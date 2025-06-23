@@ -28,10 +28,10 @@ const Sidebar: React.FC = () => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="fixed left-0 top-0 h-screen w-[280px] bg-background/95 backdrop-blur-md border-r border-border shadow-lg z-[1000] hidden md:block">
+    <div className="fixed left-0 top-0 h-screen w-[280px] bg-background/95 backdrop-blur-md shadow-lg z-[1000] hidden md:block">
       <div className="flex flex-col h-full">
         {/* Logo */}
-        <div className="p-6 border-b border-border">
+        <div className="p-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
               <Github className="text-white w-5 h-5" />
@@ -50,7 +50,7 @@ const Sidebar: React.FC = () => {
               variant={location.pathname === item.path ? "secondary" : "ghost"}
               className={`w-full justify-start h-12 rounded-xl transition-all duration-200 ${
                 location.pathname === item.path 
-                  ? 'bg-primary/10 text-primary border border-primary/20' 
+                  ? 'bg-primary/10 text-primary' 
                   : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:translate-x-1'
               }`}
               onClick={() => navigate(item.path)}

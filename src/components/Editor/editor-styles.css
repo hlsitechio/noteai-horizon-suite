@@ -1,18 +1,18 @@
 
 .editor-toolbar {
-  @apply flex items-center justify-between p-4 bg-gradient-to-r from-slate-50/80 to-white/90 backdrop-blur-xl border border-slate-200/50 shadow-lg dark:from-slate-800/80 dark:to-slate-900/90 dark:border-slate-700/50;
+  @apply flex items-center justify-between p-4 bg-gradient-to-r from-slate-50/80 to-white/90 backdrop-blur-xl shadow-lg dark:from-slate-800/80 dark:to-slate-900/90;
 }
 
 .editor-button {
-  @apply relative transition-all duration-300 hover:bg-gradient-to-r from-blue-50 to-purple-50 hover:text-slate-700 hover:shadow-md hover:scale-105 border border-transparent hover:border-blue-200/50 backdrop-blur-sm rounded-lg px-3 py-2 dark:hover:from-slate-700 dark:hover:to-slate-600 dark:hover:text-slate-200 dark:hover:border-slate-600/50;
+  @apply relative transition-all duration-300 hover:bg-gradient-to-r from-blue-50 to-purple-50 hover:text-slate-700 hover:shadow-md hover:scale-105 backdrop-blur-sm rounded-lg px-3 py-2 dark:hover:from-slate-700 dark:hover:to-slate-600 dark:hover:text-slate-200;
 }
 
 .editor-button.active {
-  @apply bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg border border-blue-400/50 backdrop-blur-md scale-105 dark:from-blue-600 dark:to-purple-700 dark:border-blue-500/50;
+  @apply bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg backdrop-blur-md scale-105 dark:from-blue-600 dark:to-purple-700;
 }
 
 .editor-content {
-  @apply p-8 min-h-[400px] max-h-[600px] overflow-y-auto bg-gradient-to-br from-white/95 to-slate-50/90 backdrop-blur-xl border-0 shadow-inner dark:from-slate-900/95 dark:to-slate-800/90;
+  @apply p-8 min-h-[400px] max-h-[600px] overflow-y-auto bg-gradient-to-br from-white/95 to-slate-50/90 backdrop-blur-xl shadow-inner dark:from-slate-900/95 dark:to-slate-800/90;
 }
 
 .editor-content .prose {
@@ -24,7 +24,7 @@
 }
 
 .editor-content .prose h1 {
-  @apply text-3xl font-bold mb-6 text-slate-900 border-0 pb-2 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent dark:from-slate-100 dark:to-slate-300;
+  @apply text-3xl font-bold mb-6 text-slate-900 pb-2 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent dark:from-slate-100 dark:to-slate-300;
 }
 
 .editor-content .prose h2 {
@@ -32,7 +32,13 @@
 }
 
 .editor-content .prose blockquote {
-  @apply border-l-4 border-gradient-to-b from-blue-500 to-purple-600 pl-6 py-3 italic text-slate-700 bg-gradient-to-r from-blue-50/80 to-purple-50/60 backdrop-blur-sm rounded-r-xl my-4 shadow-sm dark:from-blue-900/30 dark:to-purple-900/20 dark:text-slate-300 dark:border-l-4 dark:border-blue-500;
+  @apply pl-6 py-3 italic text-slate-700 bg-gradient-to-r from-blue-50/80 to-purple-50/60 backdrop-blur-sm rounded-r-xl my-4 shadow-sm dark:from-blue-900/30 dark:to-purple-900/20 dark:text-slate-300;
+  border-left: 4px solid;
+  border-image: linear-gradient(to bottom, #3b82f6, #9333ea) 1;
+}
+
+.dark .editor-content .prose blockquote {
+  border-image: linear-gradient(to bottom, #60a5fa, #a855f7) 1;
 }
 
 .editor-content .prose ul,
@@ -45,11 +51,11 @@
 }
 
 .editor-content .prose code {
-  @apply bg-gradient-to-r from-slate-100 to-slate-200 backdrop-blur-sm px-3 py-1 rounded-lg text-sm font-mono border border-slate-300/50 shadow-sm text-slate-800 dark:from-slate-800 dark:to-slate-700 dark:text-blue-300 dark:border-slate-600/50;
+  @apply bg-gradient-to-r from-slate-100 to-slate-200 backdrop-blur-sm px-3 py-1 rounded-lg text-sm font-mono shadow-sm text-slate-800 dark:from-slate-800 dark:to-slate-700 dark:text-blue-300;
 }
 
 .editor-content .prose pre {
-  @apply bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 p-6 rounded-xl font-mono text-sm my-4 overflow-x-auto shadow-lg text-slate-100 dark:from-slate-800 dark:to-slate-900 dark:border-slate-600/50;
+  @apply bg-gradient-to-br from-slate-900 to-slate-800 p-6 rounded-xl font-mono text-sm my-4 overflow-x-auto shadow-lg text-slate-100 dark:from-slate-800 dark:to-slate-900;
 }
 
 /* Enhanced dark mode placeholder styling with premium colors */
@@ -84,7 +90,8 @@
 
 /* Enhanced focus states with premium gradients */
 .editor-content:focus-within {
-  @apply ring-2 ring-gradient-to-r from-blue-400/30 to-purple-400/30 shadow-lg dark:ring-blue-400/40;
+  @apply ring-2 shadow-lg dark:ring-blue-400/40;
+  ring-color: rgba(59, 130, 246, 0.3);
 }
 
 /* Premium glassmorphic editor enhancements */

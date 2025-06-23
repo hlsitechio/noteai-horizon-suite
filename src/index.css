@@ -167,13 +167,13 @@
     background: var(--gradient-premium);
   }
 
-  /* Premium glassmorphism with enhanced depth */
+  /* Premium glassmorphism with enhanced depth - NO BORDERS */
   .glass {
-    @apply backdrop-blur-xl bg-gradient-to-br from-white/20 to-white/10 border border-white/30 shadow-premium dark:from-black/30 dark:to-black/20 dark:border-white/10;
+    @apply backdrop-blur-xl bg-gradient-to-br from-white/20 to-white/10 shadow-premium dark:from-black/30 dark:to-black/20;
   }
 
   .dark .glass {
-    @apply bg-gradient-to-br from-white/10 to-white/5 border border-white/20;
+    @apply bg-gradient-to-br from-white/10 to-white/5;
   }
 
   /* Premium shadow utilities */
@@ -215,9 +215,9 @@
     @apply transform transition-all duration-300 hover:-translate-y-2 hover:shadow-premium hover:scale-105;
   }
 
-  /* Premium button styles */
+  /* Premium button styles - NO BORDERS */
   .btn-primary {
-    @apply bg-gradient-primary text-white font-semibold px-8 py-4 rounded-xl shadow-premium hover:shadow-large transform transition-all duration-300 hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 border-0 backdrop-blur-xl;
+    @apply bg-gradient-primary text-white font-semibold px-8 py-4 rounded-xl shadow-premium hover:shadow-large transform transition-all duration-300 hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 backdrop-blur-xl;
   }
   
   .dark .btn-primary {
@@ -225,25 +225,25 @@
   }
   
   .btn-secondary {
-    @apply bg-gradient-to-r from-white/30 to-white/20 backdrop-blur-xl text-card-foreground font-semibold px-8 py-4 rounded-xl border border-white/30 shadow-premium hover:shadow-large transform transition-all duration-300 hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+    @apply bg-gradient-to-r from-white/30 to-white/20 backdrop-blur-xl text-card-foreground font-semibold px-8 py-4 rounded-xl shadow-premium hover:shadow-large transform transition-all duration-300 hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
   }
 
-  /* Premium card styles */
+  /* Premium card styles - NO BORDERS */
   .card-enhanced {
-    @apply bg-gradient-to-br from-white/30 to-white/20 backdrop-blur-xl border border-white/30 rounded-2xl shadow-premium hover:shadow-large transition-all duration-500 p-8 hover:-translate-y-1 hover:scale-105;
+    @apply bg-gradient-to-br from-white/30 to-white/20 backdrop-blur-xl rounded-2xl shadow-premium hover:shadow-large transition-all duration-500 p-8 hover:-translate-y-1 hover:scale-105;
   }
   
   .dark .card-enhanced {
-    @apply bg-gradient-to-br from-slate-800/40 to-slate-900/30 hover:from-slate-800/50 hover:to-slate-900/40 border-slate-700/50;
+    @apply bg-gradient-to-br from-slate-800/40 to-slate-900/30 hover:from-slate-800/50 hover:to-slate-900/40;
   }
 
-  /* Premium input styles */
+  /* Premium input styles - NO BORDERS */
   .input-enhanced {
-    @apply w-full px-6 py-4 bg-gradient-to-r from-white/30 to-white/20 backdrop-blur-xl border border-white/30 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-300 shadow-soft focus:shadow-medium;
+    @apply w-full px-6 py-4 bg-gradient-to-r from-white/30 to-white/20 backdrop-blur-xl rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300 shadow-soft focus:shadow-medium;
   }
 
   .dark .input-enhanced {
-    @apply bg-gradient-to-r from-slate-800/40 to-slate-900/30 focus:from-slate-800/50 focus:to-slate-900/40 focus:ring-blue-400/60 border-slate-700/50 focus:border-blue-500/50;
+    @apply bg-gradient-to-r from-slate-800/40 to-slate-900/30 focus:from-slate-800/50 focus:to-slate-900/40 focus:ring-blue-400/60;
   }
 }
 
@@ -291,33 +291,33 @@
     @apply from-slate-800/30 via-slate-700/50 to-slate-800/30;
   }
 
-  /* Premium rich text editor toolbar */
+  /* Premium rich text editor toolbar - NO BORDERS */
   .editor-toolbar {
-    @apply flex items-center gap-2 p-4 bg-gradient-to-r from-slate-50/90 to-white/95 backdrop-blur-xl border border-slate-200/50 rounded-t-2xl shadow-premium;
+    @apply flex items-center gap-2 p-4 bg-gradient-to-r from-slate-50/90 to-white/95 backdrop-blur-xl rounded-t-2xl shadow-premium;
   }
 
   .dark .editor-toolbar {
-    @apply bg-gradient-to-r from-slate-800/90 to-slate-900/95 border-slate-700/50;
+    @apply bg-gradient-to-r from-slate-800/90 to-slate-900/95;
   }
   
   .editor-button {
-    @apply p-3 rounded-xl text-muted-foreground hover:text-foreground hover:bg-gradient-to-r from-blue-50 to-purple-50 backdrop-blur-sm transition-all duration-300 border border-transparent hover:border-blue-200/50 hover:shadow-md hover:scale-105;
+    @apply p-3 rounded-xl text-muted-foreground hover:text-foreground hover:bg-gradient-to-r from-blue-50 to-purple-50 backdrop-blur-sm transition-all duration-300 hover:shadow-md hover:scale-105;
   }
 
   .dark .editor-button:hover {
-    @apply from-slate-700/60 to-slate-600/40 border-slate-600/50;
+    @apply from-slate-700/60 to-slate-600/40;
   }
   
   .editor-button.active {
-    @apply bg-gradient-to-r from-blue-500 to-purple-600 text-white backdrop-blur-xl border border-blue-400/50 shadow-lg scale-105;
+    @apply bg-gradient-to-r from-blue-500 to-purple-600 text-white backdrop-blur-xl shadow-lg scale-105;
   }
 
   .dark .editor-button.active {
-    @apply from-blue-600 to-purple-700 border-blue-500/50;
+    @apply from-blue-600 to-purple-700;
   }
   
   .editor-content {
-    @apply p-8 min-h-96 focus:outline-none prose prose-lg max-w-none dark:prose-invert bg-gradient-to-br from-white/95 to-slate-50/90 backdrop-blur-xl border-0 rounded-b-2xl shadow-inner;
+    @apply p-8 min-h-96 focus:outline-none prose prose-lg max-w-none dark:prose-invert bg-gradient-to-br from-white/95 to-slate-50/90 backdrop-blur-xl rounded-b-2xl shadow-inner;
   }
 
   .dark .editor-content {
