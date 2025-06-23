@@ -52,14 +52,16 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
   isAssistantCollapsed = false,
   isMobile = false,
 }) => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(isMobile);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(isMobile || isAssistantCollapsed);
 
-  // Auto-collapse sidebar on mobile
+  // Auto-collapse sidebar on mobile or when assistant is collapsed
   useEffect(() => {
-    if (isMobile) {
+    if (isMobile || isAssistantCollapsed) {
       setIsSidebarCollapsed(true);
+    } else {
+      setIsSidebarCollapsed(false);
     }
-  }, [isMobile]);
+  }, [isMobile, isAssistantCollapsed]);
 
   // Update refs to control assistant collapse state
   React.useEffect(() => {
@@ -72,16 +74,17 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
   }, [collapseAssistantRef, expandAssistantRef]);
 
   return (
-    <div className="relative">
-      {/* Main Editor Column - Mobile responsive grid */}
-      <div className={`grid gap-6 h-full transition-all duration-500 ease-in-out ${
+    <div className="h-full">
+      {/* Main Editor Layout - Proper grid structure */}
+      <div className={`h-full grid transition-all duration-500 ease-in-out ${
         isMobile 
           ? 'grid-cols-1' 
           : isSidebarCollapsed
-            ? 'grid-cols-1 lg:grid-cols-[1fr_4rem]' 
-            : 'grid-cols-1 lg:grid-cols-4'
+            ? 'grid-cols-[1fr_4rem] gap-4' 
+            : 'grid-cols-[1fr_20rem] gap-6'
       }`}>
-        <div className={isMobile || isSidebarCollapsed ? 'lg:col-span-1' : 'lg:col-span-3'}>
+        {/* Main Editor Column */}
+        <div className="min-h-0 overflow-hidden">
           <EditorMainColumn
             title={title}
             content={content}
@@ -104,16 +107,18 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
           />
         </div>
 
-        {/* Collapsible AI Sidebar - Hidden on mobile */}
+        {/* AI Assistant Sidebar - Only show on desktop */}
         {!isMobile && (
-          <EditorSidebar
-            content={content}
-            onSuggestionApply={onSuggestionApply}
-            onCollapseChange={setIsSidebarCollapsed}
-            isCollapsed={isAssistantCollapsed || isSidebarCollapsed}
-            onCollapseToggle={setIsSidebarCollapsed}
-            isDistractionFree={false}
-          />
+          <div className="min-h-0">
+            <EditorSidebar
+              content={content}
+              onSuggestionApply={onSuggestionApply}
+              onCollapseChange={setIsSidebarCollapsed}
+              isCollapsed={isSidebarCollapsed}
+              onCollapseToggle={setIsSidebarCollapsed}
+              isDistractionFree={false}
+            />
+          </div>
         )}
       </div>
     </div>

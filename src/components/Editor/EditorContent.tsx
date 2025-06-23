@@ -53,68 +53,72 @@ const EditorContent: React.FC<EditorContentProps> = ({
   const canSave = title.trim().length > 0;
 
   return (
-    <div className={`space-y-4 h-screen overflow-hidden ${
-      isMobile ? 'p-2' : 'p-4'
-    }`}>
-      {/* Header - Mobile responsive */}
-      {!isHeaderHidden && (
-        <EditorHeader
-          isNewNote={!currentNote}
-          isFavorite={isFavorite}
-          isSaving={isSaving}
-          canSave={canSave}
-          isCollapsed={isFocusMode}
-          isHeaderCollapsed={isHeaderCollapsed || isMobile}
-          onFavoriteToggle={onFavoriteToggle}
-          onFocusModeToggle={onFocusModeToggle}
-          onHeaderCollapseToggle={onHeaderCollapseToggle}
-          onSave={onSave}
-          onCollapseAllBars={onCollapseAllBars}
-        />
-      )}
+    <div className="h-screen overflow-hidden">
+      <div className={`h-full flex flex-col ${isMobile ? 'p-2' : 'p-4'}`}>
+        {/* Header - Mobile responsive */}
+        {!isHeaderHidden && (
+          <div className="flex-shrink-0 mb-4">
+            <EditorHeader
+              isNewNote={!currentNote}
+              isFavorite={isFavorite}
+              isSaving={isSaving}
+              canSave={canSave}
+              isCollapsed={isFocusMode}
+              isHeaderCollapsed={isHeaderCollapsed || isMobile}
+              onFavoriteToggle={onFavoriteToggle}
+              onFocusModeToggle={onFocusModeToggle}
+              onHeaderCollapseToggle={onHeaderCollapseToggle}
+              onSave={onSave}
+              onCollapseAllBars={onCollapseAllBars}
+            />
+          </div>
+        )}
 
-      {/* Main Editor Layout */}
-      {shouldShowLayout && (
-        <EditorContentLayout
+        {/* Main Editor Layout */}
+        {shouldShowLayout && (
+          <div className="flex-1 min-h-0">
+            <EditorContentLayout
+              title={title}
+              content={content}
+              category={category}
+              tags={tags}
+              newTag={newTag}
+              isFavorite={isFavorite}
+              isSaving={isSaving}
+              onTitleChange={onTitleChange}
+              onContentChange={onContentChange}
+              onCategoryChange={onCategoryChange}
+              onNewTagChange={onNewTagChange}
+              onAddTag={onAddTag}
+              onRemoveTag={onRemoveTag}
+              onFavoriteToggle={onFavoriteToggle}
+              onSave={onSave}
+              onSuggestionApply={onSuggestionApply}
+              collapseAssistantRef={collapseAssistantRef}
+              expandAssistantRef={expandAssistantRef}
+              isHeaderHidden={isHeaderHidden}
+              isHeaderCollapsed={isHeaderCollapsed}
+              isAssistantCollapsed={isAssistantCollapsed || isMobile}
+              onCollapseAllBars={onCollapseAllBars}
+              isMobile={isMobile}
+            />
+          </div>
+        )}
+
+        {/* Focus Mode Modal */}
+        <FocusMode
+          isOpen={isFocusMode}
+          onClose={onFocusModeClose}
           title={title}
           content={content}
-          category={category}
-          tags={tags}
-          newTag={newTag}
-          isFavorite={isFavorite}
-          isSaving={isSaving}
           onTitleChange={onTitleChange}
           onContentChange={onContentChange}
-          onCategoryChange={onCategoryChange}
-          onNewTagChange={onNewTagChange}
-          onAddTag={onAddTag}
-          onRemoveTag={onRemoveTag}
-          onFavoriteToggle={onFavoriteToggle}
           onSave={onSave}
-          onSuggestionApply={onSuggestionApply}
-          collapseAssistantRef={collapseAssistantRef}
-          expandAssistantRef={expandAssistantRef}
-          isHeaderHidden={isHeaderHidden}
-          isHeaderCollapsed={isHeaderCollapsed}
-          isAssistantCollapsed={isAssistantCollapsed || isMobile}
-          onCollapseAllBars={onCollapseAllBars}
+          isSaving={isSaving}
+          isDistractionFree={isDistractionFree}
           isMobile={isMobile}
         />
-      )}
-
-      {/* Focus Mode Modal */}
-      <FocusMode
-        isOpen={isFocusMode}
-        onClose={onFocusModeClose}
-        title={title}
-        content={content}
-        onTitleChange={onTitleChange}
-        onContentChange={onContentChange}
-        onSave={onSave}
-        isSaving={isSaving}
-        isDistractionFree={isDistractionFree}
-        isMobile={isMobile}
-      />
+      </div>
     </div>
   );
 };
