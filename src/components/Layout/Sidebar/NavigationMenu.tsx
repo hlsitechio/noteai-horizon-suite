@@ -124,7 +124,7 @@ export function NavigationMenu() {
                 isActive={location.pathname === item.path}
                 className={`h-11 rounded-xl transition-all duration-200 relative overflow-hidden group ${
                   location.pathname === item.path 
-                    ? 'bg-primary text-primary-foreground shadow-md' 
+                    ? 'bg-primary text-white shadow-md' 
                     : 'hover:bg-accent hover:text-accent-foreground hover:translate-x-1'
                 }`}
               >
@@ -143,7 +143,7 @@ export function NavigationMenu() {
                       initial="collapsed"
                       animate="expanded"
                       exit="collapsed"
-                      className="truncate font-medium relative z-10"
+                      className={`truncate font-medium relative z-10 ${location.pathname === item.path ? 'text-white' : ''}`}
                     >
                       {item.label}
                     </motion.span>
