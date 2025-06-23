@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -18,6 +17,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -60,6 +60,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: supabaseUser.email || 'User',
         avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(supabaseUser.email || 'User')}&background=6366f1&color=fff`
       };
+    }
+  };
+
+  // Function to refresh user data from the database
+  const refreshUser = async () => {
+    if (session?.user) {
+      try {
+        const transformedUser = await transformUser(session.user);
+        setUser(transformedUser);
+      } catch (error) {
+        console.error('Error refreshing user:', error);
+      }
     }
   };
 
@@ -220,6 +232,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     register,
     logout,
+    refreshUser,
   };
 
   console.log('AuthProvider render:', {

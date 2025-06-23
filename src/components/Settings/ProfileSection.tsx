@@ -10,7 +10,7 @@ import { Camera, Upload, User, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 
 const ProfileSection: React.FC = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [isUpdating, setIsUpdating] = useState(false);
@@ -35,6 +35,8 @@ const ProfileSection: React.FC = () => {
         toast.error('Failed to update profile');
       } else {
         toast.success('Profile updated successfully');
+        // Refresh the user data in AuthContext
+        await refreshUser();
       }
     } catch (error) {
       console.error('Profile update exception:', error);
@@ -98,8 +100,8 @@ const ProfileSection: React.FC = () => {
         toast.error('Failed to update profile picture');
       } else {
         toast.success('Profile picture updated successfully');
-        // The avatar will automatically update due to the auth context refetch
-        window.location.reload(); // Temporary solution to refresh the avatar
+        // Refresh the user data in AuthContext
+        await refreshUser();
       }
     } catch (error) {
       console.error('Avatar upload exception:', error);
