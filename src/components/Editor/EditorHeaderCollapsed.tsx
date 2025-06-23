@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CrownIcon, EyeIcon, HeartIcon, BookmarkIcon } from '@heroicons/react/24/outline';
+import { StarIcon, EyeIcon, HeartIcon, BookmarkIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import { headerVariants } from './EditorHeaderTypes';
 import EditorHeaderButton from './EditorHeaderButton';
@@ -53,7 +53,7 @@ const EditorHeaderCollapsed: React.FC<EditorHeaderCollapsedProps> = ({
               ease: "easeInOut"
             }}
           />
-          <CrownIcon className="w-4 h-4 text-white drop-shadow-sm relative z-10" />
+          <StarIcon className="w-4 h-4 text-white drop-shadow-sm relative z-10" />
         </motion.div>
         <motion.span
           initial={{ opacity: 0, x: -20 }}

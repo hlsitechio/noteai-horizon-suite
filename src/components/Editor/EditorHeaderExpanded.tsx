@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  CrownIcon, 
+  StarIcon, 
   EyeIcon, 
   HeartIcon, 
   BookmarkIcon, 
@@ -108,7 +108,7 @@ const EditorHeaderExpanded: React.FC<EditorHeaderExpandedProps> = ({
                       ease: "easeInOut"
                     }}
                   />
-                  <CrownIcon className="w-8 h-8 text-yellow-500 drop-shadow-lg relative z-10" />
+                  <StarIcon className="w-8 h-8 text-yellow-500 drop-shadow-lg relative z-10" />
                 </motion.div>
               </motion.h1>
               <motion.p 
