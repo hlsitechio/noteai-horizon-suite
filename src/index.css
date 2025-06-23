@@ -47,11 +47,6 @@
     --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --shadow-large: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     --shadow-premium: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-
-    /* Custom cursor variables */
-    --cursor-image: none;
-    --cursor-hotspot-x: 0px;
-    --cursor-hotspot-y: 0px;
   }
 
   .dark {
@@ -106,31 +101,6 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  /* Custom Cursor Styles */
-  body.custom-cursor-active,
-  body.custom-cursor-active * {
-    cursor: none !important;
-  }
-
-  .custom-cursor {
-    pointer-events: none !important;
-    user-select: none;
-    will-change: transform;
-    z-index: 10000 !important;
-  }
-
-  /* Hide cursor on touch devices */
-  @media (hover: none) and (pointer: coarse) {
-    body.custom-cursor-active,
-    body.custom-cursor-active * {
-      cursor: auto !important;
-    }
-    
-    .custom-cursor {
-      display: none !important;
-    }
-  }
-
   /* ... keep existing code (Improved scrolling and focus styles) */
   html {
     scroll-behavior: smooth;
@@ -178,7 +148,7 @@
   }
 }
 
-/* ... keep existing code (Premium utility classes, component styles, animations and media queries) */
+/* Premium utility classes */
 @layer utilities {
   /* Enhanced premium gradient utilities */
   .bg-gradient-primary {
@@ -277,7 +247,7 @@
   }
 }
 
-/* Enhanced component styles and animations */
+/* ... keep existing code (Enhanced component styles and animations) */
 @layer components {
   /* Premium navigation */
   .nav-link {
@@ -355,7 +325,7 @@
   }
 }
 
-/* Enhanced animations and media queries */
+/* ... keep existing code (Enhanced animations and media queries) */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
