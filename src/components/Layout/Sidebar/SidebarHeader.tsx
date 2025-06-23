@@ -49,7 +49,7 @@ export function SidebarHeader() {
   const isCollapsed = state === 'collapsed';
 
   return (
-    <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
+    <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} relative`}>
       {/* Logo and Title Section */}
       <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
         <motion.div 
@@ -74,11 +74,11 @@ export function SidebarHeader() {
         </AnimatePresence>
       </div>
 
-      {/* Toggle Button - Always Visible */}
+      {/* Toggle Button - Better positioned */}
       <motion.div
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className={isCollapsed ? 'absolute top-4 right-2' : ''}
+        className={isCollapsed ? 'absolute -right-3 top-1/2 -translate-y-1/2 z-10' : ''}
       >
         <Button
           variant="ghost"
