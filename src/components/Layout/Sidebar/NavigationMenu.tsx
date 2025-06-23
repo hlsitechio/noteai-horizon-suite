@@ -76,7 +76,7 @@ export function NavigationMenu() {
   const isCollapsed = state === 'collapsed';
 
   return (
-    <SidebarMenu className="space-y-1 px-2">
+    <SidebarMenu className={`space-y-2 ${isCollapsed ? 'px-1' : 'px-2'}`}>
       {menuItems.map((item, index) => (
         <SidebarMenuItem key={item.path}>
           <motion.div
@@ -92,10 +92,10 @@ export function NavigationMenu() {
                   <SidebarMenuButton
                     onClick={() => navigate(item.path)}
                     isActive={location.pathname === item.path}
-                    className={`h-11 w-11 rounded-xl transition-all duration-200 relative overflow-hidden ${
+                    className={`h-12 w-12 mx-auto rounded-xl transition-all duration-200 relative overflow-hidden ${
                       location.pathname === item.path 
-                        ? 'bg-primary text-primary-foreground shadow-md' 
-                        : 'hover:bg-accent hover:text-accent-foreground'
+                        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25' 
+                        : 'hover:bg-accent hover:text-accent-foreground hover:shadow-md'
                     }`}
                   >
                     <motion.div
