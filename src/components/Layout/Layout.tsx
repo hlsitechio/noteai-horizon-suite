@@ -14,6 +14,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const isEditorPage = location.pathname === '/editor';
+  const isDashboardPage = location.pathname === '/' || location.pathname === '/dashboard';
 
   return (
     <SidebarProvider>
@@ -26,9 +27,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               ? isMobile 
                 ? "pt-16" 
                 : "pt-24" 
-              : isMobile 
-                ? "p-4 pt-20" 
-                : "p-6 pt-24"
+              : isDashboardPage && isMobile
+                ? "pt-16"
+                : isMobile 
+                  ? "p-4 pt-20" 
+                  : "p-6 pt-24"
           }`}>
             {children}
           </div>
