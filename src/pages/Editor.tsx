@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AppSidebar } from '../components/Layout/AppSidebar';
 import { SidebarProvider, SidebarInset, useSidebar } from '@/components/ui/sidebar';
@@ -31,12 +30,18 @@ const EditorInner: React.FC = () => {
 
   const [isDistractionFree, setIsDistractionFree] = React.useState(false);
 
-  // Auto-collapse sidebar on mobile
+  // Auto-collapse sidebar on mobile and enable distraction-free mode by default
   React.useEffect(() => {
     if (isMobile) {
       setOpen(false);
+      // Auto-enable distraction-free mode on mobile for better experience
+      if (!isDistractionFree) {
+        setIsDistractionFree(true);
+        editorState.setIsHeaderHidden(true);
+        editorState.setIsAssistantCollapsed(true);
+      }
     }
-  }, [isMobile, setOpen]);
+  }, [isMobile, setOpen, isDistractionFree, editorState]);
 
   const handleDistractionFreeToggle = () => {
     const newDistractionFree = !isDistractionFree;
@@ -59,6 +64,18 @@ const EditorInner: React.FC = () => {
     }
   };
 
+  // Enhanced mobile focus mode toggle - automatically enter focus mode on mobile
+  const handleMobileFocusMode = () => {
+    if (isMobile) {
+      setIsDistractionFree(true);
+      editorState.setIsFocusMode(true);
+      editorState.setIsHeaderHidden(true);
+      editorState.setIsAssistantCollapsed(true);
+    } else {
+      editorState.setIsFocusMode(true);
+    }
+  };
+
   return (
     <div className="flex min-h-screen w-full bg-background relative">
       <AppSidebar />
@@ -73,10 +90,10 @@ const EditorInner: React.FC = () => {
           isFavorite={editorState.isFavorite}
           isSaving={editorState.isSaving}
           
-          // UI state - mobile responsive
+          // UI state - mobile responsive with enhanced distraction-free mode
           isFocusMode={editorState.isFocusMode}
           isHeaderCollapsed={editorState.isHeaderCollapsed}
-          isHeaderHidden={editorState.isHeaderHidden || isDistractionFree}
+          isHeaderHidden={editorState.isHeaderHidden || (isMobile && isDistractionFree)}
           isAssistantCollapsed={editorState.isAssistantCollapsed || isDistractionFree || isMobile}
           
           // Form handlers
@@ -90,19 +107,22 @@ const EditorInner: React.FC = () => {
           onSave={editorHandlers.handleSave}
           onSuggestionApply={editorHandlers.handleSuggestionApply}
           
-          // UI handlers
-          onFocusModeToggle={() => editorState.setIsFocusMode(true)}
+          // UI handlers - enhanced for mobile
+          onFocusModeToggle={handleMobileFocusMode}
           onHeaderCollapseToggle={() => editorState.setIsHeaderCollapsed(!editorState.isHeaderCollapsed)}
           onCollapseAllBars={editorHandlers.handleCollapseAllBars}
           onFocusModeClose={() => {
             editorState.setIsFocusMode(false);
-            if (isDistractionFree) {
+            if (isDistractionFree && !isMobile) {
               setIsDistractionFree(false);
-              if (!isMobile) {
-                setOpen(true);
-              }
+              setOpen(true);
               editorState.setIsHeaderHidden(false);
               editorState.setIsAssistantCollapsed(false);
+            }
+            // On mobile, keep distraction-free mode active even after closing focus mode
+            if (isMobile) {
+              editorState.setIsHeaderHidden(true);
+              editorState.setIsAssistantCollapsed(true);
             }
           }}
           

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import RichTextEditor from './RichTextEditor';
@@ -38,7 +38,9 @@ const FocusMode: React.FC<FocusModeProps> = ({
 }) => {
   const [backgroundOpacity, setBackgroundOpacity] = useState([85]);
   const [showStats, setShowStats] = useState(false);
-  const [isZenMode, setIsZenMode] = useState(false);
+  const [isZenMode, setIsZenMode] = useState(isMobile); // Default to zen mode on mobile
+  const [touchStartY, setTouchStartY] = useState(0);
+  const [showMobileHint, setShowMobileHint] = useState(isMobile);
 
   const { timeSpent, formatTime } = useFocusModeTimer(isOpen);
   const { wordCount, characterCount, wpm } = useFocusModeStats(content, timeSpent);
@@ -46,6 +48,35 @@ const FocusMode: React.FC<FocusModeProps> = ({
 
   // Hide controls completely when in distraction-free mode or mobile
   const shouldShowControls = !isDistractionFree && !isMobile && isControlsVisible;
+
+  // Mobile-specific: Hide hint after a few seconds
+  useEffect(() => {
+    if (isMobile && showMobileHint) {
+      const timer = setTimeout(() => {
+        setShowMobileHint(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isMobile, showMobileHint]);
+
+  // Mobile gesture handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isMobile) {
+      setTouchStartY(e.touches[0].clientY);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (isMobile) {
+      const touchEndY = e.changedTouches[0].clientY;
+      const deltaY = touchStartY - touchEndY;
+      
+      // Swipe up to close (minimum 100px swipe)
+      if (deltaY > 100) {
+        onClose();
+      }
+    }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
@@ -62,7 +93,7 @@ const FocusMode: React.FC<FocusModeProps> = ({
   };
 
   // Check if background should be completely hidden
-  const isBackgroundHidden = backgroundOpacity[0] >= 100;
+  const isBackgroundHidden = backgroundOpacity[0] >= 100 || isMobile;
 
   if (!isOpen) return null;
 
@@ -75,8 +106,10 @@ const FocusMode: React.FC<FocusModeProps> = ({
         transition={{ duration: 0.5, ease: "easeInOut" }}
         className={`fixed inset-0 z-50 flex items-center justify-center ${
           isBackgroundHidden ? 'bg-black' : ''
-        } ${isMobile ? 'p-2' : 'p-6'}`}
+        } ${isMobile ? 'p-0' : 'p-6'}`}
         onKeyDown={handleKeyDown}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         tabIndex={-1}
       >
         <FocusModeBackground
@@ -87,6 +120,18 @@ const FocusMode: React.FC<FocusModeProps> = ({
           isBackgroundHidden={isBackgroundHidden}
           onClose={onClose}
         />
+        
+        {/* Mobile Swipe Hint */}
+        {isMobile && showMobileHint && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 text-white/70 text-sm z-30"
+          >
+            Swipe up to exit
+          </motion.div>
+        )}
         
         {/* Main Focus Editor */}
         <motion.div
@@ -103,7 +148,7 @@ const FocusMode: React.FC<FocusModeProps> = ({
           }`}
         >
           {isBackgroundHidden ? (
-            /* Pure black background container when ambience is 100% */
+            /* Pure black background container when ambience is 100% or mobile */
             <div className="h-full bg-black overflow-hidden">
               {shouldShowControls && (
                 <FocusModeControls
@@ -125,7 +170,7 @@ const FocusMode: React.FC<FocusModeProps> = ({
               {/* Title Input - Mobile responsive */}
               <div className={`${
                 isMobile 
-                  ? 'pt-8 px-4' 
+                  ? 'pt-12 px-4' 
                   : isZenMode 
                     ? 'pt-24 px-12' 
                     : isDistractionFree 
@@ -139,18 +184,18 @@ const FocusMode: React.FC<FocusModeProps> = ({
                   type="text"
                   value={title}
                   onChange={(e) => onTitleChange(e.target.value)}
-                  placeholder="Enter your title..."
+                  placeholder={isMobile ? "Your title..." : "Enter your title..."}
                   className={`w-full bg-transparent border-none outline-none text-white placeholder-white/50 mb-8 leading-tight ${
                     isMobile ? 'text-2xl font-bold' : 'text-4xl font-bold'
                   }`}
-                  autoFocus
+                  autoFocus={!isMobile} // Don't auto-focus on mobile to avoid keyboard popup
                 />
               </div>
 
               {/* Editor Content - Mobile responsive */}
               <div className={`${
                 isMobile 
-                  ? 'h-[calc(100%-120px)] px-4 pb-4' 
+                  ? 'h-[calc(100%-140px)] px-4 pb-4' 
                   : isZenMode 
                     ? 'h-[calc(100%-140px)] px-12 pb-12' 
                     : 'h-[calc(100%-140px)] px-12 pb-6'
@@ -164,13 +209,16 @@ const FocusMode: React.FC<FocusModeProps> = ({
                   <RichTextEditor
                     value={content}
                     onChange={onContentChange}
-                    placeholder="Focus on your writing... Let your thoughts flow without any distractions."
+                    placeholder={isMobile 
+                      ? "Start writing..." 
+                      : "Focus on your writing... Let your thoughts flow without any distractions."
+                    }
                   />
                 </motion.div>
               </div>
             </div>
           ) : (
-            /* Card container when ambience is less than 100% */
+            /* Card container when ambience is less than 100% and not mobile */
             <Card className={`h-full glass shadow-2xl overflow-hidden transition-all duration-500 ${
               isMobile 
                 ? 'rounded-lg border-none' 
