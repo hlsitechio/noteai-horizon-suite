@@ -16,9 +16,13 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, model = "deepseek/deepseek-r1-0528:free" } = await req.json();
+    const { messages, model = "deepseek/deepseek-r1-0528:free", response_format } = await req.json();
 
-    console.log('Chat request received:', { messagesCount: messages.length, model });
+    console.log('Chat request received:', { 
+      messagesCount: messages.length, 
+      model,
+      hasStructuredOutput: !!response_format 
+    });
 
     if (!openRouterApiKey) {
       console.error('OPENROUTER_API_KEY not configured');
@@ -26,6 +30,19 @@ serve(async (req) => {
     }
 
     console.log('Making request to OpenRouter API...');
+    
+    const requestBody: any = {
+      model,
+      messages,
+      temperature: 0.7,
+      max_tokens: 1000,
+    };
+
+    // Add structured output format if provided
+    if (response_format) {
+      requestBody.response_format = response_format;
+      console.log('Using structured output with schema:', JSON.stringify(response_format, null, 2));
+    }
     
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -35,12 +52,7 @@ serve(async (req) => {
         'HTTP-Referer': 'https://lovable.dev',
         'X-Title': 'Lovable Notes App',
       },
-      body: JSON.stringify({
-        model,
-        messages,
-        temperature: 0.7,
-        max_tokens: 1000,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     console.log('OpenRouter API response status:', response.status);
@@ -70,7 +82,8 @@ serve(async (req) => {
       hasChoices: !!data.choices,
       choicesLength: data.choices?.length,
       hasMessage: !!data.choices?.[0]?.message,
-      model: data.model
+      model: data.model,
+      isStructuredOutput: !!response_format
     });
     
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
@@ -83,7 +96,8 @@ serve(async (req) => {
     return new Response(JSON.stringify({ 
       message: data.choices[0].message.content,
       model: data.model || model,
-      usage: data.usage 
+      usage: data.usage,
+      structured: !!response_format
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Plus, Send, Bot, User, Zap, Cpu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useEnhancedAIChat, ChatMessage } from '@/hooks/useEnhancedAIChat';
 import { useToast } from '@/hooks/useToast';
+import { StructuredOutputDemo } from '@/components/StructuredOutputDemo';
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -144,11 +144,14 @@ const Chat: React.FC = () => {
         </Button>
       </div>
 
+      {/* Add Structured Output Demo */}
+      <StructuredOutputDemo />
+
       {/* Messages */}
       <Card className="flex-1">
         <CardContent className="p-0">
           <div className="flex flex-col h-full justify-end">
-            <div className="flex-1 overflow-y-auto max-h-[500px] p-6">
+            <div className="flex-1 overflow-y-auto max-h-[400px] p-6">
               <div className="space-y-6">
                 {messages.map((message) => (
                   <div

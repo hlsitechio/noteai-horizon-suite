@@ -1,4 +1,3 @@
-
 import { useState, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './useToast';
@@ -62,14 +61,25 @@ export const useEnhancedAIChat = () => {
     }
   }, [initializeGPUService]);
 
-  const sendMessage = async (messages: ChatMessage[]): Promise<string> => {
+  const sendMessage = async (
+    messages: ChatMessage[], 
+    responseFormat?: {
+      type: 'json_schema';
+      json_schema: {
+        name: string;
+        strict: boolean;
+        schema: object;
+      };
+    }
+  ): Promise<string> => {
     setIsLoading(true);
     
     try {
       console.log('Sending enhanced chat message to AI:', { 
         messageCount: messages.length,
         gpuDevice: capabilities.preferredDevice,
-        gpuSupported: capabilities.webGPUSupported || capabilities.webGLSupported
+        gpuSupported: capabilities.webGPUSupported || capabilities.webGLSupported,
+        hasStructuredOutput: !!responseFormat
       });
       
       // Analyze sentiment of the last user message if GPU is available
@@ -84,11 +94,18 @@ export const useEnhancedAIChat = () => {
         content: msg.content
       }));
 
+      const requestBody: any = { 
+        messages: openAIMessages,
+        model: 'deepseek/deepseek-r1-0528:free'
+      };
+
+      // Add structured output format if provided
+      if (responseFormat) {
+        requestBody.response_format = responseFormat;
+      }
+
       const { data, error } = await supabase.functions.invoke('chat-openrouter', {
-        body: { 
-          messages: openAIMessages,
-          model: 'deepseek/deepseek-r1-0528:free'
-        }
+        body: requestBody
       });
 
       if (error) {
@@ -108,7 +125,9 @@ export const useEnhancedAIChat = () => {
         throw new Error('Invalid response format from AI service');
       }
 
-      console.log('Enhanced AI response received successfully');
+      console.log('Enhanced AI response received successfully', {
+        structured: data.structured || false
+      });
       return data.message;
 
     } catch (error: any) {
@@ -129,8 +148,29 @@ export const useEnhancedAIChat = () => {
     }
   };
 
+  const sendStructuredMessage = async (
+    messages: ChatMessage[],
+    schema: {
+      name: string;
+      schema: object;
+      description?: string;
+    }
+  ): Promise<string> => {
+    const responseFormat = {
+      type: 'json_schema' as const,
+      json_schema: {
+        name: schema.name,
+        strict: true,
+        schema: schema.schema
+      }
+    };
+
+    return sendMessage(messages, responseFormat);
+  };
+
   return {
     sendMessage,
+    sendStructuredMessage,
     isLoading,
     isProcessingLocally,
     analyzeMessageSentiment,
