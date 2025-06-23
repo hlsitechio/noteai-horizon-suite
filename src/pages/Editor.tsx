@@ -82,7 +82,7 @@ const Editor: React.FC = () => {
         tags={editorState.tags}
         newTag={editorState.newTag}
         isFavorite={editorState.isFavorite}
-        isSaving={editorState.isSaving}
+        isSaving={editorState.isSaving || editorHandlers.isGeneratingTags}
         
         // UI state - unified focus mode controls everything
         // Force AI assistant to be collapsed when main sidebar is open
