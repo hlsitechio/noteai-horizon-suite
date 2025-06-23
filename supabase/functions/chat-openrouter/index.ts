@@ -21,9 +21,12 @@ serve(async (req) => {
     console.log('Chat request received:', { messagesCount: messages.length, model });
 
     if (!openRouterApiKey) {
+      console.error('OPENROUTER_API_KEY not configured');
       throw new Error('OPENROUTER_API_KEY not configured');
     }
 
+    console.log('Making request to OpenRouter API...');
+    
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -40,15 +43,38 @@ serve(async (req) => {
       }),
     });
 
+    console.log('OpenRouter API response status:', response.status);
+
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Open Router API error:', errorText);
-      throw new Error(`Open Router API error: ${response.status} ${errorText}`);
+      console.error('Open Router API error:', { 
+        status: response.status, 
+        statusText: response.statusText,
+        errorText 
+      });
+      
+      // Check for specific error types
+      if (response.status === 401) {
+        throw new Error('Invalid API key or unauthorized access');
+      } else if (response.status === 429) {
+        throw new Error('Rate limit exceeded. Please try again later.');
+      } else if (response.status === 402) {
+        throw new Error('Insufficient credits or payment required');
+      } else {
+        throw new Error(`Open Router API error: ${response.status} - ${errorText}`);
+      }
     }
 
     const data = await response.json();
+    console.log('OpenRouter API response data structure:', {
+      hasChoices: !!data.choices,
+      choicesLength: data.choices?.length,
+      hasMessage: !!data.choices?.[0]?.message,
+      model: data.model
+    });
     
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid response structure from OpenRouter:', data);
       throw new Error('Invalid response from Open Router API');
     }
 
@@ -64,11 +90,29 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in chat-openrouter function:', error);
+    
+    // Return a more specific error message
+    let errorMessage = 'Unknown error occurred';
+    let statusCode = 500;
+    
+    if (error.message?.includes('API key')) {
+      errorMessage = 'API key configuration error';
+      statusCode = 401;
+    } else if (error.message?.includes('Rate limit')) {
+      errorMessage = 'Rate limit exceeded';
+      statusCode = 429;
+    } else if (error.message?.includes('credits') || error.message?.includes('payment')) {
+      errorMessage = 'Insufficient credits';
+      statusCode = 402;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
     return new Response(JSON.stringify({ 
-      error: error.message || 'Unknown error occurred',
-      details: 'Please check your API key configuration'
+      error: errorMessage,
+      details: 'Please check the function logs for more information'
     }), {
-      status: 500,
+      status: statusCode,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
