@@ -20,6 +20,7 @@ interface FocusModeProps {
   onContentChange: (content: string) => void;
   onSave: () => void;
   isSaving: boolean;
+  isDistractionFree?: boolean;
 }
 
 const FocusMode: React.FC<FocusModeProps> = ({
@@ -31,6 +32,7 @@ const FocusMode: React.FC<FocusModeProps> = ({
   onContentChange,
   onSave,
   isSaving,
+  isDistractionFree = false,
 }) => {
   const [backgroundOpacity, setBackgroundOpacity] = useState([85]);
   const [showStats, setShowStats] = useState(false);
@@ -39,6 +41,9 @@ const FocusMode: React.FC<FocusModeProps> = ({
   const { timeSpent, formatTime } = useFocusModeTimer(isOpen);
   const { wordCount, characterCount, wpm } = useFocusModeStats(content, timeSpent);
   const { isControlsVisible, setIsControlsVisible } = useFocusModeControls(isZenMode);
+
+  // Hide controls completely when in distraction-free mode
+  const shouldShowControls = !isDistractionFree && isControlsVisible;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
@@ -75,7 +80,7 @@ const FocusMode: React.FC<FocusModeProps> = ({
         <FocusModeBackground
           backgroundOpacity={backgroundOpacity}
           onBackgroundOpacityChange={setBackgroundOpacity}
-          isControlsVisible={isControlsVisible}
+          isControlsVisible={shouldShowControls && !isDistractionFree}
           isZenMode={isZenMode}
           isBackgroundHidden={isBackgroundHidden}
           onClose={onClose}
@@ -94,23 +99,25 @@ const FocusMode: React.FC<FocusModeProps> = ({
           {isBackgroundHidden ? (
             /* Pure black background container when ambience is 100% */
             <div className="h-full bg-black overflow-hidden">
-              <FocusModeControls
-                isControlsVisible={isControlsVisible}
-                isZenMode={isZenMode}
-                onZenModeToggle={() => setIsZenMode(!isZenMode)}
-                showStats={showStats}
-                onStatsToggle={() => setShowStats(!showStats)}
-                onSave={onSave}
-                onClose={onClose}
-                isSaving={isSaving}
-                title={title}
-                wordCount={wordCount}
-                timeSpent={timeSpent}
-                formatTime={formatTime}
-              />
+              {shouldShowControls && (
+                <FocusModeControls
+                  isControlsVisible={shouldShowControls}
+                  isZenMode={isZenMode}
+                  onZenModeToggle={() => setIsZenMode(!isZenMode)}
+                  showStats={showStats}
+                  onStatsToggle={() => setShowStats(!showStats)}
+                  onSave={onSave}
+                  onClose={onClose}
+                  isSaving={isSaving}
+                  title={title}
+                  wordCount={wordCount}
+                  timeSpent={timeSpent}
+                  formatTime={formatTime}
+                />
+              )}
 
               {/* Title Input */}
-              <div className={`${isZenMode ? 'pt-24 px-12' : 'pt-20 px-12'}`}>
+              <div className={`${isZenMode ? 'pt-24 px-12' : isDistractionFree ? 'pt-12 px-12' : 'pt-20 px-12'}`}>
                 <motion.input
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -145,23 +152,25 @@ const FocusMode: React.FC<FocusModeProps> = ({
             <Card className={`h-full glass shadow-2xl overflow-hidden transition-all duration-500 ${
               isZenMode ? 'rounded-none border-none' : 'rounded-3xl'
             }`}>
-              <FocusModeControls
-                isControlsVisible={isControlsVisible}
-                isZenMode={isZenMode}
-                onZenModeToggle={() => setIsZenMode(!isZenMode)}
-                showStats={showStats}
-                onStatsToggle={() => setShowStats(!showStats)}
-                onSave={onSave}
-                onClose={onClose}
-                isSaving={isSaving}
-                title={title}
-                wordCount={wordCount}
-                timeSpent={timeSpent}
-                formatTime={formatTime}
-              />
+              {shouldShowControls && (
+                <FocusModeControls
+                  isControlsVisible={shouldShowControls}
+                  isZenMode={isZenMode}
+                  onZenModeToggle={() => setIsZenMode(!isZenMode)}
+                  showStats={showStats}
+                  onStatsToggle={() => setShowStats(!showStats)}
+                  onSave={onSave}
+                  onClose={onClose}
+                  isSaving={isSaving}
+                  title={title}
+                  wordCount={wordCount}
+                  timeSpent={timeSpent}
+                  formatTime={formatTime}
+                />
+              )}
 
               {/* Title Input */}
-              <div className={`${isZenMode ? 'pt-24 px-12' : 'pt-20 px-12'}`}>
+              <div className={`${isZenMode ? 'pt-24 px-12' : isDistractionFree ? 'pt-12 px-12' : 'pt-20 px-12'}`}>
                 <motion.input
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -193,19 +202,23 @@ const FocusMode: React.FC<FocusModeProps> = ({
             </Card>
           )}
 
-          <FocusModeStats
-            showStats={showStats}
-            isControlsVisible={isControlsVisible}
-            wordCount={wordCount}
-            characterCount={characterCount}
-            timeSpent={timeSpent}
-            wpm={wpm}
-            formatTime={formatTime}
-          />
+          {!isDistractionFree && (
+            <>
+              <FocusModeStats
+                showStats={showStats}
+                isControlsVisible={shouldShowControls}
+                wordCount={wordCount}
+                characterCount={characterCount}
+                timeSpent={timeSpent}
+                wpm={wpm}
+                formatTime={formatTime}
+              />
 
-          <FocusModeKeyboardShortcuts
-            isControlsVisible={isControlsVisible}
-          />
+              <FocusModeKeyboardShortcuts
+                isControlsVisible={shouldShowControls}
+              />
+            </>
+          )}
         </motion.div>
       </motion.div>
     </AnimatePresence>

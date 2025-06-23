@@ -9,6 +9,7 @@ import { EditorUIState, EditorUIHandlers, EditorRefs } from './EditorUIProps';
 interface EditorContentProps extends EditorFormState, EditorFormHandlers, EditorUIState, EditorUIHandlers, EditorRefs {
   currentNote: any;
   isAssistantCollapsed: boolean;
+  isDistractionFree?: boolean;
 }
 
 const EditorContent: React.FC<EditorContentProps> = ({
@@ -44,6 +45,7 @@ const EditorContent: React.FC<EditorContentProps> = ({
   collapseAssistantRef,
   expandAssistantRef,
   currentNote,
+  isDistractionFree = false,
 }) => {
   const shouldShowLayout = !isFocusMode;
   const canSave = title.trim().length > 0;
@@ -105,6 +107,7 @@ const EditorContent: React.FC<EditorContentProps> = ({
         onContentChange={onContentChange}
         onSave={onSave}
         isSaving={isSaving}
+        isDistractionFree={isDistractionFree}
       />
     </div>
   );

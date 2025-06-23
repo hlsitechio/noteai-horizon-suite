@@ -97,12 +97,16 @@ const EditorInner: React.FC = () => {
           collapseAssistantRef={editorState.collapseAssistantRef}
           expandAssistantRef={editorState.expandAssistantRef}
           currentNote={editorState.currentNote}
+          isDistractionFree={isDistractionFree}
         />
         
-        <EditorLayoutFloatingControls
-          isDistractionFree={isDistractionFree}
-          onToggleDistractionFree={handleDistractionFreeToggle}
-        />
+        {/* Only show floating controls when not in focus mode */}
+        {!editorState.isFocusMode && (
+          <EditorLayoutFloatingControls
+            isDistractionFree={isDistractionFree}
+            onToggleDistractionFree={handleDistractionFreeToggle}
+          />
+        )}
       </SidebarInset>
     </div>
   );
