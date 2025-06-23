@@ -47,9 +47,9 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className={`w-full min-h-screen ${isMobile ? 'p-0 m-0' : 'px-6 py-6'}`}>
-      <div className={`w-full ${isMobile ? 'px-4 py-6' : ''} space-y-6`}>
-        {/* Welcome Header - Mobile optimized */}
+    <div className={`min-h-screen ${isMobile ? 'w-full' : 'w-full'}`}>
+      <div className={`${isMobile ? 'px-4 py-4' : 'px-6 py-6'} space-y-6 w-full`}>
+        {/* Welcome Header */}
         <div className={`flex w-full ${isMobile ? 'flex-col space-y-4' : 'justify-between items-start'}`}>
           <div className={isMobile ? 'text-center' : ''}>
             <h1 className={`font-bold text-gray-800 ${isMobile ? 'text-2xl' : 'text-3xl'}`}>
@@ -69,54 +69,54 @@ const Dashboard: React.FC = () => {
           </Button>
         </div>
 
-        {/* Stats Cards - Mobile optimized grid */}
+        {/* Stats Cards */}
         <div className={`w-full grid gap-4 ${
           isMobile 
-            ? 'grid-cols-1' 
+            ? 'grid-cols-2' 
             : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
         }`}>
-          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white w-full">
-            <CardContent className={isMobile ? "p-4" : "p-6"}>
+          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-blue-100 font-medium ${isMobile ? 'text-sm' : 'text-sm'}`}>Total Notes</p>
-                  <p className={`font-bold ${isMobile ? 'text-3xl' : 'text-3xl'}`}>{totalNotes}</p>
+                  <p className="text-blue-100 font-medium text-xs">Total Notes</p>
+                  <p className={`font-bold ${isMobile ? 'text-2xl' : 'text-3xl'}`}>{totalNotes}</p>
                 </div>
-                <BookOpen className={`text-blue-200 ${isMobile ? 'w-8 h-8' : 'w-8 h-8'}`} />
+                <BookOpen className={`text-blue-200 ${isMobile ? 'w-6 h-6' : 'w-8 h-8'}`} />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white w-full">
-            <CardContent className={isMobile ? "p-4" : "p-6"}>
+          <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white">
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-red-100 font-medium ${isMobile ? 'text-sm' : 'text-sm'}`}>Favorites</p>
-                  <p className={`font-bold ${isMobile ? 'text-3xl' : 'text-3xl'}`}>{favoriteNotes}</p>
+                  <p className="text-red-100 font-medium text-xs">Favorites</p>
+                  <p className={`font-bold ${isMobile ? 'text-2xl' : 'text-3xl'}`}>{favoriteNotes}</p>
                 </div>
-                <Heart className={`text-red-200 ${isMobile ? 'w-8 h-8' : 'w-8 h-8'}`} />
+                <Heart className={`text-red-200 ${isMobile ? 'w-6 h-6' : 'w-8 h-8'}`} />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white w-full">
-            <CardContent className={isMobile ? "p-4" : "p-6"}>
+          <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-green-100 font-medium ${isMobile ? 'text-sm' : 'text-sm'}`}>Categories</p>
-                  <p className={`font-bold ${isMobile ? 'text-3xl' : 'text-3xl'}`}>{Object.keys(categoryCounts).length}</p>
+                  <p className="text-green-100 font-medium text-xs">Categories</p>
+                  <p className={`font-bold ${isMobile ? 'text-2xl' : 'text-3xl'}`}>{Object.keys(categoryCounts).length}</p>
                 </div>
-                <TrendingUp className={`text-green-200 ${isMobile ? 'w-8 h-8' : 'w-8 h-8'}`} />
+                <TrendingUp className={`text-green-200 ${isMobile ? 'w-6 h-6' : 'w-8 h-8'}`} />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white w-full">
-            <CardContent className={isMobile ? "p-4" : "p-6"}>
+          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-purple-100 font-medium ${isMobile ? 'text-sm' : 'text-sm'}`}>This Week</p>
-                  <p className={`font-bold ${isMobile ? 'text-3xl' : 'text-3xl'}`}>
+                  <p className="text-purple-100 font-medium text-xs">This Week</p>
+                  <p className={`font-bold ${isMobile ? 'text-2xl' : 'text-3xl'}`}>
                     {notes.filter(note => {
                       const weekAgo = new Date();
                       weekAgo.setDate(weekAgo.getDate() - 7);
@@ -124,23 +124,23 @@ const Dashboard: React.FC = () => {
                     }).length}
                   </p>
                 </div>
-                <Calendar className={`text-purple-200 ${isMobile ? 'w-8 h-8' : 'w-8 h-8'}`} />
+                <Calendar className={`text-purple-200 ${isMobile ? 'w-6 h-6' : 'w-8 h-8'}`} />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Content Cards - Mobile responsive layout */}
+        {/* Content Cards */}
         <div className={`w-full grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
           {/* Recent Notes */}
           <Card className="w-full">
-            <CardHeader className={isMobile ? "p-4 pb-2" : ""}>
+            <CardHeader className="p-4 pb-2">
               <CardTitle className={`flex items-center gap-2 ${isMobile ? 'text-lg' : ''}`}>
                 <Clock className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
                 Recent Notes
               </CardTitle>
             </CardHeader>
-            <CardContent className={isMobile ? "p-4 pt-2" : ""}>
+            <CardContent className="p-4 pt-2">
               {recentNotes.length === 0 ? (
                 <div className={`text-center ${isMobile ? 'py-6' : 'py-8'}`}>
                   <BookOpen className={`text-gray-300 mx-auto mb-4 ${isMobile ? 'w-10 h-10' : 'w-12 h-12'}`} />
@@ -151,7 +151,7 @@ const Dashboard: React.FC = () => {
                   </Button>
                 </div>
               ) : (
-                <div className={`space-y-3 ${isMobile ? 'space-y-2' : 'space-y-4'}`}>
+                <div className="space-y-3">
                   {recentNotes.map((note) => (
                     <div
                       key={note.id}
@@ -176,7 +176,7 @@ const Dashboard: React.FC = () => {
                           <Badge variant="secondary" className="text-xs">
                             {note.category}
                           </Badge>
-                          <span className={`text-gray-400 ${isMobile ? 'text-xs' : 'text-xs'}`}>
+                          <span className="text-gray-400 text-xs">
                             {formatDate(note.updatedAt)}
                           </span>
                         </div>
@@ -198,32 +198,32 @@ const Dashboard: React.FC = () => {
 
           {/* Quick Actions */}
           <Card className="w-full">
-            <CardHeader className={isMobile ? "p-4 pb-2" : ""}>
+            <CardHeader className="p-4 pb-2">
               <CardTitle className={isMobile ? 'text-lg' : ''}>Quick Actions</CardTitle>
             </CardHeader>
-            <CardContent className={isMobile ? "p-4 pt-2" : ""}>
-              <div className={`grid grid-cols-2 gap-3 w-full ${isMobile ? 'gap-2' : 'gap-4'}`}>
+            <CardContent className="p-4 pt-2">
+              <div className={`grid grid-cols-2 gap-3 w-full`}>
                 <Button 
                   onClick={handleCreateNote}
-                  className={`flex-col gap-2 rounded-xl w-full ${isMobile ? 'h-20 text-sm' : 'h-20'}`}
+                  className={`flex-col gap-2 rounded-xl w-full ${isMobile ? 'h-16 text-xs' : 'h-20'}`}
                 >
-                  <Plus className={`${isMobile ? 'w-6 h-6' : 'w-6 h-6'}`} />
+                  <Plus className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />
                   New Note
                 </Button>
                 <Button 
                   variant="outline"
                   onClick={() => navigate('/notes')}
-                  className={`flex-col gap-2 rounded-xl w-full ${isMobile ? 'h-20 text-sm' : 'h-20'}`}
+                  className={`flex-col gap-2 rounded-xl w-full ${isMobile ? 'h-16 text-xs' : 'h-20'}`}
                 >
-                  <BookOpen className={`${isMobile ? 'w-6 h-6' : 'w-6 h-6'}`} />
+                  <BookOpen className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />
                   View Notes
                 </Button>
                 <Button 
                   variant="outline"
                   onClick={() => navigate('/chat')}
-                  className={`flex-col gap-2 rounded-xl w-full ${isMobile ? 'h-20 text-sm' : 'h-20'}`}
+                  className={`flex-col gap-2 rounded-xl w-full ${isMobile ? 'h-16 text-xs' : 'h-20'}`}
                 >
-                  <TrendingUp className={`${isMobile ? 'w-6 h-6' : 'w-6 h-6'}`} />
+                  <TrendingUp className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />
                   AI Chat
                 </Button>
                 <Button 
@@ -237,9 +237,9 @@ const Dashboard: React.FC = () => {
                       navigate('/notes');
                     }
                   }}
-                  className={`flex-col gap-2 rounded-xl w-full ${isMobile ? 'h-20 text-sm' : 'h-20'}`}
+                  className={`flex-col gap-2 rounded-xl w-full ${isMobile ? 'h-16 text-xs' : 'h-20'}`}
                 >
-                  <Heart className={`${isMobile ? 'w-6 h-6' : 'w-6 h-6'}`} />
+                  <Heart className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />
                   Favorites
                 </Button>
               </div>

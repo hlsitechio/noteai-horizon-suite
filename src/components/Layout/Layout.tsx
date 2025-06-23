@@ -27,8 +27,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               ? isMobile 
                 ? "pt-16" 
                 : "pt-24" 
-              : isDashboardPage && isMobile
-                ? "pt-16 p-0 m-0"
+              : isDashboardPage
+                ? isMobile
+                  ? "pt-16"
+                  : "p-6 pt-24"
                 : isMobile 
                   ? "p-4 pt-20" 
                   : "p-6 pt-24"
