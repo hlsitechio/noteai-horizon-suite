@@ -43,10 +43,10 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            {/* Demo Alert */}
+            {/* Info Alert */}
             <Alert>
               <AlertDescription>
-                Demo: Use <strong>demo@example.com</strong> / <strong>password</strong>
+                Create an account or sign in with your existing credentials. Email verification may be required for new accounts.
               </AlertDescription>
             </Alert>
 

@@ -15,6 +15,7 @@ import Layout from './components/Layout/Layout';
 
 // Page components
 import Register from './pages/Auth/Register';
+import Login from './pages/Auth/Login';
 import Dashboard from './pages/Dashboard';
 import Chat from './pages/Chat';
 import Editor from './pages/Editor';
@@ -34,20 +35,43 @@ const queryClient = new QueryClient({
 });
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/auth" />;
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
 };
 
 const AppRoutes = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return (
       <Routes>
-        <Route path="/auth" element={<Register />} />
-        <Route path="/login" element={<Navigate to="/auth" />} />
-        <Route path="/register" element={<Navigate to="/auth" />} />
-        <Route path="*" element={<Navigate to="/auth" />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/auth" element={<Navigate to="/register" />} />
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     );
   }
@@ -63,6 +87,9 @@ const AppRoutes = () => {
         <Route path="/notes-list" element={<Layout><Notes /></Layout>} />
         <Route path="/calendar" element={<Layout><Calendar /></Layout>} />
         <Route path="/settings" element={<Layout><Settings /></Layout>} />
+        <Route path="/login" element={<Navigate to="/dashboard" />} />
+        <Route path="/register" element={<Navigate to="/dashboard" />} />
+        <Route path="/auth" element={<Navigate to="/dashboard" />} />
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
     </NotesProvider>
