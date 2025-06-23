@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, Check } from 'lucide-react';
+import { Eye, EyeOff, Check, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,8 +17,10 @@ interface RegistrationStepProps {
   showConfirmPassword: boolean;
   password: string;
   confirmPassword: string;
+  canGoBack: boolean;
   onInputChange: (value: string) => void;
   onNext: () => void;
+  onBack: () => void;
   onTogglePassword: (field: 'password' | 'confirmPassword') => void;
 }
 
@@ -32,8 +34,10 @@ const RegistrationStep: React.FC<RegistrationStepProps> = ({
   showConfirmPassword,
   password,
   confirmPassword,
+  canGoBack,
   onInputChange,
   onNext,
+  onBack,
   onTogglePassword
 }) => {
   const navigate = useNavigate();
@@ -47,6 +51,20 @@ const RegistrationStep: React.FC<RegistrationStepProps> = ({
       transition={{ duration: 0.4, ease: "easeInOut" }}
       className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/50 p-8"
     >
+      {/* Back button */}
+      {canGoBack && (
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+          onClick={onBack}
+          className="mb-4 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span className="text-sm font-medium">Back</span>
+        </motion.button>
+      )}
+
       <div className="text-center mb-8">
         <motion.div
           initial={{ scale: 0 }}

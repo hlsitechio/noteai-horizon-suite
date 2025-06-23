@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Check, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RegistrationData } from './types';
 
@@ -9,12 +9,14 @@ interface RegistrationSummaryProps {
   data: RegistrationData;
   isLoading: boolean;
   onSubmit: () => void;
+  onBack: () => void;
 }
 
 const RegistrationSummary: React.FC<RegistrationSummaryProps> = ({
   data,
   isLoading,
-  onSubmit
+  onSubmit,
+  onBack
 }) => {
   return (
     <motion.div
@@ -24,6 +26,18 @@ const RegistrationSummary: React.FC<RegistrationSummaryProps> = ({
       transition={{ duration: 0.4, ease: "easeInOut" }}
       className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/50 p-8 text-center"
     >
+      {/* Back button */}
+      <motion.button
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.2 }}
+        onClick={onBack}
+        className="mb-4 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        <span className="text-sm font-medium">Back</span>
+      </motion.button>
+
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}

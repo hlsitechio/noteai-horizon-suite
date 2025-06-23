@@ -92,6 +92,15 @@ const StepByStepRegister: React.FC = () => {
     }
   };
 
+  const handleBack = () => {
+    const steps: Step[] = ['name', 'email', 'password', 'confirmPassword', 'summary'];
+    const currentIndex = steps.indexOf(currentStep);
+    if (currentIndex > 0) {
+      setCurrentStep(steps[currentIndex - 1]);
+      setIsValid(true); // Since we're going back, the previous step should be valid
+    }
+  };
+
   const handleSubmit = async () => {
     const success = await register(registrationData.name, registrationData.email, registrationData.password);
     if (success) {
@@ -178,8 +187,10 @@ const StepByStepRegister: React.FC = () => {
               showConfirmPassword={showConfirmPassword}
               password={registrationData.password}
               confirmPassword={registrationData.confirmPassword}
+              canGoBack={currentStep !== 'name'}
               onInputChange={handleInputChange}
               onNext={handleNext}
+              onBack={handleBack}
               onTogglePassword={handleTogglePassword}
             />
           )}
@@ -189,6 +200,7 @@ const StepByStepRegister: React.FC = () => {
               data={registrationData}
               isLoading={isLoading}
               onSubmit={handleSubmit}
+              onBack={handleBack}
             />
           )}
         </AnimatePresence>
@@ -197,7 +209,7 @@ const StepByStepRegister: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="text-center mt-6"
+          className="text-center mt-6 space-y-3"
         >
           <p className="text-sm text-gray-600 dark:text-gray-300">
             Already have an account?{' '}
@@ -206,6 +218,15 @@ const StepByStepRegister: React.FC = () => {
               onClick={() => navigate('/login')}
             >
               Sign in
+            </button>
+          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            Forgot your password?{' '}
+            <button
+              className="text-blue-500 dark:text-blue-400 font-medium hover:underline transition-colors"
+              onClick={() => navigate('/reset-password')}
+            >
+              Reset it here
             </button>
           </p>
         </motion.div>
