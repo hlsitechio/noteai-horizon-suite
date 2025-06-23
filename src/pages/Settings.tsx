@@ -1,38 +1,49 @@
-
 import React from 'react';
 import ProfileSection from '../components/Settings/ProfileSection';
 import PreferencesSection from '../components/Settings/PreferencesSection';
 import AISettingsSection from '../components/Settings/AISettingsSection';
 import DataExportSection from '../components/Settings/DataExportSection';
 import AboutSection from '../components/Settings/AboutSection';
+import { Separator } from '@/components/ui/separator';
 
 const Settings: React.FC = () => {
   return (
-    <div className="space-y-6">
+    <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold text-foreground">
           Settings
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Manage your account and preferences
+        <p className="text-muted-foreground text-lg">
+          Manage your account and application preferences
         </p>
+        <Separator className="mt-4" />
       </div>
 
-      {/* Profile Section */}
-      <ProfileSection />
+      {/* Main Content Grid */}
+      <div className="grid gap-8">
+        {/* Profile Section - Now with better spacing */}
+        <section>
+          <ProfileSection />
+        </section>
 
-      {/* Preferences */}
-      <PreferencesSection />
+        {/* Other Settings Sections */}
+        <section>
+          <PreferencesSection />
+        </section>
 
-      {/* AI Settings */}
-      <AISettingsSection />
+        <section>
+          <AISettingsSection />
+        </section>
 
-      {/* Export & Backup */}
-      <DataExportSection />
+        <section>
+          <DataExportSection />
+        </section>
 
-      {/* About */}
-      <AboutSection />
+        <section>
+          <AboutSection />
+        </section>
+      </div>
     </div>
   );
 };
