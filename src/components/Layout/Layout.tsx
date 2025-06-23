@@ -20,15 +20,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
-        <SidebarInset className="flex-1 min-w-0">
+        <SidebarInset className="flex-1 min-w-0 w-full">
           <Header />
-          <div className={`${
+          <div className={`w-full ${
             isEditorPage 
               ? isMobile 
                 ? "pt-16" 
                 : "pt-24" 
               : isDashboardPage && isMobile
-                ? "pt-16 px-0"
+                ? "pt-16 p-0 m-0"
                 : isMobile 
                   ? "p-4 pt-20" 
                   : "p-6 pt-24"

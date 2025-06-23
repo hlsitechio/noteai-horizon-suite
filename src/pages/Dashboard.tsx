@@ -47,10 +47,10 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen ${isMobile ? 'px-0 py-0 w-full' : 'px-6 py-6'}`}>
-      <div className={`${isMobile ? 'px-4 py-6' : ''} space-y-6`}>
+    <div className={`w-full min-h-screen ${isMobile ? 'p-0 m-0' : 'px-6 py-6'}`}>
+      <div className={`w-full ${isMobile ? 'px-4 py-6' : ''} space-y-6`}>
         {/* Welcome Header - Mobile optimized */}
-        <div className={`flex ${isMobile ? 'flex-col space-y-4' : 'justify-between items-start'}`}>
+        <div className={`flex w-full ${isMobile ? 'flex-col space-y-4' : 'justify-between items-start'}`}>
           <div className={isMobile ? 'text-center' : ''}>
             <h1 className={`font-bold text-gray-800 ${isMobile ? 'text-2xl' : 'text-3xl'}`}>
               Welcome back, {user?.name?.split(' ')[0]}! 👋
@@ -70,12 +70,12 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Stats Cards - Mobile optimized grid */}
-        <div className={`grid gap-4 ${
+        <div className={`w-full grid gap-4 ${
           isMobile 
             ? 'grid-cols-1' 
             : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
         }`}>
-          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white w-full">
             <CardContent className={isMobile ? "p-4" : "p-6"}>
               <div className="flex items-center justify-between">
                 <div>
@@ -87,7 +87,7 @@ const Dashboard: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white">
+          <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white w-full">
             <CardContent className={isMobile ? "p-4" : "p-6"}>
               <div className="flex items-center justify-between">
                 <div>
@@ -99,7 +99,7 @@ const Dashboard: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+          <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white w-full">
             <CardContent className={isMobile ? "p-4" : "p-6"}>
               <div className="flex items-center justify-between">
                 <div>
@@ -111,7 +111,7 @@ const Dashboard: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white w-full">
             <CardContent className={isMobile ? "p-4" : "p-6"}>
               <div className="flex items-center justify-between">
                 <div>
@@ -131,9 +131,9 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Content Cards - Mobile responsive layout */}
-        <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
+        <div className={`w-full grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
           {/* Recent Notes */}
-          <Card>
+          <Card className="w-full">
             <CardHeader className={isMobile ? "p-4 pb-2" : ""}>
               <CardTitle className={`flex items-center gap-2 ${isMobile ? 'text-lg' : ''}`}>
                 <Clock className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
@@ -155,12 +155,12 @@ const Dashboard: React.FC = () => {
                   {recentNotes.map((note) => (
                     <div
                       key={note.id}
-                      className={`flex items-start gap-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors ${
+                      className={`flex items-start gap-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors w-full ${
                         isMobile ? 'p-2' : 'p-3'
                       }`}
                       onClick={() => handleEditNote(note)}
                     >
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 w-full">
                         <div className="flex items-center gap-2 mb-1">
                           <h4 className={`font-medium text-gray-800 truncate ${isMobile ? 'text-sm' : ''}`}>
                             {note.title}
@@ -197,15 +197,15 @@ const Dashboard: React.FC = () => {
           </Card>
 
           {/* Quick Actions */}
-          <Card>
+          <Card className="w-full">
             <CardHeader className={isMobile ? "p-4 pb-2" : ""}>
               <CardTitle className={isMobile ? 'text-lg' : ''}>Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className={isMobile ? "p-4 pt-2" : ""}>
-              <div className={`grid grid-cols-2 gap-3 ${isMobile ? 'gap-2' : 'gap-4'}`}>
+              <div className={`grid grid-cols-2 gap-3 w-full ${isMobile ? 'gap-2' : 'gap-4'}`}>
                 <Button 
                   onClick={handleCreateNote}
-                  className={`flex-col gap-2 rounded-xl ${isMobile ? 'h-20 text-sm' : 'h-20'}`}
+                  className={`flex-col gap-2 rounded-xl w-full ${isMobile ? 'h-20 text-sm' : 'h-20'}`}
                 >
                   <Plus className={`${isMobile ? 'w-6 h-6' : 'w-6 h-6'}`} />
                   New Note
@@ -213,7 +213,7 @@ const Dashboard: React.FC = () => {
                 <Button 
                   variant="outline"
                   onClick={() => navigate('/notes')}
-                  className={`flex-col gap-2 rounded-xl ${isMobile ? 'h-20 text-sm' : 'h-20'}`}
+                  className={`flex-col gap-2 rounded-xl w-full ${isMobile ? 'h-20 text-sm' : 'h-20'}`}
                 >
                   <BookOpen className={`${isMobile ? 'w-6 h-6' : 'w-6 h-6'}`} />
                   View Notes
@@ -221,7 +221,7 @@ const Dashboard: React.FC = () => {
                 <Button 
                   variant="outline"
                   onClick={() => navigate('/chat')}
-                  className={`flex-col gap-2 rounded-xl ${isMobile ? 'h-20 text-sm' : 'h-20'}`}
+                  className={`flex-col gap-2 rounded-xl w-full ${isMobile ? 'h-20 text-sm' : 'h-20'}`}
                 >
                   <TrendingUp className={`${isMobile ? 'w-6 h-6' : 'w-6 h-6'}`} />
                   AI Chat
@@ -237,7 +237,7 @@ const Dashboard: React.FC = () => {
                       navigate('/notes');
                     }
                   }}
-                  className={`flex-col gap-2 rounded-xl ${isMobile ? 'h-20 text-sm' : 'h-20'}`}
+                  className={`flex-col gap-2 rounded-xl w-full ${isMobile ? 'h-20 text-sm' : 'h-20'}`}
                 >
                   <Heart className={`${isMobile ? 'w-6 h-6' : 'w-6 h-6'}`} />
                   Favorites
