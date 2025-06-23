@@ -1,3 +1,4 @@
+
 /* Import Inter font - must be at the top */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -46,6 +47,11 @@
     --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --shadow-large: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     --shadow-premium: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    /* Custom cursor variables */
+    --cursor-image: none;
+    --cursor-hotspot-x: 0px;
+    --cursor-hotspot-y: 0px;
   }
 
   .dark {
@@ -172,7 +178,7 @@
   }
 }
 
-/* Premium utility classes */
+/* ... keep existing code (Premium utility classes, component styles, animations and media queries) */
 @layer utilities {
   /* Enhanced premium gradient utilities */
   .bg-gradient-primary {
@@ -271,7 +277,7 @@
   }
 }
 
-/* ... keep existing code (Enhanced component styles and animations) */
+/* Enhanced component styles and animations */
 @layer components {
   /* Premium navigation */
   .nav-link {
@@ -349,7 +355,7 @@
   }
 }
 
-/* ... keep existing code (Enhanced animations and media queries) */
+/* Enhanced animations and media queries */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;

@@ -2,26 +2,37 @@
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useCustomCursor } from '../../hooks/useCustomCursor';
+import { getCursorPack } from './CursorPacks';
 
 const CustomCursor: React.FC = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const { isActive } = useCustomCursor();
+  const { isActive, cursorState, currentPack } = useCustomCursor();
 
   useEffect(() => {
     if (!isActive) return;
 
     const moveCursor = (e: MouseEvent) => {
       if (cursorRef.current) {
-        cursorRef.current.style.left = `${e.clientX}px`;
-        cursorRef.current.style.top = `${e.clientY}px`;
+        const pack = getCursorPack(currentPack);
+        const cursor = pack?.cursors[cursorState];
+        const hotspotX = cursor?.hotspotX || 16;
+        const hotspotY = cursor?.hotspotY || 16;
+        
+        cursorRef.current.style.left = `${e.clientX - hotspotX}px`;
+        cursorRef.current.style.top = `${e.clientY - hotspotY}px`;
       }
     };
 
     document.addEventListener('mousemove', moveCursor);
     return () => document.removeEventListener('mousemove', moveCursor);
-  }, [isActive]);
+  }, [isActive, cursorState, currentPack]);
 
   if (!isActive) return null;
+
+  const pack = getCursorPack(currentPack);
+  const cursor = pack?.cursors[cursorState];
+
+  if (!cursor?.url) return null;
 
   return (
     <motion.div
@@ -34,17 +45,15 @@ const CustomCursor: React.FC = () => {
         position: 'fixed',
         top: 0,
         left: 0,
-        width: '24px',
-        height: '24px',
-        backgroundImage: 'url(/cursors/cursor-sprite.png)',
-        backgroundPosition: 'var(--cursor-bg-position, 0 0)',
-        backgroundSize: 'auto 24px',
+        width: '32px',
+        height: '32px',
+        backgroundImage: `url(${cursor.url})`,
+        backgroundSize: 'contain',
         backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
         pointerEvents: 'none',
         zIndex: 9999,
-        transform: 'translate(-12px, -12px)',
-        mixBlendMode: 'difference',
-        filter: 'invert(1)',
+        filter: currentPack === 'neon' ? 'drop-shadow(0 0 10px rgba(59, 130, 246, 0.8))' : 'none',
       }}
     />
   );

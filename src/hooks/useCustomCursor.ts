@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { cursorPacks, getCursorPack, type CursorPack } from '../components/CustomCursor/CursorPacks';
 
 export type CursorState = 
   | 'default' 
@@ -12,35 +13,37 @@ export type CursorState =
   | 'resize'
   | 'loading';
 
-const cursorPositions = {
-  default: '0 0',
-  pointer: '-24px 0',
-  text: '-48px 0',
-  grab: '-72px 0',
-  grabbing: '-96px 0',
-  crosshair: '-120px 0',
-  move: '-144px 0',
-  resize: '-168px 0',
-  loading: '-192px 0',
-};
-
 export const useCustomCursor = () => {
   const [cursorState, setCursorState] = useState<CursorState>('default');
   const [isActive, setIsActive] = useState(true);
+  const [currentPack, setCurrentPack] = useState<string>('neon');
 
   useEffect(() => {
     const updateCursor = () => {
       if (!isActive) return;
 
-      const position = cursorPositions[cursorState];
-      document.documentElement.style.setProperty(
-        '--cursor-bg-position', 
-        position
-      );
+      const pack = getCursorPack(currentPack);
+      if (!pack) return;
+
+      const cursor = pack.cursors[cursorState];
+      if (cursor.url) {
+        document.documentElement.style.setProperty(
+          '--cursor-image', 
+          `url("${cursor.url}")`
+        );
+        document.documentElement.style.setProperty(
+          '--cursor-hotspot-x', 
+          `${cursor.hotspotX || 0}px`
+        );
+        document.documentElement.style.setProperty(
+          '--cursor-hotspot-y', 
+          `${cursor.hotspotY || 0}px`
+        );
+      }
     };
 
     updateCursor();
-  }, [cursorState, isActive]);
+  }, [cursorState, isActive, currentPack]);
 
   useEffect(() => {
     // Hide default cursor and show custom cursor
@@ -58,10 +61,20 @@ export const useCustomCursor = () => {
     };
   }, [isActive]);
 
+  const switchPack = (packId: string) => {
+    const pack = getCursorPack(packId);
+    if (pack) {
+      setCurrentPack(packId);
+    }
+  };
+
   return {
     cursorState,
     setCursorState,
     isActive,
     setIsActive,
+    currentPack,
+    switchPack,
+    availablePacks: cursorPacks,
   };
 };
