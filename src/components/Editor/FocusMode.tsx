@@ -21,6 +21,7 @@ interface FocusModeProps {
   onSave: () => void;
   isSaving: boolean;
   isDistractionFree?: boolean;
+  isMobile?: boolean;
 }
 
 const FocusMode: React.FC<FocusModeProps> = ({
@@ -33,6 +34,7 @@ const FocusMode: React.FC<FocusModeProps> = ({
   onSave,
   isSaving,
   isDistractionFree = false,
+  isMobile = false,
 }) => {
   const [backgroundOpacity, setBackgroundOpacity] = useState([85]);
   const [showStats, setShowStats] = useState(false);
@@ -42,8 +44,8 @@ const FocusMode: React.FC<FocusModeProps> = ({
   const { wordCount, characterCount, wpm } = useFocusModeStats(content, timeSpent);
   const { isControlsVisible, setIsControlsVisible } = useFocusModeControls(isZenMode);
 
-  // Hide controls completely when in distraction-free mode
-  const shouldShowControls = !isDistractionFree && isControlsVisible;
+  // Hide controls completely when in distraction-free mode or mobile
+  const shouldShowControls = !isDistractionFree && !isMobile && isControlsVisible;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
@@ -53,7 +55,7 @@ const FocusMode: React.FC<FocusModeProps> = ({
       e.preventDefault();
       onSave();
     }
-    if (e.ctrlKey && e.key === 'h') {
+    if (e.ctrlKey && e.key === 'h' && !isMobile) {
       e.preventDefault();
       setIsControlsVisible(!isControlsVisible);
     }
@@ -73,14 +75,14 @@ const FocusMode: React.FC<FocusModeProps> = ({
         transition={{ duration: 0.5, ease: "easeInOut" }}
         className={`fixed inset-0 z-50 flex items-center justify-center ${
           isBackgroundHidden ? 'bg-black' : ''
-        }`}
+        } ${isMobile ? 'p-2' : 'p-6'}`}
         onKeyDown={handleKeyDown}
         tabIndex={-1}
       >
         <FocusModeBackground
           backgroundOpacity={backgroundOpacity}
           onBackgroundOpacityChange={setBackgroundOpacity}
-          isControlsVisible={shouldShowControls && !isDistractionFree}
+          isControlsVisible={shouldShowControls && !isDistractionFree && !isMobile}
           isZenMode={isZenMode}
           isBackgroundHidden={isBackgroundHidden}
           onClose={onClose}
@@ -93,7 +95,11 @@ const FocusMode: React.FC<FocusModeProps> = ({
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
           className={`relative w-full transition-all duration-500 ${
-            isZenMode ? 'max-w-4xl h-screen p-0' : 'max-w-6xl h-[95vh] p-6'
+            isMobile 
+              ? 'max-w-full h-screen p-0' 
+              : isZenMode 
+                ? 'max-w-4xl h-screen p-0' 
+                : 'max-w-6xl h-[95vh] p-6'
           }`}
         >
           {isBackgroundHidden ? (
@@ -116,8 +122,16 @@ const FocusMode: React.FC<FocusModeProps> = ({
                 />
               )}
 
-              {/* Title Input */}
-              <div className={`${isZenMode ? 'pt-24 px-12' : isDistractionFree ? 'pt-12 px-12' : 'pt-20 px-12'}`}>
+              {/* Title Input - Mobile responsive */}
+              <div className={`${
+                isMobile 
+                  ? 'pt-8 px-4' 
+                  : isZenMode 
+                    ? 'pt-24 px-12' 
+                    : isDistractionFree 
+                      ? 'pt-12 px-12' 
+                      : 'pt-20 px-12'
+              }`}>
                 <motion.input
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -126,13 +140,21 @@ const FocusMode: React.FC<FocusModeProps> = ({
                   value={title}
                   onChange={(e) => onTitleChange(e.target.value)}
                   placeholder="Enter your title..."
-                  className="w-full text-4xl font-bold bg-transparent border-none outline-none text-white placeholder-white/50 mb-8 leading-tight"
+                  className={`w-full bg-transparent border-none outline-none text-white placeholder-white/50 mb-8 leading-tight ${
+                    isMobile ? 'text-2xl font-bold' : 'text-4xl font-bold'
+                  }`}
                   autoFocus
                 />
               </div>
 
-              {/* Editor Content */}
-              <div className={`h-[calc(100%-140px)] ${isZenMode ? 'px-12 pb-12' : 'px-12 pb-6'}`}>
+              {/* Editor Content - Mobile responsive */}
+              <div className={`${
+                isMobile 
+                  ? 'h-[calc(100%-120px)] px-4 pb-4' 
+                  : isZenMode 
+                    ? 'h-[calc(100%-140px)] px-12 pb-12' 
+                    : 'h-[calc(100%-140px)] px-12 pb-6'
+              }`}>
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -150,7 +172,11 @@ const FocusMode: React.FC<FocusModeProps> = ({
           ) : (
             /* Card container when ambience is less than 100% */
             <Card className={`h-full glass shadow-2xl overflow-hidden transition-all duration-500 ${
-              isZenMode ? 'rounded-none border-none' : 'rounded-3xl'
+              isMobile 
+                ? 'rounded-lg border-none' 
+                : isZenMode 
+                  ? 'rounded-none border-none' 
+                  : 'rounded-3xl'
             }`}>
               {shouldShowControls && (
                 <FocusModeControls
@@ -169,8 +195,16 @@ const FocusMode: React.FC<FocusModeProps> = ({
                 />
               )}
 
-              {/* Title Input */}
-              <div className={`${isZenMode ? 'pt-24 px-12' : isDistractionFree ? 'pt-12 px-12' : 'pt-20 px-12'}`}>
+              {/* Title Input - Mobile responsive */}
+              <div className={`${
+                isMobile 
+                  ? 'pt-8 px-4' 
+                  : isZenMode 
+                    ? 'pt-24 px-12' 
+                    : isDistractionFree 
+                      ? 'pt-12 px-12' 
+                      : 'pt-20 px-12'
+              }`}>
                 <motion.input
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -179,13 +213,21 @@ const FocusMode: React.FC<FocusModeProps> = ({
                   value={title}
                   onChange={(e) => onTitleChange(e.target.value)}
                   placeholder="Enter your title..."
-                  className="w-full text-4xl font-bold bg-transparent border-none outline-none text-white placeholder-white/50 mb-8 leading-tight"
+                  className={`w-full bg-transparent border-none outline-none text-white placeholder-white/50 mb-8 leading-tight ${
+                    isMobile ? 'text-2xl font-bold' : 'text-4xl font-bold'
+                  }`}
                   autoFocus
                 />
               </div>
 
-              {/* Editor Content */}
-              <CardContent className={`h-[calc(100%-140px)] ${isZenMode ? 'px-12 pb-12' : 'px-12 pb-6'}`}>
+              {/* Editor Content - Mobile responsive */}
+              <CardContent className={`${
+                isMobile 
+                  ? 'h-[calc(100%-120px)] px-4 pb-4' 
+                  : isZenMode 
+                    ? 'h-[calc(100%-140px)] px-12 pb-12' 
+                    : 'h-[calc(100%-140px)] px-12 pb-6'
+              }`}>
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -202,7 +244,7 @@ const FocusMode: React.FC<FocusModeProps> = ({
             </Card>
           )}
 
-          {!isDistractionFree && (
+          {!isDistractionFree && !isMobile && (
             <>
               <FocusModeStats
                 showStats={showStats}

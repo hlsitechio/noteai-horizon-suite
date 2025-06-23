@@ -6,9 +6,11 @@ import { useEditorState } from '../components/Editor/EditorState';
 import { useEditorHandlers } from '../components/Editor/EditorHandlers';
 import EditorContent from '../components/Editor/EditorContent';
 import EditorLayoutFloatingControls from '../components/Editor/EditorLayoutFloatingControls';
+import { useIsMobile } from '../hooks/use-mobile';
 
 const EditorInner: React.FC = () => {
   const { state: sidebarState, setOpen } = useSidebar();
+  const isMobile = useIsMobile();
   const editorState = useEditorState();
   const editorHandlers = useEditorHandlers({
     title: editorState.title,
@@ -29,6 +31,13 @@ const EditorInner: React.FC = () => {
 
   const [isDistractionFree, setIsDistractionFree] = React.useState(false);
 
+  // Auto-collapse sidebar on mobile
+  React.useEffect(() => {
+    if (isMobile) {
+      setOpen(false);
+    }
+  }, [isMobile, setOpen]);
+
   const handleDistractionFreeToggle = () => {
     const newDistractionFree = !isDistractionFree;
     setIsDistractionFree(newDistractionFree);
@@ -41,7 +50,9 @@ const EditorInner: React.FC = () => {
       editorState.setIsAssistantCollapsed(true);
     } else {
       // Restore normal mode
-      setOpen(true);
+      if (!isMobile) {
+        setOpen(true);
+      }
       editorState.setIsFocusMode(false);
       editorState.setIsHeaderHidden(false);
       editorState.setIsAssistantCollapsed(false);
@@ -51,7 +62,7 @@ const EditorInner: React.FC = () => {
   return (
     <div className="flex min-h-screen w-full bg-background relative">
       <AppSidebar />
-      <SidebarInset className="flex-1">
+      <SidebarInset className="flex-1 min-w-0">
         <EditorContent
           // Form state
           title={editorState.title}
@@ -62,11 +73,11 @@ const EditorInner: React.FC = () => {
           isFavorite={editorState.isFavorite}
           isSaving={editorState.isSaving}
           
-          // UI state
+          // UI state - mobile responsive
           isFocusMode={editorState.isFocusMode}
           isHeaderCollapsed={editorState.isHeaderCollapsed}
           isHeaderHidden={editorState.isHeaderHidden || isDistractionFree}
-          isAssistantCollapsed={editorState.isAssistantCollapsed || isDistractionFree}
+          isAssistantCollapsed={editorState.isAssistantCollapsed || isDistractionFree || isMobile}
           
           // Form handlers
           onTitleChange={editorState.setTitle}
@@ -87,7 +98,9 @@ const EditorInner: React.FC = () => {
             editorState.setIsFocusMode(false);
             if (isDistractionFree) {
               setIsDistractionFree(false);
-              setOpen(true);
+              if (!isMobile) {
+                setOpen(true);
+              }
               editorState.setIsHeaderHidden(false);
               editorState.setIsAssistantCollapsed(false);
             }
@@ -98,10 +111,11 @@ const EditorInner: React.FC = () => {
           expandAssistantRef={editorState.expandAssistantRef}
           currentNote={editorState.currentNote}
           isDistractionFree={isDistractionFree}
+          isMobile={isMobile}
         />
         
-        {/* Only show floating controls when not in focus mode */}
-        {!editorState.isFocusMode && (
+        {/* Only show floating controls when not in focus mode and not on mobile */}
+        {!editorState.isFocusMode && !isMobile && (
           <EditorLayoutFloatingControls
             isDistractionFree={isDistractionFree}
             onToggleDistractionFree={handleDistractionFreeToggle}

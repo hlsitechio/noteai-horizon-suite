@@ -24,6 +24,7 @@ interface EditorMainColumnProps {
   canSave?: boolean;
   isSaving?: boolean;
   isDistractionFree: boolean;
+  isMobile?: boolean;
 }
 
 const EditorMainColumn: React.FC<EditorMainColumnProps> = ({
@@ -44,12 +45,13 @@ const EditorMainColumn: React.FC<EditorMainColumnProps> = ({
   canSave = true,
   isSaving = false,
   isDistractionFree,
+  isMobile = false,
 }) => {
   return (
     <Card className={`flex-1 h-full glass shadow-large transition-all duration-300 ${
       isDistractionFree ? 'border-transparent shadow-none' : ''
-    }`}>
-      <CardContent className="p-8 h-full">
+    } ${isMobile ? 'mx-0' : ''}`}>
+      <CardContent className={`h-full ${isMobile ? 'p-4' : 'p-8'}`}>
         <div className="space-y-6 h-full flex flex-col">
           <AnimatePresence>
             {!isDistractionFree && (
@@ -74,7 +76,7 @@ const EditorMainColumn: React.FC<EditorMainColumnProps> = ({
             )}
           </AnimatePresence>
 
-          {/* Rich Text Editor */}
+          {/* Rich Text Editor - Mobile responsive */}
           <div className="flex-1">
             <RichTextEditor
               value={content}
@@ -82,7 +84,10 @@ const EditorMainColumn: React.FC<EditorMainColumnProps> = ({
               onSave={onSave}
               canSave={canSave}
               isSaving={isSaving}
-              placeholder="Start writing your masterpiece... The world's most advanced AI is here to help you craft something extraordinary."
+              placeholder={isMobile 
+                ? "Start writing..." 
+                : "Start writing your masterpiece... The world's most advanced AI is here to help you craft something extraordinary."
+              }
             />
           </div>
         </div>

@@ -10,6 +10,7 @@ interface EditorContentProps extends EditorFormState, EditorFormHandlers, Editor
   currentNote: any;
   isAssistantCollapsed: boolean;
   isDistractionFree?: boolean;
+  isMobile?: boolean;
 }
 
 const EditorContent: React.FC<EditorContentProps> = ({
@@ -46,13 +47,16 @@ const EditorContent: React.FC<EditorContentProps> = ({
   expandAssistantRef,
   currentNote,
   isDistractionFree = false,
+  isMobile = false,
 }) => {
   const shouldShowLayout = !isFocusMode;
   const canSave = title.trim().length > 0;
 
   return (
-    <div className="p-4 space-y-4 h-screen overflow-hidden">
-      {/* Header */}
+    <div className={`space-y-4 h-screen overflow-hidden ${
+      isMobile ? 'p-2' : 'p-4'
+    }`}>
+      {/* Header - Mobile responsive */}
       {!isHeaderHidden && (
         <EditorHeader
           isNewNote={!currentNote}
@@ -60,7 +64,7 @@ const EditorContent: React.FC<EditorContentProps> = ({
           isSaving={isSaving}
           canSave={canSave}
           isCollapsed={isFocusMode}
-          isHeaderCollapsed={isHeaderCollapsed}
+          isHeaderCollapsed={isHeaderCollapsed || isMobile}
           onFavoriteToggle={onFavoriteToggle}
           onFocusModeToggle={onFocusModeToggle}
           onHeaderCollapseToggle={onHeaderCollapseToggle}
@@ -92,8 +96,9 @@ const EditorContent: React.FC<EditorContentProps> = ({
           expandAssistantRef={expandAssistantRef}
           isHeaderHidden={isHeaderHidden}
           isHeaderCollapsed={isHeaderCollapsed}
-          isAssistantCollapsed={isAssistantCollapsed}
+          isAssistantCollapsed={isAssistantCollapsed || isMobile}
           onCollapseAllBars={onCollapseAllBars}
+          isMobile={isMobile}
         />
       )}
 
@@ -108,6 +113,7 @@ const EditorContent: React.FC<EditorContentProps> = ({
         onSave={onSave}
         isSaving={isSaving}
         isDistractionFree={isDistractionFree}
+        isMobile={isMobile}
       />
     </div>
   );

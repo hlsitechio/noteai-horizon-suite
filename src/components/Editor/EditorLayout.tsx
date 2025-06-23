@@ -4,6 +4,7 @@ import EditorLayoutFloatingControls from './EditorLayoutFloatingControls';
 import EditorMainColumn from './EditorMainColumn';
 import EditorSidebar from './EditorSidebar';
 import { NoteCategory } from '../../types/note';
+import { useIsMobile } from '../../hooks/use-mobile';
 
 interface EditorLayoutProps {
   title: string;
@@ -51,8 +52,16 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
   expandAssistantRef,
   isAssistantCollapsed = false,
 }) => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const isMobile = useIsMobile();
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(isMobile);
   const [isDistractionFree, setIsDistractionFree] = useState(false);
+
+  // Auto-collapse sidebar on mobile
+  useEffect(() => {
+    if (isMobile) {
+      setIsSidebarCollapsed(true);
+    }
+  }, [isMobile]);
 
   // Update refs to control assistant collapse state
   React.useEffect(() => {
@@ -69,25 +78,29 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
     if (!isDistractionFree) {
       setIsSidebarCollapsed(true);
     } else {
-      setIsSidebarCollapsed(false);
+      setIsSidebarCollapsed(isMobile);
     }
   };
 
   return (
     <div className="relative">
-      {/* Floating Layout Control */}
-      <EditorLayoutFloatingControls
-        isDistractionFree={isDistractionFree}
-        onToggleDistractionFree={toggleDistractionFree}
-      />
+      {/* Floating Layout Control - Hide on mobile */}
+      {!isMobile && (
+        <EditorLayoutFloatingControls
+          isDistractionFree={isDistractionFree}
+          onToggleDistractionFree={toggleDistractionFree}
+        />
+      )}
 
-      {/* Main Editor Column */}
+      {/* Main Editor Column - Mobile responsive grid */}
       <div className={`grid gap-6 h-full transition-all duration-500 ease-in-out ${
-        isSidebarCollapsed || isDistractionFree
-          ? 'grid-cols-1 lg:grid-cols-[1fr_4rem]' 
-          : 'grid-cols-1 lg:grid-cols-4'
+        isMobile 
+          ? 'grid-cols-1' 
+          : isSidebarCollapsed || isDistractionFree
+            ? 'grid-cols-1 lg:grid-cols-[1fr_4rem]' 
+            : 'grid-cols-1 lg:grid-cols-4'
       }`}>
-        <div className={isSidebarCollapsed || isDistractionFree ? 'lg:col-span-1' : 'lg:col-span-3'}>
+        <div className={isMobile || isSidebarCollapsed || isDistractionFree ? 'lg:col-span-1' : 'lg:col-span-3'}>
           <EditorMainColumn
             title={title}
             content={content}
@@ -106,18 +119,21 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
             canSave={canSave}
             isSaving={isSaving}
             isDistractionFree={isDistractionFree}
+            isMobile={isMobile}
           />
         </div>
 
-        {/* Collapsible AI Sidebar */}
-        <EditorSidebar
-          content={content}
-          onSuggestionApply={onSuggestionApply}
-          onCollapseChange={setIsSidebarCollapsed}
-          isCollapsed={isAssistantCollapsed || isSidebarCollapsed}
-          onCollapseToggle={setIsSidebarCollapsed}
-          isDistractionFree={isDistractionFree}
-        />
+        {/* Collapsible AI Sidebar - Hidden on mobile */}
+        {!isMobile && (
+          <EditorSidebar
+            content={content}
+            onSuggestionApply={onSuggestionApply}
+            onCollapseChange={setIsSidebarCollapsed}
+            isCollapsed={isAssistantCollapsed || isSidebarCollapsed}
+            onCollapseToggle={setIsSidebarCollapsed}
+            isDistractionFree={isDistractionFree}
+          />
+        )}
       </div>
     </div>
   );
