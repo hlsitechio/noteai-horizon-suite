@@ -14,7 +14,7 @@ const Pricing = () => {
       description: 'Perfect for individuals getting started',
       features: ['5 Projects', 'Basic AI Features', 'Cloud Storage', 'Email Support'],
       popular: false,
-      gradient: 'from-slate-800/5 to-slate-900/5'
+      gradient: 'from-white/5 to-white/3'
     },
     {
       name: 'Professional',
@@ -23,7 +23,7 @@ const Pricing = () => {
       description: 'Ideal for growing teams and businesses',
       features: ['Unlimited Projects', 'Advanced AI Features', 'Priority Support', 'Team Collaboration', 'Advanced Analytics'],
       popular: true,
-      gradient: 'from-blue-900/5 via-purple-900/5 to-pink-900/5'
+      gradient: 'from-white/8 to-white/4'
     },
     {
       name: 'Enterprise',
@@ -32,7 +32,7 @@ const Pricing = () => {
       description: 'For large organizations with custom needs',
       features: ['Everything in Pro', 'Custom Integrations', 'Dedicated Support', 'SLA Guarantee', 'Advanced Security'],
       popular: false,
-      gradient: 'from-slate-800/5 to-slate-900/5'
+      gradient: 'from-white/5 to-white/3'
     }
   ];
 
