@@ -29,7 +29,7 @@ export const useAIChat = () => {
       const { data, error } = await supabase.functions.invoke('chat-openrouter', {
         body: { 
           messages: openAIMessages,
-          model: 'deepseek/deepseek-r1-0528-qwen3-8b:free'
+          model: 'meta-llama/llama-3.1-8b-instruct:free'
         }
       });
 

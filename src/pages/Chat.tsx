@@ -13,7 +13,7 @@ const Chat: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
-      content: 'Hello! I\'m your AI assistant powered by DeepSeek R1. I can help you organize your thoughts, brainstorm ideas, and improve your notes. What would you like to work on today?',
+      content: 'Hello! I\'m your AI assistant powered by Llama 3.1. I can help you organize your thoughts, brainstorm ideas, and improve your notes. What would you like to work on today?',
       isUser: false,
       timestamp: new Date(),
     },
@@ -64,7 +64,7 @@ const Chat: React.FC = () => {
     setMessages([
       {
         id: '1',
-        content: 'Hello! I\'m your AI assistant powered by DeepSeek R1. I can help you organize your thoughts, brainstorm ideas, and improve your notes. What would you like to work on today?',
+        content: 'Hello! I\'m your AI assistant powered by Llama 3.1. I can help you organize your thoughts, brainstorm ideas, and improve your notes. What would you like to work on today?',
         isUser: false,
         timestamp: new Date(),
       },
@@ -89,7 +89,7 @@ const Chat: React.FC = () => {
               AI Assistant
             </h1>
             <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 dark:text-blue-400">
-              DeepSeek R1
+              Llama 3.1
             </Badge>
           </div>
           <p className="text-gray-600 dark:text-gray-400">
@@ -189,7 +189,7 @@ const Chat: React.FC = () => {
                 </Button>
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                Powered by DeepSeek R1 • Press Enter to send, Shift+Enter for new line
+                Powered by Llama 3.1 • Press Enter to send, Shift+Enter for new line
               </p>
             </div>
           </div>
