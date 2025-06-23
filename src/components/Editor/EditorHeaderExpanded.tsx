@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   EyeIcon, 
   HeartIcon, 
-  BookmarkIcon, 
   ChevronUpIcon, 
   ChevronDownIcon 
 } from '@heroicons/react/24/outline';
@@ -120,34 +119,6 @@ const EditorHeaderExpanded: React.FC<EditorHeaderExpandedProps> = ({
             )}
           </motion.div>
           {isFavorite ? 'Favorited' : 'Add to Favorites'}
-        </EditorHeaderButton>
-        <EditorHeaderButton
-          onClick={onSave}
-          disabled={!canSave || isSaving}
-          className="bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all hover:scale-105 border-0 backdrop-blur-md relative overflow-hidden"
-        >
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"
-            animate={{
-              x: [-100, 200],
-              opacity: [0, 0.5, 0]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-          <motion.div
-            animate={isSaving ? { rotate: 360 } : {}}
-            transition={{ duration: 1, repeat: isSaving ? Infinity : 0, ease: "linear" }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="relative z-10 flex items-center"
-          >
-            <BookmarkIcon className="w-4 h-4 mr-2 drop-shadow-sm" />
-          </motion.div>
-          <span className="relative z-10">{isSaving ? 'Saving...' : 'Save Note'}</span>
         </EditorHeaderButton>
       </div>
     </motion.div>
