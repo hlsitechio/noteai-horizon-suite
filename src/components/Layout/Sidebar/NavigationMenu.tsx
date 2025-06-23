@@ -94,8 +94,8 @@ export function NavigationMenu() {
                     isActive={location.pathname === item.path}
                     className={`h-12 w-12 mx-auto rounded-xl transition-all duration-200 relative overflow-hidden ${
                       location.pathname === item.path 
-                        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25' 
-                        : 'hover:bg-accent hover:text-accent-foreground hover:shadow-md'
+                        ? 'bg-primary text-white shadow-lg' 
+                        : 'hover:bg-muted hover:text-foreground hover:shadow-md'
                     }`}
                   >
                     <motion.div
@@ -107,7 +107,7 @@ export function NavigationMenu() {
                     </motion.div>
                     {location.pathname === item.path && (
                       <motion.div
-                        className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary -z-10"
+                        className="absolute inset-0 bg-primary -z-10"
                         layoutId="activeBackground"
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
                       />
@@ -125,12 +125,12 @@ export function NavigationMenu() {
                 className={`h-11 rounded-xl transition-all duration-200 relative overflow-hidden group ${
                   location.pathname === item.path 
                     ? 'bg-primary text-white shadow-md' 
-                    : 'hover:bg-accent hover:text-accent-foreground hover:translate-x-1'
+                    : 'hover:bg-muted hover:text-foreground hover:translate-x-1'
                 }`}
               >
                 {location.pathname === item.path && (
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary -z-10"
+                    className="absolute inset-0 bg-primary -z-10"
                     layoutId="activeBackground"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
@@ -143,8 +143,7 @@ export function NavigationMenu() {
                       initial="collapsed"
                       animate="expanded"
                       exit="collapsed"
-                      className={`truncate font-medium relative z-20 ${location.pathname === item.path ? 'text-white !important' : 'text-foreground'}`}
-                      style={location.pathname === item.path ? { color: 'white' } : {}}
+                      className={`truncate font-medium relative z-20 ${location.pathname === item.path ? 'text-white' : 'text-foreground'}`}
                     >
                       {item.label}
                     </motion.span>
