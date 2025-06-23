@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, Check, User, Lock, Mail } from 'lucide-react';
+import { Eye, EyeOff, Check, User, Lock, Mail, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -21,13 +22,42 @@ const StepByStepRegister: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isValid, setIsValid] = useState(false);
+  const [emailExists, setEmailExists] = useState(false);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+
+  const checkEmailExists = async (emailToCheck: string) => {
+    if (!emailToCheck || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailToCheck)) {
+      return false;
+    }
+
+    setIsCheckingEmail(true);
+    try {
+      // Try to sign in with email and a dummy password to check if email exists
+      const { error } = await supabase.auth.signInWithPassword({
+        email: emailToCheck,
+        password: 'dummy-password-check-123'
+      });
+
+      // If we get "Invalid login credentials" error, it means email doesn't exist
+      // If we get any other error or no error, email likely exists
+      const emailDoesNotExist = error && error.message === 'Invalid login credentials';
+      
+      setEmailExists(!emailDoesNotExist);
+      return !emailDoesNotExist;
+    } catch (error) {
+      console.error('Error checking email:', error);
+      return false;
+    } finally {
+      setIsCheckingEmail(false);
+    }
+  };
 
   const validateCurrentStep = () => {
     switch (currentStep) {
       case 'name':
         return name.trim().length >= 2;
       case 'email':
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && !emailExists;
       case 'password':
         return password.length >= 6;
       case 'confirmPassword':
@@ -37,13 +67,15 @@ const StepByStepRegister: React.FC = () => {
     }
   };
 
-  const handleInputChange = (value: string) => {
+  const handleInputChange = async (value: string) => {
     switch (currentStep) {
       case 'name':
         setName(value);
         break;
       case 'email':
         setEmail(value);
+        // Reset email exists state when email changes
+        setEmailExists(false);
         break;
       case 'password':
         setPassword(value);
@@ -54,10 +86,21 @@ const StepByStepRegister: React.FC = () => {
     }
     setIsValid(false);
     
-    // Check validation after a short delay
-    setTimeout(() => {
-      setIsValid(validateCurrentStep());
-    }, 300);
+    // For email step, check if email exists after validation
+    if (currentStep === 'email' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      // Debounce the email check
+      setTimeout(async () => {
+        if (value === email) { // Only check if email hasn't changed
+          await checkEmailExists(value);
+          setIsValid(validateCurrentStep());
+        }
+      }, 500);
+    } else {
+      // Check validation after a short delay for other steps
+      setTimeout(() => {
+        setIsValid(validateCurrentStep());
+      }, 300);
+    }
   };
 
   const handleNext = () => {
@@ -123,7 +166,7 @@ const StepByStepRegister: React.FC = () => {
 
   React.useEffect(() => {
     setIsValid(validateCurrentStep());
-  }, [currentStep, name, email, password, confirmPassword]);
+  }, [currentStep, name, email, password, confirmPassword, emailExists]);
 
   const stepContent = getStepContent();
 
@@ -162,6 +205,7 @@ const StepByStepRegister: React.FC = () => {
                     placeholder={stepContent.placeholder}
                     className="h-14 rounded-xl text-lg pr-20 bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:bg-white dark:focus:bg-slate-600 focus:border-blue-300 dark:focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/20"
                     autoFocus
+                    disabled={isCheckingEmail}
                   />
                   
                   {stepContent.showEye && (
@@ -181,8 +225,14 @@ const StepByStepRegister: React.FC = () => {
                     </Button>
                   )}
 
+                  {isCheckingEmail && currentStep === 'email' && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
+                    </div>
+                  )}
+
                   <AnimatePresence>
-                    {isValid && (
+                    {isValid && !isCheckingEmail && (
                       <motion.button
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
@@ -196,6 +246,33 @@ const StepByStepRegister: React.FC = () => {
                     )}
                   </AnimatePresence>
                 </div>
+
+                {/* Email exists warning */}
+                {emailExists && currentStep === 'email' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <AlertCircle className="w-5 h-5 text-red-500 dark:text-red-400" />
+                      <div>
+                        <p className="text-red-800 dark:text-red-200 font-medium">
+                          Account already exists
+                        </p>
+                        <p className="text-red-600 dark:text-red-300 text-sm mt-1">
+                          This email is already registered.{' '}
+                          <button
+                            onClick={() => navigate('/login')}
+                            className="underline hover:no-underline font-medium"
+                          >
+                            Sign in instead
+                          </button>
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
 
                 {currentStep === 'confirmPassword' && password !== confirmPassword && confirmPassword.length > 0 && (
                   <motion.p
