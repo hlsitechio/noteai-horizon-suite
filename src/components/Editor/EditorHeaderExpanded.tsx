@@ -2,7 +2,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  StarIcon, 
   EyeIcon, 
   HeartIcon, 
   BookmarkIcon, 
@@ -11,7 +10,6 @@ import {
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { headerVariants, contentVariants } from './EditorHeaderTypes';
 import EditorHeaderButton from './EditorHeaderButton';
 
@@ -76,40 +74,9 @@ const EditorHeaderExpanded: React.FC<EditorHeaderExpandedProps> = ({
               <motion.h1 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3 dark:from-blue-400 dark:to-purple-400"
+                className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-purple-400"
               >
                 {isNewNote ? 'Create New Note' : 'Edit Note'}
-                <motion.div
-                  animate={{ 
-                    rotate: [0, 10, -10, 0],
-                    scale: [1, 1.1, 1]
-                  }}
-                  transition={{ 
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatType: 'reverse'
-                  }}
-                  whileHover={{
-                    scale: 1.2,
-                    rotate: 360,
-                    filter: "drop-shadow(0 0 10px rgba(234, 179, 8, 0.6))"
-                  }}
-                  className="relative"
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-lg blur-sm"
-                    animate={{
-                      opacity: [0.5, 1, 0.5],
-                      scale: [1, 1.2, 1]
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  />
-                  <StarIcon className="w-8 h-8 text-yellow-500 drop-shadow-lg relative z-10" />
-                </motion.div>
               </motion.h1>
               <motion.p 
                 initial={{ opacity: 0, y: 10 }}
@@ -119,30 +86,6 @@ const EditorHeaderExpanded: React.FC<EditorHeaderExpandedProps> = ({
               >
                 {isNewNote ? 'Create with the most advanced AI writing tools available' : 'Edit with world-class AI writing assistance'}
               </motion.p>
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="flex items-center gap-2 mt-2"
-              >
-                <motion.div
-                  animate={{ 
-                    boxShadow: [
-                      "0 0 0 0 rgba(59, 130, 246, 0.7)",
-                      "0 0 0 10px rgba(59, 130, 246, 0)",
-                      "0 0 0 0 rgba(59, 130, 246, 0)"
-                    ]
-                  }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0 backdrop-blur-md">
-                    ⚡ AI-Powered
-                  </Badge>
-                </motion.div>
-                <Badge variant="outline" className="border-0 bg-yellow-100/20 backdrop-blur-sm text-yellow-700 dark:bg-yellow-400/10 dark:text-yellow-300">
-                  🏆 Better than Notion AI
-                </Badge>
-              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
