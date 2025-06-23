@@ -23,11 +23,11 @@ import {
 } from '@/components/ui/tooltip';
 
 const menuItems = [
-  { icon: BookOpen, label: 'Dashboard', path: '/dashboard', color: 'text-blue-500', selectedBg: 'bg-blue-500' },
-  { icon: Plus, label: 'AI Chat', path: '/chat', color: 'text-emerald-500', selectedBg: 'bg-emerald-500' },
-  { icon: PenTool, label: 'Editor', path: '/editor', color: 'text-purple-500', selectedBg: 'bg-purple-500' },
-  { icon: Calendar, label: 'Calendar', path: '/calendar', color: 'text-orange-500', selectedBg: 'bg-orange-500' },
-  { icon: Settings, label: 'Settings', path: '/settings', color: 'text-gray-500', selectedBg: 'bg-gray-600' },
+  { icon: BookOpen, label: 'Dashboard', path: '/app/dashboard', color: 'text-blue-500', selectedBg: 'bg-blue-500' },
+  { icon: Plus, label: 'AI Chat', path: '/app/chat', color: 'text-emerald-500', selectedBg: 'bg-emerald-500' },
+  { icon: PenTool, label: 'Editor', path: '/app/editor', color: 'text-purple-500', selectedBg: 'bg-purple-500' },
+  { icon: Calendar, label: 'Calendar', path: '/app/calendar', color: 'text-orange-500', selectedBg: 'bg-orange-500' },
+  { icon: Settings, label: 'Settings', path: '/app/settings', color: 'text-gray-500', selectedBg: 'bg-gray-600' },
 ];
 
 const contentVariants = {
