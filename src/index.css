@@ -101,24 +101,27 @@
   }
 
   /* Custom Cursor Styles */
+  body.custom-cursor-active,
   body.custom-cursor-active * {
     cursor: none !important;
   }
 
   .custom-cursor {
-    pointer-events: none;
+    pointer-events: none !important;
     user-select: none;
     will-change: transform;
+    z-index: 10000 !important;
   }
 
   /* Hide cursor on touch devices */
   @media (hover: none) and (pointer: coarse) {
+    body.custom-cursor-active,
     body.custom-cursor-active * {
       cursor: auto !important;
     }
     
     .custom-cursor {
-      display: none;
+      display: none !important;
     }
   }
 

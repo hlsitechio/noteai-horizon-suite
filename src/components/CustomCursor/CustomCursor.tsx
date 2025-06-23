@@ -27,22 +27,24 @@ const CustomCursor: React.FC = () => {
     <motion.div
       ref={cursorRef}
       className="custom-cursor"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.2 }}
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
-        width: '32px',
-        height: '32px',
+        width: '24px',
+        height: '24px',
         backgroundImage: 'url(/cursors/cursor-sprite.png)',
         backgroundPosition: 'var(--cursor-bg-position, 0 0)',
-        backgroundSize: 'auto 32px',
+        backgroundSize: 'auto 24px',
         backgroundRepeat: 'no-repeat',
         pointerEvents: 'none',
         zIndex: 9999,
-        transform: 'translate(-16px, -16px)',
-        mixBlendMode: 'normal',
+        transform: 'translate(-12px, -12px)',
+        mixBlendMode: 'difference',
+        filter: 'invert(1)',
       }}
     />
   );

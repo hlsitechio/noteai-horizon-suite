@@ -14,14 +14,14 @@ export type CursorState =
 
 const cursorPositions = {
   default: '0 0',
-  pointer: '-32px 0',
-  text: '-64px 0',
-  grab: '-96px 0',
-  grabbing: '-128px 0',
-  crosshair: '-160px 0',
-  move: '-192px 0',
-  resize: '-224px 0',
-  loading: '-256px 0',
+  pointer: '-24px 0',
+  text: '-48px 0',
+  grab: '-72px 0',
+  grabbing: '-96px 0',
+  crosshair: '-120px 0',
+  move: '-144px 0',
+  resize: '-168px 0',
+  loading: '-192px 0',
 };
 
 export const useCustomCursor = () => {
