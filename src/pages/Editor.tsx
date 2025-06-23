@@ -4,7 +4,6 @@ import { SidebarProvider, SidebarInset, useSidebar } from '@/components/ui/sideb
 import { useEditorState } from '../components/Editor/EditorState';
 import { useEditorHandlers } from '../components/Editor/EditorHandlers';
 import EditorContent from '../components/Editor/EditorContent';
-import EditorLayoutFloatingControls from '../components/Editor/EditorLayoutFloatingControls';
 import { useIsMobile } from '../hooks/use-mobile';
 
 const EditorInner: React.FC = () => {
@@ -122,14 +121,6 @@ const EditorInner: React.FC = () => {
           isDistractionFree={isUnifiedFocusMode}
           isMobile={isMobile}
         />
-        
-        {/* Unified Focus Mode Control - Only show when not in focus mode overlay and not on mobile */}
-        {!editorState.isFocusMode && !isMobile && (
-          <EditorLayoutFloatingControls
-            isDistractionFree={isUnifiedFocusMode}
-            onToggleDistractionFree={handleUnifiedFocusToggle}
-          />
-        )}
       </SidebarInset>
     </div>
   );
