@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { 
-  FileText, 
-  MoreHorizontal,
-  Edit3,
-  Trash2
-} from 'lucide-react';
+  DocumentTextIcon, 
+  EllipsisHorizontalIcon,
+  PencilIcon,
+  TrashIcon
+} from '@heroicons/react/24/outline';
 import { Draggable } from 'react-beautiful-dnd';
 import { Button } from '@/components/ui/button';
 import {
@@ -64,7 +64,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
             style={{ backgroundColor: note.color }}
           />
           
-          <FileText className="h-4 w-4 text-muted-foreground" />
+          <DocumentTextIcon className="h-4 w-4 text-muted-foreground" />
           
           <span className="text-sm truncate flex-1">{note.title}</span>
           
@@ -76,12 +76,12 @@ const NoteItem: React.FC<NoteItemProps> = ({
                 className="p-0 h-4 w-4 opacity-0 group-hover:opacity-100"
                 onClick={(e) => e.stopPropagation()}
               >
-                <MoreHorizontal className="h-3 w-3" />
+                <EllipsisHorizontalIcon className="h-3 w-3" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => onEditNote(note)}>
-                <Edit3 className="h-4 w-4 mr-2" />
+                <PencilIcon className="h-4 w-4 mr-2" />
                 Edit
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -94,7 +94,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
                 }}
                 className="text-destructive"
               >
-                <Trash2 className="h-4 w-4 mr-2" />
+                <TrashIcon className="h-4 w-4 mr-2" />
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>

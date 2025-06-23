@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Plus, FolderPlus, FileText } from 'lucide-react';
+import { PlusIcon, FolderPlusIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -59,16 +59,16 @@ const CreateButton: React.FC<CreateButtonProps> = ({ onCreateFolder, onCreateNot
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="p-0 h-4 w-4">
-            <Plus className="h-3 w-3" />
+            <PlusIcon className="h-3 w-3" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuItem onClick={() => setShowFolderDialog(true)}>
-            <FolderPlus className="mr-2 h-4 w-4" />
+            <FolderPlusIcon className="mr-2 h-4 w-4" />
             Create Folder
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setShowNoteDialog(true)}>
-            <FileText className="mr-2 h-4 w-4" />
+            <DocumentTextIcon className="mr-2 h-4 w-4" />
             Create Note
           </DropdownMenuItem>
         </DropdownMenuContent>

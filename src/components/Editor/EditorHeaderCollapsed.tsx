@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Crown, Focus, Heart, Save } from 'lucide-react';
+import { CrownIcon, EyeIcon, HeartIcon, BookmarkIcon } from '@heroicons/react/24/outline';
+import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import { headerVariants } from './EditorHeaderTypes';
 import EditorHeaderButton from './EditorHeaderButton';
 
@@ -52,7 +53,7 @@ const EditorHeaderCollapsed: React.FC<EditorHeaderCollapsedProps> = ({
               ease: "easeInOut"
             }}
           />
-          <Crown className="w-4 h-4 text-white drop-shadow-sm relative z-10" />
+          <CrownIcon className="w-4 h-4 text-white drop-shadow-sm relative z-10" />
         </motion.div>
         <motion.span
           initial={{ opacity: 0, x: -20 }}
@@ -72,7 +73,7 @@ const EditorHeaderCollapsed: React.FC<EditorHeaderCollapsedProps> = ({
             whileTap={{ scale: 0.95 }}
             className="flex items-center"
           >
-            <Focus className="w-4 h-4 mr-1 drop-shadow-sm" />
+            <EyeIcon className="w-4 h-4 mr-1 drop-shadow-sm" />
           </motion.div>
           Focus
         </EditorHeaderButton>
@@ -86,7 +87,11 @@ const EditorHeaderCollapsed: React.FC<EditorHeaderCollapsedProps> = ({
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Heart className={`w-4 h-4 mr-1 drop-shadow-sm ${isFavorite ? 'fill-current' : ''}`} />
+            {isFavorite ? (
+              <HeartSolidIcon className="w-4 h-4 mr-1 drop-shadow-sm" />
+            ) : (
+              <HeartIcon className="w-4 h-4 mr-1 drop-shadow-sm" />
+            )}
           </motion.div>
           {isFavorite ? 'Favorited' : 'Favorite'}
         </EditorHeaderButton>
@@ -114,7 +119,7 @@ const EditorHeaderCollapsed: React.FC<EditorHeaderCollapsedProps> = ({
             whileTap={{ scale: 0.95 }}
             className="relative z-10 flex items-center"
           >
-            <Save className="w-4 h-4 mr-1 drop-shadow-sm" />
+            <BookmarkIcon className="w-4 h-4 mr-1 drop-shadow-sm" />
           </motion.div>
           <span className="relative z-10">{isSaving ? 'Saving...' : 'Save'}</span>
         </EditorHeaderButton>

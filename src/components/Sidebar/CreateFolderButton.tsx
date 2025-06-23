@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -10,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { colors } from './ColorPalette';
 
 interface CreateFolderButtonProps {
   onCreateFolder: (name: string) => Promise<void>;
@@ -38,7 +37,7 @@ const CreateFolderButton: React.FC<CreateFolderButtonProps> = ({ onCreateFolder 
     <Dialog open={showDialog} onOpenChange={setShowDialog}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm" className="p-0 h-4 w-4">
-          <Plus className="h-3 w-3" />
+          <PlusIcon className="h-3 w-3" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">

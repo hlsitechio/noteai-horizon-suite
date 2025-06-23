@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LayoutGrid, Maximize2 } from 'lucide-react';
+import { Squares2X2Icon, ArrowsPointingOutIcon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from 'framer-motion';
 import RichTextEditor from './RichTextEditor';
 import CollapsibleAssistant from './CollapsibleAssistant';
@@ -113,7 +112,7 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
                   whileTap={{ scale: 0.95 }}
                   className="relative z-10"
                 >
-                  <LayoutGrid className="w-5 h-5 mr-2 drop-shadow-sm" />
+                  <Squares2X2Icon className="w-5 h-5 mr-2 drop-shadow-sm" />
                 </motion.div>
                 <span className="relative z-10">Show All Panels</span>
               </>
@@ -124,7 +123,7 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
                   whileTap={{ scale: 0.95 }}
                   className="relative z-10"
                 >
-                  <Maximize2 className="w-5 h-5 mr-2 drop-shadow-sm" />
+                  <ArrowsPointingOutIcon className="w-5 h-5 mr-2 drop-shadow-sm" />
                 </motion.div>
                 <span className="relative z-10">Distraction Free</span>
               </>
@@ -133,12 +132,12 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
         </motion.div>
       </AnimatePresence>
 
+      {/* Main Editor Column */}
       <div className={`grid gap-6 h-full transition-all duration-500 ease-in-out ${
         isSidebarCollapsed || isDistrationFree
           ? 'grid-cols-1 lg:grid-cols-[1fr_4rem]' 
           : 'grid-cols-1 lg:grid-cols-4'
       }`}>
-        {/* Main Editor Column */}
         <div className={isSidebarCollapsed || isDistrationFree ? 'lg:col-span-1' : 'lg:col-span-3'}>
           <Card className={`flex-1 h-full glass shadow-large transition-all duration-300 ${
             isDistrationFree ? 'border-transparent shadow-none' : ''

@@ -2,24 +2,24 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
-  Settings, 
-  Book, 
-  Edit, 
-  Plus,
-  Search,
-  Github
-} from 'lucide-react';
+  CogIcon, 
+  BookOpenIcon, 
+  PencilIcon, 
+  PlusIcon,
+  MagnifyingGlassIcon,
+  CodeBracketIcon
+} from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '../../contexts/AuthContext';
 
 const menuItems = [
-  { icon: Book, label: 'Dashboard', path: '/dashboard' },
-  { icon: Plus, label: 'AI Chat', path: '/chat' },
-  { icon: Edit, label: 'Editor', path: '/editor' },
-  { icon: Search, label: 'Notes', path: '/notes' },
-  { icon: Settings, label: 'Settings', path: '/settings' },
+  { icon: BookOpenIcon, label: 'Dashboard', path: '/dashboard' },
+  { icon: PlusIcon, label: 'AI Chat', path: '/chat' },
+  { icon: PencilIcon, label: 'Editor', path: '/editor' },
+  { icon: MagnifyingGlassIcon, label: 'Notes', path: '/notes' },
+  { icon: CogIcon, label: 'Settings', path: '/settings' },
 ];
 
 const Sidebar: React.FC = () => {
@@ -34,7 +34,7 @@ const Sidebar: React.FC = () => {
         <div className="p-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
-              <Github className="text-white w-5 h-5" />
+              <CodeBracketIcon className="text-white w-5 h-5" />
             </div>
             <span className="text-xl font-bold text-foreground">
               Online Note AI

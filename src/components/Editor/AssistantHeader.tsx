@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PanelRightClose, PanelRightOpen } from 'lucide-react';
+import { ChevronDoubleRightIcon, ChevronDoubleLeftIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 
 interface AssistantHeaderProps {
@@ -81,9 +81,9 @@ const AssistantHeader: React.FC<AssistantHeaderProps> = ({ isCollapsed, onToggle
               className="relative z-10"
             >
               {isCollapsed ? (
-                <PanelRightOpen className="w-4 h-4 drop-shadow-sm" />
+                <ChevronDoubleLeftIcon className="w-4 h-4 drop-shadow-sm" />
               ) : (
-                <PanelRightClose className="w-4 h-4 drop-shadow-sm" />
+                <ChevronDoubleRightIcon className="w-4 h-4 drop-shadow-sm" />
               )}
             </motion.div>
           </Button>

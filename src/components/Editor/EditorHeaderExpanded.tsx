@@ -1,7 +1,15 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Crown, Focus, Heart, Save, ChevronUp, ChevronDown } from 'lucide-react';
+import { 
+  CrownIcon, 
+  EyeIcon, 
+  HeartIcon, 
+  BookmarkIcon, 
+  ChevronUpIcon, 
+  ChevronDownIcon 
+} from '@heroicons/react/24/outline';
+import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { headerVariants, contentVariants } from './EditorHeaderTypes';
@@ -53,7 +61,7 @@ const EditorHeaderExpanded: React.FC<EditorHeaderExpandedProps> = ({
               transition={{ duration: 0.3, ease: "easeInOut" }}
               whileHover={{ scale: 1.1 }}
             >
-              {isHeaderCollapsed ? <ChevronDown className="w-4 h-4 drop-shadow-sm" /> : <ChevronUp className="w-4 h-4 drop-shadow-sm" />}
+              {isHeaderCollapsed ? <ChevronDownIcon className="w-4 h-4 drop-shadow-sm" /> : <ChevronUpIcon className="w-4 h-4 drop-shadow-sm" />}
             </motion.div>
           </Button>
         </motion.div>
@@ -100,7 +108,7 @@ const EditorHeaderExpanded: React.FC<EditorHeaderExpandedProps> = ({
                       ease: "easeInOut"
                     }}
                   />
-                  <Crown className="w-8 h-8 text-yellow-500 drop-shadow-lg relative z-10" />
+                  <CrownIcon className="w-8 h-8 text-yellow-500 drop-shadow-lg relative z-10" />
                 </motion.div>
               </motion.h1>
               <motion.p 
@@ -148,7 +156,7 @@ const EditorHeaderExpanded: React.FC<EditorHeaderExpandedProps> = ({
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Focus className="w-4 h-4 mr-2 drop-shadow-sm" />
+            <EyeIcon className="w-4 h-4 mr-2 drop-shadow-sm" />
           </motion.div>
           Focus Mode
         </EditorHeaderButton>
@@ -162,7 +170,11 @@ const EditorHeaderExpanded: React.FC<EditorHeaderExpandedProps> = ({
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Heart className={`w-4 h-4 mr-2 drop-shadow-sm ${isFavorite ? 'fill-current' : ''}`} />
+            {isFavorite ? (
+              <HeartSolidIcon className="w-4 h-4 mr-2 drop-shadow-sm" />
+            ) : (
+              <HeartIcon className="w-4 h-4 mr-2 drop-shadow-sm" />
+            )}
           </motion.div>
           {isFavorite ? 'Favorited' : 'Add to Favorites'}
         </EditorHeaderButton>
@@ -190,7 +202,7 @@ const EditorHeaderExpanded: React.FC<EditorHeaderExpandedProps> = ({
             whileTap={{ scale: 0.95 }}
             className="relative z-10 flex items-center"
           >
-            <Save className="w-4 h-4 mr-2 drop-shadow-sm" />
+            <BookmarkIcon className="w-4 h-4 mr-2 drop-shadow-sm" />
           </motion.div>
           <span className="relative z-10">{isSaving ? 'Saving...' : 'Save Note'}</span>
         </EditorHeaderButton>

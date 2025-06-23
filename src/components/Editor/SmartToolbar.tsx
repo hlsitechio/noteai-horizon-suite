@@ -1,23 +1,23 @@
 
 import React, { useState } from 'react';
 import { 
-  Bold, 
-  Italic, 
-  Underline, 
-  Code, 
-  Heading1, 
-  Heading2, 
-  Quote, 
-  List, 
-  ListOrdered, 
-  Bot,
-  Mic,
-  Camera,
-  Save,
-  Type,
-  Plus,
-  Minus
-} from 'lucide-react';
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  CodeBracketIcon,
+  H1Icon,
+  H2Icon,
+  ChatBubbleLeftRightIcon,
+  ListBulletIcon,
+  NumberedListIcon,
+  RocketLaunchIcon,
+  MicrophoneIcon,
+  CameraIcon,
+  BookmarkIcon,
+  PencilIcon,
+  PlusIcon,
+  MinusIcon
+} from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -75,18 +75,18 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
   };
 
   const formatButtons = [
-    { id: 'bold', icon: Bold, title: 'Bold (Ctrl+B)' },
-    { id: 'italic', icon: Italic, title: 'Italic (Ctrl+I)' },
-    { id: 'underline', icon: Underline, title: 'Underline (Ctrl+U)' },
-    { id: 'code', icon: Code, title: 'Code (Ctrl+`)' },
+    { id: 'bold', icon: BoldIcon, title: 'Bold (Ctrl+B)' },
+    { id: 'italic', icon: ItalicIcon, title: 'Italic (Ctrl+I)' },
+    { id: 'underline', icon: UnderlineIcon, title: 'Underline (Ctrl+U)' },
+    { id: 'code', icon: CodeBracketIcon, title: 'Code (Ctrl+`)' },
   ];
 
   const blockButtons = [
-    { id: 'heading-one', icon: Heading1, title: 'Heading 1' },
-    { id: 'heading-two', icon: Heading2, title: 'Heading 2' },
-    { id: 'block-quote', icon: Quote, title: 'Quote' },
-    { id: 'bulleted-list', icon: List, title: 'Bullet List' },
-    { id: 'numbered-list', icon: ListOrdered, title: 'Numbered List' },
+    { id: 'heading-one', icon: H1Icon, title: 'Heading 1' },
+    { id: 'heading-two', icon: H2Icon, title: 'Heading 2' },
+    { id: 'block-quote', icon: ChatBubbleLeftRightIcon, title: 'Quote' },
+    { id: 'bulleted-list', icon: ListBulletIcon, title: 'Bullet List' },
+    { id: 'numbered-list', icon: NumberedListIcon, title: 'Numbered List' },
   ];
 
   const fontFamilies = [
@@ -151,7 +151,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
           {/* Font Family */}
           <Select value={fontFamily} onValueChange={handleFontFamilyChange}>
             <SelectTrigger className="w-[130px] h-8 text-xs">
-              <Type className="w-3 h-3 mr-1" />
+              <PencilIcon className="w-3 h-3 mr-1" />
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -172,7 +172,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
                 className="h-8 px-2 text-xs hover:bg-orange-100 dark:hover:bg-slate-600"
                 title="Font Size"
               >
-                <Type className="w-3 h-3 mr-1" />
+                <PencilIcon className="w-3 h-3 mr-1" />
                 {fontSize[0]}px
               </Button>
             </PopoverTrigger>
@@ -189,7 +189,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
                     onClick={() => handleFontSizeChange([Math.max(8, fontSize[0] - 1)])}
                     className="h-6 w-6 p-0"
                   >
-                    <Minus className="w-3 h-3" />
+                    <MinusIcon className="w-3 h-3" />
                   </Button>
                   <Slider
                     value={fontSize}
@@ -205,7 +205,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
                     onClick={() => handleFontSizeChange([Math.min(72, fontSize[0] + 1)])}
                     className="h-6 w-6 p-0"
                   >
-                    <Plus className="w-3 h-3" />
+                    <PlusIcon className="w-3 h-3" />
                   </Button>
                 </div>
               </div>
@@ -224,7 +224,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
             onClick={() => setShowSpeechToText(true)}
             className="h-8 w-8 p-0 hover:bg-green-100 text-green-600 hover:text-green-700 dark:hover:bg-slate-600 dark:text-green-400"
           >
-            <Mic className="w-4 h-4" />
+            <MicrophoneIcon className="w-4 h-4" />
           </Button>
           <Button
             variant="ghost"
@@ -233,7 +233,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
             onClick={() => setShowOCR(true)}
             className="h-8 w-8 p-0 hover:bg-purple-100 text-purple-600 hover:text-purple-700 dark:hover:bg-slate-600 dark:text-purple-400"
           >
-            <Camera className="w-4 h-4" />
+            <CameraIcon className="w-4 h-4" />
           </Button>
         </div>
 
@@ -248,7 +248,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
                 size="sm"
                 className="h-8 px-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 shadow-md hover:shadow-lg transition-all"
               >
-                <Bot className="w-4 h-4 mr-1" />
+                <RocketLaunchIcon className="w-4 h-4 mr-1" />
                 AI Assistant
               </Button>
             </PopoverTrigger>
@@ -276,7 +276,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
             size="sm"
             className="h-8 px-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-md hover:shadow-lg transition-all"
           >
-            <Save className="w-4 h-4 mr-1" />
+            <BookmarkIcon className="w-4 h-4 mr-1" />
             {isSaving ? 'Saving...' : 'Save'}
           </Button>
         </div>

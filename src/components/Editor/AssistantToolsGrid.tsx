@@ -1,7 +1,13 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Bot, Search, Settings, Sparkles, Zap } from 'lucide-react';
+import { 
+  RocketLaunchIcon, 
+  MagnifyingGlassIcon, 
+  CogIcon, 
+  SparklesIcon, 
+  BoltIcon 
+} from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import {
   Tooltip,
@@ -16,28 +22,28 @@ interface AssistantToolsGridProps {
 const AssistantToolsGrid: React.FC<AssistantToolsGridProps> = ({ content }) => {
   const tools = [
     { 
-      icon: Sparkles, 
+      icon: SparklesIcon, 
       label: 'Writing Suggestions', 
       color: 'text-purple-600 dark:text-purple-400',
       bgGradient: 'from-purple-500/20 to-pink-500/20',
       hoverGradient: 'hover:from-purple-500/30 hover:to-pink-500/30'
     },
     { 
-      icon: Bot, 
+      icon: RocketLaunchIcon, 
       label: 'Generate Ideas', 
       color: 'text-blue-600 dark:text-blue-400',
       bgGradient: 'from-blue-500/20 to-cyan-500/20',
       hoverGradient: 'hover:from-blue-500/30 hover:to-cyan-500/30'
     },
     { 
-      icon: Search, 
+      icon: MagnifyingGlassIcon, 
       label: 'Research Topic', 
       color: 'text-emerald-600 dark:text-emerald-400',
       bgGradient: 'from-emerald-500/20 to-teal-500/20',
       hoverGradient: 'hover:from-emerald-500/30 hover:to-teal-500/30'
     },
     { 
-      icon: Settings, 
+      icon: CogIcon, 
       label: 'Tone Adjustment', 
       color: 'text-orange-600 dark:text-orange-400',
       bgGradient: 'from-orange-500/20 to-red-500/20',
@@ -130,7 +136,7 @@ const AssistantToolsGrid: React.FC<AssistantToolsGridProps> = ({ content }) => {
                 whileHover={{ scale: 1.1, rotate: 10 }}
                 className="relative z-10"
               >
-                <Zap className="w-4 h-4 text-blue-600 dark:text-blue-400 mb-1 drop-shadow-sm" />
+                <BoltIcon className="w-4 h-4 text-blue-600 dark:text-blue-400 mb-1 drop-shadow-sm" />
               </motion.div>
               <div className="text-xs text-blue-700 dark:text-blue-300 font-medium relative z-10">
                 {content.split(' ').filter(w => w.length > 0).length}

@@ -1,7 +1,16 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Maximize2, Save, Type, Eye, EyeOff, Timer, Target, X } from 'lucide-react';
+import { 
+  ArrowsPointingOutIcon, 
+  BookmarkIcon, 
+  PencilIcon, 
+  EyeIcon, 
+  EyeSlashIcon, 
+  ClockIcon, 
+  TargetIcon, 
+  XMarkIcon 
+} from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 
 interface FocusModeControlsProps {
@@ -47,7 +56,7 @@ const FocusModeControls: React.FC<FocusModeControlsProps> = ({
               whileHover={{ scale: 1.05 }}
               className="flex items-center gap-3 text-white/90"
             >
-              <Maximize2 className="w-6 h-6 text-blue-400" />
+              <ArrowsPointingOutIcon className="w-6 h-6 text-blue-400" />
               <span className="text-lg font-semibold">Focus Mode</span>
             </motion.div>
             
@@ -57,11 +66,11 @@ const FocusModeControls: React.FC<FocusModeControlsProps> = ({
               whileHover={{ scale: 1.02 }}
             >
               <div className="flex items-center gap-1">
-                <Type className="w-4 h-4" />
+                <PencilIcon className="w-4 h-4" />
                 <span>{wordCount} words</span>
               </div>
               <div className="flex items-center gap-1">
-                <Timer className="w-4 h-4" />
+                <ClockIcon className="w-4 h-4" />
                 <span>{formatTime(timeSpent)}</span>
               </div>
             </motion.div>
@@ -76,7 +85,7 @@ const FocusModeControls: React.FC<FocusModeControlsProps> = ({
                 onClick={onZenModeToggle}
                 className="text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300"
               >
-                {isZenMode ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                {isZenMode ? <EyeIcon className="w-4 h-4" /> : <EyeSlashIcon className="w-4 h-4" />}
               </Button>
             </motion.div>
 
@@ -88,7 +97,7 @@ const FocusModeControls: React.FC<FocusModeControlsProps> = ({
                 onClick={onStatsToggle}
                 className="text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300"
               >
-                <Target className="w-4 h-4" />
+                <TargetIcon className="w-4 h-4" />
               </Button>
             </motion.div>
 
@@ -99,7 +108,7 @@ const FocusModeControls: React.FC<FocusModeControlsProps> = ({
                 disabled={!title.trim() || isSaving}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-none shadow-lg"
               >
-                <Save className="w-4 h-4 mr-2" />
+                <BookmarkIcon className="w-4 h-4 mr-2" />
                 {isSaving ? 'Saving...' : 'Save'}
               </Button>
             </motion.div>
@@ -112,7 +121,7 @@ const FocusModeControls: React.FC<FocusModeControlsProps> = ({
                 onClick={onClose}
                 className="text-white/80 hover:text-white hover:bg-red-500/20 transition-all duration-300"
               >
-                <X className="w-5 h-5" />
+                <XMarkIcon className="w-5 h-5" />
               </Button>
             </motion.div>
           </div>

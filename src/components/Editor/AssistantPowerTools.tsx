@@ -1,16 +1,16 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Bot, Search, Settings, Sparkles } from 'lucide-react';
+import { RocketLaunchIcon, MagnifyingGlassIcon, CogIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 const AssistantPowerTools: React.FC = () => {
   const powerTools = [
-    { icon: Bot, label: 'Generate Ideas', badge: 'NEW', badgeColor: 'purple' },
-    { icon: Search, label: 'Research Topic', badge: 'PRO', badgeColor: 'blue' },
-    { icon: Settings, label: 'Tone Adjustment', badge: 'AI', badgeColor: 'pink' }
+    { icon: RocketLaunchIcon, label: 'Generate Ideas', badge: 'NEW', badgeColor: 'purple' },
+    { icon: MagnifyingGlassIcon, label: 'Research Topic', badge: 'PRO', badgeColor: 'blue' },
+    { icon: CogIcon, label: 'Tone Adjustment', badge: 'AI', badgeColor: 'pink' }
   ];
 
   return (
@@ -27,7 +27,7 @@ const AssistantPowerTools: React.FC = () => {
               transition={{ duration: 0.5 }}
               className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg"
             >
-              <Sparkles className="w-5 h-5 text-white" />
+              <SparklesIcon className="w-5 h-5 text-white" />
             </motion.div>
             <div>
               <h3 className="font-bold text-purple-800 dark:text-purple-300">AI Power Tools</h3>
