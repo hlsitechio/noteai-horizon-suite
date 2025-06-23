@@ -75,7 +75,7 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
               isScrolled 
-                ? 'bg-black/80 backdrop-blur-2xl border-b border-white/10' 
+                ? 'bg-black/80 backdrop-blur-2xl' 
                 : 'bg-transparent'
             }`}
           >
@@ -119,14 +119,14 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
                   <Button
                     onClick={() => navigate('/login')}
                     variant="ghost"
-                    className="hidden md:inline-flex text-gray-300 hover:text-white hover:bg-white/10 border border-white/20 hover:border-white/40 transition-all duration-300"
+                    className="hidden md:inline-flex text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-300"
                   >
                     Sign In
                   </Button>
                   <div className="relative group">
                     <Button
                       onClick={() => navigate('/register')}
-                      className="hidden md:inline-flex bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white font-semibold px-6 py-2.5 rounded-xl border border-white/20 hover:border-white/40 shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_50px_rgba(59,130,246,0.5)] transition-all duration-300 transform hover:scale-105"
+                      className="hidden md:inline-flex bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white font-semibold px-6 py-2.5 rounded-xl shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_50px_rgba(59,130,246,0.5)] transition-all duration-300 transform hover:scale-105"
                     >
                       Get Started
                     </Button>
@@ -136,7 +136,7 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
                   {/* Mobile menu button */}
                   <button
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className="md:hidden p-2 rounded-lg border border-white/20 hover:bg-white/10 transition-colors"
+                    className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
                   >
                     {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                   </button>
@@ -151,7 +151,7 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="md:hidden bg-black/95 backdrop-blur-2xl border-t border-white/10"
+                  className="md:hidden bg-black/95 backdrop-blur-2xl"
                 >
                   <div className="px-4 py-6 space-y-4">
                     {navigationItems.map((item) => (
@@ -164,14 +164,14 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
                         {item.name}
                       </a>
                     ))}
-                    <div className="flex flex-col space-y-3 pt-4 border-t border-white/10">
+                    <div className="flex flex-col space-y-3 pt-4">
                       <Button
                         onClick={() => {
                           navigate('/login');
                           setMobileMenuOpen(false);
                         }}
                         variant="ghost"
-                        className="justify-start text-gray-300 hover:text-white border border-white/20"
+                        className="justify-start text-gray-300 hover:text-white"
                       >
                         Sign In
                       </Button>
@@ -180,7 +180,7 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
                           navigate('/register');
                           setMobileMenuOpen(false);
                         }}
-                        className="justify-start bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white border border-white/20"
+                        className="justify-start bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white"
                       >
                         Get Started
                       </Button>

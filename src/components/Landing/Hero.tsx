@@ -28,7 +28,7 @@ const Hero = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 border border-cyan-500/30 rounded-full px-6 py-3 backdrop-blur-xl"
+            className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 rounded-full px-6 py-3 backdrop-blur-xl"
           >
             <Star className="w-4 h-4 text-cyan-400" />
             <span className="text-sm font-medium text-cyan-300">Next-Gen AI Technology</span>
@@ -56,7 +56,7 @@ const Hero = () => {
               <Button
                 onClick={() => navigate('/register')}
                 size="lg"
-                className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white px-10 py-6 text-xl font-bold rounded-2xl border-2 border-white/30 hover:border-white/50 shadow-[0_0_50px_rgba(59,130,246,0.4)] hover:shadow-[0_0_80px_rgba(59,130,246,0.6)] transition-all duration-500 transform hover:scale-105"
+                className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white px-10 py-6 text-xl font-bold rounded-2xl shadow-[0_0_50px_rgba(59,130,246,0.4)] hover:shadow-[0_0_80px_rgba(59,130,246,0.6)] transition-all duration-500 transform hover:scale-105"
               >
                 <Rocket className="mr-3 w-6 h-6" />
                 Start Free Trial
@@ -67,7 +67,7 @@ const Hero = () => {
             <Button
               variant="outline"
               size="lg"
-              className="px-10 py-6 text-xl font-semibold rounded-2xl border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 backdrop-blur-xl transition-all duration-300 transform hover:scale-105"
+              className="px-10 py-6 text-xl font-semibold rounded-2xl text-white hover:bg-white/10 backdrop-blur-xl transition-all duration-300 transform hover:scale-105"
             >
               <Globe className="mr-3 w-6 h-6" />
               Watch Demo

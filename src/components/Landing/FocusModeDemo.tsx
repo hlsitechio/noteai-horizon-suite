@@ -49,7 +49,7 @@ const FocusModeDemo = () => {
       transition={{ duration: 0.8 }}
       className="group"
     >
-      <Card className="bg-gradient-to-br from-slate-900/50 to-slate-800/30 border-2 border-white/10 hover:border-purple-500/30 backdrop-blur-xl transition-all duration-500 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(168,85,247,0.3)] hover:shadow-2xl">
+      <Card className="bg-gradient-to-br from-slate-900/40 to-slate-800/20 backdrop-blur-xl transition-all duration-500 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(168,85,247,0.3)] hover:shadow-2xl">
         <CardContent className="p-0">
           <div className="grid lg:grid-cols-2 gap-0">
             {/* Feature Description */}
@@ -61,18 +61,18 @@ const FocusModeDemo = () => {
               <p className="text-gray-300 leading-relaxed text-lg mb-6">
                 Transform your writing environment into a distraction-free zone. Click the focus button in the demo to experience our immersive writing mode with real-time stats.
               </p>
-              <Badge className="w-fit bg-purple-500/20 text-purple-300 border-purple-500/30">
+              <Badge className="w-fit bg-purple-500/20 text-purple-300">
                 Interactive Demo
               </Badge>
             </div>
             
             {/* Live Demo */}
-            <div className="bg-black/40 p-0 border-l border-white/10 relative overflow-hidden">
+            <div className="bg-black/40 p-0 relative overflow-hidden">
               {!isInFocusMode ? (
                 /* Normal Editor View */
                 <div className="h-full">
                   {/* Editor Header */}
-                  <div className="bg-gradient-to-r from-blue-50/5 via-purple-50/5 to-pink-50/5 border-b border-white/10 p-4">
+                  <div className="bg-gradient-to-r from-blue-50/5 via-purple-50/5 to-pink-50/5 p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Button
@@ -104,16 +104,16 @@ const FocusModeDemo = () => {
                       type="text"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="w-full bg-transparent border-none outline-none text-white text-2xl font-bold placeholder-white/50"
+                      className="w-full bg-transparent outline-none text-white text-2xl font-bold placeholder-white/50"
                       placeholder="Your title here..."
                     />
                     
-                    <div className="bg-white/5 rounded-xl p-4 min-h-[200px] backdrop-blur-sm border border-white/10">
+                    <div className="bg-white/5 rounded-xl p-4 min-h-[200px] backdrop-blur-sm">
                       <Textarea
                         value={content}
                         onChange={(e) => handleContentChange(e.target.value)}
                         placeholder="Start writing your story..."
-                        className="w-full h-full bg-transparent border-none outline-none text-white placeholder-white/50 resize-none text-base leading-relaxed"
+                        className="w-full h-full bg-transparent outline-none text-white placeholder-white/50 resize-none text-base leading-relaxed"
                       />
                     </div>
 
@@ -157,7 +157,7 @@ const FocusModeDemo = () => {
                       type="text"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="w-full bg-transparent border-none outline-none text-white text-3xl font-bold mb-8 placeholder-white/50"
+                      className="w-full bg-transparent outline-none text-white text-3xl font-bold mb-8 placeholder-white/50"
                       placeholder="Your masterpiece title..."
                     />
                     
@@ -171,7 +171,7 @@ const FocusModeDemo = () => {
                         value={content}
                         onChange={(e) => handleContentChange(e.target.value)}
                         placeholder="Focus on your writing... Let your thoughts flow without any distractions."
-                        className="w-full h-full bg-transparent border-none outline-none text-white placeholder-white/30 resize-none text-lg leading-relaxed"
+                        className="w-full h-full bg-transparent outline-none text-white placeholder-white/30 resize-none text-lg leading-relaxed"
                       />
                     </motion.div>
 

@@ -20,7 +20,7 @@ const FeatureCard = ({ icon, title, description, gradient, glow, index }: Featur
       transition={{ delay: index * 0.2, duration: 0.8 }}
       className="group relative"
     >
-      <Card className={`h-full bg-gradient-to-br from-slate-900/50 to-slate-800/30 border-2 border-white/10 hover:border-white/30 backdrop-blur-xl transition-all duration-500 hover:scale-105 rounded-3xl overflow-hidden ${glow} hover:shadow-2xl`}>
+      <Card className={`h-full bg-gradient-to-br from-slate-900/40 to-slate-800/20 backdrop-blur-xl transition-all duration-500 hover:scale-105 rounded-3xl overflow-hidden ${glow} hover:shadow-2xl`}>
         <CardContent className="p-10">
           <div className={`w-20 h-20 rounded-2xl bg-gradient-to-r ${gradient} flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 shadow-2xl`}>
             {React.cloneElement(icon, { className: "w-10 h-10 text-white" })}

@@ -34,7 +34,7 @@ const Contact = () => {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2, duration: 0.6 }}
-              className="text-center p-8 rounded-3xl bg-gradient-to-br from-slate-900/50 to-slate-800/30 border-2 border-white/10 hover:border-white/30 backdrop-blur-xl transition-all duration-500 hover:scale-105 group"
+              className="text-center p-8 rounded-3xl bg-gradient-to-br from-slate-900/40 to-slate-800/20 backdrop-blur-xl transition-all duration-500 hover:scale-105 group"
             >
               <div className={`w-16 h-16 bg-gradient-to-r ${contact.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl`}>
                 {React.cloneElement(contact.icon, { className: "w-8 h-8 text-white" })}
