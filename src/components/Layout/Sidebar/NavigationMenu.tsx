@@ -143,7 +143,7 @@ export function NavigationMenu() {
                       initial="collapsed"
                       animate="expanded"
                       exit="collapsed"
-                      className={`truncate font-medium relative z-10 ${location.pathname === item.path ? 'text-white' : ''}`}
+                      className={`truncate font-medium relative z-10 ${location.pathname === item.path ? 'text-white' : 'text-foreground'}`}
                     >
                       {item.label}
                     </motion.span>
