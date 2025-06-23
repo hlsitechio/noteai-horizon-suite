@@ -23,11 +23,11 @@ import {
 } from '@/components/ui/tooltip';
 
 const menuItems = [
-  { icon: BookOpen, label: 'Dashboard', path: '/app/dashboard', color: 'text-blue-500', selectedBg: 'bg-blue-500' },
-  { icon: Plus, label: 'AI Chat', path: '/app/chat', color: 'text-emerald-500', selectedBg: 'bg-emerald-500' },
-  { icon: PenTool, label: 'Editor', path: '/app/editor', color: 'text-purple-500', selectedBg: 'bg-purple-500' },
-  { icon: Calendar, label: 'Calendar', path: '/app/calendar', color: 'text-orange-500', selectedBg: 'bg-orange-500' },
-  { icon: Settings, label: 'Settings', path: '/app/settings', color: 'text-gray-500', selectedBg: 'bg-gray-600' },
+  { icon: BookOpen, label: 'Dashboard', path: '/app/dashboard', color: 'text-blue-500' },
+  { icon: Plus, label: 'AI Chat', path: '/app/chat', color: 'text-emerald-500' },
+  { icon: PenTool, label: 'Editor', path: '/app/editor', color: 'text-purple-500' },
+  { icon: Calendar, label: 'Calendar', path: '/app/calendar', color: 'text-orange-500' },
+  { icon: Settings, label: 'Settings', path: '/app/settings', color: 'text-gray-500' },
 ];
 
 const contentVariants = {
@@ -94,7 +94,7 @@ export function NavigationMenu() {
                     isActive={location.pathname === item.path}
                     className={`h-12 w-12 mx-auto rounded-xl transition-all duration-200 relative overflow-hidden ${
                       location.pathname === item.path 
-                        ? `${item.selectedBg} text-white shadow-lg` 
+                        ? 'bg-slate-600 text-white shadow-lg' 
                         : 'hover:bg-muted hover:text-foreground hover:shadow-md'
                     }`}
                   >
@@ -107,7 +107,7 @@ export function NavigationMenu() {
                     </motion.div>
                     {location.pathname === item.path && (
                       <motion.div
-                        className={`absolute inset-0 ${item.selectedBg} -z-10`}
+                        className="absolute inset-0 bg-slate-600 -z-10"
                         layoutId="activeBackground"
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
                       />
@@ -124,13 +124,13 @@ export function NavigationMenu() {
                 isActive={location.pathname === item.path}
                 className={`h-11 rounded-xl transition-all duration-200 relative overflow-hidden group ${
                   location.pathname === item.path 
-                    ? `${item.selectedBg} text-white shadow-md` 
+                    ? 'bg-slate-600 text-white shadow-md' 
                     : 'hover:bg-muted hover:text-foreground hover:translate-x-1'
                 }`}
               >
                 {location.pathname === item.path && (
                   <motion.div
-                    className={`absolute inset-0 ${item.selectedBg} -z-10`}
+                    className="absolute inset-0 bg-slate-600 -z-10"
                     layoutId="activeBackground"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
