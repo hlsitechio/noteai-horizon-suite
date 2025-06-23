@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, Check, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, Check, ArrowLeft, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -111,6 +111,20 @@ const RegistrationStep: React.FC<RegistrationStepProps> = ({
           )}
 
           <AnimatePresence>
+            {/* Show red X when email exists */}
+            {emailExists && currentStep === 'email' && !isCheckingEmail && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 rounded-full flex items-center justify-center text-white shadow-lg"
+              >
+                <X className="w-4 h-4" />
+              </motion.div>
+            )}
+
+            {/* Show green checkmark when valid and email doesn't exist */}
             {isValid && !isCheckingEmail && !emailExists && (
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
