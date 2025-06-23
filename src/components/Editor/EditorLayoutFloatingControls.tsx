@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Squares2X2Icon, ArrowsPointingOutIcon } from '@heroicons/react/24/outline';
+import { ArrowsPointingOutIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
 
 interface EditorLayoutFloatingControlsProps {
   isDistractionFree: boolean;
@@ -49,7 +49,7 @@ const EditorLayoutFloatingControls: React.FC<EditorLayoutFloatingControlsProps> 
               >
                 <Squares2X2Icon className="w-5 h-5 mr-2 drop-shadow-sm" />
               </motion.div>
-              <span className="relative z-10">Show All Panels</span>
+              <span className="relative z-10">Exit Focus</span>
             </>
           ) : (
             <>
@@ -60,7 +60,7 @@ const EditorLayoutFloatingControls: React.FC<EditorLayoutFloatingControlsProps> 
               >
                 <ArrowsPointingOutIcon className="w-5 h-5 mr-2 drop-shadow-sm" />
               </motion.div>
-              <span className="relative z-10">Distraction Free</span>
+              <span className="relative z-10">Enter Focus</span>
             </>
           )}
         </Button>

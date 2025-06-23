@@ -28,51 +28,40 @@ const EditorInner: React.FC = () => {
     isHeaderHidden: editorState.isHeaderHidden,
   });
 
-  const [isDistractionFree, setIsDistractionFree] = React.useState(false);
+  const [isUnifiedFocusMode, setIsUnifiedFocusMode] = React.useState(false);
 
-  // Auto-collapse sidebar on mobile and enable distraction-free mode by default
+  // Auto-collapse sidebar on mobile and enable unified focus mode by default
   React.useEffect(() => {
     if (isMobile) {
       setOpen(false);
-      // Auto-enable distraction-free mode on mobile for better experience
-      if (!isDistractionFree) {
-        setIsDistractionFree(true);
+      // Auto-enable unified focus mode on mobile for better experience
+      if (!isUnifiedFocusMode) {
+        setIsUnifiedFocusMode(true);
         editorState.setIsHeaderHidden(true);
         editorState.setIsAssistantCollapsed(true);
+        editorState.setIsFocusMode(true);
       }
     }
-  }, [isMobile, setOpen, isDistractionFree, editorState]);
+  }, [isMobile, setOpen, isUnifiedFocusMode, editorState]);
 
-  const handleDistractionFreeToggle = () => {
-    const newDistractionFree = !isDistractionFree;
-    setIsDistractionFree(newDistractionFree);
+  const handleUnifiedFocusToggle = () => {
+    const newUnifiedFocusMode = !isUnifiedFocusMode;
+    setIsUnifiedFocusMode(newUnifiedFocusMode);
     
-    if (newDistractionFree) {
-      // Collapse sidebar and enable focus mode
+    if (newUnifiedFocusMode) {
+      // Enter unified focus mode: hide everything and enter focus mode
       setOpen(false);
       editorState.setIsFocusMode(true);
       editorState.setIsHeaderHidden(true);
       editorState.setIsAssistantCollapsed(true);
     } else {
-      // Restore normal mode
+      // Exit unified focus mode: restore normal layout
       if (!isMobile) {
         setOpen(true);
       }
       editorState.setIsFocusMode(false);
       editorState.setIsHeaderHidden(false);
       editorState.setIsAssistantCollapsed(false);
-    }
-  };
-
-  // Enhanced mobile focus mode toggle - automatically enter focus mode on mobile
-  const handleMobileFocusMode = () => {
-    if (isMobile) {
-      setIsDistractionFree(true);
-      editorState.setIsFocusMode(true);
-      editorState.setIsHeaderHidden(true);
-      editorState.setIsAssistantCollapsed(true);
-    } else {
-      editorState.setIsFocusMode(true);
     }
   };
 
@@ -90,11 +79,11 @@ const EditorInner: React.FC = () => {
           isFavorite={editorState.isFavorite}
           isSaving={editorState.isSaving}
           
-          // UI state - mobile responsive with enhanced distraction-free mode
+          // UI state - unified focus mode controls everything
           isFocusMode={editorState.isFocusMode}
           isHeaderCollapsed={editorState.isHeaderCollapsed}
-          isHeaderHidden={editorState.isHeaderHidden || (isMobile && isDistractionFree)}
-          isAssistantCollapsed={editorState.isAssistantCollapsed || isDistractionFree || isMobile}
+          isHeaderHidden={editorState.isHeaderHidden || (isMobile && isUnifiedFocusMode)}
+          isAssistantCollapsed={editorState.isAssistantCollapsed || isUnifiedFocusMode || isMobile}
           
           // Form handlers
           onTitleChange={editorState.setTitle}
@@ -107,19 +96,19 @@ const EditorInner: React.FC = () => {
           onSave={editorHandlers.handleSave}
           onSuggestionApply={editorHandlers.handleSuggestionApply}
           
-          // UI handlers - enhanced for mobile
-          onFocusModeToggle={handleMobileFocusMode}
+          // UI handlers - unified approach
+          onFocusModeToggle={handleUnifiedFocusToggle}
           onHeaderCollapseToggle={() => editorState.setIsHeaderCollapsed(!editorState.isHeaderCollapsed)}
           onCollapseAllBars={editorHandlers.handleCollapseAllBars}
           onFocusModeClose={() => {
             editorState.setIsFocusMode(false);
-            if (isDistractionFree && !isMobile) {
-              setIsDistractionFree(false);
+            if (isUnifiedFocusMode && !isMobile) {
+              setIsUnifiedFocusMode(false);
               setOpen(true);
               editorState.setIsHeaderHidden(false);
               editorState.setIsAssistantCollapsed(false);
             }
-            // On mobile, keep distraction-free mode active even after closing focus mode
+            // On mobile, keep unified focus mode active even after closing focus mode overlay
             if (isMobile) {
               editorState.setIsHeaderHidden(true);
               editorState.setIsAssistantCollapsed(true);
@@ -130,15 +119,15 @@ const EditorInner: React.FC = () => {
           collapseAssistantRef={editorState.collapseAssistantRef}
           expandAssistantRef={editorState.expandAssistantRef}
           currentNote={editorState.currentNote}
-          isDistractionFree={isDistractionFree}
+          isDistractionFree={isUnifiedFocusMode}
           isMobile={isMobile}
         />
         
-        {/* Only show floating controls when not in focus mode and not on mobile */}
+        {/* Unified Focus Mode Control - Only show when not in focus mode overlay and not on mobile */}
         {!editorState.isFocusMode && !isMobile && (
           <EditorLayoutFloatingControls
-            isDistractionFree={isDistractionFree}
-            onToggleDistractionFree={handleDistractionFreeToggle}
+            isDistractionFree={isUnifiedFocusMode}
+            onToggleDistractionFree={handleUnifiedFocusToggle}
           />
         )}
       </SidebarInset>
