@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Moon, Sun, User } from 'lucide-react';
+import { Bell, Moon, Sun, User, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
   DropdownMenu, 
@@ -40,8 +41,9 @@ const iconVariants = {
 
 const Header: React.FC = () => {
   const { theme, setTheme } = useTheme();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleThemeToggle = () => {
     const newTheme = toggleTheme(theme);
@@ -53,6 +55,14 @@ const Header: React.FC = () => {
       title: "Notifications",
       description: "You have 3 new notifications",
     });
+  };
+
+  const handleProfileClick = () => {
+    navigate('/settings');
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   const isCurrentlyDark = isDarkMode(theme);
@@ -199,9 +209,24 @@ const Header: React.FC = () => {
                 whileHover={{ x: 4 }}
                 transition={{ duration: 0.2 }}
               >
-                <DropdownMenuItem className="hover:bg-white/20 dark:hover:bg-slate-700/30">
+                <DropdownMenuItem 
+                  className="hover:bg-white/20 dark:hover:bg-slate-700/30 cursor-pointer"
+                  onClick={handleProfileClick}
+                >
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
+                </DropdownMenuItem>
+              </motion.div>
+              <motion.div
+                whileHover={{ x: 4 }}
+                transition={{ duration: 0.2 }}
+              >
+                <DropdownMenuItem 
+                  className="hover:bg-white/20 dark:hover:bg-slate-700/30 cursor-pointer"
+                  onClick={handleLogout}
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Logout</span>
                 </DropdownMenuItem>
               </motion.div>
             </DropdownMenuContent>
