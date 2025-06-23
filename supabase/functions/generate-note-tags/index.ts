@@ -16,9 +16,28 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Edge function called for tag generation');
+    
+    // Check if OpenAI API key is configured
+    if (!openAIApiKey) {
+      console.error('OPENAI_API_KEY environment variable is not set');
+      return new Response(JSON.stringify({ 
+        error: 'OpenAI API key is not configured in Supabase secrets' 
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const { title, content } = await req.json();
 
+    console.log('Received request with:', { 
+      titleLength: title?.length || 0, 
+      contentLength: content?.length || 0 
+    });
+
     if (!title && !content) {
+      console.log('No title or content provided');
       return new Response(JSON.stringify({ error: 'Title or content is required' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -26,14 +45,14 @@ serve(async (req) => {
     }
 
     // Combine title and content for analysis
-    const textToAnalyze = `Title: ${title}\n\nContent: ${content}`;
+    const textToAnalyze = `Title: ${title || ''}\n\nContent: ${content || ''}`;
     
     // Truncate if too long to avoid token limits
     const truncatedText = textToAnalyze.length > 3000 
       ? textToAnalyze.substring(0, 3000) + '...' 
       : textToAnalyze;
 
-    console.log('Generating tags for text:', truncatedText.substring(0, 200) + '...');
+    console.log('Analyzing text of length:', truncatedText.length);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -68,8 +87,12 @@ serve(async (req) => {
       }),
     });
 
+    console.log('OpenAI API response status:', response.status);
+
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('OpenAI API error:', response.status, errorText);
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
@@ -83,10 +106,15 @@ serve(async (req) => {
       tags = JSON.parse(generatedContent);
       
       // Validate and clean tags
-      tags = tags
-        .filter(tag => typeof tag === 'string' && tag.trim().length > 0)
-        .map(tag => tag.toLowerCase().trim())
-        .slice(0, 10); // Limit to 10 tags max
+      if (Array.isArray(tags)) {
+        tags = tags
+          .filter(tag => typeof tag === 'string' && tag.trim().length > 0)
+          .map(tag => tag.toLowerCase().trim())
+          .slice(0, 10); // Limit to 10 tags max
+      } else {
+        console.error('AI response is not an array:', tags);
+        tags = [];
+      }
         
     } catch (parseError) {
       console.error('Failed to parse AI response as JSON:', parseError);
@@ -101,7 +129,7 @@ serve(async (req) => {
       }
     }
 
-    console.log('Generated tags:', tags);
+    console.log('Final generated tags:', tags);
 
     return new Response(JSON.stringify({ tags }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

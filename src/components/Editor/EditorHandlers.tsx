@@ -1,4 +1,3 @@
-
 import { useNotes } from '../../contexts/NotesContext';
 import { useAutoTagging } from '../../hooks/useAutoTagging';
 import { toast } from 'sonner';
@@ -41,35 +40,62 @@ export const useEditorHandlers = ({
 
   const handleSave = async () => {
     if (!title.trim()) {
+      toast.error('Please enter a title for your note');
       return;
     }
 
     setIsSaving(true);
+    console.log('Starting save process for note:', { 
+      title: title.substring(0, 50), 
+      isNewNote: !currentNote,
+      currentTags: tags,
+      hasContent: content.length > 0
+    });
+
     try {
       let finalTags = [...tags];
 
       // Generate auto-tags only for new notes or when there are no existing tags
       const shouldGenerateTags = !currentNote || tags.length === 0;
       
+      console.log('Auto-tagging decision:', {
+        shouldGenerateTags,
+        isNewNote: !currentNote,
+        hasExistingTags: tags.length > 0,
+        titleLength: title.trim().length,
+        contentLength: content.trim().length
+      });
+      
       if (shouldGenerateTags && (title.trim() || content.trim())) {
         try {
-          toast.info('Generating tags automatically...', { duration: 2000 });
+          console.log('Attempting to generate tags...');
           const autoTags = await generateTags(title, content);
+          
+          console.log('Auto-generated tags received:', autoTags);
           
           if (autoTags && autoTags.length > 0) {
             // Merge auto-generated tags with existing tags, avoiding duplicates
             const uniqueAutoTags = autoTags.filter(tag => !finalTags.includes(tag));
             finalTags = [...finalTags, ...uniqueAutoTags];
             
+            console.log('Final tags after merge:', finalTags);
+            
             // Update the tags state so user can see the generated tags
             setTags(finalTags);
             
             toast.success(`Generated ${uniqueAutoTags.length} new tags automatically`);
+          } else {
+            console.log('No auto-tags were generated');
           }
         } catch (tagError) {
           console.error('Auto-tagging failed:', tagError);
+          toast.error('Auto-tagging failed, but note will still be saved');
           // Continue with save even if auto-tagging fails
         }
+      } else {
+        console.log('Skipping auto-tag generation:', {
+          reason: shouldGenerateTags ? 'No content' : 'Not a new note or has existing tags'
+        });
       }
 
       const noteData = {
@@ -81,10 +107,17 @@ export const useEditorHandlers = ({
         color: currentNote?.color || '#64748b',
       };
 
+      console.log('Saving note with data:', {
+        ...noteData,
+        content: noteData.content.substring(0, 100) + '...'
+      });
+
       if (currentNote) {
         await updateNote(currentNote.id, noteData);
+        console.log('Note updated successfully');
       } else {
         await createNote(noteData);
+        console.log('Note created successfully');
       }
     } catch (error) {
       console.error('Error saving note:', error);
