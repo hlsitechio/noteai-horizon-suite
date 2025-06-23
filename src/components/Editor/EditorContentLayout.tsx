@@ -18,6 +18,7 @@ interface EditorContentLayoutProps extends EditorFormState, EditorFormHandlers, 
   isHeaderCollapsed: boolean;
   isAssistantCollapsed: boolean;
   onCollapseAllBars: () => void;
+  isMobile?: boolean;
 }
 
 const EditorContentLayout: React.FC<EditorContentLayoutProps> = ({
@@ -41,6 +42,7 @@ const EditorContentLayout: React.FC<EditorContentLayoutProps> = ({
   isHeaderCollapsed,
   isAssistantCollapsed,
   onCollapseAllBars,
+  isMobile = false,
 }) => {
   const getLayoutHeight = () => {
     if (isHeaderHidden) {
@@ -76,6 +78,7 @@ const EditorContentLayout: React.FC<EditorContentLayoutProps> = ({
         onCollapseAllBars={onCollapseAllBars}
         isAllBarsCollapsed={isHeaderHidden}
         isAssistantCollapsed={isAssistantCollapsed}
+        isMobile={isMobile}
       />
     </div>
   );

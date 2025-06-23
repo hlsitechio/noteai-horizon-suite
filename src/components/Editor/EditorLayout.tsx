@@ -4,7 +4,6 @@ import EditorLayoutFloatingControls from './EditorLayoutFloatingControls';
 import EditorMainColumn from './EditorMainColumn';
 import EditorSidebar from './EditorSidebar';
 import { NoteCategory } from '../../types/note';
-import { useIsMobile } from '../../hooks/use-mobile';
 
 interface EditorLayoutProps {
   title: string;
@@ -29,6 +28,7 @@ interface EditorLayoutProps {
   onCollapseAllBars?: () => void;
   isAllBarsCollapsed?: boolean;
   isAssistantCollapsed?: boolean;
+  isMobile?: boolean;
 }
 
 const EditorLayout: React.FC<EditorLayoutProps> = ({
@@ -51,8 +51,8 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
   collapseAssistantRef,
   expandAssistantRef,
   isAssistantCollapsed = false,
+  isMobile = false,
 }) => {
-  const isMobile = useIsMobile();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(isMobile);
   const [isDistractionFree, setIsDistractionFree] = useState(false);
 
