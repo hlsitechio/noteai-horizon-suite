@@ -41,6 +41,8 @@ const StepByStepRegister: React.FC = () => {
   };
 
   const handleInputChange = async (value: string) => {
+    console.log('Input change:', { currentStep, value });
+    
     const updatedData = { ...registrationData };
     
     switch (currentStep) {
@@ -63,18 +65,20 @@ const StepByStepRegister: React.FC = () => {
     
     // For email step, check if email exists after validation
     if (currentStep === 'email' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      // Debounce the email check
+      console.log('Valid email format, checking if exists:', value);
+      // Use a shorter timeout and check immediately
       setTimeout(async () => {
-        if (value === registrationData.email) { // Only check if email hasn't changed
-          await checkEmailExists(value);
-        }
-      }, 500);
+        console.log('Running email check for:', value);
+        await checkEmailExists(value);
+      }, 300);
     }
     
-    // Update validation state
-    setTimeout(() => {
-      setIsValid(validateCurrentStep());
-    }, 100);
+    // Update validation state immediately for non-email fields
+    if (currentStep !== 'email') {
+      setTimeout(() => {
+        setIsValid(validateCurrentStep());
+      }, 100);
+    }
   };
 
   const handleNext = () => {
@@ -144,9 +148,18 @@ const StepByStepRegister: React.FC = () => {
     }
   };
 
+  // Update validation when email check completes
+  React.useEffect(() => {
+    console.log('Email validation state changed:', { emailExists, isCheckingEmail, currentStep });
+    if (currentStep === 'email') {
+      setIsValid(validateCurrentStep());
+    }
+  }, [emailExists, isCheckingEmail]);
+
+  // General validation update
   React.useEffect(() => {
     setIsValid(validateCurrentStep());
-  }, [currentStep, registrationData, emailExists]);
+  }, [currentStep, registrationData]);
 
   const stepContent = getStepContent();
 

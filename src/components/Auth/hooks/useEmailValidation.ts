@@ -29,7 +29,7 @@ export const useEmailValidation = () => {
       }
 
       const emailAlreadyExists = !!profile;
-      console.log('Email exists result:', emailAlreadyExists);
+      console.log('Email exists result:', emailAlreadyExists, profile);
       
       setEmailExists(emailAlreadyExists);
       return emailAlreadyExists;
@@ -43,6 +43,7 @@ export const useEmailValidation = () => {
   };
 
   const resetEmailExists = () => {
+    console.log('Resetting email exists state');
     setEmailExists(false);
   };
 
