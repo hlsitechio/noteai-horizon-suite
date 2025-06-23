@@ -4,7 +4,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './useToast';
 import { useGPUAcceleration } from './useGPUAcceleration';
 import { GPUTextProcessingService } from '@/services/gpuTextProcessing';
-import { ChatMessage } from './useAIChat';
+
+// Export the ChatMessage type so it can be used by other components
+export interface ChatMessage {
+  id: string;
+  content: string;
+  isUser: boolean;
+  timestamp: Date;
+}
 
 export const useEnhancedAIChat = () => {
   const [isLoading, setIsLoading] = useState(false);

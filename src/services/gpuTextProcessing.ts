@@ -1,13 +1,16 @@
 
-import { pipeline, Pipeline } from '@huggingface/transformers';
+import { pipeline } from '@huggingface/transformers';
+
+type DeviceType = 'webgpu' | 'cpu' | 'auto';
 
 export class GPUTextProcessingService {
-  private embeddingPipeline: Pipeline | null = null;
-  private classificationPipeline: Pipeline | null = null;
-  private device: string;
+  private embeddingPipeline: any = null;
+  private classificationPipeline: any = null;
+  private device: DeviceType;
 
   constructor(device: 'webgpu' | 'webgl' | 'cpu' = 'cpu') {
-    this.device = device;
+    // Map our device types to Hugging Face device types
+    this.device = device === 'webgl' || device === 'cpu' ? 'cpu' : 'webgpu';
   }
 
   async initializeEmbeddings() {
@@ -21,7 +24,7 @@ export class GPUTextProcessingService {
         'feature-extraction',
         'mixedbread-ai/mxbai-embed-xsmall-v1',
         { 
-          device: this.device === 'cpu' ? undefined : this.device,
+          device: this.device,
           dtype: 'fp32'
         }
       );
@@ -50,7 +53,7 @@ export class GPUTextProcessingService {
         'text-classification',
         'cardiffnlp/twitter-roberta-base-sentiment-latest',
         { 
-          device: this.device === 'cpu' ? undefined : this.device,
+          device: this.device,
           dtype: 'fp32'
         }
       );
