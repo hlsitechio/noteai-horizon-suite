@@ -1,11 +1,7 @@
 
 import { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const useAutoTagging = () => {
   const [isGeneratingTags, setIsGeneratingTags] = useState(false);
@@ -21,9 +17,7 @@ export const useAutoTagging = () => {
     try {
       console.log('Starting tag generation for:', { 
         title: title.substring(0, 50), 
-        contentLength: content.length,
-        supabaseUrl: supabaseUrl ? 'configured' : 'missing',
-        supabaseKey: supabaseKey ? 'configured' : 'missing'
+        contentLength: content.length
       });
       
       // Show loading toast
