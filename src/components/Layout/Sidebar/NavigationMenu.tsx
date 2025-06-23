@@ -107,7 +107,7 @@ export function NavigationMenu() {
                     </motion.div>
                     {location.pathname === item.path && (
                       <motion.div
-                        className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary"
+                        className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary -z-10"
                         layoutId="activeBackground"
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
                       />
@@ -130,12 +130,12 @@ export function NavigationMenu() {
               >
                 {location.pathname === item.path && (
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary"
+                    className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary -z-10"
                     layoutId="activeBackground"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
-                <item.icon className={`w-5 h-5 flex-shrink-0 relative z-10 ${location.pathname === item.path ? 'text-white' : item.color}`} />
+                <item.icon className={`w-5 h-5 flex-shrink-0 relative z-20 ${location.pathname === item.path ? 'text-white' : item.color}`} />
                 <AnimatePresence>
                   {!isCollapsed && (
                     <motion.span
@@ -143,7 +143,8 @@ export function NavigationMenu() {
                       initial="collapsed"
                       animate="expanded"
                       exit="collapsed"
-                      className={`truncate font-medium relative z-10 ${location.pathname === item.path ? 'text-white' : 'text-foreground'}`}
+                      className={`truncate font-medium relative z-20 ${location.pathname === item.path ? 'text-white !important' : 'text-foreground'}`}
+                      style={location.pathname === item.path ? { color: 'white' } : {}}
                     >
                       {item.label}
                     </motion.span>
