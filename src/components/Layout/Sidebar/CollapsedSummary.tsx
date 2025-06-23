@@ -45,7 +45,8 @@ export function CollapsedSummary() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ delay: 0.2 }}
-          className="px-1 py-4 space-y-3 flex flex-col items-center"
+          className="px-1 py-4 space-y-3 flex flex-col items-center border-l border-white/10"
+          style={{ borderLeftWidth: '10%' }}
         >
           {summaryItems.map((item, index) => (
             item.count > 0 && (
@@ -56,10 +57,10 @@ export function CollapsedSummary() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.3 + index * 0.1 }}
                     whileHover={{ scale: 1.05 }}
-                    className={`w-12 h-12 ${item.bgColor} rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all duration-200 hover:shadow-lg relative`}
+                    className={`w-10 h-10 ${item.bgColor} rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all duration-200 hover:shadow-lg relative ml-1`}
                   >
-                    <item.icon className={`w-4 h-4 ${item.color} mb-1`} />
-                    <Badge className={`${item.badgeColor} px-1.5 py-0.5 min-w-0 h-4 rounded-full absolute -top-1 -right-1 shadow-sm`}>
+                    <item.icon className={`w-3.5 h-3.5 ${item.color} mb-0.5`} />
+                    <Badge className={`${item.badgeColor} px-1 py-0 min-w-0 h-3.5 text-[10px] rounded-full absolute -top-0.5 -right-0.5 shadow-sm flex items-center justify-center`}>
                       {item.count}
                     </Badge>
                   </motion.div>
