@@ -36,7 +36,7 @@ export function SidebarFooter() {
   const isCollapsed = state === 'collapsed';
 
   return (
-    <div className={`${isCollapsed ? 'px-1' : 'px-2'}`}>
+    <div className={`${isCollapsed ? 'px-1' : 'px-2'} relative z-20`}> {/* Lower z-index than collapsed summary */}
       <AnimatePresence>
         {!isCollapsed ? (
           <motion.div
@@ -84,7 +84,7 @@ export function SidebarFooter() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.div whileHover={{ scale: 1.05 }}>
-                  <Avatar className="w-12 h-12 ring-2 ring-primary/20 cursor-pointer">
+                  <Avatar className="w-11 h-11 ring-2 ring-primary/20 cursor-pointer"> {/* Slightly smaller to avoid overlap */}
                     <AvatarImage src={user?.avatar} />
                     <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10">
                       {user?.name?.[0]}
