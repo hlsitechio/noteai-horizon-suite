@@ -13,7 +13,8 @@ const EditorInner: React.FC = () => {
   
   console.log('EditorInner rendering with:', {
     isMobile,
-    title: editorState.title
+    title: editorState.title,
+    sidebarState
   });
 
   const editorHandlers = useEditorHandlers({
@@ -88,10 +89,11 @@ const EditorInner: React.FC = () => {
             isSaving={editorState.isSaving}
             
             // UI state - unified focus mode controls everything
+            // Force AI assistant to be collapsed when main sidebar is open
             isFocusMode={editorState.isFocusMode}
             isHeaderCollapsed={editorState.isHeaderCollapsed}
             isHeaderHidden={editorState.isHeaderHidden || (isMobile && isUnifiedFocusMode)}
-            isAssistantCollapsed={editorState.isAssistantCollapsed || isUnifiedFocusMode || isMobile}
+            isAssistantCollapsed={true} // Always collapse AI assistant to prevent double sidebar
             
             // Form handlers
             onTitleChange={editorState.setTitle}
