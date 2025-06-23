@@ -32,20 +32,29 @@ const StepByStepRegister: React.FC = () => {
 
     setIsCheckingEmail(true);
     try {
-      // Try to sign in with email and a dummy password to check if email exists
-      const { error } = await supabase.auth.signInWithPassword({
-        email: emailToCheck,
-        password: 'dummy-password-check-123'
-      });
-
-      // If we get "Invalid login credentials" error, it means email doesn't exist
-      // If we get any other error or no error, email likely exists
-      const emailDoesNotExist = error && error.message === 'Invalid login credentials';
+      console.log('Checking if email exists:', emailToCheck);
       
-      setEmailExists(!emailDoesNotExist);
-      return !emailDoesNotExist;
+      // Check if user exists in user_profiles table
+      const { data: profile, error } = await supabase
+        .from('user_profiles')
+        .select('email')
+        .eq('email', emailToCheck)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error checking email:', error);
+        setEmailExists(false);
+        return false;
+      }
+
+      const emailAlreadyExists = !!profile;
+      console.log('Email exists result:', emailAlreadyExists);
+      
+      setEmailExists(emailAlreadyExists);
+      return emailAlreadyExists;
     } catch (error) {
       console.error('Error checking email:', error);
+      setEmailExists(false);
       return false;
     } finally {
       setIsCheckingEmail(false);
@@ -84,7 +93,6 @@ const StepByStepRegister: React.FC = () => {
         setConfirmPassword(value);
         break;
     }
-    setIsValid(false);
     
     // For email step, check if email exists after validation
     if (currentStep === 'email' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
@@ -92,15 +100,14 @@ const StepByStepRegister: React.FC = () => {
       setTimeout(async () => {
         if (value === email) { // Only check if email hasn't changed
           await checkEmailExists(value);
-          setIsValid(validateCurrentStep());
         }
       }, 500);
-    } else {
-      // Check validation after a short delay for other steps
-      setTimeout(() => {
-        setIsValid(validateCurrentStep());
-      }, 300);
     }
+    
+    // Update validation state
+    setTimeout(() => {
+      setIsValid(validateCurrentStep());
+    }, 100);
   };
 
   const handleNext = () => {
@@ -232,7 +239,7 @@ const StepByStepRegister: React.FC = () => {
                   )}
 
                   <AnimatePresence>
-                    {isValid && !isCheckingEmail && (
+                    {isValid && !isCheckingEmail && !emailExists && (
                       <motion.button
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
@@ -258,7 +265,7 @@ const StepByStepRegister: React.FC = () => {
                       <AlertCircle className="w-5 h-5 text-red-500 dark:text-red-400" />
                       <div>
                         <p className="text-red-800 dark:text-red-200 font-medium">
-                          Account already exists
+                          You already have an account!
                         </p>
                         <p className="text-red-600 dark:text-red-300 text-sm mt-1">
                           This email is already registered.{' '}
@@ -266,7 +273,7 @@ const StepByStepRegister: React.FC = () => {
                             onClick={() => navigate('/login')}
                             className="underline hover:no-underline font-medium"
                           >
-                            Sign in instead
+                            Click Sign in instead
                           </button>
                         </p>
                       </div>
