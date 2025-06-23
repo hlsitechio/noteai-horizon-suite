@@ -7,6 +7,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { NotesProvider } from "./contexts/NotesContext";
 import { FoldersProvider } from "./contexts/FoldersContext";
+import { NotificationsProvider } from "./contexts/NotificationsContext";
 import Layout from "./components/Layout/Layout";
 import Index from "./pages/Index";
 import Login from "./pages/Auth/Login";
@@ -31,46 +32,48 @@ const App = () => (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <TooltipProvider>
         <AuthProvider>
-          <NotesProvider>
-            <FoldersProvider>
-              <Toaster />
-              <BrowserRouter>
-                <Routes>
-                  {/* Landing and marketing pages */}
-                  <Route path="/" element={<Landing />} />
-                  <Route path="/coming-soon" element={<ComingSoon />} />
-                  <Route path="/terms" element={<Terms />} />
-                  <Route path="/privacy" element={<Privacy />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/sitemap" element={<Sitemap />} />
-                  
-                  {/* Authentication pages */}
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  
-                  {/* App pages with layout */}
-                  <Route path="/app" element={<Layout />}>
-                    <Route index element={<Navigate to="/dashboard" replace />} />
-                    <Route path="dashboard" element={<Dashboard />} />
-                    <Route path="chat" element={<Chat />} />
-                    <Route path="editor" element={<Editor />} />
-                    <Route path="calendar" element={<Calendar />} />
-                    <Route path="settings" element={<Settings />} />
-                  </Route>
-                  
-                  {/* Legacy routes for backward compatibility */}
-                  <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
-                  <Route path="/chat" element={<Navigate to="/app/chat" replace />} />
-                  <Route path="/editor" element={<Navigate to="/app/editor" replace />} />
-                  <Route path="/calendar" element={<Navigate to="/app/calendar" replace />} />
-                  <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
-                  
-                  {/* Catch all */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
-            </FoldersProvider>
-          </NotesProvider>
+          <NotificationsProvider>
+            <NotesProvider>
+              <FoldersProvider>
+                <Toaster />
+                <BrowserRouter>
+                  <Routes>
+                    {/* Landing and marketing pages */}
+                    <Route path="/" element={<Landing />} />
+                    <Route path="/coming-soon" element={<ComingSoon />} />
+                    <Route path="/terms" element={<Terms />} />
+                    <Route path="/privacy" element={<Privacy />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/sitemap" element={<Sitemap />} />
+                    
+                    {/* Authentication pages */}
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    
+                    {/* App pages with layout */}
+                    <Route path="/app" element={<Layout />}>
+                      <Route index element={<Navigate to="/dashboard" replace />} />
+                      <Route path="dashboard" element={<Dashboard />} />
+                      <Route path="chat" element={<Chat />} />
+                      <Route path="editor" element={<Editor />} />
+                      <Route path="calendar" element={<Calendar />} />
+                      <Route path="settings" element={<Settings />} />
+                    </Route>
+                    
+                    {/* Legacy routes for backward compatibility */}
+                    <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
+                    <Route path="/chat" element={<Navigate to="/app/chat" replace />} />
+                    <Route path="/editor" element={<Navigate to="/app/editor" replace />} />
+                    <Route path="/calendar" element={<Navigate to="/app/calendar" replace />} />
+                    <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
+                    
+                    {/* Catch all */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </BrowserRouter>
+              </FoldersProvider>
+            </NotesProvider>
+          </NotificationsProvider>
         </AuthProvider>
       </TooltipProvider>
     </ThemeProvider>

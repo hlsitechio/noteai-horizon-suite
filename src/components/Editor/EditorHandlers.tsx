@@ -1,6 +1,7 @@
+
 import { useNotes } from '../../contexts/NotesContext';
 import { useAutoTagging } from '../../hooks/useAutoTagging';
-import { toast } from 'sonner';
+import { useToast } from '../../hooks/useToast';
 
 interface EditorHandlersProps {
   title: string;
@@ -37,6 +38,7 @@ export const useEditorHandlers = ({
 }: EditorHandlersProps) => {
   const { createNote, updateNote } = useNotes();
   const { generateTags, isGeneratingTags } = useAutoTagging();
+  const { toast } = useToast();
 
   const handleSave = async () => {
     if (!title.trim()) {
@@ -115,9 +117,11 @@ export const useEditorHandlers = ({
       if (currentNote) {
         await updateNote(currentNote.id, noteData);
         console.log('Note updated successfully');
+        toast.success('Note updated successfully');
       } else {
         await createNote(noteData);
         console.log('Note created successfully');
+        toast.success('Note created successfully');
       }
     } catch (error) {
       console.error('Error saving note:', error);

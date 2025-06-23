@@ -1,10 +1,11 @@
 
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import { useToast } from './useToast';
 
 export const useAutoTagging = () => {
   const [isGeneratingTags, setIsGeneratingTags] = useState(false);
+  const { toast } = useToast();
 
   const generateTags = async (title: string, content: string): Promise<string[]> => {
     if (!title.trim() && !content.trim()) {
@@ -20,15 +21,12 @@ export const useAutoTagging = () => {
         contentLength: content.length
       });
       
-      // Show loading toast
-      const loadingToast = toast.loading('Generating tags automatically...');
+      // Show loading notification
+      toast.info('Generating tags automatically...', 'Please wait while we analyze your content');
       
       const { data, error } = await supabase.functions.invoke('generate-note-tags', {
         body: { title, content }
       });
-
-      // Dismiss loading toast
-      toast.dismiss(loadingToast);
 
       if (error) {
         console.error('Supabase function error:', error);
