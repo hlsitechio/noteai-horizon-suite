@@ -16,7 +16,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, model = "meta-llama/llama-3.1-8b-instruct:free" } = await req.json();
+    const { messages, model = "deepseek/deepseek-r1-0528-qwen3-8b:free" } = await req.json();
 
     console.log('Chat request received:', { messagesCount: messages.length, model });
 
