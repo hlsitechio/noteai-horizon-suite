@@ -179,214 +179,340 @@ const FocusMode: React.FC<FocusModeProps> = ({
             isZenMode ? 'max-w-4xl h-screen p-0' : 'max-w-6xl h-[95vh] p-6'
           }`}
         >
-          <Card className={`h-full glass shadow-2xl overflow-hidden transition-all duration-500 ${
-            isZenMode ? 'rounded-none border-none' : 'rounded-3xl'
-          }`}>
-            {/* Floating Controls */}
-            <AnimatePresence>
-              {isControlsVisible && (
-                <motion.div
-                  initial={{ opacity: 0, y: -20 }}
+          {isBackgroundHidden ? (
+            /* Pure black background container when ambience is 100% */
+            <div className="h-full bg-black overflow-hidden">
+              {/* Floating Controls */}
+              <AnimatePresence>
+                {isControlsVisible && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="absolute top-6 left-6 right-6 z-20 flex items-center justify-between bg-black/20 backdrop-blur-xl rounded-2xl p-4"
+                  >
+                    {/* ... keep existing code (controls content) */}
+                    <div className="flex items-center gap-4">
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        className="flex items-center gap-3 text-white/90"
+                      >
+                        <Maximize2 className="w-6 h-6 text-blue-400" />
+                        <span className="text-lg font-semibold">Focus Mode</span>
+                      </motion.div>
+                      
+                      {/* Writing Stats */}
+                      <motion.div 
+                        className="flex items-center gap-4 text-sm text-white/70"
+                        whileHover={{ scale: 1.02 }}
+                      >
+                        <div className="flex items-center gap-1">
+                          <Type className="w-4 h-4" />
+                          <span>{wordCount} words</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Timer className="w-4 h-4" />
+                          <span>{formatTime(timeSpent)}</span>
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      {/* Zen Mode Toggle */}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setIsZenMode(!isZenMode)}
+                          className="text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300"
+                        >
+                          {isZenMode ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                        </Button>
+                      </motion.div>
+
+                      {/* Stats Toggle */}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowStats(!showStats)}
+                          className="text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300"
+                        >
+                          <Target className="w-4 h-4" />
+                        </Button>
+                      </motion.div>
+
+                      {/* Save Button */}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          onClick={onSave}
+                          disabled={!title.trim() || isSaving}
+                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-none shadow-lg"
+                        >
+                          <Save className="w-4 h-4 mr-2" />
+                          {isSaving ? 'Saving...' : 'Save'}
+                        </Button>
+                      </motion.div>
+
+                      {/* Close Button */}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={onClose}
+                          className="text-white/80 hover:text-white hover:bg-red-500/20 transition-all duration-300"
+                        >
+                          <X className="w-5 h-5" />
+                        </Button>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Title Input */}
+              <div className={`${isZenMode ? 'pt-24 px-12' : 'pt-20 px-12'}`}>
+                <motion.input
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className={`absolute top-6 left-6 right-6 z-20 flex items-center justify-between ${
-                    isZenMode ? 'bg-black/20 backdrop-blur-xl rounded-2xl p-4' : ''
-                  }`}
-                >
-                  <div className="flex items-center gap-4">
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      className="flex items-center gap-3 text-white/90"
-                    >
-                      <Maximize2 className="w-6 h-6 text-blue-400" />
-                      <span className="text-lg font-semibold">Focus Mode</span>
-                    </motion.div>
-                    
-                    {/* Writing Stats */}
-                    <motion.div 
-                      className="flex items-center gap-4 text-sm text-white/70"
-                      whileHover={{ scale: 1.02 }}
-                    >
-                      <div className="flex items-center gap-1">
-                        <Type className="w-4 h-4" />
-                        <span>{wordCount} words</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Timer className="w-4 h-4" />
-                        <span>{formatTime(timeSpent)}</span>
-                      </div>
-                    </motion.div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    {/* Zen Mode Toggle */}
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setIsZenMode(!isZenMode)}
-                        className="text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300"
-                      >
-                        {isZenMode ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                      </Button>
-                    </motion.div>
-
-                    {/* Stats Toggle */}
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowStats(!showStats)}
-                        className="text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300"
-                      >
-                        <Target className="w-4 h-4" />
-                      </Button>
-                    </motion.div>
-
-                    {/* Save Button */}
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button
-                        onClick={onSave}
-                        disabled={!title.trim() || isSaving}
-                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-none shadow-lg"
-                      >
-                        <Save className="w-4 h-4 mr-2" />
-                        {isSaving ? 'Saving...' : 'Save'}
-                      </Button>
-                    </motion.div>
-
-                    {/* Close Button */}
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={onClose}
-                        className="text-white/80 hover:text-white hover:bg-red-500/20 transition-all duration-300"
-                      >
-                        <X className="w-5 h-5" />
-                      </Button>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Title Input */}
-            <div className={`${isZenMode ? 'pt-24 px-12' : 'pt-20 px-12'}`}>
-              <motion.input
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                type="text"
-                value={title}
-                onChange={(e) => onTitleChange(e.target.value)}
-                placeholder="Enter your title..."
-                className="w-full text-4xl font-bold bg-transparent border-none outline-none text-white placeholder-white/50 mb-8 leading-tight"
-                autoFocus
-              />
-            </div>
-
-            {/* Editor Content */}
-            <CardContent className={`h-[calc(100%-140px)] ${isZenMode ? 'px-12 pb-12' : 'px-12 pb-6'}`}>
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="h-full"
-              >
-                <RichTextEditor
-                  value={content}
-                  onChange={onContentChange}
-                  placeholder="Focus on your writing... Let your thoughts flow without any distractions."
+                  transition={{ delay: 0.2 }}
+                  type="text"
+                  value={title}
+                  onChange={(e) => onTitleChange(e.target.value)}
+                  placeholder="Enter your title..."
+                  className="w-full text-4xl font-bold bg-transparent border-none outline-none text-white placeholder-white/50 mb-8 leading-tight"
+                  autoFocus
                 />
-              </motion.div>
-            </CardContent>
+              </div>
 
-            {/* Floating Background Opacity Control */}
-            <AnimatePresence>
-              {isControlsVisible && !isZenMode && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  className="absolute bottom-6 right-6 bg-black/20 backdrop-blur-xl rounded-2xl p-4"
-                >
-                  <div className="flex items-center gap-3 text-white/80">
-                    <span className="text-sm font-medium">Ambience</span>
-                    <Slider
-                      value={backgroundOpacity}
-                      onValueChange={setBackgroundOpacity}
-                      max={100}
-                      min={60}
-                      step={5}
-                      className="w-24"
-                    />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Writing Statistics Sidebar */}
-            <AnimatePresence>
-              {showStats && isControlsVisible && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="absolute bottom-6 left-6 bg-black/20 backdrop-blur-xl rounded-2xl p-6 min-w-[200px]"
-                >
-                  <h3 className="text-white font-semibold mb-4">Writing Session</h3>
-                  <div className="space-y-3 text-white/80">
-                    <div className="flex justify-between">
-                      <span>Words:</span>
-                      <span className="font-mono">{wordCount}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Characters:</span>
-                      <span className="font-mono">{characterCount}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Time:</span>
-                      <span className="font-mono">{formatTime(timeSpent)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>WPM:</span>
-                      <span className="font-mono">
-                        {timeSpent > 0 ? Math.round((wordCount / timeSpent) * 60) : 0}
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Keyboard Shortcuts Help */}
-            <AnimatePresence>
-              {isControlsVisible && (
-                <motion.div
+              {/* Editor Content */}
+              <div className={`h-[calc(100%-140px)] ${isZenMode ? 'px-12 pb-12' : 'px-12 pb-6'}`}>
+                <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-center"
+                  transition={{ delay: 0.3 }}
+                  className="h-full"
                 >
-                  <div className="flex gap-6 text-sm text-white/60">
-                    <span>
-                      <kbd className="px-2 py-1 bg-white/10 rounded text-xs mr-1">Esc</kbd>
-                      Exit
-                    </span>
-                    <span>
-                      <kbd className="px-2 py-1 bg-white/10 rounded text-xs mr-1">Ctrl+S</kbd>
-                      Save
-                    </span>
-                    <span>
-                      <kbd className="px-2 py-1 bg-white/10 rounded text-xs mr-1">Ctrl+H</kbd>
-                      {isControlsVisible ? "Hide" : "Show"} Controls
+                  <RichTextEditor
+                    value={content}
+                    onChange={onContentChange}
+                    placeholder="Focus on your writing... Let your thoughts flow without any distractions."
+                  />
+                </motion.div>
+              </div>
+            </div>
+          ) : (
+            /* Card container when ambience is less than 100% */
+            <Card className={`h-full glass shadow-2xl overflow-hidden transition-all duration-500 ${
+              isZenMode ? 'rounded-none border-none' : 'rounded-3xl'
+            }`}>
+              {/* ... keep existing code (same controls, title input, and editor content but inside Card) */}
+              {/* Floating Controls */}
+              <AnimatePresence>
+                {isControlsVisible && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className={`absolute top-6 left-6 right-6 z-20 flex items-center justify-between ${
+                      isZenMode ? 'bg-black/20 backdrop-blur-xl rounded-2xl p-4' : ''
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        className="flex items-center gap-3 text-white/90"
+                      >
+                        <Maximize2 className="w-6 h-6 text-blue-400" />
+                        <span className="text-lg font-semibold">Focus Mode</span>
+                      </motion.div>
+                      
+                      {/* Writing Stats */}
+                      <motion.div 
+                        className="flex items-center gap-4 text-sm text-white/70"
+                        whileHover={{ scale: 1.02 }}
+                      >
+                        <div className="flex items-center gap-1">
+                          <Type className="w-4 h-4" />
+                          <span>{wordCount} words</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Timer className="w-4 h-4" />
+                          <span>{formatTime(timeSpent)}</span>
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      {/* Zen Mode Toggle */}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setIsZenMode(!isZenMode)}
+                          className="text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300"
+                        >
+                          {isZenMode ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                        </Button>
+                      </motion.div>
+
+                      {/* Stats Toggle */}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowStats(!showStats)}
+                          className="text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300"
+                        >
+                          <Target className="w-4 h-4" />
+                        </Button>
+                      </motion.div>
+
+                      {/* Save Button */}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          onClick={onSave}
+                          disabled={!title.trim() || isSaving}
+                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-none shadow-lg"
+                        >
+                          <Save className="w-4 h-4 mr-2" />
+                          {isSaving ? 'Saving...' : 'Save'}
+                        </Button>
+                      </motion.div>
+
+                      {/* Close Button */}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={onClose}
+                          className="text-white/80 hover:text-white hover:bg-red-500/20 transition-all duration-300"
+                        >
+                          <X className="w-5 h-5" />
+                        </Button>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Title Input */}
+              <div className={`${isZenMode ? 'pt-24 px-12' : 'pt-20 px-12'}`}>
+                <motion.input
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  type="text"
+                  value={title}
+                  onChange={(e) => onTitleChange(e.target.value)}
+                  placeholder="Enter your title..."
+                  className="w-full text-4xl font-bold bg-transparent border-none outline-none text-white placeholder-white/50 mb-8 leading-tight"
+                  autoFocus
+                />
+              </div>
+
+              {/* Editor Content */}
+              <CardContent className={`h-[calc(100%-140px)] ${isZenMode ? 'px-12 pb-12' : 'px-12 pb-6'}`}>
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="h-full"
+                >
+                  <RichTextEditor
+                    value={content}
+                    onChange={onContentChange}
+                    placeholder="Focus on your writing... Let your thoughts flow without any distractions."
+                  />
+                </motion.div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Floating Background Opacity Control */}
+          <AnimatePresence>
+            {isControlsVisible && !isZenMode && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="absolute bottom-6 right-6 bg-black/20 backdrop-blur-xl rounded-2xl p-4"
+              >
+                <div className="flex items-center gap-3 text-white/80">
+                  <span className="text-sm font-medium">Ambience</span>
+                  <Slider
+                    value={backgroundOpacity}
+                    onValueChange={setBackgroundOpacity}
+                    max={100}
+                    min={60}
+                    step={5}
+                    className="w-24"
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Writing Statistics Sidebar */}
+          <AnimatePresence>
+            {showStats && isControlsVisible && (
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="absolute bottom-6 left-6 bg-black/20 backdrop-blur-xl rounded-2xl p-6 min-w-[200px]"
+              >
+                <h3 className="text-white font-semibold mb-4">Writing Session</h3>
+                <div className="space-y-3 text-white/80">
+                  <div className="flex justify-between">
+                    <span>Words:</span>
+                    <span className="font-mono">{wordCount}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Characters:</span>
+                    <span className="font-mono">{characterCount}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Time:</span>
+                    <span className="font-mono">{formatTime(timeSpent)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>WPM:</span>
+                    <span className="font-mono">
+                      {timeSpent > 0 ? Math.round((wordCount / timeSpent) * 60) : 0}
                     </span>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </Card>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Keyboard Shortcuts Help */}
+          <AnimatePresence>
+            {isControlsVisible && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-center"
+              >
+                <div className="flex gap-6 text-sm text-white/60">
+                  <span>
+                    <kbd className="px-2 py-1 bg-white/10 rounded text-xs mr-1">Esc</kbd>
+                    Exit
+                  </span>
+                  <span>
+                    <kbd className="px-2 py-1 bg-white/10 rounded text-xs mr-1">Ctrl+S</kbd>
+                    Save
+                  </span>
+                  <span>
+                    <kbd className="px-2 py-1 bg-white/10 rounded text-xs mr-1">Ctrl+H</kbd>
+                    {isControlsVisible ? "Hide" : "Show"} Controls
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </motion.div>
     </AnimatePresence>
