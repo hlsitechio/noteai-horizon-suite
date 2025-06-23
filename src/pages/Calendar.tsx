@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns';
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, Clock, FileText, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -18,7 +18,8 @@ const Calendar: React.FC = () => {
   const [isEventFormOpen, setIsEventFormOpen] = useState(false);
   const [isNoteFormOpen, setIsNoteFormOpen] = useState(false);
   const { events, addEvent, updateEvent, deleteEvent } = useCalendarEvents();
-  const { notes, createNote } = useNotes();
+  const { notes, createNote, setCurrentNote } = useNotes();
+  const navigate = useNavigate();
 
   const monthStart = startOfMonth(viewDate);
   const monthEnd = endOfMonth(viewDate);
@@ -60,6 +61,12 @@ const Calendar: React.FC = () => {
       color: '#64748b'
     });
     setIsNoteFormOpen(false);
+  };
+
+  const handleNoteClick = (note: any) => {
+    console.log('Note clicked:', note);
+    setCurrentNote(note);
+    navigate('/app/editor');
   };
 
   const getEventTypeIcon = (type: CalendarEvent['type']) => {
@@ -229,13 +236,17 @@ const Calendar: React.FC = () => {
                         
                         {/* Notes section */}
                         {dayNotes.slice(0, 1).map((note) => (
-                          <div
+                          <button
                             key={note.id}
-                            className="flex items-center gap-1 p-1 rounded text-xs bg-orange-500/20 backdrop-blur-sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleNoteClick(note);
+                            }}
+                            className="flex items-center gap-1 p-1 rounded text-xs bg-orange-500/20 backdrop-blur-sm hover:bg-orange-500/30 transition-colors w-full text-left"
                           >
                             <FileText className="w-3 h-3" />
                             <span className="truncate">{note.title}</span>
-                          </div>
+                          </button>
                         ))}
                         
                         {/* Show count if more items */}
@@ -327,7 +338,11 @@ const Calendar: React.FC = () => {
                     <p className="text-sm text-muted-foreground">No notes for this date</p>
                   ) : (
                     selectedDateNotes.map((note) => (
-                      <div key={note.id} className="p-3 border rounded-lg space-y-2">
+                      <button
+                        key={note.id}
+                        onClick={() => handleNoteClick(note)}
+                        className="w-full p-3 border rounded-lg space-y-2 text-left hover:bg-accent transition-colors"
+                      >
                         <div className="flex items-center gap-2">
                           <FileText className="w-4 h-4" />
                           <span className="font-medium">{note.title}</span>
@@ -345,7 +360,7 @@ const Calendar: React.FC = () => {
                             </Badge>
                           ))}
                         </div>
-                      </div>
+                      </button>
                     ))
                   )}
                 </TabsContent>
