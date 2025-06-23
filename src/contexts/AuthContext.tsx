@@ -68,25 +68,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         
         if (session?.user) {
-          try {
-            const transformedUser = await transformUser(session.user);
-            setUser(transformedUser);
-            console.log('User authenticated:', transformedUser.email);
-          } catch (error) {
-            console.error('Error setting user:', error);
-            setUser(null);
-          }
+          // Handle user transformation asynchronously without blocking state updates
+          setTimeout(async () => {
+            try {
+              const transformedUser = await transformUser(session.user);
+              setUser(transformedUser);
+              console.log('User authenticated:', transformedUser.email);
+            } catch (error) {
+              console.error('Error setting user:', error);
+              setUser(null);
+            } finally {
+              setIsLoading(false);
+            }
+          }, 0);
         } else {
           setUser(null);
+          setIsLoading(false);
           console.log('User logged out');
         }
-        
-        setIsLoading(false);
       }
     );
 
