@@ -26,6 +26,8 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   isSaving = false
 }) => {
   const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [editorFontFamily, setEditorFontFamily] = useState('inter');
+  const [editorFontSize, setEditorFontSize] = useState(16);
 
   // Custom hooks for editor functionality
   const {
@@ -52,6 +54,29 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     handleKeyboardShortcuts,
   } = useEditorFormatting(editor);
 
+  const handleFontChange = (fontFamily: string, fontSize: number) => {
+    setEditorFontFamily(fontFamily);
+    setEditorFontSize(fontSize);
+  };
+
+  const getFontFamilyStyle = (family: string) => {
+    const fontMap: Record<string, string> = {
+      'inter': 'Inter, system-ui, sans-serif',
+      'arial': 'Arial, sans-serif',
+      'helvetica': 'Helvetica, Arial, sans-serif',
+      'georgia': 'Georgia, serif',
+      'times': '"Times New Roman", serif',
+      'courier': '"Courier New", monospace',
+      'verdana': 'Verdana, sans-serif',
+    };
+    return fontMap[family] || fontMap['inter'];
+  };
+
+  const editorStyle = {
+    fontFamily: getFontFamilyStyle(editorFontFamily),
+    fontSize: `${editorFontSize}px`,
+  };
+
   return (
     <>
       <div className="glass rounded-2xl shadow-large overflow-hidden bg-white/10 backdrop-blur-lg dark:bg-slate-800/20">
@@ -60,21 +85,24 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           onAIClick={() => setShowAIAssistant(true)}
           onSave={onSave || (() => {})}
           onTextInsert={handleTextInsert}
+          onFontChange={handleFontChange}
           activeFormats={getActiveFormats()}
           selectedText={selectedText}
           canSave={canSave}
           isSaving={isSaving}
         />
 
-        <EditorContent
-          editor={editor}
-          slateValue={slateValue}
-          onChange={handleChange}
-          placeholder={placeholder}
-          onSelect={handleTextSelection}
-          onKeyDown={handleKeyboardShortcuts}
-          onAIToggle={() => setShowAIAssistant(true)}
-        />
+        <div style={editorStyle}>
+          <EditorContent
+            editor={editor}
+            slateValue={slateValue}
+            onChange={handleChange}
+            placeholder={placeholder}
+            onSelect={handleTextSelection}
+            onKeyDown={handleKeyboardShortcuts}
+            onAIToggle={() => setShowAIAssistant(true)}
+          />
+        </div>
       </div>
 
       {/* Context Menu for Text Selection */}

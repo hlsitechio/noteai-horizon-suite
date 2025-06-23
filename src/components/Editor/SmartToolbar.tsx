@@ -31,6 +31,7 @@ interface SmartToolbarProps {
   onAIClick: () => void;
   onSave: () => void;
   onTextInsert?: (text: string) => void;
+  onFontChange?: (fontFamily: string, fontSize: number) => void;
   activeFormats: Set<string>;
   selectedText: string;
   canSave?: boolean;
@@ -42,6 +43,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
   onAIClick,
   onSave,
   onTextInsert,
+  onFontChange,
   activeFormats,
   selectedText,
   canSave = true,
@@ -60,14 +62,16 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
 
   const handleFontSizeChange = (value: number[]) => {
     setFontSize(value);
-    // Apply font size to selected text or document
-    document.execCommand('fontSize', false, value[0].toString());
+    if (onFontChange) {
+      onFontChange(fontFamily, value[0]);
+    }
   };
 
   const handleFontFamilyChange = (family: string) => {
     setFontFamily(family);
-    // Apply font family to selected text or document
-    document.execCommand('fontName', false, family);
+    if (onFontChange) {
+      onFontChange(family, fontSize[0]);
+    }
   };
 
   const formatButtons = [
