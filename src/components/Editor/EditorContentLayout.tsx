@@ -20,13 +20,13 @@ const EditorContentLayout: React.FC<EditorContentLayoutProps> = (props) => {
     isAssistantCollapsed: props.isAssistantCollapsed
   });
 
-  // Get available categories - for now using a static list
+  // Get available categories - using correct NoteCategory structure
   const categories = [
-    { id: 'general', name: 'General', color: '#6366f1' },
-    { id: 'work', name: 'Work', color: '#059669' },
-    { id: 'personal', name: 'Personal', color: '#dc2626' },
-    { id: 'ideas', name: 'Ideas', color: '#7c3aed' },
-    { id: 'research', name: 'Research', color: '#ea580c' },
+    { value: 'general', label: 'General', color: '#6366f1' },
+    { value: 'work', label: 'Work', color: '#059669' },
+    { value: 'personal', label: 'Personal', color: '#dc2626' },
+    { value: 'ideas', label: 'Ideas', color: '#7c3aed' },
+    { value: 'research', label: 'Research', color: '#ea580c' },
   ];
 
   return (

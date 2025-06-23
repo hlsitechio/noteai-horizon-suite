@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AppSidebar } from '../components/Layout/AppSidebar';
 import { SidebarProvider, SidebarInset, useSidebar } from '@/components/ui/sidebar';
@@ -14,8 +13,7 @@ const EditorInner: React.FC = () => {
   
   console.log('EditorInner rendering with:', {
     isMobile,
-    title: editorState.title,
-    isLoading: editorState.isLoading || false
+    title: editorState.title
   });
 
   const editorHandlers = useEditorHandlers({
