@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Crown, Focus, Heart, Save, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import { useSidebar } from '@/components/ui/sidebar';
+import { Crown, Focus, Heart, Save } from 'lucide-react';
 import { headerVariants } from './EditorHeaderTypes';
 import EditorHeaderButton from './EditorHeaderButton';
 
@@ -25,19 +24,7 @@ const EditorHeaderCollapsed: React.FC<EditorHeaderCollapsedProps> = ({
   onFavoriteToggle,
   onFocusModeToggle,
   onSave,
-  onCollapseAllBars,
 }) => {
-  const { state, setOpen } = useSidebar();
-
-  const handleCollapseAll = () => {
-    if (state === 'collapsed') {
-      setOpen(true);
-    } else {
-      setOpen(false);
-    }
-    onCollapseAllBars?.();
-  };
-
   return (
     <motion.div
       variants={headerVariants}
@@ -61,17 +48,6 @@ const EditorHeaderCollapsed: React.FC<EditorHeaderCollapsedProps> = ({
         </motion.span>
       </div>
       <div className="flex gap-2">
-        <EditorHeaderButton
-          onClick={handleCollapseAll}
-          className="text-gray-600 bg-gray-50/20 dark:bg-gray-800/20 dark:text-gray-400 hover:scale-105 transition-all backdrop-blur-sm border-0"
-        >
-          {state === 'collapsed' ? (
-            <PanelLeftOpen className="w-4 h-4 mr-1" />
-          ) : (
-            <PanelLeftClose className="w-4 h-4 mr-1" />
-          )}
-          {state === 'collapsed' ? 'Expand All' : 'Collapse All'}
-        </EditorHeaderButton>
         <EditorHeaderButton
           onClick={onFocusModeToggle}
           className="text-purple-600 bg-purple-50/20 dark:bg-purple-900/20 dark:text-purple-400 hover:scale-105 transition-all backdrop-blur-sm border-0"

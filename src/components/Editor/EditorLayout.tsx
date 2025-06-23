@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PanelLeftOpen, Eye } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { LayoutGrid, Maximize2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import RichTextEditor from './RichTextEditor';
 import CollapsibleAssistant from './CollapsibleAssistant';
 import EditorMetadata from './EditorMetadata';
@@ -53,12 +53,10 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
   isSaving = false,
   collapseAssistantRef,
   expandAssistantRef,
-  showCollapseAllButton = false,
-  onCollapseAllBars,
-  isAllBarsCollapsed = false,
   isAssistantCollapsed = false,
 }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isDistrationFree, setIsDistractionFree] = useState(false);
 
   // Update refs to control assistant collapse state
   React.useEffect(() => {
@@ -70,56 +68,82 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
     }
   }, [collapseAssistantRef, expandAssistantRef]);
 
+  const toggleDistractionFree = () => {
+    setIsDistractionFree(!isDistrationFree);
+    if (!isDistrationFree) {
+      setIsSidebarCollapsed(true);
+    } else {
+      setIsSidebarCollapsed(false);
+    }
+  };
+
   return (
     <div className="relative">
-      {/* Floating Show All Bars Button - moved to top-right corner */}
-      {showCollapseAllButton && (
+      {/* Floating Layout Control */}
+      <AnimatePresence>
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="fixed top-6 right-6 z-50"
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className="fixed bottom-6 right-6 z-50"
         >
           <Button
-            onClick={onCollapseAllBars}
-            className="glass shadow-large bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0"
+            onClick={toggleDistractionFree}
+            className={`glass shadow-lg ${
+              isDistrationFree 
+                ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700' 
+                : 'bg-white/10 hover:bg-white/20 dark:bg-gray-800/20 dark:hover:bg-gray-700/30'
+            } text-white border-0 backdrop-blur-md transition-all duration-300`}
+            size="lg"
           >
-            {isAllBarsCollapsed ? (
+            {isDistrationFree ? (
               <>
-                <Eye className="w-4 h-4 mr-2" />
-                Show All Bars
+                <LayoutGrid className="w-5 h-5 mr-2" />
+                Show All Panels
               </>
             ) : (
               <>
-                <PanelLeftOpen className="w-4 h-4 mr-2" />
-                Collapse All
+                <Maximize2 className="w-5 h-5 mr-2" />
+                Distraction Free
               </>
             )}
           </Button>
         </motion.div>
-      )}
+      </AnimatePresence>
 
-      <div className={`grid gap-6 h-full transition-all duration-300 ${
-        isSidebarCollapsed 
+      <div className={`grid gap-6 h-full transition-all duration-500 ease-in-out ${
+        isSidebarCollapsed || isDistrationFree
           ? 'grid-cols-1 lg:grid-cols-[1fr_4rem]' 
           : 'grid-cols-1 lg:grid-cols-4'
       }`}>
         {/* Main Editor Column */}
-        <div className={isSidebarCollapsed ? 'lg:col-span-1' : 'lg:col-span-3'}>
-          <Card className="flex-1 h-full glass shadow-large">
+        <div className={isSidebarCollapsed || isDistrationFree ? 'lg:col-span-1' : 'lg:col-span-3'}>
+          <Card className={`flex-1 h-full glass shadow-large transition-all duration-300 ${
+            isDistrationFree ? 'border-transparent shadow-none' : ''
+          }`}>
             <CardContent className="p-8 h-full">
               <div className="space-y-6 h-full flex flex-col">
-                <EditorMetadata
-                  title={title}
-                  category={category}
-                  tags={tags}
-                  newTag={newTag}
-                  categories={categories}
-                  onTitleChange={onTitleChange}
-                  onCategoryChange={onCategoryChange}
-                  onNewTagChange={onNewTagChange}
-                  onAddTag={onAddTag}
-                  onRemoveTag={onRemoveTag}
-                />
+                <AnimatePresence>
+                  {!isDistrationFree && (
+                    <motion.div
+                      initial={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <EditorMetadata
+                        title={title}
+                        category={category}
+                        tags={tags}
+                        newTag={newTag}
+                        categories={categories}
+                        onTitleChange={onTitleChange}
+                        onCategoryChange={onCategoryChange}
+                        onNewTagChange={onNewTagChange}
+                        onAddTag={onAddTag}
+                        onRemoveTag={onRemoveTag}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Rich Text Editor */}
                 <div className="flex-1">
@@ -138,15 +162,24 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
         </div>
 
         {/* Collapsible AI Sidebar */}
-        <div className="lg:col-span-1">
-          <CollapsibleAssistant
-            content={content}
-            onSuggestionApply={onSuggestionApply}
-            onCollapseChange={setIsSidebarCollapsed}
-            isCollapsed={isAssistantCollapsed}
-            onCollapseToggle={() => {}}
-          />
-        </div>
+        <AnimatePresence>
+          {(!isDistrationFree || !isSidebarCollapsed) && (
+            <motion.div 
+              className="lg:col-span-1"
+              initial={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ duration: 0.3 }}
+            >
+              <CollapsibleAssistant
+                content={content}
+                onSuggestionApply={onSuggestionApply}
+                onCollapseChange={setIsSidebarCollapsed}
+                isCollapsed={isAssistantCollapsed || isSidebarCollapsed}
+                onCollapseToggle={setIsSidebarCollapsed}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
