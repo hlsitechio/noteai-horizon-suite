@@ -8,7 +8,7 @@ import {
   EyeIcon, 
   EyeSlashIcon, 
   ClockIcon, 
-  TargetIcon, 
+  ChartBarIcon, 
   XMarkIcon 
 } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
@@ -97,7 +97,7 @@ const FocusModeControls: React.FC<FocusModeControlsProps> = ({
                 onClick={onStatsToggle}
                 className="text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300"
               >
-                <TargetIcon className="w-4 h-4" />
+                <ChartBarIcon className="w-4 h-4" />
               </Button>
             </motion.div>
 
