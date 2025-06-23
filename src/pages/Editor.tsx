@@ -1,17 +1,16 @@
 import React from 'react';
-import { AppSidebar } from '../components/Layout/AppSidebar';
-import { SidebarProvider, SidebarInset, useSidebar } from '@/components/ui/sidebar';
+import { useSidebar } from '@/components/ui/sidebar';
 import { useEditorState } from '../components/Editor/EditorState';
 import { useEditorHandlers } from '../components/Editor/EditorHandlers';
 import EditorContent from '../components/Editor/EditorContent';
 import { useIsMobile } from '../hooks/use-mobile';
 
-const EditorInner: React.FC = () => {
+const Editor: React.FC = () => {
   const { state: sidebarState, setOpen } = useSidebar();
   const isMobile = useIsMobile();
   const editorState = useEditorState();
   
-  console.log('EditorInner rendering with:', {
+  console.log('Editor rendering with:', {
     isMobile,
     title: editorState.title,
     sidebarState
@@ -74,77 +73,62 @@ const EditorInner: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-full bg-background relative">
-      <AppSidebar />
-      <SidebarInset className="flex-1 min-w-0">
-        <div className="w-full h-full">
-          <EditorContent
-            // Form state
-            title={editorState.title}
-            content={editorState.content}
-            category={editorState.category}
-            tags={editorState.tags}
-            newTag={editorState.newTag}
-            isFavorite={editorState.isFavorite}
-            isSaving={editorState.isSaving}
-            
-            // UI state - unified focus mode controls everything
-            // Force AI assistant to be collapsed when main sidebar is open
-            isFocusMode={editorState.isFocusMode}
-            isHeaderCollapsed={editorState.isHeaderCollapsed}
-            isHeaderHidden={editorState.isHeaderHidden || (isMobile && isUnifiedFocusMode)}
-            isAssistantCollapsed={true} // Always collapse AI assistant to prevent double sidebar
-            
-            // Form handlers
-            onTitleChange={editorState.setTitle}
-            onContentChange={editorState.setContent}
-            onCategoryChange={editorState.setCategory}
-            onNewTagChange={editorState.setNewTag}
-            onAddTag={editorHandlers.addTag}
-            onRemoveTag={editorHandlers.removeTag}
-            onFavoriteToggle={() => editorState.setIsFavorite(!editorState.isFavorite)}
-            onSave={editorHandlers.handleSave}
-            onSuggestionApply={editorHandlers.handleSuggestionApply}
-            
-            // UI handlers - unified approach
-            onFocusModeToggle={handleUnifiedFocusToggle}
-            onHeaderCollapseToggle={() => editorState.setIsHeaderCollapsed(!editorState.isHeaderCollapsed)}
-            onCollapseAllBars={editorHandlers.handleCollapseAllBars}
-            onFocusModeClose={() => {
-              editorState.setIsFocusMode(false);
-              if (isUnifiedFocusMode && !isMobile) {
-                setIsUnifiedFocusMode(false);
-                setOpen(true);
-                editorState.setIsHeaderHidden(false);
-                editorState.setIsAssistantCollapsed(false);
-              }
-              // On mobile, keep unified focus mode active even after closing focus mode overlay
-              if (isMobile) {
-                editorState.setIsHeaderHidden(true);
-                editorState.setIsAssistantCollapsed(true);
-              }
-            }}
-            
-            // Refs and computed
-            collapseAssistantRef={editorState.collapseAssistantRef}
-            expandAssistantRef={editorState.expandAssistantRef}
-            currentNote={editorState.currentNote}
-            isDistractionFree={isUnifiedFocusMode}
-            isMobile={isMobile}
-          />
-        </div>
-      </SidebarInset>
+    <div className="w-full h-full">
+      <EditorContent
+        // Form state
+        title={editorState.title}
+        content={editorState.content}
+        category={editorState.category}
+        tags={editorState.tags}
+        newTag={editorState.newTag}
+        isFavorite={editorState.isFavorite}
+        isSaving={editorState.isSaving}
+        
+        // UI state - unified focus mode controls everything
+        // Force AI assistant to be collapsed when main sidebar is open
+        isFocusMode={editorState.isFocusMode}
+        isHeaderCollapsed={editorState.isHeaderCollapsed}
+        isHeaderHidden={editorState.isHeaderHidden || (isMobile && isUnifiedFocusMode)}
+        isAssistantCollapsed={true} // Always collapse AI assistant to prevent double sidebar
+        
+        // Form handlers
+        onTitleChange={editorState.setTitle}
+        onContentChange={editorState.setContent}
+        onCategoryChange={editorState.setCategory}
+        onNewTagChange={editorState.setNewTag}
+        onAddTag={editorHandlers.addTag}
+        onRemoveTag={editorHandlers.removeTag}
+        onFavoriteToggle={() => editorState.setIsFavorite(!editorState.isFavorite)}
+        onSave={editorHandlers.handleSave}
+        onSuggestionApply={editorHandlers.handleSuggestionApply}
+        
+        // UI handlers - unified approach
+        onFocusModeToggle={handleUnifiedFocusToggle}
+        onHeaderCollapseToggle={() => editorState.setIsHeaderCollapsed(!editorState.isHeaderCollapsed)}
+        onCollapseAllBars={editorHandlers.handleCollapseAllBars}
+        onFocusModeClose={() => {
+          editorState.setIsFocusMode(false);
+          if (isUnifiedFocusMode && !isMobile) {
+            setIsUnifiedFocusMode(false);
+            setOpen(true);
+            editorState.setIsHeaderHidden(false);
+            editorState.setIsAssistantCollapsed(false);
+          }
+          // On mobile, keep unified focus mode active even after closing focus mode overlay
+          if (isMobile) {
+            editorState.setIsHeaderHidden(true);
+            editorState.setIsAssistantCollapsed(true);
+          }
+        }}
+        
+        // Refs and computed
+        collapseAssistantRef={editorState.collapseAssistantRef}
+        expandAssistantRef={editorState.expandAssistantRef}
+        currentNote={editorState.currentNote}
+        isDistractionFree={isUnifiedFocusMode}
+        isMobile={isMobile}
+      />
     </div>
-  );
-};
-
-const Editor: React.FC = () => {
-  console.log('Editor component rendering');
-  
-  return (
-    <SidebarProvider>
-      <EditorInner />
-    </SidebarProvider>
   );
 };
 

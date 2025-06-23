@@ -17,12 +17,11 @@ const Layout: React.FC = () => {
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
         <SidebarInset className="flex-1 min-w-0 w-full">
-          <Header />
+          {/* Only show header on non-editor pages */}
+          {!isEditorPage && <Header />}
           <div className={`w-full ${
             isEditorPage 
-              ? isMobile 
-                ? "pt-16" 
-                : "pt-24" 
+              ? "h-screen" // Full height for editor
               : isDashboardPage
                 ? isMobile
                   ? "pt-16"
