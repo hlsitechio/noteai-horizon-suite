@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { User, Lock, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -66,18 +66,9 @@ const StepByStepRegister: React.FC = () => {
     // For email step, check if email exists after validation
     if (currentStep === 'email' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       console.log('Valid email format, checking if exists:', value);
-      // Use a shorter timeout and check immediately
       setTimeout(async () => {
-        console.log('Running email check for:', value);
         await checkEmailExists(value);
-      }, 300);
-    }
-    
-    // Update validation state immediately for non-email fields
-    if (currentStep !== 'email') {
-      setTimeout(() => {
-        setIsValid(validateCurrentStep());
-      }, 100);
+      }, 500); // Slightly longer delay to avoid too many API calls
     }
   };
 
@@ -158,17 +149,17 @@ const StepByStepRegister: React.FC = () => {
   };
 
   // Update validation when email check completes
-  React.useEffect(() => {
+  useEffect(() => {
     console.log('Email validation state changed:', { emailExists, isCheckingEmail, currentStep });
     if (currentStep === 'email') {
       setIsValid(validateCurrentStep());
     }
-  }, [emailExists, isCheckingEmail]);
+  }, [emailExists, isCheckingEmail, currentStep]);
 
   // General validation update
-  React.useEffect(() => {
+  useEffect(() => {
     setIsValid(validateCurrentStep());
-  }, [currentStep, registrationData]);
+  }, [currentStep, registrationData, emailExists]);
 
   const stepContent = getStepContent();
 

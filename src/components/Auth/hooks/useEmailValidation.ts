@@ -8,6 +8,7 @@ export const useEmailValidation = () => {
 
   const checkEmailExists = async (emailToCheck: string) => {
     if (!emailToCheck || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailToCheck)) {
+      setEmailExists(false);
       return false;
     }
 
@@ -18,7 +19,7 @@ export const useEmailValidation = () => {
       // Check if user exists in user_profiles table
       const { data: profile, error } = await supabase
         .from('user_profiles')
-        .select('email')
+        .select('email, id')
         .eq('email', emailToCheck)
         .maybeSingle();
 
@@ -29,12 +30,16 @@ export const useEmailValidation = () => {
       }
 
       const emailAlreadyExists = !!profile;
-      console.log('Email exists result:', emailAlreadyExists, profile);
+      console.log('Email check result:', {
+        email: emailToCheck,
+        exists: emailAlreadyExists,
+        profile: profile
+      });
       
       setEmailExists(emailAlreadyExists);
       return emailAlreadyExists;
     } catch (error) {
-      console.error('Error checking email:', error);
+      console.error('Exception while checking email:', error);
       setEmailExists(false);
       return false;
     } finally {
