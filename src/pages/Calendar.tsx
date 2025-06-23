@@ -16,8 +16,9 @@ const Calendar: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [viewDate, setViewDate] = useState(new Date());
   const [isEventFormOpen, setIsEventFormOpen] = useState(false);
+  const [isNoteFormOpen, setIsNoteFormOpen] = useState(false);
   const { events, addEvent, updateEvent, deleteEvent } = useCalendarEvents();
-  const { notes } = useNotes();
+  const { notes, createNote } = useNotes();
 
   const monthStart = startOfMonth(viewDate);
   const monthEnd = endOfMonth(viewDate);
@@ -49,6 +50,18 @@ const Calendar: React.FC = () => {
     setIsEventFormOpen(false);
   };
 
+  const handleNoteSubmit = async (noteData: { title: string; content: string }) => {
+    await createNote({
+      title: noteData.title,
+      content: noteData.content,
+      category: 'general',
+      tags: [],
+      isFavorite: false,
+      color: '#64748b'
+    });
+    setIsNoteFormOpen(false);
+  };
+
   const getEventTypeIcon = (type: CalendarEvent['type']) => {
     switch (type) {
       case 'meeting':
@@ -75,20 +88,76 @@ const Calendar: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Calendar</h1>
-        <Dialog open={isEventFormOpen} onOpenChange={setIsEventFormOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="w-4 h-4" />
-              Add Event
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create New Event</DialogTitle>
-            </DialogHeader>
-            <CalendarEventForm onSubmit={handleEventSubmit} />
-          </DialogContent>
-        </Dialog>
+        <div className="flex gap-2">
+          <Dialog open={isEventFormOpen} onOpenChange={setIsEventFormOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus className="w-4 h-4" />
+                Add Event
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create New Event</DialogTitle>
+              </DialogHeader>
+              <CalendarEventForm onSubmit={handleEventSubmit} />
+            </DialogContent>
+          </Dialog>
+          
+          <Dialog open={isNoteFormOpen} onOpenChange={setIsNoteFormOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Plus className="w-4 h-4" />
+                Add Note
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create New Note</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label htmlFor="note-title" className="text-sm font-medium">Title</label>
+                  <input
+                    id="note-title"
+                    type="text"
+                    className="w-full px-3 py-2 border rounded-md"
+                    placeholder="Enter note title"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        const title = e.currentTarget.value;
+                        const content = document.getElementById('note-content') as HTMLTextAreaElement;
+                        if (title.trim()) {
+                          handleNoteSubmit({ title, content: content?.value || '' });
+                        }
+                      }
+                    }}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="note-content" className="text-sm font-medium">Content</label>
+                  <textarea
+                    id="note-content"
+                    className="w-full px-3 py-2 border rounded-md h-32"
+                    placeholder="Enter note content"
+                  />
+                </div>
+                <Button 
+                  onClick={() => {
+                    const title = (document.getElementById('note-title') as HTMLInputElement).value;
+                    const content = (document.getElementById('note-content') as HTMLTextAreaElement).value;
+                    if (title.trim()) {
+                      handleNoteSubmit({ title, content });
+                    }
+                  }}
+                  className="w-full"
+                >
+                  Create Note
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -136,30 +205,71 @@ const Calendar: React.FC = () => {
                       key={day.toISOString()}
                       onClick={() => setSelectedDate(day)}
                       className={`
-                        relative p-2 h-20 rounded-lg border transition-all duration-200
+                        relative p-3 h-32 rounded-lg border transition-all duration-200 flex flex-col
                         ${isSelected ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50'}
                         ${!isCurrentMonth ? 'opacity-40' : ''}
                         ${isToday(day) ? 'bg-accent' : ''}
                       `}
                     >
-                      <div className="text-sm font-medium mb-1">
+                      <div className="text-sm font-medium mb-2">
                         {format(day, 'd')}
                       </div>
-                      <div className="space-y-1">
+                      
+                      {/* Events section */}
+                      <div className="flex-1 space-y-1">
                         {dayEvents.slice(0, 2).map((event) => (
                           <div
                             key={event.id}
-                            className={`w-full h-1.5 rounded-full ${getEventTypeColor(event.type)}`}
-                          />
+                            className="flex items-center gap-1 p-1 rounded text-xs bg-white/10 backdrop-blur-sm"
+                          >
+                            {getEventTypeIcon(event.type)}
+                            <span className="truncate">{event.title}</span>
+                          </div>
                         ))}
-                        {dayNotes.length > 0 && (
-                          <div className="w-full h-1.5 rounded-full bg-orange-500" />
-                        )}
-                        {(dayEvents.length + (dayNotes.length > 0 ? 1 : 0)) > 3 && (
-                          <div className="text-xs text-muted-foreground">
-                            +{(dayEvents.length + (dayNotes.length > 0 ? 1 : 0)) - 3}
+                        
+                        {/* Notes section */}
+                        {dayNotes.slice(0, 1).map((note) => (
+                          <div
+                            key={note.id}
+                            className="flex items-center gap-1 p-1 rounded text-xs bg-orange-500/20 backdrop-blur-sm"
+                          >
+                            <FileText className="w-3 h-3" />
+                            <span className="truncate">{note.title}</span>
+                          </div>
+                        ))}
+                        
+                        {/* Show count if more items */}
+                        {(dayEvents.length + dayNotes.length) > 3 && (
+                          <div className="text-xs text-muted-foreground text-center">
+                            +{(dayEvents.length + dayNotes.length) - 3} more
                           </div>
                         )}
+                      </div>
+                      
+                      {/* Quick action buttons */}
+                      <div className="flex gap-1 mt-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedDate(day);
+                            setIsEventFormOpen(true);
+                          }}
+                          className="p-1 rounded bg-blue-500/20 hover:bg-blue-500/30 transition-colors"
+                          title="Add Event"
+                        >
+                          <CalendarIcon className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedDate(day);
+                            setIsNoteFormOpen(true);
+                          }}
+                          className="p-1 rounded bg-green-500/20 hover:bg-green-500/30 transition-colors"
+                          title="Add Note"
+                        >
+                          <FileText className="w-3 h-3" />
+                        </button>
                       </div>
                     </button>
                   );
