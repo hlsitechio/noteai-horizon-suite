@@ -46,13 +46,14 @@ const EditorHeaderExpanded: React.FC<EditorHeaderExpandedProps> = ({
             variant="ghost"
             size="icon"
             onClick={onHeaderCollapseToggle}
-            className="w-8 h-8 text-gray-500 hover:text-foreground transition-colors self-start mt-1"
+            className="w-8 h-8 text-gray-500 hover:text-foreground transition-colors self-start mt-1 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 dark:hover:from-purple-900/20 dark:hover:to-blue-900/20 shadow-sm hover:shadow-md"
           >
             <motion.div
               animate={{ rotate: isHeaderCollapsed ? 180 : 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              whileHover={{ scale: 1.1 }}
             >
-              {isHeaderCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+              {isHeaderCollapsed ? <ChevronDown className="w-4 h-4 drop-shadow-sm" /> : <ChevronUp className="w-4 h-4 drop-shadow-sm" />}
             </motion.div>
           </Button>
         </motion.div>
@@ -80,8 +81,26 @@ const EditorHeaderExpanded: React.FC<EditorHeaderExpandedProps> = ({
                     repeat: Infinity,
                     repeatType: 'reverse'
                   }}
+                  whileHover={{
+                    scale: 1.2,
+                    rotate: 360,
+                    filter: "drop-shadow(0 0 10px rgba(234, 179, 8, 0.6))"
+                  }}
+                  className="relative"
                 >
-                  <Crown className="w-8 h-8 text-yellow-500" />
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-lg blur-sm"
+                    animate={{
+                      opacity: [0.5, 1, 0.5],
+                      scale: [1, 1.2, 1]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                  <Crown className="w-8 h-8 text-yellow-500 drop-shadow-lg relative z-10" />
                 </motion.div>
               </motion.h1>
               <motion.p 
@@ -123,35 +142,57 @@ const EditorHeaderExpanded: React.FC<EditorHeaderExpandedProps> = ({
       <div className="flex gap-3">
         <EditorHeaderButton
           onClick={onFocusModeToggle}
-          className="text-purple-600 bg-purple-50/20 dark:bg-purple-900/20 dark:text-purple-400 hover:scale-105 transition-all backdrop-blur-sm border-0"
+          className="text-purple-600 bg-purple-50/20 dark:bg-purple-900/20 dark:text-purple-400 hover:scale-105 transition-all backdrop-blur-sm border-0 shadow-md hover:shadow-lg"
         >
-          <Focus className="w-4 h-4 mr-2" />
+          <motion.div
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Focus className="w-4 h-4 mr-2 drop-shadow-sm" />
+          </motion.div>
           Focus Mode
         </EditorHeaderButton>
         <EditorHeaderButton
           onClick={onFavoriteToggle}
-          className={`${isFavorite ? 'text-red-500 bg-red-50/20 dark:bg-red-900/20' : 'text-gray-400 dark:text-slate-400'} hover:scale-105 transition-all backdrop-blur-sm border-0`}
+          className={`${isFavorite ? 'text-red-500 bg-red-50/20 dark:bg-red-900/20 shadow-lg' : 'text-gray-400 dark:text-slate-400 shadow-md'} hover:scale-105 transition-all backdrop-blur-sm border-0 hover:shadow-lg`}
         >
           <motion.div
             animate={isFavorite ? { scale: [1, 1.2, 1] } : {}}
             transition={{ duration: 0.3 }}
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Heart className={`w-4 h-4 mr-2 ${isFavorite ? 'fill-current' : ''}`} />
+            <Heart className={`w-4 h-4 mr-2 drop-shadow-sm ${isFavorite ? 'fill-current' : ''}`} />
           </motion.div>
           {isFavorite ? 'Favorited' : 'Add to Favorites'}
         </EditorHeaderButton>
         <EditorHeaderButton
           onClick={onSave}
           disabled={!canSave || isSaving}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all hover:scale-105 border-0 backdrop-blur-md"
+          className="bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all hover:scale-105 border-0 backdrop-blur-md relative overflow-hidden"
         >
           <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"
+            animate={{
+              x: [-100, 200],
+              opacity: [0, 0.5, 0]
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
             animate={isSaving ? { rotate: 360 } : {}}
-            transition={{ duration: 1, repeat: isSaving ? Infinity : 0 }}
+            transition={{ duration: 1, repeat: isSaving ? Infinity : 0, ease: "linear" }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative z-10 flex items-center"
           >
-            <Save className="w-4 h-4 mr-2" />
+            <Save className="w-4 h-4 mr-2 drop-shadow-sm" />
           </motion.div>
-          {isSaving ? 'Saving...' : 'Save Note'}
+          <span className="relative z-10">{isSaving ? 'Saving...' : 'Save Note'}</span>
         </EditorHeaderButton>
       </div>
     </motion.div>
