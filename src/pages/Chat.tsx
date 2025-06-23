@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Plus, Send, Bot, User, Zap, Cpu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useEnhancedAIChat, ChatMessage } from '@/hooks/useEnhancedAIChat';
 import { useToast } from '@/hooks/useToast';
-import { StructuredOutputDemo } from '@/components/StructuredOutputDemo';
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -26,6 +26,21 @@ const Chat: React.FC = () => {
     gpuCapabilities 
   } = useEnhancedAIChat();
   const { toast } = useToast();
+
+  const formatMessageContent = (content: string) => {
+    try {
+      // Try to parse as JSON to see if it's structured output
+      const parsed = JSON.parse(content);
+      return (
+        <pre className="whitespace-pre-wrap font-mono text-sm bg-gray-50 dark:bg-gray-900 p-3 rounded-lg border overflow-auto">
+          {JSON.stringify(parsed, null, 2)}
+        </pre>
+      );
+    } catch {
+      // If it's not JSON, return as regular text
+      return <p className="whitespace-pre-wrap">{content}</p>;
+    }
+  };
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -144,9 +159,6 @@ const Chat: React.FC = () => {
         </Button>
       </div>
 
-      {/* Add Structured Output Demo */}
-      <StructuredOutputDemo />
-
       {/* Messages */}
       <Card className="flex-1">
         <CardContent className="p-0">
@@ -174,7 +186,11 @@ const Chat: React.FC = () => {
                           : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-sm'
                       }`}
                     >
-                      <p className="whitespace-pre-wrap">{message.content}</p>
+                      {message.isUser ? (
+                        <p className="whitespace-pre-wrap">{message.content}</p>
+                      ) : (
+                        formatMessageContent(message.content)
+                      )}
                       <p className="text-xs opacity-70 mt-2">
                         {message.timestamp.toLocaleTimeString()}
                       </p>
