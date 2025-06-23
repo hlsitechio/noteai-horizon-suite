@@ -4,10 +4,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Settings, 
-  Book, 
-  Edit, 
+  BookOpen, 
+  PenTool, 
   Plus,
-  Calendar
+  Calendar,
+  Sparkles
 } from 'lucide-react';
 import {
   SidebarMenu,
@@ -22,9 +23,9 @@ import {
 } from '@/components/ui/tooltip';
 
 const menuItems = [
-  { icon: Book, label: 'Dashboard', path: '/dashboard', color: 'text-blue-500' },
-  { icon: Plus, label: 'AI Chat', path: '/chat', color: 'text-green-500' },
-  { icon: Edit, label: 'Editor', path: '/editor', color: 'text-purple-500' },
+  { icon: BookOpen, label: 'Dashboard', path: '/dashboard', color: 'text-blue-500' },
+  { icon: Plus, label: 'AI Chat', path: '/chat', color: 'text-emerald-500' },
+  { icon: PenTool, label: 'Editor', path: '/editor', color: 'text-purple-500' },
   { icon: Calendar, label: 'Calendar', path: '/calendar', color: 'text-orange-500' },
   { icon: Settings, label: 'Settings', path: '/settings', color: 'text-gray-500' },
 ];
@@ -75,15 +76,15 @@ export function NavigationMenu() {
   const isCollapsed = state === 'collapsed';
 
   return (
-    <SidebarMenu className="space-y-2">
+    <SidebarMenu className="space-y-1 px-2">
       {menuItems.map((item, index) => (
         <SidebarMenuItem key={item.path}>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ x: isCollapsed ? 0 : 4 }}
-            whileTap={{ scale: 0.95 }}
+            transition={{ delay: index * 0.05 }}
+            whileHover={{ x: isCollapsed ? 0 : 2 }}
+            whileTap={{ scale: 0.98 }}
           >
             {isCollapsed ? (
               <Tooltip>
@@ -91,21 +92,29 @@ export function NavigationMenu() {
                   <SidebarMenuButton
                     onClick={() => navigate(item.path)}
                     isActive={location.pathname === item.path}
-                    className={`h-12 rounded-xl transition-all duration-200 relative isolate border-0 justify-center ${
+                    className={`h-11 w-11 rounded-xl transition-all duration-200 relative overflow-hidden ${
                       location.pathname === item.path 
-                        ? 'bg-primary/10 text-primary' 
-                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                        ? 'bg-primary text-primary-foreground shadow-md' 
+                        : 'hover:bg-accent hover:text-accent-foreground'
                     }`}
                   >
                     <motion.div
                       variants={iconVariants}
                       animate={isCollapsed ? 'collapsed' : 'expanded'}
+                      className="relative z-10"
                     >
-                      <item.icon className={`w-5 h-5 ${location.pathname === item.path ? '' : item.color}`} />
+                      <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-white' : item.color}`} />
                     </motion.div>
+                    {location.pathname === item.path && (
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary"
+                        layoutId="activeBackground"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      />
+                    )}
                   </SidebarMenuButton>
                 </TooltipTrigger>
-                <TooltipContent side="right">
+                <TooltipContent side="right" className="font-medium">
                   <p>{item.label}</p>
                 </TooltipContent>
               </Tooltip>
@@ -113,14 +122,20 @@ export function NavigationMenu() {
               <SidebarMenuButton
                 onClick={() => navigate(item.path)}
                 isActive={location.pathname === item.path}
-                tooltip={item.label}
-                className={`h-12 rounded-xl transition-all duration-200 relative isolate border-0 ${
+                className={`h-11 rounded-xl transition-all duration-200 relative overflow-hidden group ${
                   location.pathname === item.path 
-                    ? 'bg-primary/10 text-primary' 
-                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:translate-x-1'
+                    ? 'bg-primary text-primary-foreground shadow-md' 
+                    : 'hover:bg-accent hover:text-accent-foreground hover:translate-x-1'
                 }`}
               >
-                <item.icon className={`w-5 h-5 flex-shrink-0 ${location.pathname === item.path ? '' : item.color}`} />
+                {location.pathname === item.path && (
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary"
+                    layoutId="activeBackground"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <item.icon className={`w-5 h-5 flex-shrink-0 relative z-10 ${location.pathname === item.path ? 'text-white' : item.color}`} />
                 <AnimatePresence>
                   {!isCollapsed && (
                     <motion.span
@@ -128,7 +143,7 @@ export function NavigationMenu() {
                       initial="collapsed"
                       animate="expanded"
                       exit="collapsed"
-                      className="truncate"
+                      className="truncate font-medium relative z-10"
                     >
                       {item.label}
                     </motion.span>

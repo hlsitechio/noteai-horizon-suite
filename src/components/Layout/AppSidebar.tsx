@@ -31,7 +31,7 @@ const sidebarVariants: Variants = {
     }
   },
   collapsed: {
-    width: "4rem",
+    width: "4.5rem",
     transition: {
       type: "spring" as const,
       stiffness: 400,
@@ -68,21 +68,21 @@ export function AppSidebar() {
       <motion.div
         variants={sidebarVariants}
         animate={isCollapsed ? 'collapsed' : 'expanded'}
-        className="glass border-r border-border/50 backdrop-blur-md h-screen overflow-hidden"
+        className="bg-background/95 backdrop-blur-md border-r border-border/50 h-screen overflow-hidden shadow-sm"
       >
-        <Sidebar collapsible="icon" className="glass border-r border-border/50 backdrop-blur-md">
-          <SidebarHeader className="p-6">
+        <Sidebar collapsible="icon" className="bg-transparent border-0">
+          <SidebarHeader className="p-4 pb-2">
             <CustomSidebarHeader />
           </SidebarHeader>
 
-          <SidebarContent>
-            <SidebarGroup>
+          <SidebarContent className="px-0">
+            <SidebarGroup className="py-2">
               <SidebarGroupContent>
                 <NavigationMenu />
               </SidebarGroupContent>
             </SidebarGroup>
 
-            <SidebarSeparator />
+            <SidebarSeparator className="mx-4 my-2" />
 
             <CollapsedSummary />
 
@@ -95,7 +95,7 @@ export function AppSidebar() {
                   animate="expanded"
                   exit="collapsed"
                 >
-                  <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+                  <SidebarGroup className="group-data-[collapsible=icon]:hidden px-2">
                     <NotesTree />
                   </SidebarGroup>
                 </motion.div>
@@ -103,9 +103,9 @@ export function AppSidebar() {
             </AnimatePresence>
           </SidebarContent>
 
-          <SidebarSeparator />
+          <SidebarSeparator className="mx-4 my-2" />
 
-          <SidebarFooter className="p-4">
+          <SidebarFooter className="p-4 pt-2">
             <CustomSidebarFooter />
           </SidebarFooter>
         </Sidebar>

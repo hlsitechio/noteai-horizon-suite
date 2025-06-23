@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { PanelLeftClose, PanelLeftOpen, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
 
@@ -49,32 +49,33 @@ export function SidebarHeader() {
   const isCollapsed = state === 'collapsed';
 
   return (
-    <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} relative`}>
+    <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} relative px-2`}>
       {/* Logo and Title Section */}
       <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
         <motion.div 
           variants={iconVariants}
           animate={isCollapsed ? 'collapsed' : 'expanded'}
-          className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center"
+          className="w-10 h-10 bg-gradient-to-br from-purple-500 via-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg"
         >
-          <span className="text-white font-bold text-sm">AI</span>
+          <Sparkles className="text-white w-5 h-5" />
         </motion.div>
         <AnimatePresence>
           {!isCollapsed && (
-            <motion.span
+            <motion.div
               variants={contentVariants}
               initial="collapsed"
               animate="expanded"
               exit="collapsed"
-              className="text-xl font-bold text-foreground"
+              className="flex flex-col"
             >
-              Online Note AI
-            </motion.span>
+              <span className="text-lg font-bold text-foreground">AI Notes</span>
+              <span className="text-xs text-muted-foreground -mt-1">Smart Writing</span>
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Toggle Button - Better positioned */}
+      {/* Toggle Button */}
       <motion.div
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -84,7 +85,7 @@ export function SidebarHeader() {
           variant="ghost"
           size="icon"
           onClick={toggleSidebar}
-          className="h-8 w-8 glass shadow-medium hover:bg-white/20 dark:hover:bg-slate-700/30 flex-shrink-0"
+          className="h-8 w-8 rounded-lg hover:bg-accent/50 transition-colors"
           title={state === 'expanded' ? 'Collapse sidebar' : 'Expand sidebar'}
         >
           <motion.div
