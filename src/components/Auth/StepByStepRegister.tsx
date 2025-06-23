@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Check, User, Lock, Mail, AlertCircle } from 'lucide-react';
@@ -254,30 +253,22 @@ const StepByStepRegister: React.FC = () => {
                   </AnimatePresence>
                 </div>
 
-                {/* Email exists warning */}
-                {emailExists && currentStep === 'email' && (
+                {/* Email exists message below input */}
+                {emailExists && currentStep === 'email' && !isCheckingEmail && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4"
+                    className="text-center"
                   >
-                    <div className="flex items-center space-x-3">
-                      <AlertCircle className="w-5 h-5 text-red-500 dark:text-red-400" />
-                      <div>
-                        <p className="text-red-800 dark:text-red-200 font-medium">
-                          You already have an account!
-                        </p>
-                        <p className="text-red-600 dark:text-red-300 text-sm mt-1">
-                          This email is already registered.{' '}
-                          <button
-                            onClick={() => navigate('/login')}
-                            className="underline hover:no-underline font-medium"
-                          >
-                            Click Sign in instead
-                          </button>
-                        </p>
-                      </div>
-                    </div>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                      This email is already registered.{' '}
+                      <button
+                        onClick={() => navigate('/login')}
+                        className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 font-medium hover:underline transition-colors"
+                      >
+                        Sign in instead
+                      </button>
+                    </p>
                   </motion.div>
                 )}
 
