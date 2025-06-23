@@ -43,7 +43,7 @@ export const colorsConfig = {
     border: 'hsl(var(--sidebar-border))',
     ring: 'hsl(var(--sidebar-ring))'
   },
-  // Enhanced theme colors with better dark mode support
+  // Premium semantic colors with enhanced depth
   success: {
     DEFAULT: 'hsl(var(--success))',
     foreground: 'hsl(var(--success-foreground))'
@@ -56,7 +56,7 @@ export const colorsConfig = {
     DEFAULT: 'hsl(var(--info))',
     foreground: 'hsl(var(--info-foreground))'
   },
-  // Additional dark mode specific colors
+  // Premium gradient colors for depth and richness
   slate: {
     50: '#f8fafc',
     100: '#f1f5f9',
@@ -70,7 +70,7 @@ export const colorsConfig = {
     900: '#0f172a',
     950: '#020617'
   },
-  // Enhanced blue colors for better dark mode contrast
+  // Rich blue spectrum for premium feel
   blue: {
     50: '#eff6ff',
     100: '#dbeafe',
@@ -84,7 +84,7 @@ export const colorsConfig = {
     900: '#1e3a8a',
     950: '#172554'
   },
-  // Enhanced purple colors
+  // Luxurious purple palette
   purple: {
     50: '#faf5ff',
     100: '#f3e8ff',
@@ -97,5 +97,33 @@ export const colorsConfig = {
     800: '#6b21a8',
     900: '#581c87',
     950: '#3b0764'
+  },
+  // Premium gold/amber accents
+  amber: {
+    50: '#fffbeb',
+    100: '#fef3c7',
+    200: '#fde68a',
+    300: '#fcd34d',
+    400: '#fbbf24',
+    500: '#f59e0b',
+    600: '#d97706',
+    700: '#b45309',
+    800: '#92400e',
+    900: '#78350f',
+    950: '#451a03'
+  },
+  // Rich emerald for success states
+  emerald: {
+    50: '#ecfdf5',
+    100: '#d1fae5',
+    200: '#a7f3d0',
+    300: '#6ee7b7',
+    400: '#34d399',
+    500: '#10b981',
+    600: '#059669',
+    700: '#047857',
+    800: '#065f46',
+    900: '#064e3b',
+    950: '#022c22'
   }
 };
