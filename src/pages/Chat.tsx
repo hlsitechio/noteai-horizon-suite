@@ -1,31 +1,40 @@
 
 import React, { useState } from 'react';
-import { Plus, Send, Bot, User, Zap, Cpu } from 'lucide-react';
+import { Plus, Send, Bot, User, Zap, Cpu, Database, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { useEnhancedAIChat, ChatMessage } from '@/hooks/useEnhancedAIChat';
+import { useRAGChat, RAGChatResponse } from '@/hooks/useRAGChat';
 import { useToast } from '@/hooks/useToast';
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
-      content: 'Hello! I\'m your GPU-accelerated AI assistant powered by DeepSeek R1. I can help you organize your thoughts, brainstorm ideas, and improve your notes with enhanced performance. What would you like to work on today?',
+      content: 'Hello! I\'m your AI assistant with access to your notes. I can help you with questions and reference your personal notes to provide more relevant answers. What would you like to work on today?',
       isUser: false,
       timestamp: new Date(),
     },
   ]);
   const [input, setInput] = useState('');
+  const [useRAG, setUseRAG] = useState(true);
+  const [lastRAGResponse, setLastRAGResponse] = useState<RAGChatResponse | null>(null);
+  
   const { 
-    sendMessage, 
-    isLoading, 
+    isLoading: isEnhancedLoading, 
     isProcessingLocally, 
     gpuCapabilities 
   } = useEnhancedAIChat();
+  
+  const { sendMessage: sendRAGMessage, isLoading: isRAGLoading } = useRAGChat();
   const { toast } = useToast();
+
+  const isLoading = isEnhancedLoading || isRAGLoading;
 
   const formatMessageContent = (content: string) => {
     try {
@@ -58,19 +67,27 @@ const Chat: React.FC = () => {
     setInput('');
 
     try {
-      // Send all messages for context
+      // Send all messages for context using RAG
       const updatedMessages = [...messages, userMessage];
-      const aiResponse = await sendMessage(updatedMessages);
+      const ragResponse = await sendRAGMessage(updatedMessages, useRAG);
+      
+      // Store RAG response info for display
+      setLastRAGResponse(ragResponse);
       
       // Add AI response
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        content: aiResponse,
+        content: ragResponse.message,
         isUser: false,
         timestamp: new Date(),
       };
       
       setMessages(prev => [...prev, aiMessage]);
+
+      // Show success toast with RAG info
+      if (useRAG && ragResponse.notesUsed > 0) {
+        toast.success(`Response generated using ${ragResponse.notesUsed} relevant notes`);
+      }
       
     } catch (error) {
       console.error('Failed to send message:', error);
@@ -84,11 +101,12 @@ const Chat: React.FC = () => {
     setMessages([
       {
         id: '1',
-        content: 'Hello! I\'m your GPU-accelerated AI assistant powered by DeepSeek R1. I can help you organize your thoughts, brainstorm ideas, and improve your notes with enhanced performance. What would you like to work on today?',
+        content: 'Hello! I\'m your AI assistant with access to your notes. I can help you with questions and reference your personal notes to provide more relevant answers. What would you like to work on today?',
         isUser: false,
         timestamp: new Date(),
       },
     ]);
+    setLastRAGResponse(null);
     toast.success('New chat started');
   };
 
@@ -147,16 +165,40 @@ const Chat: React.FC = () => {
             <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 dark:text-blue-400">
               DeepSeek R1
             </Badge>
+            {useRAG && (
+              <Badge variant="secondary" className="bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                <Database className="w-3 h-3 mr-1" />
+                RAG Enabled
+              </Badge>
+            )}
             {getGPUStatusBadge()}
           </div>
           <p className="text-gray-600 dark:text-gray-400">
-            Get help with your notes and ideas using GPU-accelerated AI
+            AI assistant with access to your notes for personalized responses
           </p>
+          {lastRAGResponse && lastRAGResponse.notesUsed > 0 && (
+            <p className="text-sm text-purple-600 dark:text-purple-400 mt-1">
+              Last response used {lastRAGResponse.notesUsed} relevant notes
+            </p>
+          )}
         </div>
-        <Button size="sm" onClick={handleNewChat} disabled={isLoading}>
-          <Plus className="w-4 h-4 mr-2" />
-          New Chat
-        </Button>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="rag-mode"
+              checked={useRAG}
+              onCheckedChange={setUseRAG}
+              disabled={isLoading}
+            />
+            <Label htmlFor="rag-mode" className="text-sm">
+              Use Notes Context
+            </Label>
+          </div>
+          <Button size="sm" onClick={handleNewChat} disabled={isLoading}>
+            <Plus className="w-4 h-4 mr-2" />
+            New Chat
+          </Button>
+        </div>
       </div>
 
       {/* Messages */}
@@ -221,11 +263,11 @@ const Chat: React.FC = () => {
                           <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                         </div>
                         <span className="text-sm">
-                          {isProcessingLocally ? 'Processing locally with GPU...' : 'AI is thinking...'}
+                          {isProcessingLocally ? 'Processing locally with GPU...' : 
+                           useRAG ? 'Searching notes and generating response...' : 'AI is thinking...'}
                         </span>
-                        {isProcessingLocally && (
-                          <Zap className="w-3 h-3 text-green-500" />
-                        )}
+                        {isProcessingLocally && <Zap className="w-3 h-3 text-green-500" />}
+                        {useRAG && <Search className="w-3 h-3 text-purple-500" />}
                       </div>
                     </div>
                   </div>
@@ -239,7 +281,7 @@ const Chat: React.FC = () => {
                 <Textarea
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask me anything about your notes or ideas..."
+                  placeholder={useRAG ? "Ask me anything - I can reference your notes for better answers..." : "Ask me anything..."}
                   className="resize-none rounded-xl min-h-[60px]"
                   rows={2}
                   onKeyPress={handleKeyPress}
@@ -255,7 +297,10 @@ const Chat: React.FC = () => {
                 </Button>
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                Powered by DeepSeek R1 with GPU acceleration • Press Enter to send, Shift+Enter for new line
+                {useRAG ? 
+                  'RAG-enhanced AI with access to your notes • Press Enter to send, Shift+Enter for new line' :
+                  'Standard AI chat • Press Enter to send, Shift+Enter for new line'
+                }
               </p>
             </div>
           </div>

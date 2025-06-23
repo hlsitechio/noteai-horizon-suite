@@ -904,6 +904,19 @@ export type Database = {
           usage_date: string
         }[]
       }
+      get_user_notes_for_rag: {
+        Args: { user_uuid: string }
+        Returns: {
+          id: string
+          title: string
+          content: string
+          tags: string[]
+          created_at: string
+          updated_at: string
+          category: string
+          is_favorite: boolean
+        }[]
+      }
       has_role: {
         Args: {
           _user_id: string
@@ -914,6 +927,20 @@ export type Database = {
       sanitize_input: {
         Args: { input_text: string }
         Returns: string
+      }
+      search_user_notes_for_rag: {
+        Args: { user_uuid: string; search_query?: string; limit_count?: number }
+        Returns: {
+          id: string
+          title: string
+          content: string
+          tags: string[]
+          created_at: string
+          updated_at: string
+          category: string
+          is_favorite: boolean
+          relevance_score: number
+        }[]
       }
       validate_content_length: {
         Args:
