@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Github, Book, Eye, EyeOff } from 'lucide-react';
+import { Github, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -10,18 +10,57 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, isAuthenticated } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Redirect if already authenticated
+  React.useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      console.log('User already authenticated, redirecting...');
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, isLoading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await login(email, password);
-    if (success) {
-      navigate('/dashboard');
+    
+    if (isSubmitting || !email.trim() || !password.trim()) {
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      console.log('Attempting login for:', email);
+      
+      const success = await login(email.trim(), password);
+      
+      if (success) {
+        console.log('Login successful, navigating to dashboard');
+        navigate('/dashboard', { replace: true });
+      } else {
+        console.log('Login failed');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  // Show loading while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
@@ -64,6 +103,7 @@ const Login: React.FC = () => {
                     placeholder="Enter your email"
                     className="rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -79,6 +119,7 @@ const Login: React.FC = () => {
                       placeholder="Enter your password"
                       className="rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100 pr-10"
                       required
+                      disabled={isSubmitting}
                     />
                     <Button
                       type="button"
@@ -86,6 +127,7 @@ const Login: React.FC = () => {
                       size="sm"
                       className="absolute right-2 top-1/2 transform -translate-y-1/2"
                       onClick={() => setShowPassword(!showPassword)}
+                      disabled={isSubmitting}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </Button>
@@ -97,9 +139,9 @@ const Login: React.FC = () => {
                 type="submit"
                 size="lg"
                 className="w-full rounded-xl"
-                disabled={isLoading}
+                disabled={isSubmitting || isLoading || !email.trim() || !password.trim()}
               >
-                {isLoading ? 'Signing in...' : 'Sign In'}
+                {isSubmitting ? 'Signing in...' : 'Sign In'}
               </Button>
             </form>
 
@@ -110,6 +152,7 @@ const Login: React.FC = () => {
                 <button
                   className="text-blue-500 font-medium hover:underline"
                   onClick={() => navigate('/register')}
+                  disabled={isSubmitting}
                 >
                   Sign up
                 </button>
