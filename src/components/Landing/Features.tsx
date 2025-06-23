@@ -1,29 +1,11 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Zap, Shield } from 'lucide-react';
 import FocusModeDemo from './FocusModeDemo';
 import AIAssistantDemo from './AIAssistantDemo';
-import FeatureCard from './FeatureCard';
+import StaticFeatures from './StaticFeatures';
 
 const Features = () => {
-  const staticFeatures = [
-    {
-      icon: <Zap className="w-8 h-8" />,
-      title: 'Lightning Fast Performance',
-      description: 'Optimized for speed with instant responses and real-time collaboration across all your devices.',
-      gradient: 'from-yellow-400 via-orange-500 to-red-600',
-      glow: 'shadow-[0_0_50px_rgba(251,191,36,0.3)]'
-    },
-    {
-      icon: <Shield className="w-8 h-8" />,
-      title: 'Enterprise Security',
-      description: 'Bank-level encryption and security protocols to keep your data safe and protected at all times.',
-      gradient: 'from-emerald-400 via-teal-500 to-cyan-600',
-      glow: 'shadow-[0_0_50px_rgba(16,185,129,0.3)]'
-    }
-  ];
-
   return (
     <section id="features" className="py-32 px-4 relative">
       <div className="max-w-7xl mx-auto">
@@ -49,19 +31,7 @@ const Features = () => {
           <AIAssistantDemo />
 
           {/* Static Feature Cards */}
-          <div className="grid md:grid-cols-2 gap-8">
-            {staticFeatures.map((feature, index) => (
-              <FeatureCard
-                key={feature.title}
-                icon={feature.icon}
-                title={feature.title}
-                description={feature.description}
-                gradient={feature.gradient}
-                glow={feature.glow}
-                index={index}
-              />
-            ))}
-          </div>
+          <StaticFeatures />
         </div>
       </div>
     </section>
