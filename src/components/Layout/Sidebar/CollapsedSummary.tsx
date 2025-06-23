@@ -49,12 +49,12 @@ export function CollapsedSummary() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ delay: 0.2 }}
-          className="relative px-3 py-4 space-y-4 flex flex-col items-center z-50" // Increased z-index and spacing
+          className="relative px-4 py-6 space-y-6 flex flex-col items-center z-50" // Increased padding and spacing
         >
           {/* Border element */}
           <div 
-            className="absolute left-0 top-0 bottom-0 bg-white/20 dark:bg-white/10" // Slightly more visible border
-            style={{ width: '8%' }}
+            className="absolute left-0 top-0 bottom-0 bg-white/20 dark:bg-white/10"
+            style={{ width: '6%' }} // Adjusted for wider sidebar
           />
           
           {summaryItems.map((item, index) => (
@@ -68,10 +68,10 @@ export function CollapsedSummary() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={item.onClick}
-                    className={`w-12 h-12 ${item.bgColor} rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all duration-200 hover:shadow-lg relative z-50 ml-2`} // Increased size and z-index
+                    className={`w-14 h-14 ${item.bgColor} rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all duration-200 hover:shadow-lg relative z-50`} // Increased size further
                   >
-                    <item.icon className={`w-4 h-4 ${item.color} mb-0.5`} /> {/* Slightly larger icon */}
-                    <Badge className={`${item.badgeColor} px-1 py-0 min-w-0 h-4 text-[10px] rounded-full absolute -top-1 -right-1 shadow-sm flex items-center justify-center z-60`}> {/* Higher z-index for badge */}
+                    <item.icon className={`w-5 h-5 ${item.color} mb-1`} /> {/* Larger icon */}
+                    <Badge className={`${item.badgeColor} px-1.5 py-0 min-w-0 h-4 text-[10px] rounded-full absolute -top-1 -right-1 shadow-sm flex items-center justify-center z-60`}>
                       {item.count}
                     </Badge>
                   </motion.button>

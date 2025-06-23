@@ -31,7 +31,7 @@ const sidebarVariants: Variants = {
     }
   },
   collapsed: {
-    width: "5.5rem", // Increased from 4.5rem to 5.5rem
+    width: "7rem", // Increased from 5.5rem to 7rem for better spacing
     transition: {
       type: "spring" as const,
       stiffness: 400,
@@ -68,7 +68,7 @@ export function AppSidebar() {
       <motion.div
         variants={sidebarVariants}
         animate={isCollapsed ? 'collapsed' : 'expanded'}
-        className="bg-background/80 backdrop-blur-md border-r border-border/50 h-screen overflow-hidden shadow-sm z-40" // Reduced transparency and added z-40
+        className="bg-background/80 backdrop-blur-md border-r border-border/50 h-screen overflow-hidden shadow-sm z-40"
       >
         <Sidebar collapsible="icon" className="bg-transparent border-0">
           <SidebarHeader className="p-4 pb-2">
@@ -105,7 +105,7 @@ export function AppSidebar() {
 
           <SidebarSeparator className="mx-4 my-2" />
 
-          <SidebarFooter className="p-4 pt-2 z-30"> {/* Added z-30 to keep footer below collapsed summary */}
+          <SidebarFooter className="p-4 pt-2 z-30">
             <CustomSidebarFooter />
           </SidebarFooter>
         </Sidebar>

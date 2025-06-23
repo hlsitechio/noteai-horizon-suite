@@ -36,7 +36,7 @@ export function SidebarFooter() {
   const isCollapsed = state === 'collapsed';
 
   return (
-    <div className={`${isCollapsed ? 'px-1' : 'px-2'} relative z-20`}> {/* Lower z-index than collapsed summary */}
+    <div className={`${isCollapsed ? 'px-2' : 'px-2'} relative z-20`}>
       <AnimatePresence>
         {!isCollapsed ? (
           <motion.div
@@ -79,12 +79,12 @@ export function SidebarFooter() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-col items-center space-y-3"
+            className="flex flex-col items-center space-y-4" // Increased spacing
           >
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.div whileHover={{ scale: 1.05 }}>
-                  <Avatar className="w-11 h-11 ring-2 ring-primary/20 cursor-pointer"> {/* Slightly smaller to avoid overlap */}
+                  <Avatar className="w-12 h-12 ring-2 ring-primary/20 cursor-pointer"> {/* Increased size */}
                     <AvatarImage src={user?.avatar} />
                     <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10">
                       {user?.name?.[0]}
@@ -103,10 +103,10 @@ export function SidebarFooter() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="w-10 h-10 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-colors"
+                  className="w-11 h-11 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-colors" // Increased size
                   onClick={logout}
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-5 h-5" /> {/* Larger icon */}
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">
