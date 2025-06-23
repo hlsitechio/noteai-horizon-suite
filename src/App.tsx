@@ -37,6 +37,8 @@ const queryClient = new QueryClient({
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
   
+  console.log('ProtectedRoute:', { isAuthenticated, isLoading });
+  
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -53,6 +55,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const AppRoutes = () => {
   const { isAuthenticated, isLoading } = useAuth();
+
+  console.log('AppRoutes:', { isAuthenticated, isLoading });
 
   if (isLoading) {
     return (
@@ -97,6 +101,8 @@ const AppRoutes = () => {
 };
 
 function App() {
+  console.log('App component rendering');
+  
   return (
     <Router>
       <QueryClientProvider client={queryClient}>

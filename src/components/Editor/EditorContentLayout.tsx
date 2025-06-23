@@ -2,85 +2,56 @@
 import React from 'react';
 import EditorLayout from './EditorLayout';
 import { EditorFormState, EditorFormHandlers } from './EditorFormProps';
-import { EditorUIState, EditorRefs } from './EditorUIProps';
-import { NoteCategory } from '../../types/note';
 
-const categories: NoteCategory[] = [
-  { value: 'general', label: 'General', color: 'gray' },
-  { value: 'meeting', label: 'Meeting', color: 'blue' },
-  { value: 'learning', label: 'Learning', color: 'green' },
-  { value: 'brainstorm', label: 'Brainstorm', color: 'purple' },
-  { value: 'project', label: 'Project', color: 'orange' },
-];
-
-interface EditorContentLayoutProps extends EditorFormState, EditorFormHandlers, EditorRefs {
-  isHeaderHidden: boolean;
-  isHeaderCollapsed: boolean;
-  isAssistantCollapsed: boolean;
-  onCollapseAllBars: () => void;
+interface EditorContentLayoutProps extends EditorFormState, EditorFormHandlers {
+  collapseAssistantRef?: React.MutableRefObject<(() => void) | undefined>;
+  expandAssistantRef?: React.MutableRefObject<(() => void) | undefined>;
+  isHeaderHidden?: boolean;
+  isHeaderCollapsed?: boolean;
+  isAssistantCollapsed?: boolean;
+  onCollapseAllBars?: () => void;
   isMobile?: boolean;
 }
 
-const EditorContentLayout: React.FC<EditorContentLayoutProps> = ({
-  title,
-  content,
-  category,
-  tags,
-  newTag,
-  isSaving,
-  onTitleChange,
-  onContentChange,
-  onCategoryChange,
-  onNewTagChange,
-  onAddTag,
-  onRemoveTag,
-  onSave,
-  onSuggestionApply,
-  collapseAssistantRef,
-  expandAssistantRef,
-  isHeaderHidden,
-  isHeaderCollapsed,
-  isAssistantCollapsed,
-  onCollapseAllBars,
-  isMobile = false,
-}) => {
-  const getLayoutHeight = () => {
-    if (isHeaderHidden) {
-      return "h-[calc(100vh-32px)]";
-    }
-    return isHeaderCollapsed ? "h-[calc(100vh-80px)]" : "h-[calc(100vh-120px)]";
-  };
+const EditorContentLayout: React.FC<EditorContentLayoutProps> = (props) => {
+  console.log('EditorContentLayout rendering with props:', {
+    title: props.title,
+    isMobile: props.isMobile,
+    isAssistantCollapsed: props.isAssistantCollapsed
+  });
 
-  const canSave = title.trim().length > 0;
+  // Get available categories - for now using a static list
+  const categories = [
+    { id: 'general', name: 'General', color: '#6366f1' },
+    { id: 'work', name: 'Work', color: '#059669' },
+    { id: 'personal', name: 'Personal', color: '#dc2626' },
+    { id: 'ideas', name: 'Ideas', color: '#7c3aed' },
+    { id: 'research', name: 'Research', color: '#ea580c' },
+  ];
 
   return (
-    <div className={getLayoutHeight()}>
-      <EditorLayout
-        title={title}
-        content={content}
-        category={category}
-        tags={tags}
-        newTag={newTag}
-        categories={categories}
-        onTitleChange={onTitleChange}
-        onContentChange={onContentChange}
-        onCategoryChange={onCategoryChange}
-        onNewTagChange={onNewTagChange}
-        onAddTag={onAddTag}
-        onRemoveTag={onRemoveTag}
-        onSuggestionApply={onSuggestionApply}
-        onSave={onSave}
-        canSave={canSave}
-        isSaving={isSaving}
-        collapseAssistantRef={collapseAssistantRef}
-        expandAssistantRef={expandAssistantRef}
-        showCollapseAllButton={isHeaderHidden}
-        onCollapseAllBars={onCollapseAllBars}
-        isAllBarsCollapsed={isHeaderHidden}
-        isAssistantCollapsed={isAssistantCollapsed}
-        isMobile={isMobile}
-      />
-    </div>
+    <EditorLayout
+      title={props.title}
+      content={props.content}
+      category={props.category}
+      tags={props.tags}
+      newTag={props.newTag}
+      categories={categories}
+      onTitleChange={props.onTitleChange}
+      onContentChange={props.onContentChange}
+      onCategoryChange={props.onCategoryChange}
+      onNewTagChange={props.onNewTagChange}
+      onAddTag={props.onAddTag}
+      onRemoveTag={props.onRemoveTag}
+      onSuggestionApply={props.onSuggestionApply}
+      onSave={props.onSave}
+      canSave={props.title?.trim().length > 0}
+      isSaving={props.isSaving}
+      collapseAssistantRef={props.collapseAssistantRef}
+      expandAssistantRef={props.expandAssistantRef}
+      isAssistantCollapsed={props.isAssistantCollapsed}
+      isMobile={props.isMobile}
+    />
   );
 };
 

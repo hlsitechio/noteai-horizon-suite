@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AppSidebar } from '../components/Layout/AppSidebar';
 import { SidebarProvider, SidebarInset, useSidebar } from '@/components/ui/sidebar';
@@ -10,6 +11,13 @@ const EditorInner: React.FC = () => {
   const { state: sidebarState, setOpen } = useSidebar();
   const isMobile = useIsMobile();
   const editorState = useEditorState();
+  
+  console.log('EditorInner rendering with:', {
+    isMobile,
+    title: editorState.title,
+    isLoading: editorState.isLoading || false
+  });
+
   const editorHandlers = useEditorHandlers({
     title: editorState.title,
     content: editorState.content,
@@ -31,6 +39,7 @@ const EditorInner: React.FC = () => {
 
   // Auto-collapse sidebar on mobile and enable unified focus mode by default
   React.useEffect(() => {
+    console.log('Editor useEffect triggered:', { isMobile, isUnifiedFocusMode });
     if (isMobile) {
       setOpen(false);
       // Auto-enable unified focus mode on mobile for better experience
@@ -45,6 +54,7 @@ const EditorInner: React.FC = () => {
 
   const handleUnifiedFocusToggle = () => {
     const newUnifiedFocusMode = !isUnifiedFocusMode;
+    console.log('Toggling unified focus mode:', newUnifiedFocusMode);
     setIsUnifiedFocusMode(newUnifiedFocusMode);
     
     if (newUnifiedFocusMode) {
@@ -127,6 +137,8 @@ const EditorInner: React.FC = () => {
 };
 
 const Editor: React.FC = () => {
+  console.log('Editor component rendering');
+  
   return (
     <SidebarProvider>
       <EditorInner />
