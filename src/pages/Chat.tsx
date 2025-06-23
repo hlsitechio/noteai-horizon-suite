@@ -1,25 +1,30 @@
 
 import React, { useState } from 'react';
-import { Plus, Send, Bot, User } from 'lucide-react';
+import { Plus, Send, Bot, User, Zap, Cpu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { useAIChat, ChatMessage } from '@/hooks/useAIChat';
+import { useEnhancedAIChat, ChatMessage } from '@/hooks/useEnhancedAIChat';
 import { useToast } from '@/hooks/useToast';
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
-      content: 'Hello! I\'m your AI assistant powered by DeepSeek R1. I can help you organize your thoughts, brainstorm ideas, and improve your notes. What would you like to work on today?',
+      content: 'Hello! I\'m your GPU-accelerated AI assistant powered by DeepSeek R1. I can help you organize your thoughts, brainstorm ideas, and improve your notes with enhanced performance. What would you like to work on today?',
       isUser: false,
       timestamp: new Date(),
     },
   ]);
   const [input, setInput] = useState('');
-  const { sendMessage, isLoading } = useAIChat();
+  const { 
+    sendMessage, 
+    isLoading, 
+    isProcessingLocally, 
+    gpuCapabilities 
+  } = useEnhancedAIChat();
   const { toast } = useToast();
 
   const handleSend = async () => {
@@ -64,7 +69,7 @@ const Chat: React.FC = () => {
     setMessages([
       {
         id: '1',
-        content: 'Hello! I\'m your AI assistant powered by DeepSeek R1. I can help you organize your thoughts, brainstorm ideas, and improve your notes. What would you like to work on today?',
+        content: 'Hello! I\'m your GPU-accelerated AI assistant powered by DeepSeek R1. I can help you organize your thoughts, brainstorm ideas, and improve your notes with enhanced performance. What would you like to work on today?',
         isUser: false,
         timestamp: new Date(),
       },
@@ -79,6 +84,42 @@ const Chat: React.FC = () => {
     }
   };
 
+  const getGPUStatusBadge = () => {
+    if (!gpuCapabilities.isInitialized) {
+      return (
+        <Badge variant="secondary" className="bg-gray-500/10 text-gray-600">
+          <Cpu className="w-3 h-3 mr-1" />
+          Initializing...
+        </Badge>
+      );
+    }
+
+    if (gpuCapabilities.webGPUSupported) {
+      return (
+        <Badge variant="secondary" className="bg-green-500/10 text-green-600">
+          <Zap className="w-3 h-3 mr-1" />
+          WebGPU Enabled
+        </Badge>
+      );
+    }
+
+    if (gpuCapabilities.webGLSupported) {
+      return (
+        <Badge variant="secondary" className="bg-blue-500/10 text-blue-600">
+          <Zap className="w-3 h-3 mr-1" />
+          WebGL Enabled
+        </Badge>
+      );
+    }
+
+    return (
+      <Badge variant="secondary" className="bg-orange-500/10 text-orange-600">
+        <Cpu className="w-3 h-3 mr-1" />
+        CPU Only
+      </Badge>
+    );
+  };
+
   return (
     <div className="space-y-6 h-[calc(100vh-120px)]">
       {/* Header */}
@@ -91,9 +132,10 @@ const Chat: React.FC = () => {
             <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 dark:text-blue-400">
               DeepSeek R1
             </Badge>
+            {getGPUStatusBadge()}
           </div>
           <p className="text-gray-600 dark:text-gray-400">
-            Get help with your notes and ideas using advanced AI
+            Get help with your notes and ideas using GPU-accelerated AI
           </p>
         </div>
         <Button size="sm" onClick={handleNewChat} disabled={isLoading}>
@@ -145,7 +187,7 @@ const Chat: React.FC = () => {
                 ))}
                 
                 {/* Loading indicator */}
-                {isLoading && (
+                {(isLoading || isProcessingLocally) && (
                   <div className="flex items-start gap-4 justify-start">
                     <Avatar className="w-8 h-8 bg-blue-500">
                       <AvatarFallback className="text-white">
@@ -159,7 +201,12 @@ const Chat: React.FC = () => {
                           <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                           <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                         </div>
-                        <span className="text-sm">AI is thinking...</span>
+                        <span className="text-sm">
+                          {isProcessingLocally ? 'Processing locally with GPU...' : 'AI is thinking...'}
+                        </span>
+                        {isProcessingLocally && (
+                          <Zap className="w-3 h-3 text-green-500" />
+                        )}
                       </div>
                     </div>
                   </div>
@@ -189,7 +236,7 @@ const Chat: React.FC = () => {
                 </Button>
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                Powered by DeepSeek R1 • Press Enter to send, Shift+Enter for new line
+                Powered by DeepSeek R1 with GPU acceleration • Press Enter to send, Shift+Enter for new line
               </p>
             </div>
           </div>
