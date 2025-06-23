@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Plus, Send, Bot, User, Zap, Cpu, Database, Search } from 'lucide-react';
+import { Plus, Send, Bot, User, Zap, Cpu, Database, Search, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -16,7 +16,7 @@ const Chat: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
-      content: 'Hello! I\'m your AI assistant with access to your notes. I can help you with questions and reference your personal notes to provide more relevant answers. What would you like to work on today?',
+      content: 'Hello! I\'m your AI assistant with access to your personal notes. I can help you with questions, reference your notes to provide contextual answers, and assist with various tasks. What would you like to work on today?',
       isUser: false,
       timestamp: new Date(),
     },
@@ -46,8 +46,8 @@ const Chat: React.FC = () => {
         </pre>
       );
     } catch {
-      // If it's not JSON, return as regular text
-      return <p className="whitespace-pre-wrap">{content}</p>;
+      // If it's not JSON, return as regular text with proper formatting
+      return <div className="whitespace-pre-wrap text-sm leading-relaxed">{content}</div>;
     }
   };
 
@@ -86,7 +86,9 @@ const Chat: React.FC = () => {
 
       // Show success toast with RAG info
       if (useRAG && ragResponse.notesUsed > 0) {
-        toast.success(`Response generated using ${ragResponse.notesUsed} relevant notes`);
+        toast.success(`Response generated using ${ragResponse.notesUsed} relevant notes from your collection`);
+      } else if (useRAG && ragResponse.notesUsed === 0) {
+        toast.info('No relevant notes found for this query - using general AI knowledge');
       }
       
     } catch (error) {
@@ -101,7 +103,7 @@ const Chat: React.FC = () => {
     setMessages([
       {
         id: '1',
-        content: 'Hello! I\'m your AI assistant with access to your notes. I can help you with questions and reference your personal notes to provide more relevant answers. What would you like to work on today?',
+        content: 'Hello! I\'m your AI assistant with access to your personal notes. I can help you with questions, reference your notes to provide contextual answers, and assist with various tasks. What would you like to work on today?',
         isUser: false,
         timestamp: new Date(),
       },
@@ -131,7 +133,7 @@ const Chat: React.FC = () => {
       return (
         <Badge variant="secondary" className="bg-green-500/10 text-green-600">
           <Zap className="w-3 h-3 mr-1" />
-          WebGPU Enabled
+          WebGPU Ready
         </Badge>
       );
     }
@@ -140,7 +142,7 @@ const Chat: React.FC = () => {
       return (
         <Badge variant="secondary" className="bg-blue-500/10 text-blue-600">
           <Zap className="w-3 h-3 mr-1" />
-          WebGL Enabled
+          WebGL Ready
         </Badge>
       );
     }
@@ -148,16 +150,16 @@ const Chat: React.FC = () => {
     return (
       <Badge variant="secondary" className="bg-orange-500/10 text-orange-600">
         <Cpu className="w-3 h-3 mr-1" />
-        CPU Only
+        CPU Mode
       </Badge>
     );
   };
 
   return (
-    <div className="space-y-6 h-[calc(100vh-120px)]">
+    <div className="flex flex-col h-[calc(100vh-120px)] space-y-6">
       {/* Header */}
       <div className="flex justify-between items-start">
-        <div>
+        <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
               AI Assistant
@@ -168,18 +170,21 @@ const Chat: React.FC = () => {
             {useRAG && (
               <Badge variant="secondary" className="bg-purple-500/10 text-purple-600 dark:text-purple-400">
                 <Database className="w-3 h-3 mr-1" />
-                RAG Enabled
+                Notes Access
               </Badge>
             )}
             {getGPUStatusBadge()}
           </div>
           <p className="text-gray-600 dark:text-gray-400">
-            AI assistant with access to your notes for personalized responses
+            AI assistant with access to your personal notes for enhanced, contextual responses
           </p>
           {lastRAGResponse && lastRAGResponse.notesUsed > 0 && (
-            <p className="text-sm text-purple-600 dark:text-purple-400 mt-1">
-              Last response used {lastRAGResponse.notesUsed} relevant notes
-            </p>
+            <div className="flex items-center gap-2 mt-2">
+              <FileText className="w-4 h-4 text-purple-600" />
+              <p className="text-sm text-purple-600 dark:text-purple-400">
+                Last response referenced {lastRAGResponse.notesUsed} notes from your collection
+              </p>
+            </div>
           )}
         </div>
         <div className="flex items-center gap-4">
@@ -190,8 +195,8 @@ const Chat: React.FC = () => {
               onCheckedChange={setUseRAG}
               disabled={isLoading}
             />
-            <Label htmlFor="rag-mode" className="text-sm">
-              Use Notes Context
+            <Label htmlFor="rag-mode" className="text-sm font-medium">
+              Use My Notes
             </Label>
           </div>
           <Button size="sm" onClick={handleNewChat} disabled={isLoading}>
@@ -201,108 +206,107 @@ const Chat: React.FC = () => {
         </div>
       </div>
 
-      {/* Messages */}
-      <Card className="flex-1">
-        <CardContent className="p-0">
-          <div className="flex flex-col h-full justify-end">
-            <div className="flex-1 overflow-y-auto max-h-[400px] p-6">
-              <div className="space-y-6">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex items-start gap-4 ${
-                      message.isUser ? 'justify-end' : 'justify-start'
-                    }`}
-                  >
-                    {!message.isUser && (
-                      <Avatar className="w-8 h-8 bg-blue-500 flex-shrink-0">
-                        <AvatarFallback className="text-white">
-                          <Bot className="w-4 h-4" />
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
-                    <div
-                      className={`max-w-[70%] p-4 rounded-2xl ${
-                        message.isUser
-                          ? 'bg-blue-500 text-white rounded-br-sm'
-                          : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-sm'
-                      }`}
-                    >
-                      {message.isUser ? (
-                        <p className="whitespace-pre-wrap">{message.content}</p>
-                      ) : (
-                        formatMessageContent(message.content)
-                      )}
-                      <p className="text-xs opacity-70 mt-2">
-                        {message.timestamp.toLocaleTimeString()}
-                      </p>
-                    </div>
-                    {message.isUser && (
-                      <Avatar className="w-8 h-8 bg-purple-500 flex-shrink-0">
-                        <AvatarFallback className="text-white">
-                          <User className="w-4 h-4" />
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
-                  </div>
-                ))}
-                
-                {/* Loading indicator */}
-                {(isLoading || isProcessingLocally) && (
-                  <div className="flex items-start gap-4 justify-start">
-                    <Avatar className="w-8 h-8 bg-blue-500">
+      {/* Messages Container */}
+      <Card className="flex-1 flex flex-col">
+        <CardContent className="p-0 flex flex-col h-full">
+          {/* Messages Area */}
+          <div className="flex-1 overflow-y-auto p-6">
+            <div className="space-y-6">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex items-start gap-4 ${
+                    message.isUser ? 'justify-end' : 'justify-start'
+                  }`}
+                >
+                  {!message.isUser && (
+                    <Avatar className="w-8 h-8 bg-blue-500 flex-shrink-0">
                       <AvatarFallback className="text-white">
                         <Bot className="w-4 h-4" />
                       </AvatarFallback>
                     </Avatar>
-                    <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-2xl rounded-bl-sm">
-                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                        <div className="flex space-x-1">
-                          <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                          <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                        </div>
-                        <span className="text-sm">
-                          {isProcessingLocally ? 'Processing locally with GPU...' : 
-                           useRAG ? 'Searching notes and generating response...' : 'AI is thinking...'}
-                        </span>
-                        {isProcessingLocally && <Zap className="w-3 h-3 text-green-500" />}
-                        {useRAG && <Search className="w-3 h-3 text-purple-500" />}
+                  )}
+                  <div
+                    className={`max-w-[80%] p-4 rounded-2xl ${
+                      message.isUser
+                        ? 'bg-blue-500 text-white rounded-br-sm'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-sm'
+                    }`}
+                  >
+                    {message.isUser ? (
+                      <p className="whitespace-pre-wrap">{message.content}</p>
+                    ) : (
+                      formatMessageContent(message.content)
+                    )}
+                    <p className="text-xs opacity-70 mt-2">
+                      {message.timestamp.toLocaleTimeString()}
+                    </p>
+                  </div>
+                  {message.isUser && (
+                    <Avatar className="w-8 h-8 bg-purple-500 flex-shrink-0">
+                      <AvatarFallback className="text-white">
+                        <User className="w-4 h-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                </div>
+              ))}
+              
+              {/* Loading indicator */}
+              {(isLoading || isProcessingLocally) && (
+                <div className="flex items-start gap-4 justify-start">
+                  <Avatar className="w-8 h-8 bg-blue-500">
+                    <AvatarFallback className="text-white">
+                      <Bot className="w-4 h-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-2xl rounded-bl-sm">
+                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                       </div>
+                      <span className="text-sm">
+                        {isProcessingLocally ? 'Processing locally with GPU...' : 
+                         useRAG ? 'Searching your notes and generating response...' : 'AI is thinking...'}
+                      </span>
+                      {isProcessingLocally && <Zap className="w-3 h-3 text-green-500" />}
+                      {useRAG && <Search className="w-3 h-3 text-purple-500" />}
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
+          </div>
 
-            {/* Input */}
-            <div className="border-t dark:border-gray-700 p-6">
-              <div className="flex gap-3">
-                <Textarea
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder={useRAG ? "Ask me anything - I can reference your notes for better answers..." : "Ask me anything..."}
-                  className="resize-none rounded-xl min-h-[60px]"
-                  rows={2}
-                  onKeyPress={handleKeyPress}
-                  disabled={isLoading}
-                />
-                <Button
-                  size="lg"
-                  onClick={handleSend}
-                  disabled={!input.trim() || isLoading}
-                  className="rounded-xl px-6"
-                >
-                  <Send className="w-4 h-4" />
-                </Button>
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                {useRAG ? 
-                  'RAG-enhanced AI with access to your notes • Press Enter to send, Shift+Enter for new line' :
-                  'Standard AI chat • Press Enter to send, Shift+Enter for new line'
-                }
-              </p>
+          {/* Input Area */}
+          <div className="border-t dark:border-gray-700 p-6">
+            <div className="flex gap-3">
+              <Textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={useRAG ? "Ask me anything - I can reference your notes for better answers..." : "Ask me anything..."}
+                className="resize-none rounded-xl min-h-[60px] flex-1"
+                rows={2}
+                onKeyPress={handleKeyPress}
+                disabled={isLoading}
+              />
+              <Button
+                size="lg"
+                onClick={handleSend}
+                disabled={!input.trim() || isLoading}
+                className="rounded-xl px-6"
+              >
+                <Send className="w-4 h-4" />
+              </Button>
             </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+              {useRAG ? 
+                'RAG-enhanced AI with access to your notes • Press Enter to send, Shift+Enter for new line' :
+                'Standard AI chat • Press Enter to send, Shift+Enter for new line'
+              }
+            </p>
           </div>
         </CardContent>
       </Card>

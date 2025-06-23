@@ -95,13 +95,17 @@ export const useRAGChat = () => {
     } catch (error: any) {
       console.error('Error sending RAG-enhanced chat message:', error);
       
-      // More specific error messages
+      // More specific error messages based on the error type
       if (error.message?.includes('OPENROUTER_API_KEY')) {
         toast.error('AI service not configured. Please contact support.');
-      } else if (error.message?.includes('network')) {
-        toast.error('Network error. Please check your connection.');
-      } else if (error.message?.includes('Authentication')) {
+      } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
+        toast.error('Network error. Please check your connection and try again.');
+      } else if (error.message?.includes('Authentication') || error.message?.includes('auth')) {
         toast.error('Please log in to use the AI assistant.');
+      } else if (error.message?.includes('Rate limit')) {
+        toast.error('Rate limit exceeded. Please wait a moment and try again.');
+      } else if (error.message?.includes('credits') || error.message?.includes('quota')) {
+        toast.error('API quota exceeded. Please try again later.');
       } else {
         toast.error(`AI chat failed: ${error.message}`);
       }
