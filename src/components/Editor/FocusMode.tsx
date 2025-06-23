@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Maximize2, Save, Type, Eye, EyeOff, Timer, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -116,6 +115,9 @@ const FocusMode: React.FC<FocusModeProps> = ({
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Check if background should be completely hidden
+  const isBackgroundHidden = backgroundOpacity[0] >= 100;
+
   if (!isOpen) return null;
 
   return (
@@ -125,41 +127,47 @@ const FocusMode: React.FC<FocusModeProps> = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5, ease: "easeInOut" }}
-        className="fixed inset-0 z-50 flex items-center justify-center"
+        className={`fixed inset-0 z-50 flex items-center justify-center ${
+          isBackgroundHidden ? 'bg-black' : ''
+        }`}
         onKeyDown={handleKeyDown}
         tabIndex={-1}
       >
-        {/* Dynamic Blurred Background */}
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
-          style={{ 
-            backdropFilter: `blur(${Math.max(10, backgroundOpacity[0] / 10)}px)`,
-            opacity: backgroundOpacity[0] / 100 
-          }}
-          onClick={!isZenMode ? onClose : undefined}
-        />
+        {/* Dynamic Blurred Background - Hidden when opacity is 100% */}
+        {!isBackgroundHidden && (
+          <motion.div 
+            className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
+            style={{ 
+              backdropFilter: `blur(${Math.max(10, backgroundOpacity[0] / 10)}px)`,
+              opacity: backgroundOpacity[0] / 100 
+            }}
+            onClick={!isZenMode ? onClose : undefined}
+          />
+        )}
         
-        {/* Ambient Background Effects */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div 
-            className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"
-            animate={{ 
-              x: [0, 100, 0],
-              y: [0, -50, 0],
-              scale: [1, 1.2, 1]
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          />
-          <motion.div 
-            className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-pink-500/10 to-orange-500/10 rounded-full blur-3xl"
-            animate={{ 
-              x: [0, -80, 0],
-              y: [0, 60, 0],
-              scale: [1, 0.8, 1]
-            }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          />
-        </div>
+        {/* Ambient Background Effects - Hidden when opacity is 100% */}
+        {!isBackgroundHidden && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <motion.div 
+              className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"
+              animate={{ 
+                x: [0, 100, 0],
+                y: [0, -50, 0],
+                scale: [1, 1.2, 1]
+              }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            />
+            <motion.div 
+              className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-pink-500/10 to-orange-500/10 rounded-full blur-3xl"
+              animate={{ 
+                x: [0, -80, 0],
+                y: [0, 60, 0],
+                scale: [1, 0.8, 1]
+              }}
+              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            />
+          </div>
+        )}
         
         {/* Main Focus Editor */}
         <motion.div
@@ -308,7 +316,7 @@ const FocusMode: React.FC<FocusModeProps> = ({
                     <Slider
                       value={backgroundOpacity}
                       onValueChange={setBackgroundOpacity}
-                      max={95}
+                      max={100}
                       min={60}
                       step={5}
                       className="w-24"
