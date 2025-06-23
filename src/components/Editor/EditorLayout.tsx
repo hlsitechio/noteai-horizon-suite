@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import EditorLayoutFloatingControls from './EditorLayoutFloatingControls';
 import EditorMainColumn from './EditorMainColumn';
 import EditorSidebar from './EditorSidebar';
 import { NoteCategory } from '../../types/note';
@@ -54,7 +53,6 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
   isMobile = false,
 }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(isMobile);
-  const [isDistractionFree, setIsDistractionFree] = useState(false);
 
   // Auto-collapse sidebar on mobile
   useEffect(() => {
@@ -73,34 +71,17 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
     }
   }, [collapseAssistantRef, expandAssistantRef]);
 
-  const toggleDistractionFree = () => {
-    setIsDistractionFree(!isDistractionFree);
-    if (!isDistractionFree) {
-      setIsSidebarCollapsed(true);
-    } else {
-      setIsSidebarCollapsed(isMobile);
-    }
-  };
-
   return (
     <div className="relative">
-      {/* Floating Layout Control - Hide on mobile */}
-      {!isMobile && (
-        <EditorLayoutFloatingControls
-          isDistractionFree={isDistractionFree}
-          onToggleDistractionFree={toggleDistractionFree}
-        />
-      )}
-
       {/* Main Editor Column - Mobile responsive grid */}
       <div className={`grid gap-6 h-full transition-all duration-500 ease-in-out ${
         isMobile 
           ? 'grid-cols-1' 
-          : isSidebarCollapsed || isDistractionFree
+          : isSidebarCollapsed
             ? 'grid-cols-1 lg:grid-cols-[1fr_4rem]' 
             : 'grid-cols-1 lg:grid-cols-4'
       }`}>
-        <div className={isMobile || isSidebarCollapsed || isDistractionFree ? 'lg:col-span-1' : 'lg:col-span-3'}>
+        <div className={isMobile || isSidebarCollapsed ? 'lg:col-span-1' : 'lg:col-span-3'}>
           <EditorMainColumn
             title={title}
             content={content}
@@ -118,7 +99,7 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
             onSave={onSave}
             canSave={canSave}
             isSaving={isSaving}
-            isDistractionFree={isDistractionFree}
+            isDistractionFree={false}
             isMobile={isMobile}
           />
         </div>
@@ -131,7 +112,7 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
             onCollapseChange={setIsSidebarCollapsed}
             isCollapsed={isAssistantCollapsed || isSidebarCollapsed}
             onCollapseToggle={setIsSidebarCollapsed}
-            isDistractionFree={isDistractionFree}
+            isDistractionFree={false}
           />
         )}
       </div>
