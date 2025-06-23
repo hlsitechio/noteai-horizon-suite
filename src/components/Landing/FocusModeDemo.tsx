@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, X, Heart, Save, Sparkles } from 'lucide-react';
@@ -49,7 +48,7 @@ const FocusModeDemo = () => {
       transition={{ duration: 0.8 }}
       className="group"
     >
-      <Card className="bg-gradient-to-br from-slate-900/40 to-slate-800/20 backdrop-blur-xl transition-all duration-500 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(168,85,247,0.3)] hover:shadow-2xl">
+      <Card className="bg-gradient-to-br from-slate-900/5 to-slate-800/5 backdrop-blur-xl border-0 transition-all duration-500 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(168,85,247,0.3)] hover:shadow-2xl">
         <CardContent className="p-0">
           <div className="grid lg:grid-cols-2 gap-0">
             {/* Feature Description */}
@@ -61,7 +60,7 @@ const FocusModeDemo = () => {
               <p className="text-gray-300 leading-relaxed text-lg mb-6">
                 Transform your writing environment into a distraction-free zone. Click the focus button in the demo to experience our immersive writing mode with real-time stats.
               </p>
-              <Badge className="w-fit bg-purple-500/20 text-purple-300">
+              <Badge className="w-fit bg-purple-500/20 text-purple-300 border-0">
                 Interactive Demo
               </Badge>
             </div>
@@ -108,25 +107,25 @@ const FocusModeDemo = () => {
                       placeholder="Your title here..."
                     />
                     
-                    <div className="bg-white/5 rounded-xl p-4 min-h-[200px] backdrop-blur-sm">
+                    <div className="bg-white/5 rounded-xl p-4 min-h-[200px] backdrop-blur-sm border-0">
                       <Textarea
                         value={content}
                         onChange={(e) => handleContentChange(e.target.value)}
                         placeholder="Start writing your story..."
-                        className="w-full h-full bg-transparent outline-none text-white placeholder-white/50 resize-none text-base leading-relaxed"
+                        className="w-full h-full bg-transparent outline-none text-white placeholder-white/50 resize-none text-base leading-relaxed border-0"
                       />
                     </div>
 
                     {/* Sidebar Preview */}
                     <div className="flex gap-4">
                       <div className="flex-1">
-                        <div className="bg-white/5 rounded-lg p-3">
+                        <div className="bg-white/5 rounded-lg p-3 border-0">
                           <div className="text-white/60 text-xs mb-2">Category</div>
                           <div className="text-white text-sm">Personal</div>
                         </div>
                       </div>
                       <div className="flex-1">
-                        <div className="bg-white/5 rounded-lg p-3">
+                        <div className="bg-white/5 rounded-lg p-3 border-0">
                           <div className="text-white/60 text-xs mb-2">Words</div>
                           <div className="text-white text-sm">{content.trim().split(/\s+/).length}</div>
                         </div>
@@ -180,7 +179,7 @@ const FocusModeDemo = () => {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2 }}
-                      className="absolute bottom-4 left-8 right-8 flex justify-between text-white/40 text-sm bg-white/5 rounded-lg p-3 backdrop-blur-sm"
+                      className="absolute bottom-4 left-8 right-8 flex justify-between text-white/40 text-sm bg-white/5 rounded-lg p-3 backdrop-blur-sm border-0"
                     >
                       <span>Words: {focusStats.words}</span>
                       <span>Time: {formatTime(focusStats.time)}</span>

@@ -103,11 +103,11 @@ const AIAssistantDemo = () => {
       transition={{ duration: 0.8 }}
       className="group"
     >
-      <Card className="bg-gradient-to-br from-slate-900/50 to-slate-800/30 border-2 border-white/10 hover:border-cyan-500/30 backdrop-blur-xl transition-all duration-500 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.3)] hover:shadow-2xl">
+      <Card className="bg-gradient-to-br from-slate-900/5 to-slate-800/5 backdrop-blur-xl border-0 transition-all duration-500 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.3)] hover:shadow-2xl">
         <CardContent className="p-0">
           <div className="grid lg:grid-cols-2 gap-0">
             {/* Live Demo */}
-            <div className="bg-black/40 p-8 border-r border-white/10 order-2 lg:order-1">
+            <div className="bg-black/40 p-8 order-2 lg:order-1">
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
@@ -189,7 +189,7 @@ const AIAssistantDemo = () => {
                         placeholder="Enter some text to process with AI..."
                         value={aiSelectedText}
                         onChange={(e) => setAiSelectedText(e.target.value)}
-                        className="w-full bg-white/10 border border-white/20 text-white placeholder-white/50 rounded-xl min-h-[100px]"
+                        className="w-full bg-white/10 border-0 text-white placeholder-white/50 rounded-xl min-h-[100px]"
                       />
                     </motion.div>
                   </AnimatePresence>
@@ -252,14 +252,14 @@ const AIAssistantDemo = () => {
                       className="space-y-3"
                     >
                       <div className="flex items-center justify-between">
-                        <Badge variant="secondary" className="bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border-cyan-500/30">
+                        <Badge variant="secondary" className="bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border-0">
                           ✨ AI Result
                         </Badge>
                         <Button variant="ghost" size="sm" onClick={handleCopy}>
                           {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
                         </Button>
                       </div>
-                      <div className="bg-gradient-to-br from-white/10 to-white/5 p-4 rounded-xl text-sm text-white/90 max-h-40 overflow-y-auto border border-white/10">
+                      <div className="bg-gradient-to-br from-white/10 to-white/5 p-4 rounded-xl text-sm text-white/90 max-h-40 overflow-y-auto border-0">
                         {aiResult}
                       </div>
                     </motion.div>
@@ -279,10 +279,10 @@ const AIAssistantDemo = () => {
                 Try our pre-built examples or enter your own text to see AI enhance, translate, or summarize content instantly!
               </p>
               <div className="flex flex-wrap gap-2">
-                <Badge className="bg-cyan-500/20 text-cyan-300 border-cyan-500/30">
+                <Badge className="bg-cyan-500/20 text-cyan-300 border-0">
                   Try Examples
                 </Badge>
-                <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30">
+                <Badge className="bg-purple-500/20 text-purple-300 border-0">
                   Custom Text
                 </Badge>
               </div>
