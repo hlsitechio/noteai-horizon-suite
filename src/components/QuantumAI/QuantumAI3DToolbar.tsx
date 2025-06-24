@@ -74,6 +74,14 @@ const QuantumAI3DToolbar: React.FC = () => {
     setIsExpanded(!isExpanded);
   };
 
+  // Helper function to safely parse gradient colors
+  const parseGradientColors = (colorString: string) => {
+    const parts = colorString.split(' ');
+    const fromColor = parts.find(part => part.startsWith('from-'))?.replace('from-', '') || 'purple-500';
+    const toColor = parts.find(part => part.startsWith('to-'))?.replace('to-', '') || 'blue-500';
+    return { fromColor, toColor };
+  };
+
   return (
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
       <AnimatePresence>
@@ -93,41 +101,40 @@ const QuantumAI3DToolbar: React.FC = () => {
               {/* Main Toolbar Container */}
               <div className="relative bg-card/95 backdrop-blur-xl border border-border/20 rounded-2xl shadow-2xl p-4">
                 <div className="flex items-center gap-3">
-                  {toolbarActions.map((tool, index) => (
-                    <motion.div
-                      key={tool.label}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ 
-                        delay: index * 0.1,
-                        duration: 0.3,
-                        ease: "easeOut" 
-                      }}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="lg"
-                        onClick={tool.action}
-                        className="group relative h-14 w-14 rounded-xl bg-gradient-to-br hover:scale-105 transition-all duration-300 shadow-lg"
-                        style={{
-                          background: `linear-gradient(135deg, var(--gradient-from), var(--gradient-to))`,
-                          '--gradient-from': tool.color.split(' ')[0].replace('from-', ''),
-                          '--gradient-to': tool.color.split(' ')[2].replace('to-', '')
-                        } as any}
+                  {toolbarActions.map((tool, index) => {
+                    const { fromColor, toColor } = parseGradientColors(tool.color);
+                    
+                    return (
+                      <motion.div
+                        key={tool.label}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ 
+                          delay: index * 0.1,
+                          duration: 0.3,
+                          ease: "easeOut" 
+                        }}
                       >
-                        <div className="absolute inset-0 bg-white/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        <tool.icon className="w-6 h-6 text-white relative z-10" />
-                        
-                        {/* Tooltip */}
-                        <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                          <div className="bg-card/95 backdrop-blur-xl border border-border/20 rounded-lg px-3 py-2 shadow-xl">
-                            <p className="text-sm font-medium text-foreground whitespace-nowrap">{tool.label}</p>
-                            <p className="text-xs text-muted-foreground">{tool.description}</p>
+                        <Button
+                          variant="ghost"
+                          size="lg"
+                          onClick={tool.action}
+                          className={`group relative h-14 w-14 rounded-xl bg-gradient-to-br from-${fromColor} to-${toColor} hover:scale-105 transition-all duration-300 shadow-lg text-white`}
+                        >
+                          <div className="absolute inset-0 bg-white/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          <tool.icon className="w-6 h-6 text-white relative z-10" />
+                          
+                          {/* Tooltip */}
+                          <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                            <div className="bg-card/95 backdrop-blur-xl border border-border/20 rounded-lg px-3 py-2 shadow-xl">
+                              <p className="text-sm font-medium text-foreground whitespace-nowrap">{tool.label}</p>
+                              <p className="text-xs text-muted-foreground">{tool.description}</p>
+                            </div>
                           </div>
-                        </div>
-                      </Button>
-                    </motion.div>
-                  ))}
+                        </Button>
+                      </motion.div>
+                    );
+                  })}
                 </div>
                 
                 {/* Status Indicator */}
