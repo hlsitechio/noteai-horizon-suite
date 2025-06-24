@@ -88,7 +88,8 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
               <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
             </Button>
 
-            {currentNote && !isNewNote && (
+            {/* Show share button for existing notes */}
+            {currentNote && (
               <NoteShareButton 
                 note={currentNote} 
                 variant="ghost" 
