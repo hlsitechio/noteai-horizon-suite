@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PanelLeftClose, PanelLeftOpen, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
+import { useAccentColor } from '../../../contexts/AccentColorContext';
 
 const contentVariants = {
   expanded: {
@@ -46,13 +47,20 @@ const iconVariants = {
 
 export function SidebarHeader() {
   const { state, toggleSidebar } = useSidebar();
+  const { accentColor } = useAccentColor();
   const isCollapsed = state === 'collapsed';
 
   return (
     <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} relative px-2`}>
       {/* Logo and Title Section */}
       <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
-        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-electric-cyan-500 to-electric-cyan-600 flex items-center justify-center shadow-premium border border-electric-cyan-400/30">
+        <div 
+          className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-premium border"
+          style={{
+            background: `linear-gradient(135deg, ${accentColor}, ${accentColor}dd)`,
+            borderColor: `${accentColor}30`
+          }}
+        >
           <Sparkles className="w-5 h-5 text-deep-carbon-900" />
         </div>
         
@@ -66,7 +74,12 @@ export function SidebarHeader() {
               className="flex flex-col"
             >
               <span className="text-lg font-bold text-professional-grey-200">AI Notes</span>
-              <span className="text-xs text-electric-cyan-400 -mt-1">Smart Writing</span>
+              <span 
+                className="text-xs -mt-1"
+                style={{ color: accentColor }}
+              >
+                Smart Writing
+              </span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -82,7 +95,13 @@ export function SidebarHeader() {
           variant="ghost"
           size="icon"
           onClick={toggleSidebar}
-          className="h-8 w-8 rounded-lg hover:bg-electric-cyan-500/20 hover:text-electric-cyan-400 text-professional-grey-400 transition-colors"
+          className="h-8 w-8 rounded-lg hover:text-professional-grey-400 text-professional-grey-400 transition-colors"
+          style={{
+            ':hover': {
+              backgroundColor: `${accentColor}20`,
+              color: accentColor
+            }
+          }}
           title={state === 'expanded' ? 'Collapse sidebar' : 'Expand sidebar'}
         >
           <motion.div

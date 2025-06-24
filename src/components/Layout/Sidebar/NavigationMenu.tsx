@@ -21,13 +21,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useAccentColor } from '../../../contexts/AccentColorContext';
 
 const menuItems = [
-  { icon: BookOpen, label: 'Dashboard', path: '/app/dashboard', color: 'text-electric-cyan-500' },
-  { icon: Plus, label: 'AI Chat', path: '/app/chat', color: 'text-electric-cyan-500' },
-  { icon: PenTool, label: 'Editor', path: '/app/editor', color: 'text-electric-cyan-500' },
-  { icon: Calendar, label: 'Calendar', path: '/app/calendar', color: 'text-electric-cyan-500' },
-  { icon: Settings, label: 'Settings', path: '/app/settings', color: 'text-electric-cyan-500' },
+  { icon: BookOpen, label: 'Dashboard', path: '/app/dashboard' },
+  { icon: Plus, label: 'AI Chat', path: '/app/chat' },
+  { icon: PenTool, label: 'Editor', path: '/app/editor' },
+  { icon: Calendar, label: 'Calendar', path: '/app/calendar' },
+  { icon: Settings, label: 'Settings', path: '/app/settings' },
 ];
 
 const contentVariants = {
@@ -73,6 +74,7 @@ export function NavigationMenu() {
   const location = useLocation();
   const navigate = useNavigate();
   const { state } = useSidebar();
+  const { accentColor } = useAccentColor();
   const isCollapsed = state === 'collapsed';
 
   return (
@@ -94,22 +96,34 @@ export function NavigationMenu() {
                     isActive={location.pathname === item.path}
                     className={`h-12 w-12 mx-auto rounded-xl transition-all duration-200 relative overflow-hidden ${
                       location.pathname === item.path 
-                        ? 'bg-electric-cyan-500/20 text-electric-cyan-400 shadow-lg border border-electric-cyan-500/30' 
-                        : 'hover:bg-deep-carbon-800 hover:text-electric-cyan-400 hover:shadow-md text-professional-grey-400'
+                        ? 'shadow-lg border' 
+                        : 'hover:bg-deep-carbon-800 hover:shadow-md text-professional-grey-400'
                     }`}
+                    style={location.pathname === item.path ? {
+                      backgroundColor: `${accentColor}20`,
+                      color: accentColor,
+                      borderColor: `${accentColor}30`
+                    } : {}}
                   >
                     <motion.div
                       variants={iconVariants}
                       animate={isCollapsed ? 'collapsed' : 'expanded'}
                       className="relative z-10"
                     >
-                      <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-electric-cyan-400' : ''}`} />
+                      <item.icon 
+                        className="w-5 h-5" 
+                        style={location.pathname === item.path ? { color: accentColor } : {}}
+                      />
                     </motion.div>
                     {location.pathname === item.path && (
                       <motion.div
-                        className="absolute inset-0 bg-electric-cyan-500/20 border border-electric-cyan-500/30 -z-10 rounded-xl"
+                        className="absolute inset-0 -z-10 rounded-xl border"
                         layoutId="activeBackground"
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                        style={{
+                          backgroundColor: `${accentColor}20`,
+                          borderColor: `${accentColor}30`
+                        }}
                       />
                     )}
                   </SidebarMenuButton>
@@ -124,18 +138,30 @@ export function NavigationMenu() {
                 isActive={location.pathname === item.path}
                 className={`h-11 rounded-xl transition-all duration-200 relative overflow-hidden group ${
                   location.pathname === item.path 
-                    ? 'bg-electric-cyan-500/20 text-electric-cyan-400 shadow-md border border-electric-cyan-500/30' 
-                    : 'hover:bg-deep-carbon-800 hover:text-electric-cyan-400 hover:translate-x-1 text-professional-grey-400'
+                    ? 'shadow-md border' 
+                    : 'hover:bg-deep-carbon-800 hover:translate-x-1 text-professional-grey-400'
                 }`}
+                style={location.pathname === item.path ? {
+                  backgroundColor: `${accentColor}20`,
+                  color: accentColor,
+                  borderColor: `${accentColor}30`
+                } : {}}
               >
                 {location.pathname === item.path && (
                   <motion.div
-                    className="absolute inset-0 bg-electric-cyan-500/20 border border-electric-cyan-500/30 -z-10 rounded-xl"
+                    className="absolute inset-0 -z-10 rounded-xl border"
                     layoutId="activeBackground"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    style={{
+                      backgroundColor: `${accentColor}20`,
+                      borderColor: `${accentColor}30`
+                    }}
                   />
                 )}
-                <item.icon className={`w-5 h-5 flex-shrink-0 relative z-20 ${location.pathname === item.path ? 'text-electric-cyan-400' : ''}`} />
+                <item.icon 
+                  className="w-5 h-5 flex-shrink-0 relative z-20" 
+                  style={location.pathname === item.path ? { color: accentColor } : {}}
+                />
                 <AnimatePresence>
                   {!isCollapsed && (
                     <motion.span
@@ -143,7 +169,8 @@ export function NavigationMenu() {
                       initial="collapsed"
                       animate="expanded"
                       exit="collapsed"
-                      className={`truncate font-medium relative z-20 ${location.pathname === item.path ? 'text-electric-cyan-400' : 'text-professional-grey-300'}`}
+                      className="truncate font-medium relative z-20 text-professional-grey-300"
+                      style={location.pathname === item.path ? { color: accentColor } : {}}
                     >
                       {item.label}
                     </motion.span>
