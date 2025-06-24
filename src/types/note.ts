@@ -5,23 +5,21 @@ export interface Note {
   content: string;
   category: string;
   tags: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   isFavorite: boolean;
-  folderId?: string;
-  color: string;
-}
-
-export interface NoteCategory {
-  value: string;
-  label: string;
-  color: string;
+  folder_id?: string | null;
 }
 
 export interface NoteFilters {
   category?: string;
-  tags?: string[];
   searchTerm?: string;
+  tags?: string[];
   isFavorite?: boolean;
-  folderId?: string;
+}
+
+export interface NoteMeta {
+  wordCount: number;
+  readingTime: number;
+  lastModified: string;
 }

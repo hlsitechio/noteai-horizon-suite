@@ -1,74 +1,87 @@
 
 import { Note } from '../types/note';
 
-const NOTES_STORAGE_KEY = 'online-note-ai-notes';
-
 export class NoteStorageService {
+  private static readonly STORAGE_KEY = 'notes';
+
   static getAllNotes(): Note[] {
     try {
-      const notesJson = localStorage.getItem(NOTES_STORAGE_KEY);
-      if (!notesJson) return [];
-      
-      const notes = JSON.parse(notesJson);
-      return notes.map((note: any) => ({
-        ...note,
-        createdAt: new Date(note.createdAt),
-        updatedAt: new Date(note.updatedAt),
-        color: note.color || '#64748b', // Default color for existing notes
-      }));
+      const notes = localStorage.getItem(this.STORAGE_KEY);
+      return notes ? JSON.parse(notes) : [];
     } catch (error) {
       console.error('Error loading notes:', error);
       return [];
     }
   }
 
-  static saveNote(note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Note {
-    const notes = this.getAllNotes();
+  static saveNote(noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Note {
     const newNote: Note = {
-      ...note,
-      id: Date.now().toString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      color: note.color || '#64748b', // Default color
+      ...noteData,
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      isFavorite: noteData.isFavorite || false,
     };
-    
+
+    const notes = this.getAllNotes();
     notes.push(newNote);
-    this.saveAllNotes(notes);
-    return newNote;
+    
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(notes));
+      return newNote;
+    } catch (error) {
+      console.error('Error saving note:', error);
+      throw error;
+    }
   }
 
   static updateNote(id: string, updates: Partial<Omit<Note, 'id' | 'createdAt'>>): Note | null {
     const notes = this.getAllNotes();
     const noteIndex = notes.findIndex(note => note.id === id);
     
-    if (noteIndex === -1) return null;
-    
+    if (noteIndex === -1) {
+      return null;
+    }
+
     const updatedNote = {
       ...notes[noteIndex],
       ...updates,
-      updatedAt: new Date(),
+      updatedAt: new Date().toISOString(),
     };
-    
+
     notes[noteIndex] = updatedNote;
-    this.saveAllNotes(notes);
-    return updatedNote;
+    
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(notes));
+      return updatedNote;
+    } catch (error) {
+      console.error('Error updating note:', error);
+      throw error;
+    }
   }
 
   static deleteNote(id: string): boolean {
     const notes = this.getAllNotes();
     const filteredNotes = notes.filter(note => note.id !== id);
     
-    if (filteredNotes.length === notes.length) return false;
-    
-    this.saveAllNotes(filteredNotes);
-    return true;
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(filteredNotes));
+      return true;
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      return false;
+    }
   }
 
-  private static saveAllNotes(notes: Note[]): void {
-    try {
-      localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(notes));
-    } catch (error) {
-      console.error('Error saving notes:', error);
-    }
+  static getNoteById(id: string): Note | null {
+    const notes = this.getAllNotes();
+    return notes.find(note => note.id === id) || null;
+  }
+
+  static toggleFavorite(id: string): Note | null {
+    const note = this.getNoteById(id);
+    if (!note) return null;
+
+    return this.updateNote(id, { isFavorite: !note.isFavorite });
   }
 }

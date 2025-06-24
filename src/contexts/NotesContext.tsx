@@ -19,6 +19,7 @@ interface NotesContextType {
   setSelectedNote: (note: Note | null) => void;
   setFilters: (filters: NoteFilters) => void;
   refreshNotes: () => void;
+  toggleFavorite: (id: string) => Promise<Note | null>;
 }
 
 const NotesContext = createContext<NotesContextType | undefined>(undefined);
@@ -111,6 +112,26 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const toggleFavorite = async (id: string): Promise<Note | null> => {
+    try {
+      const updatedNote = NoteStorageService.toggleFavorite(id);
+      if (updatedNote) {
+        setNotes(prev => prev.map(note => note.id === id ? updatedNote : note));
+        if (currentNote?.id === id) {
+          setCurrentNote(updatedNote);
+        }
+        if (selectedNote?.id === id) {
+          setSelectedNote(updatedNote);
+        }
+        toast.success(updatedNote.isFavorite ? 'Added to favorites' : 'Removed from favorites');
+      }
+      return updatedNote;
+    } catch (error) {
+      toast.error('Failed to update favorite');
+      throw error;
+    }
+  };
+
   // Filter notes based on current filters
   const filteredNotes = notes.filter(note => {
     if (filters.category && note.category !== filters.category) return false;
@@ -148,6 +169,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setSelectedNote,
         setFilters,
         refreshNotes,
+        toggleFavorite,
       }}
     >
       {children}
