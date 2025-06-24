@@ -25,18 +25,18 @@ export function CollapsedSummary() {
       icon: FolderIcon,
       count: folders.length,
       label: 'Folders',
-      color: 'text-blue-500',
-      bgColor: 'bg-blue-50 dark:bg-blue-950/30',
-      badgeColor: 'bg-blue-500 text-white text-xs font-semibold',
+      color: 'text-electric-cyan-400',
+      bgColor: 'bg-electric-cyan-500/10 border border-electric-cyan-500/20',
+      badgeColor: 'bg-electric-cyan-500 text-deep-carbon-900 text-xs font-semibold',
       onClick: () => navigate('/app/notes')
     },
     {
       icon: FileText,
       count: notes.length,
       label: 'Notes',
-      color: 'text-emerald-500',
-      bgColor: 'bg-emerald-50 dark:bg-emerald-950/30',
-      badgeColor: 'bg-emerald-500 text-white text-xs font-semibold',
+      color: 'text-electric-cyan-400',
+      bgColor: 'bg-electric-cyan-500/10 border border-electric-cyan-500/20',
+      badgeColor: 'bg-electric-cyan-500 text-deep-carbon-900 text-xs font-semibold',
       onClick: () => navigate('/app/notes')
     }
   ];
@@ -53,7 +53,7 @@ export function CollapsedSummary() {
         >
           {/* Subtle border element */}
           <div 
-            className="absolute left-0 top-0 bottom-0 bg-white/5 dark:bg-white/5"
+            className="absolute left-0 top-0 bottom-0 bg-electric-cyan-500/10"
             style={{ width: '4%' }}
           />
           
@@ -68,7 +68,7 @@ export function CollapsedSummary() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={item.onClick}
-                    className={`w-14 h-14 ${item.bgColor} rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all duration-200 hover:shadow-lg relative z-50`}
+                    className={`w-14 h-14 ${item.bgColor} rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-electric-cyan-400/40 relative z-50`}
                   >
                     <item.icon className={`w-5 h-5 ${item.color} mb-1`} />
                     <Badge className={`${item.badgeColor} px-1.5 py-0 min-w-0 h-4 text-[10px] rounded-full absolute -top-1 -right-1 shadow-sm flex items-center justify-center z-60`}>
@@ -76,7 +76,7 @@ export function CollapsedSummary() {
                     </Badge>
                   </motion.button>
                 </TooltipTrigger>
-                <TooltipContent side="right">
+                <TooltipContent side="right" className="bg-deep-carbon-800 text-professional-grey-200 border border-deep-carbon-700">
                   <p>{item.count} {item.label}</p>
                 </TooltipContent>
               </Tooltip>

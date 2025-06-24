@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,11 +23,11 @@ import {
 } from '@/components/ui/tooltip';
 
 const menuItems = [
-  { icon: BookOpen, label: 'Dashboard', path: '/app/home', color: 'text-blue-500' },
-  { icon: Plus, label: 'AI Chat', path: '/app/chat', color: 'text-emerald-500' },
-  { icon: PenTool, label: 'Editor', path: '/app/editor', color: 'text-purple-500' },
-  { icon: Calendar, label: 'Calendar', path: '/app/calendar', color: 'text-orange-500' },
-  { icon: Settings, label: 'Settings', path: '/app/settings', color: 'text-gray-500' },
+  { icon: BookOpen, label: 'Dashboard', path: '/app/home', color: 'text-electric-cyan-500' },
+  { icon: Plus, label: 'AI Chat', path: '/app/chat', color: 'text-electric-cyan-500' },
+  { icon: PenTool, label: 'Editor', path: '/app/editor', color: 'text-electric-cyan-500' },
+  { icon: Calendar, label: 'Calendar', path: '/app/calendar', color: 'text-electric-cyan-500' },
+  { icon: Settings, label: 'Settings', path: '/app/settings', color: 'text-electric-cyan-500' },
 ];
 
 const contentVariants = {
@@ -93,8 +94,8 @@ export function NavigationMenu() {
                     isActive={location.pathname === item.path}
                     className={`h-12 w-12 mx-auto rounded-xl transition-all duration-200 relative overflow-hidden ${
                       location.pathname === item.path 
-                        ? 'bg-slate-600 text-white shadow-lg' 
-                        : 'hover:bg-muted hover:text-foreground hover:shadow-md'
+                        ? 'bg-electric-cyan-500/20 text-electric-cyan-400 shadow-lg border border-electric-cyan-500/30' 
+                        : 'hover:bg-deep-carbon-800 hover:text-electric-cyan-400 hover:shadow-md text-professional-grey-400'
                     }`}
                   >
                     <motion.div
@@ -102,18 +103,18 @@ export function NavigationMenu() {
                       animate={isCollapsed ? 'collapsed' : 'expanded'}
                       className="relative z-10"
                     >
-                      <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-white' : item.color}`} />
+                      <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-electric-cyan-400' : ''}`} />
                     </motion.div>
                     {location.pathname === item.path && (
                       <motion.div
-                        className="absolute inset-0 bg-slate-600 -z-10"
+                        className="absolute inset-0 bg-electric-cyan-500/20 border border-electric-cyan-500/30 -z-10 rounded-xl"
                         layoutId="activeBackground"
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
                       />
                     )}
                   </SidebarMenuButton>
                 </TooltipTrigger>
-                <TooltipContent side="right" className="font-medium">
+                <TooltipContent side="right" className="font-medium bg-deep-carbon-800 text-professional-grey-200 border border-professional-grey-700">
                   <p>{item.label}</p>
                 </TooltipContent>
               </Tooltip>
@@ -123,18 +124,18 @@ export function NavigationMenu() {
                 isActive={location.pathname === item.path}
                 className={`h-11 rounded-xl transition-all duration-200 relative overflow-hidden group ${
                   location.pathname === item.path 
-                    ? 'bg-slate-600 text-white shadow-md' 
-                    : 'hover:bg-muted hover:text-foreground hover:translate-x-1'
+                    ? 'bg-electric-cyan-500/20 text-electric-cyan-400 shadow-md border border-electric-cyan-500/30' 
+                    : 'hover:bg-deep-carbon-800 hover:text-electric-cyan-400 hover:translate-x-1 text-professional-grey-400'
                 }`}
               >
                 {location.pathname === item.path && (
                   <motion.div
-                    className="absolute inset-0 bg-slate-600 -z-10"
+                    className="absolute inset-0 bg-electric-cyan-500/20 border border-electric-cyan-500/30 -z-10 rounded-xl"
                     layoutId="activeBackground"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
-                <item.icon className={`w-5 h-5 flex-shrink-0 relative z-20 ${location.pathname === item.path ? 'text-white' : item.color}`} />
+                <item.icon className={`w-5 h-5 flex-shrink-0 relative z-20 ${location.pathname === item.path ? 'text-electric-cyan-400' : ''}`} />
                 <AnimatePresence>
                   {!isCollapsed && (
                     <motion.span
@@ -142,7 +143,7 @@ export function NavigationMenu() {
                       initial="collapsed"
                       animate="expanded"
                       exit="collapsed"
-                      className={`truncate font-medium relative z-20 ${location.pathname === item.path ? 'text-white' : 'text-foreground'}`}
+                      className={`truncate font-medium relative z-20 ${location.pathname === item.path ? 'text-electric-cyan-400' : 'text-professional-grey-300'}`}
                     >
                       {item.label}
                     </motion.span>

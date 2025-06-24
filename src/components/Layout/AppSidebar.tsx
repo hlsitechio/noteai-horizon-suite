@@ -68,21 +68,21 @@ export function AppSidebar() {
       <motion.div
         variants={sidebarVariants}
         animate={isCollapsed ? 'collapsed' : 'expanded'}
-        className="bg-background/85 backdrop-blur-md border-r border-border/30 h-screen overflow-hidden shadow-sm z-40"
+        className="bg-deep-carbon-900/95 backdrop-blur-md border-r border-deep-carbon-700/50 h-screen overflow-hidden shadow-premium z-40"
       >
         <Sidebar collapsible="icon" className="bg-transparent border-0">
-          <SidebarHeader className="p-4 pb-2">
+          <SidebarHeader className="p-4 pb-2 bg-deep-carbon-900/90">
             <CustomSidebarHeader />
           </SidebarHeader>
 
-          <SidebarContent className="px-0">
+          <SidebarContent className="px-0 bg-deep-carbon-900/80">
             <SidebarGroup className="py-2">
               <SidebarGroupContent>
                 <NavigationMenu />
               </SidebarGroupContent>
             </SidebarGroup>
 
-            <SidebarSeparator className="mx-4 my-2 bg-border/20" />
+            <SidebarSeparator className="mx-4 my-2 bg-deep-carbon-700/30" />
 
             <CollapsedSummary />
 
@@ -103,9 +103,9 @@ export function AppSidebar() {
             </AnimatePresence>
           </SidebarContent>
 
-          <SidebarSeparator className="mx-4 my-2 bg-border/20" />
+          <SidebarSeparator className="mx-4 my-2 bg-deep-carbon-700/30" />
 
-          <SidebarFooter className="p-4 pt-2 z-30">
+          <SidebarFooter className="p-4 pt-2 z-30 bg-deep-carbon-900/90">
             <CustomSidebarFooter />
           </SidebarFooter>
         </Sidebar>
