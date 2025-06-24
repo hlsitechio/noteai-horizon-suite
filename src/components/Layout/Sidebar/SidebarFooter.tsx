@@ -3,7 +3,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Bell, Moon, Sun } from 'lucide-react';
+import { LogOut, Bell, Moon, Sun, Settings } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   Tooltip,
@@ -15,6 +15,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { useNotifications } from '../../../contexts/NotificationsContext';
 import { useTheme } from '@/providers/ThemeProvider';
 import { toggleTheme, isDarkMode } from '@/utils/themeUtils';
+import { useNavigate } from 'react-router-dom';
 
 const contentVariants = {
   expanded: {
@@ -39,12 +40,17 @@ export function SidebarFooter() {
   const { user, logout } = useAuth();
   const { unreadCount } = useNotifications();
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
   const isCollapsed = state === 'collapsed';
   const isCurrentlyDark = isDarkMode(theme);
 
   const handleThemeToggle = () => {
     const newTheme = toggleTheme(theme);
     setTheme(newTheme);
+  };
+
+  const handleSettingsClick = () => {
+    navigate('/settings');
   };
 
   return (
@@ -75,58 +81,68 @@ export function SidebarFooter() {
               </div>
             </div>
             
-            {/* Sign Out button with icons */}
-            <div className="flex items-center gap-2">
+            {/* Action buttons grouped together */}
+            <div className="space-y-2">
               {/* Notifications */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-9 h-9 rounded-lg hover:bg-accent/10 relative"
-                  >
-                    <Bell className="w-4 h-4" />
-                    {unreadCount > 0 && (
-                      <motion.div
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" as const }}
-                        className="absolute -top-1 -right-1"
-                      >
-                        <Badge className="h-4 min-w-4 p-0 bg-red-500 border-0 text-xs">
-                          {unreadCount > 99 ? '99+' : unreadCount}
-                        </Badge>
-                      </motion.div>
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Notifications</p>
-                </TooltipContent>
-              </Tooltip>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start h-9 rounded-lg hover:bg-accent/10 transition-colors"
+                >
+                  <Bell className="w-4 h-4 mr-2" />
+                  Notifications
+                  {unreadCount > 0 && (
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" as const }}
+                      className="ml-auto"
+                    >
+                      <Badge className="h-4 min-w-4 p-0 bg-red-500 border-0 text-xs">
+                        {unreadCount > 99 ? '99+' : unreadCount}
+                      </Badge>
+                    </motion.div>
+                  )}
+                </Button>
+              </motion.div>
 
               {/* Theme Toggle */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-9 h-9 rounded-lg hover:bg-accent/10"
-                    onClick={handleThemeToggle}
-                  >
-                    {isCurrentlyDark ? (
-                      <Sun className="w-4 h-4" />
-                    ) : (
-                      <Moon className="w-4 h-4" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{isCurrentlyDark ? 'Light Mode' : 'Dark Mode'}</p>
-                </TooltipContent>
-              </Tooltip>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start h-9 rounded-lg hover:bg-accent/10 transition-colors"
+                  onClick={handleThemeToggle}
+                >
+                  {isCurrentlyDark ? (
+                    <>
+                      <Sun className="w-4 h-4 mr-2" />
+                      Light Mode
+                    </>
+                  ) : (
+                    <>
+                      <Moon className="w-4 h-4 mr-2" />
+                      Dark Mode
+                    </>
+                  )}
+                </Button>
+              </motion.div>
+
+              {/* Settings */}
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start h-9 rounded-lg hover:bg-accent/10 transition-colors"
+                  onClick={handleSettingsClick}
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Settings
+                </Button>
+              </motion.div>
 
               {/* Sign Out */}
-              <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -210,6 +226,23 @@ export function SidebarFooter() {
                 </TooltipTrigger>
                 <TooltipContent side="right">
                   <p>{isCurrentlyDark ? 'Light Mode' : 'Dark Mode'}</p>
+                </TooltipContent>
+              </Tooltip>
+
+              {/* Settings */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="w-11 h-11 rounded-xl hover:bg-accent/10"
+                    onClick={handleSettingsClick}
+                  >
+                    <Settings className="w-5 h-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Settings</p>
                 </TooltipContent>
               </Tooltip>
 
