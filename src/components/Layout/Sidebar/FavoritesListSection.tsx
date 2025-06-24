@@ -54,7 +54,7 @@ export function FavoritesListSection({
             transition={{ duration: 0.2 }}
           >
             <SidebarGroupContent>
-              <Droppable droppableId="favorites">
+              <Droppable droppableId="sidebar-favorites">
                 {(provided, snapshot) => (
                   <SidebarMenu
                     ref={provided.innerRef}
@@ -63,7 +63,7 @@ export function FavoritesListSection({
                   >
                     {favoriteNotes.length > 0 ? (
                       favoriteNotes.map((note, index) => (
-                        <Draggable key={note.id} draggableId={`favorite-note-${note.id}`} index={index}>
+                        <Draggable key={note.id} draggableId={`sidebar-favorite-note-${note.id}`} index={index}>
                           {(provided) => (
                             <SidebarMenuItem
                               ref={provided.innerRef}

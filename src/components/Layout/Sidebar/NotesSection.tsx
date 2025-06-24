@@ -56,17 +56,19 @@ export function NotesSection({ isCollapsed = false }: NotesSectionProps) {
       return;
     }
 
+    console.log('Drag end:', { destination, source, draggableId });
+
     // Handle drag and drop logic
-    if (destination.droppableId === 'favorites' && source.droppableId !== 'favorites') {
+    if (destination.droppableId === 'sidebar-favorites' && source.droppableId !== 'sidebar-favorites') {
       // Add to favorites
-      const noteId = draggableId.replace('note-', '').replace('favorite-note-', '');
+      const noteId = draggableId.replace('sidebar-note-', '').replace('sidebar-favorite-note-', '');
       const note = notes.find(n => n.id === noteId);
       if (note && updateNote) {
         updateNote(noteId, { ...note, isFavorite: true });
       }
-    } else if (source.droppableId === 'favorites' && destination.droppableId !== 'favorites') {
+    } else if (source.droppableId === 'sidebar-favorites' && destination.droppableId !== 'sidebar-favorites') {
       // Remove from favorites
-      const noteId = draggableId.replace('note-', '').replace('favorite-note-', '');
+      const noteId = draggableId.replace('sidebar-note-', '').replace('sidebar-favorite-note-', '');
       const note = notes.find(n => n.id === noteId);
       if (note && updateNote) {
         updateNote(noteId, { ...note, isFavorite: false });

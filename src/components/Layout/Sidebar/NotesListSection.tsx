@@ -86,7 +86,7 @@ export function NotesListSection({
             <SidebarGroupContent>
               <SidebarMenu>
                 {recentNotes.map((note, index) => (
-                  <Draggable key={note.id} draggableId={`note-${note.id}`} index={index}>
+                  <Draggable key={note.id} draggableId={`sidebar-note-${note.id}`} index={index}>
                     {(provided) => (
                       <SidebarMenuItem
                         ref={provided.innerRef}

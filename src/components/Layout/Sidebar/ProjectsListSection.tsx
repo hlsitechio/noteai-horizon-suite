@@ -58,7 +58,7 @@ export function ProjectsListSection({
             <SidebarGroupContent>
               <SidebarMenu>
                 {activeProjects.map((project) => (
-                  <Droppable key={project.id} droppableId={`project-${project.id}`}>
+                  <Droppable key={project.id} droppableId={`sidebar-project-${project.id}`}>
                     {(provided, snapshot) => (
                       <SidebarMenuItem
                         ref={provided.innerRef}
