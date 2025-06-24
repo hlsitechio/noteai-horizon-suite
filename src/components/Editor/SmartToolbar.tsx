@@ -25,12 +25,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import SpeechToText from './SpeechToText';
 import OCRScreenCapture from './OCRScreenCapture';
+import ImageUpload from './ImageUpload';
 
 interface SmartToolbarProps {
   onFormatClick: (formatId: string, event: React.MouseEvent) => void;
   onAIClick: () => void;
   onSave: () => void;
   onTextInsert?: (text: string) => void;
+  onImageInsert?: (imageData: string, width?: number, height?: number) => void;
   onFontChange?: (fontFamily: string, fontSize: number) => void;
   activeFormats: Set<string>;
   selectedText: string;
@@ -43,6 +45,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
   onAIClick,
   onSave,
   onTextInsert,
+  onImageInsert,
   onFontChange,
   activeFormats,
   selectedText,
@@ -57,6 +60,12 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
   const handleTextReceived = (text: string) => {
     if (onTextInsert) {
       onTextInsert(text);
+    }
+  };
+
+  const handleImageInsert = (imageData: string, width?: number, height?: number) => {
+    if (onImageInsert) {
+      onImageInsert(imageData, width, height);
     }
   };
 
@@ -215,8 +224,9 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
 
         <Separator orientation="vertical" className="h-6 mx-2 bg-orange-200 dark:bg-slate-500" />
 
-        {/* Voice & OCR Tools */}
+        {/* Media Tools */}
         <div className="flex items-center gap-1">
+          <ImageUpload onImageInsert={handleImageInsert} />
           <Button
             variant="ghost"
             size="sm"

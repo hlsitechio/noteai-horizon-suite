@@ -4,6 +4,7 @@ import SmartToolbar from './SmartToolbar';
 import EnhancedAIAssistant from './EnhancedAIAssistant';
 import TextSelectionContextMenu from './TextSelectionContextMenu';
 import EditorContent from './components/EditorContent';
+import ResizableImage from './ResizableImage';
 import { useRichTextEditor } from './hooks/useRichTextEditor';
 import { useTextSelection } from './hooks/useTextSelection';
 import { useEditorFormatting } from './hooks/useEditorFormatting';
@@ -28,6 +29,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [editorFontFamily, setEditorFontFamily] = useState('inter');
   const [editorFontSize, setEditorFontSize] = useState(16);
+  const [images, setImages] = useState<Array<{
+    id: string;
+    src: string;
+    width: number;
+    height: number;
+  }>>([]);
 
   // Custom hooks for editor functionality
   const {
@@ -59,6 +66,26 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     setEditorFontSize(fontSize);
   };
 
+  const handleImageInsert = (imageData: string, width = 300, height = 200) => {
+    const newImage = {
+      id: Date.now().toString(),
+      src: imageData,
+      width,
+      height
+    };
+    setImages(prev => [...prev, newImage]);
+  };
+
+  const handleImageRemove = (imageId: string) => {
+    setImages(prev => prev.filter(img => img.id !== imageId));
+  };
+
+  const handleImageSizeChange = (imageId: string, width: number, height: number) => {
+    setImages(prev => prev.map(img => 
+      img.id === imageId ? { ...img, width, height } : img
+    ));
+  };
+
   const getFontFamilyStyle = (family: string) => {
     const fontMap: Record<string, string> = {
       'inter': 'Inter, system-ui, sans-serif',
@@ -85,6 +112,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           onAIClick={() => setShowAIAssistant(true)}
           onSave={onSave || (() => {})}
           onTextInsert={handleTextInsert}
+          onImageInsert={handleImageInsert}
           onFontChange={handleFontChange}
           activeFormats={getActiveFormats()}
           selectedText={selectedText}
@@ -102,6 +130,22 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             onKeyDown={handleKeyboardShortcuts}
             onAIToggle={() => setShowAIAssistant(true)}
           />
+          
+          {/* Render images */}
+          {images.length > 0 && (
+            <div className="p-4 space-y-4">
+              {images.map((image) => (
+                <ResizableImage
+                  key={image.id}
+                  src={image.src}
+                  initialWidth={image.width}
+                  initialHeight={image.height}
+                  onRemove={() => handleImageRemove(image.id)}
+                  onSizeChange={(width, height) => handleImageSizeChange(image.id, width, height)}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
