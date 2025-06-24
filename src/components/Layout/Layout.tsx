@@ -18,16 +18,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background">
+      <div className="flex min-h-screen w-full bg-background overflow-hidden">
         <AppSidebar />
-        <SidebarInset className="flex-1 min-w-0 w-full">
+        <SidebarInset className="flex-1 min-w-0 w-full flex flex-col">
           {/* Only show header on non-editor and non-dashboard pages */}
           {!isEditorPage && !isDashboardPage && <Header />}
-          <div className={`w-full h-full ${
+          <div className={`w-full h-full flex-1 min-h-0 ${
             isEditorPage 
               ? "h-screen" // Full height for editor
               : isDashboardPage
-                ? "h-screen" // Full height for dashboard
+                ? "h-screen overflow-hidden" // Full height for dashboard with no overflow
                 : isMobile 
                   ? "p-4 pt-20" 
                   : "p-6 pt-24"
