@@ -39,8 +39,8 @@ const WorkflowActions: React.FC<WorkflowActionsProps> = ({
   };
 
   return (
-    <Card className="w-full border border-border/10 shadow-premium bg-card/50 backdrop-blur-xl rounded-2xl">
-      <CardHeader className="p-6 pb-4 border-b border-border/10">
+    <Card className="w-full h-full border border-border/10 shadow-premium bg-card/50 backdrop-blur-xl rounded-2xl flex flex-col">
+      <CardHeader className={`${isMobile ? 'p-4 pb-3' : 'p-6 pb-4'} border-b border-border/10 flex-shrink-0`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent/10 to-accent/5 flex items-center justify-center border border-accent/10">
             <Sparkles className="w-5 h-5 text-accent" />
@@ -50,37 +50,37 @@ const WorkflowActions: React.FC<WorkflowActionsProps> = ({
           </CardTitle>
         </div>
       </CardHeader>
-      <CardContent className="p-6">
+      <CardContent className={`${isMobile ? 'p-4' : 'p-6'} flex-1 flex flex-col justify-center`}>
         <div className={`grid grid-cols-2 gap-4 w-full`}>
           <Button 
             onClick={onCreateNote}
-            className={`flex-col gap-3 bg-accent hover:bg-accent/90 text-accent-foreground border-0 shadow-premium hover:shadow-large transition-all duration-300 hover:-translate-y-1 hover:scale-105 w-full rounded-xl ${isMobile ? 'h-20 text-xs' : 'h-24 text-sm'}`}
+            className={`flex-col gap-3 bg-accent hover:bg-accent/90 text-accent-foreground border-0 shadow-premium hover:shadow-large transition-all duration-300 hover:-translate-y-1 hover:scale-105 w-full rounded-xl ${isMobile ? 'h-24 text-xs' : 'h-28 text-sm'}`}
           >
-            <Plus className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />
+            <Plus className={`${isMobile ? 'w-6 h-6' : 'w-7 h-7'}`} />
             New Document
           </Button>
           <Button 
             variant="outline"
             onClick={() => navigate('/app/notes')}
-            className={`flex-col gap-3 border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 ${isMobile ? 'h-20 text-xs' : 'h-24 text-sm'}`}
+            className={`flex-col gap-3 border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-accent/30 ${isMobile ? 'h-24 text-xs' : 'h-28 text-sm'}`}
           >
-            <FileText className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />
+            <FileText className={`${isMobile ? 'w-6 h-6' : 'w-7 h-7'}`} />
             Browse Library
           </Button>
           <Button 
             variant="outline"
             onClick={() => navigate('/app/chat')}
-            className={`flex-col gap-3 border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 ${isMobile ? 'h-20 text-xs' : 'h-24 text-sm'}`}
+            className={`flex-col gap-3 border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-accent/30 ${isMobile ? 'h-24 text-xs' : 'h-28 text-sm'}`}
           >
-            <Brain className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />
+            <Brain className={`${isMobile ? 'w-6 h-6' : 'w-7 h-7'}`} />
             AI Assistant
           </Button>
           <Button 
             variant="outline"
             onClick={handlePriorityItems}
-            className={`flex-col gap-3 border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 ${isMobile ? 'h-20 text-xs' : 'h-24 text-sm'}`}
+            className={`flex-col gap-3 border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-accent/30 ${isMobile ? 'h-24 text-xs' : 'h-28 text-sm'}`}
           >
-            <Star className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />
+            <Star className={`${isMobile ? 'w-6 h-6' : 'w-7 h-7'}`} />
             Priority Items
           </Button>
         </div>

@@ -43,10 +43,10 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className={`h-full bg-background overflow-hidden ${isMobile ? 'w-full' : 'w-full'}`}>
-      <div className={`${isMobile ? 'px-4 py-4' : 'px-6 py-6'} h-full flex flex-col space-y-6 w-full max-w-7xl mx-auto`}>
+      <div className={`${isMobile ? 'px-4 py-4' : 'px-8 py-6'} h-full flex flex-col w-full max-w-[1800px] mx-auto`}>
         
-        {/* Intelligence Metrics - Compact */}
-        <div className="flex-shrink-0">
+        {/* Intelligence Metrics - More compact */}
+        <div className="flex-shrink-0 mb-8">
           <KPIStats 
             totalNotes={totalNotes}
             favoriteNotes={favoriteNotes}
@@ -55,8 +55,8 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Content Management Section - Main content area */}
-        <div className={`flex-1 min-h-0 w-full grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
+        {/* Main Content Grid - Optimized for better space usage */}
+        <div className={`flex-1 min-h-0 w-full grid gap-8 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'} mb-8`}>
           {/* Recent Activity */}
           <RecentActivity 
             recentNotes={recentNotes}
@@ -72,8 +72,8 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* AI Copilot Toolbar - Bottom positioned */}
-        <div className="flex-shrink-0 w-full flex justify-center items-center py-4">
+        {/* AI Copilot Toolbar - Better positioned */}
+        <div className="flex-shrink-0 w-full flex justify-center items-center">
           <QuantumAI3DToolbar />
         </div>
       </div>
