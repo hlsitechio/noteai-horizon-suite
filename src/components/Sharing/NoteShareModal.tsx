@@ -6,11 +6,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { Note } from '../../types/note';
-import { NoteExportService, ExportFormat, SharePlatform } from '../../services/noteExportService';
+import { NoteExportService, ExportFormat } from '../../services/noteExportService';
+import { NoteSharingService, SharePlatform } from '../../services/noteSharingService';
 import ShareButtons from './ShareButtons';
 import ExportButtons from './ExportButtons';
 import QRCodeSection from './QRCodeSection';
@@ -56,7 +56,7 @@ const NoteShareModal: React.FC<NoteShareModalProps> = ({ note, isOpen, onClose }
     try {
       // Try Web Share API first for mobile devices
       if (platform !== 'email') {
-        const webShareSuccess = await NoteExportService.shareWithWebAPI(note);
+        const webShareSuccess = await NoteSharingService.shareWithWebAPI(note);
         if (webShareSuccess) {
           toast.success('Note shared successfully');
           return;
@@ -64,7 +64,7 @@ const NoteShareModal: React.FC<NoteShareModalProps> = ({ note, isOpen, onClose }
       }
       
       // Fall back to opening share URLs
-      NoteExportService.openShare(platform, note);
+      NoteSharingService.openShare(platform, note);
       toast.success('Share window opened');
     } catch (error) {
       toast.error('Failed to share note');
@@ -93,7 +93,7 @@ const NoteShareModal: React.FC<NoteShareModalProps> = ({ note, isOpen, onClose }
           content = note.content;
       }
 
-      const success = await NoteExportService.copyToClipboard(content);
+      const success = await NoteSharingService.copyToClipboard(content);
       if (success) {
         toast.success(`Note copied as ${format.toUpperCase()}`);
       } else {

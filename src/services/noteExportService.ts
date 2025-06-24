@@ -1,7 +1,8 @@
+
 import { Note } from '../types/note';
+import { NoteDocumentExportService } from './noteDocumentExportService';
 
 export type ExportFormat = 'txt' | 'md' | 'html' | 'json' | 'docx' | 'pdf';
-export type SharePlatform = 'facebook' | 'twitter' | 'linkedin' | 'whatsapp' | 'email';
 
 export class NoteExportService {
   // Helper function to extract plain text from rich text content
@@ -70,9 +71,7 @@ export class NoteExportService {
     return JSON.stringify(note, null, 2);
   }
 
-  // Updated export function using your streamlined approach
   static async exportAsFile(format: ExportFormat, note: Note): Promise<void> {
-    const plainContent = this.extractPlainText(note.content);
     const title = note.title;
     
     const blobMap = {
@@ -82,8 +81,8 @@ export class NoteExportService {
       json: new Blob([this.exportToJSON(note)], { type: 'application/json' }),
     };
 
-    if (format === 'docx') return this.exportAsDocx(title, plainContent);
-    if (format === 'pdf') return this.exportAsPDF(title, plainContent);
+    if (format === 'docx') return NoteDocumentExportService.exportAsDocx(note);
+    if (format === 'pdf') return NoteDocumentExportService.exportAsPDF(note);
 
     const blob = blobMap[format as keyof typeof blobMap];
     const link = document.createElement('a');
@@ -93,50 +92,6 @@ export class NoteExportService {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(link.href);
-  }
-
-  private static async exportAsDocx(title: string, body: string): Promise<void> {
-    try {
-      const { Document, Packer, Paragraph } = await import('docx');
-      const doc = new Document({
-        sections: [
-          {
-            children: [
-              new Paragraph({ text: title, heading: 'Heading1' }),
-              new Paragraph({ text: body }),
-            ],
-          },
-        ],
-      });
-      const blob = await Packer.toBlob(doc);
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `${title}.docx`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(link.href);
-    } catch (error) {
-      console.error('Failed to export as DOCX:', error);
-      throw new Error('DOCX export failed. The required package could not be loaded.');
-    }
-  }
-
-  private static async exportAsPDF(title: string, body: string): Promise<void> {
-    try {
-      const jsPDF = await import('jspdf');
-      const doc = new jsPDF.default();
-      doc.setFontSize(16);
-      doc.text(title, 10, 10);
-      doc.setFontSize(12);
-      // Handle text wrapping for long content
-      const splitText = doc.splitTextToSize(body, 180);
-      doc.text(splitText, 10, 30);
-      doc.save(`${title}.pdf`);
-    } catch (error) {
-      console.error('Failed to export as PDF:', error);
-      throw new Error('PDF export failed. The required package could not be loaded.');
-    }
   }
 
   static downloadFile(content: string, filename: string, mimeType: string): void {
@@ -149,66 +104,5 @@ export class NoteExportService {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  }
-
-  static async copyToClipboard(content: string): Promise<boolean> {
-    try {
-      await navigator.clipboard.writeText(content);
-      return true;
-    } catch (error) {
-      console.error('Failed to copy to clipboard:', error);
-      return false;
-    }
-  }
-
-  // Updated share functions using your streamlined approach
-  private static encoded = (str: string) => encodeURIComponent(str);
-
-  private static shareLinks = {
-    facebook: (url: string) => `https://www.facebook.com/sharer/sharer.php?u=${this.encoded(url)}`,
-    twitter: (title: string, url: string) => `https://twitter.com/intent/tweet?text=${this.encoded(title)}&url=${this.encoded(url)}`,
-    linkedin: (title: string, url: string) => `https://www.linkedin.com/shareArticle?mini=true&url=${this.encoded(url)}&title=${this.encoded(title)}`,
-    whatsapp: (title: string, url: string) => `https://wa.me/?text=${this.encoded(`${title} ${url}`)}`,
-    email: (title: string, body: string) => `mailto:?subject=${this.encoded(title)}&body=${this.encoded(body)}`,
-  };
-
-  static getShareUrl(platform: SharePlatform, note: Note): string {
-    const plainContent = this.extractPlainText(note.content);
-    const title = note.title;
-    const tags = note.tags.length > 0 ? `\n\nTags: ${note.tags.map(tag => `#${tag}`).join(' ')}` : '';
-    const fullContent = `${title}\n\n${plainContent}${tags}`;
-    const noteURL = window.location.href;
-
-    if (platform === 'email') {
-      return this.shareLinks.email(title, fullContent);
-    }
-    
-    return this.shareLinks[platform](title, noteURL);
-  }
-
-  static openShare(platform: SharePlatform, note: Note): void {
-    const shareURL = this.getShareUrl(platform, note);
-    window.open(shareURL, '_blank');
-  }
-
-  static async shareWithWebAPI(note: Note): Promise<boolean> {
-    if (!navigator.share) {
-      return false;
-    }
-
-    try {
-      const plainContent = this.extractPlainText(note.content);
-      const tags = note.tags.length > 0 ? `\n\nTags: ${note.tags.map(tag => `#${tag}`).join(' ')}` : '';
-      const fullContent = `${plainContent}${tags}`;
-
-      await navigator.share({
-        title: note.title,
-        text: fullContent
-      });
-      return true;
-    } catch (error) {
-      console.error('Web Share API failed:', error);
-      return false;
-    }
   }
 }

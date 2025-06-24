@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { SharePlatform } from '../../services/noteExportService';
+import { SharePlatform } from '../../services/noteSharingService';
 
 interface ShareButtonsProps {
   onShare: (platform: SharePlatform) => void;
