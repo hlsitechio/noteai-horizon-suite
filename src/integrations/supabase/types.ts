@@ -462,6 +462,7 @@ export type Database = {
           content: string
           content_type: string | null
           created_at: string | null
+          folder_id: string | null
           id: string
           is_encrypted: boolean | null
           is_public: boolean | null
@@ -477,6 +478,7 @@ export type Database = {
           content: string
           content_type?: string | null
           created_at?: string | null
+          folder_id?: string | null
           id?: string
           is_encrypted?: boolean | null
           is_public?: boolean | null
@@ -492,6 +494,7 @@ export type Database = {
           content?: string
           content_type?: string | null
           created_at?: string | null
+          folder_id?: string | null
           id?: string
           is_encrypted?: boolean | null
           is_public?: boolean | null
@@ -504,6 +507,13 @@ export type Database = {
           version?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "notes_v2_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "notes_v2_parent_id_fkey"
             columns: ["parent_id"]

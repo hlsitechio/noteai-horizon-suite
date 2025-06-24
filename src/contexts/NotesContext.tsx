@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Note, NoteFilters } from '../types/note';
-import { NoteStorageService } from '../services/noteStorage';
+import { SupabaseNotesService } from '../services/supabaseNotesService';
 import { toast } from 'sonner';
 
 interface NotesContextType {
@@ -39,14 +39,12 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [filters, setFilters] = useState<NoteFilters>({});
   const [isLoading, setIsLoading] = useState(true);
   
-  // Remove the direct useFolders() call that was causing the error
-  // Instead, we'll get folders from the component that uses this context
   const folders: any[] = [];
 
-  const refreshNotes = () => {
+  const refreshNotes = async () => {
     setIsLoading(true);
     try {
-      const loadedNotes = NoteStorageService.getAllNotes();
+      const loadedNotes = await SupabaseNotesService.getAllNotes();
       setNotes(loadedNotes);
     } catch (error) {
       toast.error('Failed to load notes');
@@ -62,8 +60,8 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const createNote = async (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Promise<Note> => {
     try {
-      const newNote = NoteStorageService.saveNote(noteData);
-      setNotes(prev => [...prev, newNote]);
+      const newNote = await SupabaseNotesService.saveNote(noteData);
+      setNotes(prev => [newNote, ...prev]);
       toast.success('Note created successfully');
       return newNote;
     } catch (error) {
@@ -74,7 +72,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const updateNote = async (id: string, updates: Partial<Omit<Note, 'id' | 'createdAt'>>): Promise<Note | null> => {
     try {
-      const updatedNote = NoteStorageService.updateNote(id, updates);
+      const updatedNote = await SupabaseNotesService.updateNote(id, updates);
       if (updatedNote) {
         setNotes(prev => prev.map(note => note.id === id ? updatedNote : note));
         if (currentNote?.id === id) {
@@ -94,7 +92,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const deleteNote = async (id: string): Promise<boolean> => {
     try {
-      const success = NoteStorageService.deleteNote(id);
+      const success = await SupabaseNotesService.deleteNote(id);
       if (success) {
         setNotes(prev => prev.filter(note => note.id !== id));
         if (currentNote?.id === id) {
@@ -114,7 +112,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const toggleFavorite = async (id: string): Promise<Note | null> => {
     try {
-      const updatedNote = NoteStorageService.toggleFavorite(id);
+      const updatedNote = await SupabaseNotesService.toggleFavorite(id);
       if (updatedNote) {
         setNotes(prev => prev.map(note => note.id === id ? updatedNote : note));
         if (currentNote?.id === id) {

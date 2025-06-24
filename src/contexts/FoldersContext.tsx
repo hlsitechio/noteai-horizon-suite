@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Folder } from '../types/folder';
-import { FolderStorageService } from '../services/folderStorage';
+import { SupabaseFoldersService } from '../services/supabaseFoldersService';
 import { toast } from 'sonner';
 
 interface FoldersContextType {
@@ -27,10 +27,10 @@ export const FoldersProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [folders, setFolders] = useState<Folder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const refreshFolders = () => {
+  const refreshFolders = async () => {
     setIsLoading(true);
     try {
-      const loadedFolders = FolderStorageService.getAllFolders();
+      const loadedFolders = await SupabaseFoldersService.getAllFolders();
       setFolders(loadedFolders);
     } catch (error) {
       toast.error('Failed to load folders');
@@ -46,8 +46,8 @@ export const FoldersProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const createFolder = async (folderData: Omit<Folder, 'id' | 'createdAt' | 'updatedAt'>): Promise<Folder> => {
     try {
-      const newFolder = FolderStorageService.saveFolder(folderData);
-      setFolders(prev => [...prev, newFolder]);
+      const newFolder = await SupabaseFoldersService.saveFolder(folderData);
+      setFolders(prev => [newFolder, ...prev]);
       toast.success('Folder created successfully');
       return newFolder;
     } catch (error) {
@@ -58,7 +58,7 @@ export const FoldersProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const updateFolder = async (id: string, updates: Partial<Omit<Folder, 'id' | 'createdAt'>>): Promise<Folder | null> => {
     try {
-      const updatedFolder = FolderStorageService.updateFolder(id, updates);
+      const updatedFolder = await SupabaseFoldersService.updateFolder(id, updates);
       if (updatedFolder) {
         setFolders(prev => prev.map(folder => folder.id === id ? updatedFolder : folder));
         toast.success('Folder updated successfully');
@@ -72,7 +72,7 @@ export const FoldersProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const deleteFolder = async (id: string): Promise<boolean> => {
     try {
-      const success = FolderStorageService.deleteFolder(id);
+      const success = await SupabaseFoldersService.deleteFolder(id);
       if (success) {
         setFolders(prev => prev.filter(folder => folder.id !== id));
         toast.success('Folder deleted successfully');
