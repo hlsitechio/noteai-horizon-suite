@@ -50,12 +50,12 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <AccentColorProvider>
-            <QuantumAIProvider>
-              <NotificationsProvider>
-                <ProjectRealmsProvider>
-                  <NotesProvider>
-                    <FoldersProvider>
-                      <Router>
+            <Router>
+              <QuantumAIProvider>
+                <NotificationsProvider>
+                  <ProjectRealmsProvider>
+                    <NotesProvider>
+                      <FoldersProvider>
                         <div className="min-h-screen bg-background text-foreground">
                           <Routes>
                             {/* Public Routes */}
@@ -155,12 +155,12 @@ function App() {
                           </Routes>
                           <Toaster />
                         </div>
-                      </Router>
-                    </FoldersProvider>
-                  </NotesProvider>
-                </ProjectRealmsProvider>
-              </NotificationsProvider>
-            </QuantumAIProvider>
+                      </FoldersProvider>
+                    </NotesProvider>
+                  </ProjectRealmsProvider>
+                </NotificationsProvider>
+              </QuantumAIProvider>
+            </Router>
           </AccentColorProvider>
         </AuthProvider>
       </ThemeProvider>
