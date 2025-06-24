@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export interface CopilotRequest {
   action: 'improve' | 'translate' | 'summarize' | 'expand' | 'simplify' | 'custom';
@@ -40,7 +40,6 @@ export interface CopilotSession {
 export const useAICopilot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentSession, setCurrentSession] = useState<string | null>(null);
-  const { toast } = useToast();
 
   const processText = async (request: CopilotRequest): Promise<CopilotResponse> => {
     setIsLoading(true);
