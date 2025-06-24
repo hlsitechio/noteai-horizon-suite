@@ -30,6 +30,36 @@ interface CopilotResponse {
   }>;
 }
 
+// Enhanced model selection based on task requirements
+function selectOptimalModel(action: string, textLength: number, hasContext: boolean): string {
+  switch (action) {
+    case 'improve':
+    case 'simplify':
+      // Use best reasoning model for improvement tasks
+      return 'deepseek/r1-distill-qwen-14b';
+    
+    case 'translate':
+      // Use multilingual model for translation
+      return 'sarvamai/sarvam-m';
+    
+    case 'summarize':
+      // Use efficient model for summarization
+      return textLength > 1000 ? 'google/gemma-3-4b' : 'mistralai/mistral-small-3';
+    
+    case 'expand':
+      // Use creative model for expansion
+      return 'arliai/qwq-32b-rpr-v1';
+    
+    case 'custom':
+      // Use premium model for custom tasks
+      return hasContext ? 'deepseek/r1-distill-qwen-14b' : 'featherless/qwerky-72b';
+    
+    default:
+      // Default to best overall model
+      return 'deepseek/r1-distill-qwen-14b';
+  }
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -99,15 +129,19 @@ serve(async (req) => {
         ).join('\n')}`
       : '';
 
-    // Generate AI prompt based on action
+    // Select optimal model based on task
+    const model = selectOptimalModel(action, text.length, similarNotes.length > 0);
+
+    // Generate AI prompt based on action with enhanced instructions
     let systemPrompt = '';
     let userPrompt = '';
-    let model = 'openai/gpt-4o-mini'; // Default free model
+    let temperature = 0.7;
 
     switch (action) {
       case 'improve':
-        systemPrompt = 'You are a professional writing assistant. Improve the given text by enhancing clarity, flow, and impact while maintaining the original meaning and tone.';
-        userPrompt = `Please improve this text:\n\n${text}${contextFromNotes}`;
+        systemPrompt = 'You are a professional writing coach with expertise in clarity, engagement, and impact. Enhance the text by improving word choice, sentence structure, and overall flow while preserving the original voice and meaning. Focus on making the writing more compelling and professional.';
+        userPrompt = `Please improve this text by enhancing clarity, engagement, and professional impact:\n\n${text}${contextFromNotes}`;
+        temperature = 0.5;
         break;
         
       case 'translate':
@@ -117,40 +151,44 @@ serve(async (req) => {
           'ar': 'Arabic', 'ru': 'Russian'
         };
         const targetLang = languageMap[targetLanguage || 'es'] || 'Spanish';
-        systemPrompt = `You are a professional translator. Translate the given text to ${targetLang} while maintaining the original meaning and context.`;
-        userPrompt = `Please translate this text to ${targetLang}:\n\n${text}`;
+        systemPrompt = `You are a professional translator with native-level fluency. Translate the text to ${targetLang} while maintaining nuance, cultural context, and the original tone. Ensure the translation reads naturally to native speakers.`;
+        userPrompt = `Please translate this text to ${targetLang} with cultural sensitivity and natural flow:\n\n${text}`;
+        temperature = 0.3;
         break;
         
       case 'summarize':
-        systemPrompt = 'You are a professional summarizer. Create concise, clear summaries that capture the key points and main ideas.';
-        userPrompt = `Please summarize this text:\n\n${text}${contextFromNotes}`;
+        systemPrompt = 'You are an expert at distilling complex information into clear, actionable summaries. Create concise summaries that capture the essential points, key insights, and main takeaways while maintaining logical flow.';
+        userPrompt = `Please create a comprehensive yet concise summary of this text, highlighting key insights:\n\n${text}${contextFromNotes}`;
+        temperature = 0.4;
         break;
         
       case 'expand':
-        systemPrompt = 'You are a professional content writer. Expand the given text by adding relevant details, examples, and context while maintaining the original intent.';
-        userPrompt = `Please expand this text with more detail and context:\n\n${text}${contextFromNotes}`;
+        systemPrompt = 'You are a skilled content developer who excels at adding depth, examples, and context. Expand the text by providing relevant details, supporting arguments, real-world examples, and deeper analysis while maintaining coherence.';
+        userPrompt = `Please expand this text with additional depth, examples, and supporting context:\n\n${text}${contextFromNotes}`;
+        temperature = 0.6;
         break;
         
       case 'simplify':
-        systemPrompt = 'You are a professional editor. Simplify the given text to make it clearer and more accessible while preserving the essential information.';
-        userPrompt = `Please simplify this text:\n\n${text}`;
+        systemPrompt = 'You are an expert at making complex information accessible. Simplify the text by using clearer vocabulary, shorter sentences, and more straightforward explanations while preserving all important information.';
+        userPrompt = `Please simplify this text for better readability and accessibility:\n\n${text}`;
+        temperature = 0.4;
         break;
         
       case 'custom':
-        systemPrompt = 'You are a helpful AI assistant. Follow the user\'s custom instructions carefully.';
+        systemPrompt = 'You are a versatile AI assistant with expertise across multiple domains. Follow the user\'s specific instructions carefully while applying best practices for the requested task.';
         userPrompt = `${customPrompt}\n\nText to work with:\n${text}${contextFromNotes}`;
-        model = 'openai/gpt-4o-mini'; // Use better model for custom prompts
+        temperature = 0.6;
         break;
     }
 
-    // Call OpenRouter API
+    // Call OpenRouter API with enhanced configuration
     const openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${openRouterKey}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': supabaseUrl,
-        'X-Title': 'AI Note Copilot'
+        'X-Title': 'AI Note Copilot Enhanced'
       },
       body: JSON.stringify({
         model,
@@ -158,8 +196,11 @@ serve(async (req) => {
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        max_tokens: 2000,
-        temperature: 0.7
+        max_tokens: action === 'expand' ? 3000 : action === 'summarize' ? 1000 : 2000,
+        temperature,
+        top_p: 0.9,
+        frequency_penalty: 0.1,
+        presence_penalty: 0.1
       })
     });
 
@@ -174,7 +215,7 @@ serve(async (req) => {
     const processingTime = Date.now() - startTime;
     const tokensUsed = aiResponse.usage?.total_tokens || 0;
 
-    // Create or update copilot session
+    // Create or update copilot session with enhanced metadata
     const sessionData = {
       user_id: user.id,
       note_id: noteId || null,
@@ -187,7 +228,11 @@ serve(async (req) => {
         targetLanguage,
         customPrompt,
         tokensUsed,
-        similarNotesCount: similarNotes.length
+        similarNotesCount: similarNotes.length,
+        textLength: text.length,
+        processingTime,
+        temperature,
+        quality_score: Math.min(100, Math.max(0, 100 - (processingTime / 1000) * 10)) // Simple quality metric
       },
       processing_time: processingTime
     };
@@ -214,7 +259,7 @@ serve(async (req) => {
       }
     }
 
-    // Track usage
+    // Track usage with enhanced metrics
     await supabase.rpc('track_copilot_usage', {
       user_uuid: user.id,
       tokens_used: tokensUsed,
