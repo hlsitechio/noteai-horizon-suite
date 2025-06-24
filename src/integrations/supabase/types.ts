@@ -546,6 +546,89 @@ export type Database = {
         }
         Relationships: []
       }
+      project_agents: {
+        Row: {
+          agent_type: string
+          config: Json | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          project_id: string
+          prompt_template: string
+          updated_at: string | null
+        }
+        Insert: {
+          agent_type: string
+          config?: Json | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          project_id: string
+          prompt_template: string
+          updated_at?: string | null
+        }
+        Update: {
+          agent_type?: string
+          config?: Json | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          project_id?: string
+          prompt_template?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_agents_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "project_realms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_realms: {
+        Row: {
+          ai_config: Json | null
+          created_at: string | null
+          creator_id: string
+          description: string | null
+          id: string
+          last_activity_at: string | null
+          settings: Json | null
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          ai_config?: Json | null
+          created_at?: string | null
+          creator_id: string
+          description?: string | null
+          id?: string
+          last_activity_at?: string | null
+          settings?: Json | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          ai_config?: Json | null
+          created_at?: string | null
+          creator_id?: string
+          description?: string | null
+          id?: string
+          last_activity_at?: string | null
+          settings?: Json | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       pwa_analytics: {
         Row: {
           browser: string | null

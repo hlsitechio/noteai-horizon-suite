@@ -15,7 +15,7 @@ import {
   TooltipProvider,
 } from '@/components/ui/tooltip';
 import { SidebarHeader as CustomSidebarHeader } from './SidebarHeader';
-import { NavigationMenu } from './NavigationMenu';
+import NavigationMenu from './NavigationMenu';
 import { CollapsedSummary } from './CollapsedSummary';
 import { SidebarFooter as CustomSidebarFooter } from './SidebarFooter';
 import { NotesSection } from './NotesSection';
@@ -60,7 +60,7 @@ export function SidebarMain() {
           <SidebarContent className="px-0 bg-deep-carbon-900/80 flex-1 min-h-0 overflow-y-auto">
             <SidebarGroup className="py-2">
               <SidebarGroupContent>
-                <NavigationMenu />
+                <NavigationMenu isCollapsed={isCollapsed} />
               </SidebarGroupContent>
             </SidebarGroup>
 
