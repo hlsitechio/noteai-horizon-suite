@@ -11,7 +11,7 @@ export class ProjectRealmsService {
         .order('last_activity_at', { ascending: false });
 
       if (error) throw error;
-      return (data || []) as ProjectRealm[];
+      return (data || []) as unknown as ProjectRealm[];
     } catch (error) {
       console.error('Error loading projects:', error);
       return [];
@@ -33,7 +33,7 @@ export class ProjectRealmsService {
         .single();
 
       if (error) throw error;
-      return data as ProjectRealm;
+      return data as unknown as ProjectRealm;
     } catch (error) {
       console.error('Error creating project:', error);
       return null;
@@ -50,7 +50,7 @@ export class ProjectRealmsService {
         .single();
 
       if (error) throw error;
-      return data as ProjectRealm;
+      return data as unknown as ProjectRealm;
     } catch (error) {
       console.error('Error updating project:', error);
       return null;
@@ -82,7 +82,7 @@ export class ProjectRealmsService {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return (data || []) as ProjectAgent[];
+      return (data || []) as unknown as ProjectAgent[];
     } catch (error) {
       console.error('Error loading project agents:', error);
       return [];
@@ -98,7 +98,7 @@ export class ProjectRealmsService {
         .single();
 
       if (error) throw error;
-      return data as ProjectAgent;
+      return data as unknown as ProjectAgent;
     } catch (error) {
       console.error('Error creating agent:', error);
       return null;
