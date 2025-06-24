@@ -11,7 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { Note } from '../../types/note';
 import { NoteExportService, ExportFormat, SharePlatform } from '../../services/noteExportService';
-import { DocumentGenerationService } from '../../services/documentGenerationService';
 import ShareButtons from './ShareButtons';
 import ExportButtons from './ExportButtons';
 import QRCodeSection from './QRCodeSection';
@@ -30,68 +29,20 @@ const NoteShareModal: React.FC<NoteShareModalProps> = ({ note, isOpen, onClose }
   const handleExport = async (format: ExportFormat) => {
     setIsExporting(true);
     try {
-      let content: string;
-      let filename: string;
-      let mimeType: string;
-
-      switch (format) {
-        case 'txt':
-          content = NoteExportService.exportToText(note);
-          filename = `${note.title}.txt`;
-          mimeType = 'text/plain';
-          break;
-        case 'md':
-          content = NoteExportService.exportToMarkdown(note);
-          filename = `${note.title}.md`;
-          mimeType = 'text/markdown';
-          break;
-        case 'html':
-          content = NoteExportService.exportToHTML(note);
-          filename = `${note.title}.html`;
-          mimeType = 'text/html';
-          break;
-        case 'json':
-          content = NoteExportService.exportToJSON(note);
-          filename = `${note.title}.json`;
-          mimeType = 'application/json';
-          break;
-        default:
-          throw new Error('Unsupported format');
-      }
-
-      NoteExportService.downloadFile(content, filename, mimeType);
+      await NoteExportService.exportAsFile(format, note);
       toast.success(`Note exported as ${format.toUpperCase()}`);
     } catch (error) {
-      toast.error('Failed to export note');
+      toast.error(`Failed to export as ${format.toUpperCase()}`);
       console.error('Export error:', error);
     } finally {
       setIsExporting(false);
     }
   };
 
-  const handleDocumentExport = async (type: 'word' | 'pdf') => {
+  const handleDocumentExport = async (type: 'docx' | 'pdf') => {
     setIsExporting(true);
     try {
-      let blob: Blob;
-      let filename: string;
-
-      if (type === 'word') {
-        blob = await DocumentGenerationService.generateWordDocument(note);
-        filename = `${note.title}.rtf`;
-      } else {
-        blob = await DocumentGenerationService.generatePDF(note);
-        filename = `${note.title}.pdf`;
-      }
-
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
+      await NoteExportService.exportAsFile(type, note);
       toast.success(`Note exported as ${type.toUpperCase()}`);
     } catch (error) {
       toast.error(`Failed to export as ${type.toUpperCase()}`);
@@ -103,15 +54,18 @@ const NoteShareModal: React.FC<NoteShareModalProps> = ({ note, isOpen, onClose }
 
   const handleShare = async (platform: SharePlatform) => {
     try {
-      if (platform === 'email') {
-        window.open(NoteExportService.getShareUrl(platform, note));
-      } else {
+      // Try Web Share API first for mobile devices
+      if (platform !== 'email') {
         const webShareSuccess = await NoteExportService.shareWithWebAPI(note);
-        if (!webShareSuccess) {
-          window.open(NoteExportService.getShareUrl(platform, note), '_blank');
+        if (webShareSuccess) {
+          toast.success('Note shared successfully');
+          return;
         }
       }
-      toast.success('Note shared successfully');
+      
+      // Fall back to opening share URLs
+      NoteExportService.openShare(platform, note);
+      toast.success('Share window opened');
     } catch (error) {
       toast.error('Failed to share note');
       console.error('Share error:', error);

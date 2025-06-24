@@ -5,7 +5,7 @@ import { ExportFormat } from '../../services/noteExportService';
 
 interface ExportButtonsProps {
   onExport: (format: ExportFormat) => void;
-  onDocumentExport: (type: 'word' | 'pdf') => void;
+  onDocumentExport: (type: 'docx' | 'pdf') => void;
   isExporting: boolean;
 }
 
@@ -22,7 +22,7 @@ const ExportButtons: React.FC<ExportButtonsProps> = ({
   ];
 
   const documentFormats = [
-    { type: 'word' as const, label: 'Word Document', description: 'RTF format for Word' },
+    { type: 'docx' as const, label: 'Word Document', description: 'Microsoft Word format' },
     { type: 'pdf' as const, label: 'PDF Document', description: 'Portable document format' },
   ];
 
@@ -62,6 +62,9 @@ const ExportButtons: React.FC<ExportButtonsProps> = ({
             </Button>
           ))}
         </div>
+        <p className="text-sm text-gray-600 mt-3">
+          Note: DOCX and PDF exports require additional packages to be downloaded when first used.
+        </p>
       </div>
 
       <p className="text-sm text-gray-600">
