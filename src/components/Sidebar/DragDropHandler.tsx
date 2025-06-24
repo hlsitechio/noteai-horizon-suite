@@ -25,9 +25,9 @@ export const useDragDropHandler = ({ updateNote }: DragDropHandlerProps) => {
     
     // Update note's folder
     if (targetFolderId === 'unorganized') {
-      await updateNote(draggableId, { folderId: undefined });
+      await updateNote(draggableId, { folder_id: null });
     } else {
-      await updateNote(draggableId, { folderId: targetFolderId });
+      await updateNote(draggableId, { folder_id: targetFolderId });
     }
   };
 

@@ -5,14 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { NoteCategory } from '../../types/note';
+import { CategoryOption } from '../../types/note';
 
 interface EditorMetadataProps {
   title: string;
   category: string;
   tags: string[];
   newTag: string;
-  categories: NoteCategory[];
+  categories: CategoryOption[];
   onTitleChange: (title: string) => void;
   onCategoryChange: (category: string) => void;
   onNewTagChange: (tag: string) => void;

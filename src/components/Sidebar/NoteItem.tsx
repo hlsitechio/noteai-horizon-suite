@@ -61,7 +61,7 @@ const NoteItem: React.FC<NoteItemProps> = ({
           
           <div 
             className="w-2 h-2 rounded-full mr-1" 
-            style={{ backgroundColor: note.color }}
+            style={{ backgroundColor: note.color || '#64748b' }}
           />
           
           <DocumentTextIcon className="h-4 w-4 text-muted-foreground" />

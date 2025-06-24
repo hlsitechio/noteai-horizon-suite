@@ -6,9 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNotes } from '../../contexts/NotesContext';
-import { NoteCategory } from '../../types/note';
+import { CategoryOption } from '../../types/note';
 
-const categories: NoteCategory[] = [
+const categories: CategoryOption[] = [
   { value: 'all', label: 'All Categories', color: 'gray' },
   { value: 'general', label: 'General', color: 'gray' },
   { value: 'meeting', label: 'Meeting', color: 'blue' },

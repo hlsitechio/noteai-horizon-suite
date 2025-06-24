@@ -53,7 +53,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
 }) => {
   const isExpanded = expandedFolders.has(folder.id);
   const childFolders = folders.filter(f => f.parentId === folder.id);
-  const folderNotes = notes.filter(n => n.folderId === folder.id);
+  const folderNotes = notes.filter(n => n.folder_id === folder.id);
   const hasChildren = childFolders.length > 0 || folderNotes.length > 0;
   
   const paddingLeft = level * 20;

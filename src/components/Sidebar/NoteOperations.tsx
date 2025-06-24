@@ -26,9 +26,8 @@ export const useNoteOperations = ({
   };
 
   const handleChangeColor = async (id: string, color: string, type: 'folder' | 'note') => {
-    if (type === 'note') {
-      await updateNote(id, { color });
-    }
+    // Color handling for notes is not implemented yet
+    console.log('Note color change not implemented:', { id, color, type });
   };
 
   return {

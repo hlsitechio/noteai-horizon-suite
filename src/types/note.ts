@@ -9,6 +9,7 @@ export interface Note {
   updatedAt: string;
   isFavorite: boolean;
   folder_id?: string | null;
+  color?: string;
 }
 
 export interface NoteFilters {
@@ -24,4 +25,10 @@ export interface NoteMeta {
   lastModified: string;
 }
 
-export type NoteCategory = 'general' | 'work' | 'personal' | 'ideas' | 'todo';
+export type NoteCategory = 'general' | 'work' | 'personal' | 'ideas' | 'todo' | 'meeting' | 'learning' | 'brainstorm' | 'project';
+
+export interface CategoryOption {
+  value: string;
+  label: string;
+  color: string;
+}

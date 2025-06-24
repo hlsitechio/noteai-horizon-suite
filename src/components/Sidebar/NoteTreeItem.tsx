@@ -48,7 +48,7 @@ export const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
           >
             <div 
               className="w-2 h-2 rounded-full flex-shrink-0" 
-              style={{ backgroundColor: note.color }}
+              style={{ backgroundColor: note.color || '#64748b' }}
             />
             
             <DocumentTextIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />

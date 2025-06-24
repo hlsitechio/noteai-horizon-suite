@@ -59,14 +59,14 @@ const NotesTree: React.FC = () => {
       category: 'general',
       tags: [],
       isFavorite: false,
-      color: '#64748b',
+      folder_id: null,
     });
     setCurrentNote(newNote);
     navigate('/editor');
   };
 
   const rootFolders = folders.filter(f => !f.parentId);
-  const unorganizedNotes = notes.filter(n => !n.folderId);
+  const unorganizedNotes = notes.filter(n => !n.folder_id);
 
   const handleChangeColor = async (id: string, color: string, type: 'folder' | 'note') => {
     if (type === 'folder') {

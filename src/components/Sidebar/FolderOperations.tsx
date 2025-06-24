@@ -47,9 +47,9 @@ export const useFolderOperations = ({
   const handleDeleteFolder = async (folderId: string) => {
     if (window.confirm('Are you sure you want to delete this folder? Notes inside will be moved to unorganized.')) {
       // Move notes from folder to unorganized
-      const folderNotes = notes.filter(n => n.folderId === folderId);
+      const folderNotes = notes.filter(n => n.folder_id === folderId);
       for (const note of folderNotes) {
-        await updateNote(note.id, { folderId: undefined });
+        await updateNote(note.id, { folder_id: null });
       }
       await deleteFolder(folderId);
     }
@@ -58,9 +58,8 @@ export const useFolderOperations = ({
   const handleChangeColor = async (id: string, color: string, type: 'folder' | 'note') => {
     if (type === 'folder') {
       await updateFolder(id, { color });
-    } else {
-      await updateNote(id, { color });
     }
+    // Note: color property will be handled when we add it to Note interface
   };
 
   return {

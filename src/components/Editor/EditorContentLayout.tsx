@@ -2,6 +2,7 @@
 import React from 'react';
 import EditorLayout from './EditorLayout';
 import { EditorFormState, EditorFormHandlers } from './EditorFormProps';
+import { CategoryOption } from '../../types/note';
 
 interface EditorContentLayoutProps extends EditorFormState, EditorFormHandlers {
   collapseAssistantRef?: React.MutableRefObject<(() => void) | undefined>;
@@ -20,8 +21,8 @@ const EditorContentLayout: React.FC<EditorContentLayoutProps> = (props) => {
     isAssistantCollapsed: props.isAssistantCollapsed
   });
 
-  // Get available categories - using correct NoteCategory structure
-  const categories = [
+  // Get available categories - using CategoryOption interface
+  const categories: CategoryOption[] = [
     { value: 'general', label: 'General', color: '#6366f1' },
     { value: 'work', label: 'Work', color: '#059669' },
     { value: 'personal', label: 'Personal', color: '#dc2626' },

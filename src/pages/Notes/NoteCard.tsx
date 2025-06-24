@@ -6,10 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../../contexts/NotesContext';
-import { Note, NoteCategory } from '../../types/note';
+import { Note, CategoryOption } from '../../types/note';
 import NoteShareButton from '../../components/Sharing/NoteShareButton';
 
-const categories: NoteCategory[] = [
+const categories: CategoryOption[] = [
   { value: 'all', label: 'All Categories', color: 'gray' },
   { value: 'general', label: 'General', color: 'gray' },
   { value: 'meeting', label: 'Meeting', color: 'blue' },
@@ -38,7 +38,8 @@ const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
     }
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
