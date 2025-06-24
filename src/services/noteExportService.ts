@@ -66,19 +66,20 @@ export class NoteExportService {
   }
 
   static getShareUrl(platform: SharePlatform, note: Note): string {
-    const baseUrl = window.location.origin;
-    const noteUrl = `${baseUrl}/note/${note.id}`;
-    const text = `Check out this note: "${note.title}"`;
-    const encodedText = encodeURIComponent(text);
-    const encodedUrl = encodeURIComponent(noteUrl);
+    // Create the note content to share
+    const noteContent = `${note.title}\n\n${note.content}`;
+    const tags = note.tags.length > 0 ? `\n\nTags: ${note.tags.map(tag => `#${tag}`).join(' ')}` : '';
+    const fullContent = `${noteContent}${tags}`;
+    
+    const encodedContent = encodeURIComponent(fullContent);
     const encodedTitle = encodeURIComponent(note.title);
 
     const urls = {
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
-      twitter: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
-      linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}&summary=${encodedText}`,
-      whatsapp: `https://wa.me/?text=${encodedText}%20${encodedUrl}`,
-      email: `mailto:?subject=${encodedTitle}&body=${encodedText}%0A%0A${encodedUrl}`
+      facebook: `https://www.facebook.com/sharer/sharer.php?quote=${encodedContent}`,
+      twitter: `https://twitter.com/intent/tweet?text=${encodedContent}`,
+      linkedin: `https://www.linkedin.com/shareArticle?mini=true&title=${encodedTitle}&summary=${encodedContent}`,
+      whatsapp: `https://wa.me/?text=${encodedContent}`,
+      email: `mailto:?subject=${encodedTitle}&body=${encodedContent}`
     };
 
     return urls[platform];
@@ -90,10 +91,13 @@ export class NoteExportService {
     }
 
     try {
+      const noteContent = `${note.title}\n\n${note.content}`;
+      const tags = note.tags.length > 0 ? `\n\nTags: ${note.tags.map(tag => `#${tag}`).join(' ')}` : '';
+      const fullContent = `${noteContent}${tags}`;
+
       await navigator.share({
         title: note.title,
-        text: `Check out this note: "${note.title}"`,
-        url: `${window.location.origin}/note/${note.id}`
+        text: fullContent
       });
       return true;
     } catch (error) {
