@@ -76,7 +76,7 @@ const QuantumAI3DToolbar: React.FC = () => {
 
   return (
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-      {/* Two-Sided Menu - positioned above the main button */}
+      {/* Two-Sided Menu - positioned on both sides of the main button */}
       <TwoSidedMenu 
         isVisible={isExpanded}
         leftActions={leftActions}
