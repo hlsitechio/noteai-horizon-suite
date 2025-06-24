@@ -6,15 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '../../hooks/use-mobile';
-
-interface Note {
-  id: string;
-  title: string;
-  content: string;
-  category: string;
-  isFavorite: boolean;
-  updatedAt: Date;
-}
+import { Note } from '../../types/note';
 
 interface RecentActivityProps {
   recentNotes: Note[];
@@ -30,7 +22,8 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  const formatDate = (date: Date) => {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',

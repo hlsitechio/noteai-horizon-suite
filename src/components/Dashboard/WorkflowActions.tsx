@@ -5,15 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '../../hooks/use-mobile';
-
-interface Note {
-  id: string;
-  title: string;
-  content: string;
-  category: string;
-  isFavorite: boolean;
-  updatedAt: Date;
-}
+import { Note } from '../../types/note';
 
 interface WorkflowActionsProps {
   notes: Note[];
