@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Note, NoteFilters } from '../types/note';
 import { SupabaseNotesService } from '../services/supabaseNotesService';
+import { useFolders } from './FoldersContext';
 import { toast } from 'sonner';
 
 interface NotesContextType {
@@ -39,7 +40,8 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [filters, setFilters] = useState<NoteFilters>({});
   const [isLoading, setIsLoading] = useState(true);
   
-  const folders: any[] = [];
+  // Get folders from FoldersContext
+  const { folders } = useFolders();
 
   const refreshNotes = async () => {
     setIsLoading(true);
