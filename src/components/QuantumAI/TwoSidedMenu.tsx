@@ -23,6 +23,9 @@ interface TwoSidedMenuProps {
 }
 
 const TwoSidedMenu: React.FC<TwoSidedMenuProps> = ({ isVisible, leftActions, rightActions }) => {
+  // Combine all actions into a single array
+  const allActions = [...leftActions, ...rightActions];
+
   return (
     <AnimatePresence>
       {isVisible && (
@@ -42,33 +45,48 @@ const TwoSidedMenu: React.FC<TwoSidedMenuProps> = ({ isVisible, leftActions, rig
               {/* Top border accent */}
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-400/50 to-transparent" />
               
-              <div className="flex items-center">
-                {/* Left Side Menu */}
-                <div className="flex items-center">
-                  <MenuSide 
-                    actions={leftActions} 
-                    side="left"
-                    className="pr-4 pl-6 py-4"
-                  />
-                </div>
-                
-                {/* Center Divider with Logo */}
-                <div className="relative px-4 py-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 border border-slate-500/30 flex items-center justify-center">
-                    <div className="w-6 h-6 rounded-full bg-slate-400" />
-                  </div>
-                  {/* Center accent lines */}
-                  <div className="absolute top-1/2 -translate-y-1/2 -left-3 w-6 h-px bg-slate-600/50" />
-                  <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-6 h-px bg-slate-600/50" />
-                </div>
-                
-                {/* Right Side Menu */}
-                <div className="flex items-center">
-                  <MenuSide 
-                    actions={rightActions} 
-                    side="right"
-                    className="pl-4 pr-6 py-4"
-                  />
+              {/* All Actions in a Single Row */}
+              <div className="flex items-center px-6 py-4">
+                <div className="flex items-center gap-2">
+                  {allActions.map((action, index) => {
+                    const parseGradientColors = (colorString: string) => {
+                      const parts = colorString.split(' ');
+                      const fromColor = parts.find(part => part.startsWith('from-'))?.replace('from-', '') || 'slate-500';
+                      const toColor = parts.find(part => part.startsWith('to-'))?.replace('to-', '') || 'slate-600';
+                      return { fromColor, toColor };
+                    };
+
+                    const { fromColor, toColor } = parseGradientColors(action.color);
+                    
+                    return (
+                      <motion.div
+                        key={action.label}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ 
+                          delay: index * 0.1 + 0.2,
+                          duration: 0.3,
+                          ease: "easeOut" 
+                        }}
+                      >
+                        <button
+                          onClick={action.action}
+                          className={`group relative h-12 w-12 rounded-xl bg-gradient-to-br from-${fromColor} to-${toColor} hover:scale-110 transition-all duration-300 shadow-lg text-white border border-white/10`}
+                        >
+                          <div className="absolute inset-0 bg-white/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          <action.icon className="w-5 h-5 text-white relative z-10 mx-auto" />
+                          
+                          {/* Tooltip */}
+                          <div className="absolute -top-14 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50">
+                            <div className="bg-slate-800/95 backdrop-blur-xl border border-slate-600/30 rounded-lg px-3 py-2 shadow-xl">
+                              <p className="text-sm font-medium text-white whitespace-nowrap">{action.label}</p>
+                              <p className="text-xs text-slate-300">{action.description}</p>
+                            </div>
+                          </div>
+                        </button>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </div>
               
