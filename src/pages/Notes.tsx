@@ -45,7 +45,7 @@ const Notes: React.FC = () => {
 
   const handleEditNote = (note: any) => {
     setCurrentNote(note);
-    navigate('/editor');
+    navigate('/app/editor');
   };
 
   const handleDeleteNote = async (noteId: string, e: React.MouseEvent) => {
@@ -94,7 +94,7 @@ const Notes: React.FC = () => {
         </div>
         <Button onClick={() => {
           setCurrentNote(null);
-          navigate('/editor');
+          navigate('/app/editor');
         }}>
           <Plus className="w-4 h-4 mr-2" />
           New Note
@@ -164,7 +164,7 @@ const Notes: React.FC = () => {
             </p>
             <Button onClick={() => {
               setCurrentNote(null);
-              navigate('/editor');
+              navigate('/app/editor');
             }}>
               <Plus className="w-4 h-4 mr-2" />
               Create Note
