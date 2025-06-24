@@ -8,17 +8,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '../../contexts/AuthContext';
 
-const badgeVariants = {
-  animate: {
-    scale: [1, 1.05, 1],
-    transition: {
-      duration: 2,
-      repeat: Infinity,
-      repeatType: "reverse" as const
-    }
-  }
-};
-
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -34,18 +23,7 @@ const Header: React.FC = () => {
       transition={{ duration: 0.3 }}
       className="fixed top-0 right-0 left-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/50 md:left-[var(--sidebar-width)]"
     >
-      <div className="flex items-center justify-between px-6 py-4">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <motion.div variants={badgeVariants} animate="animate">
-              
-            </motion.div>
-            <motion.div variants={badgeVariants} animate="animate" transition={{ delay: 0.5 }}>
-              
-            </motion.div>
-          </div>
-        </div>
-
+      <div className="flex items-center justify-end px-6 py-4">
         <div className="flex items-center gap-3">
           {/* Only Profile Dropdown remains */}
           <DropdownMenu>
