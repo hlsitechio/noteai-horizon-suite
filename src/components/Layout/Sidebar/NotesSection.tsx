@@ -68,17 +68,17 @@ export function NotesSection() {
     return (
       <div className="px-2 space-y-1">
         <SidebarMenuButton asChild tooltip="Notes">
-          <Link to="/app/notes">
+          <Link to="/app/notes" className="hover:bg-accent hover:text-accent-foreground">
             <FileText className="h-4 w-4" />
           </Link>
         </SidebarMenuButton>
         <SidebarMenuButton asChild tooltip="Projects">
-          <Link to="/app/projects">
+          <Link to="/app/projects" className="hover:bg-accent hover:text-accent-foreground">
             <FolderOpen className="h-4 w-4" />
           </Link>
         </SidebarMenuButton>
         <SidebarMenuButton asChild tooltip="Favorites">
-          <button onClick={() => {}}>
+          <button onClick={() => {}} className="hover:bg-accent hover:text-accent-foreground">
             <Star className="h-4 w-4" />
           </button>
         </SidebarMenuButton>
@@ -92,7 +92,7 @@ export function NotesSection() {
       <SidebarGroup>
         <div className="flex items-center justify-between px-2">
           <SidebarGroupLabel 
-            className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70"
+            className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors"
             onClick={() => toggleSection('notes')}
           >
             {expandedSections.notes ? (
@@ -105,7 +105,7 @@ export function NotesSection() {
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 w-6 p-0 hover:bg-sidebar-accent"
+            className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
             onClick={handleCreateNote}
           >
             <Plus className="h-3 w-3" />
@@ -125,11 +125,11 @@ export function NotesSection() {
                   {recentNotes.map((note) => (
                     <SidebarMenuItem key={note.id}>
                       <SidebarMenuButton asChild>
-                        <Link to={`/app/notes?note=${note.id}`} className="flex items-center">
+                        <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
                           <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
                           <span className="truncate text-xs">{note.title}</span>
                           {note.isFavorite && (
-                            <Star className="h-3 w-3 ml-auto text-yellow-400 fill-current" />
+                            <Star className="h-3 w-3 ml-auto text-accent fill-current" />
                           )}
                         </Link>
                       </SidebarMenuButton>
@@ -137,7 +137,7 @@ export function NotesSection() {
                   ))}
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <Link to="/app/notes" className="text-xs text-sidebar-foreground/60">
+                      <Link to="/app/notes" className="text-xs text-sidebar-foreground/60 hover:bg-accent hover:text-accent-foreground transition-colors">
                         View all notes →
                       </Link>
                     </SidebarMenuButton>
@@ -153,7 +153,7 @@ export function NotesSection() {
       <SidebarGroup>
         <div className="flex items-center justify-between px-2">
           <SidebarGroupLabel 
-            className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70"
+            className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors"
             onClick={() => toggleSection('projects')}
           >
             {expandedSections.projects ? (
@@ -178,7 +178,7 @@ export function NotesSection() {
                   {activeProjects.map((project) => (
                     <SidebarMenuItem key={project.id}>
                       <SidebarMenuButton asChild>
-                        <Link to={`/app/projects?project=${project.id}`} className="flex items-center">
+                        <Link to={`/app/projects?project=${project.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
                           <Folder className="h-3 w-3 mr-2 flex-shrink-0" />
                           <span className="truncate text-xs">{project.title}</span>
                         </Link>
@@ -187,7 +187,7 @@ export function NotesSection() {
                   ))}
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <Link to="/app/projects" className="text-xs text-sidebar-foreground/60">
+                      <Link to="/app/projects" className="text-xs text-sidebar-foreground/60 hover:bg-accent hover:text-accent-foreground transition-colors">
                         View all projects →
                       </Link>
                     </SidebarMenuButton>
@@ -203,7 +203,7 @@ export function NotesSection() {
       <SidebarGroup>
         <div className="flex items-center justify-between px-2">
           <SidebarGroupLabel 
-            className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70"
+            className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors"
             onClick={() => toggleSection('favorites')}
           >
             {expandedSections.favorites ? (
@@ -229,8 +229,8 @@ export function NotesSection() {
                     favoriteNotes.map((note) => (
                       <SidebarMenuItem key={note.id}>
                         <SidebarMenuButton asChild>
-                          <Link to={`/app/notes?note=${note.id}`} className="flex items-center">
-                            <Star className="h-3 w-3 mr-2 flex-shrink-0 text-yellow-400 fill-current" />
+                          <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
+                            <Star className="h-3 w-3 mr-2 flex-shrink-0 text-accent fill-current" />
                             <span className="truncate text-xs">{note.title}</span>
                           </Link>
                         </SidebarMenuButton>

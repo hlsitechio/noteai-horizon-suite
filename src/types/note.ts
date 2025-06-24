@@ -23,3 +23,5 @@ export interface NoteMeta {
   readingTime: number;
   lastModified: string;
 }
+
+export type NoteCategory = 'general' | 'work' | 'personal' | 'ideas' | 'todo';
