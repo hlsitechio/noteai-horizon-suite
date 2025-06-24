@@ -3,17 +3,21 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Note, NoteFilters } from '../types/note';
 import { NoteStorageService } from '../services/noteStorage';
 import { toast } from 'sonner';
+import { useFolders } from './FoldersContext';
 
 interface NotesContextType {
   notes: Note[];
   filteredNotes: Note[];
   currentNote: Note | null;
+  selectedNote: Note | null;
   filters: NoteFilters;
   isLoading: boolean;
+  folders: any[];
   createNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Note>;
   updateNote: (id: string, updates: Partial<Omit<Note, 'id' | 'createdAt'>>) => Promise<Note | null>;
   deleteNote: (id: string) => Promise<boolean>;
   setCurrentNote: (note: Note | null) => void;
+  setSelectedNote: (note: Note | null) => void;
   setFilters: (filters: NoteFilters) => void;
   refreshNotes: () => void;
 }
@@ -31,8 +35,10 @@ export const useNotes = () => {
 export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [currentNote, setCurrentNote] = useState<Note | null>(null);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [filters, setFilters] = useState<NoteFilters>({});
   const [isLoading, setIsLoading] = useState(true);
+  const { folders } = useFolders();
 
   const refreshNotes = () => {
     setIsLoading(true);
@@ -71,6 +77,9 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (currentNote?.id === id) {
           setCurrentNote(updatedNote);
         }
+        if (selectedNote?.id === id) {
+          setSelectedNote(updatedNote);
+        }
         toast.success('Note updated successfully');
       }
       return updatedNote;
@@ -87,6 +96,9 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setNotes(prev => prev.filter(note => note.id !== id));
         if (currentNote?.id === id) {
           setCurrentNote(null);
+        }
+        if (selectedNote?.id === id) {
+          setSelectedNote(null);
         }
         toast.success('Note deleted successfully');
       }
@@ -123,12 +135,15 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         notes,
         filteredNotes,
         currentNote,
+        selectedNote,
         filters,
         isLoading,
+        folders,
         createNote,
         updateNote,
         deleteNote,
         setCurrentNote,
+        setSelectedNote,
         setFilters,
         refreshNotes,
       }}

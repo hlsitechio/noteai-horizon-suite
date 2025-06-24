@@ -1,18 +1,19 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './providers/ThemeProvider';
 import Layout from './components/Layout/Layout';
-import Home from './pages/Home';
+import Dashboard from './pages/Dashboard';
 import Notes from './pages/Notes';
 import Editor from './pages/Editor';
 import Chat from './pages/Chat';
 import Settings from './pages/Settings';
-import Auth from './pages/Auth';
+import Landing from './pages/Landing';
 import { AuthProvider } from './contexts/AuthContext';
 import { NotificationsProvider } from './contexts/NotificationsContext';
-import { ToastProvider } from './hooks/useToast';
-import { GPUAccelerationProvider } from './hooks/useGPUAcceleration';
+import { NotesProvider } from './contexts/NotesContext';
+import { FoldersProvider } from './contexts/FoldersContext';
 import { QuantumAIProvider } from '@/contexts/QuantumAIContext';
 import QuantumAIInterface from '@/components/QuantumAI/QuantumAIInterface';
 import QuantumAIIndicator from '@/components/QuantumAI/QuantumAIIndicator';
@@ -28,16 +29,16 @@ function App() {
             <div className="min-h-screen bg-background">
               <AuthProvider>
                 <NotificationsProvider>
-                  <ToastProvider>
-                    <GPUAccelerationProvider>
+                  <FoldersProvider>
+                    <NotesProvider>
                       <Routes>
-                        <Route path="/auth" element={<Auth />} />
+                        <Route path="/auth" element={<Landing />} />
                         <Route
                           path="/app/*"
                           element={
                             <Layout>
                               <Routes>
-                                <Route path="home" element={<Home />} />
+                                <Route path="home" element={<Dashboard />} />
                                 <Route path="notes" element={<Notes />} />
                                 <Route path="editor/:noteId?" element={<Editor />} />
                                 <Route path="chat" element={<Chat />} />
@@ -46,10 +47,10 @@ function App() {
                             </Layout>
                           }
                         />
-                        <Route path="/" element={<Auth />} />
+                        <Route path="/" element={<Landing />} />
                       </Routes>
-                    </GPUAccelerationProvider>
-                  </ToastProvider>
+                    </NotesProvider>
+                  </FoldersProvider>
                 </NotificationsProvider>
               </AuthProvider>
               
