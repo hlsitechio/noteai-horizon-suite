@@ -1,78 +1,91 @@
 
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from './providers/ThemeProvider';
+import { ThemeProvider } from '@/providers/ThemeProvider';
+import { AuthProvider } from './contexts/AuthContext';
+import { NotesProvider } from './contexts/NotesContext';
+import { FoldersProvider } from './contexts/FoldersContext';
+import { NotificationsProvider } from './contexts/NotificationsContext';
+import { QuantumAIProvider } from './contexts/QuantumAIContext';
+import { Toaster } from '@/components/ui/sonner';
 import Layout from './components/Layout/Layout';
+import Landing from './pages/Landing';
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
+import ResetPassword from './pages/Auth/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import Notes from './pages/Notes';
 import Editor from './pages/Editor';
 import Chat from './pages/Chat';
+import Calendar from './pages/Calendar';
 import Settings from './pages/Settings';
-import Landing from './pages/Landing';
-import Login from './pages/Auth/Login';
-import Register from './pages/Auth/Register';
-import { AuthProvider } from './contexts/AuthContext';
-import { NotificationsProvider } from './contexts/NotificationsContext';
-import { NotesProvider } from './contexts/NotesContext';
-import { FoldersProvider } from './contexts/FoldersContext';
-import { QuantumAIProvider } from '@/contexts/QuantumAIContext';
-import QuantumAIInterface from '@/components/QuantumAI/QuantumAIInterface';
-import QuantumAIIndicator from '@/components/QuantumAI/QuantumAIIndicator';
+import NotFound from './pages/NotFound';
+import Contact from './pages/Contact';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import Sitemap from './pages/Sitemap';
+import ComingSoon from './pages/ComingSoon';
+import QuantumAI3DToolbar from './components/QuantumAI/QuantumAI3DToolbar';
+import QuantumAIInterface from './components/QuantumAI/QuantumAIInterface';
+import './App.css';
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <Router>
-          <div className="min-h-screen bg-background">
-            {/* QuantumAIProvider must be inside Router since it uses useLocation */}
-            <QuantumAIProvider>
-              <AuthProvider>
-                <NotificationsProvider>
-                  <FoldersProvider>
-                    <NotesProvider>
-                      <Routes>
-                        <Route path="/auth" element={<Landing />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        
-                        {/* Redirect /dashboard to /app/home */}
-                        <Route path="/dashboard" element={<Navigate to="/app/home" replace />} />
-                        
-                        <Route
-                          path="/app/*"
-                          element={
-                            <Layout>
-                              <Routes>
-                                <Route path="home" element={<Dashboard />} />
-                                <Route path="notes" element={<Notes />} />
-                                <Route path="editor/:noteId?" element={<Editor />} />
-                                <Route path="chat" element={<Chat />} />
-                                <Route path="settings" element={<Settings />} />
-                              </Routes>
-                            </Layout>
-                          }
-                        />
-                        
-                        {/* Default redirect to dashboard */}
-                        <Route path="/" element={<Navigate to="/app/home" replace />} />
-                      </Routes>
-                      
-                      {/* Quantum AI Components - Available everywhere, now inside NotificationsProvider */}
-                      <QuantumAIInterface />
-                      <QuantumAIIndicator />
-                    </NotesProvider>
-                  </FoldersProvider>
-                </NotificationsProvider>
-              </AuthProvider>
-            </QuantumAIProvider>
-          </div>
-        </Router>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <NotificationsProvider>
+            <NotesProvider>
+              <FoldersProvider>
+                <QuantumAIProvider>
+                  <Router>
+                    <Routes>
+                      {/* Public routes */}
+                      <Route path="/" element={<Landing />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
+                      <Route path="/reset-password" element={<ResetPassword />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/privacy" element={<Privacy />} />
+                      <Route path="/terms" element={<Terms />} />
+                      <Route path="/sitemap" element={<Sitemap />} />
+
+                      {/* Protected app routes */}
+                      <Route path="/app/*" element={
+                        <Layout>
+                          <Routes>
+                            <Route path="home" element={<Dashboard />} />
+                            <Route path="dashboard" element={<Dashboard />} />
+                            <Route path="notes" element={<Notes />} />
+                            <Route path="editor" element={<Editor />} />
+                            <Route path="chat" element={<Chat />} />
+                            <Route path="calendar" element={<Calendar />} />
+                            <Route path="settings" element={<Settings />} />
+                            <Route path="coming-soon" element={<ComingSoon />} />
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                        </Layout>
+                      } />
+
+                      {/* Catch all */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                    
+                    {/* Global AI Components */}
+                    <QuantumAI3DToolbar />
+                    <QuantumAIInterface />
+                    <Toaster />
+                  </Router>
+                </QuantumAIProvider>
+              </FoldersProvider>
+            </NotesProvider>
+          </NotificationsProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 
