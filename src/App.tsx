@@ -39,10 +39,10 @@ const App = () => (
           <FoldersProvider>
             <NotesProvider>
               <NotificationsProvider>
-                <QuantumAIProvider>
-                  <TooltipProvider>
-                    <Toaster />
-                    <BrowserRouter>
+                <TooltipProvider>
+                  <Toaster />
+                  <BrowserRouter>
+                    <QuantumAIProvider>
                       <Routes>
                         {/* Public routes */}
                         <Route path="/" element={<Index />} />
@@ -67,9 +67,9 @@ const App = () => (
                         {/* 404 route */}
                         <Route path="*" element={<NotFound />} />
                       </Routes>
-                    </BrowserRouter>
-                  </TooltipProvider>
-                </QuantumAIProvider>
+                    </QuantumAIProvider>
+                  </BrowserRouter>
+                </TooltipProvider>
               </NotificationsProvider>
             </NotesProvider>
           </FoldersProvider>
