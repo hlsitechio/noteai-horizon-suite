@@ -1,15 +1,22 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { LogOut, Bell, Moon, Sun, Settings } from 'lucide-react';
+import { LogOut, Bell, Moon, Sun, Settings, MoreVertical } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useSidebar } from '@/components/ui/sidebar';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNotifications } from '../../../contexts/NotificationsContext';
@@ -83,63 +90,60 @@ export function SidebarFooter() {
             
             {/* Action buttons grouped together */}
             <div className="space-y-2">
-              {/* Notifications */}
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start h-9 rounded-lg hover:bg-accent/10 transition-colors"
-                >
-                  <Bell className="w-4 h-4 mr-2" />
-                  Notifications
-                  {unreadCount > 0 && (
-                    <motion.div
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" as const }}
-                      className="ml-auto"
+              {/* Combined Menu Button */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start h-9 rounded-lg hover:bg-accent/10 transition-colors relative"
                     >
-                      <Badge className="h-4 min-w-4 p-0 bg-red-500 border-0 text-xs">
+                      <MoreVertical className="w-4 h-4 mr-2" />
+                      Menu
+                      {unreadCount > 0 && (
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" as const }}
+                          className="ml-auto"
+                        >
+                          <Badge className="h-4 min-w-4 p-0 bg-red-500 border-0 text-xs">
+                            {unreadCount > 99 ? '99+' : unreadCount}
+                          </Badge>
+                        </motion.div>
+                      )}
+                    </Button>
+                  </motion.div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="top" align="start" className="w-48">
+                  <DropdownMenuItem>
+                    <Bell className="w-4 h-4 mr-2" />
+                    Notifications
+                    {unreadCount > 0 && (
+                      <Badge className="h-4 min-w-4 p-0 bg-red-500 border-0 text-xs ml-auto">
                         {unreadCount > 99 ? '99+' : unreadCount}
                       </Badge>
-                    </motion.div>
-                  )}
-                </Button>
-              </motion.div>
-
-              {/* Theme Toggle */}
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start h-9 rounded-lg hover:bg-accent/10 transition-colors"
-                  onClick={handleThemeToggle}
-                >
-                  {isCurrentlyDark ? (
-                    <>
-                      <Sun className="w-4 h-4 mr-2" />
-                      Light Mode
-                    </>
-                  ) : (
-                    <>
-                      <Moon className="w-4 h-4 mr-2" />
-                      Dark Mode
-                    </>
-                  )}
-                </Button>
-              </motion.div>
-
-              {/* Settings */}
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start h-9 rounded-lg hover:bg-accent/10 transition-colors"
-                  onClick={handleSettingsClick}
-                >
-                  <Settings className="w-4 h-4 mr-2" />
-                  Settings
-                </Button>
-              </motion.div>
+                    )}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleThemeToggle}>
+                    {isCurrentlyDark ? (
+                      <>
+                        <Sun className="w-4 h-4 mr-2" />
+                        Light Mode
+                      </>
+                    ) : (
+                      <>
+                        <Moon className="w-4 h-4 mr-2" />
+                        Dark Mode
+                      </>
+                    )}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSettingsClick}>
+                    <Settings className="w-4 h-4 mr-2" />
+                    Settings
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* Sign Out */}
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -181,70 +185,64 @@ export function SidebarFooter() {
             
             {/* Collapsed view icons */}
             <div className="flex flex-col items-center space-y-2">
-              {/* Notifications */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-11 h-11 rounded-xl hover:bg-accent/10 relative"
-                  >
-                    <Bell className="w-5 h-5" />
-                    {unreadCount > 0 && (
-                      <motion.div
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" as const }}
-                        className="absolute -top-1 -right-1"
+              {/* Combined Menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="w-11 h-11 rounded-xl hover:bg-accent/10 relative"
                       >
-                        <Badge className="h-4 min-w-4 p-0 bg-red-500 border-0 text-xs">
-                          {unreadCount > 99 ? '99+' : unreadCount}
-                        </Badge>
-                      </motion.div>
+                        <MoreVertical className="w-5 h-5" />
+                        {unreadCount > 0 && (
+                          <motion.div
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" as const }}
+                            className="absolute -top-1 -right-1"
+                          >
+                            <Badge className="h-4 min-w-4 p-0 bg-red-500 border-0 text-xs">
+                              {unreadCount > 99 ? '99+' : unreadCount}
+                            </Badge>
+                          </motion.div>
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>Menu</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="right" align="start" className="w-48">
+                  <DropdownMenuItem>
+                    <Bell className="w-4 h-4 mr-2" />
+                    Notifications
+                    {unreadCount > 0 && (
+                      <Badge className="h-4 min-w-4 p-0 bg-red-500 border-0 text-xs ml-auto">
+                        {unreadCount > 99 ? '99+' : unreadCount}
+                      </Badge>
                     )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>Notifications</p>
-                </TooltipContent>
-              </Tooltip>
-
-              {/* Theme Toggle */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-11 h-11 rounded-xl hover:bg-accent/10"
-                    onClick={handleThemeToggle}
-                  >
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleThemeToggle}>
                     {isCurrentlyDark ? (
-                      <Sun className="w-5 h-5" />
+                      <>
+                        <Sun className="w-4 h-4 mr-2" />
+                        Light Mode
+                      </>
                     ) : (
-                      <Moon className="w-5 h-5" />
+                      <>
+                        <Moon className="w-4 h-4 mr-2" />
+                        Dark Mode
+                      </>
                     )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>{isCurrentlyDark ? 'Light Mode' : 'Dark Mode'}</p>
-                </TooltipContent>
-              </Tooltip>
-
-              {/* Settings */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-11 h-11 rounded-xl hover:bg-accent/10"
-                    onClick={handleSettingsClick}
-                  >
-                    <Settings className="w-5 h-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>Settings</p>
-                </TooltipContent>
-              </Tooltip>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSettingsClick}>
+                    <Settings className="w-4 h-4 mr-2" />
+                    Settings
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* Sign Out */}
               <Tooltip>
