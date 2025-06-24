@@ -38,8 +38,8 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <NotificationsProvider>
-            <NotesProvider>
-              <FoldersProvider>
+            <FoldersProvider>
+              <NotesProvider>
                 <QuantumAIProvider>
                   <Router>
                     <Routes>
@@ -80,8 +80,8 @@ function App() {
                     <Toaster />
                   </Router>
                 </QuantumAIProvider>
-              </FoldersProvider>
-            </NotesProvider>
+              </NotesProvider>
+            </FoldersProvider>
           </NotificationsProvider>
         </AuthProvider>
       </QueryClientProvider>
