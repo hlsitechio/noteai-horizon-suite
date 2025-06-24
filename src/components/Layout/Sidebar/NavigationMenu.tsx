@@ -1,186 +1,100 @@
 
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 import { 
-  Settings, 
-  BookOpen, 
-  PenTool, 
-  Plus,
-  Calendar,
-  Sparkles
+  LayoutDashboard, 
+  FileText, 
+  Edit3, 
+  Calendar, 
+  MessageSquare, 
+  Settings,
+  FolderOpen
 } from 'lucide-react';
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from '@/components/ui/sidebar';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { useAccentColor } from '../../../contexts/AccentColorContext';
+import { Link, useLocation } from 'react-router-dom';
 
-const menuItems = [
-  { icon: BookOpen, label: 'Dashboard', path: '/app/dashboard' },
-  { icon: Plus, label: 'AI Chat', path: '/app/chat' },
-  { icon: PenTool, label: 'Editor', path: '/app/editor' },
-  { icon: Calendar, label: 'Calendar', path: '/app/calendar' },
-  { icon: Settings, label: 'Settings', path: '/app/settings' },
-];
+interface NavigationMenuProps {
+  isCollapsed: boolean;
+}
 
-const contentVariants = {
-  expanded: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      delay: 0.1,
-      duration: 0.2
-    }
-  },
-  collapsed: {
-    opacity: 0,
-    x: -20,
-    transition: {
-      duration: 0.15
-    }
-  }
-};
-
-const iconVariants = {
-  expanded: {
-    scale: 1,
-    rotate: 0,
-    transition: {
-      type: "spring" as const,
-      stiffness: 400,
-      damping: 25
-    }
-  },
-  collapsed: {
-    scale: 1.1,
-    rotate: 0,
-    transition: {
-      type: "spring" as const,
-      stiffness: 400,
-      damping: 25
-    }
-  }
-};
-
-export function NavigationMenu() {
+const NavigationMenu: React.FC<NavigationMenuProps> = ({ isCollapsed }) => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { state } = useSidebar();
-  const { accentColor } = useAccentColor();
-  const isCollapsed = state === 'collapsed';
+
+  const navigationItems = [
+    { 
+      icon: LayoutDashboard, 
+      label: 'Dashboard', 
+      path: '/app/dashboard',
+      description: 'Overview and analytics'
+    },
+    { 
+      icon: FileText, 
+      label: 'Notes', 
+      path: '/app/notes',
+      description: 'Browse and manage notes'
+    },
+    { 
+      icon: Edit3, 
+      label: 'Editor', 
+      path: '/app/editor',
+      description: 'Write and edit notes'
+    },
+    { 
+      icon: Calendar, 
+      label: 'Calendar', 
+      path: '/app/calendar',
+      description: 'Schedule and events'
+    },
+    { 
+      icon: MessageSquare, 
+      label: 'AI Chat', 
+      path: '/app/chat',
+      description: 'AI-powered conversations'
+    },
+    { 
+      icon: FolderOpen, 
+      label: 'Projects', 
+      path: '/app/projects',
+      description: 'Project realms and workspaces'
+    },
+    { 
+      icon: Settings, 
+      label: 'Settings', 
+      path: '/app/settings',
+      description: 'App preferences'
+    },
+  ];
 
   return (
-    <SidebarMenu className={`space-y-2 ${isCollapsed ? 'px-1' : 'px-2'}`}>
-      {menuItems.map((item, index) => (
-        <SidebarMenuItem key={item.path}>
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.05 }}
-            whileHover={{ x: isCollapsed ? 0 : 2 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            {isCollapsed ? (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <SidebarMenuButton
-                    onClick={() => navigate(item.path)}
-                    isActive={location.pathname === item.path}
-                    className={`h-12 w-12 mx-auto rounded-xl transition-all duration-200 relative overflow-hidden ${
-                      location.pathname === item.path 
-                        ? 'shadow-lg border' 
-                        : 'hover:bg-deep-carbon-800 hover:shadow-md text-professional-grey-400'
-                    }`}
-                    style={location.pathname === item.path ? {
-                      backgroundColor: `${accentColor}20`,
-                      color: accentColor,
-                      borderColor: `${accentColor}30`
-                    } : {}}
-                  >
-                    <motion.div
-                      variants={iconVariants}
-                      animate={isCollapsed ? 'collapsed' : 'expanded'}
-                      className="relative z-10"
-                    >
-                      <item.icon 
-                        className="w-5 h-5" 
-                        style={location.pathname === item.path ? { color: accentColor } : {}}
-                      />
-                    </motion.div>
-                    {location.pathname === item.path && (
-                      <motion.div
-                        className="absolute inset-0 -z-10 rounded-xl border"
-                        layoutId="activeBackground"
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                        style={{
-                          backgroundColor: `${accentColor}20`,
-                          borderColor: `${accentColor}30`
-                        }}
-                      />
-                    )}
-                  </SidebarMenuButton>
-                </TooltipTrigger>
-                <TooltipContent side="right" className="font-medium bg-deep-carbon-800 text-professional-grey-200 border border-professional-grey-700">
-                  <p>{item.label}</p>
-                </TooltipContent>
-              </Tooltip>
-            ) : (
-              <SidebarMenuButton
-                onClick={() => navigate(item.path)}
-                isActive={location.pathname === item.path}
-                className={`h-11 rounded-xl transition-all duration-200 relative overflow-hidden group ${
-                  location.pathname === item.path 
-                    ? 'shadow-md border' 
-                    : 'hover:bg-deep-carbon-800 hover:translate-x-1 text-professional-grey-400'
-                }`}
-                style={location.pathname === item.path ? {
-                  backgroundColor: `${accentColor}20`,
-                  color: accentColor,
-                  borderColor: `${accentColor}30`
-                } : {}}
-              >
-                {location.pathname === item.path && (
-                  <motion.div
-                    className="absolute inset-0 -z-10 rounded-xl border"
-                    layoutId="activeBackground"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    style={{
-                      backgroundColor: `${accentColor}20`,
-                      borderColor: `${accentColor}30`
-                    }}
-                  />
-                )}
-                <item.icon 
-                  className="w-5 h-5 flex-shrink-0 relative z-20" 
-                  style={location.pathname === item.path ? { color: accentColor } : {}}
-                />
-                <AnimatePresence>
-                  {!isCollapsed && (
-                    <motion.span
-                      variants={contentVariants}
-                      initial="collapsed"
-                      animate="expanded"
-                      exit="collapsed"
-                      className="truncate font-medium relative z-20 text-professional-grey-300"
-                      style={location.pathname === item.path ? { color: accentColor } : {}}
-                    >
-                      {item.label}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </SidebarMenuButton>
-            )}
-          </motion.div>
-        </SidebarMenuItem>
-      ))}
-    </SidebarMenu>
+    <nav className="space-y-2">
+      {navigationItems.map((item) => {
+        const Icon = item.icon;
+        const isActive = location.pathname === item.path;
+        
+        return (
+          <Link key={item.path} to={item.path}>
+            <Button
+              variant={isActive ? "secondary" : "ghost"}
+              className={`w-full justify-start transition-all duration-200 ${
+                isCollapsed ? 'px-2' : 'px-3'
+              } ${isActive ? 'bg-primary/10 text-primary' : 'hover:bg-accent'}`}
+            >
+              <Icon className={`h-4 w-4 ${isCollapsed ? '' : 'mr-3'} ${
+                isActive ? 'text-primary' : ''
+              }`} />
+              {!isCollapsed && (
+                <div className="flex flex-col items-start">
+                  <span className="text-sm font-medium">{item.label}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {item.description}
+                  </span>
+                </div>
+              )}
+            </Button>
+          </Link>
+        );
+      })}
+    </nav>
   );
-}
+};
+
+export default NavigationMenu;
