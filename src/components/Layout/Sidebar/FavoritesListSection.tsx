@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Draggable, Droppable } from 'react-beautiful-dnd';
+import { Draggable } from 'react-beautiful-dnd';
 import { 
   SidebarGroup, 
   SidebarGroupContent, 
@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Note } from '../../../types/note';
+import { SafeDroppableWrapper } from './SafeDroppableWrapper';
 
 interface FavoritesListSectionProps {
   favoriteNotes: Note[];
@@ -29,6 +30,83 @@ export function FavoritesListSection({
   isExpanded, 
   onToggle 
 }: FavoritesListSectionProps) {
+  const renderFavoriteNotes = (provided?: any, snapshot?: any) => (
+    <SidebarMenu
+      ref={provided?.innerRef}
+      {...(provided?.droppableProps || {})}
+      className={snapshot?.isDraggingOver ? 'bg-accent/20 rounded-md' : ''}
+    >
+      {favoriteNotes.length > 0 ? (
+        favoriteNotes.map((note, index) => {
+          try {
+            return (
+              <Draggable key={note.id} draggableId={`sidebar-favorite-note-${note.id}`} index={index}>
+                {(provided) => (
+                  <SidebarMenuItem
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  >
+                    <SidebarMenuButton asChild>
+                      <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
+                        <Star className="h-3 w-3 mr-2 flex-shrink-0 text-accent fill-current" />
+                        <span className="truncate text-xs">{note.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
+              </Draggable>
+            );
+          } catch (error) {
+            console.log('Drag context not ready for favorites, rendering static item:', error);
+            return (
+              <SidebarMenuItem key={note.id}>
+                <SidebarMenuButton asChild>
+                  <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
+                    <Star className="h-3 w-3 mr-2 flex-shrink-0 text-accent fill-current" />
+                    <span className="truncate text-xs">{note.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          }
+        })
+      ) : (
+        <SidebarMenuItem>
+          <SidebarMenuButton disabled>
+            <span className="text-xs text-sidebar-foreground/40">
+              {snapshot?.isDraggingOver ? 'Drop note here to add to favorites' : 'No favorites yet'}
+            </span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      )}
+      {provided?.placeholder}
+    </SidebarMenu>
+  );
+
+  const fallbackContent = (
+    <SidebarMenu>
+      {favoriteNotes.length > 0 ? (
+        favoriteNotes.map((note) => (
+          <SidebarMenuItem key={note.id}>
+            <SidebarMenuButton asChild>
+              <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Star className="h-3 w-3 mr-2 flex-shrink-0 text-accent fill-current" />
+                <span className="truncate text-xs">{note.title}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))
+      ) : (
+        <SidebarMenuItem>
+          <SidebarMenuButton disabled>
+            <span className="text-xs text-sidebar-foreground/40">No favorites yet</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      )}
+    </SidebarMenu>
+  );
+
   return (
     <SidebarGroup>
       <div className="flex items-center justify-between px-2">
@@ -54,45 +132,11 @@ export function FavoritesListSection({
             transition={{ duration: 0.2 }}
           >
             <SidebarGroupContent>
-              <Droppable droppableId="sidebar-favorites">
-                {(provided, snapshot) => (
-                  <SidebarMenu
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className={snapshot.isDraggingOver ? 'bg-accent/20 rounded-md' : ''}
-                  >
-                    {favoriteNotes.length > 0 ? (
-                      favoriteNotes.map((note, index) => (
-                        <Draggable key={note.id} draggableId={`sidebar-favorite-note-${note.id}`} index={index}>
-                          {(provided) => (
-                            <SidebarMenuItem
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                            >
-                              <SidebarMenuButton asChild>
-                                <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
-                                  <Star className="h-3 w-3 mr-2 flex-shrink-0 text-accent fill-current" />
-                                  <span className="truncate text-xs">{note.title}</span>
-                                </Link>
-                              </SidebarMenuButton>
-                            </SidebarMenuItem>
-                          )}
-                        </Draggable>
-                      ))
-                    ) : (
-                      <SidebarMenuItem>
-                        <SidebarMenuButton disabled>
-                          <span className="text-xs text-sidebar-foreground/40">
-                            {snapshot.isDraggingOver ? 'Drop note here to add to favorites' : 'No favorites yet'}
-                          </span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    )}
-                    {provided.placeholder}
-                  </SidebarMenu>
-                )}
-              </Droppable>
+              <SafeDroppableWrapper
+                droppableId="sidebar-favorites"
+                children={renderFavoriteNotes}
+                fallbackChildren={fallbackContent}
+              />
             </SidebarGroupContent>
           </motion.div>
         )}
