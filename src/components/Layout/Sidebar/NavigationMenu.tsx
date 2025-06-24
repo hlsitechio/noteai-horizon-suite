@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/tooltip';
 
 const menuItems = [
-  { icon: BookOpen, label: 'Dashboard', path: '/app/home', color: 'text-electric-cyan-500' },
+  { icon: BookOpen, label: 'Dashboard', path: '/app/dashboard', color: 'text-electric-cyan-500' },
   { icon: Plus, label: 'AI Chat', path: '/app/chat', color: 'text-electric-cyan-500' },
   { icon: PenTool, label: 'Editor', path: '/app/editor', color: 'text-electric-cyan-500' },
   { icon: Calendar, label: 'Calendar', path: '/app/calendar', color: 'text-electric-cyan-500' },
