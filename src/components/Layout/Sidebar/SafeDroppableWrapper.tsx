@@ -14,22 +14,16 @@ export function SafeDroppableWrapper({
   children, 
   fallbackChildren 
 }: SafeDroppableWrapperProps) {
-  const { isReady } = useDragDropReady();
+  const { isReady, contextRef } = useDragDropReady();
 
-  // Always render fallback first, then transition to droppable
-  if (!isReady) {
+  // Only render droppable if context is confirmed ready
+  if (!isReady || !contextRef.current) {
     return <>{fallbackChildren}</>;
   }
 
-  // Add error boundary protection
-  try {
-    return (
-      <Droppable droppableId={droppableId}>
-        {children}
-      </Droppable>
-    );
-  } catch (error) {
-    console.warn('Droppable context error, falling back to static content:', error);
-    return <>{fallbackChildren}</>;
-  }
+  return (
+    <Droppable droppableId={droppableId}>
+      {children}
+    </Droppable>
+  );
 }

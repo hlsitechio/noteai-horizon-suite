@@ -5,9 +5,13 @@ import { useUnifiedDragDrop } from '../../hooks/useUnifiedDragDrop';
 
 interface DragDropReadyContextType {
   isReady: boolean;
+  contextRef: React.RefObject<any>;
 }
 
-const DragDropReadyContext = createContext<DragDropReadyContextType>({ isReady: false });
+const DragDropReadyContext = createContext<DragDropReadyContextType>({ 
+  isReady: false, 
+  contextRef: { current: null } 
+});
 
 export const useDragDropReady = () => useContext(DragDropReadyContext);
 
@@ -18,36 +22,38 @@ interface UnifiedDragDropProviderProps {
 export function UnifiedDragDropProvider({ children }: UnifiedDragDropProviderProps) {
   const { handleDragEnd } = useUnifiedDragDrop();
   const [isReady, setIsReady] = useState(false);
+  const contextRef = useRef<any>(null);
   const mountedRef = useRef(false);
 
   useEffect(() => {
     mountedRef.current = true;
     
-    // Use multiple checks to ensure context is ready
-    const timer1 = setTimeout(() => {
-      if (mountedRef.current) {
-        // First check after initial render
+    // Use requestAnimationFrame to ensure DOM is ready
+    const checkContext = () => {
+      if (mountedRef.current && contextRef.current) {
         setIsReady(true);
+      } else if (mountedRef.current) {
+        requestAnimationFrame(checkContext);
       }
-    }, 50);
+    };
 
-    const timer2 = setTimeout(() => {
-      if (mountedRef.current) {
-        // Double check to ensure stability
-        setIsReady(true);
-      }
-    }, 200);
+    requestAnimationFrame(checkContext);
 
     return () => {
       mountedRef.current = false;
-      clearTimeout(timer1);
-      clearTimeout(timer2);
     };
   }, []);
 
+  const handleContextRef = (ref: any) => {
+    contextRef.current = ref;
+    if (ref && mountedRef.current) {
+      setIsReady(true);
+    }
+  };
+
   return (
-    <DragDropReadyContext.Provider value={{ isReady }}>
-      <DragDropContext onDragEnd={handleDragEnd}>
+    <DragDropReadyContext.Provider value={{ isReady, contextRef }}>
+      <DragDropContext onDragEnd={handleDragEnd} ref={handleContextRef}>
         {children}
       </DragDropContext>
     </DragDropReadyContext.Provider>
