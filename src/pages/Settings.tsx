@@ -4,9 +4,17 @@ import PreferencesSection from '../components/Settings/PreferencesSection';
 import AISettingsSection from '../components/Settings/AISettingsSection';
 import DataExportSection from '../components/Settings/DataExportSection';
 import AboutSection from '../components/Settings/AboutSection';
+import ColorPicker from '../components/Settings/ColorPicker';
 import { Separator } from '@/components/ui/separator';
+import { useAccentColor } from '../contexts/AccentColorContext';
 
 const Settings: React.FC = () => {
+  const { accentColor, setAccentColor } = useAccentColor();
+
+  const handleColorChange = (color: { name: string; value: string; hsl: string }) => {
+    setAccentColor(color.value, color.hsl);
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
@@ -25,6 +33,14 @@ const Settings: React.FC = () => {
         {/* Profile Section - Now with better spacing */}
         <section>
           <ProfileSection />
+        </section>
+
+        {/* Color Picker Section */}
+        <section>
+          <ColorPicker 
+            currentColor={accentColor}
+            onColorChange={handleColorChange}
+          />
         </section>
 
         {/* Other Settings Sections */}
