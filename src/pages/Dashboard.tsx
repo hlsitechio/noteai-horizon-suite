@@ -7,6 +7,7 @@ import DashboardHeader from '../components/Dashboard/DashboardHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
 import RecentActivity from '../components/Dashboard/RecentActivity';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
+import QuantumAI3DToolbar from '../components/QuantumAI/QuantumAI3DToolbar';
 
 const Dashboard: React.FC = () => {
   const { notes, setCurrentNote } = useNotes();
@@ -72,6 +73,9 @@ const Dashboard: React.FC = () => {
           />
         </div>
       </div>
+
+      {/* Dashboard-specific Quantum AI 3D Toolbar */}
+      <QuantumAI3DToolbar />
     </div>
   );
 };

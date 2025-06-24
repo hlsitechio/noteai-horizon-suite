@@ -26,7 +26,6 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Sitemap from './pages/Sitemap';
 import ComingSoon from './pages/ComingSoon';
-import QuantumAI3DToolbar from './components/QuantumAI/QuantumAI3DToolbar';
 import QuantumAIInterface from './components/QuantumAI/QuantumAIInterface';
 import './App.css';
 
@@ -75,7 +74,6 @@ function App() {
                     </Routes>
                     
                     {/* Global AI Components */}
-                    <QuantumAI3DToolbar />
                     <QuantumAIInterface />
                     <Toaster />
                   </QuantumAIProvider>
