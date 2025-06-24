@@ -3,7 +3,7 @@ import React from 'react';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { AppSidebar } from './AppSidebar';
 import Header from './Header';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Outlet } from 'react-router-dom';
 import { useIsMobile } from '../../hooks/use-mobile';
 
 interface LayoutProps {
@@ -32,7 +32,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   ? "p-4 pt-20" 
                   : "p-6 pt-24"
           }`}>
-            {children}
+            {children || <Outlet />}
           </div>
         </SidebarInset>
       </div>

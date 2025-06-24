@@ -57,9 +57,9 @@ function App() {
               <FoldersProvider>
                 <NotesProvider>
                   <ProjectRealmsProvider>
-                    <QuantumAIProvider>
-                      <UnifiedDragDropProvider>
-                        <Router>
+                    <UnifiedDragDropProvider>
+                      <Router>
+                        <QuantumAIProvider>
                           <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10">
                             <Routes>
                               {/* Public routes */}
@@ -76,29 +76,31 @@ function App() {
                               {/* Protected routes with layout */}
                               <Route path="/app" element={
                                 <ProtectedRoute>
-                                  <Layout />
+                                  <Layout>
+                                    <Routes>
+                                      <Route index element={<Navigate to="/app/dashboard" replace />} />
+                                      <Route path="dashboard" element={<Dashboard />} />
+                                      <Route path="notes" element={<Notes />} />
+                                      <Route path="editor" element={<Editor />} />
+                                      <Route path="chat" element={<Chat />} />
+                                      <Route path="settings" element={<Settings />} />
+                                      <Route path="calendar" element={<Calendar />} />
+                                      <Route path="projects" element={<ProjectRealms />} />
+                                      <Route path="projects/:id" element={<ProjectDetail />} />
+                                      <Route path="coming-soon" element={<ComingSoon />} />
+                                    </Routes>
+                                  </Layout>
                                 </ProtectedRoute>
-                              }>
-                                <Route index element={<Navigate to="/app/dashboard" replace />} />
-                                <Route path="dashboard" element={<Dashboard />} />
-                                <Route path="notes" element={<Notes />} />
-                                <Route path="editor" element={<Editor />} />
-                                <Route path="chat" element={<Chat />} />
-                                <Route path="settings" element={<Settings />} />
-                                <Route path="calendar" element={<Calendar />} />
-                                <Route path="projects" element={<ProjectRealms />} />
-                                <Route path="projects/:id" element={<ProjectDetail />} />
-                                <Route path="coming-soon" element={<ComingSoon />} />
-                              </Route>
+                              } />
                               
                               {/* Catch all route */}
                               <Route path="*" element={<NotFound />} />
                             </Routes>
                           </div>
                           <Toaster />
-                        </Router>
-                      </UnifiedDragDropProvider>
-                    </QuantumAIProvider>
+                        </QuantumAIProvider>
+                      </Router>
+                    </UnifiedDragDropProvider>
                   </ProjectRealmsProvider>
                 </NotesProvider>
               </FoldersProvider>
