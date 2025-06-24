@@ -40,8 +40,8 @@ function App() {
           <NotificationsProvider>
             <FoldersProvider>
               <NotesProvider>
-                <QuantumAIProvider>
-                  <Router>
+                <Router>
+                  <QuantumAIProvider>
                     <Routes>
                       {/* Public routes */}
                       <Route path="/" element={<Landing />} />
@@ -78,8 +78,8 @@ function App() {
                     <QuantumAI3DToolbar />
                     <QuantumAIInterface />
                     <Toaster />
-                  </Router>
-                </QuantumAIProvider>
+                  </QuantumAIProvider>
+                </Router>
               </NotesProvider>
             </FoldersProvider>
           </NotificationsProvider>
