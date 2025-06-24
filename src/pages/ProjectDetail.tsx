@@ -7,12 +7,14 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Settings, Users, Activity, Calendar, FolderOpen, FileText, Plus } from 'lucide-react';
 import { useProjectRealms } from '../contexts/ProjectRealmsContext';
 import { ProjectRealm } from '../types/project';
+import ProjectImageUpload from '../components/ProjectRealms/ProjectImageUpload';
 
 const ProjectDetail: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { projects, currentProject, setCurrentProject } = useProjectRealms();
   const [project, setProject] = useState<ProjectRealm | null>(null);
+  const [bannerImage, setBannerImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (projectId) {
@@ -20,6 +22,8 @@ const ProjectDetail: React.FC = () => {
       if (foundProject) {
         setProject(foundProject);
         setCurrentProject(foundProject);
+        // Check if project has a banner image in settings
+        setBannerImage(foundProject.settings?.banner_image || null);
       } else {
         navigate('/app/projects');
       }
@@ -47,6 +51,10 @@ const ProjectDetail: React.FC = () => {
     });
   };
 
+  const handleImageUpdate = (imageUrl: string) => {
+    setBannerImage(imageUrl);
+  };
+
   if (!project) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -61,10 +69,24 @@ const ProjectDetail: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Banner Section */}
-      <div className="relative h-64 bg-gradient-to-r from-blue-600 to-purple-600 overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
+      <div className="relative h-64 overflow-hidden">
+        {bannerImage ? (
+          <>
+            <img 
+              src={bannerImage} 
+              alt="Project banner" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40"></div>
+          </>
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600"></div>
+            <div className="absolute inset-0 bg-black/20"></div>
+          </>
+        )}
         <div className="relative z-10 h-full flex items-end p-8">
-          <div className="text-white">
+          <div className="text-white flex-1">
             <Button
               variant="ghost"
               onClick={() => navigate('/app/projects')}
@@ -90,6 +112,13 @@ const ProjectDetail: React.FC = () => {
                 Created {formatDate(project.created_at)}
               </div>
             </div>
+          </div>
+          <div className="flex items-start">
+            <ProjectImageUpload 
+              projectId={project.id}
+              currentImageUrl={bannerImage}
+              onImageUpdate={handleImageUpdate}
+            />
           </div>
         </div>
       </div>
