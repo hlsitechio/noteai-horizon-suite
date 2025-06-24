@@ -1,6 +1,5 @@
-
 import React, { useState, useCallback } from 'react';
-import { Bot, Languages, Lightbulb, Sparkles, X, Send, Copy, Check, ThumbsUp, ThumbsDown, History, BarChart3 } from 'lucide-react';
+import { Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,6 +8,21 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { useAICopilot, CopilotRequest, CopilotResponse } from '@/hooks/useAICopilot';
+
+// Import refactored icons
+import {
+  ImproveIcon,
+  TranslateIcon,
+  SummarizeIcon,
+  ExpandIcon,
+  SimplifyIcon,
+  CustomIcon,
+  CopyIcon,
+  ThumbsUpIcon,
+  ThumbsDownIcon,
+  AnalyticsIcon,
+  CloseIcon
+} from '@/components/AICopilot/icons';
 
 interface EnhancedAICopilotProps {
   selectedText: string;
@@ -146,10 +160,10 @@ const EnhancedAICopilot: React.FC<EnhancedAICopilotProps> = ({
             </CardTitle>
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="sm" onClick={() => setShowAnalytics(!showAnalytics)}>
-                <BarChart3 className="w-4 h-4" />
+                <AnalyticsIcon />
               </Button>
               <Button variant="ghost" size="sm" onClick={onClose}>
-                <X className="w-4 h-4" />
+                <CloseIcon />
               </Button>
             </div>
           </div>
@@ -171,7 +185,7 @@ const EnhancedAICopilot: React.FC<EnhancedAICopilotProps> = ({
                 className="h-auto p-3 flex flex-col items-center gap-1"
                 disabled={isLoading}
               >
-                <Sparkles className="w-4 h-4" />
+                <ImproveIcon />
                 <span className="text-xs">Improve</span>
               </Button>
               
@@ -182,7 +196,7 @@ const EnhancedAICopilot: React.FC<EnhancedAICopilotProps> = ({
                 className="h-auto p-3 flex flex-col items-center gap-1"
                 disabled={isLoading}
               >
-                <Languages className="w-4 h-4" />
+                <TranslateIcon />
                 <span className="text-xs">Translate</span>
               </Button>
               
@@ -193,7 +207,7 @@ const EnhancedAICopilot: React.FC<EnhancedAICopilotProps> = ({
                 className="h-auto p-3 flex flex-col items-center gap-1"
                 disabled={isLoading}
               >
-                <Lightbulb className="w-4 h-4" />
+                <SummarizeIcon />
                 <span className="text-xs">Summarize</span>
               </Button>
               
@@ -204,7 +218,7 @@ const EnhancedAICopilot: React.FC<EnhancedAICopilotProps> = ({
                 className="h-auto p-3 flex flex-col items-center gap-1"
                 disabled={isLoading}
               >
-                <Sparkles className="w-4 h-4" />
+                <ExpandIcon />
                 <span className="text-xs">Expand</span>
               </Button>
               
@@ -215,7 +229,7 @@ const EnhancedAICopilot: React.FC<EnhancedAICopilotProps> = ({
                 className="h-auto p-3 flex flex-col items-center gap-1"
                 disabled={isLoading}
               >
-                <Bot className="w-4 h-4" />
+                <SimplifyIcon />
                 <span className="text-xs">Simplify</span>
               </Button>
               
@@ -226,7 +240,7 @@ const EnhancedAICopilot: React.FC<EnhancedAICopilotProps> = ({
                 className="h-auto p-3 flex flex-col items-center gap-1"
                 disabled={isLoading}
               >
-                <Send className="w-4 h-4" />
+                <CustomIcon />
                 <span className="text-xs">Custom</span>
               </Button>
             </div>
@@ -298,7 +312,7 @@ const EnhancedAICopilot: React.FC<EnhancedAICopilotProps> = ({
                   </Badge>
                 </div>
                 <Button variant="ghost" size="sm" onClick={handleCopy}>
-                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  <CopyIcon isCopied={copied} />
                 </Button>
               </div>
               
@@ -337,7 +351,7 @@ const EnhancedAICopilot: React.FC<EnhancedAICopilotProps> = ({
                   onClick={() => handleFeedback(5)}
                   className="h-6 w-6 p-0"
                 >
-                  <ThumbsUp className="w-3 h-3" />
+                  <ThumbsUpIcon />
                 </Button>
                 <Button
                   variant="ghost"
@@ -345,7 +359,7 @@ const EnhancedAICopilot: React.FC<EnhancedAICopilotProps> = ({
                   onClick={() => handleFeedback(1)}
                   className="h-6 w-6 p-0"
                 >
-                  <ThumbsDown className="w-3 h-3" />
+                  <ThumbsDownIcon />
                 </Button>
               </div>
             </div>
