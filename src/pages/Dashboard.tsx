@@ -33,21 +33,21 @@ const Dashboard: React.FC = () => {
 
   const handleCreateNote = () => {
     setCurrentNote(null);
-    navigate('/editor');
+    navigate('/app/editor');
   };
 
   const handleEditNote = (note: any) => {
     setCurrentNote(note);
-    navigate('/editor');
+    navigate('/app/editor');
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 dark:from-slate-950 dark:via-gray-950 dark:to-slate-900 ${isMobile ? 'w-full' : 'w-full'}`}>
+    <div className={`min-h-screen bg-background ${isMobile ? 'w-full' : 'w-full'}`}>
       <div className={`${isMobile ? 'px-4 py-6' : 'px-8 py-8'} space-y-8 w-full max-w-7xl mx-auto`}>
-        {/* Executive Header */}
+        {/* Professional Header */}
         <DashboardHeader onCreateNote={handleCreateNote} />
 
-        {/* KPI Metrics Cards */}
+        {/* Intelligence Metrics */}
         <KPIStats 
           totalNotes={totalNotes}
           favoriteNotes={favoriteNotes}
@@ -64,7 +64,7 @@ const Dashboard: React.FC = () => {
             onEditNote={handleEditNote}
           />
 
-          {/* Workflow Actions */}
+          {/* Quick Actions */}
           <WorkflowActions 
             notes={notes}
             onCreateNote={handleCreateNote}

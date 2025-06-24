@@ -17,7 +17,7 @@ const QuantumAIIndicator: React.FC = () => {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={showCommandPalette}
-        className="group relative p-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+        className="group relative p-4 bg-gradient-to-r from-accent to-accent/80 text-accent-foreground rounded-2xl shadow-premium hover:shadow-large transition-all duration-300 border border-accent/20 backdrop-blur-xl"
         title="Open Quantum AI (⌘K)"
       >
         <motion.div
@@ -27,13 +27,13 @@ const QuantumAIIndicator: React.FC = () => {
           }}
           transition={{ duration: 0.3 }}
         >
-          <Brain className="w-5 h-5" />
+          <Brain className="w-6 h-6" />
         </motion.div>
         
-        {/* Pulse effect when active */}
+        {/* Electric pulse effect when active */}
         {state.isVisible && (
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full"
+            className="absolute inset-0 bg-gradient-to-r from-accent to-accent/80 rounded-2xl"
             animate={{
               scale: [1, 1.2],
               opacity: [0.7, 0]
@@ -46,11 +46,11 @@ const QuantumAIIndicator: React.FC = () => {
           />
         )}
         
-        {/* Keyboard shortcut hint */}
-        <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-          <div className="flex items-center gap-1">
+        {/* Professional keyboard shortcut hint */}
+        <div className="absolute -top-14 left-1/2 transform -translate-x-1/2 bg-card/90 backdrop-blur-xl text-foreground text-xs px-3 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-border/20 shadow-premium">
+          <div className="flex items-center gap-2">
             <Command className="w-3 h-3" />
-            <span>⌘K</span>
+            <span className="font-medium">⌘K</span>
           </div>
         </div>
       </motion.button>
