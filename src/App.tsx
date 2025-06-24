@@ -10,6 +10,8 @@ import Editor from './pages/Editor';
 import Chat from './pages/Chat';
 import Settings from './pages/Settings';
 import Landing from './pages/Landing';
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
 import { AuthProvider } from './contexts/AuthContext';
 import { NotificationsProvider } from './contexts/NotificationsContext';
 import { NotesProvider } from './contexts/NotesContext';
@@ -34,6 +36,8 @@ function App() {
                     <NotesProvider>
                       <Routes>
                         <Route path="/auth" element={<Landing />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
                         <Route
                           path="/app/*"
                           element={
