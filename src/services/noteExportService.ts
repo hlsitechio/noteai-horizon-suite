@@ -1,4 +1,3 @@
-
 import { Note } from '../types/note';
 
 export type ExportFormat = 'txt' | 'md' | 'html' | 'json' | 'docx' | 'pdf';
@@ -119,7 +118,7 @@ export class NoteExportService {
       URL.revokeObjectURL(link.href);
     } catch (error) {
       console.error('Failed to export as DOCX:', error);
-      throw new Error('DOCX export failed. Make sure docx package is installed.');
+      throw new Error('DOCX export failed. The required package could not be loaded.');
     }
   }
 
@@ -136,7 +135,7 @@ export class NoteExportService {
       doc.save(`${title}.pdf`);
     } catch (error) {
       console.error('Failed to export as PDF:', error);
-      throw new Error('PDF export failed. Make sure jspdf package is installed.');
+      throw new Error('PDF export failed. The required package could not be loaded.');
     }
   }
 
