@@ -74,11 +74,11 @@ function App() {
                               <Route path="/sitemap" element={<Sitemap />} />
                               
                               {/* Protected routes with layout */}
-                              <Route path="/app" element={
+                              <Route path="/app/*" element={
                                 <ProtectedRoute>
                                   <Layout>
                                     <Routes>
-                                      <Route index element={<Navigate to="/app/dashboard" replace />} />
+                                      <Route index element={<Navigate to="dashboard" replace />} />
                                       <Route path="dashboard" element={<Dashboard />} />
                                       <Route path="notes" element={<Notes />} />
                                       <Route path="editor" element={<Editor />} />
