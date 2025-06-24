@@ -1,96 +1,68 @@
 
 import React, { useState } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { useSidebar } from '@/components/ui/sidebar';
-import { useNotes } from '../../../contexts/NotesContext';
-import { useFolders } from '../../../contexts/FoldersContext';
-import { useProjectRealms } from '../../../contexts/ProjectRealmsContext';
-import { toast } from 'sonner';
 import { NotesListSection } from './NotesListSection';
 import { ProjectsListSection } from './ProjectsListSection';
 import { FavoritesListSection } from './FavoritesListSection';
 import { CollapsedNotesSection } from './CollapsedNotesSection';
 import { CreateFolderDialog } from './CreateFolderDialog';
+import { useNotes } from '../../../contexts/NotesContext';
+import { useProjects } from '../../../contexts/ProjectRealmsContext';
 
-export function NotesSection() {
-  const { state } = useSidebar();
-  const isCollapsed = state === 'collapsed';
+interface NotesSectionProps {
+  isCollapsed?: boolean;
+}
+
+export function NotesSection({ isCollapsed = false }: NotesSectionProps) {
   const { notes, createNote, updateNote } = useNotes();
-  const { createFolder } = useFolders();
-  const { projects } = useProjectRealms();
+  const { projects } = useProjects();
   
-  const [expandedSections, setExpandedSections] = useState({
-    notes: true,
-    projects: false,
-    favorites: false
-  });
-
+  // State for expandable sections
+  const [isNotesExpanded, setIsNotesExpanded] = useState(true);
+  const [isProjectsExpanded, setIsProjectsExpanded] = useState(true);
+  const [isFavoritesExpanded, setIsFavoritesExpanded] = useState(true);
+  
+  // State for folder creation dialog
   const [showCreateFolderDialog, setShowCreateFolderDialog] = useState(false);
-  const [newFolderName, setNewFolderName] = useState('');
+  const [folderName, setFolderName] = useState('');
 
   const favoriteNotes = notes.filter(note => note.isFavorite);
 
-  const toggleSection = (section: keyof typeof expandedSections) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
+  const handleCreateNote = () => {
+    createNote();
   };
 
-  const handleCreateNote = async () => {
-    try {
-      await createNote({
-        title: 'New Note',
-        content: '',
-        category: 'general',
-        tags: [],
-        isFavorite: false,
-        folder_id: null
-      });
-    } catch (error) {
-      console.error('Failed to create note:', error);
+  const handleCreateFolder = () => {
+    if (folderName.trim()) {
+      // Handle folder creation logic here
+      console.log('Creating folder:', folderName);
+      setFolderName('');
+      setShowCreateFolderDialog(false);
     }
   };
 
-  const handleCreateFolder = async () => {
-    if (newFolderName.trim()) {
-      try {
-        await createFolder({
-          name: newFolderName.trim(),
-          color: '#3b82f6'
-        });
-        setNewFolderName('');
-        setShowCreateFolderDialog(false);
-        toast.success('Folder created successfully');
-      } catch (error) {
-        console.error('Failed to create folder:', error);
-        toast.error('Failed to create folder');
-      }
-    }
-  };
-
-  const handleDragEnd = async (result: DropResult) => {
+  const handleDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result;
 
-    if (!destination) return;
+    if (!destination) {
+      return;
+    }
 
-    const noteId = draggableId.replace('note-', '');
-    
-    try {
-      if (destination.droppableId === 'favorites') {
-        // Add to favorites
-        await updateNote(noteId, { isFavorite: true });
-        toast.success('Note added to favorites');
-      } else if (destination.droppableId.startsWith('project-')) {
-        // Move to project (this would require extending the note structure to include project_id)
-        const projectId = destination.droppableId.replace('project-', '');
-        toast.success('Note moved to project');
-        // Note: You would need to extend the Note interface to include project_id
-        // await updateNote(noteId, { project_id: projectId });
+    // Handle drag and drop logic
+    if (destination.droppableId === 'favorites' && source.droppableId !== 'favorites') {
+      // Add to favorites
+      const noteId = draggableId.replace('note-', '').replace('favorite-note-', '');
+      const note = notes.find(n => n.id === noteId);
+      if (note && updateNote) {
+        updateNote(noteId, { ...note, isFavorite: true });
       }
-    } catch (error) {
-      console.error('Failed to move note:', error);
-      toast.error('Failed to move note');
+    } else if (source.droppableId === 'favorites' && destination.droppableId !== 'favorites') {
+      // Remove from favorites
+      const noteId = draggableId.replace('note-', '').replace('favorite-note-', '');
+      const note = notes.find(n => n.id === noteId);
+      if (note && updateNote) {
+        updateNote(noteId, { ...note, isFavorite: false });
+      }
     }
   };
 
@@ -100,32 +72,32 @@ export function NotesSection() {
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="space-y-4">
-        <NotesListSection 
+      <div className="space-y-2">
+        <NotesListSection
           notes={notes}
-          isExpanded={expandedSections.notes}
-          onToggle={() => toggleSection('notes')}
+          isExpanded={isNotesExpanded}
+          onToggle={() => setIsNotesExpanded(!isNotesExpanded)}
           onCreateNote={handleCreateNote}
           onCreateFolder={() => setShowCreateFolderDialog(true)}
         />
-
-        <ProjectsListSection 
+        
+        <ProjectsListSection
           projects={projects}
-          isExpanded={expandedSections.projects}
-          onToggle={() => toggleSection('projects')}
+          isExpanded={isProjectsExpanded}
+          onToggle={() => setIsProjectsExpanded(!isProjectsExpanded)}
         />
-
-        <FavoritesListSection 
+        
+        <FavoritesListSection
           favoriteNotes={favoriteNotes}
-          isExpanded={expandedSections.favorites}
-          onToggle={() => toggleSection('favorites')}
+          isExpanded={isFavoritesExpanded}
+          onToggle={() => setIsFavoritesExpanded(!isFavoritesExpanded)}
         />
 
         <CreateFolderDialog
           isOpen={showCreateFolderDialog}
           onOpenChange={setShowCreateFolderDialog}
-          folderName={newFolderName}
-          onFolderNameChange={setNewFolderName}
+          folderName={folderName}
+          onFolderNameChange={setFolderName}
           onCreateFolder={handleCreateFolder}
         />
       </div>
