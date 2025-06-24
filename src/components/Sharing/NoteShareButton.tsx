@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { share } from 'lucide-react';
+import { Share } from 'lucide-react';
 import { Note } from '../../types/note';
 import NoteShareModal from './NoteShareModal';
 
@@ -33,7 +33,7 @@ const NoteShareButton: React.FC<NoteShareButtonProps> = ({
         onClick={handleClick}
         className="flex items-center gap-2"
       >
-        <share className="w-4 h-4" />
+        <Share className="w-4 h-4" />
         {showLabel && 'Share'}
       </Button>
 

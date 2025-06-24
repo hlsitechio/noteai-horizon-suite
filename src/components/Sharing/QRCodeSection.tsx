@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Note } from '../../types/note';
@@ -25,16 +25,39 @@ const QRCodeSection: React.FC<QRCodeSectionProps> = ({ note }) => {
 
   const downloadQRCode = () => {
     try {
-      const canvas = document.querySelector('#qr-code canvas') as HTMLCanvasElement;
-      if (canvas) {
-        const url = canvas.toDataURL('image/png');
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${note.title}-qr.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        toast.success('QR Code downloaded');
+      const svg = document.querySelector('#qr-code svg') as SVGElement;
+      if (svg) {
+        // Convert SVG to canvas and then to image
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        // Serialize SVG to string
+        const svgData = new XMLSerializer().serializeToString(svg);
+        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+        
+        img.onload = () => {
+          canvas.width = 200;
+          canvas.height = 200;
+          ctx?.drawImage(img, 0, 0);
+          
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const link = document.createElement('a');
+              link.href = URL.createObjectURL(blob);
+              link.download = `${note.title}-qr.png`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              toast.success('QR Code downloaded');
+            }
+          }, 'image/png');
+          
+          URL.revokeObjectURL(url);
+        };
+        
+        img.src = url;
       }
     } catch (error) {
       toast.error('Failed to download QR Code');
@@ -66,7 +89,7 @@ const QRCodeSection: React.FC<QRCodeSectionProps> = ({ note }) => {
       <Card>
         <CardContent className="p-6 flex flex-col items-center space-y-4">
           <div id="qr-code">
-            <QRCode
+            <QRCodeSVG
               value={qrData}
               size={200}
               level="M"
