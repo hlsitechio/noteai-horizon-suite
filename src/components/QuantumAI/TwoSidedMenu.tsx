@@ -37,21 +37,23 @@ const TwoSidedMenu: React.FC<TwoSidedMenuProps> = ({ isVisible, leftActions, rig
             {/* Glowing Background */}
             <div className="absolute inset-0 bg-gradient-to-r from-slate-500/20 via-slate-600/20 to-slate-500/20 rounded-3xl blur-xl scale-110" />
             
-            {/* Main Container - Inspired by reference image */}
+            {/* Main Container */}
             <div className="relative bg-slate-800/95 backdrop-blur-xl border border-slate-600/30 rounded-3xl shadow-2xl overflow-hidden">
               {/* Top border accent */}
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-400/50 to-transparent" />
               
               <div className="flex items-center">
                 {/* Left Side Menu */}
-                <MenuSide 
-                  actions={leftActions} 
-                  side="left"
-                  className="border-r border-slate-600/30"
-                />
+                <div className="flex items-center">
+                  <MenuSide 
+                    actions={leftActions} 
+                    side="left"
+                    className="pr-4 pl-6 py-4"
+                  />
+                </div>
                 
                 {/* Center Divider with Logo */}
-                <div className="relative px-6 py-4">
+                <div className="relative px-4 py-4">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 border border-slate-500/30 flex items-center justify-center">
                     <div className="w-6 h-6 rounded-full bg-slate-400" />
                   </div>
@@ -61,11 +63,13 @@ const TwoSidedMenu: React.FC<TwoSidedMenuProps> = ({ isVisible, leftActions, rig
                 </div>
                 
                 {/* Right Side Menu */}
-                <MenuSide 
-                  actions={rightActions} 
-                  side="right"
-                  className="border-l border-slate-600/30"
-                />
+                <div className="flex items-center">
+                  <MenuSide 
+                    actions={rightActions} 
+                    side="right"
+                    className="pl-4 pr-6 py-4"
+                  />
+                </div>
               </div>
               
               {/* Bottom border accent */}

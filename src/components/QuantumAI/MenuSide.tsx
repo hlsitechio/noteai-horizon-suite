@@ -26,7 +26,7 @@ const MenuSide: React.FC<MenuSideProps> = ({ actions, side, className = '' }) =>
   };
 
   return (
-    <div className={`p-4 ${className}`}>
+    <div className={className}>
       <div className="flex items-center gap-2">
         {actions.map((action, index) => {
           const { fromColor, toColor } = parseGradientColors(action.color);
