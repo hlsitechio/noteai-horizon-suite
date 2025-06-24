@@ -50,14 +50,14 @@ function App() {
                         />
                         <Route path="/" element={<Landing />} />
                       </Routes>
+                      
+                      {/* Quantum AI Components - Available everywhere, now inside NotificationsProvider */}
+                      <QuantumAIInterface />
+                      <QuantumAIIndicator />
                     </NotesProvider>
                   </FoldersProvider>
                 </NotificationsProvider>
               </AuthProvider>
-              
-              {/* Quantum AI Components - Available everywhere */}
-              <QuantumAIInterface />
-              <QuantumAIIndicator />
             </QuantumAIProvider>
           </div>
         </Router>
