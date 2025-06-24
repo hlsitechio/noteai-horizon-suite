@@ -66,20 +66,28 @@ export class NoteExportService {
   }
 
   static getShareUrl(platform: SharePlatform, note: Note): string {
-    // Create the note content to share
-    const noteContent = `${note.title}\n\n${note.content}`;
+    // Create the complete note content to share
+    const noteTitle = note.title;
+    const noteContent = note.content;
     const tags = note.tags.length > 0 ? `\n\nTags: ${note.tags.map(tag => `#${tag}`).join(' ')}` : '';
-    const fullContent = `${noteContent}${tags}`;
     
-    const encodedContent = encodeURIComponent(fullContent);
-    const encodedTitle = encodeURIComponent(note.title);
-
+    // Combine title, content, and tags for sharing
+    const fullContent = `${noteTitle}\n\n${noteContent}${tags}`;
+    
+    // For platforms with character limits, we might need to truncate
+    const truncateContent = (content: string, maxLength: number) => {
+      if (content.length <= maxLength) return content;
+      return content.substring(0, maxLength - 3) + '...';
+    };
+    
+    const encodedTitle = encodeURIComponent(noteTitle);
+    
     const urls = {
-      facebook: `https://www.facebook.com/sharer/sharer.php?quote=${encodedContent}`,
-      twitter: `https://twitter.com/intent/tweet?text=${encodedContent}`,
-      linkedin: `https://www.linkedin.com/shareArticle?mini=true&title=${encodedTitle}&summary=${encodedContent}`,
-      whatsapp: `https://wa.me/?text=${encodedContent}`,
-      email: `mailto:?subject=${encodedTitle}&body=${encodedContent}`
+      facebook: `https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(fullContent)}`,
+      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(truncateContent(fullContent, 280))}`,
+      linkedin: `https://www.linkedin.com/shareArticle?mini=true&title=${encodedTitle}&summary=${encodeURIComponent(truncateContent(fullContent, 600))}`,
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(fullContent)}`,
+      email: `mailto:?subject=${encodedTitle}&body=${encodeURIComponent(fullContent)}`
     };
 
     return urls[platform];
