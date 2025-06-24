@@ -52,25 +52,34 @@ export function FoldersListSection({
     return (
       <div key={folder.id}>
         <SidebarMenuItem>
-          <SidebarMenuButton 
-            onClick={() => toggleFolder(folder.id)}
-            className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full"
-          >
-            {isFolderExpanded ? (
-              <ChevronDown className="h-3 w-3 mr-1" />
-            ) : (
-              <ChevronRight className="h-3 w-3 mr-1" />
-            )}
-            <div 
-              className="w-2 h-2 rounded-full mr-2" 
-              style={{ backgroundColor: folder.color }}
-            />
-            <Folder className="h-3 w-3 mr-2 flex-shrink-0" />
-            <span className="truncate text-xs flex-1">{folder.name}</span>
-            <span className="text-xs text-sidebar-foreground/40 ml-2">
-              {folderNotes.length}
-            </span>
-          </SidebarMenuButton>
+          <div className="flex items-center w-full">
+            <SidebarMenuButton 
+              onClick={() => toggleFolder(folder.id)}
+              className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors p-1 min-w-0"
+            >
+              {isFolderExpanded ? (
+                <ChevronDown className="h-3 w-3" />
+              ) : (
+                <ChevronRight className="h-3 w-3" />
+              )}
+            </SidebarMenuButton>
+            <SidebarMenuButton asChild className="flex-1">
+              <Link 
+                to={`/app/folders/${folder.id}`}
+                className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full"
+              >
+                <div 
+                  className="w-2 h-2 rounded-full mr-2" 
+                  style={{ backgroundColor: folder.color }}
+                />
+                <Folder className="h-3 w-3 mr-2 flex-shrink-0" />
+                <span className="truncate text-xs flex-1">{folder.name}</span>
+                <span className="text-xs text-sidebar-foreground/40 ml-2">
+                  {folderNotes.length}
+                </span>
+              </Link>
+            </SidebarMenuButton>
+          </div>
         </SidebarMenuItem>
         
         {isFolderExpanded && folderNotes.length > 0 && (
