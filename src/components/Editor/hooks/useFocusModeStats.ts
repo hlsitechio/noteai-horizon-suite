@@ -6,7 +6,9 @@ export const useFocusModeStats = (content: string, timeSpent: number) => {
   const [characterCount, setCharacterCount] = useState(0);
 
   useEffect(() => {
-    const text = content.replace(/<[^>]*>/g, ''); // Remove HTML tags for accurate count
+    // Add safety check for undefined/null content
+    const safeContent = content || '';
+    const text = safeContent.replace(/<[^>]*>/g, ''); // Remove HTML tags for accurate count
     const words = text.trim() ? text.trim().split(/\s+/).length : 0;
     setWordCount(words);
     setCharacterCount(text.length);
