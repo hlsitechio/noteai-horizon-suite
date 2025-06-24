@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Droppable } from 'react-beautiful-dnd';
+import { useDragDropReady } from '../UnifiedDragDropProvider';
 
 interface SafeDroppableWrapperProps {
   droppableId: string;
@@ -13,14 +14,15 @@ export function SafeDroppableWrapper({
   children, 
   fallbackChildren 
 }: SafeDroppableWrapperProps) {
-  try {
-    return (
-      <Droppable droppableId={droppableId}>
-        {children}
-      </Droppable>
-    );
-  } catch (error) {
-    console.log('Droppable context not ready, rendering fallback:', error);
+  const { isReady } = useDragDropReady();
+
+  if (!isReady) {
     return <>{fallbackChildren}</>;
   }
+
+  return (
+    <Droppable droppableId={droppableId}>
+      {children}
+    </Droppable>
+  );
 }

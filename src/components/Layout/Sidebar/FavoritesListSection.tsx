@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Draggable } from 'react-beautiful-dnd';
 import { 
   SidebarGroup, 
   SidebarGroupContent, 
@@ -18,6 +17,7 @@ import {
 import { Link } from 'react-router-dom';
 import { Note } from '../../../types/note';
 import { SafeDroppableWrapper } from './SafeDroppableWrapper';
+import { SafeDraggableWrapper } from './SafeDraggableWrapper';
 
 interface FavoritesListSectionProps {
   favoriteNotes: Note[];
@@ -38,38 +38,40 @@ export function FavoritesListSection({
     >
       {favoriteNotes.length > 0 ? (
         favoriteNotes.map((note, index) => {
-          try {
-            return (
-              <Draggable key={note.id} draggableId={`sidebar-favorite-note-${note.id}`} index={index}>
-                {(provided) => (
-                  <SidebarMenuItem
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                  >
-                    <SidebarMenuButton asChild>
-                      <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
-                        <Star className="h-3 w-3 mr-2 flex-shrink-0 text-accent fill-current" />
-                        <span className="truncate text-xs">{note.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )}
-              </Draggable>
-            );
-          } catch (error) {
-            console.log('Drag context not ready for favorites, rendering static item:', error);
-            return (
-              <SidebarMenuItem key={note.id}>
-                <SidebarMenuButton asChild>
-                  <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
-                    <Star className="h-3 w-3 mr-2 flex-shrink-0 text-accent fill-current" />
-                    <span className="truncate text-xs">{note.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            );
-          }
+          const fallbackContent = (
+            <SidebarMenuItem key={note.id}>
+              <SidebarMenuButton asChild>
+                <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
+                  <Star className="h-3 w-3 mr-2 flex-shrink-0 text-accent fill-current" />
+                  <span className="truncate text-xs">{note.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          );
+
+          return (
+            <SafeDraggableWrapper
+              key={note.id}
+              draggableId={`sidebar-favorite-note-${note.id}`}
+              index={index}
+              fallbackChildren={fallbackContent}
+            >
+              {(provided) => (
+                <SidebarMenuItem
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                >
+                  <SidebarMenuButton asChild>
+                    <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
+                      <Star className="h-3 w-3 mr-2 flex-shrink-0 text-accent fill-current" />
+                      <span className="truncate text-xs">{note.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
+            </SafeDraggableWrapper>
+          );
         })
       ) : (
         <SidebarMenuItem>
