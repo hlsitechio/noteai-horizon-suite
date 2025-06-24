@@ -4,6 +4,7 @@ import { useEditorState } from '../components/Editor/EditorState';
 import { useEditorHandlers } from '../components/Editor/EditorHandlers';
 import EditorContent from '../components/Editor/EditorContent';
 import { useIsMobile } from '../hooks/use-mobile';
+import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 
 const Editor: React.FC = () => {
   const { state: sidebarState, setOpen } = useSidebar();
@@ -71,6 +72,17 @@ const Editor: React.FC = () => {
       editorState.setIsAssistantCollapsed(false);
     }
   };
+
+  // Add Quantum AI integration with current note content
+  useQuantumAIIntegration({
+    page: '/app/editor',
+    content: `Editing note: ${editorState.currentNote?.title || 'New note'}`,
+    metadata: {
+      noteId: editorState.currentNote?.id,
+      wordCount: editorState.currentNote?.content?.length || 0,
+      hasContent: Boolean(editorState.currentNote?.content)
+    }
+  });
 
   return (
     <div className="w-full h-full">

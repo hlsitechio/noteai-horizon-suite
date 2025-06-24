@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Plus, Heart, Calendar, Tag, Filter, BookOpen, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useNotes } from '../contexts/NotesContext';
 import { useNavigate } from 'react-router-dom';
 import { NoteCategory } from '../types/note';
+import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 
 const categories: NoteCategory[] = [
   { value: 'all', label: 'All Categories', color: 'gray' },
@@ -20,7 +20,7 @@ const categories: NoteCategory[] = [
 ];
 
 const Notes: React.FC = () => {
-  const { filteredNotes, filters, setFilters, setCurrentNote, deleteNote, isLoading } = useNotes();
+  const { filteredNotes, filters, setFilters, setCurrentNote, deleteNote, isLoading, notes, selectedNote, folders } = useNotes();
   const [searchTerm, setSearchTerm] = useState(filters.searchTerm || '');
   const navigate = useNavigate();
 
@@ -62,6 +62,16 @@ const Notes: React.FC = () => {
       year: 'numeric',
     }).format(date);
   };
+
+  useQuantumAIIntegration({
+    page: '/app/notes',
+    content: `Notes page with ${notes.length} notes`,
+    metadata: {
+      hasNotes: notes.length > 0,
+      selectedNote: selectedNote?.id,
+      folders: folders.length
+    }
+  });
 
   if (isLoading) {
     return (

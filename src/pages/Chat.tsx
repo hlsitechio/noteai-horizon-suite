@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Plus, Send, Bot, User, Zap, Cpu, Database, Search, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { useEnhancedAIChat, ChatMessage } from '@/hooks/useEnhancedAIChat';
 import { useRAGChat, RAGChatResponse } from '@/hooks/useRAGChat';
 import { useToast } from '@/hooks/useToast';
+import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -154,6 +154,17 @@ const Chat: React.FC = () => {
       </Badge>
     );
   };
+
+  // Add Quantum AI integration
+  useQuantumAIIntegration({
+    page: '/app/chat',
+    content: `Chat session with ${messages.length} messages`,
+    metadata: {
+      messageCount: messages.length,
+      useRAG,
+      lastRAGResponse: lastRAGResponse?.notesUsed || 0
+    }
+  });
 
   return (
     <div className="flex flex-col h-[calc(100vh-120px)] space-y-6">
