@@ -36,11 +36,22 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect, onEdit, on
     });
   };
 
+  const handleCardClick = () => {
+    onSelect(project);
+  };
+
+  const handleDropdownClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   return (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer">
+    <Card 
+      className="hover:shadow-md transition-shadow cursor-pointer"
+      onClick={handleCardClick}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <div className="flex-1" onClick={() => onSelect(project)}>
+          <div className="flex-1">
             <CardTitle className="text-lg mb-2">{project.title}</CardTitle>
             {project.description && (
               <p className="text-sm text-gray-600 line-clamp-2">
@@ -48,24 +59,26 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect, onEdit, on
               </p>
             )}
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit(project)}>
-                Edit Project
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => onDelete(project)}
-                className="text-red-600"
-              >
-                Delete Project
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div onClick={handleDropdownClick}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => onEdit(project)}>
+                  Edit Project
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => onDelete(project)}
+                  className="text-red-600"
+                >
+                  Delete Project
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="pt-0">
