@@ -42,11 +42,11 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-background overflow-hidden">
-      <div className="h-full flex flex-col p-6 max-w-7xl mx-auto">
+    <div className={`h-full bg-background overflow-hidden ${isMobile ? 'w-full' : 'w-full'}`}>
+      <div className={`${isMobile ? 'px-4 py-4' : 'px-8 py-6'} h-full flex flex-col w-full max-w-[1800px] mx-auto`}>
         
-        {/* Top Section - KPI Stats */}
-        <div className="flex-shrink-0 mb-6">
+        {/* Intelligence Metrics - More compact */}
+        <div className="flex-shrink-0 mb-8">
           <KPIStats 
             totalNotes={totalNotes}
             favoriteNotes={favoriteNotes}
@@ -55,29 +55,25 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Better organized layout */}
-        <div className="flex-1 min-h-0 grid grid-cols-12 gap-6 mb-6">
-          {/* Recent Activity - Takes more space */}
-          <div className="col-span-8">
-            <RecentActivity 
-              recentNotes={recentNotes}
-              onCreateNote={handleCreateNote}
-              onEditNote={handleEditNote}
-            />
-          </div>
+        {/* Main Content Grid - Optimized for better space usage */}
+        <div className={`flex-1 min-h-0 w-full grid gap-8 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'} mb-8`}>
+          {/* Recent Activity */}
+          <RecentActivity 
+            recentNotes={recentNotes}
+            onCreateNote={handleCreateNote}
+            onEditNote={handleEditNote}
+          />
 
-          {/* Quick Actions - Compact sidebar */}
-          <div className="col-span-4">
-            <WorkflowActions 
-              notes={notes}
-              onCreateNote={handleCreateNote}
-              onEditNote={handleEditNote}
-            />
-          </div>
+          {/* Quick Actions */}
+          <WorkflowActions 
+            notes={notes}
+            onCreateNote={handleCreateNote}
+            onEditNote={handleEditNote}
+          />
         </div>
 
-        {/* Bottom Section - AI Toolbar */}
-        <div className="flex-shrink-0 flex justify-center">
+        {/* AI Copilot Toolbar - Better positioned */}
+        <div className="flex-shrink-0 w-full flex justify-center items-center">
           <QuantumAI3DToolbar />
         </div>
       </div>
