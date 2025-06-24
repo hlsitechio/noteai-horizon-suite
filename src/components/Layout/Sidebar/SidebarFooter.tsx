@@ -71,23 +71,6 @@ export function SidebarFooter() {
             exit="collapsed"
             className="space-y-3"
           >
-            <div className="flex items-center gap-3 p-2 rounded-xl bg-accent/30">
-              <Avatar className="w-10 h-10 flex-shrink-0 ring-2 ring-primary/20">
-                <AvatarImage src={user?.avatar} />
-                <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10">
-                  {user?.name?.[0]}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm text-foreground truncate">
-                  {user?.name}
-                </p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {user?.email}
-                </p>
-              </div>
-            </div>
-            
             {/* Action buttons grouped together */}
             <div className="space-y-2">
               {/* Combined Menu Button */}
@@ -115,7 +98,27 @@ export function SidebarFooter() {
                     </Button>
                   </motion.div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent side="top" align="start" className="w-48">
+                <DropdownMenuContent side="top" align="start" className="w-56">
+                  {/* Profile Section */}
+                  <div className="flex items-center gap-3 p-3 bg-accent/20 rounded-lg mx-1 mb-2">
+                    <Avatar className="w-8 h-8 flex-shrink-0 ring-2 ring-primary/20">
+                      <AvatarImage src={user?.avatar} />
+                      <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-xs">
+                        {user?.name?.[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-foreground truncate">
+                        {user?.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <DropdownMenuSeparator />
+                  
                   <DropdownMenuItem>
                     <Bell className="w-4 h-4 mr-2" />
                     Notifications
@@ -214,7 +217,27 @@ export function SidebarFooter() {
                     </TooltipContent>
                   </Tooltip>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent side="right" align="start" className="w-48">
+                <DropdownMenuContent side="right" align="start" className="w-56">
+                  {/* Profile Section */}
+                  <div className="flex items-center gap-3 p-3 bg-accent/20 rounded-lg mx-1 mb-2">
+                    <Avatar className="w-8 h-8 flex-shrink-0 ring-2 ring-primary/20">
+                      <AvatarImage src={user?.avatar} />
+                      <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-xs">
+                        {user?.name?.[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-foreground truncate">
+                        {user?.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <DropdownMenuSeparator />
+                  
                   <DropdownMenuItem>
                     <Bell className="w-4 h-4 mr-2" />
                     Notifications
