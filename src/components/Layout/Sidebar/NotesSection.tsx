@@ -257,7 +257,7 @@ export function NotesSection() {
                               <Link 
                                 to={`/app/projects?project=${project.id}`} 
                                 className={`flex items-center hover:bg-accent hover:text-accent-foreground transition-colors ${
-                                  snapshot.isDraggedOver ? 'bg-accent/50' : ''
+                                  snapshot.isDraggingOver ? 'bg-accent/50' : ''
                                 }`}
                               >
                                 <Folder className="h-3 w-3 mr-2 flex-shrink-0" />
@@ -313,7 +313,7 @@ export function NotesSection() {
                       <SidebarMenu
                         ref={provided.innerRef}
                         {...provided.droppableProps}
-                        className={snapshot.isDraggedOver ? 'bg-accent/20 rounded-md' : ''}
+                        className={snapshot.isDraggingOver ? 'bg-accent/20 rounded-md' : ''}
                       >
                         {favoriteNotes.length > 0 ? (
                           favoriteNotes.map((note, index) => (
@@ -338,7 +338,7 @@ export function NotesSection() {
                           <SidebarMenuItem>
                             <SidebarMenuButton disabled>
                               <span className="text-xs text-sidebar-foreground/40">
-                                {snapshot.isDraggedOver ? 'Drop note here to add to favorites' : 'No favorites yet'}
+                                {snapshot.isDraggingOver ? 'Drop note here to add to favorites' : 'No favorites yet'}
                               </span>
                             </SidebarMenuButton>
                           </SidebarMenuItem>
