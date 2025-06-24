@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,7 +22,7 @@ import {
 } from '@/components/ui/tooltip';
 
 const menuItems = [
-  { icon: BookOpen, label: 'Dashboard', path: '/app/dashboard', color: 'text-blue-500' },
+  { icon: BookOpen, label: 'Dashboard', path: '/app/home', color: 'text-blue-500' },
   { icon: Plus, label: 'AI Chat', path: '/app/chat', color: 'text-emerald-500' },
   { icon: PenTool, label: 'Editor', path: '/app/editor', color: 'text-purple-500' },
   { icon: Calendar, label: 'Calendar', path: '/app/calendar', color: 'text-orange-500' },

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './providers/ThemeProvider';
 import Layout from './components/Layout/Layout';
@@ -38,6 +38,10 @@ function App() {
                         <Route path="/auth" element={<Landing />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
+                        
+                        {/* Redirect /dashboard to /app/home */}
+                        <Route path="/dashboard" element={<Navigate to="/app/home" replace />} />
+                        
                         <Route
                           path="/app/*"
                           element={
@@ -52,7 +56,9 @@ function App() {
                             </Layout>
                           }
                         />
-                        <Route path="/" element={<Landing />} />
+                        
+                        {/* Default redirect to dashboard */}
+                        <Route path="/" element={<Navigate to="/app/home" replace />} />
                       </Routes>
                       
                       {/* Quantum AI Components - Available everywhere, now inside NotificationsProvider */}
