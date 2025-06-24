@@ -3,7 +3,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
 import { useIsMobile } from '../hooks/use-mobile';
-import DashboardHeader from '../components/Dashboard/DashboardHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
 import RecentActivity from '../components/Dashboard/RecentActivity';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
@@ -43,21 +42,21 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-background ${isMobile ? 'w-full' : 'w-full'}`}>
-      <div className={`${isMobile ? 'px-4 py-6' : 'px-8 py-8'} space-y-8 w-full max-w-7xl mx-auto`}>
-        {/* Professional Header */}
-        <DashboardHeader onCreateNote={handleCreateNote} />
+    <div className={`h-full bg-background overflow-hidden ${isMobile ? 'w-full' : 'w-full'}`}>
+      <div className={`${isMobile ? 'px-4 py-4' : 'px-6 py-6'} h-full flex flex-col space-y-6 w-full max-w-7xl mx-auto`}>
+        
+        {/* Intelligence Metrics - Compact */}
+        <div className="flex-shrink-0">
+          <KPIStats 
+            totalNotes={totalNotes}
+            favoriteNotes={favoriteNotes}
+            categoryCounts={categoryCounts}
+            weeklyNotes={weeklyNotes}
+          />
+        </div>
 
-        {/* Intelligence Metrics */}
-        <KPIStats 
-          totalNotes={totalNotes}
-          favoriteNotes={favoriteNotes}
-          categoryCounts={categoryCounts}
-          weeklyNotes={weeklyNotes}
-        />
-
-        {/* Content Management Section */}
-        <div className={`w-full grid gap-8 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
+        {/* Content Management Section - Main content area */}
+        <div className={`flex-1 min-h-0 w-full grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
           {/* Recent Activity */}
           <RecentActivity 
             recentNotes={recentNotes}
@@ -73,11 +72,9 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* AI Copilot Settings Bar Placeholder */}
-        <div className="w-full flex justify-center items-center py-6">
-          <div className="w-full max-w-4xl border border-border/20 rounded-2xl bg-card/30 backdrop-blur-sm p-6 flex justify-center items-center">
-            <QuantumAI3DToolbar />
-          </div>
+        {/* AI Copilot Toolbar - Bottom positioned */}
+        <div className="flex-shrink-0 w-full flex justify-center items-center py-4">
+          <QuantumAI3DToolbar />
         </div>
       </div>
     </div>
