@@ -20,7 +20,7 @@ const Login: React.FC = () => {
   React.useEffect(() => {
     if (isAuthenticated && !isLoading) {
       console.log('User already authenticated, redirecting...');
-      navigate('/app/dashboard', { replace: true });
+      navigate('/dashboard', { replace: true });
     }
   }, [isAuthenticated, isLoading, navigate]);
 
@@ -39,7 +39,7 @@ const Login: React.FC = () => {
       
       if (success) {
         console.log('Login successful, navigating to dashboard');
-        navigate('/app/dashboard', { replace: true });
+        navigate('/dashboard', { replace: true });
       } else {
         console.log('Login failed');
       }
