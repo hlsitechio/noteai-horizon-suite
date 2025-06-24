@@ -23,10 +23,11 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <QuantumAIProvider>
-        <ThemeProvider>
-          <Router>
-            <div className="min-h-screen bg-background">
+      <ThemeProvider>
+        <Router>
+          <div className="min-h-screen bg-background">
+            {/* QuantumAIProvider must be inside Router since it uses useLocation */}
+            <QuantumAIProvider>
               <AuthProvider>
                 <NotificationsProvider>
                   <FoldersProvider>
@@ -57,10 +58,10 @@ function App() {
               {/* Quantum AI Components - Available everywhere */}
               <QuantumAIInterface />
               <QuantumAIIndicator />
-            </div>
-          </Router>
-        </ThemeProvider>
-      </QuantumAIProvider>
+            </QuantumAIProvider>
+          </div>
+        </Router>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
