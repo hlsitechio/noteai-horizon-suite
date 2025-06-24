@@ -1,10 +1,11 @@
+
 import React from 'react';
 import ProfileSection from '../components/Settings/ProfileSection';
 import PreferencesSection from '../components/Settings/PreferencesSection';
 import AISettingsSection from '../components/Settings/AISettingsSection';
 import DataExportSection from '../components/Settings/DataExportSection';
 import AboutSection from '../components/Settings/AboutSection';
-import ColorPicker from '../components/Settings/ColorPicker';
+import { AdvancedColorPicker } from '../components/Settings/AdvancedColorPicker';
 import { Separator } from '@/components/ui/separator';
 import { useAccentColor } from '../contexts/AccentColorContext';
 
@@ -35,9 +36,9 @@ const Settings: React.FC = () => {
           <ProfileSection />
         </section>
 
-        {/* Color Picker Section */}
+        {/* Advanced Color Picker Section */}
         <section>
-          <ColorPicker 
+          <AdvancedColorPicker 
             currentColor={accentColor}
             onColorChange={handleColorChange}
           />
