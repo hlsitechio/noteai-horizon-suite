@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Badge } from '@/components/ui/badge';
 
 interface TwoSidedMenuProps {
   isVisible: boolean;
@@ -115,19 +114,6 @@ const TwoSidedMenu: React.FC<TwoSidedMenuProps> = ({ isVisible, leftActions, rig
                 </motion.div>
               );
             })}
-          </motion.div>
-
-          {/* Status Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ delay: 0.3, duration: 0.3 }}
-            className="absolute -top-4 left-1/2 transform -translate-x-1/2"
-          >
-            <Badge className="bg-green-500/90 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm border border-green-400/30">
-              AI Ready
-            </Badge>
           </motion.div>
         </>
       )}
