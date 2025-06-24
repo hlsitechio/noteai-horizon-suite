@@ -13,17 +13,15 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useSidebar } from '@/components/ui/sidebar';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNotifications } from '../../../contexts/NotificationsContext';
-import { useTheme } from '@/providers/ThemeProvider';
-import { toggleTheme, isDarkMode } from '@/utils/themeUtils';
-import { useNavigate } from 'react-router-dom';
 import NotificationsPanel from '../NotificationsPanel';
+import { SidebarProfile } from './SidebarProfile';
+import { SidebarActions, SidebarSignOutButton } from './SidebarActions';
 
 const contentVariants = {
   expanded: {
@@ -47,20 +45,8 @@ export function SidebarFooter() {
   const { state } = useSidebar();
   const { user, logout } = useAuth();
   const { unreadCount } = useNotifications();
-  const { theme, setTheme } = useTheme();
-  const navigate = useNavigate();
   const [isNotificationsPanelOpen, setIsNotificationsPanelOpen] = useState(false);
   const isCollapsed = state === 'collapsed';
-  const isCurrentlyDark = isDarkMode(theme);
-
-  const handleThemeToggle = () => {
-    const newTheme = toggleTheme(theme);
-    setTheme(newTheme);
-  };
-
-  const handleSettingsClick = () => {
-    navigate('/app/settings');
-  };
 
   const handleNotificationsClick = () => {
     setIsNotificationsPanelOpen(true);
@@ -78,9 +64,7 @@ export function SidebarFooter() {
               exit="collapsed"
               className="space-y-3"
             >
-              {/* Action buttons grouped together */}
               <div className="space-y-2">
-                {/* Combined Menu Button */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -106,67 +90,13 @@ export function SidebarFooter() {
                     </motion.div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent side="top" align="start" className="w-56">
-                    {/* Profile Section */}
-                    <div className="flex items-center gap-3 p-3 bg-accent/20 rounded-lg mx-1 mb-2">
-                      <Avatar className="w-8 h-8 flex-shrink-0 ring-2 ring-primary/20">
-                        <AvatarImage src={user?.avatar} />
-                        <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-xs">
-                          {user?.name?.[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm text-foreground truncate">
-                          {user?.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {user?.email}
-                        </p>
-                      </div>
-                    </div>
-                    
+                    <SidebarProfile />
                     <DropdownMenuSeparator />
-                    
-                    <DropdownMenuItem onClick={handleNotificationsClick}>
-                      <Bell className="w-4 h-4 mr-2" />
-                      Notifications
-                      {unreadCount > 0 && (
-                        <Badge className="h-4 min-w-4 p-0 bg-red-500 border-0 text-xs ml-auto">
-                          {unreadCount > 99 ? '99+' : unreadCount}
-                        </Badge>
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleThemeToggle}>
-                      {isCurrentlyDark ? (
-                        <>
-                          <Sun className="w-4 h-4 mr-2" />
-                          Light Mode
-                        </>
-                      ) : (
-                        <>
-                          <Moon className="w-4 h-4 mr-2" />
-                          Dark Mode
-                        </>
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleSettingsClick}>
-                      <Settings className="w-4 h-4 mr-2" />
-                      Settings
-                    </DropdownMenuItem>
+                    <SidebarActions onNotificationsClick={handleNotificationsClick} />
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                {/* Sign Out */}
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start h-9 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-colors"
-                    onClick={logout}
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
-                  </Button>
-                </motion.div>
+                <SidebarSignOutButton />
               </div>
             </motion.div>
           ) : (
@@ -193,9 +123,7 @@ export function SidebarFooter() {
                 </TooltipContent>
               </Tooltip>
               
-              {/* Collapsed view icons */}
               <div className="flex flex-col items-center space-y-2">
-                {/* Combined Menu */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Tooltip>
@@ -225,56 +153,12 @@ export function SidebarFooter() {
                     </Tooltip>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent side="right" align="start" className="w-56">
-                    {/* Profile Section */}
-                    <div className="flex items-center gap-3 p-3 bg-accent/20 rounded-lg mx-1 mb-2">
-                      <Avatar className="w-8 h-8 flex-shrink-0 ring-2 ring-primary/20">
-                        <AvatarImage src={user?.avatar} />
-                        <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-xs">
-                          {user?.name?.[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm text-foreground truncate">
-                          {user?.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {user?.email}
-                        </p>
-                      </div>
-                    </div>
-                    
+                    <SidebarProfile />
                     <DropdownMenuSeparator />
-                    
-                    <DropdownMenuItem onClick={handleNotificationsClick}>
-                      <Bell className="w-4 h-4 mr-2" />
-                      Notifications
-                      {unreadCount > 0 && (
-                        <Badge className="h-4 min-w-4 p-0 bg-red-500 border-0 text-xs ml-auto">
-                          {unreadCount > 99 ? '99+' : unreadCount}
-                        </Badge>
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleThemeToggle}>
-                      {isCurrentlyDark ? (
-                        <>
-                          <Sun className="w-4 h-4 mr-2" />
-                          Light Mode
-                        </>
-                      ) : (
-                        <>
-                          <Moon className="w-4 h-4 mr-2" />
-                          Dark Mode
-                        </>
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleSettingsClick}>
-                      <Settings className="w-4 h-4 mr-2" />
-                      Settings
-                    </DropdownMenuItem>
+                    <SidebarActions onNotificationsClick={handleNotificationsClick} />
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                {/* Sign Out */}
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -296,7 +180,6 @@ export function SidebarFooter() {
         </AnimatePresence>
       </div>
       
-      {/* Notifications Panel */}
       <NotificationsPanel 
         isOpen={isNotificationsPanelOpen} 
         onClose={() => setIsNotificationsPanelOpen(false)} 
