@@ -1,10 +1,8 @@
-
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PanelLeftClose, PanelLeftOpen, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
-
 const contentVariants = {
   expanded: {
     opacity: 1,
@@ -22,7 +20,6 @@ const contentVariants = {
     }
   }
 };
-
 const iconVariants = {
   expanded: {
     scale: 1,
@@ -43,63 +40,39 @@ const iconVariants = {
     }
   }
 };
-
 export function SidebarHeader() {
-  const { state, toggleSidebar } = useSidebar();
+  const {
+    state,
+    toggleSidebar
+  } = useSidebar();
   const isCollapsed = state === 'collapsed';
-
-  return (
-    <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} relative px-2`}>
+  return <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} relative px-2`}>
       {/* Logo and Title Section */}
       <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
-        <motion.div 
-          variants={iconVariants}
-          animate={isCollapsed ? 'collapsed' : 'expanded'}
-          className="w-10 h-10 bg-gradient-to-br from-purple-500 via-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg"
-        >
-          <Sparkles className="text-white w-5 h-5" />
-        </motion.div>
+        
         <AnimatePresence>
-          {!isCollapsed && (
-            <motion.div
-              variants={contentVariants}
-              initial="collapsed"
-              animate="expanded"
-              exit="collapsed"
-              className="flex flex-col"
-            >
+          {!isCollapsed && <motion.div variants={contentVariants} initial="collapsed" animate="expanded" exit="collapsed" className="flex flex-col">
               <span className="text-lg font-bold text-foreground">AI Notes</span>
               <span className="text-xs text-muted-foreground -mt-1">Smart Writing</span>
-            </motion.div>
-          )}
+            </motion.div>}
         </AnimatePresence>
       </div>
 
       {/* Toggle Button */}
-      <motion.div
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className={isCollapsed ? 'absolute -right-3 top-1/2 -translate-y-1/2 z-10' : ''}
-      >
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleSidebar}
-          className="h-8 w-8 rounded-lg hover:bg-accent/50 transition-colors"
-          title={state === 'expanded' ? 'Collapse sidebar' : 'Expand sidebar'}
-        >
-          <motion.div
-            animate={{ rotate: isCollapsed ? 180 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            {state === 'expanded' ? (
-              <PanelLeftClose className="w-4 h-4" />
-            ) : (
-              <PanelLeftOpen className="w-4 h-4" />
-            )}
+      <motion.div whileHover={{
+      scale: 1.05
+    }} whileTap={{
+      scale: 0.95
+    }} className={isCollapsed ? 'absolute -right-3 top-1/2 -translate-y-1/2 z-10' : ''}>
+        <Button variant="ghost" size="icon" onClick={toggleSidebar} className="h-8 w-8 rounded-lg hover:bg-accent/50 transition-colors" title={state === 'expanded' ? 'Collapse sidebar' : 'Expand sidebar'}>
+          <motion.div animate={{
+          rotate: isCollapsed ? 180 : 0
+        }} transition={{
+          duration: 0.2
+        }}>
+            {state === 'expanded' ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeftOpen className="w-4 h-4" />}
           </motion.div>
         </Button>
       </motion.div>
-    </div>
-  );
+    </div>;
 }
