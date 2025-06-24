@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../../contexts/NotesContext';
 import { Note, NoteCategory } from '../../types/note';
+import NoteShareButton from '../../components/Sharing/NoteShareButton';
 
 const categories: NoteCategory[] = [
   { value: 'all', label: 'All Categories', color: 'gray' },
@@ -59,6 +60,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
             {note.isFavorite && (
               <Heart className="w-4 h-4 text-red-500 fill-current" />
             )}
+            <NoteShareButton note={note} />
             <Button
               variant="ghost"
               size="sm"
