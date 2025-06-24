@@ -9,6 +9,65 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      ai_copilot_sessions: {
+        Row: {
+          created_at: string | null
+          feedback_rating: number | null
+          id: string
+          model_config: Json | null
+          note_id: string | null
+          original_content: string
+          polished_result: string | null
+          processed_content: string | null
+          processing_time: number | null
+          session_type: string
+          suggestions_result: string | null
+          summary_result: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          feedback_rating?: number | null
+          id?: string
+          model_config?: Json | null
+          note_id?: string | null
+          original_content: string
+          polished_result?: string | null
+          processed_content?: string | null
+          processing_time?: number | null
+          session_type?: string
+          suggestions_result?: string | null
+          summary_result?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          feedback_rating?: number | null
+          id?: string
+          model_config?: Json | null
+          note_id?: string | null
+          original_content?: string
+          polished_result?: string | null
+          processed_content?: string | null
+          processing_time?: number | null
+          session_type?: string
+          suggestions_result?: string | null
+          summary_result?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_copilot_sessions_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes_v2"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_interactions: {
         Row: {
           created_at: string | null
@@ -890,6 +949,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      find_similar_notes_text: {
+        Args: { search_text: string; user_uuid: string; max_results?: number }
+        Returns: {
+          note_id: string
+          title: string
+          content: string
+          created_at: string
+        }[]
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["app_role"]
@@ -941,6 +1009,10 @@ export type Database = {
           is_favorite: boolean
           relevance_score: number
         }[]
+      }
+      track_copilot_usage: {
+        Args: { user_uuid: string; tokens_used?: number; model_name?: string }
+        Returns: undefined
       }
       validate_content_length: {
         Args:
