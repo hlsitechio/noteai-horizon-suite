@@ -41,6 +41,23 @@ const ProjectBanner: React.FC<ProjectBannerProps> = ({
     });
   };
 
+  const getImagePosition = () => {
+    const position = project.settings?.image_position || 'center';
+    switch (position) {
+      case 'top':
+        return 'object-top';
+      case 'bottom':
+        return 'object-bottom';
+      case 'left':
+        return 'object-left';
+      case 'right':
+        return 'object-right';
+      case 'center':
+      default:
+        return 'object-center';
+    }
+  };
+
   return (
     <div className="relative h-64 overflow-hidden">
       {bannerImage ? (
@@ -48,7 +65,7 @@ const ProjectBanner: React.FC<ProjectBannerProps> = ({
           <img 
             src={bannerImage} 
             alt="Project banner" 
-            className="w-full h-full object-cover"
+            className={`w-full h-full object-cover ${getImagePosition()}`}
           />
           <div className="absolute inset-0 bg-black/40"></div>
         </>
