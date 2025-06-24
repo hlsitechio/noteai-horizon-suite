@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { NotesListSection } from './NotesListSection';
 import { ProjectsListSection } from './ProjectsListSection';
 import { FavoritesListSection } from './FavoritesListSection';
@@ -49,68 +48,39 @@ export function NotesSection({ isCollapsed = false }: NotesSectionProps) {
     }
   };
 
-  const handleDragEnd = (result: DropResult) => {
-    const { destination, source, draggableId } = result;
-
-    if (!destination) {
-      return;
-    }
-
-    console.log('Drag end:', { destination, source, draggableId });
-
-    // Handle drag and drop logic
-    if (destination.droppableId === 'sidebar-favorites' && source.droppableId !== 'sidebar-favorites') {
-      // Add to favorites
-      const noteId = draggableId.replace('sidebar-note-', '').replace('sidebar-favorite-note-', '');
-      const note = notes.find(n => n.id === noteId);
-      if (note && updateNote) {
-        updateNote(noteId, { ...note, isFavorite: true });
-      }
-    } else if (source.droppableId === 'sidebar-favorites' && destination.droppableId !== 'sidebar-favorites') {
-      // Remove from favorites
-      const noteId = draggableId.replace('sidebar-note-', '').replace('sidebar-favorite-note-', '');
-      const note = notes.find(n => n.id === noteId);
-      if (note && updateNote) {
-        updateNote(noteId, { ...note, isFavorite: false });
-      }
-    }
-  };
-
   if (isCollapsed) {
     return <CollapsedNotesSection />;
   }
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="space-y-2">
-        <NotesListSection
-          notes={notes}
-          isExpanded={isNotesExpanded}
-          onToggle={() => setIsNotesExpanded(!isNotesExpanded)}
-          onCreateNote={handleCreateNote}
-          onCreateFolder={() => setShowCreateFolderDialog(true)}
-        />
-        
-        <ProjectsListSection
-          projects={projects}
-          isExpanded={isProjectsExpanded}
-          onToggle={() => setIsProjectsExpanded(!isProjectsExpanded)}
-        />
-        
-        <FavoritesListSection
-          favoriteNotes={favoriteNotes}
-          isExpanded={isFavoritesExpanded}
-          onToggle={() => setIsFavoritesExpanded(!isFavoritesExpanded)}
-        />
+    <div className="space-y-2">
+      <NotesListSection
+        notes={notes}
+        isExpanded={isNotesExpanded}
+        onToggle={() => setIsNotesExpanded(!isNotesExpanded)}
+        onCreateNote={handleCreateNote}
+        onCreateFolder={() => setShowCreateFolderDialog(true)}
+      />
+      
+      <ProjectsListSection
+        projects={projects}
+        isExpanded={isProjectsExpanded}
+        onToggle={() => setIsProjectsExpanded(!isProjectsExpanded)}
+      />
+      
+      <FavoritesListSection
+        favoriteNotes={favoriteNotes}
+        isExpanded={isFavoritesExpanded}
+        onToggle={() => setIsFavoritesExpanded(!isFavoritesExpanded)}
+      />
 
-        <CreateFolderDialog
-          isOpen={showCreateFolderDialog}
-          onOpenChange={setShowCreateFolderDialog}
-          folderName={folderName}
-          onFolderNameChange={setFolderName}
-          onCreateFolder={handleCreateFolder}
-        />
-      </div>
-    </DragDropContext>
+      <CreateFolderDialog
+        isOpen={showCreateFolderDialog}
+        onOpenChange={setShowCreateFolderDialog}
+        folderName={folderName}
+        onFolderNameChange={setFolderName}
+        onCreateFolder={handleCreateFolder}
+      />
+    </div>
   );
 }

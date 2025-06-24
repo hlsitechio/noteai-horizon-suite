@@ -1,94 +1,111 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
-import { NotesProvider } from "./contexts/NotesContext";
-import { FoldersProvider } from "./contexts/FoldersContext";
-import { NotificationsProvider } from "./contexts/NotificationsContext";
-import { AccentColorProvider } from "./contexts/AccentColorContext";
-import { QuantumAIProvider } from "./contexts/QuantumAIContext";
-import { ProjectRealmsProvider } from "./contexts/ProjectRealmsContext";
-import { ThemeProvider } from "./providers/ThemeProvider";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Index from "./pages/Index";
-import Login from "./pages/Auth/Login";
-import Register from "./pages/Auth/Register";
-import ResetPassword from "./pages/Auth/ResetPassword";
-import Dashboard from "./pages/Dashboard";
-import Editor from "./pages/Editor";
-import Notes from "./pages/Notes";
-import Chat from "./pages/Chat";
-import Calendar from "./pages/Calendar";
-import Settings from "./pages/Settings";
-import ProjectRealms from "./pages/ProjectRealms";
-import ProjectDetail from "./pages/ProjectDetail";
-import NotFound from "./pages/NotFound";
-import Layout from "./components/Layout/Layout";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from '@/components/ui/sonner';
+import { ThemeProvider } from './providers/ThemeProvider';
+import { AuthProvider } from './contexts/AuthContext';
+import { NotesProvider } from './contexts/NotesContext';
+import { FoldersProvider } from './contexts/FoldersContext';
+import { ProjectRealmsProvider } from './contexts/ProjectRealmsContext';
+import { NotificationsProvider } from './contexts/NotificationsContext';
+import { AccentColorProvider } from './contexts/AccentColorContext';
+import { QuantumAIProvider } from './contexts/QuantumAIContext';
+import { UnifiedDragDropProvider } from './components/Layout/UnifiedDragDropProvider';
+import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layout/Layout';
 
-const queryClient = new QueryClient();
+// Pages
+import Index from './pages/Index';
+import Landing from './pages/Landing';
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
+import ResetPassword from './pages/Auth/ResetPassword';
+import Dashboard from './pages/Dashboard';
+import Notes from './pages/Notes';
+import Editor from './pages/Editor';
+import Chat from './pages/Chat';
+import Settings from './pages/Settings';
+import Calendar from './pages/Calendar';
+import ProjectRealms from './pages/ProjectRealms';
+import ProjectDetail from './pages/ProjectDetail';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+import Contact from './pages/Contact';
+import Sitemap from './pages/Sitemap';
+import NotFound from './pages/NotFound';
+import ComingSoon from './pages/ComingSoon';
+
+import './App.css';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-          <TooltipProvider>
-            <AuthProvider>
-              <AccentColorProvider>
-                <NotificationsProvider>
-                  <QuantumAIProvider>
-                    <ProjectRealmsProvider>
-                      <NotesProvider>
-                        <FoldersProvider>
-                          <div className="min-h-screen bg-background">
+      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+        <AccentColorProvider>
+          <AuthProvider>
+            <NotificationsProvider>
+              <FoldersProvider>
+                <NotesProvider>
+                  <ProjectRealmsProvider>
+                    <QuantumAIProvider>
+                      <UnifiedDragDropProvider>
+                        <Router>
+                          <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10">
                             <Routes>
                               {/* Public routes */}
                               <Route path="/" element={<Index />} />
+                              <Route path="/landing" element={<Landing />} />
                               <Route path="/login" element={<Login />} />
                               <Route path="/register" element={<Register />} />
                               <Route path="/reset-password" element={<ResetPassword />} />
+                              <Route path="/terms" element={<Terms />} />
+                              <Route path="/privacy" element={<Privacy />} />
+                              <Route path="/contact" element={<Contact />} />
+                              <Route path="/sitemap" element={<Sitemap />} />
                               
                               {/* Protected routes with layout */}
-                              <Route
-                                path="/app/*"
-                                element={
-                                  <ProtectedRoute>
-                                    <Layout>
-                                      <Routes>
-                                        <Route path="/dashboard" element={<Dashboard />} />
-                                        <Route path="/editor" element={<Editor />} />
-                                        <Route path="/notes" element={<Notes />} />
-                                        <Route path="/chat" element={<Chat />} />
-                                        <Route path="/calendar" element={<Calendar />} />
-                                        <Route path="/projects" element={<ProjectRealms />} />
-                                        <Route path="/projects/:projectId" element={<ProjectDetail />} />
-                                        <Route path="/settings" element={<Settings />} />
-                                        <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
-                                      </Routes>
-                                    </Layout>
-                                  </ProtectedRoute>
-                                }
-                              />
+                              <Route path="/app" element={
+                                <ProtectedRoute>
+                                  <Layout />
+                                </ProtectedRoute>
+                              }>
+                                <Route index element={<Navigate to="/app/dashboard" replace />} />
+                                <Route path="dashboard" element={<Dashboard />} />
+                                <Route path="notes" element={<Notes />} />
+                                <Route path="editor" element={<Editor />} />
+                                <Route path="chat" element={<Chat />} />
+                                <Route path="settings" element={<Settings />} />
+                                <Route path="calendar" element={<Calendar />} />
+                                <Route path="projects" element={<ProjectRealms />} />
+                                <Route path="projects/:id" element={<ProjectDetail />} />
+                                <Route path="coming-soon" element={<ComingSoon />} />
+                              </Route>
                               
                               {/* Catch all route */}
                               <Route path="*" element={<NotFound />} />
                             </Routes>
                           </div>
                           <Toaster />
-                          <Sonner />
-                        </FoldersProvider>
-                      </NotesProvider>
-                    </ProjectRealmsProvider>
-                  </QuantumAIProvider>
-                </NotificationsProvider>
-              </AccentColorProvider>
-            </AuthProvider>
-          </TooltipProvider>
-        </ThemeProvider>
-      </BrowserRouter>
+                        </Router>
+                      </UnifiedDragDropProvider>
+                    </QuantumAIProvider>
+                  </ProjectRealmsProvider>
+                </NotesProvider>
+              </FoldersProvider>
+            </NotificationsProvider>
+          </AuthProvider>
+        </AccentColorProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

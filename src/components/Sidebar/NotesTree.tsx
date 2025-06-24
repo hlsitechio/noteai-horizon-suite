@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { DragDropContext } from 'react-beautiful-dnd';
 import { useNotes } from '../../contexts/NotesContext';
 import { useFolders } from '../../contexts/FoldersContext';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +8,6 @@ import UnorganizedNotes from './UnorganizedNotes';
 import FolderDialog from './FolderDialog';
 import NotesTreeHeader from './NotesTreeHeader';
 import { useFolderOperations } from './FolderOperations';
-import { useDragDropHandler } from './DragDropHandler';
 import { useNoteOperations } from './NoteOperations';
 import { useFolderState } from './FolderState';
 
@@ -38,8 +36,6 @@ const NotesTree: React.FC = () => {
     deleteFolder,
     updateNote,
   });
-
-  const { handleDragEnd } = useDragDropHandler({ updateNote });
   
   const {
     handleEditNote,
@@ -77,52 +73,50 @@ const NotesTree: React.FC = () => {
   };
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="p-2 space-y-1">
-        <NotesTreeHeader 
-          onCreateFolder={handleCreateFolder}
-          onCreateNote={handleCreateNote}
-        />
+    <div className="p-2 space-y-1">
+      <NotesTreeHeader 
+        onCreateFolder={handleCreateFolder}
+        onCreateNote={handleCreateNote}
+      />
 
-        <div className="space-y-1 relative">
-          {/* Root Folders */}
-          {rootFolders.map((folder) => (
-            <TreeNode
-              key={folder.id}
-              folder={folder}
-              notes={notes}
-              folders={folders}
-              level={0}
-              expandedFolders={expandedFolders}
-              onToggleFolder={handleToggleFolder}
-              onEditFolder={handleEditFolder}
-              onDeleteFolder={handleDeleteFolder}
-              onEditNote={handleEditNote}
-              onDeleteNote={handleDeleteNote}
-              onChangeColor={handleChangeColor}
-            />
-          ))}
-
-          {/* Unorganized Notes */}
-          <UnorganizedNotes
-            notes={unorganizedNotes}
+      <div className="space-y-1 relative">
+        {/* Root Folders */}
+        {rootFolders.map((folder) => (
+          <TreeNode
+            key={folder.id}
+            folder={folder}
+            notes={notes}
+            folders={folders}
+            level={0}
+            expandedFolders={expandedFolders}
+            onToggleFolder={handleToggleFolder}
+            onEditFolder={handleEditFolder}
+            onDeleteFolder={handleDeleteFolder}
             onEditNote={handleEditNote}
             onDeleteNote={handleDeleteNote}
             onChangeColor={handleChangeColor}
           />
-        </div>
+        ))}
 
-        {/* Edit Folder Dialog */}
-        <FolderDialog
-          isOpen={!!editingFolder}
-          onClose={() => setEditingFolder(null)}
-          title="Rename Folder"
-          folderName={newFolderName}
-          onFolderNameChange={setNewFolderName}
-          onSave={handleSaveFolder}
+        {/* Unorganized Notes */}
+        <UnorganizedNotes
+          notes={unorganizedNotes}
+          onEditNote={handleEditNote}
+          onDeleteNote={handleDeleteNote}
+          onChangeColor={handleChangeColor}
         />
       </div>
-    </DragDropContext>
+
+      {/* Edit Folder Dialog */}
+      <FolderDialog
+        isOpen={!!editingFolder}
+        onClose={() => setEditingFolder(null)}
+        title="Rename Folder"
+        folderName={newFolderName}
+        onFolderNameChange={setNewFolderName}
+        onSave={handleSaveFolder}
+      />
+    </div>
   );
 };
 
