@@ -96,12 +96,6 @@ export function SidebarHeader() {
           size="icon"
           onClick={toggleSidebar}
           className="h-8 w-8 rounded-lg hover:text-professional-grey-400 text-professional-grey-400 transition-colors"
-          style={{
-            ':hover': {
-              backgroundColor: `${accentColor}20`,
-              color: accentColor
-            }
-          }}
           title={state === 'expanded' ? 'Collapse sidebar' : 'Expand sidebar'}
         >
           <motion.div
