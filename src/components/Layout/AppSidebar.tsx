@@ -106,7 +106,7 @@ export function AppSidebar() {
 
           <SidebarSeparator className="mx-4 my-1 bg-deep-carbon-700/30" />
 
-          <SidebarFooter className="p-3 pt-2 z-30 bg-deep-carbon-900/90 flex-shrink-0">
+          <SidebarFooter className="p-2 pt-1 z-30 bg-deep-carbon-900/90 flex-shrink-0">
             <CustomSidebarFooter />
           </SidebarFooter>
         </Sidebar>
