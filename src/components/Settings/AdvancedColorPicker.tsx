@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,9 +33,6 @@ export const AdvancedColorPicker: React.FC<AdvancedColorPickerProps> = ({
   const [lightness, setLightness] = useState(42);
   const [hexInput, setHexInput] = useState(currentColor);
   
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const hueCanvasRef = useRef<HTMLCanvasElement>(null);
-  
   // Initialize HSL values from current color
   useEffect(() => {
     const rgb = hexToRgb(currentColor);
@@ -57,72 +54,24 @@ export const AdvancedColorPicker: React.FC<AdvancedColorPickerProps> = ({
     setHexInput(hex);
   }, [hue, saturation, lightness]);
 
-  // Draw color picker canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const width = canvas.width;
-    const height = canvas.height;
-
-    // Create gradient for saturation and lightness
-    for (let x = 0; x < width; x++) {
-      for (let y = 0; y < height; y++) {
-        const s = (x / width) * 100;
-        const l = ((height - y) / height) * 100;
-        const rgb = hslToRgb(hue, s, l);
-        ctx.fillStyle = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-        ctx.fillRect(x, y, 1, 1);
-      }
-    }
-  }, [hue]);
-
-  // Draw hue slider
-  useEffect(() => {
-    const canvas = hueCanvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const width = canvas.width;
-    const height = canvas.height;
-
-    for (let y = 0; y < height; y++) {
-      const h = (y / height) * 360;
-      const rgb = hslToRgb(h, 100, 50);
-      ctx.fillStyle = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-      ctx.fillRect(0, y, width, 1);
-    }
-  }, []);
-
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
+  const handleSaturationLightnessClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-
-    const newSaturation = (x / canvas.width) * 100;
-    const newLightness = ((canvas.height - y) / canvas.height) * 100;
-
-    setSaturation(Math.round(newSaturation));
-    setLightness(Math.round(newLightness));
+    
+    const newSaturation = Math.round((x / rect.width) * 100);
+    const newLightness = Math.round(100 - (y / rect.height) * 100);
+    
+    setSaturation(Math.max(0, Math.min(100, newSaturation)));
+    setLightness(Math.max(0, Math.min(100, newLightness)));
   };
 
-  const handleHueCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = hueCanvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
+  const handleHueClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
     const y = e.clientY - rect.top;
-    const newHue = (y / canvas.height) * 360;
-
-    setHue(Math.round(newHue));
+    const newHue = Math.round((y / rect.height) * 360);
+    
+    setHue(Math.max(0, Math.min(360, newHue)));
   };
 
   const handleHexInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -183,43 +132,72 @@ export const AdvancedColorPicker: React.FC<AdvancedColorPickerProps> = ({
         <div>
           <Label className="text-sm font-medium mb-3 block">Custom Color</Label>
           <div className="flex gap-4">
-            {/* Main Color Area */}
-            <div className="flex-1">
-              <div className="relative">
-                <canvas
-                  ref={canvasRef}
-                  width={200}
-                  height={150}
-                  className="w-full h-32 rounded-lg border cursor-crosshair"
-                  onClick={handleCanvasClick}
+            {/* Main Saturation/Lightness Area */}
+            <div className="relative flex-1">
+              <div
+                className="w-full h-32 rounded-lg border cursor-crosshair relative overflow-hidden"
+                style={{
+                  background: `linear-gradient(to right, 
+                    hsl(${hue}, 0%, 50%) 0%, 
+                    hsl(${hue}, 100%, 50%) 100%), 
+                    linear-gradient(to top, 
+                    hsl(${hue}, 50%, 0%) 0%, 
+                    transparent 50%, 
+                    hsl(${hue}, 50%, 100%) 100%)`
+                }}
+                onClick={handleSaturationLightnessClick}
+              >
+                {/* Saturation gradient overlay */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: `linear-gradient(to right, white, transparent, hsl(${hue}, 100%, 50%))`
+                  }}
+                />
+                {/* Lightness gradient overlay */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: `linear-gradient(to top, black, transparent, white)`
+                  }}
                 />
                 {/* Color picker indicator */}
                 <div
-                  className="absolute w-3 h-3 border-2 border-white rounded-full pointer-events-none shadow-lg"
+                  className="absolute w-4 h-4 border-2 border-white rounded-full shadow-lg pointer-events-none"
                   style={{
-                    left: `${(saturation / 100) * 100}%`,
-                    top: `${(1 - lightness / 100) * 100}%`,
-                    transform: 'translate(-50%, -50%)'
+                    left: `${saturation}%`,
+                    top: `${100 - lightness}%`,
+                    transform: 'translate(-50%, -50%)',
+                    boxShadow: '0 0 0 1px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2)'
                   }}
                 />
               </div>
             </div>
 
             {/* Hue Slider */}
-            <div className="w-6">
-              <canvas
-                ref={hueCanvasRef}
-                width={24}
-                height={150}
+            <div className="relative w-6">
+              <div
                 className="w-6 h-32 rounded cursor-pointer"
-                onClick={handleHueCanvasClick}
+                style={{
+                  background: `linear-gradient(to bottom, 
+                    #ff0000 0%, 
+                    #ffff00 16.66%, 
+                    #00ff00 33.33%, 
+                    #00ffff 50%, 
+                    #0000ff 66.66%, 
+                    #ff00ff 83.33%, 
+                    #ff0000 100%)`
+                }}
+                onClick={handleHueClick}
               />
               {/* Hue indicator */}
               <div
-                className="absolute w-8 h-1 border border-white rounded-sm pointer-events-none shadow-lg -ml-1"
+                className="absolute w-8 h-2 border-2 border-white rounded-sm pointer-events-none shadow-lg -ml-1"
                 style={{
                   top: `${(hue / 360) * 100}%`,
-                  backgroundColor: `hsl(${hue}, 100%, 50%)`
+                  backgroundColor: `hsl(${hue}, 100%, 50%)`,
+                  transform: 'translateY(-50%)',
+                  boxShadow: '0 0 0 1px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2)'
                 }}
               />
             </div>
