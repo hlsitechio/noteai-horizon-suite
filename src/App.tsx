@@ -24,6 +24,7 @@ import Chat from "./pages/Chat";
 import Calendar from "./pages/Calendar";
 import Settings from "./pages/Settings";
 import ProjectRealms from "./pages/ProjectRealms";
+import ProjectDetail from "./pages/ProjectDetail";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout/Layout";
 
@@ -63,6 +64,7 @@ function App() {
                                         <Route path="/chat" element={<Chat />} />
                                         <Route path="/calendar" element={<Calendar />} />
                                         <Route path="/projects" element={<ProjectRealms />} />
+                                        <Route path="/projects/:projectId" element={<ProjectDetail />} />
                                         <Route path="/settings" element={<Settings />} />
                                         <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
                                       </Routes>

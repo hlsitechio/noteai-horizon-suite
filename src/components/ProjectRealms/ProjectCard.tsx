@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,8 @@ interface ProjectCardProps {
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect, onEdit, onDelete }) => {
+  const navigate = useNavigate();
+
   const getStatusColor = (status: ProjectRealm['status']) => {
     switch (status) {
       case 'active':
@@ -38,6 +40,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect, onEdit, on
 
   const handleCardClick = () => {
     onSelect(project);
+    navigate(`/app/projects/${project.id}`);
   };
 
   const handleDropdownClick = (e: React.MouseEvent) => {
