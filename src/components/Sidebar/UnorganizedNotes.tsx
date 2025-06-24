@@ -2,7 +2,7 @@
 import React from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 import { Note } from '../../types/note';
-import NoteItem from './NoteItem';
+import { NoteTreeItem } from './NoteTreeItem';
 
 interface UnorganizedNotesProps {
   notes: Note[];
@@ -33,7 +33,7 @@ const UnorganizedNotes: React.FC<UnorganizedNotesProps> = ({
           >
             {notes.map((note, index) => (
               <div key={note.id} className="px-1">
-                <NoteItem
+                <NoteTreeItem
                   note={note}
                   index={index}
                   level={0}

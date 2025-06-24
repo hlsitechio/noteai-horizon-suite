@@ -20,7 +20,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Note } from '../../types/note';
 import { Folder as FolderType } from '../../types/folder';
-import NoteItem from './NoteItem';
+import { NoteTreeItem } from './NoteTreeItem';
+import { FolderTreeItem } from './FolderTreeItem';
 import ColorPalette from './ColorPalette';
 
 interface TreeNodeProps {
@@ -53,6 +54,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   const isExpanded = expandedFolders.has(folder.id);
   const childFolders = folders.filter(f => f.parentId === folder.id);
   const folderNotes = notes.filter(n => n.folderId === folder.id);
+  const hasChildren = childFolders.length > 0 || folderNotes.length > 0;
   
   const paddingLeft = level * 20;
 
@@ -84,7 +86,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
                 className="p-0 h-4 w-4"
                 onClick={() => onToggleFolder(folder.id)}
               >
-                {childFolders.length > 0 || folderNotes.length > 0 ? (
+                {hasChildren ? (
                   isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />
                 ) : (
                   <div className="h-3 w-3" />
@@ -133,12 +135,12 @@ const TreeNode: React.FC<TreeNodeProps> = ({
               </DropdownMenu>
             </div>
             
-            {/* Child Items - Notes in this folder need to be in a separate droppable */}
+            {/* Child Items - Notes in this folder */}
             {isExpanded && folderNotes.length > 0 && (
               <div>
                 {folderNotes.map((note, index) => (
                   <div key={note.id} style={{ paddingLeft: `${(level + 1) * 20}px` }}>
-                    <NoteItem
+                    <NoteTreeItem
                       note={note}
                       index={index}
                       level={level + 1}
