@@ -42,11 +42,11 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-background overflow-hidden flex flex-col">
-      <div className="flex-1 flex flex-col p-4 max-w-7xl mx-auto w-full min-h-0">
+    <div className="h-screen bg-background overflow-hidden">
+      <div className="h-full flex flex-col p-6 max-w-7xl mx-auto">
         
         {/* Top Section - KPI Stats */}
-        <div className="flex-shrink-0 mb-4">
+        <div className="flex-shrink-0 mb-6">
           <KPIStats 
             totalNotes={totalNotes}
             favoriteNotes={favoriteNotes}
@@ -56,9 +56,9 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Main Content Area - Better organized layout */}
-        <div className="flex-1 min-h-0 grid grid-cols-12 gap-4 mb-4">
+        <div className="flex-1 min-h-0 grid grid-cols-12 gap-6 mb-6">
           {/* Recent Activity - Takes more space */}
-          <div className="col-span-8 min-h-0">
+          <div className="col-span-8">
             <RecentActivity 
               recentNotes={recentNotes}
               onCreateNote={handleCreateNote}
@@ -67,7 +67,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Quick Actions - Compact sidebar */}
-          <div className="col-span-4 min-h-0">
+          <div className="col-span-4">
             <WorkflowActions 
               notes={notes}
               onCreateNote={handleCreateNote}
@@ -77,7 +77,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Bottom Section - AI Toolbar */}
-        <div className="flex-shrink-0 flex justify-center pb-2">
+        <div className="flex-shrink-0 flex justify-center">
           <QuantumAI3DToolbar />
         </div>
       </div>
