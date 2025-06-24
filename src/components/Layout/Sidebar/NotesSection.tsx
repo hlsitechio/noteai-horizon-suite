@@ -29,7 +29,15 @@ export function NotesSection({ isCollapsed = false }: NotesSectionProps) {
   const favoriteNotes = notes.filter(note => note.isFavorite);
 
   const handleCreateNote = () => {
-    createNote();
+    const newNote = {
+      title: 'Untitled Note',
+      content: '',
+      category: 'general' as const,
+      tags: [],
+      isFavorite: false,
+      folder_id: null
+    };
+    createNote(newNote);
   };
 
   const handleCreateFolder = () => {
