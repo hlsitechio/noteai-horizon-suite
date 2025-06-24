@@ -7,7 +7,7 @@ import { FavoritesListSection } from './FavoritesListSection';
 import { CollapsedNotesSection } from './CollapsedNotesSection';
 import { CreateFolderDialog } from './CreateFolderDialog';
 import { useNotes } from '../../../contexts/NotesContext';
-import { useProjects } from '../../../contexts/ProjectRealmsContext';
+import { useProjectRealms } from '../../../contexts/ProjectRealmsContext';
 
 interface NotesSectionProps {
   isCollapsed?: boolean;
@@ -15,7 +15,7 @@ interface NotesSectionProps {
 
 export function NotesSection({ isCollapsed = false }: NotesSectionProps) {
   const { notes, createNote, updateNote } = useNotes();
-  const { projects } = useProjects();
+  const { projects } = useProjectRealms();
   
   // State for expandable sections
   const [isNotesExpanded, setIsNotesExpanded] = useState(true);
