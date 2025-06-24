@@ -5,16 +5,44 @@ export type ExportFormat = 'txt' | 'md' | 'html' | 'json';
 export type SharePlatform = 'facebook' | 'twitter' | 'linkedin' | 'whatsapp' | 'email';
 
 export class NoteExportService {
+  // Helper function to extract plain text from rich text content
+  private static extractPlainText(content: string): string {
+    try {
+      // Try to parse as JSON (Slate format)
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed)) {
+        return parsed
+          .map((node: any) => {
+            if (node.children && Array.isArray(node.children)) {
+              return node.children
+                .map((child: any) => child.text || '')
+                .join('');
+            }
+            return '';
+          })
+          .join('\n')
+          .trim();
+      }
+    } catch {
+      // If not JSON, return as plain text
+      return content;
+    }
+    return content;
+  }
+
   static exportToText(note: Note): string {
-    return `${note.title}\n\n${note.content}\n\nTags: ${note.tags.join(', ')}\nCategory: ${note.category}`;
+    const plainContent = this.extractPlainText(note.content);
+    return `${note.title}\n\n${plainContent}\n\nTags: ${note.tags.join(', ')}\nCategory: ${note.category}`;
   }
 
   static exportToMarkdown(note: Note): string {
+    const plainContent = this.extractPlainText(note.content);
     const tags = note.tags.map(tag => `#${tag}`).join(' ');
-    return `# ${note.title}\n\n${note.content}\n\n---\n\n**Tags:** ${tags}\n**Category:** ${note.category}\n**Created:** ${new Date(note.createdAt).toLocaleDateString()}`;
+    return `# ${note.title}\n\n${plainContent}\n\n---\n\n**Tags:** ${tags}\n**Category:** ${note.category}\n**Created:** ${new Date(note.createdAt).toLocaleDateString()}`;
   }
 
   static exportToHTML(note: Note): string {
+    const plainContent = this.extractPlainText(note.content);
     const tags = note.tags.map(tag => `<span class="tag">#${tag}</span>`).join(' ');
     return `
 <!DOCTYPE html>
@@ -29,7 +57,7 @@ export class NoteExportService {
 </head>
 <body>
     <h1>${note.title}</h1>
-    <div>${note.content.replace(/\n/g, '<br>')}</div>
+    <div>${plainContent.replace(/\n/g, '<br>')}</div>
     <div class="metadata">
         <p><strong>Tags:</strong> ${tags}</p>
         <p><strong>Category:</strong> ${note.category}</p>
@@ -66,13 +94,13 @@ export class NoteExportService {
   }
 
   static getShareUrl(platform: SharePlatform, note: Note): string {
-    // Create the complete note content to share
+    // Extract plain text from rich text content
+    const plainContent = this.extractPlainText(note.content);
     const noteTitle = note.title;
-    const noteContent = note.content;
     const tags = note.tags.length > 0 ? `\n\nTags: ${note.tags.map(tag => `#${tag}`).join(' ')}` : '';
     
     // Combine title, content, and tags for sharing
-    const fullContent = `${noteTitle}\n\n${noteContent}${tags}`;
+    const fullContent = `${noteTitle}\n\n${plainContent}${tags}`;
     
     // For platforms with character limits, we might need to truncate
     const truncateContent = (content: string, maxLength: number) => {
@@ -81,13 +109,14 @@ export class NoteExportService {
     };
     
     const encodedTitle = encodeURIComponent(noteTitle);
+    const encodedContent = encodeURIComponent(fullContent);
     
     const urls = {
-      facebook: `https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(fullContent)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodedContent}`,
       twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(truncateContent(fullContent, 280))}`,
-      linkedin: `https://www.linkedin.com/shareArticle?mini=true&title=${encodedTitle}&summary=${encodeURIComponent(truncateContent(fullContent, 600))}`,
-      whatsapp: `https://wa.me/?text=${encodeURIComponent(fullContent)}`,
-      email: `mailto:?subject=${encodedTitle}&body=${encodeURIComponent(fullContent)}`
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&title=${encodedTitle}&summary=${encodeURIComponent(truncateContent(plainContent, 600))}&source=NotesApp`,
+      whatsapp: `https://wa.me/?text=${encodedContent}`,
+      email: `https://mail.google.com/mail/?view=cm&fs=1&to=&su=${encodedTitle}&body=${encodedContent}`
     };
 
     return urls[platform];
@@ -99,9 +128,9 @@ export class NoteExportService {
     }
 
     try {
-      const noteContent = `${note.title}\n\n${note.content}`;
+      const plainContent = this.extractPlainText(note.content);
       const tags = note.tags.length > 0 ? `\n\nTags: ${note.tags.map(tag => `#${tag}`).join(' ')}` : '';
-      const fullContent = `${noteContent}${tags}`;
+      const fullContent = `${plainContent}${tags}`;
 
       await navigator.share({
         title: note.title,
