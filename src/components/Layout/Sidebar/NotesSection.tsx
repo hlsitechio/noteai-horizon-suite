@@ -1,41 +1,23 @@
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { 
-  SidebarGroup, 
-  SidebarGroupContent, 
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  useSidebar 
-} from '@/components/ui/sidebar';
-import { 
-  FileText, 
-  Plus, 
-  ChevronRight, 
-  ChevronDown,
-  FolderOpen,
-  Star,
-  Folder,
-  FolderPlus
-} from 'lucide-react';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { useSidebar } from '@/components/ui/sidebar';
 import { useNotes } from '../../../contexts/NotesContext';
 import { useFolders } from '../../../contexts/FoldersContext';
 import { useProjectRealms } from '../../../contexts/ProjectRealmsContext';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { NotesListSection } from './NotesListSection';
+import { ProjectsListSection } from './ProjectsListSection';
+import { FavoritesListSection } from './FavoritesListSection';
+import { CollapsedNotesSection } from './CollapsedNotesSection';
+import { CreateFolderDialog } from './CreateFolderDialog';
 
 export function NotesSection() {
   const { state } = useSidebar();
   const isCollapsed = state === 'collapsed';
   const { notes, createNote, updateNote } = useNotes();
-  const { folders, createFolder } = useFolders();
-  const { projects, updateProject } = useProjectRealms();
+  const { createFolder } = useFolders();
+  const { projects } = useProjectRealms();
   
   const [expandedSections, setExpandedSections] = useState({
     notes: true,
@@ -47,8 +29,6 @@ export function NotesSection() {
   const [newFolderName, setNewFolderName] = useState('');
 
   const favoriteNotes = notes.filter(note => note.isFavorite);
-  const recentNotes = notes.slice(0, 5);
-  const activeProjects = projects.filter(project => project.status === 'active').slice(0, 3);
 
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections(prev => ({
@@ -115,265 +95,39 @@ export function NotesSection() {
   };
 
   if (isCollapsed) {
-    return (
-      <div className="px-2 space-y-1">
-        <SidebarMenuButton asChild tooltip="Notes">
-          <Link to="/app/notes" className="hover:bg-accent hover:text-accent-foreground">
-            <FileText className="h-4 w-4" />
-          </Link>
-        </SidebarMenuButton>
-        <SidebarMenuButton asChild tooltip="Projects">
-          <Link to="/app/projects" className="hover:bg-accent hover:text-accent-foreground">
-            <FolderOpen className="h-4 w-4" />
-          </Link>
-        </SidebarMenuButton>
-        <SidebarMenuButton asChild tooltip="Favorites">
-          <button onClick={() => {}} className="hover:bg-accent hover:text-accent-foreground">
-            <Star className="h-4 w-4" />
-          </button>
-        </SidebarMenuButton>
-      </div>
-    );
+    return <CollapsedNotesSection />;
   }
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <div className="space-y-4">
-        {/* Notes Section */}
-        <SidebarGroup>
-          <div className="flex items-center justify-between px-2">
-            <SidebarGroupLabel 
-              className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors"
-              onClick={() => toggleSection('notes')}
-            >
-              {expandedSections.notes ? (
-                <ChevronDown className="h-3 w-3 mr-1" />
-              ) : (
-                <ChevronRight className="h-3 w-3 mr-1" />
-              )}
-              Notes
-            </SidebarGroupLabel>
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
-                onClick={() => setShowCreateFolderDialog(true)}
-                title="Create Folder"
-              >
-                <FolderPlus className="h-3 w-3" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
-                onClick={handleCreateNote}
-                title="Create Note"
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-          
-          <AnimatePresence>
-            {expandedSections.notes && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {recentNotes.map((note, index) => (
-                      <Draggable key={note.id} draggableId={`note-${note.id}`} index={index}>
-                        {(provided) => (
-                          <SidebarMenuItem
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          >
-                            <SidebarMenuButton asChild>
-                              <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
-                                <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
-                                <span className="truncate text-xs">{note.title}</span>
-                                {note.isFavorite && (
-                                  <Star className="h-3 w-3 ml-auto text-accent fill-current" />
-                                )}
-                              </Link>
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        )}
-                      </Draggable>
-                    ))}
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild>
-                        <Link to="/app/notes" className="text-xs text-sidebar-foreground/60 hover:bg-accent hover:text-accent-foreground transition-colors">
-                          View all notes →
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </SidebarGroup>
+        <NotesListSection 
+          notes={notes}
+          isExpanded={expandedSections.notes}
+          onToggle={() => toggleSection('notes')}
+          onCreateNote={handleCreateNote}
+          onCreateFolder={() => setShowCreateFolderDialog(true)}
+        />
 
-        {/* Projects Section */}
-        <SidebarGroup>
-          <div className="flex items-center justify-between px-2">
-            <SidebarGroupLabel 
-              className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors"
-              onClick={() => toggleSection('projects')}
-            >
-              {expandedSections.projects ? (
-                <ChevronDown className="h-3 w-3 mr-1" />
-              ) : (
-                <ChevronRight className="h-3 w-3 mr-1" />
-              )}
-              Projects
-            </SidebarGroupLabel>
-          </div>
-          
-          <AnimatePresence>
-            {expandedSections.projects && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {activeProjects.map((project) => (
-                      <Droppable key={project.id} droppableId={`project-${project.id}`}>
-                        {(provided, snapshot) => (
-                          <SidebarMenuItem
-                            ref={provided.innerRef}
-                            {...provided.droppableProps}
-                          >
-                            <SidebarMenuButton asChild>
-                              <Link 
-                                to={`/app/projects?project=${project.id}`} 
-                                className={`flex items-center hover:bg-accent hover:text-accent-foreground transition-colors ${
-                                  snapshot.isDraggingOver ? 'bg-accent/50' : ''
-                                }`}
-                              >
-                                <Folder className="h-3 w-3 mr-2 flex-shrink-0" />
-                                <span className="truncate text-xs">{project.title}</span>
-                              </Link>
-                            </SidebarMenuButton>
-                            {provided.placeholder}
-                          </SidebarMenuItem>
-                        )}
-                      </Droppable>
-                    ))}
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild>
-                        <Link to="/app/projects" className="text-xs text-sidebar-foreground/60 hover:bg-accent hover:text-accent-foreground transition-colors">
-                          View all projects →
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </SidebarGroup>
+        <ProjectsListSection 
+          projects={projects}
+          isExpanded={expandedSections.projects}
+          onToggle={() => toggleSection('projects')}
+        />
 
-        {/* Favorites Section */}
-        <SidebarGroup>
-          <div className="flex items-center justify-between px-2">
-            <SidebarGroupLabel 
-              className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors"
-              onClick={() => toggleSection('favorites')}
-            >
-              {expandedSections.favorites ? (
-                <ChevronDown className="h-3 w-3 mr-1" />
-              ) : (
-                <ChevronRight className="h-3 w-3 mr-1" />
-              )}
-              Favorites
-            </SidebarGroupLabel>
-          </div>
-          
-          <AnimatePresence>
-            {expandedSections.favorites && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <SidebarGroupContent>
-                  <Droppable droppableId="favorites">
-                    {(provided, snapshot) => (
-                      <SidebarMenu
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        className={snapshot.isDraggingOver ? 'bg-accent/20 rounded-md' : ''}
-                      >
-                        {favoriteNotes.length > 0 ? (
-                          favoriteNotes.map((note, index) => (
-                            <Draggable key={note.id} draggableId={`favorite-note-${note.id}`} index={index}>
-                              {(provided) => (
-                                <SidebarMenuItem
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                >
-                                  <SidebarMenuButton asChild>
-                                    <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
-                                      <Star className="h-3 w-3 mr-2 flex-shrink-0 text-accent fill-current" />
-                                      <span className="truncate text-xs">{note.title}</span>
-                                    </Link>
-                                  </SidebarMenuButton>
-                                </SidebarMenuItem>
-                              )}
-                            </Draggable>
-                          ))
-                        ) : (
-                          <SidebarMenuItem>
-                            <SidebarMenuButton disabled>
-                              <span className="text-xs text-sidebar-foreground/40">
-                                {snapshot.isDraggingOver ? 'Drop note here to add to favorites' : 'No favorites yet'}
-                              </span>
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        )}
-                        {provided.placeholder}
-                      </SidebarMenu>
-                    )}
-                  </Droppable>
-                </SidebarGroupContent>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </SidebarGroup>
+        <FavoritesListSection 
+          favoriteNotes={favoriteNotes}
+          isExpanded={expandedSections.favorites}
+          onToggle={() => toggleSection('favorites')}
+        />
 
-        {/* Create Folder Dialog */}
-        <Dialog open={showCreateFolderDialog} onOpenChange={setShowCreateFolderDialog}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Create New Folder</DialogTitle>
-            </DialogHeader>
-            <div className="flex items-center space-x-2">
-              <Input
-                placeholder="Folder name"
-                value={newFolderName}
-                onChange={(e) => setNewFolderName(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleCreateFolder();
-                  }
-                }}
-              />
-              <Button onClick={handleCreateFolder}>Create</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <CreateFolderDialog
+          isOpen={showCreateFolderDialog}
+          onOpenChange={setShowCreateFolderDialog}
+          folderName={newFolderName}
+          onFolderNameChange={setNewFolderName}
+          onCreateFolder={handleCreateFolder}
+        />
       </div>
     </DragDropContext>
   );
