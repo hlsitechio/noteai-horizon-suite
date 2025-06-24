@@ -55,8 +55,8 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Better organized layout */}
-        <div className="flex-1 min-h-0 grid grid-cols-12 gap-4 mb-4">
+        {/* Main Content Area - Aligned to top */}
+        <div className="flex-1 min-h-0 grid grid-cols-12 gap-4 mb-4 items-start">
           {/* Recent Activity - Takes more space */}
           <div className="col-span-8 min-h-0">
             <RecentActivity 

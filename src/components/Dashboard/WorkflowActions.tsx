@@ -50,7 +50,7 @@ const WorkflowActions: React.FC<WorkflowActionsProps> = ({
           </CardTitle>
         </div>
       </CardHeader>
-      <CardContent className={`${isMobile ? 'p-4' : 'p-6'} flex-1 flex flex-col justify-center`}>
+      <CardContent className={`${isMobile ? 'p-4' : 'p-6'} flex-1 flex flex-col`}>
         <div className={`grid grid-cols-2 gap-4 w-full`}>
           <Button 
             onClick={onCreateNote}
