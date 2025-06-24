@@ -54,8 +54,8 @@ function App() {
               <QuantumAIProvider>
                 <NotificationsProvider>
                   <ProjectRealmsProvider>
-                    <NotesProvider>
-                      <FoldersProvider>
+                    <FoldersProvider>
+                      <NotesProvider>
                         <div className="min-h-screen bg-background text-foreground">
                           <Routes>
                             {/* Public Routes */}
@@ -155,8 +155,8 @@ function App() {
                           </Routes>
                           <Toaster />
                         </div>
-                      </FoldersProvider>
-                    </NotesProvider>
+                      </NotesProvider>
+                    </FoldersProvider>
                   </ProjectRealmsProvider>
                 </NotificationsProvider>
               </QuantumAIProvider>
