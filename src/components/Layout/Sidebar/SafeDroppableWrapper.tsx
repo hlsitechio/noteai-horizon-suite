@@ -16,13 +16,20 @@ export function SafeDroppableWrapper({
 }: SafeDroppableWrapperProps) {
   const { isReady } = useDragDropReady();
 
+  // Always render fallback first, then transition to droppable
   if (!isReady) {
     return <>{fallbackChildren}</>;
   }
 
-  return (
-    <Droppable droppableId={droppableId}>
-      {children}
-    </Droppable>
-  );
+  // Add error boundary protection
+  try {
+    return (
+      <Droppable droppableId={droppableId}>
+        {children}
+      </Droppable>
+    );
+  } catch (error) {
+    console.warn('Droppable context error, falling back to static content:', error);
+    return <>{fallbackChildren}</>;
+  }
 }

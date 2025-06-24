@@ -58,9 +58,9 @@ export function FavoritesListSection({
             >
               {(provided) => (
                 <SidebarMenuItem
-                  ref={provided.innerRef}
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
+                  ref={provided?.innerRef}
+                  {...(provided?.draggableProps || {})}
+                  {...(provided?.dragHandleProps || {})}
                 >
                   <SidebarMenuButton asChild>
                     <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">

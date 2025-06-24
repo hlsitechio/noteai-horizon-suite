@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, createContext, useContext, useRef } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { useUnifiedDragDrop } from '../../hooks/useUnifiedDragDrop';
 
@@ -18,14 +18,31 @@ interface UnifiedDragDropProviderProps {
 export function UnifiedDragDropProvider({ children }: UnifiedDragDropProviderProps) {
   const { handleDragEnd } = useUnifiedDragDrop();
   const [isReady, setIsReady] = useState(false);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
-    // Ensure the context is ready after a brief delay to avoid race conditions
-    const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 100);
+    mountedRef.current = true;
+    
+    // Use multiple checks to ensure context is ready
+    const timer1 = setTimeout(() => {
+      if (mountedRef.current) {
+        // First check after initial render
+        setIsReady(true);
+      }
+    }, 50);
 
-    return () => clearTimeout(timer);
+    const timer2 = setTimeout(() => {
+      if (mountedRef.current) {
+        // Double check to ensure stability
+        setIsReady(true);
+      }
+    }, 200);
+
+    return () => {
+      mountedRef.current = false;
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
   }, []);
 
   return (

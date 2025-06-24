@@ -39,6 +39,49 @@ export function NotesListSection({
 }: NotesListSectionProps) {
   const recentNotes = notes.slice(0, 5);
 
+  const renderNoteItem = (note: Note, index: number) => {
+    const fallbackContent = (
+      <SidebarMenuItem key={note.id}>
+        <SidebarMenuButton asChild>
+          <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
+            <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
+            <span className="truncate text-xs">{note.title}</span>
+            {note.isFavorite && (
+              <Star className="h-3 w-3 ml-auto text-accent fill-current" />
+            )}
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    );
+
+    return (
+      <SafeDraggableWrapper
+        key={note.id}
+        draggableId={`sidebar-note-${note.id}`}
+        index={index}
+        fallbackChildren={fallbackContent}
+      >
+        {(provided) => (
+          <SidebarMenuItem
+            ref={provided?.innerRef}
+            {...(provided?.draggableProps || {})}
+            {...(provided?.dragHandleProps || {})}
+          >
+            <SidebarMenuButton asChild>
+              <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
+                <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
+                <span className="truncate text-xs">{note.title}</span>
+                {note.isFavorite && (
+                  <Star className="h-3 w-3 ml-auto text-accent fill-current" />
+                )}
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        )}
+      </SafeDraggableWrapper>
+    );
+  };
+
   return (
     <SidebarGroup>
       <div className="flex items-center justify-between px-2">
@@ -85,48 +128,7 @@ export function NotesListSection({
           >
             <SidebarGroupContent>
               <SidebarMenu>
-                {recentNotes.map((note, index) => {
-                  const fallbackContent = (
-                    <SidebarMenuItem key={note.id}>
-                      <SidebarMenuButton asChild>
-                        <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
-                          <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
-                          <span className="truncate text-xs">{note.title}</span>
-                          {note.isFavorite && (
-                            <Star className="h-3 w-3 ml-auto text-accent fill-current" />
-                          )}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-
-                  return (
-                    <SafeDraggableWrapper
-                      key={note.id}
-                      draggableId={`sidebar-note-${note.id}`}
-                      index={index}
-                      fallbackChildren={fallbackContent}
-                    >
-                      {(provided) => (
-                        <SidebarMenuItem
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <SidebarMenuButton asChild>
-                            <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
-                              <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
-                              <span className="truncate text-xs">{note.title}</span>
-                              {note.isFavorite && (
-                                <Star className="h-3 w-3 ml-auto text-accent fill-current" />
-                              )}
-                            </Link>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      )}
-                    </SafeDraggableWrapper>
-                  );
-                })}
+                {recentNotes.map((note, index) => renderNoteItem(note, index))}
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
                     <Link to="/app/notes" className="text-xs text-sidebar-foreground/60 hover:bg-accent hover:text-accent-foreground transition-colors">

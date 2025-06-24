@@ -18,13 +18,20 @@ export function SafeDraggableWrapper({
 }: SafeDraggableWrapperProps) {
   const { isReady } = useDragDropReady();
 
+  // Always render fallback first, then transition to draggable
   if (!isReady) {
     return <>{fallbackChildren}</>;
   }
 
-  return (
-    <Draggable draggableId={draggableId} index={index}>
-      {children}
-    </Draggable>
-  );
+  // Add error boundary protection
+  try {
+    return (
+      <Draggable draggableId={draggableId} index={index}>
+        {children}
+      </Draggable>
+    );
+  } catch (error) {
+    console.warn('Draggable context error, falling back to static content:', error);
+    return <>{fallbackChildren}</>;
+  }
 }
