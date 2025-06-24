@@ -40,45 +40,22 @@ export function NotesListSection({
   const recentNotes = notes.slice(0, 5);
 
   const renderNoteItem = (note: Note, index: number) => {
-    const fallbackContent = (
+    // Simplified note item without drag wrapper for better click handling
+    return (
       <SidebarMenuItem key={note.id}>
         <SidebarMenuButton asChild>
-          <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
+          <Link 
+            to={`/app/notes?note=${note.id}`} 
+            className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full"
+          >
             <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
-            <span className="truncate text-xs">{note.title}</span>
+            <span className="truncate text-xs flex-1">{note.title}</span>
             {note.isFavorite && (
               <Star className="h-3 w-3 ml-auto text-accent fill-current" />
             )}
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
-    );
-
-    return (
-      <SafeDraggableWrapper
-        key={note.id}
-        draggableId={`sidebar-note-${note.id}`}
-        index={index}
-        fallbackChildren={fallbackContent}
-      >
-        {(provided) => (
-          <SidebarMenuItem
-            ref={provided?.innerRef}
-            {...(provided?.draggableProps || {})}
-            {...(provided?.dragHandleProps || {})}
-          >
-            <SidebarMenuButton asChild>
-              <Link to={`/app/notes?note=${note.id}`} className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors">
-                <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
-                <span className="truncate text-xs">{note.title}</span>
-                {note.isFavorite && (
-                  <Star className="h-3 w-3 ml-auto text-accent fill-current" />
-                )}
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        )}
-      </SafeDraggableWrapper>
     );
   };
 
@@ -129,6 +106,13 @@ export function NotesListSection({
             <SidebarGroupContent>
               <SidebarMenu>
                 {recentNotes.map((note, index) => renderNoteItem(note, index))}
+                {recentNotes.length === 0 && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton disabled>
+                      <span className="text-xs text-sidebar-foreground/40">No notes yet</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
                     <Link to="/app/notes" className="text-xs text-sidebar-foreground/60 hover:bg-accent hover:text-accent-foreground transition-colors">
