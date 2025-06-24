@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import EditorMainColumn from './EditorMainColumn';
-import { NoteCategory } from '../../types/note';
+import { CategoryOption } from '../../types/note';
 
 interface EditorLayoutProps {
   title: string;
@@ -9,7 +9,7 @@ interface EditorLayoutProps {
   category: string;
   tags: string[];
   newTag: string;
-  categories: NoteCategory[];
+  categories: CategoryOption[];
   onTitleChange: (title: string) => void;
   onContentChange: (content: string) => void;
   onCategoryChange: (category: string) => void;

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import RichTextEditor from './RichTextEditor';
 import EditorMetadata from './EditorMetadata';
-import { NoteCategory } from '../../types/note';
+import { CategoryOption } from '../../types/note';
 
 interface EditorMainColumnProps {
   title: string;
@@ -12,7 +12,7 @@ interface EditorMainColumnProps {
   category: string;
   tags: string[];
   newTag: string;
-  categories: NoteCategory[];
+  categories: CategoryOption[];
   onTitleChange: (title: string) => void;
   onContentChange: (content: string) => void;
   onCategoryChange: (category: string) => void;
