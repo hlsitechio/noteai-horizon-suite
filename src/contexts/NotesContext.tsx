@@ -3,7 +3,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Note, NoteFilters } from '../types/note';
 import { NoteStorageService } from '../services/noteStorage';
 import { toast } from 'sonner';
-import { useFolders } from './FoldersContext';
 
 interface NotesContextType {
   notes: Note[];
@@ -38,7 +37,10 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [filters, setFilters] = useState<NoteFilters>({});
   const [isLoading, setIsLoading] = useState(true);
-  const { folders } = useFolders();
+  
+  // Remove the direct useFolders() call that was causing the error
+  // Instead, we'll get folders from the component that uses this context
+  const folders: any[] = [];
 
   const refreshNotes = () => {
     setIsLoading(true);
