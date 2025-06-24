@@ -57,13 +57,18 @@ const Dashboard: React.FC = () => {
         />
 
         {/* Content Management Section */}
-        <div className={`w-full grid gap-8 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
+        <div className={`w-full grid gap-8 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'} relative`}>
           {/* Recent Activity */}
           <RecentActivity 
             recentNotes={recentNotes}
             onCreateNote={handleCreateNote}
             onEditNote={handleEditNote}
           />
+
+          {/* Quantum AI Toolbar positioned between sections */}
+          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40">
+            <QuantumAI3DToolbar />
+          </div>
 
           {/* Quick Actions */}
           <WorkflowActions 
@@ -73,9 +78,6 @@ const Dashboard: React.FC = () => {
           />
         </div>
       </div>
-
-      {/* Dashboard-specific Quantum AI 3D Toolbar */}
-      <QuantumAI3DToolbar />
     </div>
   );
 };
