@@ -36,8 +36,8 @@ const App = () => (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <AccentColorProvider>
         <AuthProvider>
-          <NotesProvider>
-            <FoldersProvider>
+          <FoldersProvider>
+            <NotesProvider>
               <NotificationsProvider>
                 <QuantumAIProvider>
                   <TooltipProvider>
@@ -71,8 +71,8 @@ const App = () => (
                   </TooltipProvider>
                 </QuantumAIProvider>
               </NotificationsProvider>
-            </FoldersProvider>
-          </NotesProvider>
+            </NotesProvider>
+          </FoldersProvider>
         </AuthProvider>
       </AccentColorProvider>
     </ThemeProvider>
