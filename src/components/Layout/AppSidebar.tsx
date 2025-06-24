@@ -70,12 +70,12 @@ export function AppSidebar() {
         animate={isCollapsed ? 'collapsed' : 'expanded'}
         className="bg-deep-carbon-900/95 backdrop-blur-md border-r border-deep-carbon-700/50 h-screen overflow-hidden shadow-premium z-40"
       >
-        <Sidebar collapsible="icon" className="bg-transparent border-0">
-          <SidebarHeader className="p-4 pb-2 bg-deep-carbon-900/90">
+        <Sidebar collapsible="icon" className="bg-transparent border-0 h-full flex flex-col">
+          <SidebarHeader className="p-3 pb-2 bg-deep-carbon-900/90 flex-shrink-0">
             <CustomSidebarHeader />
           </SidebarHeader>
 
-          <SidebarContent className="px-0 bg-deep-carbon-900/80">
+          <SidebarContent className="px-0 bg-deep-carbon-900/80 flex-1 min-h-0 overflow-y-auto">
             <SidebarGroup className="py-2">
               <SidebarGroupContent>
                 <NavigationMenu />
@@ -94,8 +94,9 @@ export function AppSidebar() {
                   initial="collapsed"
                   animate="expanded"
                   exit="collapsed"
+                  className="flex-1 min-h-0"
                 >
-                  <SidebarGroup className="group-data-[collapsible=icon]:hidden px-2">
+                  <SidebarGroup className="group-data-[collapsible=icon]:hidden px-2 flex-1 min-h-0">
                     <NotesTree />
                   </SidebarGroup>
                 </motion.div>
@@ -103,9 +104,9 @@ export function AppSidebar() {
             </AnimatePresence>
           </SidebarContent>
 
-          <SidebarSeparator className="mx-4 my-2 bg-deep-carbon-700/30" />
+          <SidebarSeparator className="mx-4 my-1 bg-deep-carbon-700/30" />
 
-          <SidebarFooter className="p-4 pt-2 z-30 bg-deep-carbon-900/90">
+          <SidebarFooter className="p-3 pt-2 z-30 bg-deep-carbon-900/90 flex-shrink-0">
             <CustomSidebarFooter />
           </SidebarFooter>
         </Sidebar>
