@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -26,29 +25,47 @@ export class BannerStorageService {
       }
 
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${bannerType}${projectId ? `_${projectId}` : ''}.${fileExt}`;
+      const fileName = `${user.id}/${bannerType}${projectId ? `_${projectId}` : ''}_${Date.now()}.${fileExt}`;
       
       console.log('BannerStorageService: Uploading file:', fileName, file.type, file.size);
 
-      // Upload file to storage
+      // First, let's check if the bucket exists
+      const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+      console.log('Available buckets:', buckets);
+      
+      if (bucketsError) {
+        console.error('Error listing buckets:', bucketsError);
+      }
+
+      // Upload file to storage with additional options
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('banners')
         .upload(fileName, file, {
-          upsert: true
+          upsert: true,
+          contentType: file.type
         });
 
       if (uploadError) {
-        console.error('BannerStorageService: Upload error:', uploadError);
-        toast.error('Failed to upload banner');
+        console.error('BannerStorageService: Upload error details:', uploadError);
+        
+        // Check if it's a bucket access issue
+        if (uploadError.message.includes('not found') || uploadError.message.includes('bucket')) {
+          toast.error('Storage bucket not found. Please contact support.');
+          return null;
+        }
+        
+        toast.error(`Upload failed: ${uploadError.message}`);
         return null;
       }
+
+      console.log('BannerStorageService: Upload successful:', uploadData);
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('banners')
         .getPublicUrl(fileName);
 
-      console.log('BannerStorageService: Upload successful, public URL:', publicUrl);
+      console.log('BannerStorageService: Public URL generated:', publicUrl);
 
       // Save metadata to database
       const bannerMetadata = {
@@ -61,6 +78,8 @@ export class BannerStorageService {
         file_size: file.size
       };
 
+      console.log('BannerStorageService: Saving metadata:', bannerMetadata);
+
       const { data: bannerData, error: dbError } = await supabase
         .from('banners')
         .upsert(bannerMetadata, {
@@ -70,12 +89,14 @@ export class BannerStorageService {
         .single();
 
       if (dbError) {
-        console.error('BannerStorageService: Database error:', dbError);
-        toast.error('Failed to save banner metadata');
+        console.error('BannerStorageService: Database error details:', dbError);
+        toast.error(`Database error: ${dbError.message}`);
         return null;
       }
 
       console.log('BannerStorageService: Banner saved successfully:', bannerData);
+      toast.success('Banner uploaded successfully!');
+      
       // Cast the file_type to the correct union type since we know it's constrained in the database
       return {
         ...bannerData,
@@ -83,7 +104,7 @@ export class BannerStorageService {
       };
     } catch (error) {
       console.error('BannerStorageService: Upload exception:', error);
-      toast.error('Failed to upload banner');
+      toast.error(`Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return null;
     }
   }
