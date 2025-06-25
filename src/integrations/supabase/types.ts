@@ -178,6 +178,45 @@ export type Database = {
         }
         Relationships: []
       }
+      banners: {
+        Row: {
+          banner_type: string
+          created_at: string
+          file_name: string
+          file_size: number
+          file_type: string
+          file_url: string
+          id: string
+          project_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          banner_type: string
+          created_at?: string
+          file_name: string
+          file_size: number
+          file_type: string
+          file_url: string
+          id?: string
+          project_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          banner_type?: string
+          created_at?: string
+          file_name?: string
+          file_size?: number
+          file_type?: string
+          file_url?: string
+          id?: string
+          project_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       content_moderation: {
         Row: {
           content_id: string

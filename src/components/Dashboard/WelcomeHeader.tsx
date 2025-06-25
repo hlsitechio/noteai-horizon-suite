@@ -3,11 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Clock, Image } from 'lucide-react';
 import BannerUpload from './BannerUpload';
+import { BannerStorageService, BannerData } from '@/services/bannerStorageService';
 
 const WelcomeHeader: React.FC = () => {
   const { user } = useAuth();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [bannerData, setBannerData] = useState<{url: string, type: 'image' | 'video'} | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -18,22 +20,35 @@ const WelcomeHeader: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Load banner from localStorage on component mount
-    const savedBanner = localStorage.getItem('dashboard_banner');
-    console.log('WelcomeHeader: Loading banner from localStorage:', savedBanner);
-    if (savedBanner) {
-      try {
-        const bannerInfo = JSON.parse(savedBanner);
-        console.log('WelcomeHeader: Banner info parsed:', bannerInfo);
-        setBannerData({
-          url: bannerInfo.url,
-          type: bannerInfo.type || 'image'
-        });
-      } catch (error) {
-        console.error('WelcomeHeader: Error loading saved banner:', error);
+    // Load banner from Supabase on component mount
+    const loadBanner = async () => {
+      if (!user) {
+        setIsLoading(false);
+        return;
       }
-    }
-  }, []);
+
+      try {
+        console.log('WelcomeHeader: Loading dashboard banner from Supabase');
+        const banner = await BannerStorageService.getBanner('dashboard');
+        if (banner) {
+          console.log('WelcomeHeader: Banner loaded:', banner);
+          setBannerData({
+            url: banner.file_url,
+            type: banner.file_type
+          });
+        } else {
+          console.log('WelcomeHeader: No banner found');
+          setBannerData(null);
+        }
+      } catch (error) {
+        console.error('WelcomeHeader: Error loading banner:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadBanner();
+  }, [user]);
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { 
@@ -62,12 +77,17 @@ const WelcomeHeader: React.FC = () => {
     setBannerData({ url: bannerUrl, type });
   };
 
+  const handleBannerDelete = () => {
+    console.log('WelcomeHeader: Banner deleted');
+    setBannerData(null);
+  };
+
   return (
     <div className="space-y-4 mb-6">
       {/* Banner Section */}
       <div className="relative h-64 overflow-hidden rounded-xl border border-blue-100 dark:border-slate-600">
         {/* Banner Background */}
-        {bannerData ? (
+        {!isLoading && bannerData ? (
           bannerData.type === 'video' ? (
             <video
               src={bannerData.url}
@@ -107,7 +127,7 @@ const WelcomeHeader: React.FC = () => {
         <div className="absolute inset-0 bg-black/30"></div>
         
         {/* Banner Placeholder Content (only show when no banner is set) */}
-        {!bannerData && (
+        {!isLoading && !bannerData && (
           <div className="absolute inset-0 flex items-center justify-center opacity-30">
             <div className="text-center text-white">
               <Image className="w-16 h-16 mx-auto mb-4" />
@@ -122,6 +142,7 @@ const WelcomeHeader: React.FC = () => {
           <BannerUpload
             currentBannerUrl={bannerData?.url}
             onBannerUpdate={handleBannerUpdate}
+            onBannerDelete={handleBannerDelete}
           />
         </div>
       </div>

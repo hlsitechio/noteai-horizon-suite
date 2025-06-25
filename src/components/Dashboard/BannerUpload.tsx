@@ -2,22 +2,26 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Upload, Image as ImageIcon, Video, X } from 'lucide-react';
+import { Upload, Image as ImageIcon, Video, X, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { BannerStorageService } from '@/services/bannerStorageService';
 
 interface BannerUploadProps {
   currentBannerUrl?: string;
   onBannerUpdate?: (bannerUrl: string, type: 'image' | 'video') => void;
+  onBannerDelete?: () => void;
 }
 
 const BannerUpload: React.FC<BannerUploadProps> = ({ 
   currentBannerUrl,
-  onBannerUpdate 
+  onBannerUpdate,
+  onBannerDelete
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedBanner, setSelectedBanner] = useState<string | null>(null);
   const [bannerType, setBannerType] = useState<'image' | 'video'>('image');
   const [isUploading, setIsUploading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +50,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
       return;
     }
 
-    // For videos, check if it's MP4 - Fixed validation logic
+    // For videos, check if it's MP4
     if (isVideo && !file.type.includes('mp4') && !file.name.toLowerCase().endsWith('.mp4')) {
       console.log('BannerUpload: Not MP4 format:', file.type);
       toast.error('Only MP4 videos are supported');
@@ -70,32 +74,45 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
   };
 
   const handleUploadBanner = async () => {
-    if (!selectedBanner) return;
+    if (!selectedBanner || !fileInputRef.current?.files?.[0]) return;
 
     console.log('BannerUpload: Starting upload process, type:', bannerType);
     setIsUploading(true);
     try {
-      // For now, we'll store the base64 banner in localStorage
-      // In a production app, you'd want to upload to a storage service
-      const bannerKey = 'dashboard_banner';
-      const bannerData = {
-        url: selectedBanner,
-        type: bannerType,
-        uploadedAt: new Date().toISOString()
-      };
+      const file = fileInputRef.current.files[0];
+      const bannerData = await BannerStorageService.uploadBanner(file, 'dashboard');
       
-      localStorage.setItem(bannerKey, JSON.stringify(bannerData));
-      console.log('BannerUpload: Banner saved to localStorage:', bannerData);
-
-      onBannerUpdate?.(selectedBanner, bannerType);
-      setIsOpen(false);
-      setSelectedBanner(null);
-      toast.success(`Dashboard ${bannerType} banner updated successfully!`);
+      if (bannerData) {
+        onBannerUpdate?.(bannerData.file_url, bannerData.file_type);
+        setIsOpen(false);
+        setSelectedBanner(null);
+        toast.success(`Dashboard ${bannerData.file_type} banner updated successfully!`);
+      }
     } catch (error) {
       console.error('BannerUpload: Upload error:', error);
       toast.error('Failed to update dashboard banner');
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleDeleteBanner = async () => {
+    console.log('BannerUpload: Deleting banner');
+    setIsDeleting(true);
+    try {
+      const success = await BannerStorageService.deleteBanner('dashboard');
+      if (success) {
+        onBannerDelete?.();
+        setIsOpen(false);
+        toast.success('Dashboard banner deleted successfully!');
+      } else {
+        toast.error('Failed to delete banner');
+      }
+    } catch (error) {
+      console.error('BannerUpload: Delete error:', error);
+      toast.error('Failed to delete banner');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -117,12 +134,12 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
           className="text-white hover:bg-white/20 border border-white/30 bg-black/20 backdrop-blur-sm"
         >
           <Upload className="w-4 h-4 mr-2" />
-          Upload Banner
+          {currentBannerUrl ? 'Update Banner' : 'Upload Banner'}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl">
         <DialogHeader>
-          <DialogTitle>Upload Dashboard Banner</DialogTitle>
+          <DialogTitle>Dashboard Banner</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-6">
@@ -145,13 +162,25 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
                 <br />
                 Recommended: 1920x1080px for optimal quality
               </p>
-              <Button
-                onClick={() => fileInputRef.current?.click()}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Choose File
-              </Button>
+              <div className="flex gap-2 justify-center">
+                <Button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Choose File
+                </Button>
+                {currentBannerUrl && (
+                  <Button
+                    onClick={handleDeleteBanner}
+                    disabled={isDeleting}
+                    variant="destructive"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    {isDeleting ? 'Deleting...' : 'Delete Current'}
+                  </Button>
+                )}
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
