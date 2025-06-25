@@ -98,11 +98,6 @@ const GlobalAICopilot: React.FC = () => {
     setIsVisible(false);
   };
 
-  // Don't show on app routes (only show on public pages)
-  const shouldShow = !location.pathname.startsWith('/app');
-
-  if (!shouldShow) return null;
-
   return (
     <>
       {/* Floating AI Copilot Button */}
