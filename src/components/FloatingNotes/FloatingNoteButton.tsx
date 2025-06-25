@@ -22,10 +22,13 @@ const FloatingNoteButton: React.FC<FloatingNoteButtonProps> = ({
   const { openFloatingNote, isNoteFloating } = useFloatingNotes();
 
   const handleOpenFloating = () => {
+    console.log('FloatingNoteButton: Opening floating note', note.id, note.title);
     openFloatingNote(note);
   };
 
   const isFloating = isNoteFloating(note.id);
+
+  console.log('FloatingNoteButton rendering:', { noteId: note.id, title: note.title, isFloating });
 
   if (variant === 'text') {
     return (

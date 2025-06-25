@@ -37,26 +37,31 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Load floating notes state from localStorage on mount
   useEffect(() => {
-    const savedState = localStorage.getItem('floating-notes-state');
-    if (savedState) {
-      try {
+    try {
+      const savedState = localStorage.getItem('floating-notes-state');
+      if (savedState) {
         const parsed = JSON.parse(savedState);
+        console.log('FloatingNotesProvider: Loaded state from localStorage', parsed);
         setFloatingNotes(parsed);
-      } catch (error) {
-        console.error('Error loading floating notes state:', error);
       }
+    } catch (error) {
+      console.error('Error loading floating notes state:', error);
     }
   }, []);
 
   // Save floating notes state to localStorage whenever it changes
   useEffect(() => {
+    console.log('FloatingNotesProvider: Saving state to localStorage', floatingNotes);
     localStorage.setItem('floating-notes-state', JSON.stringify(floatingNotes));
   }, [floatingNotes]);
 
   const openFloatingNote = (note: Note) => {
+    console.log('FloatingNotesProvider: Opening floating note', note.id, note.title);
+    
     // Check if note is already floating
     const existingIndex = floatingNotes.findIndex(fn => fn.noteId === note.id);
     if (existingIndex !== -1) {
+      console.log('FloatingNotesProvider: Note already floating, bringing to front');
       // Bring to front by moving to end of array
       setFloatingNotes(prev => {
         const updated = [...prev];
@@ -69,26 +74,32 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // Create new floating note with staggered position
     const offset = floatingNotes.length * 30;
+    const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    const windowHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+    
     const newFloatingNote: FloatingWindowState = {
       id: `floating-${note.id}-${Date.now()}`,
       noteId: note.id,
       position: { 
-        x: Math.min(100 + offset, window.innerWidth - 400), 
-        y: Math.min(100 + offset, window.innerHeight - 300) 
+        x: Math.min(100 + offset, windowWidth - 400), 
+        y: Math.min(100 + offset, windowHeight - 300) 
       },
       size: { width: 400, height: 300 },
       isMinimized: false,
       note,
     };
 
+    console.log('FloatingNotesProvider: Creating new floating note', newFloatingNote);
     setFloatingNotes(prev => [...prev, newFloatingNote]);
   };
 
   const closeFloatingNote = (noteId: string) => {
+    console.log('FloatingNotesProvider: Closing floating note', noteId);
     setFloatingNotes(prev => prev.filter(fn => fn.noteId !== noteId));
   };
 
   const minimizeFloatingNote = (noteId: string, minimized: boolean) => {
+    console.log('FloatingNotesProvider: Minimizing floating note', noteId, minimized);
     setFloatingNotes(prev =>
       prev.map(fn =>
         fn.noteId === noteId ? { ...fn, isMinimized: minimized } : fn
@@ -97,6 +108,7 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const updateFloatingNotePosition = (noteId: string, position: { x: number; y: number }) => {
+    console.log('FloatingNotesProvider: Updating position', noteId, position);
     setFloatingNotes(prev =>
       prev.map(fn =>
         fn.noteId === noteId ? { ...fn, position } : fn
@@ -105,6 +117,7 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const updateFloatingNoteSize = (noteId: string, size: { width: number; height: number }) => {
+    console.log('FloatingNotesProvider: Updating size', noteId, size);
     setFloatingNotes(prev =>
       prev.map(fn =>
         fn.noteId === noteId ? { ...fn, size } : fn
@@ -113,6 +126,7 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const updateFloatingNoteContent = (noteId: string, content: string) => {
+    console.log('FloatingNotesProvider: Updating content', noteId);
     setFloatingNotes(prev =>
       prev.map(fn =>
         fn.noteId === noteId ? { ...fn, note: { ...fn.note, content } } : fn

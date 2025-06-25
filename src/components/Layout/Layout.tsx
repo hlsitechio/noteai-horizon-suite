@@ -7,6 +7,7 @@ import { useLocation, Outlet } from 'react-router-dom';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { UnifiedDragDropProvider } from './UnifiedDragDropProvider';
 import SecureGlobalAICopilot from '../Global/SecureGlobalAICopilot';
+import FloatingNotesContainer from '../FloatingNotes/FloatingNotesContainer';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -41,6 +42,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           
           {/* Secure Global AI Copilot - Available on all app pages */}
           <SecureGlobalAICopilot />
+          
+          {/* Floating Notes Container - Available on all app pages */}
+          <FloatingNotesContainer />
         </div>
       </SidebarProvider>
     </UnifiedDragDropProvider>

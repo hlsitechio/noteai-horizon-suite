@@ -51,23 +51,29 @@ const FloatingNoteWindow: React.FC<FloatingNoteWindowProps> = ({
 
   const windowRef = useRef<HTMLDivElement>(null);
 
+  console.log('FloatingNoteWindow rendering:', { noteId, title, position, size, minimized });
+
   const handlePositionChange = (newPosition: FloatingWindowPosition) => {
+    console.log('FloatingNoteWindow: Position changed', newPosition);
     setPosition(newPosition);
     onPositionChange(noteId, newPosition);
   };
 
   const handleSizeChange = (newSize: FloatingWindowSize) => {
+    console.log('FloatingNoteWindow: Size changed', newSize);
     setSize(newSize);
     onSizeChange(noteId, newSize);
   };
 
   const handleMinimize = () => {
     const newMinimized = !minimized;
+    console.log('FloatingNoteWindow: Minimize toggled', newMinimized);
     setMinimized(newMinimized);
     onMinimize(noteId, newMinimized);
   };
 
   const handleClose = () => {
+    console.log('FloatingNoteWindow: Closing', noteId);
     onClose(noteId);
   };
 
@@ -100,11 +106,12 @@ const FloatingNoteWindow: React.FC<FloatingNoteWindowProps> = ({
         top: position.y,
         width: minimized ? 300 : size.width,
         height: minimized ? 50 : size.height,
-        zIndex: 1000,
+        zIndex: 10000,
+        pointerEvents: 'auto', // Enable pointer events for the window
       }}
       className="floating-note-window"
     >
-      <Card className="h-full shadow-xl border-2 border-blue-200 dark:border-blue-700">
+      <Card className="h-full shadow-xl border-2 border-blue-200 dark:border-blue-700 pointer-events-auto">
         <FloatingWindowHeader
           title={title}
           isMinimized={minimized}
