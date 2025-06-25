@@ -24,11 +24,16 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
     const file = event.target.files?.[0];
     if (!file) return;
 
+    console.log('BannerUpload: File selected:', file.name, file.type, file.size);
+
     // Check if it's an image or video
     const isImage = file.type.startsWith('image/');
     const isVideo = file.type.startsWith('video/');
 
+    console.log('BannerUpload: File type check - isImage:', isImage, 'isVideo:', isVideo);
+
     if (!isImage && !isVideo) {
+      console.log('BannerUpload: Invalid file type');
       toast.error('Please select an image or video file');
       return;
     }
@@ -36,22 +41,30 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
     // Check file size (max 50MB for videos, 10MB for images)
     const maxSize = isVideo ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
     if (file.size > maxSize) {
+      console.log('BannerUpload: File too large:', file.size, 'max:', maxSize);
       toast.error(`File size must be less than ${isVideo ? '50MB' : '10MB'}`);
       return;
     }
 
-    // For MP4 videos, check if it's actually MP4
-    if (isVideo && !file.type.includes('mp4')) {
+    // For videos, check if it's MP4 - Fixed validation logic
+    if (isVideo && !file.type.includes('mp4') && !file.name.toLowerCase().endsWith('.mp4')) {
+      console.log('BannerUpload: Not MP4 format:', file.type);
       toast.error('Only MP4 videos are supported');
       return;
     }
 
     setBannerType(isVideo ? 'video' : 'image');
+    console.log('BannerUpload: Banner type set to:', isVideo ? 'video' : 'image');
 
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
+      console.log('BannerUpload: File read successfully, data URL length:', result.length);
       setSelectedBanner(result);
+    };
+    reader.onerror = (e) => {
+      console.error('BannerUpload: FileReader error:', e);
+      toast.error('Failed to read file');
     };
     reader.readAsDataURL(file);
   };
@@ -59,6 +72,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
   const handleUploadBanner = async () => {
     if (!selectedBanner) return;
 
+    console.log('BannerUpload: Starting upload process, type:', bannerType);
     setIsUploading(true);
     try {
       // For now, we'll store the base64 banner in localStorage
@@ -71,13 +85,14 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
       };
       
       localStorage.setItem(bannerKey, JSON.stringify(bannerData));
+      console.log('BannerUpload: Banner saved to localStorage:', bannerData);
 
       onBannerUpdate?.(selectedBanner, bannerType);
       setIsOpen(false);
       setSelectedBanner(null);
-      toast.success('Dashboard banner updated successfully!');
+      toast.success(`Dashboard ${bannerType} banner updated successfully!`);
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error('BannerUpload: Upload error:', error);
       toast.error('Failed to update dashboard banner');
     } finally {
       setIsUploading(false);
@@ -85,6 +100,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
   };
 
   const resetBanner = () => {
+    console.log('BannerUpload: Resetting banner');
     setSelectedBanner(null);
     setBannerType('image');
     if (fileInputRef.current) {
@@ -115,7 +131,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*,video/mp4"
+                accept="image/*,video/mp4,video/*"
                 onChange={handleFileSelect}
                 className="hidden"
               />
@@ -125,7 +141,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
               </div>
               <p className="text-gray-600 mb-4">Select a banner image or MP4 video for your dashboard</p>
               <p className="text-sm text-gray-500 mb-4">
-                Images: Max 10MB • Videos: Max 50MB (MP4 only)
+                Images: Max 10MB • Videos: Max 50MB (MP4 format)
                 <br />
                 Recommended: 1200x400px for images
               </p>
@@ -154,6 +170,14 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
                       className="max-w-full h-48 object-cover border rounded"
                       controls
                       muted
+                      preload="metadata"
+                      onError={(e) => {
+                        console.error('BannerUpload: Video preview error:', e);
+                        toast.error('Video preview failed');
+                      }}
+                      onLoadedMetadata={() => {
+                        console.log('BannerUpload: Video metadata loaded successfully');
+                      }}
                     >
                       Your browser does not support video playback.
                     </video>
@@ -171,7 +195,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
                     ) : (
                       <>
                         <Video className="w-4 h-4" />
-                        <span>Video Banner</span>
+                        <span>Video Banner (MP4)</span>
                       </>
                     )}
                   </div>

@@ -20,15 +20,17 @@ const WelcomeHeader: React.FC = () => {
   useEffect(() => {
     // Load banner from localStorage on component mount
     const savedBanner = localStorage.getItem('dashboard_banner');
+    console.log('WelcomeHeader: Loading banner from localStorage:', savedBanner);
     if (savedBanner) {
       try {
         const bannerInfo = JSON.parse(savedBanner);
+        console.log('WelcomeHeader: Banner info parsed:', bannerInfo);
         setBannerData({
           url: bannerInfo.url,
           type: bannerInfo.type || 'image'
         });
       } catch (error) {
-        console.error('Error loading saved banner:', error);
+        console.error('WelcomeHeader: Error loading saved banner:', error);
       }
     }
   }, []);
@@ -56,6 +58,7 @@ const WelcomeHeader: React.FC = () => {
   };
 
   const handleBannerUpdate = (bannerUrl: string, type: 'image' | 'video') => {
+    console.log('WelcomeHeader: Banner updated:', type, bannerUrl.substring(0, 50) + '...');
     setBannerData({ url: bannerUrl, type });
   };
 
@@ -71,12 +74,27 @@ const WelcomeHeader: React.FC = () => {
             loop
             muted
             playsInline
+            onError={(e) => {
+              console.error('WelcomeHeader: Video playback error:', e);
+            }}
+            onLoadedData={() => {
+              console.log('WelcomeHeader: Video loaded successfully');
+            }}
+            onCanPlay={() => {
+              console.log('WelcomeHeader: Video can play');
+            }}
           />
         ) : (
           <img
             src={bannerData.url}
             alt="Dashboard banner"
             className="absolute inset-0 w-full h-full object-cover"
+            onError={(e) => {
+              console.error('WelcomeHeader: Image load error:', e);
+            }}
+            onLoad={() => {
+              console.log('WelcomeHeader: Image loaded successfully');
+            }}
           />
         )
       ) : (
