@@ -8,6 +8,7 @@ export interface BannerUploadProps {
 export interface BannerState {
   isOpen: boolean;
   selectedBanner: string | null;
+  selectedFile: File | null;
   bannerType: 'image' | 'video';
   isUploading: boolean;
   isDeleting: boolean;

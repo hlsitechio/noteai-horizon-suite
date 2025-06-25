@@ -18,6 +18,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
   const [state, setState] = useState<BannerState>({
     isOpen: false,
     selectedBanner: null,
+    selectedFile: null,
     bannerType: 'image',
     isUploading: false,
     isDeleting: false,
@@ -46,7 +47,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
       return;
     }
 
-    updateState({ bannerType: validation.type! });
+    updateState({ bannerType: validation.type!, selectedFile: file });
     console.log('BannerUpload: Banner type set to:', validation.type);
 
     const reader = new FileReader();
@@ -64,7 +65,8 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
   };
 
   const handleUploadBanner = async () => {
-    if (!state.selectedBanner || !fileInputRef.current?.files?.[0]) {
+    if (!state.selectedBanner || !state.selectedFile) {
+      console.error('BannerUpload: No file selected - selectedBanner:', !!state.selectedBanner, 'selectedFile:', !!state.selectedFile);
       updateState({ uploadError: 'No file selected' });
       return;
     }
@@ -73,10 +75,9 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
     updateState({ isUploading: true, uploadError: null });
     
     try {
-      const file = fileInputRef.current.files[0];
-      console.log('BannerUpload: Uploading file:', file.name, file.size, file.type);
+      console.log('BannerUpload: Uploading file:', state.selectedFile.name, state.selectedFile.size, state.selectedFile.type);
       
-      const bannerData = await BannerStorageService.uploadBanner(file, 'dashboard');
+      const bannerData = await BannerStorageService.uploadBanner(state.selectedFile, 'dashboard');
       
       if (bannerData) {
         console.log('BannerUpload: Upload successful:', bannerData);
@@ -84,6 +85,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
         updateState({ 
           isOpen: false, 
           selectedBanner: null, 
+          selectedFile: null,
           uploadError: null 
         });
       } else {
@@ -123,6 +125,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
     console.log('BannerUpload: Resetting banner');
     updateState({ 
       selectedBanner: null, 
+      selectedFile: null,
       bannerType: 'image', 
       uploadError: null 
     });
