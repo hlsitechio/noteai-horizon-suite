@@ -60,8 +60,8 @@ const Dashboard: React.FC = () => {
     <div className="h-screen bg-background overflow-hidden flex flex-col">
       <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full min-h-0">
         
-        {/* Top Section - KPI Stats - No top padding */}
-        <div className="flex-shrink-0 mb-4 pt-4 px-4">
+        {/* Top Section - KPI Stats - Remove padding */}
+        <div className="flex-shrink-0 mb-4 pt-2">
           <KPIStats 
             totalNotes={totalNotes}
             favoriteNotes={favoriteNotes}
@@ -70,8 +70,8 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Aligned to top */}
-        <div className="flex-1 min-h-0 grid grid-cols-12 gap-4 mb-4 items-start px-4">
+        {/* Main Content Area - Remove gap between columns */}
+        <div className="flex-1 min-h-0 grid grid-cols-12 gap-2 mb-4 items-start">
           {/* Recent Activity - Takes more space */}
           <div className="col-span-8 min-h-0">
             <RecentActivity 
@@ -92,7 +92,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Bottom Section - AI Toolbar */}
-        <div className="flex-shrink-0 flex justify-center pb-2 px-4">
+        <div className="flex-shrink-0 flex justify-center pb-2">
           <QuantumAI3DToolbar />
         </div>
       </div>
