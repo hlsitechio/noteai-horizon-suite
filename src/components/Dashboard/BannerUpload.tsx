@@ -120,7 +120,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
           Upload Banner
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle>Upload Dashboard Banner</DialogTitle>
         </DialogHeader>
@@ -143,7 +143,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
               <p className="text-sm text-gray-500 mb-4">
                 Images: Max 10MB • Videos: Max 50MB (MP4 format)
                 <br />
-                Recommended: 1200x400px for images
+                Recommended: 1920x1080px for optimal quality
               </p>
               <Button
                 onClick={() => fileInputRef.current?.click()}
@@ -162,15 +162,16 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
                     <img
                       src={selectedBanner}
                       alt="Banner preview"
-                      className="max-w-full h-48 object-cover border rounded"
+                      className="max-w-full h-64 object-cover border rounded"
                     />
                   ) : (
                     <video
                       src={selectedBanner}
-                      className="max-w-full h-48 object-cover border rounded"
+                      className="max-w-full h-64 object-cover border rounded"
                       controls
                       muted
                       preload="metadata"
+                      style={{ aspectRatio: '16/9' }}
                       onError={(e) => {
                         console.error('BannerUpload: Video preview error:', e);
                         toast.error('Video preview failed');
@@ -190,12 +191,12 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
                     {bannerType === 'image' ? (
                       <>
                         <ImageIcon className="w-4 h-4" />
-                        <span>Image Banner</span>
+                        <span>Image Banner (1920x1080 recommended)</span>
                       </>
                     ) : (
                       <>
                         <Video className="w-4 h-4" />
-                        <span>Video Banner (MP4)</span>
+                        <span>Video Banner (1920x1080 MP4)</span>
                       </>
                     )}
                   </div>
