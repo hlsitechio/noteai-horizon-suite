@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Clock } from 'lucide-react';
+import { Clock, Upload, Image } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const WelcomeHeader: React.FC = () => {
   const { user } = useAuth();
@@ -38,28 +39,53 @@ const WelcomeHeader: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 rounded-xl p-6 mb-6 border border-blue-100 dark:border-slate-600">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+    <div className="relative h-64 overflow-hidden rounded-xl mb-6 border border-blue-100 dark:border-slate-600">
+      {/* Banner Background - Placeholder */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600"></div>
+      <div className="absolute inset-0 bg-black/20"></div>
+      
+      {/* Banner Placeholder Content */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-30">
+        <div className="text-center text-white">
+          <Image className="w-16 h-16 mx-auto mb-4" />
+          <p className="text-lg font-medium">Banner Image Placeholder</p>
+          <p className="text-sm">Upload a banner to personalize your dashboard</p>
+        </div>
+      </div>
+
+      {/* Content Overlay */}
+      <div className="relative z-10 h-full flex items-end p-8">
+        <div className="text-white flex-1">
+          <h1 className="text-4xl font-bold text-white mb-2">
             Welcome back, {getFirstName(user?.name || '')}! 👋
           </h1>
-          <p className="text-gray-600 dark:text-gray-300">
+          <p className="text-xl text-white/90 mb-4">
             {formatDate(currentTime)}
           </p>
         </div>
+        
         <div className="flex items-center gap-3 text-right">
-          <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+          <div className="flex items-center gap-2 text-white/90">
             <Clock className="w-5 h-5" />
             <div>
-              <div className="text-lg font-semibold text-gray-900 dark:text-white">
+              <div className="text-lg font-semibold text-white">
                 {formatTime(currentTime)}
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
+              <div className="text-sm text-white/70">
                 Local Time
               </div>
             </div>
           </div>
+          
+          {/* Upload Banner Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white hover:bg-white/20 border border-white/30"
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            Upload Banner
+          </Button>
         </div>
       </div>
     </div>
