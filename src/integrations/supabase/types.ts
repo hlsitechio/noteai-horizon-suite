@@ -1036,6 +1036,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_enhanced_rate_limit_v2: {
+        Args: {
+          user_uuid: string
+          action_type: string
+          max_requests?: number
+          time_window?: unknown
+        }
+        Returns: boolean
+      }
       check_rate_limit: {
         Args: {
           user_uuid: string
@@ -1105,6 +1114,15 @@ export type Database = {
           is_favorite: boolean
           relevance_score: number
         }[]
+      }
+      track_ai_usage_enhanced: {
+        Args: {
+          user_uuid: string
+          request_type_param: string
+          tokens_used_param?: number
+          model_name_param?: string
+        }
+        Returns: undefined
       }
       track_copilot_usage: {
         Args: { user_uuid: string; tokens_used?: number; model_name?: string }
