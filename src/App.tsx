@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -13,6 +12,8 @@ import { AccentColorProvider } from './contexts/AccentColorContext';
 import { QuantumAIProvider } from './contexts/QuantumAIContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout/Layout';
+import { FloatingNotesProvider } from './contexts/FloatingNotesContext';
+import FloatingNotesContainer from './components/FloatingNotes/FloatingNotesContainer';
 
 // Pages
 import Index from './pages/Index';
@@ -56,105 +57,108 @@ function App() {
                   <ProjectRealmsProvider>
                     <FoldersProvider>
                       <NotesProvider>
-                        <div className="min-h-screen bg-background text-foreground">
-                          <Routes>
-                            {/* Public Routes */}
-                            <Route path="/" element={<Index />} />
-                            <Route path="/landing" element={<Landing />} />
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/register" element={<Register />} />
-                            <Route path="/reset-password" element={<ResetPassword />} />
-                            <Route path="/privacy" element={<Privacy />} />
-                            <Route path="/terms" element={<Terms />} />
-                            <Route path="/contact" element={<Contact />} />
-                            <Route path="/sitemap" element={<Sitemap />} />
+                        <FloatingNotesProvider>
+                          <div className="min-h-screen bg-background text-foreground">
+                            <Routes>
+                              {/* Public Routes */}
+                              <Route path="/" element={<Index />} />
+                              <Route path="/landing" element={<Landing />} />
+                              <Route path="/login" element={<Login />} />
+                              <Route path="/register" element={<Register />} />
+                              <Route path="/reset-password" element={<ResetPassword />} />
+                              <Route path="/privacy" element={<Privacy />} />
+                              <Route path="/terms" element={<Terms />} />
+                              <Route path="/contact" element={<Contact />} />
+                              <Route path="/sitemap" element={<Sitemap />} />
 
-                            {/* Protected Routes */}
-                            <Route path="/app" element={
-                              <ProtectedRoute>
-                                <Layout>
-                                  <Navigate to="/app/dashboard" replace />
-                                </Layout>
-                              </ProtectedRoute>
-                            } />
-                            
-                            <Route path="/app/dashboard" element={
-                              <ProtectedRoute>
-                                <Layout>
-                                  <Dashboard />
-                                </Layout>
-                              </ProtectedRoute>
-                            } />
-                            
-                            <Route path="/app/notes" element={
-                              <ProtectedRoute>
-                                <Layout>
-                                  <Notes />
-                                </Layout>
-                              </ProtectedRoute>
-                            } />
+                              {/* Protected Routes */}
+                              <Route path="/app" element={
+                                <ProtectedRoute>
+                                  <Layout>
+                                    <Navigate to="/app/dashboard" replace />
+                                  </Layout>
+                                </ProtectedRoute>
+                              } />
+                              
+                              <Route path="/app/dashboard" element={
+                                <ProtectedRoute>
+                                  <Layout>
+                                    <Dashboard />
+                                  </Layout>
+                                </ProtectedRoute>
+                              } />
+                              
+                              <Route path="/app/notes" element={
+                                <ProtectedRoute>
+                                  <Layout>
+                                    <Notes />
+                                  </Layout>
+                                </ProtectedRoute>
+                              } />
 
-                            <Route path="/app/folders/:folderId" element={
-                              <ProtectedRoute>
-                                <Layout>
-                                  <FolderDetail />
-                                </Layout>
-                              </ProtectedRoute>
-                            } />
-                            
-                            <Route path="/app/editor" element={
-                              <ProtectedRoute>
-                                <Layout>
-                                  <Editor />
-                                </Layout>
-                              </ProtectedRoute>
-                            } />
-                            
-                            <Route path="/app/chat" element={
-                              <ProtectedRoute>
-                                <Layout>
-                                  <Chat />
-                                </Layout>
-                              </ProtectedRoute>
-                            } />
-                            
-                            <Route path="/app/calendar" element={
-                              <ProtectedRoute>
-                                <Layout>
-                                  <Calendar />
-                                </Layout>
-                              </ProtectedRoute>
-                            } />
-                            
-                            <Route path="/app/projects" element={
-                              <ProtectedRoute>
-                                <Layout>
-                                  <ProjectRealms />
-                                </Layout>
-                              </ProtectedRoute>
-                            } />
-                            
-                            <Route path="/app/projects/:projectId" element={
-                              <ProtectedRoute>
-                                <Layout>
-                                  <ProjectDetail />
-                                </Layout>
-                              </ProtectedRoute>
-                            } />
-                            
-                            <Route path="/app/settings" element={
-                              <ProtectedRoute>
-                                <Layout>
-                                  <Settings />
-                                </Layout>
-                              </ProtectedRoute>
-                            } />
+                              <Route path="/app/folders/:folderId" element={
+                                <ProtectedRoute>
+                                  <Layout>
+                                    <FolderDetail />
+                                  </Layout>
+                                </ProtectedRoute>
+                              } />
+                              
+                              <Route path="/app/editor" element={
+                                <ProtectedRoute>
+                                  <Layout>
+                                    <Editor />
+                                  </Layout>
+                                </ProtectedRoute>
+                              } />
+                              
+                              <Route path="/app/chat" element={
+                                <ProtectedRoute>
+                                  <Layout>
+                                    <Chat />
+                                  </Layout>
+                                </ProtectedRoute>
+                              } />
+                              
+                              <Route path="/app/calendar" element={
+                                <ProtectedRoute>
+                                  <Layout>
+                                    <Calendar />
+                                  </Layout>
+                                </ProtectedRoute>
+                              } />
+                              
+                              <Route path="/app/projects" element={
+                                <ProtectedRoute>
+                                  <Layout>
+                                    <ProjectRealms />
+                                  </Layout>
+                                </ProtectedRoute>
+                              } />
+                              
+                              <Route path="/app/projects/:projectId" element={
+                                <ProtectedRoute>
+                                  <Layout>
+                                    <ProjectDetail />
+                                  </Layout>
+                                </ProtectedRoute>
+                              } />
+                              
+                              <Route path="/app/settings" element={
+                                <ProtectedRoute>
+                                  <Layout>
+                                    <Settings />
+                                  </Layout>
+                                </ProtectedRoute>
+                              } />
 
-                            {/* Catch all route */}
-                            <Route path="*" element={<NotFound />} />
-                          </Routes>
-                          <Toaster />
-                        </div>
+                              {/* Catch all route */}
+                              <Route path="*" element={<NotFound />} />
+                            </Routes>
+                            <Toaster />
+                            <FloatingNotesContainer />
+                          </div>
+                        </FloatingNotesProvider>
                       </NotesProvider>
                     </FoldersProvider>
                   </ProjectRealmsProvider>
