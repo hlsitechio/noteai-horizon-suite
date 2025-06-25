@@ -14,11 +14,14 @@ const Notes: React.FC = () => {
 
   useQuantumAIIntegration({
     page: '/app/notes',
-    content: `Notes page with ${notes.length} notes`,
+    content: `Notes page with ${notes.length} notes. Current filters: ${filters.searchTerm || 'none'}`,
     metadata: {
       hasNotes: notes.length > 0,
       selectedNote: selectedNote?.id,
-      folders: folders.length
+      folders: folders.length,
+      totalNotes: notes.length,
+      filteredNotesCount: filteredNotes.length,
+      activeFilters: Object.values(filters).filter(Boolean).length
     }
   });
 

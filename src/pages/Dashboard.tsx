@@ -3,6 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
 import { useIsMobile } from '../hooks/use-mobile';
+import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import KPIStats from '../components/Dashboard/KPIStats';
 import RecentActivity from '../components/Dashboard/RecentActivity';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
@@ -30,6 +31,20 @@ const Dashboard: React.FC = () => {
     weekAgo.setDate(weekAgo.getDate() - 7);
     return new Date(note.createdAt) > weekAgo;
   }).length;
+
+  // Enhanced AI context integration
+  useQuantumAIIntegration({
+    page: '/app/dashboard',
+    content: `Dashboard overview: ${totalNotes} total notes, ${favoriteNotes} favorites, ${weeklyNotes} notes this week`,
+    metadata: {
+      totalNotes,
+      favoriteNotes,
+      weeklyNotes,
+      categoryCounts,
+      recentNotesCount: recentNotes.length,
+      hasRecentActivity: recentNotes.length > 0
+    }
+  });
 
   const handleCreateNote = () => {
     setCurrentNote(null);
