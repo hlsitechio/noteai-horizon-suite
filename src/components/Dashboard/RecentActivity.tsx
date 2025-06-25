@@ -32,6 +32,35 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
     }).format(date);
   };
 
+  // Function to extract plain text from rich text editor JSON content
+  const extractPlainText = (content: string): string => {
+    if (!content) return 'No content available...';
+    
+    try {
+      // Try to parse as JSON (Slate.js format)
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed)) {
+        return parsed
+          .map((node: any) => {
+            if (node.children && Array.isArray(node.children)) {
+              return node.children
+                .map((child: any) => child.text || '')
+                .join('')
+                .trim();
+            }
+            return '';
+          })
+          .filter(text => text.length > 0)
+          .join(' ') || 'No content available...';
+      }
+    } catch (error) {
+      // If it's not JSON, treat as plain text
+      return content.trim() || 'No content available...';
+    }
+    
+    return 'No content available...';
+  };
+
   return (
     <Card className="w-full h-full border border-border/10 shadow-premium bg-card/50 backdrop-blur-xl rounded-2xl flex flex-col">
       <CardHeader className={`${isMobile ? 'p-4 pb-3' : 'p-6 pb-4'} border-b border-border/10 flex-shrink-0`}>
@@ -82,7 +111,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
                     )}
                   </div>
                   <p className={`text-muted-foreground line-clamp-2 mb-3 ${isMobile ? 'text-xs' : 'text-sm'}`}>
-                    {note.content || 'No content available...'}
+                    {extractPlainText(note.content)}
                   </p>
                   <div className="flex items-center gap-3">
                     <Badge variant="secondary" className="text-xs bg-accent/10 text-accent border-accent/20">
