@@ -20,7 +20,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Note } from '../../../types/note';
-import { SafeDraggableWrapper } from './SafeDraggableWrapper';
+import DesktopPopOutButton from '../../FloatingNotes/DesktopPopOutButton';
 
 interface NotesListSectionProps {
   notes: Note[];
@@ -40,21 +40,27 @@ export function NotesListSection({
   const recentNotes = notes.slice(0, 5);
 
   const renderNoteItem = (note: Note, index: number) => {
-    // Simplified note item without drag wrapper for better click handling
     return (
       <SidebarMenuItem key={note.id}>
-        <SidebarMenuButton asChild>
-          <Link 
-            to={`/app/notes?note=${note.id}`} 
-            className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full"
-          >
-            <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
-            <span className="truncate text-xs flex-1">{note.title}</span>
-            {note.isFavorite && (
-              <Star className="h-3 w-3 ml-auto text-accent fill-current" />
-            )}
-          </Link>
-        </SidebarMenuButton>
+        <div className="flex items-center w-full">
+          <SidebarMenuButton asChild className="flex-1">
+            <Link 
+              to={`/app/notes?note=${note.id}`} 
+              className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
+              <span className="truncate text-xs flex-1">{note.title}</span>
+              {note.isFavorite && (
+                <Star className="h-3 w-3 ml-auto text-accent fill-current" />
+              )}
+            </Link>
+          </SidebarMenuButton>
+          <DesktopPopOutButton 
+            note={note} 
+            size="sm" 
+            className="ml-1 h-6 w-6 p-0 flex-shrink-0" 
+          />
+        </div>
       </SidebarMenuItem>
     );
   };

@@ -3,9 +3,9 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, Clock, Tag, ExternalLink } from 'lucide-react';
+import { Plus, Edit, Clock, Tag } from 'lucide-react';
 import { Note } from '../../types/note';
-import FloatingNoteButton from '../FloatingNotes/FloatingNoteButton';
+import DesktopPopOutButton from '../FloatingNotes/DesktopPopOutButton';
 
 interface RecentActivityProps {
   recentNotes: Note[];
@@ -73,7 +73,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
                   {note.title || 'Untitled Note'}
                 </h3>
                 <div className="flex items-center gap-2">
-                  <FloatingNoteButton note={note} />
+                  <DesktopPopOutButton note={note} />
                   <Button
                     variant="ghost"
                     size="sm"
