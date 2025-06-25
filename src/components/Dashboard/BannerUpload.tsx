@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Upload, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { BannerStorageService } from '@/services/bannerStorageService';
+import { BannerStorageService } from '@/services/bannerStorage';
 import { BannerUploadProps, BannerState } from './BannerUpload/types';
 import { validateFile } from './BannerUpload/utils';
 import BannerPreview from './BannerUpload/BannerPreview';

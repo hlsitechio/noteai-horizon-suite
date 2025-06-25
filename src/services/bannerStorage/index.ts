@@ -3,7 +3,7 @@ import { BannerUploadService } from './uploadService';
 import { BannerRetrievalService } from './retrievalService';
 import { BannerDeletionService } from './deletionService';
 
-export { BannerData, BannerMetadata, BannerUploadResult } from './types';
+export type { BannerData, BannerMetadata, BannerUploadResult } from './types';
 
 export class BannerStorageService {
   static async uploadBanner(

@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Clock, Image } from 'lucide-react';
 import BannerUpload from './BannerUpload';
-import { BannerStorageService, BannerData } from '@/services/bannerStorageService';
+import { BannerStorageService, BannerData } from '@/services/bannerStorage';
 
 const WelcomeHeader: React.FC = () => {
   const { user } = useAuth();

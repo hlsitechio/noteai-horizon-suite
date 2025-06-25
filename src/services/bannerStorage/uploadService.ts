@@ -48,10 +48,7 @@ export class BannerUploadService {
       console.log('BannerUploadService: Banner saved successfully:', bannerData);
       toast.success('Banner uploaded successfully!');
       
-      return {
-        ...bannerData,
-        file_type: bannerData.file_type as 'image' | 'video'
-      };
+      return bannerData;
     } catch (error) {
       console.error('BannerUploadService: Upload exception:', error);
       toast.error(`Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -116,6 +113,10 @@ export class BannerUploadService {
       return null;
     }
 
-    return bannerData;
+    // Ensure proper type casting for the returned data
+    return {
+      ...bannerData,
+      file_type: bannerData.file_type as 'image' | 'video'
+    };
   }
 }
