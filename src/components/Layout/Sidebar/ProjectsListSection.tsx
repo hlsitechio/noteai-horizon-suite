@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Droppable } from 'react-beautiful-dnd';
 import { 
   SidebarGroup, 
   SidebarGroupContent, 
@@ -58,27 +57,17 @@ export function ProjectsListSection({
             <SidebarGroupContent>
               <SidebarMenu>
                 {activeProjects.map((project) => (
-                  <Droppable key={project.id} droppableId={`sidebar-project-${project.id}`}>
-                    {(provided, snapshot) => (
-                      <SidebarMenuItem
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
+                  <SidebarMenuItem key={project.id}>
+                    <SidebarMenuButton asChild>
+                      <Link 
+                        to={`/app/projects?project=${project.id}`} 
+                        className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors"
                       >
-                        <SidebarMenuButton asChild>
-                          <Link 
-                            to={`/app/projects?project=${project.id}`} 
-                            className={`flex items-center hover:bg-accent hover:text-accent-foreground transition-colors ${
-                              snapshot.isDraggingOver ? 'bg-accent/50' : ''
-                            }`}
-                          >
-                            <Folder className="h-3 w-3 mr-2 flex-shrink-0" />
-                            <span className="truncate text-xs">{project.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
-                        {provided.placeholder}
-                      </SidebarMenuItem>
-                    )}
-                  </Droppable>
+                        <Folder className="h-3 w-3 mr-2 flex-shrink-0" />
+                        <span className="truncate text-xs">{project.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 ))}
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>

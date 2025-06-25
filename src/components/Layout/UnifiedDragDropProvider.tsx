@@ -28,16 +28,8 @@ export function UnifiedDragDropProvider({ children }: UnifiedDragDropProviderPro
   useEffect(() => {
     mountedRef.current = true;
     
-    // Use requestAnimationFrame to ensure DOM is ready
-    const checkContext = () => {
-      if (mountedRef.current && contextRef.current) {
-        setIsReady(true);
-      } else if (mountedRef.current) {
-        requestAnimationFrame(checkContext);
-      }
-    };
-
-    requestAnimationFrame(checkContext);
+    // Set ready immediately since we're providing the context
+    setIsReady(true);
 
     return () => {
       mountedRef.current = false;
@@ -46,13 +38,10 @@ export function UnifiedDragDropProvider({ children }: UnifiedDragDropProviderPro
 
   const handleContextRef = (ref: any) => {
     contextRef.current = ref;
-    if (ref && mountedRef.current) {
-      setIsReady(true);
-    }
   };
 
   return (
-    <DragDropReadyContext.Provider value={{ isReady, contextRef }}>
+    <DragDropReadyContext.Provider value={{ isReady: true, contextRef }}>
       <DragDropContext onDragEnd={handleDragEnd} ref={handleContextRef}>
         {children}
       </DragDropContext>
