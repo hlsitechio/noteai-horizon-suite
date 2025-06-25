@@ -1054,6 +1054,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      cleanup_expired_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      ensure_authenticated: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       find_similar_notes_text: {
         Args: { search_text: string; user_uuid: string; max_results?: number }
         Returns: {
@@ -1061,6 +1069,15 @@ export type Database = {
           title: string
           content: string
           created_at: string
+        }[]
+      }
+      get_current_user_data: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_id: string
+          email: string
+          display_name: string
+          role: Database["public"]["Enums"]["app_role"]
         }[]
       }
       get_current_user_role: {
@@ -1132,6 +1149,10 @@ export type Database = {
         Args:
           | Record<PropertyKey, never>
           | { content: string; max_length?: number }
+        Returns: boolean
+      }
+      validate_content_security: {
+        Args: { content: string }
         Returns: boolean
       }
       validate_note_content: {
