@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Clock, Upload, Image } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Clock, Image } from 'lucide-react';
+import BannerUpload from './BannerUpload';
 
 const WelcomeHeader: React.FC = () => {
   const { user } = useAuth();
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [bannerData, setBannerData] = useState<{url: string, type: 'image' | 'video'} | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -14,6 +15,22 @@ const WelcomeHeader: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    // Load banner from localStorage on component mount
+    const savedBanner = localStorage.getItem('dashboard_banner');
+    if (savedBanner) {
+      try {
+        const bannerInfo = JSON.parse(savedBanner);
+        setBannerData({
+          url: bannerInfo.url,
+          type: bannerInfo.type || 'image'
+        });
+      } catch (error) {
+        console.error('Error loading saved banner:', error);
+      }
+    }
   }, []);
 
   const formatTime = (date: Date) => {
@@ -38,20 +55,47 @@ const WelcomeHeader: React.FC = () => {
     return name?.split(' ')[0] || 'User';
   };
 
+  const handleBannerUpdate = (bannerUrl: string, type: 'image' | 'video') => {
+    setBannerData({ url: bannerUrl, type });
+  };
+
   return (
     <div className="relative h-64 overflow-hidden rounded-xl mb-6 border border-blue-100 dark:border-slate-600">
-      {/* Banner Background - Placeholder */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600"></div>
-      <div className="absolute inset-0 bg-black/20"></div>
+      {/* Banner Background */}
+      {bannerData ? (
+        bannerData.type === 'video' ? (
+          <video
+            src={bannerData.url}
+            className="absolute inset-0 w-full h-full object-cover"
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+        ) : (
+          <img
+            src={bannerData.url}
+            alt="Dashboard banner"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600"></div>
+      )}
       
-      {/* Banner Placeholder Content */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-30">
-        <div className="text-center text-white">
-          <Image className="w-16 h-16 mx-auto mb-4" />
-          <p className="text-lg font-medium">Banner Image Placeholder</p>
-          <p className="text-sm">Upload a banner to personalize your dashboard</p>
+      {/* Overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/30"></div>
+      
+      {/* Banner Placeholder Content (only show when no banner is set) */}
+      {!bannerData && (
+        <div className="absolute inset-0 flex items-center justify-center opacity-30">
+          <div className="text-center text-white">
+            <Image className="w-16 h-16 mx-auto mb-4" />
+            <p className="text-lg font-medium">Banner Placeholder</p>
+            <p className="text-sm">Upload an image or video to personalize your dashboard</p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Content Overlay */}
       <div className="relative z-10 h-full flex items-end p-8">
@@ -77,15 +121,11 @@ const WelcomeHeader: React.FC = () => {
             </div>
           </div>
           
-          {/* Upload Banner Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-white hover:bg-white/20 border border-white/30"
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            Upload Banner
-          </Button>
+          {/* Upload Banner Component */}
+          <BannerUpload
+            currentBannerUrl={bannerData?.url}
+            onBannerUpdate={handleBannerUpdate}
+          />
         </div>
       </div>
     </div>
