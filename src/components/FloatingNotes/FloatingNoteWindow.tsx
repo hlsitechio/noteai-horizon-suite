@@ -54,9 +54,8 @@ const FloatingNoteWindow: React.FC<FloatingNoteWindowProps> = ({
   const windowRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
-  // Handle dragging
+  // Handle dragging - now works for both minimized and expanded states
   const handleDragStart = (e: React.MouseEvent) => {
-    if (minimized) return;
     setIsDragging(true);
     setDragOffset({
       x: e.clientX - position.x,
@@ -66,9 +65,12 @@ const FloatingNoteWindow: React.FC<FloatingNoteWindowProps> = ({
 
   const handleDrag = (e: MouseEvent) => {
     if (isDragging) {
+      const currentHeight = minimized ? 50 : size.height;
+      const currentWidth = minimized ? 300 : size.width;
+      
       const newPosition = {
-        x: Math.max(0, Math.min(window.innerWidth - size.width, e.clientX - dragOffset.x)),
-        y: Math.max(0, Math.min(window.innerHeight - (minimized ? 50 : size.height), e.clientY - dragOffset.y)),
+        x: Math.max(0, Math.min(window.innerWidth - currentWidth, e.clientX - dragOffset.x)),
+        y: Math.max(0, Math.min(window.innerHeight - currentHeight, e.clientY - dragOffset.y)),
       };
       setPosition(newPosition);
       onPositionChange(noteId, newPosition);
@@ -79,7 +81,7 @@ const FloatingNoteWindow: React.FC<FloatingNoteWindowProps> = ({
     setIsDragging(false);
   };
 
-  // Handle resizing
+  // Handle resizing - only works when not minimized
   const handleResizeStart = (e: React.MouseEvent) => {
     if (minimized) return;
     e.stopPropagation();
