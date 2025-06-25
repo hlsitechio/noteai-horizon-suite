@@ -98,8 +98,8 @@ const GlobalAICopilot: React.FC = () => {
     setIsVisible(false);
   };
 
-  // Only show on app routes (routes that use the Layout component)
-  const shouldShow = location.pathname.startsWith('/app');
+  // Don't show on app routes (only show on public pages)
+  const shouldShow = !location.pathname.startsWith('/app');
 
   if (!shouldShow) return null;
 

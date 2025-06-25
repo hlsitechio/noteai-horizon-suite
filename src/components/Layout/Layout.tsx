@@ -6,7 +6,6 @@ import Header from './Header';
 import { useLocation, Outlet } from 'react-router-dom';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { UnifiedDragDropProvider } from './UnifiedDragDropProvider';
-import GlobalAICopilot from '../Global/GlobalAICopilot';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -38,9 +37,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {children || <Outlet />}
             </div>
           </SidebarInset>
-          
-          {/* Global AI Copilot - Available on all pages within the app */}
-          <GlobalAICopilot />
         </div>
       </SidebarProvider>
     </UnifiedDragDropProvider>
