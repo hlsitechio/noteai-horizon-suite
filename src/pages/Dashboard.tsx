@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
+import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
 import RecentActivity from '../components/Dashboard/RecentActivity';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
@@ -60,8 +61,13 @@ const Dashboard: React.FC = () => {
     <div className="h-screen bg-background overflow-hidden flex flex-col">
       <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full min-h-0">
         
-        {/* Top Section - KPI Stats - Remove padding */}
-        <div className="flex-shrink-0 mb-4 pt-2">
+        {/* Welcome Header */}
+        <div className="flex-shrink-0 pt-2">
+          <WelcomeHeader />
+        </div>
+
+        {/* Top Section - KPI Stats */}
+        <div className="flex-shrink-0 mb-4">
           <KPIStats 
             totalNotes={totalNotes}
             favoriteNotes={favoriteNotes}
