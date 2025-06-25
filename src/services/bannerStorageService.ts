@@ -76,7 +76,11 @@ export class BannerStorageService {
       }
 
       console.log('BannerStorageService: Banner saved successfully:', bannerData);
-      return bannerData;
+      // Cast the file_type to the correct union type since we know it's constrained in the database
+      return {
+        ...bannerData,
+        file_type: bannerData.file_type as 'image' | 'video'
+      };
     } catch (error) {
       console.error('BannerStorageService: Upload exception:', error);
       toast.error('Failed to upload banner');
@@ -112,7 +116,11 @@ export class BannerStorageService {
       }
 
       console.log('BannerStorageService: Retrieved banner:', data);
-      return data;
+      // Cast the file_type to the correct union type since we know it's constrained in the database
+      return data ? {
+        ...data,
+        file_type: data.file_type as 'image' | 'video'
+      } : null;
     } catch (error) {
       console.error('BannerStorageService: Get banner exception:', error);
       return null;
