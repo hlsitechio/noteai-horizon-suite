@@ -57,13 +57,19 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const openFloatingNote = (note: Note) => {
     console.log('FloatingNotesProvider: Opening floating note', note.id, note.title);
+    console.log('FloatingNotesProvider: Current floating notes before check:', floatingNotes.map(fn => ({ id: fn.id, noteId: fn.noteId })));
     
-    // Check if note is already floating
-    const existingIndex = floatingNotes.findIndex(fn => fn.noteId === note.id);
-    if (existingIndex !== -1) {
+    // Check if note is already floating - use a more robust check
+    const isAlreadyFloating = floatingNotes.some(fn => fn.noteId === note.id);
+    console.log('FloatingNotesProvider: Is note already floating?', isAlreadyFloating);
+    
+    if (isAlreadyFloating) {
       console.log('FloatingNotesProvider: Note already floating, bringing to front');
       // Bring to front by moving to end of array
       setFloatingNotes(prev => {
+        const existingIndex = prev.findIndex(fn => fn.noteId === note.id);
+        if (existingIndex === -1) return prev; // Safety check
+        
         const updated = [...prev];
         const existing = updated.splice(existingIndex, 1)[0];
         updated.push(existing);
@@ -90,7 +96,12 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     console.log('FloatingNotesProvider: Creating new floating note', newFloatingNote);
-    setFloatingNotes(prev => [...prev, newFloatingNote]);
+    setFloatingNotes(prev => {
+      console.log('FloatingNotesProvider: Previous state before adding:', prev.map(fn => ({ id: fn.id, noteId: fn.noteId })));
+      const updated = [...prev, newFloatingNote];
+      console.log('FloatingNotesProvider: New state after adding:', updated.map(fn => ({ id: fn.id, noteId: fn.noteId })));
+      return updated;
+    });
   };
 
   const closeFloatingNote = (noteId: string) => {
@@ -135,7 +146,9 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const isNoteFloating = (noteId: string) => {
-    return floatingNotes.some(fn => fn.noteId === noteId);
+    const isFloating = floatingNotes.some(fn => fn.noteId === noteId);
+    console.log('FloatingNotesProvider: isNoteFloating check', noteId, isFloating);
+    return isFloating;
   };
 
   return (

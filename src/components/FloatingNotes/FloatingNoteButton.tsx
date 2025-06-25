@@ -21,8 +21,11 @@ const FloatingNoteButton: React.FC<FloatingNoteButtonProps> = ({
 }) => {
   const { openFloatingNote, isNoteFloating } = useFloatingNotes();
 
-  const handleOpenFloating = () => {
-    console.log('FloatingNoteButton: Opening floating note', note.id, note.title);
+  const handleOpenFloating = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('FloatingNoteButton: handleOpenFloating called', note.id, note.title);
+    console.log('FloatingNoteButton: Event details:', e.type, e.currentTarget);
     openFloatingNote(note);
   };
 
