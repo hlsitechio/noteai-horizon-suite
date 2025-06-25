@@ -9,7 +9,7 @@ import { Note } from '../../types/note';
 interface FloatingNoteButtonProps {
   note: Note;
   variant?: 'icon' | 'text';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'default' | 'lg';
   className?: string;
 }
 
