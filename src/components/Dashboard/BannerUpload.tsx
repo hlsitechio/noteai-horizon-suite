@@ -114,7 +114,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
         <Button
           variant="ghost"
           size="sm"
-          className="text-white hover:bg-white/20 border border-white/30"
+          className="text-white hover:bg-white/20 border border-white/30 bg-black/20 backdrop-blur-sm"
         >
           <Upload className="w-4 h-4 mr-2" />
           Upload Banner

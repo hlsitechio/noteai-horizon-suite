@@ -63,87 +63,90 @@ const WelcomeHeader: React.FC = () => {
   };
 
   return (
-    <div className="relative h-64 overflow-hidden rounded-xl mb-6 border border-blue-100 dark:border-slate-600">
-      {/* Banner Background */}
-      {bannerData ? (
-        bannerData.type === 'video' ? (
-          <video
-            src={bannerData.url}
-            className="absolute inset-0 w-full h-full object-cover"
-            autoPlay
-            loop
-            muted
-            playsInline
-            onError={(e) => {
-              console.error('WelcomeHeader: Video playback error:', e);
-            }}
-            onLoadedData={() => {
-              console.log('WelcomeHeader: Video loaded successfully');
-            }}
-            onCanPlay={() => {
-              console.log('WelcomeHeader: Video can play');
-            }}
-          />
+    <div className="space-y-4 mb-6">
+      {/* Banner Section */}
+      <div className="relative h-64 overflow-hidden rounded-xl border border-blue-100 dark:border-slate-600">
+        {/* Banner Background */}
+        {bannerData ? (
+          bannerData.type === 'video' ? (
+            <video
+              src={bannerData.url}
+              className="absolute inset-0 w-full h-full object-cover"
+              autoPlay
+              loop
+              muted
+              playsInline
+              onError={(e) => {
+                console.error('WelcomeHeader: Video playback error:', e);
+              }}
+              onLoadedData={() => {
+                console.log('WelcomeHeader: Video loaded successfully');
+              }}
+              onCanPlay={() => {
+                console.log('WelcomeHeader: Video can play');
+              }}
+            />
+          ) : (
+            <img
+              src={bannerData.url}
+              alt="Dashboard banner"
+              className="absolute inset-0 w-full h-full object-cover"
+              onError={(e) => {
+                console.error('WelcomeHeader: Image load error:', e);
+              }}
+              onLoad={() => {
+                console.log('WelcomeHeader: Image loaded successfully');
+              }}
+            />
+          )
         ) : (
-          <img
-            src={bannerData.url}
-            alt="Dashboard banner"
-            className="absolute inset-0 w-full h-full object-cover"
-            onError={(e) => {
-              console.error('WelcomeHeader: Image load error:', e);
-            }}
-            onLoad={() => {
-              console.log('WelcomeHeader: Image loaded successfully');
-            }}
-          />
-        )
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600"></div>
-      )}
-      
-      {/* Overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/30"></div>
-      
-      {/* Banner Placeholder Content (only show when no banner is set) */}
-      {!bannerData && (
-        <div className="absolute inset-0 flex items-center justify-center opacity-30">
-          <div className="text-center text-white">
-            <Image className="w-16 h-16 mx-auto mb-4" />
-            <p className="text-lg font-medium">Banner Placeholder</p>
-            <p className="text-sm">Upload an image or video to personalize your dashboard</p>
-          </div>
-        </div>
-      )}
-
-      {/* Content Overlay */}
-      <div className="relative z-10 h-full flex items-end p-8">
-        <div className="text-white flex-1">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Welcome back, {getFirstName(user?.name || '')}! 👋
-          </h1>
-          <p className="text-xl text-white/90 mb-4">
-            {formatDate(currentTime)}
-          </p>
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600"></div>
+        )}
         
-        <div className="flex items-center gap-3 text-right">
-          <div className="flex items-center gap-2 text-white/90">
-            <Clock className="w-5 h-5" />
-            <div>
-              <div className="text-lg font-semibold text-white">
-                {formatTime(currentTime)}
-              </div>
-              <div className="text-sm text-white/70">
-                Local Time
-              </div>
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/30"></div>
+        
+        {/* Banner Placeholder Content (only show when no banner is set) */}
+        {!bannerData && (
+          <div className="absolute inset-0 flex items-center justify-center opacity-30">
+            <div className="text-center text-white">
+              <Image className="w-16 h-16 mx-auto mb-4" />
+              <p className="text-lg font-medium">Banner Placeholder</p>
+              <p className="text-sm">Upload an image or video to personalize your dashboard</p>
             </div>
           </div>
-          
-          {/* Upload Banner Component */}
+        )}
+
+        {/* Upload Banner Button - positioned in top right with low opacity */}
+        <div className="absolute top-4 right-4 z-10 opacity-10 hover:opacity-100 transition-opacity duration-300">
           <BannerUpload
             currentBannerUrl={bannerData?.url}
             onBannerUpdate={handleBannerUpdate}
           />
+        </div>
+      </div>
+
+      {/* Welcome Content Below Banner */}
+      <div className="flex items-center justify-between p-6 bg-card/50 rounded-xl border border-border/20 backdrop-blur-sm">
+        <div className="text-foreground flex-1">
+          <h1 className="text-4xl font-bold text-foreground mb-2">
+            Welcome back, {getFirstName(user?.name || '')}! 👋
+          </h1>
+          <p className="text-xl text-muted-foreground mb-4">
+            {formatDate(currentTime)}
+          </p>
+        </div>
+        
+        <div className="flex items-center gap-2 text-right">
+          <Clock className="w-5 h-5 text-muted-foreground" />
+          <div>
+            <div className="text-lg font-semibold text-foreground">
+              {formatTime(currentTime)}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Local Time
+            </div>
+          </div>
         </div>
       </div>
     </div>
