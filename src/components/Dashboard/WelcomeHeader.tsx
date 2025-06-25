@@ -117,8 +117,8 @@ const WelcomeHeader: React.FC = () => {
           </div>
         )}
 
-        {/* Upload Banner Button - positioned in top right with low opacity */}
-        <div className="absolute top-4 right-4 z-10 opacity-10 hover:opacity-100 transition-opacity duration-300">
+        {/* Upload Banner Button - positioned in top right with better opacity */}
+        <div className="absolute top-4 right-4 z-10 opacity-30 hover:opacity-100 transition-opacity duration-300">
           <BannerUpload
             currentBannerUrl={bannerData?.url}
             onBannerUpdate={handleBannerUpdate}
