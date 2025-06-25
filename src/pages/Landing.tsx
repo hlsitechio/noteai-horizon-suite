@@ -10,7 +10,7 @@ import PageAICopilot from '../components/Global/PageAICopilot';
 const Landing: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <Navigation isScrolled={false} mousePosition={{ x: 0, y: 0 }} />
       <Hero />
       <Features />
       <Pricing />

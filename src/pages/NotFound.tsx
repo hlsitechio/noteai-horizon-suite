@@ -1,5 +1,7 @@
+
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import PageAICopilot from '../components/Global/PageAICopilot';
 
 const NotFound = () => {
   const location = useLocation();
@@ -20,6 +22,7 @@ const NotFound = () => {
           Return to Home
         </a>
       </div>
+      <PageAICopilot pageContext="not-found" />
     </div>
   );
 };

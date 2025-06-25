@@ -98,10 +98,8 @@ const GlobalAICopilot: React.FC = () => {
     setIsVisible(false);
   };
 
-  // Don't show on certain pages where it might interfere
-  const shouldShow = !location.pathname.includes('/login') && 
-                    !location.pathname.includes('/register') && 
-                    !location.pathname.includes('/reset-password');
+  // Only show on app routes (routes that use the Layout component)
+  const shouldShow = location.pathname.startsWith('/app');
 
   if (!shouldShow) return null;
 
