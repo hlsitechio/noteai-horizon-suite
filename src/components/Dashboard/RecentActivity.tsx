@@ -63,11 +63,11 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
           recentNotes.map((note) => (
             <div
               key={note.id}
-              className="border rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              className="border-2 border-accent rounded-lg p-4 hover:bg-accent/10 transition-colors"
             >
               <div className="flex items-start justify-between mb-2">
                 <h3 
-                  className="font-medium text-gray-900 dark:text-gray-100 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  className="font-medium text-foreground cursor-pointer hover:text-accent transition-colors"
                   onClick={() => onEditNote(note)}
                 >
                   {note.title || 'Untitled Note'}
@@ -78,14 +78,14 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
                     variant="ghost"
                     size="sm"
                     onClick={() => onEditNote(note)}
-                    className="h-8 w-8 p-0"
+                    className="h-8 w-8 p-0 hover:bg-accent/10 hover:text-accent"
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
               
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+              <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                 {truncateContent(note.content)}
               </p>
               
@@ -96,8 +96,8 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
                   </Badge>
                   {note.tags.length > 0 && (
                     <div className="flex items-center gap-1">
-                      <Tag className="h-3 w-3 text-gray-400" />
-                      <span className="text-xs text-gray-500">
+                      <Tag className="h-3 w-3 text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground">
                         {note.tags.slice(0, 2).join(', ')}
                         {note.tags.length > 2 && ` +${note.tags.length - 2}`}
                       </span>
@@ -105,7 +105,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
                   )}
                 </div>
                 
-                <div className="flex items-center gap-1 text-xs text-gray-500">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Clock className="h-3 w-3" />
                   {formatDate(note.updatedAt)}
                 </div>
