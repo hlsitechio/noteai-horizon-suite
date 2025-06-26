@@ -36,13 +36,9 @@ export function UnifiedDragDropProvider({ children }: UnifiedDragDropProviderPro
     };
   }, []);
 
-  const handleContextRef = (ref: any) => {
-    contextRef.current = ref;
-  };
-
   return (
     <DragDropReadyContext.Provider value={{ isReady: true, contextRef }}>
-      <DragDropContext onDragEnd={handleDragEnd} ref={handleContextRef}>
+      <DragDropContext onDragEnd={handleDragEnd}>
         {children}
       </DragDropContext>
     </DragDropReadyContext.Provider>

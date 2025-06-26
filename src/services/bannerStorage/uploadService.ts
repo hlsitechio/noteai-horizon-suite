@@ -22,13 +22,6 @@ export class BannerUploadService {
       
       console.log('BannerUploadService: Uploading file:', fileName, file.type, file.size);
 
-      // Check if bucket exists
-      const bucketExists = await checkBucketExists();
-      if (!bucketExists) {
-        toast.error('Storage bucket not found. Please contact support.');
-        return null;
-      }
-
       // Upload file to storage
       const uploadResult = await this.uploadFileToStorage(fileName, file);
       if (!uploadResult.success) {
@@ -66,13 +59,7 @@ export class BannerUploadService {
 
     if (uploadError) {
       console.error('BannerUploadService: Upload error details:', uploadError);
-      
-      if (uploadError.message.includes('not found') || uploadError.message.includes('bucket')) {
-        toast.error('Storage bucket not found. Please contact support.');
-      } else {
-        toast.error(`Upload failed: ${uploadError.message}`);
-      }
-      
+      toast.error(`Upload failed: ${uploadError.message}`);
       return { success: false, error: uploadError.message };
     }
 

@@ -23,9 +23,10 @@ export class BannerRetrievalService {
         query = query.is('project_id', null);
       }
 
-      const { data, error } = await query.single();
+      // Use maybeSingle() instead of single() to avoid 406 errors when no rows exist
+      const { data, error } = await query.maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         console.error('BannerRetrievalService: Get banner error:', error);
         return null;
       }
