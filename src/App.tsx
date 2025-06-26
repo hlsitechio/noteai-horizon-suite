@@ -15,6 +15,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout/Layout';
 import { FloatingNotesProvider } from './contexts/FloatingNotesContext';
 import FloatingNotesContainer from './components/FloatingNotes/FloatingNotesContainer';
+import SamsungFrame from './components/SamsungFrame';
+import MobileApp from './mobile/MobileApp';
 
 // Pages
 import Index from './pages/Index';
@@ -71,6 +73,17 @@ function App() {
                               <Route path="/terms" element={<Terms />} />
                               <Route path="/contact" element={<Contact />} />
                               <Route path="/sitemap" element={<Sitemap />} />
+
+                              {/* Mobile Routes with Samsung Frame */}
+                              <Route path="/mobile/*" element={
+                                <ProtectedRoute>
+                                  <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-8">
+                                    <SamsungFrame>
+                                      <MobileApp />
+                                    </SamsungFrame>
+                                  </div>
+                                </ProtectedRoute>
+                              } />
 
                               {/* Protected Routes */}
                               <Route path="/app" element={
@@ -166,7 +179,7 @@ function App() {
                 </NotificationsProvider>
               </QuantumAIProvider>
             </Router>
-          </AccentColorProvider>
+          </AccentColorContext>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

@@ -9,6 +9,7 @@ import { UnifiedDragDropProvider } from './UnifiedDragDropProvider';
 import { FloatingNotesProvider } from '../../contexts/FloatingNotesContext';
 import SecureGlobalAICopilot from '../Global/SecureGlobalAICopilot';
 import FloatingNotesContainer from '../FloatingNotes/FloatingNotesContainer';
+import MobileViewButton from './MobileViewButton';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -47,6 +48,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             
             {/* Floating Notes Container - Available on all app pages */}
             <FloatingNotesContainer />
+            
+            {/* Mobile View Button */}
+            <MobileViewButton />
           </div>
         </SidebarProvider>
       </UnifiedDragDropProvider>

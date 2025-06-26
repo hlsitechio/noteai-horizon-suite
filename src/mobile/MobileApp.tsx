@@ -1,0 +1,43 @@
+
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import MobileLayout from './layout/MobileLayout';
+import MobileNotes from './pages/MobileNotes';
+import MobileEditor from './pages/MobileEditor';
+import MobileSettings from './pages/MobileSettings';
+import { useNotes } from '../contexts/NotesContext';
+
+const MobileApp: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const noteId = searchParams.get('note');
+  const { notes, setCurrentNote } = useNotes();
+
+  // Handle note routing - if a note ID is provided, navigate to editor
+  React.useEffect(() => {
+    if (noteId) {
+      const note = notes.find(n => n.id === noteId);
+      if (note) {
+        setCurrentNote(note);
+      }
+    }
+  }, [noteId, notes, setCurrentNote]);
+
+  return (
+    <div className="mobile-app h-screen overflow-hidden bg-background">
+      <Routes>
+        <Route path="/mobile" element={<MobileLayout />}>
+          <Route index element={<Navigate to="/mobile/notes" replace />} />
+          <Route 
+            path="notes" 
+            element={noteId ? <Navigate to="/mobile/editor" replace /> : <MobileNotes />} 
+          />
+          <Route path="editor" element={<MobileEditor />} />
+          <Route path="settings" element={<MobileSettings />} />
+        </Route>
+      </Routes>
+    </div>
+  );
+};
+
+export default MobileApp;
