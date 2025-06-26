@@ -157,4 +157,85 @@ export class SupabaseNotesService {
       return null;
     }
   }
+
+  // Real-time subscription methods
+  static subscribeToNoteChanges(
+    userId: string,
+    onInsert?: (note: Note) => void,
+    onUpdate?: (note: Note) => void,
+    onDelete?: (noteId: string) => void
+  ) {
+    const channel = supabase
+      .channel('notes-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notes_v2',
+          filter: `user_id=eq.${userId}`
+        },
+        (payload) => {
+          console.log('Real-time INSERT:', payload);
+          if (onInsert && payload.new) {
+            const note: Note = {
+              id: payload.new.id,
+              title: payload.new.title,
+              content: payload.new.content,
+              category: payload.new.content_type || 'general',
+              tags: payload.new.tags || [],
+              createdAt: payload.new.created_at,
+              updatedAt: payload.new.updated_at,
+              isFavorite: payload.new.is_public || false,
+              folder_id: payload.new.folder_id,
+            };
+            onInsert(note);
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notes_v2',
+          filter: `user_id=eq.${userId}`
+        },
+        (payload) => {
+          console.log('Real-time UPDATE:', payload);
+          if (onUpdate && payload.new) {
+            const note: Note = {
+              id: payload.new.id,
+              title: payload.new.title,
+              content: payload.new.content,
+              category: payload.new.content_type || 'general',
+              tags: payload.new.tags || [],
+              createdAt: payload.new.created_at,
+              updatedAt: payload.new.updated_at,
+              isFavorite: payload.new.is_public || false,
+              folder_id: payload.new.folder_id,
+            };
+            onUpdate(note);
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'notes_v2',
+          filter: `user_id=eq.${userId}`
+        },
+        (payload) => {
+          console.log('Real-time DELETE:', payload);
+          if (onDelete && payload.old) {
+            onDelete(payload.old.id);
+          }
+        }
+      )
+      .subscribe();
+
+    return channel;
+  }
 }

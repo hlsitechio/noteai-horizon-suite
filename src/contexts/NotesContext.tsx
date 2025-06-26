@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Note, NoteFilters } from '../types/note';
 import { SupabaseNotesService } from '../services/supabaseNotesService';
 import { useFolders } from './FoldersContext';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 interface NotesContextType {
@@ -13,6 +14,7 @@ interface NotesContextType {
   filters: NoteFilters;
   isLoading: boolean;
   folders: any[];
+  syncStatus: 'connected' | 'disconnected' | 'syncing';
   createNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Note>;
   updateNote: (id: string, updates: Partial<Omit<Note, 'id' | 'createdAt'>>) => Promise<Note | null>;
   deleteNote: (id: string) => Promise<boolean>;
@@ -39,16 +41,20 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [filters, setFilters] = useState<NoteFilters>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [syncStatus, setSyncStatus] = useState<'connected' | 'disconnected' | 'syncing'>('disconnected');
   
   // Get folders from FoldersContext
   const { folders } = useFolders();
 
   const refreshNotes = async () => {
     setIsLoading(true);
+    setSyncStatus('syncing');
     try {
       const loadedNotes = await SupabaseNotesService.getAllNotes();
       setNotes(loadedNotes);
+      setSyncStatus('connected');
     } catch (error) {
+      setSyncStatus('disconnected');
       toast.error('Failed to load notes');
       console.error('Error loading notes:', error);
     } finally {
@@ -56,77 +62,145 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  // Set up real-time subscription
   useEffect(() => {
-    refreshNotes();
-  }, []);
+    let channel: any;
+
+    const setupRealtimeSubscription = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        // Initial load
+        await refreshNotes();
+
+        // Set up real-time subscription
+        channel = SupabaseNotesService.subscribeToNoteChanges(
+          user.id,
+          // onInsert
+          (newNote) => {
+            console.log('Real-time: Note inserted', newNote);
+            setNotes(prev => {
+              // Check if note already exists to avoid duplicates
+              const exists = prev.find(note => note.id === newNote.id);
+              if (exists) return prev;
+              
+              toast.success(`New note synced: ${newNote.title}`);
+              return [newNote, ...prev];
+            });
+          },
+          // onUpdate
+          (updatedNote) => {
+            console.log('Real-time: Note updated', updatedNote);
+            setNotes(prev => prev.map(note => 
+              note.id === updatedNote.id ? updatedNote : note
+            ));
+            
+            // Update current note if it's the one being edited
+            if (currentNote?.id === updatedNote.id) {
+              setCurrentNote(updatedNote);
+            }
+            if (selectedNote?.id === updatedNote.id) {
+              setSelectedNote(updatedNote);
+            }
+            
+            toast.success(`Note synced: ${updatedNote.title}`);
+          },
+          // onDelete
+          (deletedNoteId) => {
+            console.log('Real-time: Note deleted', deletedNoteId);
+            setNotes(prev => prev.filter(note => note.id !== deletedNoteId));
+            
+            // Clear current note if it was deleted
+            if (currentNote?.id === deletedNoteId) {
+              setCurrentNote(null);
+            }
+            if (selectedNote?.id === deletedNoteId) {
+              setSelectedNote(null);
+            }
+            
+            toast.info('Note deleted on another device');
+          }
+        );
+
+        setSyncStatus('connected');
+      } catch (error) {
+        console.error('Error setting up real-time subscription:', error);
+        setSyncStatus('disconnected');
+      }
+    };
+
+    setupRealtimeSubscription();
+
+    // Cleanup subscription on unmount
+    return () => {
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
+  }, [currentNote?.id, selectedNote?.id]);
 
   const createNote = async (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Promise<Note> => {
+    setSyncStatus('syncing');
     try {
       const newNote = await SupabaseNotesService.saveNote(noteData);
-      setNotes(prev => [newNote, ...prev]);
-      toast.success('Note created successfully');
+      // Note will be added via real-time subscription
+      setSyncStatus('connected');
+      toast.success('Note created and synced');
       return newNote;
     } catch (error) {
+      setSyncStatus('disconnected');
       toast.error('Failed to create note');
       throw error;
     }
   };
 
   const updateNote = async (id: string, updates: Partial<Omit<Note, 'id' | 'createdAt'>>): Promise<Note | null> => {
+    setSyncStatus('syncing');
     try {
       const updatedNote = await SupabaseNotesService.updateNote(id, updates);
       if (updatedNote) {
-        setNotes(prev => prev.map(note => note.id === id ? updatedNote : note));
-        if (currentNote?.id === id) {
-          setCurrentNote(updatedNote);
-        }
-        if (selectedNote?.id === id) {
-          setSelectedNote(updatedNote);
-        }
-        toast.success('Note updated successfully');
+        // Note will be updated via real-time subscription
+        setSyncStatus('connected');
+        toast.success('Note updated and synced');
       }
       return updatedNote;
     } catch (error) {
+      setSyncStatus('disconnected');
       toast.error('Failed to update note');
       throw error;
     }
   };
 
   const deleteNote = async (id: string): Promise<boolean> => {
+    setSyncStatus('syncing');
     try {
       const success = await SupabaseNotesService.deleteNote(id);
       if (success) {
-        setNotes(prev => prev.filter(note => note.id !== id));
-        if (currentNote?.id === id) {
-          setCurrentNote(null);
-        }
-        if (selectedNote?.id === id) {
-          setSelectedNote(null);
-        }
-        toast.success('Note deleted successfully');
+        // Note will be removed via real-time subscription
+        setSyncStatus('connected');
+        toast.success('Note deleted and synced');
       }
       return success;
     } catch (error) {
+      setSyncStatus('disconnected');
       toast.error('Failed to delete note');
       throw error;
     }
   };
 
   const toggleFavorite = async (id: string): Promise<Note | null> => {
+    setSyncStatus('syncing');
     try {
       const updatedNote = await SupabaseNotesService.toggleFavorite(id);
       if (updatedNote) {
-        setNotes(prev => prev.map(note => note.id === id ? updatedNote : note));
-        if (currentNote?.id === id) {
-          setCurrentNote(updatedNote);
-        }
-        if (selectedNote?.id === id) {
-          setSelectedNote(updatedNote);
-        }
+        // Note will be updated via real-time subscription
+        setSyncStatus('connected');
         toast.success(updatedNote.isFavorite ? 'Added to favorites' : 'Removed from favorites');
       }
       return updatedNote;
     } catch (error) {
+      setSyncStatus('disconnected');
       toast.error('Failed to update favorite');
       throw error;
     }
@@ -162,6 +236,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         filters,
         isLoading,
         folders,
+        syncStatus,
         createNote,
         updateNote,
         deleteNote,
