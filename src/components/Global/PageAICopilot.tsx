@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { CopilotButton } from '@/components/AICopilot';
+import { UnifiedAIButton } from '@/components/AICopilot';
 import EnhancedAICopilot from '@/components/Editor/EnhancedAICopilot';
 
 interface PageAICopilotProps {
@@ -61,7 +61,7 @@ const PageAICopilot: React.FC<PageAICopilotProps> = ({ pageContext }) => {
     <>
       {/* Floating AI Copilot Button */}
       <div className="fixed bottom-6 right-6 z-50">
-        <CopilotButton
+        <UnifiedAIButton
           onClick={() => setIsVisible(true)}
           isActive={isVisible}
           className="shadow-xl"
