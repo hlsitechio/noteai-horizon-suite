@@ -8,7 +8,8 @@ import {
   Calendar, 
   MessageSquare, 
   Settings,
-  FolderOpen
+  FolderOpen,
+  BarChart3
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -37,6 +38,12 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ isCollapsed }) => {
       label: 'Editor', 
       path: '/app/editor',
       description: 'Write and edit notes'
+    },
+    { 
+      icon: BarChart3, 
+      label: 'Analytics', 
+      path: '/app/analytics',
+      description: 'Writing insights and stats'
     },
     { 
       icon: Calendar, 

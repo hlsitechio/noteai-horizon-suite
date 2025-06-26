@@ -34,6 +34,7 @@ import Calendar from './pages/Calendar';
 import ProjectRealms from './pages/ProjectRealms';
 import ProjectDetail from './pages/ProjectDetail';
 import Settings from './pages/Settings';
+import Analytics from './pages/Analytics';
 import Landing from './pages/Landing';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
@@ -144,6 +145,14 @@ function App() {
                                   <ProtectedRoute>
                                     <Layout>
                                       <Calendar />
+                                    </Layout>
+                                  </ProtectedRoute>
+                                } />
+
+                                <Route path="/app/analytics" element={
+                                  <ProtectedRoute>
+                                    <Layout>
+                                      <Analytics />
                                     </Layout>
                                   </ProtectedRoute>
                                 } />
