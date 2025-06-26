@@ -17,6 +17,7 @@ import { FloatingNotesProvider } from './contexts/FloatingNotesContext';
 import FloatingNotesContainer from './components/FloatingNotes/FloatingNotesContainer';
 import SamsungFrame from './components/SamsungFrame';
 import MobileApp from './mobile/MobileApp';
+import HomeRedirect from './components/HomeRedirect';
 
 // Pages
 import Index from './pages/Index';
@@ -67,7 +68,7 @@ function App() {
                             <Routes>
                               {/* Public Routes */}
                               <Route path="/" element={<Index />} />
-                              <Route path="/home" element={<Navigate to="/landing" replace />} />
+                              <Route path="/home" element={<HomeRedirect />} />
                               <Route path="/landing" element={<Landing />} />
                               <Route path="/login" element={<Login />} />
                               <Route path="/register" element={<Register />} />
