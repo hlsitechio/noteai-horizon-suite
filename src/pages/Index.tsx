@@ -9,18 +9,26 @@ const Index: React.FC = () => {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
 
+  console.log('Index component - Auth state:', { user: !!user, isLoading });
+  console.log('Index component - Current URL:', window.location.href);
+
   useEffect(() => {
-    console.log('Index component - Auth state:', { user: !!user, isLoading });
+    console.log('Index useEffect - Auth state:', { user: !!user, isLoading });
     
-    if (!isLoading) {
-      if (user) {
-        console.log('User authenticated, navigating to dashboard');
-        navigate('/app/dashboard', { replace: true });
-      } else {
-        console.log('User not authenticated, navigating to landing');
-        navigate('/landing', { replace: true });
+    // Add a small delay to prevent potential race conditions
+    const timer = setTimeout(() => {
+      if (!isLoading) {
+        if (user) {
+          console.log('User authenticated, navigating to dashboard');
+          navigate('/app/dashboard', { replace: true });
+        } else {
+          console.log('User not authenticated, navigating to landing');
+          navigate('/landing', { replace: true });
+        }
       }
-    }
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [user, isLoading, navigate]);
 
   console.log('Index component rendering - isLoading:', isLoading);
@@ -44,6 +52,9 @@ const Index: React.FC = () => {
       <div className="text-center">
         <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
         <p className="text-muted-foreground">Redirecting...</p>
+        <p className="text-xs text-muted-foreground mt-2">
+          Debug: User {user ? 'found' : 'not found'}, Loading: {isLoading ? 'yes' : 'no'}
+        </p>
       </div>
       <PageAICopilot pageContext="redirecting" />
     </div>

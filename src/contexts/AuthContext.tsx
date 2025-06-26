@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -35,30 +36,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Transform Supabase user to our User interface
-  const transformUser = async (supabaseUser: SupabaseUser): Promise<User> => {
-    try {
-      // Try to get user profile from our profiles table
-      const { data: profile } = await supabase
-        .from('user_profiles')
-        .select('display_name, avatar_url')
-        .eq('id', supabaseUser.id)
-        .single();
+  console.log('AuthProvider render - Auth state:', {
+    hasUser: !!user,
+    hasSession: !!session,
+    isLoading,
+    userEmail: user?.email
+  });
 
-      return {
-        id: supabaseUser.id,
-        email: supabaseUser.email || '',
-        name: profile?.display_name || supabaseUser.email || 'User',
-        avatar: profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.display_name || supabaseUser.email || 'User')}&background=6366f1&color=fff`
-      };
-    } catch (error) {
-      console.error('Error transforming user:', error);
-      // Fallback user object
+  // Transform Supabase user to our User interface
+  const transformUser = (supabaseUser: SupabaseUser): User => {
+    try {
       return {
         id: supabaseUser.id,
         email: supabaseUser.email || '',
         name: supabaseUser.email || 'User',
         avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(supabaseUser.email || 'User')}&background=6366f1&color=fff`
+      };
+    } catch (error) {
+      console.error('Error transforming user:', error);
+      return {
+        id: supabaseUser.id,
+        email: supabaseUser.email || '',
+        name: 'User',
+        avatar: `https://ui-avatars.com/api/?name=User&background=6366f1&color=fff`
       };
     }
   };
@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const refreshUser = async () => {
     if (session?.user) {
       try {
-        const transformedUser = await transformUser(session.user);
+        const transformedUser = transformUser(session.user);
         setUser(transformedUser);
       } catch (error) {
         console.error('Error refreshing user:', error);
@@ -78,31 +78,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     console.log('AuthProvider: Setting up auth state listener');
     
+    let mounted = true;
+    
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
+        
+        if (!mounted) return;
+        
         setSession(session);
         
         if (session?.user) {
-          // Handle user transformation asynchronously without blocking state updates
-          setTimeout(async () => {
-            try {
-              const transformedUser = await transformUser(session.user);
-              setUser(transformedUser);
-              console.log('User authenticated:', transformedUser.email);
-            } catch (error) {
-              console.error('Error setting user:', error);
-              setUser(null);
-            } finally {
-              setIsLoading(false);
-            }
-          }, 0);
+          const transformedUser = transformUser(session.user);
+          setUser(transformedUser);
+          console.log('User authenticated:', transformedUser.email);
         } else {
           setUser(null);
-          setIsLoading(false);
           console.log('User logged out');
         }
+        
+        setIsLoading(false);
       }
     );
 
@@ -112,25 +108,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { data: { session }, error } = await supabase.auth.getSession();
         if (error) {
           console.error('Error getting session:', error);
-          setIsLoading(false);
+          if (mounted) {
+            setIsLoading(false);
+          }
           return;
         }
 
         console.log('Initial session check:', session?.user?.email || 'No session');
+        
+        if (!mounted) return;
+        
         setSession(session);
         
         if (session?.user) {
-          const transformedUser = await transformUser(session.user);
+          const transformedUser = transformUser(session.user);
           setUser(transformedUser);
         } else {
           setUser(null);
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
-        setUser(null);
-        setSession(null);
+        if (mounted) {
+          setUser(null);
+          setSession(null);
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -138,6 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return () => {
       console.log('AuthProvider: Cleaning up auth listener');
+      mounted = false;
       subscription.unsubscribe();
     };
   }, []);
@@ -234,12 +240,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     logout,
     refreshUser,
   };
-
-  console.log('AuthProvider render:', {
-    isAuthenticated: contextValue.isAuthenticated,
-    isLoading: contextValue.isLoading,
-    userEmail: user?.email
-  });
 
   return (
     <AuthContext.Provider value={contextValue}>
