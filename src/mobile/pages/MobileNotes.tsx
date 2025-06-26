@@ -46,9 +46,9 @@ const MobileNotes: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-background">
+    <div className="h-full flex flex-col bg-background min-h-0">
       {/* Search and Actions */}
-      <div className="p-4 space-y-3 flex-shrink-0">
+      <div className="p-4 space-y-3 flex-shrink-0 bg-background border-b">
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -75,23 +75,25 @@ const MobileNotes: React.FC = () => {
         </Button>
       </div>
 
-      {/* Notes List */}
-      <div className="flex-1 overflow-y-auto px-4 pb-4">
-        {filteredNotes.length === 0 ? (
-          <div className="text-center py-12">
-            <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">No notes found</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Create your first note to get started
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {filteredNotes.map((note) => (
-              <MobileNoteCard key={note.id} note={note} />
-            ))}
-          </div>
-        )}
+      {/* Notes List - Fixed scrolling container */}
+      <div className="flex-1 min-h-0 bg-background">
+        <div className="h-full overflow-y-auto px-4 py-4">
+          {filteredNotes.length === 0 ? (
+            <div className="text-center py-12">
+              <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No notes found</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Create your first note to get started
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3 pb-6">
+              {filteredNotes.map((note) => (
+                <MobileNoteCard key={note.id} note={note} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Filter Sheet */}

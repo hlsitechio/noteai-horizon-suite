@@ -11,12 +11,12 @@ const MobileLayout: React.FC = () => {
   const isEditor = location.pathname === '/mobile/editor';
 
   return (
-    <div className="h-full flex flex-col bg-background">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
       {/* Header - hidden in editor for distraction-free experience */}
       {!isEditor && <MobileHeader />}
       
       {/* Main Content */}
-      <main className={`flex-1 overflow-hidden ${isEditor ? 'h-full' : ''}`}>
+      <main className={`flex-1 min-h-0 ${isEditor ? 'h-full' : ''}`}>
         <Outlet />
       </main>
       
