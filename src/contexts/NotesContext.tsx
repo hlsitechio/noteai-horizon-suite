@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Note, NoteFilters } from '../types/note';
 import { SupabaseNotesService } from '../services/supabaseNotesService';
 import { useFolders } from './FoldersContext';
+import { useAuth } from './AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -43,10 +44,17 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isLoading, setIsLoading] = useState(true);
   const [syncStatus, setSyncStatus] = useState<'connected' | 'disconnected' | 'syncing'>('disconnected');
   
-  // Get folders from FoldersContext
+  // Get auth state and folders
+  const { user, isLoading: authLoading } = useAuth();
   const { folders } = useFolders();
 
   const refreshNotes = async () => {
+    if (!user) {
+      console.log('No user, skipping notes refresh');
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     setSyncStatus('syncing');
     try {
@@ -55,26 +63,34 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setSyncStatus('connected');
     } catch (error) {
       setSyncStatus('disconnected');
-      toast.error('Failed to load notes');
       console.error('Error loading notes:', error);
+      // Only show toast if user is authenticated (to avoid errors on public pages)
+      if (user) {
+        toast.error('Failed to load notes');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Set up real-time subscription
+  // Set up real-time subscription only when user is authenticated
   useEffect(() => {
     let channel: any;
 
     const setupRealtimeSubscription = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+      // Wait for auth to be ready and ensure user is authenticated
+      if (authLoading || !user) {
+        console.log('Auth not ready or no user, skipping real-time setup');
+        return;
+      }
 
+      try {
         // Initial load
         await refreshNotes();
 
-        // Set up real-time subscription
+        // Set up real-time subscription only if user is authenticated
+        console.log('Setting up real-time subscription for user:', user.id);
+        
         channel = SupabaseNotesService.subscribeToNoteChanges(
           user.id,
           // onInsert
@@ -132,15 +148,18 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     setupRealtimeSubscription();
 
-    // Cleanup subscription on unmount
+    // Cleanup subscription on unmount or when user changes
     return () => {
       if (channel) {
+        console.log('Cleaning up real-time subscription');
         supabase.removeChannel(channel);
       }
     };
-  }, [currentNote?.id, selectedNote?.id]);
+  }, [user, authLoading, currentNote?.id, selectedNote?.id]);
 
   const createNote = async (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Promise<Note> => {
+    if (!user) throw new Error('User not authenticated');
+    
     setSyncStatus('syncing');
     try {
       const newNote = await SupabaseNotesService.saveNote(noteData);
@@ -156,6 +175,8 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const updateNote = async (id: string, updates: Partial<Omit<Note, 'id' | 'createdAt'>>): Promise<Note | null> => {
+    if (!user) throw new Error('User not authenticated');
+    
     setSyncStatus('syncing');
     try {
       const updatedNote = await SupabaseNotesService.updateNote(id, updates);
@@ -173,6 +194,8 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const deleteNote = async (id: string): Promise<boolean> => {
+    if (!user) throw new Error('User not authenticated');
+    
     setSyncStatus('syncing');
     try {
       const success = await SupabaseNotesService.deleteNote(id);
@@ -190,6 +213,8 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const toggleFavorite = async (id: string): Promise<Note | null> => {
+    if (!user) throw new Error('User not authenticated');
+    
     setSyncStatus('syncing');
     try {
       const updatedNote = await SupabaseNotesService.toggleFavorite(id);
