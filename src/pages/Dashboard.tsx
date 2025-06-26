@@ -57,8 +57,8 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-background overflow-hidden flex flex-col">
-      <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full min-h-0">
+    <div className="h-screen bg-background overflow-hidden flex flex-col w-full">
+      <div className="flex-1 flex flex-col w-full min-h-0 px-6 py-4">
         
         {/* Welcome Header */}
         <div className="flex-shrink-0 pt-2">
@@ -75,8 +75,8 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Remove gap between columns */}
-        <div className="flex-1 min-h-0 grid grid-cols-12 gap-2 mb-4 items-start">
+        {/* Main Content Area - Full width grid */}
+        <div className="flex-1 min-h-0 grid grid-cols-12 gap-6 mb-4 items-start">
           {/* Recent Activity - Takes more space */}
           <div className="col-span-8 min-h-0">
             <RecentActivity 
