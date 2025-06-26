@@ -36,17 +36,19 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent 
         side="left" 
-        className="w-[280px] p-0 h-full max-h-screen overflow-hidden"
+        className="w-[250px] p-0 h-full max-h-screen overflow-hidden border-r-0"
         style={{ 
-          position: 'fixed',
+          position: 'absolute',
           top: 0,
-          left: isOpen ? 0 : '-280px',
+          left: isOpen ? 0 : '-250px',
           height: '100%',
           maxHeight: '100vh',
-          zIndex: 50
+          zIndex: 40,
+          transform: 'none',
+          transition: 'left 0.3s ease-out'
         }}
       >
-        <div className="flex flex-col h-full max-h-screen overflow-hidden">
+        <div className="flex flex-col h-full max-h-screen overflow-hidden bg-background">
           <SheetHeader className="p-4 border-b flex-shrink-0">
             <SheetTitle className="flex items-center justify-between">
               <span>Menu</span>
