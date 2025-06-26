@@ -19,6 +19,7 @@ import {
 import { Link } from 'react-router-dom';
 import { Note } from '../../../types/note';
 import { Folder as FolderType } from '../../../types/folder';
+import DesktopPopOutButton from '../../FloatingNotes/DesktopPopOutButton';
 
 interface FoldersListSectionProps {
   folders: FolderType[];
@@ -50,12 +51,12 @@ export function FoldersListSection({
     const isFolderExpanded = expandedFolders.has(folder.id);
 
     return (
-      <div key={folder.id}>
+      <div key={folder.id} className="space-y-1">
         <SidebarMenuItem>
           <div className="flex items-center w-full">
             <SidebarMenuButton 
               onClick={() => toggleFolder(folder.id)}
-              className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors p-1 min-w-0"
+              className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors p-1 min-w-0 h-6 w-6 flex-shrink-0"
             >
               {isFolderExpanded ? (
                 <ChevronDown className="h-3 w-3" />
@@ -69,7 +70,7 @@ export function FoldersListSection({
                 className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full"
               >
                 <div 
-                  className="w-2 h-2 rounded-full mr-2" 
+                  className="w-2 h-2 rounded-full mr-2 flex-shrink-0" 
                   style={{ backgroundColor: folder.color }}
                 />
                 <Folder className="h-3 w-3 mr-2 flex-shrink-0" />
@@ -82,30 +83,43 @@ export function FoldersListSection({
           </div>
         </SidebarMenuItem>
         
+        {/* Folder Notes */}
         {isFolderExpanded && folderNotes.length > 0 && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="ml-4"
+            className="ml-4 space-y-1"
           >
-            {folderNotes.map((note) => (
+            {folderNotes.slice(0, 5).map((note) => (
               <SidebarMenuItem key={note.id}>
-                <SidebarMenuButton asChild>
-                  <Link 
-                    to={`/app/notes?note=${note.id}`} 
-                    className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full"
-                  >
-                    <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
-                    <span className="truncate text-xs flex-1">{note.title}</span>
-                    {note.isFavorite && (
-                      <Star className="h-3 w-3 ml-auto text-accent fill-current" />
-                    )}
-                  </Link>
-                </SidebarMenuButton>
+                <div className="flex items-center w-full">
+                  <SidebarMenuButton asChild className="flex-1">
+                    <Link 
+                      to={`/app/notes?note=${note.id}`} 
+                      className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full"
+                    >
+                      <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
+                      <span className="truncate text-xs flex-1">{note.title}</span>
+                      {note.isFavorite && (
+                        <Star className="h-3 w-3 ml-auto text-accent fill-current" />
+                      )}
+                    </Link>
+                  </SidebarMenuButton>
+                  <DesktopPopOutButton 
+                    note={note} 
+                    size="sm" 
+                    className="ml-1 h-6 w-6 p-0 flex-shrink-0" 
+                  />
+                </div>
               </SidebarMenuItem>
             ))}
+            {folderNotes.length > 5 && (
+              <div className="text-xs text-sidebar-foreground/40 px-2 ml-4">
+                +{folderNotes.length - 5} more notes
+              </div>
+            )}
           </motion.div>
         )}
       </div>
