@@ -43,7 +43,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </div>
             </SidebarInset>
             
-            {/* Secure Global AI Copilot - Available on all app pages */}
+            {/* Unified AI Copilot - Single interface only */}
             <SecureGlobalAICopilot />
             
             {/* Floating Notes Container - Available on all app pages */}

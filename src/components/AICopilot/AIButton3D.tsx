@@ -8,7 +8,6 @@ const AIButton3D: React.FC<AIButton3DProps> = ({
   onClick,
   isActive,
   isDragging,
-  showQuickActions,
   dragRef,
   onDragStart,
   onDragEnd,
@@ -21,7 +20,7 @@ const AIButton3D: React.FC<AIButton3DProps> = ({
       drag={!isMobile}
       dragMomentum={false}
       dragElastic={0}
-      dragTransition={{ power: 0, timeConstant: 0 }}
+      dragConstraints={false}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       whileHover={!isDragging ? { scale: 1.05, y: -2 } : {}}
@@ -29,7 +28,7 @@ const AIButton3D: React.FC<AIButton3DProps> = ({
       whileDrag={{ scale: 1.1, zIndex: 1000 }}
       onClick={onClick}
       className={`relative z-10 group w-16 h-16 cursor-${!isMobile ? (isDragging ? 'grabbing' : 'grab') : 'pointer'} ${className}`}
-      title={!isMobile ? "Drag to move • Single click for quick actions • Double click for AI Copilot" : "Single click for quick actions • Double click for AI Copilot"}
+      title={!isMobile ? "Drag to move • Click for AI Copilot" : "Click for AI Copilot"}
     >
       {/* 3D Button Container */}
       <div className="relative w-full h-full">
@@ -53,8 +52,8 @@ const AIButton3D: React.FC<AIButton3DProps> = ({
           <div className="flex items-center justify-center w-full h-full relative z-10">
             <motion.div
               animate={{ 
-                rotate: isActive || showQuickActions ? 180 : 0,
-                scale: isActive || showQuickActions ? 1.2 : 1
+                rotate: isActive ? 180 : 0,
+                scale: isActive ? 1.2 : 1
               }}
               transition={{ duration: 0.3 }}
             >
@@ -92,7 +91,7 @@ const AIButton3D: React.FC<AIButton3DProps> = ({
           </div>
           
           {/* Pulse Ring */}
-          {(isActive || showQuickActions) && (
+          {isActive && (
             <motion.div
               className="absolute inset-0 rounded-full border-2 border-white/50"
               animate={{
@@ -110,7 +109,7 @@ const AIButton3D: React.FC<AIButton3DProps> = ({
       </div>
       
       {/* Activity Indicator */}
-      {(isActive || showQuickActions) && (
+      {isActive && (
         <motion.div
           className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"
           animate={{
