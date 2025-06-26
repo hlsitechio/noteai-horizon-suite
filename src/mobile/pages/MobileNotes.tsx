@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Plus, Filter } from 'lucide-react';
+import { Search, Plus, Filter, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNotes } from '../../contexts/NotesContext';
