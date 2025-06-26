@@ -3,6 +3,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import MobileHeader from './MobileHeader';
 import MobileBottomNav from './MobileBottomNav';
+import MobileDesktopViewButton from '../components/MobileDesktopViewButton';
 import { useLocation } from 'react-router-dom';
 
 const MobileLayout: React.FC = () => {
@@ -21,6 +22,9 @@ const MobileLayout: React.FC = () => {
       
       {/* Bottom Navigation - hidden in editor */}
       {!isEditor && <MobileBottomNav />}
+      
+      {/* Desktop View Button - always visible */}
+      <MobileDesktopViewButton />
     </div>
   );
 };
