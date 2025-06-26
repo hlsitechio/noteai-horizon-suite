@@ -23,7 +23,10 @@ export class BannerRetrievalService {
         query = query.is('project_id', null);
       }
 
-      // Use maybeSingle() instead of single() to avoid 406 errors when no rows exist
+      // Order by updated_at DESC to get the most recent record
+      query = query.order('updated_at', { ascending: false });
+
+      // Use maybeSingle() to safely handle cases where no records exist
       const { data, error } = await query.maybeSingle();
 
       if (error) {

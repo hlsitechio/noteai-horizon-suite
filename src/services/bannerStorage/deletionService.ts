@@ -16,16 +16,16 @@ export class BannerDeletionService {
       const banner = await BannerRetrievalService.getBanner(bannerType, projectId);
       if (!banner) return true; // Already deleted
 
-      // Extract file path from URL
+      // Extract file path from URL for storage deletion
       const filePath = extractFilePathFromUrl(banner.file_url);
       const fileName = `${user.id}/${filePath}`;
 
       console.log('BannerDeletionService: Deleting banner:', fileName);
 
-      // Delete from storage
+      // Delete from storage (non-blocking - if this fails, we still want to clean up the database)
       const storageResult = await this.deleteFromStorage(fileName);
       if (!storageResult) {
-        console.error('BannerDeletionService: Failed to delete from storage');
+        console.warn('BannerDeletionService: Storage deletion failed, but continuing with database cleanup');
       }
 
       // Delete from database
@@ -44,16 +44,21 @@ export class BannerDeletionService {
   }
 
   private static async deleteFromStorage(fileName: string): Promise<boolean> {
-    const { error: storageError } = await supabase.storage
-      .from('banners')
-      .remove([fileName]);
+    try {
+      const { error: storageError } = await supabase.storage
+        .from('banners')
+        .remove([fileName]);
 
-    if (storageError) {
-      console.error('BannerDeletionService: Storage delete error:', storageError);
+      if (storageError) {
+        console.error('BannerDeletionService: Storage delete error:', storageError);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('BannerDeletionService: Storage delete exception:', error);
       return false;
     }
-
-    return true;
   }
 
   private static async deleteFromDatabase(
@@ -61,25 +66,30 @@ export class BannerDeletionService {
     bannerType: 'dashboard' | 'project',
     projectId?: string
   ): Promise<boolean> {
-    let query = supabase
-      .from('banners')
-      .delete()
-      .eq('user_id', userId)
-      .eq('banner_type', bannerType);
+    try {
+      let query = supabase
+        .from('banners')
+        .delete()
+        .eq('user_id', userId)
+        .eq('banner_type', bannerType);
 
-    if (bannerType === 'project' && projectId) {
-      query = query.eq('project_id', projectId);
-    } else if (bannerType === 'dashboard') {
-      query = query.is('project_id', null);
-    }
+      if (bannerType === 'project' && projectId) {
+        query = query.eq('project_id', projectId);
+      } else if (bannerType === 'dashboard') {
+        query = query.is('project_id', null);
+      }
 
-    const { error: dbError } = await query;
+      const { error: dbError } = await query;
 
-    if (dbError) {
-      console.error('BannerDeletionService: Database delete error:', dbError);
+      if (dbError) {
+        console.error('BannerDeletionService: Database delete error:', dbError);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('BannerDeletionService: Database delete exception:', error);
       return false;
     }
-
-    return true;
   }
 }

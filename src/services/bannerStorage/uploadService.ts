@@ -86,17 +86,26 @@ export class BannerUploadService {
 
     console.log('BannerUploadService: Saving metadata:', bannerMetadata);
 
+    // Use upsert with the proper conflict resolution
     const { data: bannerData, error: dbError } = await supabase
       .from('banners')
       .upsert(bannerMetadata, {
-        onConflict: 'user_id,banner_type,project_id'
+        onConflict: bannerType === 'dashboard' 
+          ? 'user_id,banner_type' // For dashboard banners (where project_id is NULL)
+          : 'user_id,banner_type,project_id' // For project banners
       })
       .select()
       .single();
 
     if (dbError) {
       console.error('BannerUploadService: Database error details:', dbError);
-      toast.error(`Database error: ${dbError.message}`);
+      
+      // Handle specific database errors with user-friendly messages
+      if (dbError.code === '23505') {
+        toast.error('A banner for this location already exists and was updated.');
+      } else {
+        toast.error(`Database error: ${dbError.message}`);
+      }
       return null;
     }
 
