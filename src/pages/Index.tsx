@@ -25,6 +25,7 @@ const Index: React.FC = () => {
 
   console.log('Index component rendering - isLoading:', isLoading);
 
+  // Show loading state while auth is being determined
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
