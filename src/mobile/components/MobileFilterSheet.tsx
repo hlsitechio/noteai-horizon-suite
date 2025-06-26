@@ -1,8 +1,11 @@
 
 import React from 'react';
-import { X, Heart } from 'lucide-react';
+import { X, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useNotes } from '../../contexts/NotesContext';
 
 interface MobileFilterSheetProps {
@@ -13,88 +16,69 @@ interface MobileFilterSheetProps {
 const MobileFilterSheet: React.FC<MobileFilterSheetProps> = ({ isOpen, onClose }) => {
   const { filters, setFilters } = useNotes();
 
-  const categories = [
-    { value: 'general', label: 'General' },
-    { value: 'work', label: 'Work' },
-    { value: 'personal', label: 'Personal' },
-    { value: 'ideas', label: 'Ideas' },
-    { value: 'meeting', label: 'Meeting' },
-  ];
-
-  const handleCategoryFilter = (category: string) => {
-    setFilters({ 
-      ...filters, 
-      category: filters.category === category ? undefined : category 
-    });
+  const handleCategoryChange = (category: string) => {
+    setFilters({ ...filters, category: category === 'all' ? undefined : category });
   };
 
-  const handleFavoriteFilter = () => {
-    setFilters({ 
-      ...filters, 
-      isFavorite: filters.isFavorite ? undefined : true 
-    });
+  const handleFavoriteToggle = (checked: boolean) => {
+    setFilters({ ...filters, isFavorite: checked ? true : undefined });
   };
 
   const clearFilters = () => {
     setFilters({});
+    onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 bg-black/50">
-      <div className="absolute bottom-0 left-0 right-0 bg-background rounded-t-xl p-6 max-h-[80vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold">Filter Notes</h2>
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent side="bottom" className="h-[400px]">
+        <SheetHeader className="flex flex-row items-center justify-between">
+          <SheetTitle className="flex items-center gap-2">
+            <Filter className="w-5 h-5" />
+            Filter Notes
+          </SheetTitle>
           <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </Button>
-        </div>
-
-        <div className="space-y-6">
-          {/* Categories */}
-          <div>
-            <h3 className="font-medium mb-3">Categories</h3>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <Badge
-                  key={cat.value}
-                  variant={filters.category === cat.value ? "default" : "outline"}
-                  className="cursor-pointer px-3 py-1"
-                  onClick={() => handleCategoryFilter(cat.value)}
-                >
-                  {cat.label}
-                </Badge>
-              ))}
-            </div>
+        </SheetHeader>
+        
+        <div className="space-y-6 mt-6">
+          <div className="space-y-3">
+            <Label>Category</Label>
+            <Select value={filters.category || 'all'} onValueChange={handleCategoryChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="general">General</SelectItem>
+                <SelectItem value="work">Work</SelectItem>
+                <SelectItem value="personal">Personal</SelectItem>
+                <SelectItem value="ideas">Ideas</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Favorites */}
-          <div>
-            <h3 className="font-medium mb-3">Special Filters</h3>
-            <Badge
-              variant={filters.isFavorite ? "default" : "outline"}
-              className="cursor-pointer px-3 py-1"
-              onClick={handleFavoriteFilter}
-            >
-              <Heart className="w-3 h-3 mr-1" />
-              Favorites Only
-            </Badge>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="favorites-filter">Show Favorites Only</Label>
+            <Switch
+              id="favorites-filter"
+              checked={filters.isFavorite === true}
+              onCheckedChange={handleFavoriteToggle}
+            />
           </div>
 
-          {/* Clear Filters */}
-          <div className="pt-4 border-t">
-            <Button 
-              variant="outline" 
-              onClick={clearFilters}
-              className="w-full"
-            >
-              Clear All Filters
+          <div className="flex gap-3 pt-4">
+            <Button variant="outline" onClick={clearFilters} className="flex-1">
+              Clear Filters
+            </Button>
+            <Button onClick={onClose} className="flex-1">
+              Apply Filters
             </Button>
           </div>
         </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 };
 

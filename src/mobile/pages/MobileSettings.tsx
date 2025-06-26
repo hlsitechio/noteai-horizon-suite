@@ -1,98 +1,115 @@
 
 import React from 'react';
-import { User, Bell, Palette, Shield, Info } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { User, Settings, Palette, Info, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from 'next-themes';
 
 const MobileSettings: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
+  const { theme, setTheme } = useTheme();
+  const [notifications, setNotifications] = React.useState(true);
+  const [autoSync, setAutoSync] = React.useState(true);
 
-  const settingsGroups = [
-    {
-      title: 'Account',
-      icon: User,
-      items: [
-        { label: 'Profile', value: user?.email || 'Not signed in' },
-        { label: 'Sign Out', action: logout, type: 'button' },
-      ]
-    },
-    {
-      title: 'Notifications',
-      icon: Bell,
-      items: [
-        { label: 'Push Notifications', type: 'switch', checked: true },
-        { label: 'Email Updates', type: 'switch', checked: false },
-      ]
-    },
-    {
-      title: 'Appearance',
-      icon: Palette,
-      items: [
-        { label: 'Dark Mode', type: 'switch', checked: true },
-        { label: 'Accent Color', value: 'Blue' },
-      ]
-    },
-    {
-      title: 'Privacy & Security',
-      icon: Shield,
-      items: [
-        { label: 'Biometric Lock', type: 'switch', checked: false },
-        { label: 'Auto-lock', value: '5 minutes' },
-      ]
-    },
-    {
-      title: 'About',
-      icon: Info,
-      items: [
-        { label: 'Version', value: '1.0.0' },
-        { label: 'Privacy Policy', type: 'button' },
-        { label: 'Terms of Service', type: 'button' },
-      ]
-    },
-  ];
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Failed to sign out:', error);
+    }
+  };
 
   return (
     <div className="h-full overflow-y-auto bg-background">
       <div className="p-4 space-y-4">
-        <h1 className="text-2xl font-bold mb-6">Settings</h1>
-        
-        {settingsGroups.map((group) => {
-          const Icon = group.icon;
-          return (
-            <Card key={group.title}>
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Icon className="w-5 h-5" />
-                  {group.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {group.items.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <span className="text-sm">{item.label}</span>
-                    {item.type === 'switch' ? (
-                      <Switch checked={item.checked} />
-                    ) : item.type === 'button' ? (
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={item.action}
-                      >
-                        {item.label === 'Sign Out' ? 'Sign Out' : 'View'}
-                      </Button>
-                    ) : (
-                      <span className="text-sm text-muted-foreground">
-                        {item.value}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          );
-        })}
+        {/* Profile Section */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <User className="w-5 h-5" />
+              Profile
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div>
+              <Label className="text-sm text-muted-foreground">Email</Label>
+              <p className="text-sm font-medium">{user?.email}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Appearance */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Palette className="w-5 h-5" />
+              Appearance
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label>Dark Mode</Label>
+              <Switch
+                checked={theme === 'dark'}
+                onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Preferences */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Settings className="w-5 h-5" />
+              Preferences
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label>Push Notifications</Label>
+              <Switch
+                checked={notifications}
+                onCheckedChange={setNotifications}
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Label>Auto Sync</Label>
+              <Switch
+                checked={autoSync}
+                onCheckedChange={setAutoSync}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* About */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Info className="w-5 h-5" />
+              About
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm text-muted-foreground">
+            <p>NoteAI Suite Mobile</p>
+            <p>Version 1.0.0</p>
+          </CardContent>
+        </Card>
+
+        {/* Sign Out */}
+        <Button
+          variant="outline"
+          onClick={handleSignOut}
+          className="w-full"
+        >
+          <LogOut className="w-4 h-4 mr-2" />
+          Sign Out
+        </Button>
       </div>
     </div>
   );

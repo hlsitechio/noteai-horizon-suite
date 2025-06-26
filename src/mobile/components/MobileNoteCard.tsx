@@ -1,10 +1,9 @@
 
 import React from 'react';
-import { Calendar, Heart, MoreVertical } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Clock, Star, Tag } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../../contexts/NotesContext';
 import { Note } from '../../types/note';
 
@@ -13,69 +12,67 @@ interface MobileNoteCardProps {
 }
 
 const MobileNoteCard: React.FC<MobileNoteCardProps> = ({ note }) => {
-  const { setCurrentNote } = useNotes();
   const navigate = useNavigate();
+  const { setCurrentNote } = useNotes();
 
-  const handleEditNote = () => {
+  const handleNoteClick = () => {
     setCurrentNote(note);
-    navigate('/mobile/editor');
+    navigate(`/mobile/editor?note=${note.id}`);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-    }).format(date);
+      year: 'numeric'
+    });
+  };
+
+  const getPreviewText = (content: string) => {
+    const plainText = content.replace(/<[^>]*>/g, '');
+    return plainText.length > 100 ? plainText.substring(0, 100) + '...' : plainText;
   };
 
   return (
     <Card 
-      className="cursor-pointer active:scale-[0.98] transition-transform"
-      onClick={handleEditNote}
+      className="cursor-pointer hover:shadow-md transition-shadow"
+      onClick={handleNoteClick}
     >
       <CardContent className="p-4">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-semibold text-base line-clamp-1 flex-1 pr-2">
-            {note.title}
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="font-semibold text-base line-clamp-2 flex-1 mr-2">
+            {note.title || 'Untitled'}
           </h3>
-          <div className="flex items-center gap-1 flex-shrink-0">
-            {note.isFavorite && (
-              <Heart className="w-4 h-4 text-red-500 fill-current" />
-            )}
-            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-              <MoreVertical className="w-4 h-4" />
-            </Button>
-          </div>
+          {note.isFavorite && (
+            <Star className="w-4 h-4 text-yellow-500 fill-current flex-shrink-0" />
+          )}
         </div>
         
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-          {note.content || 'No content yet...'}
-        </p>
+        {note.content && (
+          <p className="text-sm text-muted-foreground mb-3 line-clamp-3">
+            {getPreviewText(note.content)}
+          </p>
+        )}
         
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Calendar className="w-3 h-3" />
-            {formatDate(note.updatedAt)}
-            <Badge variant="secondary" className="text-xs">
-              {note.category}
-            </Badge>
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            <span>{formatDate(note.updatedAt)}</span>
           </div>
           
-          {note.tags.length > 0 && (
-            <div className="flex gap-1">
-              {note.tags.slice(0, 2).map((tag) => (
-                <Badge key={tag} variant="outline" className="text-xs">
-                  #{tag}
-                </Badge>
-              ))}
-              {note.tags.length > 2 && (
-                <Badge variant="outline" className="text-xs">
-                  +{note.tags.length - 2}
-                </Badge>
-              )}
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            {note.category && (
+              <Badge variant="secondary" className="text-xs px-2 py-1">
+                {note.category}
+              </Badge>
+            )}
+            {note.tags.length > 0 && (
+              <div className="flex items-center gap-1">
+                <Tag className="w-3 h-3" />
+                <span>{note.tags.length}</span>
+              </div>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
