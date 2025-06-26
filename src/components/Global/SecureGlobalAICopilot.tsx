@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useQuantumAI } from '@/contexts/QuantumAIContext';
-import { CopilotButton } from '@/components/AICopilot';
+import UnifiedAIButton from '@/components/AICopilot/UnifiedAIButton';
 import EnhancedAICopilot from '@/components/Editor/EnhancedAICopilot';
 import { validateNoteContent, sanitizeText, secureLog, rateLimiter } from '../../utils/securityUtils';
 import { useToast } from '../../hooks/useToast';
@@ -158,9 +158,9 @@ const SecureGlobalAICopilot: React.FC = () => {
 
   return (
     <>
-      {/* Floating AI Copilot Button */}
+      {/* Unified AI Button */}
       <div className="fixed bottom-20 right-6 z-40">
-        <CopilotButton
+        <UnifiedAIButton
           onClick={handleCopilotToggle}
           isActive={isVisible}
           className="shadow-xl"

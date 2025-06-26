@@ -8,7 +8,6 @@ import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
 import RecentActivity from '../components/Dashboard/RecentActivity';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
-import QuantumAI3DToolbar from '../components/QuantumAI/QuantumAI3DToolbar';
 
 const Dashboard: React.FC = () => {
   const { notes, setCurrentNote } = useNotes();
@@ -95,11 +94,6 @@ const Dashboard: React.FC = () => {
               onEditNote={handleEditNote}
             />
           </div>
-        </div>
-
-        {/* Bottom Section - AI Toolbar */}
-        <div className="flex-shrink-0 flex justify-center pb-2">
-          <QuantumAI3DToolbar />
         </div>
       </div>
     </div>
