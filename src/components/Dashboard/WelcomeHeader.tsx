@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Clock, Image } from 'lucide-react';
 import BannerUpload from './BannerUpload';
+import AIBannerGenerator from './AIBannerGenerator';
 import { BannerStorageService, BannerData } from '@/services/bannerStorage';
 
 const WelcomeHeader: React.FC = () => {
@@ -81,6 +83,31 @@ const WelcomeHeader: React.FC = () => {
     setBannerData(null);
   };
 
+  const handleAIBannerGenerated = async (imageUrl: string) => {
+    console.log('WelcomeHeader: AI banner generated:', imageUrl.substring(0, 50) + '...');
+    
+    // Convert the base64 image to a File object and upload it
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const file = new File([blob], 'ai-generated-banner.png', { type: 'image/png' });
+      
+      // Upload using the banner storage service
+      const bannerData = await BannerStorageService.uploadBanner(file, 'dashboard');
+      
+      if (bannerData) {
+        setBannerData({
+          url: bannerData.file_url,
+          type: bannerData.file_type
+        });
+      }
+    } catch (error) {
+      console.error('WelcomeHeader: Error saving AI banner:', error);
+      // Still show the generated banner even if upload fails
+      setBannerData({ url: imageUrl, type: 'image' });
+    }
+  };
+
   return (
     <div className="space-y-4 mb-6">
       {/* Banner Section */}
@@ -136,13 +163,16 @@ const WelcomeHeader: React.FC = () => {
           </div>
         )}
 
-        {/* Upload Banner Button - positioned in top right with better opacity */}
+        {/* Banner Controls - positioned in top right */}
         <div className="absolute top-4 right-4 z-10 opacity-30 hover:opacity-100 transition-opacity duration-300">
-          <BannerUpload
-            currentBannerUrl={bannerData?.url}
-            onBannerUpdate={handleBannerUpdate}
-            onBannerDelete={handleBannerDelete}
-          />
+          <div className="flex gap-2">
+            <AIBannerGenerator onBannerGenerated={handleAIBannerGenerated} />
+            <BannerUpload
+              currentBannerUrl={bannerData?.url}
+              onBannerUpdate={handleBannerUpdate}
+              onBannerDelete={handleBannerDelete}
+            />
+          </div>
         </div>
       </div>
 
