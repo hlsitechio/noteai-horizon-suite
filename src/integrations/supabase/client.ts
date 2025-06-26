@@ -13,6 +13,28 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: true
+    detectSessionInUrl: true,
+    // Handle token refresh failures gracefully
+    debug: process.env.NODE_ENV === 'development',
+    flowType: 'pkce'
+  },
+  global: {
+    headers: {
+      'x-my-custom-header': 'notes-app',
+    },
+  },
+});
+
+// Add error handling for token refresh failures
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'TOKEN_REFRESHED' && !session) {
+    console.warn('Token refresh failed, session is null');
+  }
+  
+  if (event === 'SIGNED_OUT') {
+    console.log('User signed out, clearing local storage');
+    // Clear any cached auth data
+    localStorage.removeItem('supabase.auth.token');
+    localStorage.removeItem('sb-qrdulwzjgbfgaplazgsh-auth-token');
   }
 });

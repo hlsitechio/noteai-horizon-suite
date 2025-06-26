@@ -63,6 +63,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Function to clear corrupted session data
+  const clearCorruptedSession = async () => {
+    console.log('Clearing potentially corrupted session data');
+    try {
+      await supabase.auth.signOut();
+      localStorage.removeItem('supabase.auth.token');
+      localStorage.removeItem('sb-qrdulwzjgbfgaplazgsh-auth-token');
+      setSession(null);
+      setUser(null);
+    } catch (error) {
+      console.error('Error clearing session:', error);
+    }
+  };
+
   // Function to refresh user data from the database
   const refreshUser = async () => {
     if (session?.user) {
@@ -87,6 +101,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (error) {
           console.error('Error getting session:', error);
+          
+          // Handle invalid refresh token error
+          if (error.message.includes('Invalid Refresh Token') || 
+              error.message.includes('Refresh Token Not Found')) {
+            console.log('Invalid refresh token detected, clearing session');
+            await clearCorruptedSession();
+          }
+          
           if (mounted) {
             setSession(null);
             setUser(null);
@@ -111,6 +133,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsLoading(false);
       } catch (error) {
         console.error('Error initializing auth:', error);
+        
+        // Handle any authentication initialization errors
+        if (error instanceof Error && 
+            (error.message.includes('Invalid Refresh Token') || 
+             error.message.includes('Refresh Token Not Found'))) {
+          await clearCorruptedSession();
+        }
+        
         if (mounted) {
           setUser(null);
           setSession(null);
@@ -125,6 +155,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('Auth state changed:', event, session?.user?.email);
         
         if (!mounted) return;
+        
+        // Handle token refresh errors
+        if (event === 'TOKEN_REFRESHED' && !session) {
+          console.log('Token refresh failed, clearing session');
+          await clearCorruptedSession();
+          setIsLoading(false);
+          return;
+        }
         
         setSession(session);
         
@@ -161,7 +199,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         console.error('Login error:', error);
-        toast.error(error.message);
+        
+        // Handle invalid credentials or other auth errors
+        if (error.message.includes('Invalid Refresh Token')) {
+          await clearCorruptedSession();
+          toast.error('Session expired. Please try logging in again.');
+        } else {
+          toast.error(error.message);
+        }
         return false;
       }
 
@@ -225,6 +270,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error('Logout error:', error);
         toast.error('Logout failed');
       } else {
+        // Clear any remaining session data
+        await clearCorruptedSession();
         toast.success('Logged out successfully');
       }
     } catch (error) {
