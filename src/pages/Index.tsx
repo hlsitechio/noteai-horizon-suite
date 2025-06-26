@@ -15,9 +15,8 @@ const Index: React.FC = () => {
   useEffect(() => {
     console.log('Index useEffect - Auth state:', { user: !!user, isLoading });
     
-    // Add a small delay to prevent potential race conditions
-    const timer = setTimeout(() => {
-      if (!isLoading) {
+    if (!isLoading) {
+      const timer = setTimeout(() => {
         if (user) {
           console.log('User authenticated, navigating to dashboard');
           navigate('/app/dashboard', { replace: true });
@@ -25,10 +24,10 @@ const Index: React.FC = () => {
           console.log('User not authenticated, navigating to landing');
           navigate('/landing', { replace: true });
         }
-      }
-    }, 100);
+      }, 100);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    }
   }, [user, isLoading, navigate]);
 
   console.log('Index component rendering - isLoading:', isLoading);

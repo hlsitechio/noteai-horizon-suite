@@ -80,9 +80,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     let mounted = true;
     
+    // Check for existing session first
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error getting session:', error);
+          if (mounted) {
+            setSession(null);
+            setUser(null);
+            setIsLoading(false);
+          }
+          return;
+        }
+
+        console.log('Initial session check:', session?.user?.email || 'No session');
+        
+        if (!mounted) return;
+        
+        setSession(session);
+        
+        if (session?.user) {
+          const transformedUser = transformUser(session.user);
+          setUser(transformedUser);
+        } else {
+          setUser(null);
+        }
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+        if (mounted) {
+          setUser(null);
+          setSession(null);
+          setIsLoading(false);
+        }
+      }
+    };
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         
         if (!mounted) return;
@@ -101,43 +140,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsLoading(false);
       }
     );
-
-    // Check for existing session
-    const initializeAuth = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) {
-          console.error('Error getting session:', error);
-          if (mounted) {
-            setIsLoading(false);
-          }
-          return;
-        }
-
-        console.log('Initial session check:', session?.user?.email || 'No session');
-        
-        if (!mounted) return;
-        
-        setSession(session);
-        
-        if (session?.user) {
-          const transformedUser = transformUser(session.user);
-          setUser(transformedUser);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-        if (mounted) {
-          setUser(null);
-          setSession(null);
-        }
-      } finally {
-        if (mounted) {
-          setIsLoading(false);
-        }
-      }
-    };
 
     initializeAuth();
 
