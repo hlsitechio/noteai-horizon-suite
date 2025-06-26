@@ -34,19 +34,30 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="left" className="w-80 p-0">
-        <SheetHeader className="p-4 border-b">
-          <SheetTitle className="flex items-center justify-between">
-            <span>Menu</span>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="w-4 h-4" />
-            </Button>
-          </SheetTitle>
-        </SheetHeader>
-        
-        <div className="flex flex-col h-full">
+      <SheetContent 
+        side="left" 
+        className="w-[280px] p-0 h-full max-h-screen overflow-hidden"
+        style={{ 
+          position: 'fixed',
+          top: 0,
+          left: isOpen ? 0 : '-280px',
+          height: '100%',
+          maxHeight: '100vh',
+          zIndex: 50
+        }}
+      >
+        <div className="flex flex-col h-full max-h-screen overflow-hidden">
+          <SheetHeader className="p-4 border-b flex-shrink-0">
+            <SheetTitle className="flex items-center justify-between">
+              <span>Menu</span>
+              <Button variant="ghost" size="sm" onClick={onClose}>
+                <X className="w-4 h-4" />
+              </Button>
+            </SheetTitle>
+          </SheetHeader>
+          
           {/* Profile Section */}
-          <div className="p-4 border-b bg-muted/30">
+          <div className="p-4 border-b bg-muted/30 flex-shrink-0">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
                 <User className="h-5 w-5 text-primary-foreground" />
@@ -62,49 +73,51 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Navigation Menu */}
-          <div className="flex-1 p-4 space-y-2">
-            <Button
-              variant="ghost"
-              onClick={() => handleNavigation('/mobile/notes')}
-              className="w-full justify-start h-12"
-            >
-              <FileText className="w-5 h-5 mr-3" />
-              Notes
-            </Button>
-            
-            <Button
-              variant="ghost"
-              onClick={() => handleNavigation('/mobile/settings')}
-              className="w-full justify-start h-12"
-            >
-              <Settings className="w-5 h-5 mr-3" />
-              Settings
-            </Button>
-            
-            <Button
-              variant="ghost"
-              onClick={() => handleNavigation('/app/notes')}
-              className="w-full justify-start h-12"
-            >
-              <Home className="w-5 h-5 mr-3" />
-              Desktop View
-            </Button>
+          {/* Navigation Menu - Scrollable */}
+          <div className="flex-1 overflow-y-auto min-h-0">
+            <div className="p-4 space-y-2">
+              <Button
+                variant="ghost"
+                onClick={() => handleNavigation('/mobile/notes')}
+                className="w-full justify-start h-12"
+              >
+                <FileText className="w-5 h-5 mr-3" />
+                Notes
+              </Button>
+              
+              <Button
+                variant="ghost"
+                onClick={() => handleNavigation('/mobile/settings')}
+                className="w-full justify-start h-12"
+              >
+                <Settings className="w-5 h-5 mr-3" />
+                Settings
+              </Button>
+              
+              <Button
+                variant="ghost"
+                onClick={() => handleNavigation('/app/notes')}
+                className="w-full justify-start h-12"
+              >
+                <Home className="w-5 h-5 mr-3" />
+                Desktop View
+              </Button>
+            </div>
+
+            {/* Notifications Section */}
+            <div className="p-4 border-t">
+              <Button
+                variant="ghost"
+                className="w-full justify-start h-12"
+              >
+                <Bell className="w-5 h-5 mr-3" />
+                Notifications
+              </Button>
+            </div>
           </div>
 
-          {/* Notifications Section */}
-          <div className="p-4 border-t">
-            <Button
-              variant="ghost"
-              className="w-full justify-start h-12"
-            >
-              <Bell className="w-5 h-5 mr-3" />
-              Notifications
-            </Button>
-          </div>
-
-          {/* Sign Out */}
-          <div className="p-4 border-t">
+          {/* Sign Out - Fixed at bottom */}
+          <div className="p-4 border-t flex-shrink-0">
             <Button
               variant="outline"
               onClick={handleSignOut}

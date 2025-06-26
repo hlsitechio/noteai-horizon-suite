@@ -26,7 +26,7 @@ const MobileApp: React.FC = () => {
   }, [noteId, notes, setCurrentNote]);
 
   return (
-    <div className="mobile-app h-screen overflow-hidden bg-background">
+    <div className="mobile-app h-full w-full overflow-hidden bg-background">
       <Routes>
         <Route path="/" element={<MobileLayout />}>
           <Route index element={<Navigate to="notes" replace />} />
