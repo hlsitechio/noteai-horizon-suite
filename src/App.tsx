@@ -179,7 +179,7 @@ function App() {
                 </NotificationsProvider>
               </QuantumAIProvider>
             </Router>
-          </AccentColorContext>
+          </AccentColorProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
