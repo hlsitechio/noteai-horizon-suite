@@ -65,6 +65,7 @@ function App() {
                             <Routes>
                               {/* Public Routes */}
                               <Route path="/" element={<Index />} />
+                              <Route path="/home" element={<Navigate to="/landing" replace />} />
                               <Route path="/landing" element={<Landing />} />
                               <Route path="/login" element={<Login />} />
                               <Route path="/register" element={<Register />} />
