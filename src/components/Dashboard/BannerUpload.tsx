@@ -1,7 +1,7 @@
 
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Upload, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { BannerStorageService } from '@/services/bannerStorage';
@@ -149,6 +149,9 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
       <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle>Dashboard Banner</DialogTitle>
+          <DialogDescription>
+            Upload an image or video to personalize your dashboard banner. Images should be max 10MB and videos max 50MB in MP4 format.
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-6">
