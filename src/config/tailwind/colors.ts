@@ -43,7 +43,7 @@ export const colorsConfig = {
     border: 'hsl(var(--sidebar-border))',
     ring: 'hsl(var(--sidebar-ring))'
   },
-  // Deep Intelligence semantic colors
+  // Pure black theme semantic colors
   success: {
     DEFAULT: 'hsl(var(--success))',
     foreground: 'hsl(var(--success-foreground))'
@@ -56,9 +56,9 @@ export const colorsConfig = {
     DEFAULT: 'hsl(var(--info))',
     foreground: 'hsl(var(--info-foreground))'
   },
-  // Deep Intelligence color palette
+  // Pure black color palette with silver touches
   'deep-carbon': {
-    DEFAULT: '#121212', // Primary Background
+    DEFAULT: '#000000', // Pure Black
     50: '#f8f8f8',
     100: '#e8e8e8',
     200: '#d1d1d1',
@@ -67,9 +67,9 @@ export const colorsConfig = {
     500: '#8c8c8c',
     600: '#757575',
     700: '#5e5e5e',
-    800: '#1A1A1A', // Secondary UI Elements
-    900: '#121212', // Primary Background
-    950: '#0a0a0a'
+    800: '#0D0D0D', // Dark cards with silver touch
+    900: '#000000', // Pure Black
+    950: '#000000'
   },
   'electric-cyan': {
     DEFAULT: '#00CFDE', // Accent Color

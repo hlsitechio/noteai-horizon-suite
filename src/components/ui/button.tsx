@@ -6,17 +6,17 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 backdrop-blur-xl",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-accent text-accent-foreground hover:bg-accent/90 shadow-premium hover:shadow-large hover:-translate-y-1 hover:scale-105",
+        default: "bg-transparent text-accent border-2 border-accent hover:bg-accent/10 hover:-translate-y-0.5 hover:scale-[1.02]",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-premium hover:shadow-large hover:-translate-y-1 hover:scale-105",
+          "bg-transparent text-destructive border-2 border-destructive hover:bg-destructive/10 hover:-translate-y-0.5 hover:scale-[1.02]",
         outline:
-          "border border-border/20 bg-card/50 hover:bg-card/80 hover:text-foreground shadow-premium hover:shadow-large hover:-translate-y-1 hover:scale-105",
+          "bg-transparent border-2 border-border/50 hover:bg-border/10 hover:text-foreground hover:-translate-y-0.5 hover:scale-[1.02]",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-premium hover:shadow-large hover:-translate-y-1 hover:scale-105",
+          "bg-transparent text-secondary-foreground border-2 border-secondary hover:bg-secondary/10 hover:-translate-y-0.5 hover:scale-[1.02]",
         ghost: "hover:bg-accent/10 hover:text-foreground",
         link: "text-accent underline-offset-4 hover:underline",
       },

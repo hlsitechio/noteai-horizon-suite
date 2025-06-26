@@ -38,67 +38,47 @@
     --warning-foreground: 222.2 84% 4.9%;
     --info: 199.89 89% 48%;
     --info-foreground: 210 40% 98%;
-    
-    /* Enhanced premium gradient variables */
-    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
-    --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
-    --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #43e97b 100%);
-    --gradient-premium: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
-    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-large: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    --shadow-premium: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
 
   .dark {
-    /* Deep Intelligence Theme - Professional Dark UI */
-    --background: 216 16% 7%; /* #121212 - Primary Background */
+    /* Pure Black with Silver Touch Background */
+    --background: 0 0% 0%; /* Pure Black */
     --foreground: 0 0% 88%; /* #E1E1E1 - Primary Text & Icons */
-    --card: 0 0% 10%; /* #1A1A1A - Secondary UI Elements */
+    --card: 0 0% 5%; /* #0D0D0D - Very dark cards with silver touch */
     --card-foreground: 0 0% 88%; /* #E1E1E1 - Primary Text & Icons */
-    --popover: 0 0% 10%; /* #1A1A1A - Secondary UI Elements */
+    --popover: 0 0% 5%; /* #0D0D0D - Very dark popover with silver touch */
     --popover-foreground: 0 0% 88%; /* #E1E1E1 - Primary Text & Icons */
     --primary: 187 100% 42%; /* #00CFDE - Accent Color */
-    --primary-foreground: 216 16% 7%; /* #121212 - Dark on accent */
-    --secondary: 0 0% 12%; /* Slightly lighter than card */
+    --primary-foreground: 0 0% 0%; /* Pure black on accent */
+    --secondary: 0 0% 8%; /* Dark grey with silver touch */
     --secondary-foreground: 0 0% 88%; /* #E1E1E1 - Primary Text & Icons */
-    --muted: 0 0% 15%; /* Muted backgrounds */
+    --muted: 0 0% 10%; /* Muted backgrounds with silver touch */
     --muted-foreground: 0 0% 60%; /* Muted text */
     --accent: 187 100% 42%; /* #00CFDE - Accent Color */
-    --accent-foreground: 216 16% 7%; /* #121212 - Dark on accent */
+    --accent-foreground: 0 0% 0%; /* Pure black on accent */
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 88%;
-    --border: 0 0% 15%; /* Subtle borders */
-    --input: 0 0% 12%; /* Input backgrounds */
+    --border: 0 0% 12%; /* Subtle silver borders */
+    --input: 0 0% 8%; /* Input backgrounds with silver touch */
     --ring: 187 100% 42%; /* #00CFDE - Focus rings */
     
-    /* Sidebar specific colors for Deep Intelligence theme */
-    --sidebar-background: 216 16% 7%; /* #121212 - Primary Background */
+    /* Sidebar specific colors for pure black theme */
+    --sidebar-background: 0 0% 0%; /* Pure Black */
     --sidebar-foreground: 0 0% 88%; /* #E1E1E1 - Primary Text & Icons */
     --sidebar-primary: 187 100% 42%; /* #00CFDE - Accent Color */
-    --sidebar-primary-foreground: 216 16% 7%; /* #121212 - Dark on accent */
-    --sidebar-accent: 0 0% 12%; /* Hover states */
+    --sidebar-primary-foreground: 0 0% 0%; /* Pure black on accent */
+    --sidebar-accent: 0 0% 5%; /* Hover states with silver touch */
     --sidebar-accent-foreground: 0 0% 88%; /* #E1E1E1 - Primary Text & Icons */
-    --sidebar-border: 0 0% 15%; /* Subtle borders */
+    --sidebar-border: 0 0% 12%; /* Subtle silver borders */
     --sidebar-ring: 187 100% 42%; /* #00CFDE - Focus rings */
     
     /* Enhanced dark mode semantic colors */
     --success: 142.1 76.2% 36.3%;
     --success-foreground: 0 0% 88%;
     --warning: 38.2 92% 50%;
-    --warning-foreground: 216 16% 7%;
+    --warning-foreground: 0 0% 0%;
     --info: 187 100% 42%; /* Using accent color for info */
-    --info-foreground: 216 16% 7%;
-    
-    /* Professional dark gradients with accent integration */
-    --gradient-primary: linear-gradient(135deg, #00CFDE 0%, #1A1A1A 50%, #00CFDE 100%);
-    --gradient-secondary: linear-gradient(135deg, #1A1A1A 0%, #121212 50%, #1A1A1A 100%);
-    --gradient-success: linear-gradient(135deg, #00CFDE 0%, #10b981 50%, #00CFDE 100%);
-    --gradient-premium: linear-gradient(135deg, #00CFDE 0%, #1A1A1A 25%, #00CFDE 50%, #121212 75%, #00CFDE 100%);
-    --shadow-soft: 0 4px 6px -1px rgba(0, 207, 222, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
-    --shadow-medium: 0 10px 15px -3px rgba(0, 207, 222, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
-    --shadow-large: 0 25px 50px -12px rgba(0, 207, 222, 0.2);
-    --shadow-premium: 0 20px 25px -5px rgba(0, 207, 222, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    --info-foreground: 0 0% 0%;
   }
 
   * {
@@ -113,7 +93,7 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  /* Professional scrollbar for Deep Intelligence theme */
+  /* Professional scrollbar for pure black theme */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -134,57 +114,56 @@
 
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-accent/30;
-    transform: scale(1.1);
   }
 
-  /* Professional focus styles with accent color */
+  /* Professional focus styles with accent color - no glow */
   :focus-visible {
     @apply outline-none ring-2 ring-accent/50 ring-offset-2 ring-offset-background;
   }
 }
 
-/* Professional utility classes for Deep Intelligence theme */
+/* Professional utility classes for pure black theme */
 @layer utilities {
-  /* Enhanced gradient utilities with accent integration */
+  /* Simple gradients without glow effects */
   .bg-gradient-primary {
-    background: var(--gradient-primary);
+    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--card)) 50%, hsl(var(--accent)) 100%);
   }
   
   .bg-gradient-secondary {
-    background: var(--gradient-secondary);
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--background)) 50%, hsl(var(--card)) 100%);
   }
   
   .bg-gradient-success {
-    background: var(--gradient-success);
+    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--success)) 50%, hsl(var(--accent)) 100%);
   }
 
   .bg-gradient-premium {
-    background: var(--gradient-premium);
+    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--card)) 25%, hsl(var(--accent)) 50%, hsl(var(--background)) 75%, hsl(var(--accent)) 100%);
   }
 
-  /* Professional glassmorphism with Deep Intelligence colors */
+  /* Simple glassmorphism without glow */
   .glass {
-    @apply backdrop-blur-xl bg-card/20 shadow-premium border border-border/10;
+    @apply backdrop-blur-xl bg-card/20 border border-border/10;
   }
 
-  /* Professional shadow utilities with accent hints */
+  /* Simple shadow utilities without glow effects */
   .shadow-soft {
-    box-shadow: var(--shadow-soft);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
   }
   
   .shadow-medium {
-    box-shadow: var(--shadow-medium);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
   }
   
   .shadow-large {
-    box-shadow: var(--shadow-large);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   }
 
   .shadow-premium {
-    box-shadow: var(--shadow-premium);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
   }
 
-  /* Professional text gradients with accent color */
+  /* Simple text gradients with accent color */
   .text-gradient-primary {
     @apply bg-gradient-to-r from-accent via-foreground to-accent bg-clip-text text-transparent;
   }
@@ -197,44 +176,44 @@
     @apply bg-gradient-to-r from-accent via-foreground via-accent to-foreground bg-clip-text text-transparent;
   }
 
-  /* Professional transitions */
+  /* Simple transitions without glow effects */
   .transition-all-smooth {
-    @apply transition-all duration-500 ease-out;
+    @apply transition-all duration-300 ease-out;
   }
   
   .hover-lift {
-    @apply transform transition-all duration-300 hover:-translate-y-1 hover:shadow-premium hover:scale-105;
+    @apply transform transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.02];
   }
 
-  /* Professional button styles with accent color */
+  /* Simple button styles with colored borders */
   .btn-primary {
-    @apply bg-accent text-accent-foreground font-semibold px-8 py-4 rounded-xl shadow-premium hover:shadow-large transform transition-all duration-300 hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 backdrop-blur-xl;
+    @apply bg-transparent text-accent font-semibold px-8 py-4 rounded-xl border-2 border-accent hover:bg-accent/10 transform transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2;
   }
   
   .btn-secondary {
-    @apply bg-card backdrop-blur-xl text-card-foreground font-semibold px-8 py-4 rounded-xl shadow-premium hover:shadow-large transform transition-all duration-300 hover:-translate-y-1 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 border border-border/20;
+    @apply bg-transparent text-card-foreground font-semibold px-8 py-4 rounded-xl border-2 border-border hover:bg-border/10 transform transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2;
   }
 
-  /* Professional card styles */
+  /* Simple card styles without glow */
   .card-enhanced {
-    @apply bg-card backdrop-blur-xl rounded-2xl shadow-premium hover:shadow-large transition-all duration-500 p-8 hover:-translate-y-1 hover:scale-105 border border-border/10;
+    @apply bg-card rounded-2xl transition-all duration-300 p-8 hover:-translate-y-0.5 hover:scale-[1.02] border border-border/20;
   }
 
-  /* Professional input styles */
+  /* Simple input styles */
   .input-enhanced {
-    @apply w-full px-6 py-4 bg-input backdrop-blur-xl rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-300 shadow-soft focus:shadow-medium border border-border/20;
+    @apply w-full px-6 py-4 bg-input rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-200 border border-border/20;
   }
 }
 
-/* Professional component styles for Deep Intelligence theme */
+/* Simple component styles for pure black theme */
 @layer components {
-  /* Professional navigation with accent highlights */
+  /* Simple navigation with accent highlights */
   .nav-link {
-    @apply relative text-muted-foreground hover:text-foreground transition-all duration-300 font-semibold px-4 py-2 rounded-lg hover:bg-accent/10;
+    @apply relative text-muted-foreground hover:text-foreground transition-all duration-200 font-semibold px-4 py-2 rounded-lg hover:bg-accent/10;
   }
   
   .nav-link::after {
-    @apply absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-accent transition-all duration-300 rounded-full;
+    @apply absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-accent transition-all duration-200 rounded-full;
     content: '';
   }
   
@@ -243,7 +222,7 @@
     @apply w-full;
   }
 
-  /* Professional form styles */
+  /* Simple form styles */
   .form-group {
     @apply space-y-3;
   }
@@ -256,31 +235,31 @@
     @apply text-sm text-destructive font-medium;
   }
 
-  /* Professional loading states with accent color */
+  /* Simple loading states with accent color */
   .loading-shimmer {
-    @apply animate-pulse bg-gradient-to-r from-card via-accent/10 to-card bg-[length:200%_100%] backdrop-blur-sm rounded-lg;
+    @apply animate-pulse bg-gradient-to-r from-card via-accent/10 to-card bg-[length:200%_100%] rounded-lg;
     animation: shimmer 2s infinite;
   }
 
-  /* Professional rich text editor toolbar */
+  /* Simple rich text editor toolbar */
   .editor-toolbar {
-    @apply flex items-center gap-2 p-4 bg-card backdrop-blur-xl rounded-t-2xl shadow-premium border border-border/10;
+    @apply flex items-center gap-2 p-4 bg-card rounded-t-2xl border border-border/10;
   }
   
   .editor-button {
-    @apply p-3 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent/10 backdrop-blur-sm transition-all duration-300 hover:shadow-md hover:scale-105;
+    @apply p-3 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent/10 transition-all duration-200;
   }
   
   .editor-button.active {
-    @apply bg-accent text-accent-foreground backdrop-blur-xl shadow-lg scale-105;
+    @apply bg-transparent text-accent border border-accent;
   }
   
   .editor-content {
-    @apply p-8 min-h-96 focus:outline-none prose prose-lg max-w-none prose-invert bg-card backdrop-blur-xl rounded-b-2xl shadow-inner border border-border/10;
+    @apply p-8 min-h-96 focus:outline-none prose prose-lg max-w-none prose-invert bg-card rounded-b-2xl border border-border/10;
   }
 }
 
-/* Professional animations */
+/* Simple animations without glow effects */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -313,7 +292,7 @@
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.98);
   }
   to {
     opacity: 1;
@@ -321,17 +300,17 @@
   }
 }
 
-/* Professional animation utilities */
+/* Simple animation utilities */
 .animate-slide-in-up {
-  animation: slideInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: slideInUp 0.3s ease-out;
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.4s ease-out;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: scaleIn 0.2s ease-out;
 }
 
 /* Responsive typography */
