@@ -164,49 +164,70 @@ const EnhancedAssistantAnalytics: React.FC<EnhancedAssistantAnalyticsProps> = ({
         </Card>
       </motion.div>
 
-      {/* Daily Notes Creation Chart */}
+      {/* Enhanced Daily Notes Creation Chart */}
       <motion.div variants={itemVariants}>
-        <Card className="glass shadow-medium border-0 bg-gradient-to-br from-white/80 via-white/60 to-white/40 dark:from-slate-800/80 dark:via-slate-800/60 dark:to-slate-800/40 backdrop-blur-xl">
-          <CardHeader className="pb-3">
-            <CardTitle className="font-bold text-gray-800 flex items-center gap-2 dark:text-slate-200">
-              <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
+        <Card className="glass shadow-medium border-0 bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 dark:from-slate-900/95 dark:via-slate-800/90 dark:to-slate-900/95 backdrop-blur-xl overflow-hidden">
+          <CardHeader className="pb-6 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10" />
+            <CardTitle className="font-bold text-white flex items-center gap-2 relative z-10">
+              <TrendingUp className="w-5 h-5 text-cyan-400" />
               Daily Notes Creation
-              <Badge variant="secondary" className="ml-auto bg-blue-100/50 text-blue-700 border-0 dark:bg-blue-900/30 dark:text-blue-300">
+              <Badge variant="secondary" className="ml-auto bg-cyan-900/50 text-cyan-300 border-cyan-500/30">
                 Last 7 days
               </Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-48 w-full">
+          <CardContent className="pt-0 relative">
+            <div className="h-64 w-full relative">
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent rounded-lg" />
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={dailyNotesData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                <AreaChart data={dailyNotesData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                   <defs>
-                    <linearGradient id="notesGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.05}/>
+                    <linearGradient id="enhancedNotesGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.8}/>
+                      <stop offset="25%" stopColor="#0891b2" stopOpacity={0.6}/>
+                      <stop offset="50%" stopColor="#0e7490" stopOpacity={0.4}/>
+                      <stop offset="75%" stopColor="#155e75" stopOpacity={0.2}/>
+                      <stop offset="100%" stopColor="#164e63" stopOpacity={0.1}/>
                     </linearGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                      <feMerge> 
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" strokeOpacity={0.3} />
+                  <CartesianGrid 
+                    strokeDasharray="2 4" 
+                    stroke="#334155" 
+                    strokeOpacity={0.3} 
+                    vertical={false}
+                  />
                   <XAxis 
                     dataKey="shortDate" 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fill: '#64748b' }}
+                    tick={{ fontSize: 12, fill: '#94a3b8', fontWeight: 500 }}
                   />
                   <YAxis 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fill: '#64748b' }}
+                    tick={{ fontSize: 12, fill: '#94a3b8', fontWeight: 500 }}
+                    domain={[0, 'dataMax + 2']}
                   />
                   <Tooltip 
                     content={({ active, payload, label }) => {
                       if (active && payload && payload.length) {
                         return (
-                          <div className="bg-white/90 backdrop-blur-sm border border-white/20 rounded-lg p-3 shadow-lg dark:bg-slate-800/90 dark:border-slate-600/20">
-                            <p className="font-semibold text-gray-900 dark:text-slate-100">{label}</p>
-                            <p className="text-blue-600 dark:text-blue-400">
-                              Notes: <span className="font-bold">{payload[0].value}</span>
-                            </p>
+                          <div className="bg-slate-800/95 backdrop-blur-xl border border-cyan-500/30 rounded-xl p-4 shadow-2xl">
+                            <p className="font-semibold text-white text-sm mb-2">{label}</p>
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" />
+                              <span className="text-cyan-300 font-medium">
+                                Notes: <span className="text-white font-bold text-lg">{payload[0].value}</span>
+                              </span>
+                            </div>
                           </div>
                         );
                       }
@@ -216,27 +237,48 @@ const EnhancedAssistantAnalytics: React.FC<EnhancedAssistantAnalyticsProps> = ({
                   <Area
                     type="monotone"
                     dataKey="notes"
-                    stroke="#3b82f6"
-                    strokeWidth={2}
-                    fill="url(#notesGradient)"
-                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
-                    activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 2, fill: '#ffffff' }}
+                    stroke="#06b6d4"
+                    strokeWidth={3}
+                    fill="url(#enhancedNotesGradient)"
+                    dot={{ 
+                      fill: '#06b6d4', 
+                      strokeWidth: 2, 
+                      r: 5,
+                      stroke: '#ffffff',
+                      filter: 'url(#glow)'
+                    }}
+                    activeDot={{ 
+                      r: 8, 
+                      stroke: '#06b6d4', 
+                      strokeWidth: 3, 
+                      fill: '#ffffff',
+                      filter: 'url(#glow)',
+                      style: {
+                        filter: 'drop-shadow(0 0 8px #06b6d4)'
+                      }
+                    }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
             
-            {/* Weekly Summary */}
-            <div className="mt-4 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-100 dark:from-blue-900/20 dark:to-purple-900/20 dark:border-blue-800/30">
+            {/* Enhanced Weekly Summary */}
+            <div className="mt-6 p-4 bg-gradient-to-r from-cyan-900/20 via-blue-900/20 to-purple-900/20 rounded-xl border border-cyan-500/20 backdrop-blur-sm">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-700 dark:text-slate-300">Weekly Summary:</span>
-                <div className="flex items-center gap-4">
-                  <span className="text-blue-600 font-semibold dark:text-blue-400">
-                    {weeklyTrend.total} notes total
-                  </span>
-                  <span className="text-purple-600 font-semibold dark:text-purple-400">
-                    {weeklyTrend.average} avg/day
-                  </span>
+                <span className="text-slate-300 font-medium">Weekly Summary:</span>
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" />
+                    <span className="text-cyan-300 font-semibold">
+                      {weeklyTrend.total} total
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-purple-400 shadow-lg shadow-purple-400/50" />
+                    <span className="text-purple-300 font-semibold">
+                      {weeklyTrend.average} avg/day
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
