@@ -1,10 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Plus, Filter, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNotes } from '../../contexts/NotesContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import MobileNoteCard from '../components/MobileNoteCard';
 import MobileFilterSheet from '../components/MobileFilterSheet';
 
@@ -13,6 +13,15 @@ const MobileNotes: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState(filters.searchTerm || '');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const noteId = searchParams.get('note');
+
+  // If there's a note parameter, automatically go to editor
+  useEffect(() => {
+    if (noteId) {
+      navigate('/mobile/editor');
+    }
+  }, [noteId, navigate]);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
@@ -72,6 +81,9 @@ const MobileNotes: React.FC = () => {
           <div className="text-center py-12">
             <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <p className="text-muted-foreground">No notes found</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Create your first note to get started
+            </p>
           </div>
         ) : (
           <div className="space-y-3">

@@ -19,15 +19,17 @@ const MobileViewButton: React.FC = () => {
     navigate(mobileUrl);
   };
 
-  // Only show on notes page for now
-  if (!location.pathname.includes('/notes')) return null;
+  // Show on notes and editor pages
+  if (!location.pathname.includes('/notes') && !location.pathname.includes('/editor')) {
+    return null;
+  }
 
   return (
     <Button
       variant="outline"
       size="sm"
       onClick={handleMobileView}
-      className="fixed bottom-4 right-4 z-50 shadow-lg"
+      className="fixed bottom-4 right-4 z-50 shadow-lg bg-background/80 backdrop-blur-sm"
     >
       <Smartphone className="w-4 h-4 mr-2" />
       Mobile View
