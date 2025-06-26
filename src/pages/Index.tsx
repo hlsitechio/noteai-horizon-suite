@@ -10,14 +10,20 @@ const Index: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('Index component - Auth state:', { user: !!user, isLoading });
+    
     if (!isLoading) {
       if (user) {
-        navigate('/app/dashboard');
+        console.log('User authenticated, navigating to dashboard');
+        navigate('/app/dashboard', { replace: true });
       } else {
-        navigate('/landing');
+        console.log('User not authenticated, navigating to landing');
+        navigate('/landing', { replace: true });
       }
     }
   }, [user, isLoading, navigate]);
+
+  console.log('Index component rendering - isLoading:', isLoading);
 
   if (isLoading) {
     return (
@@ -31,7 +37,16 @@ const Index: React.FC = () => {
     );
   }
 
-  return null;
+  // Show loading state while redirecting
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="text-center">
+        <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+        <p className="text-muted-foreground">Redirecting...</p>
+      </div>
+      <PageAICopilot pageContext="redirecting" />
+    </div>
+  );
 };
 
 export default Index;
