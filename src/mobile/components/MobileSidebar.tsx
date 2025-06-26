@@ -1,11 +1,12 @@
 
 import React from 'react';
-import { X, User, Bell, Settings, LogOut, Home, FileText } from 'lucide-react';
+import { X, User, Bell, Settings, LogOut, Home, FileText, Folder, ChevronRight, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../../contexts/NotesContext';
+import { useFolders } from '../../contexts/FoldersContext';
 import SyncStatusIndicator from '../../components/SyncStatusIndicator';
 
 interface MobileSidebarProps {
@@ -15,8 +16,10 @@ interface MobileSidebarProps {
 
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
   const { user, logout } = useAuth();
-  const { syncStatus } = useNotes();
+  const { syncStatus, notes } = useNotes();
+  const { folders } = useFolders();
   const navigate = useNavigate();
+  const [expandedFolders, setExpandedFolders] = React.useState<Set<string>>(new Set());
 
   const handleSignOut = async () => {
     try {
@@ -30,6 +33,77 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
   const handleNavigation = (path: string) => {
     navigate(path);
     onClose();
+  };
+
+  const toggleFolder = (folderId: string) => {
+    const newExpanded = new Set(expandedFolders);
+    if (newExpanded.has(folderId)) {
+      newExpanded.delete(folderId);
+    } else {
+      newExpanded.add(folderId);
+    }
+    setExpandedFolders(newExpanded);
+  };
+
+  const renderFolder = (folder: any) => {
+    const folderNotes = notes.filter(note => note.folder_id === folder.id);
+    const isFolderExpanded = expandedFolders.has(folder.id);
+
+    return (
+      <div key={folder.id} className="space-y-1">
+        <div className="flex items-center w-full">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => toggleFolder(folder.id)}
+            className="p-1 h-8 w-8 flex-shrink-0"
+          >
+            {isFolderExpanded ? (
+              <ChevronDown className="h-4 w-4" />
+            ) : (
+              <ChevronRight className="h-4 w-4" />
+            )}
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => handleNavigation(`/app/folders/${folder.id}`)}
+            className="flex-1 justify-start h-10 px-2"
+          >
+            <div 
+              className="w-3 h-3 rounded-full mr-2 flex-shrink-0" 
+              style={{ backgroundColor: folder.color }}
+            />
+            <Folder className="h-4 w-4 mr-2 flex-shrink-0" />
+            <span className="truncate text-sm flex-1">{folder.name}</span>
+            <span className="text-xs text-muted-foreground ml-2">
+              {folderNotes.length}
+            </span>
+          </Button>
+        </div>
+        
+        {/* Folder Notes */}
+        {isFolderExpanded && folderNotes.length > 0 && (
+          <div className="ml-6 space-y-1">
+            {folderNotes.slice(0, 5).map((note) => (
+              <Button
+                key={note.id}
+                variant="ghost"
+                onClick={() => handleNavigation(`/mobile/notes?note=${note.id}`)}
+                className="w-full justify-start h-8 px-2 text-xs"
+              >
+                <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
+                <span className="truncate">{note.title}</span>
+              </Button>
+            ))}
+            {folderNotes.length > 5 && (
+              <div className="text-xs text-muted-foreground px-2">
+                +{folderNotes.length - 5} more notes
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -86,6 +160,19 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                 <FileText className="w-5 h-5 mr-3" />
                 Notes
               </Button>
+
+              {/* Folders Section */}
+              {folders.length > 0 && (
+                <div className="space-y-1">
+                  <div className="flex items-center px-2 py-1">
+                    <Folder className="w-4 h-4 mr-2" />
+                    <span className="text-sm font-medium text-muted-foreground">Folders</span>
+                  </div>
+                  <div className="space-y-1">
+                    {folders.map(renderFolder)}
+                  </div>
+                </div>
+              )}
               
               <Button
                 variant="ghost"
