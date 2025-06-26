@@ -154,14 +154,9 @@ const UnifiedAIButton: React.FC<UnifiedAIButtonProps> = ({
       <motion.button
         ref={dragRef}
         drag={!isMobile}
-        dragMomentum={false}
-        dragElastic={0.1}
-        dragConstraints={{
-          left: -window.innerWidth / 2,
-          right: window.innerWidth / 2,
-          top: -window.innerHeight / 2,
-          bottom: window.innerHeight / 2,
-        }}
+        dragMomentum={true}
+        dragElastic={0.05}
+        dragTransition={{ bounceStiffness: 100, bounceDamping: 30 }}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         whileHover={!isDragging ? { scale: 1.05, y: -2 } : {}}
