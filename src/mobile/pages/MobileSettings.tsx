@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { User, Settings, Palette, Info, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,14 +8,14 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from 'next-themes';
 
 const MobileSettings: React.FC = () => {
-  const { user, signOut } = useAuth();
+  const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const [notifications, setNotifications] = React.useState(true);
   const [autoSync, setAutoSync] = React.useState(true);
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      await logout();
     } catch (error) {
       console.error('Failed to sign out:', error);
     }
