@@ -1,156 +1,67 @@
-import React from 'react';
+
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import './App.css';
 import { Toaster } from '@/components/ui/sonner';
-import { ThemeProvider } from '@/providers/ThemeProvider';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { NotesProvider } from '@/contexts/NotesContext';
-import { FoldersProvider } from '@/contexts/FoldersContext';
-import { NotificationsProvider } from '@/contexts/NotificationsContext';
-import { FloatingNotesProvider } from '@/contexts/FloatingNotesContext';
-import { AccentColorProvider } from '@/contexts/AccentColorContext';
-import { QuantumAIProvider } from '@/contexts/QuantumAIContext';
-import { ProjectRealmsProvider } from '@/contexts/ProjectRealmsContext';
-import { UnifiedDragDropProvider } from '@/components/Layout/UnifiedDragDropProvider';
-import ErrorBoundary from '@/components/ErrorBoundary';
-import GlobalAICopilot from '@/components/Global/GlobalAICopilot';
-import FloatingNotesContainer from '@/components/FloatingNotes/FloatingNotesContainer';
-import MobileViewButton from '@/components/Layout/MobileViewButton';
-
-// Main layout with sidebar
-import Layout from '@/components/Layout/Layout';
-
-// Pages
-import Landing from '@/pages/Landing';
-import Dashboard from '@/pages/Dashboard';
-import Notes from '@/pages/Notes';
-import Analytics from '@/pages/Analytics';
-import Calendar from '@/pages/Calendar';
-import Chat from '@/pages/Chat';
-import Settings from '@/pages/Settings';
-import Editor from '@/pages/Editor';
-import Login from '@/pages/Auth/Login';
-import Register from '@/pages/Auth/Register';
-import ResetPassword from '@/pages/Auth/ResetPassword';
-import FolderDetail from '@/pages/FolderDetail';
-import ProjectRealms from '@/pages/ProjectRealms';
-import ProjectDetail from '@/pages/ProjectDetail';
-import NotFound from '@/pages/NotFound';
-import ComingSoon from '@/pages/ComingSoon';
-import Contact from '@/pages/Contact';
-import Terms from '@/pages/Terms';
-import Privacy from '@/pages/Privacy';
-import Sitemap from '@/pages/Sitemap';
-import Index from '@/pages/Index';
-
-// Mobile app
-import MobileApp from '@/mobile/MobileApp';
-
-// Protected route component
-import ProtectedRoute from '@/components/ProtectedRoute';
-
-// Route guard component
-import HomeRedirect from '@/components/HomeRedirect';
+import { AuthProvider } from './contexts/AuthContext';
+import { NotesProvider } from './contexts/NotesContext';
+import { QuantumAIProvider } from './contexts/QuantumAIContext';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import Layout from './components/Layout/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+import Landing from './pages/Landing';
+import Auth from './pages/Auth';
+import Dashboard from './pages/Dashboard';
+import Chat from './pages/Chat';
+import Editor from './pages/Editor';
+import Notes from './pages/Notes';
+import Analytics from './pages/Analytics';
+import Settings from './pages/Settings';
+import MobileView from './mobile/MobileView';
+import { ThemeProvider } from 'next-themes';
+import GlobalAICopilot from './components/Global/GlobalAICopilot';
+import './App.css';
 
 function App() {
   return (
-    <ErrorBoundary>
-      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-        <AuthProvider>
-          <AccentColorProvider>
-            <NotificationsProvider>
-              <Router>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <AuthProvider>
+        <NotesProvider>
+          <QuantumAIProvider>
+            <Router>
+              <div className="min-h-screen bg-background">
                 <Routes>
-                  {/* Mobile Routes - Now wrapped with proper providers */}
-                  <Route path="/mobile/*" element={
+                  {/* Public routes */}
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/mobile/*" element={<MobileView />} />
+                  
+                  {/* Protected routes */}
+                  <Route path="/app" element={
                     <ProtectedRoute>
-                      <FoldersProvider>
-                        <NotesProvider>
-                          <ProjectRealmsProvider>
-                            <FloatingNotesProvider>
-                              <QuantumAIProvider>
-                                <UnifiedDragDropProvider>
-                                  <MobileApp />
-                                </UnifiedDragDropProvider>
-                              </QuantumAIProvider>
-                            </FloatingNotesProvider>
-                          </ProjectRealmsProvider>
-                        </NotesProvider>
-                      </FoldersProvider>
+                      <Layout />
                     </ProtectedRoute>
-                  } />
+                  }>
+                    <Route index element={<Navigate to="/app/dashboard" replace />} />
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="chat" element={<Chat />} />
+                    <Route path="editor" element={<Editor />} />
+                    <Route path="notes" element={<Notes />} />
+                    <Route path="analytics" element={<Analytics />} />
+                    <Route path="settings" element={<Settings />} />
+                  </Route>
                   
-                  {/* Public Routes */}
-                  <Route path="/" element={<HomeRedirect />} />
-                  <Route path="/landing" element={<Landing />} />
-                  
-                  {/* Auth Routes */}
-                  <Route path="/auth/login" element={<Login />} />
-                  <Route path="/auth/register" element={<Register />} />
-                  <Route path="/auth/reset-password" element={<ResetPassword />} />
-                  
-                  {/* Redirect routes for convenience */}
-                  <Route path="/login" element={<Navigate to="/auth/login" replace />} />
-                  <Route path="/register" element={<Navigate to="/auth/register" replace />} />
-                  <Route path="/reset-password" element={<Navigate to="/auth/reset-password" replace />} />
-                  
-                  {/* Other Public Routes */}
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/terms" element={<Terms />} />
-                  <Route path="/privacy" element={<Privacy />} />
-                  <Route path="/sitemap" element={<Sitemap />} />
-                  <Route path="/coming-soon" element={<ComingSoon />} />
-                  
-                  {/* Direct dashboard route for convenience */}
-                  <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
-                  
-                  {/* Protected App Routes */}
-                  <Route path="/app/*" element={
-                    <ProtectedRoute>
-                      <FoldersProvider>
-                        <NotesProvider>
-                          <ProjectRealmsProvider>
-                            <FloatingNotesProvider>
-                              <QuantumAIProvider>
-                                <UnifiedDragDropProvider>
-                                  <Layout>
-                                    <Routes>
-                                      <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
-                                      <Route path="/dashboard" element={<Dashboard />} />
-                                      <Route path="/notes" element={<Notes />} />
-                                      <Route path="/notes/:noteId" element={<Notes />} />
-                                      <Route path="/analytics" element={<Analytics />} />
-                                      <Route path="/calendar" element={<Calendar />} />
-                                      <Route path="/chat" element={<Chat />} />
-                                      <Route path="/settings" element={<Settings />} />
-                                      <Route path="/editor" element={<Editor />} />
-                                      <Route path="/folder/:folderId" element={<FolderDetail />} />
-                                      <Route path="/projects" element={<ProjectRealms />} />
-                                      <Route path="/projects/:projectId" element={<ProjectDetail />} />
-                                    </Routes>
-                                  </Layout>
-                                  <FloatingNotesContainer />
-                                  <GlobalAICopilot />
-                                  <MobileViewButton />
-                                </UnifiedDragDropProvider>
-                              </QuantumAIProvider>
-                            </FloatingNotesProvider>
-                          </ProjectRealmsProvider>
-                        </NotesProvider>
-                      </FoldersProvider>
-                    </ProtectedRoute>
-                  } />
-                  
-                  {/* Fallback */}
-                  <Route path="*" element={<NotFound />} />
+                  {/* Redirect unknown routes to landing */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
-              </Router>
-              <Toaster />
-            </NotificationsProvider>
-          </AccentColorProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+                
+                {/* Global components */}
+                <GlobalAICopilot />
+                <Toaster />
+              </div>
+            </Router>
+          </QuantumAIProvider>
+        </NotesProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
