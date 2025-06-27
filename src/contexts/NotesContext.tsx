@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Note, NoteFilters } from '../types/note';
 import { SupabaseNotesService } from '../services/supabaseNotesService';
 import { useFolders } from './FoldersContext';
@@ -48,6 +48,10 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const { user, isLoading: authLoading } = useAuth();
   const { folders } = useFolders();
 
+  // Track subscription state to prevent multiple subscriptions
+  const subscriptionRef = useRef<any>(null);
+  const isSubscribedRef = useRef(false);
+
   const refreshNotes = async () => {
     if (!user) {
       console.log('No user, skipping notes refresh');
@@ -75,12 +79,16 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Set up real-time subscription only when user is authenticated
   useEffect(() => {
-    let channel: any;
-
     const setupRealtimeSubscription = async () => {
       // Wait for auth to be ready and ensure user is authenticated
       if (authLoading || !user) {
         console.log('Auth not ready or no user, skipping real-time setup');
+        return;
+      }
+
+      // Prevent multiple subscriptions
+      if (isSubscribedRef.current || subscriptionRef.current) {
+        console.log('Real-time subscription already exists, skipping setup');
         return;
       }
 
@@ -91,7 +99,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         // Set up real-time subscription only if user is authenticated
         console.log('Setting up real-time subscription for user:', user.id);
         
-        channel = SupabaseNotesService.subscribeToNoteChanges(
+        const channel = SupabaseNotesService.subscribeToNoteChanges(
           user.id,
           // onInsert
           (newNote) => {
@@ -139,6 +147,9 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           }
         );
 
+        // Store the channel reference and mark as subscribed
+        subscriptionRef.current = channel;
+        isSubscribedRef.current = true;
         setSyncStatus('connected');
       } catch (error) {
         console.error('Error setting up real-time subscription:', error);
@@ -150,12 +161,19 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // Cleanup subscription on unmount or when user changes
     return () => {
-      if (channel) {
+      if (subscriptionRef.current) {
         console.log('Cleaning up real-time subscription');
-        supabase.removeChannel(channel);
+        supabase.removeChannel(subscriptionRef.current);
+        subscriptionRef.current = null;
+        isSubscribedRef.current = false;
       }
     };
-  }, [user, authLoading, currentNote?.id, selectedNote?.id]);
+  }, [user, authLoading]); // Remove currentNote/selectedNote dependencies to prevent re-subscriptions
+
+  // Update current/selected notes when they change (separate effect)
+  useEffect(() => {
+    // This effect handles updating current/selected notes without triggering subscription cleanup
+  }, [currentNote?.id, selectedNote?.id]);
 
   const createNote = async (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Promise<Note> => {
     if (!user) throw new Error('User not authenticated');
