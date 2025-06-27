@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Clock, Image } from 'lucide-react';
+import { Clock, Image, Maximize } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import BannerUpload from './BannerUpload';
 import AIBannerGenerator from './AIBannerGenerator';
+import FullscreenBanner from './FullscreenBanner';
 import { BannerStorageService, BannerData } from '@/services/bannerStorage';
 
 const WelcomeHeader: React.FC = () => {
@@ -11,6 +12,7 @@ const WelcomeHeader: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [bannerData, setBannerData] = useState<{url: string, type: 'image' | 'video'} | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -108,16 +110,20 @@ const WelcomeHeader: React.FC = () => {
     }
   };
 
+  const handleFullscreenToggle = () => {
+    setIsFullscreenOpen(!isFullscreenOpen);
+  };
+
   return (
     <div className="space-y-4 mb-6">
       {/* Banner Section */}
-      <div className="relative h-64 overflow-hidden rounded-xl border border-blue-100 dark:border-slate-600">
+      <div className="relative h-64 overflow-hidden rounded-xl border border-blue-100 dark:border-slate-600 group cursor-pointer" onClick={bannerData ? handleFullscreenToggle : undefined}>
         {/* Banner Background */}
         {!isLoading && bannerData ? (
           bannerData.type === 'video' ? (
             <video
               src={bannerData.url}
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               autoPlay
               loop
               muted
@@ -136,7 +142,7 @@ const WelcomeHeader: React.FC = () => {
             <img
               src={bannerData.url}
               alt="Dashboard banner"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               onError={(e) => {
                 console.error('WelcomeHeader: Image load error:', e);
               }}
@@ -150,7 +156,22 @@ const WelcomeHeader: React.FC = () => {
         )}
         
         {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/30"></div>
+        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors duration-300"></div>
+        
+        {/* Fullscreen button - only show when banner exists */}
+        {!isLoading && bannerData && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleFullscreenToggle();
+            }}
+            className="absolute top-4 left-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/40"
+          >
+            <Maximize className="h-4 w-4" />
+          </Button>
+        )}
         
         {/* Banner Placeholder Content (only show when no banner is set) */}
         {!isLoading && !bannerData && (
@@ -174,6 +195,13 @@ const WelcomeHeader: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* Fullscreen hint */}
+        {!isLoading && bannerData && (
+          <div className="absolute bottom-4 left-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white/80 text-sm">
+            Click to view fullscreen
+          </div>
+        )}
       </div>
 
       {/* Welcome Content Below Banner */}
@@ -199,6 +227,13 @@ const WelcomeHeader: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Banner Modal */}
+      <FullscreenBanner
+        bannerData={bannerData}
+        isOpen={isFullscreenOpen}
+        onClose={() => setIsFullscreenOpen(false)}
+      />
     </div>
   );
 };
