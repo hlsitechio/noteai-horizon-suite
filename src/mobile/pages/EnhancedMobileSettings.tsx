@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { ArrowLeft, User, Bell, Sync, Palette, Shield, Info, Moon, Sun, Volume2, VolumeX } from 'lucide-react';
+import { ArrowLeft, User, Bell, RotateCw, Palette, Shield, Info, Moon, Sun, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -80,7 +79,7 @@ const EnhancedMobileSettings: React.FC = () => {
     },
     {
       title: 'Sync & Storage',
-      icon: Sync,
+      icon: RotateCw,
       items: [
         {
           label: 'Auto Sync',

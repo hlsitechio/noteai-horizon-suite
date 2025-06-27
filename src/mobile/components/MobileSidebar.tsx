@@ -97,7 +97,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
               <MobileSidebarFolders
                 expandedFolders={expandedFolders}
                 onToggleFolder={toggleFolder}
-                onNavigation={handleNavigation}
+                onNavigate={handleNavigation}
               />
               
               <Separator />
