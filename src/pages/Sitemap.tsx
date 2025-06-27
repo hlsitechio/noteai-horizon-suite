@@ -5,16 +5,17 @@ import PageAICopilot from '../components/Global/PageAICopilot';
 
 const Sitemap: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Full screen background with same styling as Hero */}
-      <section className="relative min-h-screen flex items-center justify-center px-4">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-pink-900/20" />
-        
-        {/* Floating Orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
-        
-        <div className="relative max-w-4xl mx-auto z-10">
+    <div className="min-h-screen bg-black">
+      {/* Full screen background with gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-pink-900/20" />
+      
+      {/* Floating Orbs */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
+      
+      {/* Content section */}
+      <section className="relative min-h-screen flex items-center justify-center px-4 z-10">
+        <div className="relative max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold mb-8 text-center">
             <span className="bg-gradient-to-r from-white via-cyan-200 to-blue-200 bg-clip-text text-transparent">
               Sitemap
