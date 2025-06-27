@@ -123,10 +123,10 @@ const WelcomeHeader: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4 mb-6">
-      {/* Banner Section */}
+    <div className="space-y-2">
+      {/* Compact Banner Section */}
       <div 
-        className="relative h-64 overflow-hidden rounded-xl border border-blue-100 dark:border-slate-600 group"
+        className="relative h-40 overflow-hidden rounded-lg border border-blue-100 dark:border-slate-600 group"
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => setShowControls(false)}
       >
@@ -175,22 +175,46 @@ const WelcomeHeader: React.FC = () => {
         {/* Overlay for better text readability */}
         <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors duration-300"></div>
         
+        {/* Welcome Content Overlay */}
+        <div className="absolute inset-0 flex items-center justify-between p-4 text-white">
+          <div>
+            <h1 className="text-2xl font-bold mb-1">
+              Welcome back, {getFirstName(user?.name || '')}! 👋
+            </h1>
+            <p className="text-sm opacity-90">
+              {formatDate(currentTime)}
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-2 text-right">
+            <Clock className="w-4 h-4" />
+            <div>
+              <div className="text-lg font-semibold">
+                {formatTime(currentTime)}
+              </div>
+              <div className="text-xs opacity-75">
+                Local Time
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Banner Placeholder Content (only show when no banner is set) */}
         {!isLoading && !bannerData && (
           <div className="absolute inset-0 flex items-center justify-center opacity-30">
             <div className="text-center text-white">
-              <Image className="w-16 h-16 mx-auto mb-4" />
-              <p className="text-lg font-medium">Banner Placeholder</p>
-              <p className="text-sm">Upload an image or video to personalize your dashboard</p>
+              <Image className="w-12 h-12 mx-auto mb-2" />
+              <p className="text-sm font-medium">Banner Placeholder</p>
+              <p className="text-xs">Upload an image or video to personalize your dashboard</p>
             </div>
           </div>
         )}
 
         {/* Unified Banner Controls */}
-        <div className={`absolute top-4 right-4 z-10 transition-all duration-300 ${
+        <div className={`absolute top-2 right-2 z-10 transition-all duration-300 ${
           showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
         }`}>
-          <div className="flex items-center gap-2 p-2 bg-black/40 backdrop-blur-md rounded-lg border border-white/20">
+          <div className="flex items-center gap-1 p-1.5 bg-black/40 backdrop-blur-md rounded-md border border-white/20">
             <AIBannerGenerator onBannerGenerated={handleAIBannerGenerated} />
             <BannerUpload
               currentBannerUrl={bannerData?.url}
@@ -202,36 +226,12 @@ const WelcomeHeader: React.FC = () => {
 
         {/* Click to fullscreen hint - only show when banner exists */}
         {!isLoading && bannerData && (
-          <div className={`absolute bottom-4 left-4 z-10 transition-all duration-300 ${
+          <div className={`absolute bottom-2 left-2 z-10 transition-all duration-300 ${
             showControls ? 'opacity-100' : 'opacity-0'
-          } text-white/90 text-sm bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full`}>
+          } text-white/90 text-xs bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full`}>
             Click to view fullscreen
           </div>
         )}
-      </div>
-
-      {/* Welcome Content Below Banner */}
-      <div className="flex items-center justify-between p-6 bg-card/50 rounded-xl border border-border/20 backdrop-blur-sm">
-        <div className="text-foreground flex-1">
-          <h1 className="text-4xl font-bold text-foreground mb-2">
-            Welcome back, {getFirstName(user?.name || '')}! 👋
-          </h1>
-          <p className="text-xl text-muted-foreground mb-4">
-            {formatDate(currentTime)}
-          </p>
-        </div>
-        
-        <div className="flex items-center gap-2 text-right">
-          <Clock className="w-5 h-5 text-muted-foreground" />
-          <div>
-            <div className="text-lg font-semibold text-foreground">
-              {formatTime(currentTime)}
-            </div>
-            <div className="text-sm text-muted-foreground">
-              Local Time
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Fullscreen Banner Modal */}

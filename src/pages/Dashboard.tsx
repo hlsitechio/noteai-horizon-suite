@@ -58,18 +58,18 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col w-full">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
       {/* Fullscreen Toggle Button */}
       <FullscreenToggle />
       
-      <div className="flex-1 flex flex-col w-full px-4 py-3 space-y-4">
+      <div className="flex-1 flex flex-col px-3 py-2 space-y-3 overflow-hidden">
         
-        {/* Welcome Header */}
+        {/* Compact Welcome Header */}
         <div className="flex-shrink-0">
           <WelcomeHeader />
         </div>
 
-        {/* Top Section - KPI Stats */}
+        {/* Compact KPI Stats */}
         <div className="flex-shrink-0">
           <KPIStats 
             totalNotes={totalNotes}
@@ -79,10 +79,10 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Better space utilization */}
-        <div className="grid grid-cols-12 gap-4 items-start flex-1 min-h-0">
-          {/* Recent Activity */}
-          <div className="col-span-7 h-full">
+        {/* Main Content Area - Optimized for better screen utilization */}
+        <div className="grid grid-cols-12 gap-3 flex-1 min-h-0">
+          {/* Recent Activity - Larger area */}
+          <div className="col-span-8 h-full">
             <RecentActivity 
               recentNotes={recentNotes}
               onCreateNote={handleCreateNote}
@@ -90,8 +90,8 @@ const Dashboard: React.FC = () => {
             />
           </div>
 
-          {/* Quick Actions */}
-          <div className="col-span-5 h-full">
+          {/* Quick Actions - Compact area */}
+          <div className="col-span-4 h-full">
             <WorkflowActions 
               notes={notes}
               onCreateNote={handleCreateNote}
