@@ -22,8 +22,8 @@ export class SupabaseNotesService {
         isFavorite: note.is_public || false,
         folder_id: note.folder_id,
         reminder_date: note.reminder_date,
-        reminder_status: note.reminder_status || 'none',
-        reminder_frequency: note.reminder_frequency || 'once',
+        reminder_status: (note.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
+        reminder_frequency: (note.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
         reminder_enabled: note.reminder_enabled || false,
       }));
     } catch (error) {
@@ -68,8 +68,8 @@ export class SupabaseNotesService {
         isFavorite: data.is_public || false,
         folder_id: data.folder_id,
         reminder_date: data.reminder_date,
-        reminder_status: data.reminder_status || 'none',
-        reminder_frequency: data.reminder_frequency || 'once',
+        reminder_status: (data.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
+        reminder_frequency: (data.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
         reminder_enabled: data.reminder_enabled || false,
       };
     } catch (error) {
@@ -113,8 +113,8 @@ export class SupabaseNotesService {
         isFavorite: data.is_public || false,
         folder_id: data.folder_id,
         reminder_date: data.reminder_date,
-        reminder_status: data.reminder_status || 'none',
-        reminder_frequency: data.reminder_frequency || 'once',
+        reminder_status: (data.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
+        reminder_frequency: (data.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
         reminder_enabled: data.reminder_enabled || false,
       };
     } catch (error) {
@@ -159,8 +159,8 @@ export class SupabaseNotesService {
         isFavorite: data.is_public || false,
         folder_id: data.folder_id,
         reminder_date: data.reminder_date,
-        reminder_status: data.reminder_status || 'none',
-        reminder_frequency: data.reminder_frequency || 'once',
+        reminder_status: (data.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
+        reminder_frequency: (data.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
         reminder_enabled: data.reminder_enabled || false,
       };
     } catch (error) {
@@ -181,7 +181,6 @@ export class SupabaseNotesService {
     }
   }
 
-  // Real-time subscription methods
   static subscribeToNoteChanges(
     userId: string,
     onInsert?: (note: Note) => void,
@@ -212,8 +211,8 @@ export class SupabaseNotesService {
               isFavorite: payload.new.is_public || false,
               folder_id: payload.new.folder_id,
               reminder_date: payload.new.reminder_date,
-              reminder_status: payload.new.reminder_status || 'none',
-              reminder_frequency: payload.new.reminder_frequency || 'once',
+              reminder_status: (payload.new.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
+              reminder_frequency: (payload.new.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
               reminder_enabled: payload.new.reminder_enabled || false,
             };
             onInsert(note);
@@ -242,8 +241,8 @@ export class SupabaseNotesService {
               isFavorite: payload.new.is_public || false,
               folder_id: payload.new.folder_id,
               reminder_date: payload.new.reminder_date,
-              reminder_status: payload.new.reminder_status || 'none',
-              reminder_frequency: payload.new.reminder_frequency || 'once',
+              reminder_status: (payload.new.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
+              reminder_frequency: (payload.new.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
               reminder_enabled: payload.new.reminder_enabled || false,
             };
             onUpdate(note);

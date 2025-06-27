@@ -59,17 +59,27 @@ const EditorContent: React.FC<EditorContentProps> = ({
         {!isHeaderHidden && (
           <div className="flex-shrink-0 mb-4">
             <EditorHeader
-              isNewNote={!currentNote}
-              isFavorite={isFavorite}
+              note={currentNote}
+              title={title}
+              category={category}
+              tags={tags}
+              newTag={newTag}
+              isEditing={true}
               isSaving={isSaving}
-              canSave={canSave}
-              isCollapsed={isFocusMode}
-              isHeaderCollapsed={isHeaderCollapsed || isMobile}
-              onFavoriteToggle={onFavoriteToggle}
-              onFocusModeToggle={onFocusModeToggle}
-              onHeaderCollapseToggle={onHeaderCollapseToggle}
+              onBack={() => {}}
               onSave={onSave}
-              onCollapseAllBars={onCollapseAllBars}
+              onTitleChange={onTitleChange}
+              onCategoryChange={onCategoryChange}
+              onTagsChange={(tags) => {
+                // Handle tags change logic here
+                tags.forEach(tag => {
+                  if (!tags.includes(tag)) {
+                    onAddTag();
+                  }
+                });
+              }}
+              onNewTagChange={onNewTagChange}
+              onToggleFavorite={onFavoriteToggle}
             />
           </div>
         )}
