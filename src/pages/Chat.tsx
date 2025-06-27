@@ -1,115 +1,21 @@
+
 import React, { useState } from 'react';
-import { Plus, Send, Bot, User, Zap, Cpu, Database, Search, FileText } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { useEnhancedAIChat, ChatMessage } from '@/hooks/useEnhancedAIChat';
-import { useRAGChat, RAGChatResponse } from '@/hooks/useRAGChat';
-import { useToast } from '@/hooks/useToast';
-import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Send, MessageCircle } from 'lucide-react';
+import { useEnhancedAIChat } from '../hooks/useEnhancedAIChat';
 
 const Chat: React.FC = () => {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: '1',
-      content: 'Hello! I\'m your AI assistant with access to your personal notes. I can help you with questions, reference your notes to provide contextual answers, and assist with various tasks. What would you like to work on today?',
-      isUser: false,
-      timestamp: new Date(),
-    },
-  ]);
-  const [input, setInput] = useState('');
-  const [useRAG, setUseRAG] = useState(true);
-  const [lastRAGResponse, setLastRAGResponse] = useState<RAGChatResponse | null>(null);
-  
-  const { 
-    isLoading: isEnhancedLoading, 
-    isProcessingLocally, 
-    gpuCapabilities 
-  } = useEnhancedAIChat();
-  
-  const { sendMessage: sendRAGMessage, isLoading: isRAGLoading } = useRAGChat();
-  const { toast } = useToast();
-
-  const isLoading = isEnhancedLoading || isRAGLoading;
-
-  const formatMessageContent = (content: string) => {
-    try {
-      // Try to parse as JSON to see if it's structured output
-      const parsed = JSON.parse(content);
-      return (
-        <pre className="whitespace-pre-wrap font-mono text-sm bg-gray-50 dark:bg-gray-900 p-3 rounded-lg border overflow-auto">
-          {JSON.stringify(parsed, null, 2)}
-        </pre>
-      );
-    } catch {
-      // If it's not JSON, return as regular text with proper formatting
-      return <div className="whitespace-pre-wrap text-sm leading-relaxed">{content}</div>;
-    }
-  };
+  const [message, setMessage] = useState('');
+  const { messages, sendMessage, isLoading } = useEnhancedAIChat();
 
   const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
-
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      content: input.trim(),
-      isUser: true,
-      timestamp: new Date(),
-    };
-
-    // Add user message immediately
-    setMessages(prev => [...prev, userMessage]);
-    const currentInput = input.trim();
-    setInput('');
-
-    try {
-      // Send all messages for context using RAG
-      const updatedMessages = [...messages, userMessage];
-      const ragResponse = await sendRAGMessage(updatedMessages, useRAG);
-      
-      // Store RAG response info for display
-      setLastRAGResponse(ragResponse);
-      
-      // Add AI response
-      const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        content: ragResponse.message,
-        isUser: false,
-        timestamp: new Date(),
-      };
-      
-      setMessages(prev => [...prev, aiMessage]);
-
-      // Show success toast with RAG info
-      if (useRAG && ragResponse.notesUsed > 0) {
-        toast.success(`Response generated using ${ragResponse.notesUsed} relevant notes from your collection`);
-      } else if (useRAG && ragResponse.notesUsed === 0) {
-        toast.info('No relevant notes found for this query - using general AI knowledge');
-      }
-      
-    } catch (error) {
-      console.error('Failed to send message:', error);
-      // Remove the user message if AI response failed
-      setMessages(prev => prev.filter(msg => msg.id !== userMessage.id));
-      setInput(currentInput); // Restore the input
+    if (message.trim()) {
+      await sendMessage(message);
+      setMessage('');
     }
-  };
-
-  const handleNewChat = () => {
-    setMessages([
-      {
-        id: '1',
-        content: 'Hello! I\'m your AI assistant with access to your personal notes. I can help you with questions, reference your notes to provide contextual answers, and assist with various tasks. What would you like to work on today?',
-        isUser: false,
-        timestamp: new Date(),
-      },
-    ]);
-    setLastRAGResponse(null);
-    toast.success('New chat started');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -119,208 +25,81 @@ const Chat: React.FC = () => {
     }
   };
 
-  const getGPUStatusBadge = () => {
-    if (!gpuCapabilities.isInitialized) {
-      return (
-        <Badge variant="secondary" className="bg-gray-500/10 text-gray-600">
-          <Cpu className="w-3 h-3 mr-1" />
-          Initializing...
-        </Badge>
-      );
-    }
-
-    if (gpuCapabilities.webGPUSupported) {
-      return (
-        <Badge variant="secondary" className="bg-green-500/10 text-green-600">
-          <Zap className="w-3 h-3 mr-1" />
-          WebGPU Ready
-        </Badge>
-      );
-    }
-
-    if (gpuCapabilities.webGLSupported) {
-      return (
-        <Badge variant="secondary" className="bg-blue-500/10 text-blue-600">
-          <Zap className="w-3 h-3 mr-1" />
-          WebGL Ready
-        </Badge>
-      );
-    }
-
-    return (
-      <Badge variant="secondary" className="bg-orange-500/10 text-orange-600">
-        <Cpu className="w-3 h-3 mr-1" />
-        CPU Mode
-      </Badge>
-    );
-  };
-
-  // Add Quantum AI integration
-  useQuantumAIIntegration({
-    page: '/app/chat',
-    content: `Chat session with ${messages.length} messages`,
-    metadata: {
-      messageCount: messages.length,
-      useRAG,
-      lastRAGResponse: lastRAGResponse?.notesUsed || 0
-    }
-  });
-
   return (
-    <div className="flex flex-col h-[calc(100vh-120px)] space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-start">
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-              AI Assistant
-            </h1>
-            <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 dark:text-blue-400">
-              DeepSeek R1
-            </Badge>
-            {useRAG && (
-              <Badge variant="secondary" className="bg-purple-500/10 text-purple-600 dark:text-purple-400">
-                <Database className="w-3 h-3 mr-1" />
-                Notes Access
-              </Badge>
-            )}
-            {getGPUStatusBadge()}
-          </div>
-          <p className="text-gray-600 dark:text-gray-400">
-            AI assistant with access to your personal notes for enhanced, contextual responses
-          </p>
-          {lastRAGResponse && lastRAGResponse.notesUsed > 0 && (
-            <div className="flex items-center gap-2 mt-2">
-              <FileText className="w-4 h-4 text-purple-600" />
-              <p className="text-sm text-purple-600 dark:text-purple-400">
-                Last response referenced {lastRAGResponse.notesUsed} notes from your collection
-              </p>
-            </div>
-          )}
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="rag-mode"
-              checked={useRAG}
-              onCheckedChange={setUseRAG}
-              disabled={isLoading}
-            />
-            <Label htmlFor="rag-mode" className="text-sm font-medium">
-              Use My Notes
-            </Label>
-          </div>
-          <Button size="sm" onClick={handleNewChat} disabled={isLoading}>
-            <Plus className="w-4 h-4 mr-2" />
-            New Chat
-          </Button>
-        </div>
+    <div className="h-full flex flex-col">
+      <div className="flex-shrink-0 mb-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MessageCircle className="w-5 h-5" />
+              AI Chat Assistant
+            </CardTitle>
+          </CardHeader>
+        </Card>
       </div>
 
-      {/* Messages Container */}
-      <Card className="flex-1 flex flex-col">
-        <CardContent className="p-0 flex flex-col h-full">
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-6">
-            <div className="space-y-6">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex items-start gap-4 ${
-                    message.isUser ? 'justify-end' : 'justify-start'
-                  }`}
-                >
-                  {!message.isUser && (
-                    <Avatar className="w-8 h-8 bg-blue-500 flex-shrink-0">
-                      <AvatarFallback className="text-white">
-                        <Bot className="w-4 h-4" />
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                  <div
-                    className={`max-w-[80%] p-4 rounded-2xl ${
-                      message.isUser
-                        ? 'bg-blue-500 text-white rounded-br-sm'
-                        : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-sm'
-                    }`}
-                  >
-                    {message.isUser ? (
-                      <p className="whitespace-pre-wrap">{message.content}</p>
-                    ) : (
-                      formatMessageContent(message.content)
-                    )}
-                    <p className="text-xs opacity-70 mt-2">
-                      {message.timestamp.toLocaleTimeString()}
-                    </p>
+      <div className="flex-1 flex flex-col min-h-0">
+        <Card className="flex-1 flex flex-col">
+          <CardContent className="flex-1 flex flex-col p-4">
+            <ScrollArea className="flex-1 mb-4">
+              <div className="space-y-4">
+                {messages.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-8">
+                    <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>Start a conversation with your AI assistant</p>
                   </div>
-                  {message.isUser && (
-                    <Avatar className="w-8 h-8 bg-purple-500 flex-shrink-0">
-                      <AvatarFallback className="text-white">
-                        <User className="w-4 h-4" />
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                </div>
-              ))}
-              
-              {/* Loading indicator */}
-              {(isLoading || isProcessingLocally) && (
-                <div className="flex items-start gap-4 justify-start">
-                  <Avatar className="w-8 h-8 bg-blue-500">
-                    <AvatarFallback className="text-white">
-                      <Bot className="w-4 h-4" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-2xl rounded-bl-sm">
-                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                ) : (
+                  messages.map((msg, index) => (
+                    <div
+                      key={index}
+                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[80%] p-3 rounded-lg ${
+                          msg.role === 'user'
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted'
+                        }`}
+                      >
+                        <p className="text-sm">{msg.content}</p>
                       </div>
-                      <span className="text-sm">
-                        {isProcessingLocally ? 'Processing locally with GPU...' : 
-                         useRAG ? 'Searching your notes and generating response...' : 'AI is thinking...'}
-                      </span>
-                      {isProcessingLocally && <Zap className="w-3 h-3 text-green-500" />}
-                      {useRAG && <Search className="w-3 h-3 text-purple-500" />}
+                    </div>
+                  ))
+                )}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-muted p-3 rounded-lg">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          </div>
+                )}
+              </div>
+            </ScrollArea>
 
-          {/* Input Area */}
-          <div className="border-t dark:border-gray-700 p-6">
-            <div className="flex gap-3">
-              <Textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder={useRAG ? "Ask me anything - I can reference your notes for better answers..." : "Ask me anything..."}
-                className="resize-none rounded-xl min-h-[60px] flex-1"
-                rows={2}
+            <div className="flex gap-2">
+              <Input
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
+                placeholder="Type your message..."
                 disabled={isLoading}
+                className="flex-1"
               />
               <Button
-                size="lg"
                 onClick={handleSend}
-                disabled={!input.trim() || isLoading}
-                className="rounded-xl px-6"
+                disabled={isLoading || !message.trim()}
+                size="sm"
               >
                 <Send className="w-4 h-4" />
               </Button>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-              {useRAG ? 
-                'RAG-enhanced AI with access to your notes • Press Enter to send, Shift+Enter for new line' :
-                'Standard AI chat • Press Enter to send, Shift+Enter for new line'
-              }
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

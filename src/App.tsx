@@ -32,12 +32,15 @@ function App() {
                   {/* Public routes */}
                   <Route path="/" element={<Landing />} />
                   <Route path="/auth" element={<Login />} />
+                  <Route path="/login" element={<Login />} />
                   <Route path="/mobile/*" element={<MobileApp />} />
                   
                   {/* Protected routes */}
                   <Route path="/app" element={
                     <ProtectedRoute>
-                      <Layout />
+                      <SidebarProvider>
+                        <Layout />
+                      </SidebarProvider>
                     </ProtectedRoute>
                   }>
                     <Route index element={<Navigate to="/app/dashboard" replace />} />

@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from './AppSidebar';
 import Header from './Header';
 import { useIsMobile } from '../../hooks/use-mobile';
@@ -18,18 +17,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   useReminderManager();
 
   return (
-    <SidebarProvider>
-      <div className="flex h-screen w-full bg-background">
-        {!isMobile && <AppSidebar />}
-        
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <Header />
-          <main className="flex-1 overflow-hidden">
-            {children || <Outlet />}
-          </main>
-        </div>
+    <div className="flex h-screen w-full bg-background">
+      {!isMobile && <AppSidebar />}
+      
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header />
+        <main className="flex-1 overflow-auto p-4">
+          {children || <Outlet />}
+        </main>
       </div>
-    </SidebarProvider>
+    </div>
   );
 };
 
