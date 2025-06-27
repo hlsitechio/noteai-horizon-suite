@@ -122,16 +122,16 @@ function App() {
             <AccentColorProvider>
               <AuthProvider>
                 <NotificationsProvider>
-                  <NotesProvider>
-                    <FoldersProvider>
+                  <FoldersProvider>
+                    <NotesProvider>
                       <ProjectRealmsProvider>
                         <QuantumAIProvider>
                           <AppContent />
                           <Toaster />
                         </QuantumAIProvider>
                       </ProjectRealmsProvider>
-                    </FoldersProvider>
-                  </NotesProvider>
+                    </NotesProvider>
+                  </FoldersProvider>
                 </NotificationsProvider>
               </AuthProvider>
             </AccentColorProvider>
