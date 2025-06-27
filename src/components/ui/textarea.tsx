@@ -1,3 +1,4 @@
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
@@ -6,7 +7,29 @@ export interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, onClick, onTouchStart, ...props }, ref) => {
+    const handleClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {
+      // Ensure focus on mobile devices
+      const target = e.currentTarget;
+      target.focus();
+      
+      // Call the original onClick if provided
+      if (onClick) {
+        onClick(e);
+      }
+    };
+
+    const handleTouchStart = (e: React.TouchEvent<HTMLTextAreaElement>) => {
+      // Ensure focus on mobile touch
+      const target = e.currentTarget;
+      target.focus();
+      
+      // Call the original onTouchStart if provided
+      if (onTouchStart) {
+        onTouchStart(e);
+      }
+    };
+
     return (
       <textarea
         className={cn(
@@ -14,6 +37,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           className
         )}
         ref={ref}
+        onClick={handleClick}
+        onTouchStart={handleTouchStart}
         {...props}
       />
     )

@@ -1,5 +1,4 @@
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ArrowLeft, Save, MoreVertical, Share2, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +17,10 @@ const MobileEditor: React.FC = () => {
   const [content, setContent] = React.useState(currentNote?.content || '');
   const [isSaving, setIsSaving] = React.useState(false);
   const [hasChanges, setHasChanges] = React.useState(false);
+  
+  // Refs for focusing
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Load note from URL parameter if available
   useEffect(() => {
@@ -94,6 +97,27 @@ const MobileEditor: React.FC = () => {
     }
   };
 
+  // Handle mobile keyboard focus
+  const handleTextareaClick = () => {
+    // Small delay to ensure the click event is processed first
+    setTimeout(() => {
+      if (contentTextareaRef.current) {
+        contentTextareaRef.current.focus();
+        // For iOS, this helps ensure the keyboard appears
+        contentTextareaRef.current.click();
+      }
+    }, 100);
+  };
+
+  const handleTitleClick = () => {
+    setTimeout(() => {
+      if (titleInputRef.current) {
+        titleInputRef.current.focus();
+        titleInputRef.current.click();
+      }
+    }, 100);
+  };
+
   if (!currentNote) {
     return (
       <div className="h-full flex flex-col items-center justify-center bg-background p-4">
@@ -148,18 +172,24 @@ const MobileEditor: React.FC = () => {
       <div className="flex-1 flex flex-col p-4 space-y-4">
         {/* Title Input */}
         <Input
+          ref={titleInputRef}
           placeholder="Note title..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          onClick={handleTitleClick}
           className="text-lg font-semibold border-none px-0 shadow-none focus-visible:ring-0"
         />
         
         {/* Content Textarea */}
         <Textarea
+          ref={contentTextareaRef}
           placeholder="Start writing your note..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
+          onClick={handleTextareaClick}
+          onTouchStart={handleTextareaClick}
           className="flex-1 resize-none border-none px-0 shadow-none focus-visible:ring-0 text-base leading-relaxed"
+          autoFocus={false}
         />
       </div>
 
