@@ -9,15 +9,17 @@ import { CreateFolderDialog } from './CreateFolderDialog';
 import { useNotes } from '../../../contexts/NotesContext';
 import { useProjectRealms } from '../../../contexts/ProjectRealmsContext';
 import { useFolders } from '../../../contexts/FoldersContext';
+import { useNavigate } from 'react-router-dom';
 
 interface NotesSectionProps {
   isCollapsed?: boolean;
 }
 
 export function NotesSection({ isCollapsed = false }: NotesSectionProps) {
-  const { notes, createNote, updateNote } = useNotes();
+  const { notes, createNote, updateNote, setCurrentNote } = useNotes();
   const { projects } = useProjectRealms();
   const { folders, createFolder } = useFolders();
+  const navigate = useNavigate();
   
   // State for expandable sections
   const [isNotesExpanded, setIsNotesExpanded] = useState(true);
@@ -31,16 +33,23 @@ export function NotesSection({ isCollapsed = false }: NotesSectionProps) {
 
   const favoriteNotes = notes.filter(note => note.isFavorite);
 
-  const handleCreateNote = () => {
-    const newNote = {
-      title: 'Untitled Note',
-      content: '',
-      category: 'general' as const,
-      tags: [],
-      isFavorite: false,
-      folder_id: null
-    };
-    createNote(newNote);
+  const handleCreateNote = async () => {
+    try {
+      const newNote = await createNote({
+        title: 'Untitled Note',
+        content: '',
+        category: 'general' as const,
+        tags: [],
+        isFavorite: false,
+        folder_id: null
+      });
+      
+      // Set the new note as current and navigate to editor
+      setCurrentNote(newNote);
+      navigate('/app/editor');
+    } catch (error) {
+      console.error('Failed to create note:', error);
+    }
   };
 
   const handleCreateFolder = () => {
@@ -83,11 +92,13 @@ export function NotesSection({ isCollapsed = false }: NotesSectionProps) {
         onToggle={() => setIsProjectsExpanded(!isProjectsExpanded)}
       />
       
-      <FavoritesListSection
-        favoriteNotes={favoriteNotes}
-        isExpanded={isFavoritesExpanded}
-        onToggle={() => setIsFavoritesExpanded(!isFavoritesExpanded)}
-      />
+      {favoriteNotes.length > 0 && (
+        <FavoritesListSection
+          favoriteNotes={favoriteNotes}
+          isExpanded={isFavoritesExpanded}
+          onToggle={() => setIsFavoritesExpanded(!isFavoritesExpanded)}
+        />
+      )}
 
       <CreateFolderDialog
         isOpen={showCreateFolderDialog}
