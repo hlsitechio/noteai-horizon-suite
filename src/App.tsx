@@ -8,14 +8,14 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import Layout from './components/Layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Landing from './pages/Landing';
-import Auth from './pages/Auth';
+import Login from './pages/Auth/Login';
 import Dashboard from './pages/Dashboard';
 import Chat from './pages/Chat';
 import Editor from './pages/Editor';
 import Notes from './pages/Notes';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
-import MobileView from './mobile/MobileView';
+import MobileApp from './mobile/MobileApp';
 import { ThemeProvider } from 'next-themes';
 import GlobalAICopilot from './components/Global/GlobalAICopilot';
 import './App.css';
@@ -31,8 +31,8 @@ function App() {
                 <Routes>
                   {/* Public routes */}
                   <Route path="/" element={<Landing />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/mobile/*" element={<MobileView />} />
+                  <Route path="/auth" element={<Login />} />
+                  <Route path="/mobile/*" element={<MobileApp />} />
                   
                   {/* Protected routes */}
                   <Route path="/app" element={
