@@ -5,38 +5,50 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, MessageCircle } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
 import { useEnhancedAIChat, ChatMessage } from '../hooks/useEnhancedAIChat';
 
 const Chat: React.FC = () => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const { sendMessage: sendAIMessage, isLoading } = useEnhancedAIChat();
+  const { sendMessage: sendAIMessage } = useEnhancedAIChat();
 
-  const handleSend = async () => {
-    if (message.trim()) {
+  // Use TanStack Query mutation for chat messages
+  const chatMutation = useMutation({
+    mutationFn: async (newMessage: string) => {
       const userMessage: ChatMessage = {
         id: Date.now().toString(),
-        content: message,
+        content: newMessage,
         isUser: true,
         timestamp: new Date()
       };
 
       const updatedMessages = [...messages, userMessage];
       setMessages(updatedMessages);
-      setMessage('');
 
-      try {
-        const aiResponse = await sendAIMessage(updatedMessages);
-        const aiMessage: ChatMessage = {
-          id: (Date.now() + 1).toString(),
-          content: aiResponse,
-          isUser: false,
-          timestamp: new Date()
-        };
-        setMessages([...updatedMessages, aiMessage]);
-      } catch (error) {
-        console.error('Error sending message:', error);
-      }
+      const aiResponse = await sendAIMessage(updatedMessages);
+      
+      const aiMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        content: aiResponse,
+        isUser: false,
+        timestamp: new Date()
+      };
+
+      return { updatedMessages, aiMessage };
+    },
+    onSuccess: ({ updatedMessages, aiMessage }) => {
+      setMessages([...updatedMessages, aiMessage]);
+    },
+    onError: (error) => {
+      console.error('Error sending message:', error);
+    },
+  });
+
+  const handleSend = async () => {
+    if (message.trim()) {
+      chatMutation.mutate(message);
+      setMessage('');
     }
   };
 
@@ -88,7 +100,7 @@ const Chat: React.FC = () => {
                     </div>
                   ))
                 )}
-                {isLoading && (
+                {chatMutation.isPending && (
                   <div className="flex justify-start">
                     <div className="bg-muted p-3 rounded-lg">
                       <div className="flex items-center space-x-2">
@@ -108,12 +120,12 @@ const Chat: React.FC = () => {
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
-                disabled={isLoading}
+                disabled={chatMutation.isPending}
                 className="flex-1"
               />
               <Button
                 onClick={handleSend}
-                disabled={isLoading || !message.trim()}
+                disabled={chatMutation.isPending || !message.trim()}
                 size="sm"
               >
                 <Send className="w-4 h-4" />
