@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -15,6 +14,7 @@ import { useIsMobile } from './hooks/use-mobile';
 import ProtectedRoute from './components/ProtectedRoute';
 import HomeRedirect from './components/HomeRedirect';
 import ErrorBoundary from './components/ErrorBoundary';
+import DeviceFrame from './components/DeviceFrame';
 
 // Desktop Layout and Pages
 import Layout from './components/Layout/Layout';
@@ -72,12 +72,14 @@ function AppContent() {
         <Route path="/register" element={<Register />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Mobile Routes - Completely separate from desktop layout */}
+        {/* Mobile Routes - Wrapped in Device Frame */}
         <Route 
           path="/mobile/*" 
           element={
             <ProtectedRoute>
-              <MobileApp />
+              <DeviceFrame>
+                <MobileApp />
+              </DeviceFrame>
             </ProtectedRoute>
           } 
         />
