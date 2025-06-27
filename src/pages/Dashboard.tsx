@@ -16,7 +16,7 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  // Calculate stats
+  // Calculate stats from real user data
   const totalNotes = notes.length;
   const favoriteNotes = notes.filter(note => note.isFavorite).length;
   const recentNotes = notes
@@ -24,7 +24,8 @@ const Dashboard: React.FC = () => {
     .slice(0, 5);
 
   const categoryCounts = notes.reduce((acc, note) => {
-    acc[note.category] = (acc[note.category] || 0) + 1;
+    const category = note.category || 'general';
+    acc[category] = (acc[category] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
@@ -34,17 +35,21 @@ const Dashboard: React.FC = () => {
     return new Date(note.createdAt) > weekAgo;
   }).length;
 
-  // Enhanced AI context integration
+  // Enhanced AI context integration with real user data
   useQuantumAIIntegration({
     page: '/app/dashboard',
-    content: `Dashboard overview: ${totalNotes} total notes, ${favoriteNotes} favorites, ${weeklyNotes} notes this week`,
+    content: `Dashboard overview: ${totalNotes} total notes, ${favoriteNotes} favorites, ${weeklyNotes} notes this week. Categories: ${Object.keys(categoryCounts).join(', ')}`,
     metadata: {
       totalNotes,
       favoriteNotes,
       weeklyNotes,
       categoryCounts,
       recentNotesCount: recentNotes.length,
-      hasRecentActivity: recentNotes.length > 0
+      hasRecentActivity: recentNotes.length > 0,
+      totalWords: notes.reduce((acc, note) => {
+        const wordCount = note.content ? note.content.split(/\s+/).filter(word => word.length > 0).length : 0;
+        return acc + wordCount;
+      }, 0)
     }
   });
 
@@ -78,6 +83,7 @@ const Dashboard: React.FC = () => {
             favoriteNotes={favoriteNotes}
             categoryCounts={categoryCounts}
             weeklyNotes={weeklyNotes}
+            notes={notes}
           />
         </div>
 

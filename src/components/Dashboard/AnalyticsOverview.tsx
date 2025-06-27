@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, TrendingUp, Calendar, Target } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { motion } from 'framer-motion';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface AnalyticsOverviewProps {
   totalNotes: number;
@@ -20,7 +21,9 @@ const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
   weeklyNotes,
   notes
 }) => {
-  // Generate weekly activity data
+  const { user } = useAuth();
+
+  // Generate weekly activity data from real user notes
   const weeklyData = React.useMemo(() => {
     const last7Days = [];
     const today = new Date();
@@ -44,26 +47,92 @@ const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
     return last7Days;
   }, [notes]);
 
-  // Category distribution data
+  // Category distribution data from real user notes
   const categoryData = React.useMemo(() => {
-    const colors = ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
+    const colors = ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#84cc16'];
     return Object.entries(categoryCounts).map(([category, count], index) => ({
       name: category.charAt(0).toUpperCase() + category.slice(1),
       value: count,
       color: colors[index % colors.length],
-      percentage: Math.round((count / totalNotes) * 100)
+      percentage: totalNotes > 0 ? Math.round((count / totalNotes) * 100) : 0
     }));
   }, [categoryCounts, totalNotes]);
 
-  // Monthly trend data
+  // Monthly trend data from real user notes
   const monthlyData = React.useMemo(() => {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-    return months.map((month, index) => ({
+    const monthsMap = new Map();
+    const currentDate = new Date();
+    
+    // Initialize last 6 months
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+      const monthKey = date.toLocaleDateString('en-US', { month: 'short' });
+      monthsMap.set(monthKey, { notes: 0, favorites: 0 });
+    }
+    
+    // Count notes and favorites by month
+    notes.forEach(note => {
+      const noteDate = new Date(note.createdAt);
+      const monthKey = noteDate.toLocaleDateString('en-US', { month: 'short' });
+      
+      if (monthsMap.has(monthKey)) {
+        const monthData = monthsMap.get(monthKey);
+        monthData.notes += 1;
+        if (note.isFavorite) {
+          monthData.favorites += 1;
+        }
+        monthsMap.set(monthKey, monthData);
+      }
+    });
+    
+    return Array.from(monthsMap.entries()).map(([month, data]) => ({
       month,
-      notes: Math.floor(Math.random() * 20) + 5,
-      favorites: Math.floor(Math.random() * 8) + 2
+      ...data
     }));
-  }, []);
+  }, [notes]);
+
+  // Calculate writing streak
+  const writingStreak = React.useMemo(() => {
+    if (notes.length === 0) return 0;
+    
+    const sortedNotes = [...notes].sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+    
+    let streak = 0;
+    let currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    
+    for (let i = 0; i < 30; i++) { // Check last 30 days
+      const hasNoteOnDay = sortedNotes.some(note => {
+        const noteDate = new Date(note.createdAt);
+        noteDate.setHours(0, 0, 0, 0);
+        return noteDate.getTime() === currentDate.getTime();
+      });
+      
+      if (hasNoteOnDay) {
+        streak++;
+      } else if (i > 0) { // Don't break on first day if no notes today
+        break;
+      }
+      
+      currentDate.setDate(currentDate.getDate() - 1);
+    }
+    
+    return streak;
+  }, [notes]);
+
+  // Calculate average words per note
+  const averageWordsPerNote = React.useMemo(() => {
+    if (notes.length === 0) return 0;
+    
+    const totalWords = notes.reduce((acc, note) => {
+      const wordCount = note.content ? note.content.split(/\s+/).filter(word => word.length > 0).length : 0;
+      return acc + wordCount;
+    }, 0);
+    
+    return Math.round(totalWords / notes.length);
+  }, [notes]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
@@ -132,55 +201,63 @@ const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
         </CardHeader>
         <CardContent className="pt-0">
           <div className="flex items-center justify-between h-32">
-            <div className="h-24 w-24">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={categoryData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={20}
-                    outerRadius={40}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
-                    {categoryData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        const data = payload[0].payload;
-                        return (
-                          <div className="bg-background border border-border p-2 rounded-lg shadow-lg">
-                            <p className="text-xs font-medium">{data.name}</p>
-                            <p className="text-xs text-accent">
-                              {data.value} notes ({data.percentage}%)
-                            </p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="flex-1 ml-4 space-y-2">
-              {categoryData.slice(0, 3).map((category, index) => (
-                <div key={category.name} className="flex items-center gap-2">
-                  <div 
-                    className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: category.color }}
-                  />
-                  <span className="text-xs text-muted-foreground truncate flex-1">
-                    {category.name}
-                  </span>
-                  <span className="text-xs font-medium">{category.value}</span>
+            {categoryData.length > 0 ? (
+              <>
+                <div className="h-24 w-24">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={categoryData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={20}
+                        outerRadius={40}
+                        paddingAngle={2}
+                        dataKey="value"
+                      >
+                        {categoryData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-background border border-border p-2 rounded-lg shadow-lg">
+                                <p className="text-xs font-medium">{data.name}</p>
+                                <p className="text-xs text-accent">
+                                  {data.value} notes ({data.percentage}%)
+                                </p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
                 </div>
-              ))}
-            </div>
+                <div className="flex-1 ml-4 space-y-2">
+                  {categoryData.slice(0, 3).map((category, index) => (
+                    <div key={category.name} className="flex items-center gap-2">
+                      <div 
+                        className="w-2 h-2 rounded-full"
+                        style={{ backgroundColor: category.color }}
+                      />
+                      <span className="text-xs text-muted-foreground truncate flex-1">
+                        {category.name}
+                      </span>
+                      <span className="text-xs font-medium">{category.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center justify-center w-full h-full text-muted-foreground">
+                <p className="text-xs">No categories yet</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -197,13 +274,13 @@ const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
           <div className="space-y-3">
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">Completion Rate</span>
-                <span className="font-medium">{Math.round((favoriteNotes / totalNotes) * 100)}%</span>
+                <span className="text-muted-foreground">Favorite Rate</span>
+                <span className="font-medium">{totalNotes > 0 ? Math.round((favoriteNotes / totalNotes) * 100) : 0}%</span>
               </div>
               <div className="w-full bg-muted rounded-full h-1.5">
                 <div 
                   className="bg-accent h-1.5 rounded-full transition-all duration-500"
-                  style={{ width: `${(favoriteNotes / totalNotes) * 100}%` }}
+                  style={{ width: `${totalNotes > 0 ? (favoriteNotes / totalNotes) * 100 : 0}%` }}
                 />
               </div>
             </div>
@@ -221,13 +298,13 @@ const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
             </div>
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">Organization</span>
-                <span className="font-medium">{Object.keys(categoryCounts).length}/5</span>
+                <span className="text-muted-foreground">Writing Streak</span>
+                <span className="font-medium">{writingStreak} days</span>
               </div>
               <div className="w-full bg-muted rounded-full h-1.5">
                 <div 
-                  className="bg-blue-500 h-1.5 rounded-full transition-all duration-500"
-                  style={{ width: `${(Object.keys(categoryCounts).length / 5) * 100}%` }}
+                  className="bg-purple-500 h-1.5 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min((writingStreak / 7) * 100, 100)}%` }}
                 />
               </div>
             </div>
@@ -264,6 +341,9 @@ const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                           <p className="text-xs text-accent">
                             Notes: {payload[0].value}
                           </p>
+                          <p className="text-xs text-green-500">
+                            Favorites: {payload[1]?.value || 0}
+                          </p>
                         </div>
                       );
                     }
@@ -276,8 +356,24 @@ const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
                   radius={[2, 2, 0, 0]}
                   opacity={0.8}
                 />
+                <Bar 
+                  dataKey="favorites" 
+                  fill="hsl(var(--primary))" 
+                  radius={[2, 2, 0, 0]}
+                  opacity={0.6}
+                />
               </BarChart>
             </ResponsiveContainer>
+          </div>
+          <div className="mt-2 flex items-center justify-center gap-4 text-xs">
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-accent"></div>
+              <span className="text-muted-foreground">All Notes</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-primary"></div>
+              <span className="text-muted-foreground">Favorites</span>
+            </div>
           </div>
         </CardContent>
       </Card>
