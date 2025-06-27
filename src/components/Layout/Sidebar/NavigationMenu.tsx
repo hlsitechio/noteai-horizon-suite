@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -20,86 +21,122 @@ interface NavigationMenuProps {
 const NavigationMenu: React.FC<NavigationMenuProps> = ({ isCollapsed }) => {
   const location = useLocation();
 
-  const navigationItems = [
-    { 
-      icon: LayoutDashboard, 
-      label: 'Dashboard', 
-      path: '/app/dashboard',
-      description: 'Overview and analytics'
+  const navigationGroups = [
+    // Core section
+    {
+      items: [
+        { 
+          icon: LayoutDashboard, 
+          label: 'Dashboard', 
+          path: '/app/dashboard',
+          description: 'Overview and analytics'
+        },
+      ]
     },
-    { 
-      icon: FileText, 
-      label: 'Notes', 
-      path: '/app/notes',
-      description: 'Browse and manage notes'
+    // Content section
+    {
+      items: [
+        { 
+          icon: FileText, 
+          label: 'Notes', 
+          path: '/app/notes',
+          description: 'Browse and manage notes'
+        },
+        { 
+          icon: Edit3, 
+          label: 'Editor', 
+          path: '/app/editor',
+          description: 'Write and edit notes'
+        },
+      ]
     },
-    { 
-      icon: Edit3, 
-      label: 'Editor', 
-      path: '/app/editor',
-      description: 'Write and edit notes'
+    // Analytics section
+    {
+      items: [
+        { 
+          icon: BarChart3, 
+          label: 'Analytics', 
+          path: '/app/analytics',
+          description: 'Writing insights and stats'
+        },
+      ]
     },
-    { 
-      icon: BarChart3, 
-      label: 'Analytics', 
-      path: '/app/analytics',
-      description: 'Writing insights and stats'
+    // Tools section
+    {
+      items: [
+        { 
+          icon: Calendar, 
+          label: 'Calendar', 
+          path: '/app/calendar',
+          description: 'Schedule and events'
+        },
+        { 
+          icon: MessageSquare, 
+          label: 'AI Chat', 
+          path: '/app/chat',
+          description: 'AI-powered conversations'
+        },
+        { 
+          icon: FolderOpen, 
+          label: 'Projects', 
+          path: '/app/projects',
+          description: 'Project realms and workspaces'
+        },
+      ]
     },
-    { 
-      icon: Calendar, 
-      label: 'Calendar', 
-      path: '/app/calendar',
-      description: 'Schedule and events'
-    },
-    { 
-      icon: MessageSquare, 
-      label: 'AI Chat', 
-      path: '/app/chat',
-      description: 'AI-powered conversations'
-    },
-    { 
-      icon: FolderOpen, 
-      label: 'Projects', 
-      path: '/app/projects',
-      description: 'Project realms and workspaces'
-    },
-    { 
-      icon: Settings, 
-      label: 'Settings', 
-      path: '/app/settings',
-      description: 'App preferences'
-    },
+    // Settings section
+    {
+      items: [
+        { 
+          icon: Settings, 
+          label: 'Settings', 
+          path: '/app/settings',
+          description: 'App preferences'
+        },
+      ]
+    }
   ];
 
   return (
-    <nav className="space-y-2">
-      {navigationItems.map((item) => {
-        const Icon = item.icon;
-        const isActive = location.pathname === item.path;
-        
-        return (
-          <Link key={item.path} to={item.path}>
-            <Button
-              variant={isActive ? "secondary" : "ghost"}
-              className={`w-full justify-start transition-all duration-200 ${
-                isCollapsed ? 'px-2' : 'px-3'
-              } ${isActive ? 'bg-primary/10 text-primary' : 'hover:bg-accent'}`}
-            >
-              <Icon className={`h-4 w-4 ${isCollapsed ? '' : 'mr-3'} ${
-                isActive ? 'text-primary' : ''
-              }`} />
-              {!isCollapsed && (
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-medium">{item.label}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {item.description}
-                  </span>
-                </div>
-              )}
-            </Button>
-          </Link>
-        );
-      })}
+    <nav className="space-y-3">
+      {navigationGroups.map((group, groupIndex) => (
+        <div key={groupIndex}>
+          {group.items.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.path;
+            
+            return (
+              <Link key={item.path} to={item.path}>
+                <Button
+                  variant={isActive ? "secondary" : "ghost"}
+                  className={`w-full justify-start transition-all duration-200 ${
+                    isCollapsed ? 'px-2' : 'px-3'
+                  } ${isActive ? 'bg-primary/10 text-primary' : 'hover:bg-accent'}`}
+                >
+                  <Icon className={`h-4 w-4 ${isCollapsed ? '' : 'mr-3'} ${
+                    isActive ? 'text-primary' : ''
+                  }`} />
+                  {!isCollapsed && (
+                    <div className="flex flex-col items-start">
+                      <span className="text-sm font-medium">{item.label}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {item.description}
+                      </span>
+                    </div>
+                  )}
+                </Button>
+              </Link>
+            );
+          })}
+          
+          {/* Add separator between groups, but not after the last group */}
+          {groupIndex < navigationGroups.length - 1 && (
+            <div className={`${isCollapsed ? 'px-2' : 'px-3'} py-2`}>
+              <Separator className="bg-deep-carbon-700/30" />
+            </div>
+          )}
+        </div>
+      ))}
     </nav>
   );
 };
