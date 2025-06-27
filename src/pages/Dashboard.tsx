@@ -7,6 +7,7 @@ import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
 import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
+import AnalyticsOverview from '../components/Dashboard/AnalyticsOverview';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
 import FullscreenToggle from '../components/Dashboard/FullscreenToggle';
 
@@ -82,8 +83,19 @@ const Dashboard: React.FC = () => {
 
         {/* Main Content Area - Calculated height to fill remaining space */}
         <div className="grid grid-cols-12 gap-4 flex-1 min-h-0 w-full h-[770px]">
-          {/* Recent Activity - 8/12 columns */}
-          <div className="col-span-8 h-full min-h-0">
+          {/* Analytics Overview - 5/12 columns */}
+          <div className="col-span-5 h-full min-h-0">
+            <AnalyticsOverview
+              totalNotes={totalNotes}
+              favoriteNotes={favoriteNotes}
+              categoryCounts={categoryCounts}
+              weeklyNotes={weeklyNotes}
+              notes={notes}
+            />
+          </div>
+
+          {/* Recent Activity - 4/12 columns */}
+          <div className="col-span-4 h-full min-h-0">
             <SecureRecentActivity 
               recentNotes={recentNotes}
               onCreateNote={handleCreateNote}
@@ -91,8 +103,8 @@ const Dashboard: React.FC = () => {
             />
           </div>
 
-          {/* Quick Actions - 4/12 columns */}
-          <div className="col-span-4 h-full min-h-0">
+          {/* Quick Actions - 3/12 columns */}
+          <div className="col-span-3 h-full min-h-0">
             <WorkflowActions 
               notes={notes}
               onCreateNote={handleCreateNote}
