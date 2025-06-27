@@ -10,8 +10,10 @@ import ProjectCard from '../components/ProjectRealms/ProjectCard';
 import CreateProjectModal from '../components/ProjectRealms/CreateProjectModal';
 import { ProjectRealm } from '../types/project';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { useNavigate } from 'react-router-dom';
 
 const ProjectRealms: React.FC = () => {
+  const navigate = useNavigate();
   const {
     filteredProjects,
     filters,
@@ -30,6 +32,7 @@ const ProjectRealms: React.FC = () => {
 
   const handleCreateProject = async (projectData: Omit<ProjectRealm, 'id' | 'created_at' | 'updated_at' | 'last_activity_at' | 'creator_id'>) => {
     await createProject(projectData);
+    setIsCreateModalOpen(false);
   };
 
   const handleEditProject = async (projectData: Omit<ProjectRealm, 'id' | 'created_at' | 'updated_at' | 'last_activity_at' | 'creator_id'>) => {
@@ -60,8 +63,7 @@ const ProjectRealms: React.FC = () => {
 
   const handleSelectProject = (project: ProjectRealm) => {
     setCurrentProject(project);
-    // Navigate to project detail view or perform other actions
-    console.log('Selected project:', project);
+    navigate(`/app/projects/${project.id}`);
   };
 
   if (isLoading) {
@@ -77,13 +79,6 @@ const ProjectRealms: React.FC = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      {/* Project Manager Label */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
-          Project Manager
-        </h2>
-      </div>
-
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
           <div>

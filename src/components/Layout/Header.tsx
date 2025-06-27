@@ -24,8 +24,9 @@ const Header: React.FC = () => {
       return 'Analytics Dashboard';
     }
     if (path.includes('/projects')) {
-      // If we're on a specific project page, show the project title
-      if (currentProject && path.includes(currentProject.id)) {
+      // Check if we're on a specific project detail page
+      const projectIdMatch = path.match(/\/projects\/([^\/]+)$/);
+      if (projectIdMatch && currentProject) {
         return currentProject.title;
       }
       return 'Project Manager';
