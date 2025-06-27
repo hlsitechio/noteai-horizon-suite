@@ -1,7 +1,8 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { BannerData, BannerMetadata, BannerUploadResult } from './types';
-import { generateFileName, getFileExtension, ensureBannersStorageExists, getPublicUrl } from './utils';
+import { generateFileName, getFileExtension, verifyBannersStorageExists, getPublicUrl } from './utils';
 
 export class BannerUploadService {
   static async uploadBanner(
@@ -21,15 +22,9 @@ export class BannerUploadService {
 
       console.log('BannerUploadService: User authenticated', user.id);
 
-      // Ensure storage bucket exists - this will create it if it doesn't exist
-      const storageReady = await ensureBannersStorageExists();
-      console.log('BannerUploadService: Storage ready:', storageReady);
-      
-      if (!storageReady) {
-        console.error('BannerUploadService: Failed to ensure storage exists');
-        toast.error('Storage setup failed. Please try again.');
-        return null;
-      }
+      // Verify storage bucket exists (for logging - bucket is guaranteed to exist)
+      const storageReady = await verifyBannersStorageExists();
+      console.log('BannerUploadService: Storage verification:', storageReady);
 
       const fileExt = getFileExtension(file.name);
       const fileName = generateFileName(user.id, bannerType, projectId, fileExt);
