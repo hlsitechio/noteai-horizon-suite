@@ -88,7 +88,9 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
           selectedFile: null,
           uploadError: null 
         });
+        toast.success('Banner uploaded successfully!');
       } else {
+        console.error('BannerUpload: Upload returned null result');
         updateState({ uploadError: 'Upload failed. Please try again.' });
       }
     } catch (error) {
