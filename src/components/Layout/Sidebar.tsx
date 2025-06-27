@@ -7,7 +7,8 @@ import {
   PencilIcon, 
   PlusIcon,
   MagnifyingGlassIcon,
-  CodeBracketIcon
+  CodeBracketIcon,
+  Squares2X2Icon
 } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -15,11 +16,11 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '../../contexts/AuthContext';
 
 const menuItems = [
-  { icon: BookOpenIcon, label: 'Dashboard', path: '/dashboard' },
-  { icon: PlusIcon, label: 'AI Chat', path: '/chat' },
-  { icon: PencilIcon, label: 'Editor', path: '/editor' },
-  { icon: MagnifyingGlassIcon, label: 'Notes', path: '/notes' },
-  { icon: CogIcon, label: 'Settings', path: '/settings' },
+  { icon: Squares2X2Icon, label: 'Dashboard', path: '/app/dashboard' },
+  { icon: PlusIcon, label: 'AI Chat', path: '/app/chat' },
+  { icon: PencilIcon, label: 'Editor', path: '/app/editor' },
+  { icon: MagnifyingGlassIcon, label: 'Notes', path: '/app/notes' },
+  { icon: CogIcon, label: 'Settings', path: '/app/settings' },
 ];
 
 const Sidebar: React.FC = () => {
