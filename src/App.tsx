@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
@@ -13,11 +12,11 @@ import { AccentColorProvider } from '@/contexts/AccentColorContext';
 import { QuantumAIProvider } from '@/contexts/QuantumAIContext';
 import { ProjectRealmsProvider } from '@/contexts/ProjectRealmsContext';
 import { UnifiedDragDropProvider } from '@/components/Layout/UnifiedDragDropProvider';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { GlobalAICopilot } from '@/components/Global/GlobalAICopilot';
-import { FloatingNotesContainer } from '@/components/FloatingNotes/FloatingNotesContainer';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import GlobalAICopilot from '@/components/Global/GlobalAICopilot';
+import FloatingNotesContainer from '@/components/FloatingNotes/FloatingNotesContainer';
 import { GPUPerformanceMonitor } from '@/components/GPUPerformanceMonitor';
-import { MobileViewButton } from '@/components/Layout/MobileViewButton';
+import MobileViewButton from '@/components/Layout/MobileViewButton';
 
 // Main layout with sidebar
 import Layout from '@/components/Layout/Layout';
