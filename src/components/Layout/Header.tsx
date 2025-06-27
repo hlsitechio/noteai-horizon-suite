@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Bell, Settings, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotes } from '../../contexts/NotesContext';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useProjectRealms } from '../../contexts/ProjectRealmsContext';
 import SyncStatusIndicator from '../SyncStatusIndicator';
 
@@ -13,6 +12,7 @@ const Header: React.FC = () => {
   const { syncStatus } = useNotes();
   const { currentProject } = useProjectRealms();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const getPageTitle = () => {
     const path = location.pathname;
@@ -50,6 +50,10 @@ const Header: React.FC = () => {
     return 'NoteAI Horizon Suite';
   };
 
+  const handleSettingsClick = () => {
+    navigate('/app/settings');
+  };
+
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-2">
       <div className="flex items-center justify-between">
@@ -66,7 +70,7 @@ const Header: React.FC = () => {
             <Bell className="h-4 w-4" />
           </Button>
           
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm" onClick={handleSettingsClick}>
             <Settings className="h-4 w-4" />
           </Button>
           
