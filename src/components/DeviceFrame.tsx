@@ -9,6 +9,25 @@ interface DeviceFrameProps {
 }
 
 const DeviceFrame: React.FC<DeviceFrameProps> = ({ children, className = '' }) => {
+  // Add custom styles to remove glowing border
+  React.useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .marvel-device .screen::after {
+        display: none !important;
+      }
+      .marvel-device .screen {
+        border: none !important;
+        box-shadow: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   return (
     <div className={`flex items-center justify-center min-h-screen w-full bg-background ${className}`}>
       <div className="relative">
@@ -20,17 +39,6 @@ const DeviceFrame: React.FC<DeviceFrameProps> = ({ children, className = '' }) =
             {children}
           </div>
         </DeviceFrameset>
-        
-        {/* Custom styles to remove glowing border */}
-        <style jsx>{`
-          .marvel-device .screen::after {
-            display: none !important;
-          }
-          .marvel-device .screen {
-            border: none !important;
-            box-shadow: none !important;
-          }
-        `}</style>
       </div>
     </div>
   );
