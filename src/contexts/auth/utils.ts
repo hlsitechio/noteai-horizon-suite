@@ -12,23 +12,40 @@ export const transformUser = async (supabaseUser: SupabaseUser): Promise<User> =
       .eq('id', supabaseUser.id)
       .single();
 
-    if (error) {
+    if (error && error.code !== 'PGRST116') { // PGRST116 is "not found" error
       console.error('Error fetching user profile:', error);
+    }
+
+    // Create profile if it doesn't exist
+    if (!profile) {
+      const newProfile = {
+        id: supabaseUser.id,
+        email: supabaseUser.email || '',
+        display_name: supabaseUser.email?.split('@')[0] || 'User',
+      };
+
+      const { error: insertError } = await supabase
+        .from('user_profiles')
+        .insert(newProfile);
+
+      if (insertError) {
+        console.error('Error creating user profile:', insertError);
+      }
     }
 
     return {
       id: supabaseUser.id,
       email: supabaseUser.email || '',
-      name: profile?.display_name || supabaseUser.email || 'User',
-      avatar: profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.display_name || supabaseUser.email || 'User')}&background=6366f1&color=fff`
+      name: profile?.display_name || supabaseUser.email?.split('@')[0] || 'User',
+      avatar: profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.display_name || supabaseUser.email?.split('@')[0] || 'User')}&background=6366f1&color=fff`
     };
   } catch (error) {
     console.error('Error transforming user:', error);
     return {
       id: supabaseUser.id,
       email: supabaseUser.email || '',
-      name: supabaseUser.email || 'User',
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(supabaseUser.email || 'User')}&background=6366f1&color=fff`
+      name: supabaseUser.email?.split('@')[0] || 'User',
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(supabaseUser.email?.split('@')[0] || 'User')}&background=6366f1&color=fff`
     };
   }
 };
