@@ -139,7 +139,7 @@ function App() {
               </Router>
               <Toaster />
             </NotificationsProvider>
-          </AccentColorContext>
+          </AccentColorProvider>
         </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>
