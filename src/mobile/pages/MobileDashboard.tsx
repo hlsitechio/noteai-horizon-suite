@@ -82,15 +82,15 @@ const MobileDashboard: React.FC = () => {
     <div className="h-full overflow-y-auto bg-background">
       <DynamicMobileHeader title="Dashboard" />
       
-      <div className="p-4 space-y-6">
+      <div className="p-3 space-y-4">
         {/* Welcome Section */}
-        <div className="text-center py-6">
-          <h1 className="text-2xl font-bold mb-2">Welcome back!</h1>
-          <p className="text-muted-foreground">Ready to capture your thoughts?</p>
+        <div className="text-center py-4">
+          <h1 className="text-xl font-bold mb-1">Welcome back!</h1>
+          <p className="text-sm text-muted-foreground">Ready to capture your thoughts?</p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-3">
           {stats.map((stat) => {
             const StatIcon = stat.icon;
             return (
@@ -109,9 +109,9 @@ const MobileDashboard: React.FC = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="space-y-3">
-          <h2 className="text-lg font-semibold">Quick Actions</h2>
-          <div className="space-y-3">
+        <div className="space-y-2">
+          <h2 className="text-base font-semibold">Quick Actions</h2>
+          <div className="space-y-2">
             {quickActions.map((action) => {
               const ActionIcon = action.icon;
               return (
@@ -119,12 +119,12 @@ const MobileDashboard: React.FC = () => {
                   key={action.title}
                   variant={action.variant}
                   onClick={action.action}
-                  className="w-full h-auto py-4 flex items-center justify-start space-x-3"
+                  className="w-full h-auto py-3 flex items-center justify-start space-x-3"
                 >
-                  <ActionIcon className="h-5 w-5" />
+                  <ActionIcon className="h-4 w-4" />
                   <div className="text-left">
-                    <div className="font-medium">{action.title}</div>
-                    <div className="text-sm text-muted-foreground">{action.description}</div>
+                    <div className="text-sm font-medium">{action.title}</div>
+                    <div className="text-xs text-muted-foreground">{action.description}</div>
                   </div>
                 </Button>
               );
@@ -133,8 +133,8 @@ const MobileDashboard: React.FC = () => {
         </div>
 
         {/* Recent Activity */}
-        <div className="space-y-3">
-          <h2 className="text-lg font-semibold">Recent Notes</h2>
+        <div className="space-y-2">
+          <h2 className="text-base font-semibold">Recent Notes</h2>
           <div className="space-y-2">
             {notes.slice(0, 3).map((note) => (
               <Card 
@@ -145,12 +145,12 @@ const MobileDashboard: React.FC = () => {
                   navigate('/mobile/editor');
                 }}
               >
-                <CardContent className="p-4">
-                  <h3 className="font-medium truncate">{note.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                <CardContent className="p-3">
+                  <h3 className="text-sm font-medium truncate">{note.title}</h3>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                     {note.content || 'No content'}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-xs text-muted-foreground mt-1">
                     {new Date(note.updatedAt).toLocaleDateString()}
                   </p>
                 </CardContent>
@@ -159,8 +159,8 @@ const MobileDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom spacing */}
-        <div className="h-20" />
+        {/* Bottom spacing for nav */}
+        <div className="h-16" />
       </div>
     </div>
   );

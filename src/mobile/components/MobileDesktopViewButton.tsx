@@ -33,10 +33,10 @@ const MobileDesktopViewButton: React.FC = () => {
       variant="outline"
       size="sm"
       onClick={handleDesktopView}
-      className="fixed top-4 right-4 z-50 shadow-lg bg-background/80 backdrop-blur-sm"
+      className="h-8 px-2 text-xs shadow-lg bg-background/80 backdrop-blur-sm"
     >
-      <Monitor className="w-4 h-4 mr-2" />
-      Desktop View
+      <Monitor className="w-3 h-3 mr-1" />
+      Desktop
     </Button>
   );
 };

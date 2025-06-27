@@ -31,23 +31,23 @@ const MobileProjects: React.FC = () => {
       <DynamicMobileHeader 
         title="Projects"
         rightActions={
-          <Button size="sm" className="h-8">
-            <Plus className="w-4 h-4 mr-1" />
+          <Button size="sm" className="h-7 text-xs">
+            <Plus className="w-3 h-3 mr-1" />
             New
           </Button>
         }
       />
       
-      <div className="p-4 space-y-4">
+      <div className="p-3 space-y-3">
         {/* Filter Tabs */}
-        <div className="flex space-x-2 bg-muted p-1 rounded-lg">
+        <div className="flex space-x-1 bg-muted p-1 rounded-lg">
           {['all', 'active', 'archived'].map((tab) => (
             <Button
               key={tab}
               variant={filter === tab ? 'default' : 'ghost'}
               size="sm"
               onClick={() => setFilter(tab as any)}
-              className="flex-1 capitalize"
+              className="flex-1 capitalize text-xs h-7"
             >
               {tab}
             </Button>
@@ -56,51 +56,51 @@ const MobileProjects: React.FC = () => {
 
         {/* Projects List */}
         {filteredProjects.length === 0 ? (
-          <div className="text-center py-12">
-            <Folder className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground font-medium">No projects found</p>
-            <p className="text-sm text-muted-foreground mt-2">
+          <div className="text-center py-8">
+            <Folder className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground font-medium">No projects found</p>
+            <p className="text-xs text-muted-foreground mt-1">
               Create your first project to get started
             </p>
-            <Button className="mt-4">
-              <Plus className="w-4 h-4 mr-2" />
+            <Button className="mt-3 text-xs h-8">
+              <Plus className="w-3 h-3 mr-1" />
               Create Project
             </Button>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {filteredProjects.map((project) => (
               <Card key={project.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                <CardHeader className="pb-3">
+                <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className="text-base">{project.title}</CardTitle>
-                      <CardDescription className="mt-1 line-clamp-2">
+                      <CardTitle className="text-sm">{project.title}</CardTitle>
+                      <CardDescription className="mt-1 line-clamp-2 text-xs">
                         {project.description}
                       </CardDescription>
                     </div>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <MoreVertical className="w-4 h-4" />
+                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                      <MoreVertical className="w-3 h-3" />
                     </Button>
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {/* Status and Progress */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <div className={`w-2 h-2 rounded-full ${getStatusColor(project.status)}`} />
-                        <span className="text-sm capitalize text-muted-foreground">
+                        <span className="text-xs capitalize text-muted-foreground">
                           {project.status}
                         </span>
                       </div>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-[10px]">
                         Project
                       </Badge>
                     </div>
 
                     {/* Project Stats */}
-                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                    <div className="flex items-center space-x-3 text-xs text-muted-foreground">
                       <div className="flex items-center space-x-1">
                         <Calendar className="w-3 h-3" />
                         <span>{new Date(project.created_at).toLocaleDateString()}</span>
@@ -115,12 +115,12 @@ const MobileProjects: React.FC = () => {
                     {project.ai_config?.agents && project.ai_config.agents.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {project.ai_config.agents.slice(0, 3).map((agent, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
+                          <Badge key={index} variant="secondary" className="text-[10px]">
                             {agent}
                           </Badge>
                         ))}
                         {project.ai_config.agents.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">
+                          <Badge variant="secondary" className="text-[10px]">
                             +{project.ai_config.agents.length - 3} more
                           </Badge>
                         )}
@@ -133,8 +133,8 @@ const MobileProjects: React.FC = () => {
           </div>
         )}
 
-        {/* Bottom spacing */}
-        <div className="h-20" />
+        {/* Bottom spacing for nav */}
+        <div className="h-16" />
       </div>
     </div>
   );
