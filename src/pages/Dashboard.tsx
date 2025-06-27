@@ -62,10 +62,10 @@ const Dashboard: React.FC = () => {
       {/* Fullscreen Toggle Button */}
       <FullscreenToggle />
       
-      <div className="flex-1 flex flex-col w-full px-6 py-4 space-y-6">
+      <div className="flex-1 flex flex-col w-full px-4 py-3 space-y-4">
         
         {/* Welcome Header */}
-        <div className="flex-shrink-0 pt-2">
+        <div className="flex-shrink-0">
           <WelcomeHeader />
         </div>
 
@@ -79,10 +79,10 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Improved proportions */}
-        <div className="grid grid-cols-12 gap-6 items-start flex-1">
-          {/* Recent Activity - Better balanced width */}
-          <div className="col-span-7">
+        {/* Main Content Area - Better space utilization */}
+        <div className="grid grid-cols-12 gap-4 items-start flex-1 min-h-0">
+          {/* Recent Activity */}
+          <div className="col-span-7 h-full">
             <RecentActivity 
               recentNotes={recentNotes}
               onCreateNote={handleCreateNote}
@@ -90,8 +90,8 @@ const Dashboard: React.FC = () => {
             />
           </div>
 
-          {/* Quick Actions - More space for better visibility */}
-          <div className="col-span-5">
+          {/* Quick Actions */}
+          <div className="col-span-5 h-full">
             <WorkflowActions 
               notes={notes}
               onCreateNote={handleCreateNote}
@@ -99,9 +99,6 @@ const Dashboard: React.FC = () => {
             />
           </div>
         </div>
-
-        {/* Footer spacing */}
-        <div className="h-20"></div>
       </div>
     </div>
   );
