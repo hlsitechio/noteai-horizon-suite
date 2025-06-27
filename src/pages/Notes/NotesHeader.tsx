@@ -21,7 +21,7 @@ const NotesHeader: React.FC = () => {
         folder_id: null,
       });
       setCurrentNote(newNote);
-      navigate('/editor');
+      navigate('/app/editor');
     } catch (error) {
       console.error('Failed to create note:', error);
     }
