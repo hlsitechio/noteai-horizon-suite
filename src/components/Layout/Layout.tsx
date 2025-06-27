@@ -1,60 +1,38 @@
 
 import React from 'react';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { AppSidebar } from './AppSidebar';
+import { Outlet } from 'react-router-dom';
+import Sidebar from './Sidebar';
 import Header from './Header';
-import { useLocation, Outlet } from 'react-router-dom';
 import { useIsMobile } from '../../hooks/use-mobile';
-import { UnifiedDragDropProvider } from './UnifiedDragDropProvider';
-import { FloatingNotesProvider } from '../../contexts/FloatingNotesContext';
-import SecureGlobalAICopilot from '../Global/SecureGlobalAICopilot';
-import FloatingNotesContainer from '../FloatingNotes/FloatingNotesContainer';
-import MobileViewButton from './MobileViewButton';
+import { useReminderManager } from '../../hooks/useReminderManager';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const location = useLocation();
+const Layout: React.FC = () => {
   const isMobile = useIsMobile();
-  const isEditorPage = location.pathname === '/app/editor';
-  const isDashboardPage = location.pathname === '/app/dashboard';
+  
+  // Initialize reminder manager
+  useReminderManager();
+
+  if (isMobile) {
+    return (
+      <div className="flex flex-col h-screen bg-background">
+        <Header />
+        <main className="flex-1 overflow-hidden">
+          <Outlet />
+        </main>
+      </div>
+    );
+  }
 
   return (
-    <FloatingNotesProvider>
-      <UnifiedDragDropProvider>
-        <SidebarProvider>
-          <div className="flex min-h-screen w-full bg-background overflow-hidden">
-            <AppSidebar />
-            <SidebarInset className="flex-1 min-w-0 w-full flex flex-col">
-              {/* Only show header on non-editor and non-dashboard pages */}
-              {!isEditorPage && !isDashboardPage && <Header />}
-              <div className={`w-full flex-1 min-h-0 ${
-                isEditorPage 
-                  ? "h-screen" // Full height for editor
-                  : isDashboardPage
-                    ? "flex flex-col" // Flexbox for dashboard - remove fixed height
-                    : isMobile 
-                      ? "p-0.5" // Minimal padding on mobile
-                      : "p-1" // Minimal padding on desktop
-              }`}>
-                {children || <Outlet />}
-              </div>
-            </SidebarInset>
-            
-            {/* Unified AI Copilot - Single interface only */}
-            <SecureGlobalAICopilot />
-            
-            {/* Floating Notes Container - Available on all app pages */}
-            <FloatingNotesContainer />
-            
-            {/* Mobile View Button */}
-            <MobileViewButton />
-          </div>
-        </SidebarProvider>
-      </UnifiedDragDropProvider>
-    </FloatingNotesProvider>
+    <div className="flex h-screen bg-background">
+      <Sidebar />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header />
+        <main className="flex-1 overflow-hidden">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   );
 };
 

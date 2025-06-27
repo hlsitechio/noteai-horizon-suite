@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Note } from '../types/note';
 
@@ -22,6 +21,10 @@ export class SupabaseNotesService {
         updatedAt: note.updated_at,
         isFavorite: note.is_public || false,
         folder_id: note.folder_id,
+        reminder_date: note.reminder_date,
+        reminder_status: note.reminder_status || 'none',
+        reminder_frequency: note.reminder_frequency || 'once',
+        reminder_enabled: note.reminder_enabled || false,
       }));
     } catch (error) {
       console.error('Error loading notes:', error);
@@ -43,6 +46,10 @@ export class SupabaseNotesService {
           tags: noteData.tags,
           is_public: noteData.isFavorite,
           folder_id: noteData.folder_id,
+          reminder_date: noteData.reminder_date,
+          reminder_status: noteData.reminder_status || 'none',
+          reminder_frequency: noteData.reminder_frequency || 'once',
+          reminder_enabled: noteData.reminder_enabled || false,
           user_id: user.user.id,
         })
         .select()
@@ -60,6 +67,10 @@ export class SupabaseNotesService {
         updatedAt: data.updated_at,
         isFavorite: data.is_public || false,
         folder_id: data.folder_id,
+        reminder_date: data.reminder_date,
+        reminder_status: data.reminder_status || 'none',
+        reminder_frequency: data.reminder_frequency || 'once',
+        reminder_enabled: data.reminder_enabled || false,
       };
     } catch (error) {
       console.error('Error saving note:', error);
@@ -77,6 +88,10 @@ export class SupabaseNotesService {
       if (updates.tags !== undefined) updateData.tags = updates.tags;
       if (updates.isFavorite !== undefined) updateData.is_public = updates.isFavorite;
       if (updates.folder_id !== undefined) updateData.folder_id = updates.folder_id;
+      if (updates.reminder_date !== undefined) updateData.reminder_date = updates.reminder_date;
+      if (updates.reminder_status !== undefined) updateData.reminder_status = updates.reminder_status;
+      if (updates.reminder_frequency !== undefined) updateData.reminder_frequency = updates.reminder_frequency;
+      if (updates.reminder_enabled !== undefined) updateData.reminder_enabled = updates.reminder_enabled;
 
       const { data, error } = await supabase
         .from('notes_v2')
@@ -97,6 +112,10 @@ export class SupabaseNotesService {
         updatedAt: data.updated_at,
         isFavorite: data.is_public || false,
         folder_id: data.folder_id,
+        reminder_date: data.reminder_date,
+        reminder_status: data.reminder_status || 'none',
+        reminder_frequency: data.reminder_frequency || 'once',
+        reminder_enabled: data.reminder_enabled || false,
       };
     } catch (error) {
       console.error('Error updating note:', error);
@@ -139,6 +158,10 @@ export class SupabaseNotesService {
         updatedAt: data.updated_at,
         isFavorite: data.is_public || false,
         folder_id: data.folder_id,
+        reminder_date: data.reminder_date,
+        reminder_status: data.reminder_status || 'none',
+        reminder_frequency: data.reminder_frequency || 'once',
+        reminder_enabled: data.reminder_enabled || false,
       };
     } catch (error) {
       console.error('Error getting note:', error);
@@ -188,6 +211,10 @@ export class SupabaseNotesService {
               updatedAt: payload.new.updated_at,
               isFavorite: payload.new.is_public || false,
               folder_id: payload.new.folder_id,
+              reminder_date: payload.new.reminder_date,
+              reminder_status: payload.new.reminder_status || 'none',
+              reminder_frequency: payload.new.reminder_frequency || 'once',
+              reminder_enabled: payload.new.reminder_enabled || false,
             };
             onInsert(note);
           }
@@ -214,6 +241,10 @@ export class SupabaseNotesService {
               updatedAt: payload.new.updated_at,
               isFavorite: payload.new.is_public || false,
               folder_id: payload.new.folder_id,
+              reminder_date: payload.new.reminder_date,
+              reminder_status: payload.new.reminder_status || 'none',
+              reminder_frequency: payload.new.reminder_frequency || 'once',
+              reminder_enabled: payload.new.reminder_enabled || false,
             };
             onUpdate(note);
           }

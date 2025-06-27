@@ -10,6 +10,10 @@ export interface Note {
   isFavorite: boolean;
   folder_id?: string | null;
   color?: string;
+  reminder_date?: string | null;
+  reminder_status?: 'none' | 'pending' | 'sent' | 'dismissed';
+  reminder_frequency?: 'once' | 'daily' | 'weekly' | 'monthly';
+  reminder_enabled?: boolean;
 }
 
 export interface NoteFilters {
@@ -25,10 +29,23 @@ export interface NoteMeta {
   lastModified: string;
 }
 
-export type NoteCategory = 'general' | 'work' | 'personal' | 'ideas' | 'todo' | 'meeting' | 'learning' | 'brainstorm' | 'project';
+export type NoteCategory = 'general' | 'work' | 'personal' | 'ideas' | 'todo' | 'meeting' | 'learning' | 'brainstorm' | 'project' | 'reminder';
 
 export interface CategoryOption {
   value: string;
   label: string;
   color: string;
+}
+
+export interface Reminder {
+  id: string;
+  user_id: string;
+  note_id: string;
+  reminder_date: string;
+  status: 'pending' | 'sent' | 'dismissed' | 'snoozed';
+  frequency: 'once' | 'daily' | 'weekly' | 'monthly';
+  snooze_until?: string | null;
+  notification_sent: boolean;
+  created_at: string;
+  updated_at: string;
 }

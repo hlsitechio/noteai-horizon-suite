@@ -557,6 +557,10 @@ export type Database = {
           is_public: boolean | null
           last_accessed_at: string | null
           parent_id: string | null
+          reminder_date: string | null
+          reminder_enabled: boolean | null
+          reminder_frequency: string | null
+          reminder_status: string | null
           tags: string[] | null
           title: string
           updated_at: string | null
@@ -573,6 +577,10 @@ export type Database = {
           is_public?: boolean | null
           last_accessed_at?: string | null
           parent_id?: string | null
+          reminder_date?: string | null
+          reminder_enabled?: boolean | null
+          reminder_frequency?: string | null
+          reminder_status?: string | null
           tags?: string[] | null
           title: string
           updated_at?: string | null
@@ -589,6 +597,10 @@ export type Database = {
           is_public?: boolean | null
           last_accessed_at?: string | null
           parent_id?: string | null
+          reminder_date?: string | null
+          reminder_enabled?: boolean | null
+          reminder_frequency?: string | null
+          reminder_status?: string | null
           tags?: string[] | null
           title?: string
           updated_at?: string | null
@@ -796,6 +808,53 @@ export type Database = {
           window_start?: string | null
         }
         Relationships: []
+      }
+      reminders: {
+        Row: {
+          created_at: string
+          frequency: string
+          id: string
+          note_id: string
+          notification_sent: boolean | null
+          reminder_date: string
+          snooze_until: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          frequency?: string
+          id?: string
+          note_id: string
+          notification_sent?: boolean | null
+          reminder_date: string
+          snooze_until?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          frequency?: string
+          id?: string
+          note_id?: string
+          notification_sent?: boolean | null
+          reminder_date?: string
+          snooze_until?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminders_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes_v2"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       security_audit_log: {
         Row: {
@@ -1180,6 +1239,17 @@ export type Database = {
           usage_date: string
         }[]
       }
+      get_pending_reminders: {
+        Args: { user_uuid: string }
+        Returns: {
+          reminder_id: string
+          note_id: string
+          note_title: string
+          reminder_date: string
+          frequency: string
+          status: string
+        }[]
+      }
       get_user_notes_for_rag: {
         Args: { user_uuid: string }
         Returns: {
@@ -1200,6 +1270,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      mark_reminder_sent: {
+        Args: { reminder_uuid: string }
+        Returns: boolean
+      }
       sanitize_input: {
         Args: { input_text: string }
         Returns: string
@@ -1217,6 +1291,10 @@ export type Database = {
           is_favorite: boolean
           relevance_score: number
         }[]
+      }
+      snooze_reminder: {
+        Args: { reminder_uuid: string; snooze_minutes?: number }
+        Returns: boolean
       }
       track_ai_usage_enhanced: {
         Args: {
