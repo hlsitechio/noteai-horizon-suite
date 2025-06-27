@@ -5,16 +5,38 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, MessageCircle } from 'lucide-react';
-import { useEnhancedAIChat } from '../hooks/useEnhancedAIChat';
+import { useEnhancedAIChat, ChatMessage } from '../hooks/useEnhancedAIChat';
 
 const Chat: React.FC = () => {
   const [message, setMessage] = useState('');
-  const { messages, sendMessage, isLoading } = useEnhancedAIChat();
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const { sendMessage: sendAIMessage, isLoading } = useEnhancedAIChat();
 
   const handleSend = async () => {
     if (message.trim()) {
-      await sendMessage(message);
+      const userMessage: ChatMessage = {
+        id: Date.now().toString(),
+        content: message,
+        isUser: true,
+        timestamp: new Date()
+      };
+
+      const updatedMessages = [...messages, userMessage];
+      setMessages(updatedMessages);
       setMessage('');
+
+      try {
+        const aiResponse = await sendAIMessage(updatedMessages);
+        const aiMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          content: aiResponse,
+          isUser: false,
+          timestamp: new Date()
+        };
+        setMessages([...updatedMessages, aiMessage]);
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
     }
   };
 
@@ -52,11 +74,11 @@ const Chat: React.FC = () => {
                   messages.map((msg, index) => (
                     <div
                       key={index}
-                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                      className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
                     >
                       <div
                         className={`max-w-[80%] p-3 rounded-lg ${
-                          msg.role === 'user'
+                          msg.isUser
                             ? 'bg-primary text-primary-foreground'
                             : 'bg-muted'
                         }`}
