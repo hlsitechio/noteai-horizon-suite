@@ -1,114 +1,45 @@
+
 import React from 'react';
-import { User, Settings, Palette, Info, LogOut } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { useAuth } from '../../contexts/AuthContext';
-import { useTheme } from 'next-themes';
+import { useNavigate } from 'react-router-dom';
 
 const MobileSettings: React.FC = () => {
-  const { user, logout } = useAuth();
-  const { theme, setTheme } = useTheme();
-  const [notifications, setNotifications] = React.useState(true);
-  const [autoSync, setAutoSync] = React.useState(true);
+  const navigate = useNavigate();
 
-  const handleSignOut = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Failed to sign out:', error);
-    }
+  const handleBack = () => {
+    navigate('/mobile/notes');
   };
 
   return (
     <div className="h-full overflow-y-auto bg-background">
-      <div className="p-4 space-y-4">
-        {/* Profile Section */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <User className="w-5 h-5" />
-              Profile
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <Label className="text-sm text-muted-foreground">Email</Label>
-              <p className="text-sm font-medium">{user?.email}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Appearance */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Palette className="w-5 h-5" />
-              Appearance
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label>Dark Mode</Label>
-              <Switch
-                checked={theme === 'dark'}
-                onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Preferences */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Settings className="w-5 h-5" />
-              Preferences
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label>Push Notifications</Label>
-              <Switch
-                checked={notifications}
-                onCheckedChange={setNotifications}
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <Label>Auto Sync</Label>
-              <Switch
-                checked={autoSync}
-                onCheckedChange={setAutoSync}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* About */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Info className="w-5 h-5" />
-              About
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>NoteAI Suite Mobile</p>
-            <p>Version 1.0.0</p>
-          </CardContent>
-        </Card>
-
-        {/* Sign Out */}
-        <Button
-          variant="outline"
-          onClick={handleSignOut}
-          className="w-full"
+      {/* Header */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border px-4 py-3 flex items-center space-x-3 z-10">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="h-8 w-8 p-0"
+          onClick={handleBack}
         >
-          <LogOut className="w-4 h-4 mr-2" />
-          Sign Out
+          <ArrowLeft className="h-5 w-5" />
         </Button>
+        <h1 className="text-lg font-semibold text-foreground">Settings</h1>
+      </div>
+
+      {/* Content */}
+      <div className="p-4">
+        <div className="text-center py-12">
+          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-2xl">⚙️</span>
+          </div>
+          <h2 className="text-xl font-semibold mb-2">Settings are now in the menu</h2>
+          <p className="text-muted-foreground mb-4">
+            Access all your settings from the hamburger menu (☰) for a better mobile experience.
+          </p>
+          <Button onClick={handleBack} variant="outline">
+            Go back to Notes
+          </Button>
+        </div>
       </div>
     </div>
   );

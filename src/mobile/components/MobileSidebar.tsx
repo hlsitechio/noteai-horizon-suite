@@ -1,12 +1,16 @@
 
 import React from 'react';
-import { X, User, Bell, Settings, LogOut, Home, FileText, Folder, ChevronRight, ChevronDown } from 'lucide-react';
+import { X, User, Bell, LogOut, Home, FileText, Folder, ChevronRight, ChevronDown, Settings, Palette, Info, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../../contexts/NotesContext';
 import { useFolders } from '../../contexts/FoldersContext';
+import { useTheme } from 'next-themes';
 import SyncStatusIndicator from '../../components/SyncStatusIndicator';
 
 interface MobileSidebarProps {
@@ -18,8 +22,12 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
   const { user, logout } = useAuth();
   const { syncStatus, notes } = useNotes();
   const { folders } = useFolders();
+  const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const [expandedFolders, setExpandedFolders] = React.useState<Set<string>>(new Set());
+  const [expandedSettings, setExpandedSettings] = React.useState(false);
+  const [notifications, setNotifications] = React.useState(true);
+  const [autoSync, setAutoSync] = React.useState(true);
 
   const handleSignOut = async () => {
     try {
@@ -43,6 +51,10 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
       newExpanded.add(folderId);
     }
     setExpandedFolders(newExpanded);
+  };
+
+  const toggleSettings = () => {
+    setExpandedSettings(!expandedSettings);
   };
 
   const renderFolder = (folder: any) => {
@@ -110,11 +122,11 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent 
         side="left" 
-        className="w-[250px] p-0 h-full max-h-screen overflow-hidden border-r-0"
+        className="w-[280px] p-0 h-full max-h-screen overflow-hidden border-r-0"
         style={{ 
           position: 'absolute',
           top: 0,
-          left: isOpen ? 0 : '-250px',
+          left: isOpen ? 0 : '-280px',
           height: '100%',
           maxHeight: '100vh',
           zIndex: 40,
@@ -173,15 +185,80 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                   </div>
                 </div>
               )}
-              
-              <Button
-                variant="ghost"
-                onClick={() => handleNavigation('/mobile/settings')}
-                className="w-full justify-start h-12"
-              >
-                <Settings className="w-5 h-5 mr-3" />
-                Settings
-              </Button>
+
+              <Separator className="my-4" />
+
+              {/* Integrated Settings Section - Messenger Style */}
+              <div className="space-y-1">
+                <Button
+                  variant="ghost"
+                  onClick={toggleSettings}
+                  className="w-full justify-start h-12"
+                >
+                  <Settings className="w-5 h-5 mr-3" />
+                  Settings
+                  <ChevronRight className={`w-4 h-4 ml-auto transition-transform ${
+                    expandedSettings ? 'rotate-90' : ''
+                  }`} />
+                </Button>
+
+                {/* Expanded Settings Options - Messenger Style */}
+                {expandedSettings && (
+                  <div className="ml-8 space-y-2 bg-muted/20 rounded-lg p-3">
+                    {/* Theme Toggle */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        {theme === 'dark' ? (
+                          <Moon className="w-4 h-4" />
+                        ) : (
+                          <Sun className="w-4 h-4" />
+                        )}
+                        <Label className="text-sm">Dark Mode</Label>
+                      </div>
+                      <Switch
+                        checked={theme === 'dark'}
+                        onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                      />
+                    </div>
+
+                    <Separator className="my-2" />
+
+                    {/* Notifications */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Bell className="w-4 h-4" />
+                        <Label className="text-sm">Push Notifications</Label>
+                      </div>
+                      <Switch
+                        checked={notifications}
+                        onCheckedChange={setNotifications}
+                      />
+                    </div>
+
+                    {/* Auto Sync */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <SyncStatusIndicator status={syncStatus} className="text-xs" />
+                        <Label className="text-sm">Auto Sync</Label>
+                      </div>
+                      <Switch
+                        checked={autoSync}
+                        onCheckedChange={setAutoSync}
+                      />
+                    </div>
+
+                    <Separator className="my-2" />
+
+                    {/* About Info */}
+                    <div className="space-y-1 text-xs text-muted-foreground">
+                      <div className="flex items-center space-x-2">
+                        <Info className="w-3 h-3" />
+                        <span>NoteAI Suite Mobile v1.0.0</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
               
               <Button
                 variant="ghost"
