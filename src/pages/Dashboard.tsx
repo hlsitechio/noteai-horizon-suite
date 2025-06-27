@@ -58,19 +58,19 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-background flex flex-col overflow-hidden">
+    <div className="h-screen w-full bg-background flex flex-col overflow-hidden">
       {/* Fullscreen Toggle Button */}
       <FullscreenToggle />
       
-      <div className="flex-1 flex flex-col px-3 py-2 space-y-3 overflow-hidden">
+      <div className="flex-1 flex flex-col px-2 py-1 space-y-2 overflow-hidden w-full">
         
         {/* Compact Welcome Header */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 w-full">
           <WelcomeHeader />
         </div>
 
         {/* Compact KPI Stats */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 w-full">
           <KPIStats 
             totalNotes={totalNotes}
             favoriteNotes={favoriteNotes}
@@ -79,8 +79,8 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Optimized for better screen utilization */}
-        <div className="grid grid-cols-12 gap-3 flex-1 min-h-0">
+        {/* Main Content Area - Full width utilization */}
+        <div className="grid grid-cols-12 gap-2 flex-1 min-h-0 w-full">
           {/* Recent Activity - Larger area */}
           <div className="col-span-8 h-full">
             <RecentActivity 
