@@ -6,7 +6,11 @@ import Header from './Header';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { useReminderManager } from '../../hooks/useReminderManager';
 
-const Layout: React.FC = () => {
+interface LayoutProps {
+  children?: React.ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   const isMobile = useIsMobile();
   
   // Initialize reminder manager
@@ -17,7 +21,7 @@ const Layout: React.FC = () => {
       <div className="flex flex-col h-screen bg-background">
         <Header />
         <main className="flex-1 overflow-hidden">
-          <Outlet />
+          {children || <Outlet />}
         </main>
       </div>
     );
@@ -29,7 +33,7 @@ const Layout: React.FC = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
         <main className="flex-1 overflow-hidden">
-          <Outlet />
+          {children || <Outlet />}
         </main>
       </div>
     </div>
