@@ -27,7 +27,7 @@ const Notes: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[calc(100vh-120px)]">
+      <div className="flex items-center justify-center h-[calc(100vh-80px)]">
         <div className="text-center">
           <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-600">Loading your notes...</p>
@@ -39,7 +39,7 @@ const Notes: React.FC = () => {
   const hasFilters = !!(filters.searchTerm || filters.category || filters.isFavorite);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3 h-full">
       <NotesHeader />
       <NotesFilters />
       <NotesGrid notes={filteredNotes} hasFilters={hasFilters} />

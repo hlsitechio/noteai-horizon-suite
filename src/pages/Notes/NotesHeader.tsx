@@ -28,22 +28,22 @@ const NotesHeader: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        <BookOpen className="w-8 h-8 text-primary" />
+    <div className="flex items-center justify-between py-1">
+      <div className="flex items-center gap-2">
+        <BookOpen className="w-6 h-6 text-primary" />
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
             Your Notes
           </h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Create, organize, and sync your notes across all devices
+          <p className="text-xs text-gray-600 dark:text-gray-400">
+            Create, organize, and sync your notes
           </p>
         </div>
       </div>
       
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <SyncStatusIndicator status={syncStatus} />
-        <Button onClick={handleCreateNote} className="flex items-center gap-2">
+        <Button onClick={handleCreateNote} className="flex items-center gap-2" size="sm">
           <Plus className="w-4 h-4" />
           New Note
         </Button>

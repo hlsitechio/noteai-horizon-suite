@@ -36,8 +36,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   : isDashboardPage
                     ? "h-screen overflow-hidden" // Full height for dashboard with no overflow
                     : isMobile 
-                      ? "p-2" // Much less padding on mobile
-                      : "p-4" // Reduced padding on desktop
+                      ? "p-1" // Minimal padding on mobile
+                      : "p-2" // Minimal padding on desktop
               }`}>
                 {children || <Outlet />}
               </div>

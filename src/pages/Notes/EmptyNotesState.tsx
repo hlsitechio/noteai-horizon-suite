@@ -20,9 +20,9 @@ const EmptyNotesState: React.FC<EmptyNotesStateProps> = ({ hasFilters }) => {
   };
 
   return (
-    <Card>
-      <CardContent className="p-12 text-center">
-        <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+    <Card className="mt-8">
+      <CardContent className="p-8 text-center">
+        <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
         <h3 className="text-lg font-semibold text-gray-600 mb-2">
           {hasFilters ? 'No notes match your filters' : 'No notes yet'}
         </h3>
@@ -32,7 +32,7 @@ const EmptyNotesState: React.FC<EmptyNotesStateProps> = ({ hasFilters }) => {
             : 'Create your first note to get started'
           }
         </p>
-        <Button onClick={handleCreateNote}>
+        <Button onClick={handleCreateNote} size="sm">
           <Plus className="w-4 h-4 mr-2" />
           Create Note
         </Button>
