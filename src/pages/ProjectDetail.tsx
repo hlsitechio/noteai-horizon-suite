@@ -16,16 +16,24 @@ const ProjectDetail: React.FC = () => {
   const [bannerImage, setBannerImage] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('ProjectDetail: projectId from URL:', projectId);
+    console.log('ProjectDetail: available projects:', projects);
+    
     if (projectId) {
       const foundProject = projects.find(p => p.id === projectId);
+      console.log('ProjectDetail: found project:', foundProject);
+      
       if (foundProject) {
         setProject(foundProject);
         setCurrentProject(foundProject);
         // Check if project has a banner image in settings
         setBannerImage(foundProject.settings?.banner_image || null);
-      } else {
+      } else if (projects.length > 0) {
+        // Projects are loaded but project not found
+        console.log('ProjectDetail: Project not found, redirecting...');
         navigate('/app/projects');
       }
+      // If projects are still loading, wait for them
     }
   }, [projectId, projects, setCurrentProject, navigate]);
 
@@ -33,12 +41,31 @@ const ProjectDetail: React.FC = () => {
     setBannerImage(imageUrl);
   };
 
-  if (!project) {
+  // Show loading if projects are still loading or project not found yet
+  if (!project && projects.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading project...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If projects are loaded but project not found
+  if (!project) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Project Not Found</h2>
+          <p className="text-gray-600 mb-4">The project you're looking for doesn't exist or you don't have access to it.</p>
+          <button 
+            onClick={() => navigate('/app/projects')}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Back to Projects
+          </button>
         </div>
       </div>
     );
