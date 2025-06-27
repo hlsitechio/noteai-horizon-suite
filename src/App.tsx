@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
@@ -80,8 +81,8 @@ function App() {
                   {/* Protected App Routes */}
                   <Route path="/app/*" element={
                     <ProtectedRoute>
-                      <NotesProvider>
-                        <FoldersProvider>
+                      <FoldersProvider>
+                        <NotesProvider>
                           <ProjectRealmsProvider>
                             <FloatingNotesProvider>
                               <QuantumAIProvider>
@@ -110,8 +111,8 @@ function App() {
                               </QuantumAIProvider>
                             </FloatingNotesProvider>
                           </ProjectRealmsProvider>
-                        </FoldersProvider>
-                      </NotesProvider>
+                        </NotesProvider>
+                      </FoldersProvider>
                     </ProtectedRoute>
                   } />
                   
