@@ -8,6 +8,7 @@ import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
 import RecentActivity from '../components/Dashboard/RecentActivity';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
+import FullscreenToggle from '../components/Dashboard/FullscreenToggle';
 
 const Dashboard: React.FC = () => {
   const { notes, setCurrentNote } = useNotes();
@@ -58,6 +59,9 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col w-full">
+      {/* Fullscreen Toggle Button */}
+      <FullscreenToggle />
+      
       <div className="flex-1 flex flex-col w-full px-6 py-4 space-y-6">
         
         {/* Welcome Header */}
