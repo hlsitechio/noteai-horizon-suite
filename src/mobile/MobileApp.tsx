@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import EnhancedMobileLayout from './layout/EnhancedMobileLayout';
 import EnhancedMobileNotes from './pages/EnhancedMobileNotes';
 import MobileEditor from './pages/MobileEditor';
-import MobileSettings from './pages/MobileSettings';
+import EnhancedMobileSettings from './pages/EnhancedMobileSettings';
 import { useNotes } from '../contexts/NotesContext';
 
 const MobileApp: React.FC = () => {
@@ -32,7 +32,7 @@ const MobileApp: React.FC = () => {
           <Route index element={<Navigate to="notes" replace />} />
           <Route path="notes" element={<EnhancedMobileNotes />} />
           <Route path="editor" element={<MobileEditor />} />
-          <Route path="settings" element={<MobileSettings />} />
+          <Route path="settings" element={<EnhancedMobileSettings />} />
         </Route>
       </Routes>
     </div>
