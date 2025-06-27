@@ -2,8 +2,8 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
-import MobileLayout from './layout/MobileLayout';
-import MobileNotes from './pages/MobileNotes';
+import EnhancedMobileLayout from './layout/EnhancedMobileLayout';
+import EnhancedMobileNotes from './pages/EnhancedMobileNotes';
 import MobileEditor from './pages/MobileEditor';
 import MobileSettings from './pages/MobileSettings';
 import { useNotes } from '../contexts/NotesContext';
@@ -13,7 +13,7 @@ const MobileApp: React.FC = () => {
   const noteId = searchParams.get('note');
   const { notes, setCurrentNote } = useNotes();
 
-  console.log('MobileApp rendering', { noteId, notesCount: notes.length });
+  console.log('Enhanced MobileApp rendering', { noteId, notesCount: notes.length });
 
   // Handle note routing - if a note ID is provided, set it as current and navigate to editor
   React.useEffect(() => {
@@ -28,9 +28,9 @@ const MobileApp: React.FC = () => {
   return (
     <div className="mobile-app h-full w-full overflow-hidden bg-background">
       <Routes>
-        <Route path="/" element={<MobileLayout />}>
+        <Route path="/" element={<EnhancedMobileLayout />}>
           <Route index element={<Navigate to="notes" replace />} />
-          <Route path="notes" element={<MobileNotes />} />
+          <Route path="notes" element={<EnhancedMobileNotes />} />
           <Route path="editor" element={<MobileEditor />} />
           <Route path="settings" element={<MobileSettings />} />
         </Route>
