@@ -58,20 +58,20 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col bg-background">
+    <div className="w-full h-screen max-h-screen flex flex-col bg-background overflow-hidden">
       {/* Fullscreen Toggle Button */}
       <FullscreenToggle />
       
-      {/* Optimized Container - Remove overflow hidden and use minimal gaps */}
-      <div className="flex-1 flex flex-col p-1 gap-1 w-full min-h-0">
+      {/* Main Dashboard Container - Exact 1920x1080 fit */}
+      <div className="flex-1 flex flex-col p-4 gap-4 w-full max-w-[1920px] max-h-[1080px] mx-auto">
         
-        {/* Compact Welcome Header - Fixed height */}
-        <div className="flex-shrink-0 w-full h-40">
+        {/* Welcome Header - Fixed height for 1080p */}
+        <div className="flex-shrink-0 w-full h-[180px]">
           <WelcomeHeader />
         </div>
 
-        {/* Compact KPI Stats - Fixed height */}
-        <div className="flex-shrink-0 w-full h-20">
+        {/* KPI Stats - Optimized height for 1080p */}
+        <div className="flex-shrink-0 w-full h-[90px]">
           <KPIStats 
             totalNotes={totalNotes}
             favoriteNotes={favoriteNotes}
@@ -80,9 +80,9 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Optimized 8:4 ratio for better space utilization */}
-        <div className="grid grid-cols-12 gap-1 flex-1 min-h-0 w-full">
-          {/* Recent Activity - 8/12 columns for maximum content space */}
+        {/* Main Content Area - Calculated height to fill remaining space */}
+        <div className="grid grid-cols-12 gap-4 flex-1 min-h-0 w-full h-[770px]">
+          {/* Recent Activity - 8/12 columns */}
           <div className="col-span-8 h-full min-h-0">
             <SecureRecentActivity 
               recentNotes={recentNotes}
@@ -91,7 +91,7 @@ const Dashboard: React.FC = () => {
             />
           </div>
 
-          {/* Quick Actions - 4/12 columns with enhanced layout */}
+          {/* Quick Actions - 4/12 columns */}
           <div className="col-span-4 h-full min-h-0">
             <WorkflowActions 
               notes={notes}

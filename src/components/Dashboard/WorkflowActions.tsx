@@ -61,54 +61,54 @@ const WorkflowActions: React.FC<WorkflowActionsProps> = ({
           </CardTitle>
         </div>
       </CardHeader>
-      <CardContent className="p-4 flex-1 flex flex-col min-h-0 space-y-4">
-        {/* Primary Actions - Vertical layout for better space usage */}
-        <div className="grid grid-cols-1 gap-2">
+      <CardContent className="p-4 flex-1 flex flex-col min-h-0 space-y-4 overflow-y-auto">
+        {/* Primary Actions - Optimized for 1080p height */}
+        <div className="grid grid-cols-1 gap-3">
           <Button 
             onClick={onCreateNote}
-            className="flex items-center gap-3 justify-start bg-accent hover:bg-accent/90 text-accent-foreground border-0 shadow-premium hover:shadow-large transition-all duration-300 hover:-translate-y-1 hover:scale-105 w-full rounded-xl h-12 text-sm px-4"
+            className="flex items-center gap-3 justify-start bg-accent hover:bg-accent/90 text-accent-foreground border-0 shadow-premium hover:shadow-large transition-all duration-300 hover:-translate-y-1 hover:scale-105 w-full rounded-xl h-14 text-base px-4 font-semibold"
           >
             <Plus className="w-5 h-5" />
-            <span className="font-semibold">New Document</span>
+            <span>New Document</span>
           </Button>
           
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <Button 
               variant="outline"
               onClick={() => navigate('/app/notes')}
-              className="flex-col gap-1 border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-accent/30 h-16 text-xs"
+              className="flex-col gap-2 border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-accent/30 h-20 text-sm"
             >
-              <FileText className="w-4 h-4" />
-              <span>Library</span>
+              <FileText className="w-5 h-5" />
+              <span className="font-medium">Library</span>
             </Button>
             <Button 
               variant="outline"
               onClick={() => navigate('/app/chat')}
-              className="flex-col gap-1 border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-accent/30 h-16 text-xs"
+              className="flex-col gap-2 border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-accent/30 h-20 text-sm"
             >
-              <Brain className="w-4 h-4" />
-              <span>AI Chat</span>
+              <Brain className="w-5 h-5" />
+              <span className="font-medium">AI Chat</span>
             </Button>
           </div>
         </div>
 
-        {/* Recent Activity Section */}
+        {/* Recent Activity Section - Optimized spacing */}
         {recentlyModified.length > 0 && (
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-muted-foreground" />
               <h4 className="text-sm font-semibold text-foreground">Recent</h4>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-2">
               {recentlyModified.map((note) => (
                 <button
                   key={note.id}
                   onClick={() => onEditNote(note)}
-                  className="w-full text-left p-2 rounded-lg hover:bg-accent/10 transition-colors duration-200 border border-transparent hover:border-accent/20"
+                  className="w-full text-left p-3 rounded-lg hover:bg-accent/10 transition-colors duration-200 border border-transparent hover:border-accent/20"
                 >
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                    <span className="text-xs text-foreground truncate font-medium">
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-sm text-foreground truncate font-medium">
                       {note.title}
                     </span>
                   </div>
@@ -118,19 +118,19 @@ const WorkflowActions: React.FC<WorkflowActionsProps> = ({
           </div>
         )}
 
-        {/* Categories Section */}
+        {/* Categories Section - Optimized spacing */}
         {topCategories.length > 0 && (
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Folder className="w-4 h-4 text-muted-foreground" />
               <h4 className="text-sm font-semibold text-foreground">Top Categories</h4>
             </div>
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-2">
               {topCategories.map(([category, count]) => (
                 <Badge
                   key={category}
                   variant="secondary"
-                  className="text-xs bg-accent/10 text-accent border-accent/20 cursor-pointer hover:bg-accent/20 transition-colors"
+                  className="text-xs bg-accent/10 text-accent border-accent/20 cursor-pointer hover:bg-accent/20 transition-colors px-3 py-1"
                   onClick={() => navigate(`/app/notes?category=${category}`)}
                 >
                   {category} ({count})
@@ -140,15 +140,15 @@ const WorkflowActions: React.FC<WorkflowActionsProps> = ({
           </div>
         )}
 
-        {/* Priority Items */}
-        <div className="mt-auto">
+        {/* Priority Items - Positioned at bottom */}
+        <div className="mt-auto pt-4">
           <Button 
             variant="outline"
             onClick={handlePriorityItems}
-            className="flex items-center gap-2 justify-start border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-accent/30 h-10 text-xs"
+            className="flex items-center gap-3 justify-start border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-accent/30 h-12 text-sm"
           >
             <Star className="w-4 h-4" />
-            <span>Priority Items</span>
+            <span className="font-medium">Priority Items</span>
             {notes.filter(note => note.isFavorite).length > 0 && (
               <Badge variant="secondary" className="ml-auto text-xs">
                 {notes.filter(note => note.isFavorite).length}
