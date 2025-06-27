@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Clock, Image, Maximize } from 'lucide-react';
+import { Clock, Image, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import BannerUpload from './BannerUpload';
 import AIBannerGenerator from './AIBannerGenerator';
@@ -13,6 +14,7 @@ const WelcomeHeader: React.FC = () => {
   const [bannerData, setBannerData] = useState<{url: string, type: 'image' | 'video'} | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
+  const [showControls, setShowControls] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -114,64 +116,64 @@ const WelcomeHeader: React.FC = () => {
     setIsFullscreenOpen(!isFullscreenOpen);
   };
 
+  const handleBannerClick = () => {
+    if (bannerData) {
+      setIsFullscreenOpen(true);
+    }
+  };
+
   return (
     <div className="space-y-4 mb-6">
       {/* Banner Section */}
-      <div className="relative h-64 overflow-hidden rounded-xl border border-blue-100 dark:border-slate-600 group cursor-pointer" onClick={bannerData ? handleFullscreenToggle : undefined}>
+      <div 
+        className="relative h-64 overflow-hidden rounded-xl border border-blue-100 dark:border-slate-600 group"
+        onMouseEnter={() => setShowControls(true)}
+        onMouseLeave={() => setShowControls(false)}
+      >
         {/* Banner Background */}
         {!isLoading && bannerData ? (
-          bannerData.type === 'video' ? (
-            <video
-              src={bannerData.url}
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              autoPlay
-              loop
-              muted
-              playsInline
-              onError={(e) => {
-                console.error('WelcomeHeader: Video playback error:', e);
-              }}
-              onLoadedData={() => {
-                console.log('WelcomeHeader: Video loaded successfully');
-              }}
-              onCanPlay={() => {
-                console.log('WelcomeHeader: Video can play');
-              }}
-            />
-          ) : (
-            <img
-              src={bannerData.url}
-              alt="Dashboard banner"
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              onError={(e) => {
-                console.error('WelcomeHeader: Image load error:', e);
-              }}
-              onLoad={() => {
-                console.log('WelcomeHeader: Image loaded successfully');
-              }}
-            />
-          )
+          <div 
+            className="absolute inset-0 cursor-pointer"
+            onClick={handleBannerClick}
+          >
+            {bannerData.type === 'video' ? (
+              <video
+                src={bannerData.url}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                autoPlay
+                loop
+                muted
+                playsInline
+                onError={(e) => {
+                  console.error('WelcomeHeader: Video playback error:', e);
+                }}
+                onLoadedData={() => {
+                  console.log('WelcomeHeader: Video loaded successfully');
+                }}
+                onCanPlay={() => {
+                  console.log('WelcomeHeader: Video can play');
+                }}
+              />
+            ) : (
+              <img
+                src={bannerData.url}
+                alt="Dashboard banner"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                onError={(e) => {
+                  console.error('WelcomeHeader: Image load error:', e);
+                }}
+                onLoad={() => {
+                  console.log('WelcomeHeader: Image loaded successfully');
+                }}
+              />
+            )}
+          </div>
         ) : (
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600"></div>
         )}
         
         {/* Overlay for better text readability */}
         <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors duration-300"></div>
-        
-        {/* Fullscreen button - only show when banner exists */}
-        {!isLoading && bannerData && (
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleFullscreenToggle();
-            }}
-            className="absolute top-4 left-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/40"
-          >
-            <Maximize className="h-4 w-4" />
-          </Button>
-        )}
         
         {/* Banner Placeholder Content (only show when no banner is set) */}
         {!isLoading && !bannerData && (
@@ -184,9 +186,11 @@ const WelcomeHeader: React.FC = () => {
           </div>
         )}
 
-        {/* Banner Controls - positioned in top right */}
-        <div className="absolute top-4 right-4 z-10 opacity-30 hover:opacity-100 transition-opacity duration-300">
-          <div className="flex gap-2">
+        {/* Unified Banner Controls */}
+        <div className={`absolute top-4 right-4 z-10 transition-all duration-300 ${
+          showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
+        }`}>
+          <div className="flex items-center gap-2 p-2 bg-black/40 backdrop-blur-md rounded-lg border border-white/20">
             <AIBannerGenerator onBannerGenerated={handleAIBannerGenerated} />
             <BannerUpload
               currentBannerUrl={bannerData?.url}
@@ -196,9 +200,11 @@ const WelcomeHeader: React.FC = () => {
           </div>
         </div>
 
-        {/* Fullscreen hint */}
+        {/* Click to fullscreen hint - only show when banner exists */}
         {!isLoading && bannerData && (
-          <div className="absolute bottom-4 left-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white/80 text-sm">
+          <div className={`absolute bottom-4 left-4 z-10 transition-all duration-300 ${
+            showControls ? 'opacity-100' : 'opacity-0'
+          } text-white/90 text-sm bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full`}>
             Click to view fullscreen
           </div>
         )}
