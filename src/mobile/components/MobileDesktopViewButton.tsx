@@ -10,11 +10,20 @@ const MobileDesktopViewButton: React.FC = () => {
   const [searchParams] = useSearchParams();
 
   const handleDesktopView = () => {
-    // Preserve note parameter when switching to desktop
+    // Map mobile routes to desktop routes
+    const routeMapping: Record<string, string> = {
+      '/mobile/dashboard': '/app/dashboard',
+      '/mobile/notes': '/app/notes',
+      '/mobile/editor': '/app/editor',
+      '/mobile/chat': '/app/chat',
+      '/mobile/projects': '/app/projects',
+      '/mobile/analytics': '/app/analytics',
+      '/mobile/settings': '/app/settings'
+    };
+
     const noteParam = searchParams.get('note');
-    const desktopUrl = noteParam 
-      ? `/app/notes?note=${noteParam}` 
-      : '/app/notes';
+    const desktopRoute = routeMapping[location.pathname] || '/app/dashboard';
+    const desktopUrl = noteParam ? `${desktopRoute}?note=${noteParam}` : desktopRoute;
     
     navigate(desktopUrl);
   };

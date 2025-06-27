@@ -3,8 +3,12 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
 import EnhancedMobileLayout from './layout/EnhancedMobileLayout';
+import MobileDashboard from './pages/MobileDashboard';
 import EnhancedMobileNotes from './pages/EnhancedMobileNotes';
 import MobileEditor from './pages/MobileEditor';
+import MobileChat from './pages/MobileChat';
+import MobileProjects from './pages/MobileProjects';
+import MobileAnalytics from './pages/MobileAnalytics';
 import EnhancedMobileSettings from './pages/EnhancedMobileSettings';
 import { useNotes } from '../contexts/NotesContext';
 
@@ -29,9 +33,13 @@ const MobileApp: React.FC = () => {
     <div className="mobile-app h-screen w-full overflow-hidden bg-background">
       <Routes>
         <Route path="/" element={<EnhancedMobileLayout />}>
-          <Route index element={<Navigate to="notes" replace />} />
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<MobileDashboard />} />
           <Route path="notes" element={<EnhancedMobileNotes />} />
           <Route path="editor" element={<MobileEditor />} />
+          <Route path="chat" element={<MobileChat />} />
+          <Route path="projects" element={<MobileProjects />} />
+          <Route path="analytics" element={<MobileAnalytics />} />
           <Route path="settings" element={<EnhancedMobileSettings />} />
         </Route>
       </Routes>

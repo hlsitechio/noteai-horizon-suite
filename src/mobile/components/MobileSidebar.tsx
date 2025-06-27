@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { FileText, Bell, LogOut, Home } from 'lucide-react';
+import { FileText, Bell, LogOut, Home, MessageCircle, Folder, BarChart3, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
@@ -55,6 +55,15 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
     setExpandedSettings(!expandedSettings);
   };
 
+  const navigationItems = [
+    { icon: Home, label: 'Dashboard', path: '/mobile/dashboard' },
+    { icon: FileText, label: 'Notes', path: '/mobile/notes' },
+    { icon: MessageCircle, label: 'AI Chat', path: '/mobile/chat' },
+    { icon: Folder, label: 'Projects', path: '/mobile/projects' },
+    { icon: BarChart3, label: 'Analytics', path: '/mobile/analytics' },
+    { icon: Settings, label: 'Settings', path: '/mobile/settings' }
+  ];
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="left" className="w-80 p-0 bg-background">
@@ -72,23 +81,20 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
               
               {/* Navigation */}
               <div className="space-y-1">
-                <Button
-                  variant="ghost"
-                  onClick={() => handleNavigation('/mobile/notes')}
-                  className="w-full justify-start h-12"
-                >
-                  <FileText className="w-5 h-5 mr-3" />
-                  Notes
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  onClick={() => handleNavigation('/mobile/editor')}
-                  className="w-full justify-start h-12"
-                >
-                  <Home className="w-5 h-5 mr-3" />
-                  Dashboard
-                </Button>
+                {navigationItems.map((item) => {
+                  const ItemIcon = item.icon;
+                  return (
+                    <Button
+                      key={item.path}
+                      variant="ghost"
+                      onClick={() => handleNavigation(item.path)}
+                      className="w-full justify-start h-12"
+                    >
+                      <ItemIcon className="w-5 h-5 mr-3" />
+                      {item.label}
+                    </Button>
+                  );
+                })}
               </div>
               
               <Separator />
