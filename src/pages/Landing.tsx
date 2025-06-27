@@ -5,7 +5,6 @@ import Hero from '../components/Landing/Hero';
 import Features from '../components/Landing/Features';
 import Pricing from '../components/Landing/Pricing';
 import Footer from '../components/Landing/Footer';
-import PageAICopilot from '../components/Global/PageAICopilot';
 
 const Landing: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -36,7 +35,6 @@ const Landing: React.FC = () => {
       <Features />
       <Pricing />
       <Footer />
-      <PageAICopilot pageContext="landing" />
     </div>
   );
 };

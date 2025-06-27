@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
@@ -83,11 +82,7 @@ function App() {
                   
                   {/* Public Routes */}
                   <Route path="/" element={<HomeRedirect />} />
-                  <Route path="/landing" element={
-                    <QuantumAIProvider>
-                      <Landing />
-                    </QuantumAIProvider>
-                  } />
+                  <Route path="/landing" element={<Landing />} />
                   <Route path="/auth/login" element={<Login />} />
                   <Route path="/auth/register" element={<Register />} />
                   <Route path="/auth/reset-password" element={<ResetPassword />} />
