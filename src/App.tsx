@@ -62,8 +62,24 @@ function App() {
             <NotificationsProvider>
               <Router>
                 <Routes>
-                  {/* Mobile Routes */}
-                  <Route path="/mobile/*" element={<MobileApp />} />
+                  {/* Mobile Routes - Now wrapped with proper providers */}
+                  <Route path="/mobile/*" element={
+                    <ProtectedRoute>
+                      <FoldersProvider>
+                        <NotesProvider>
+                          <ProjectRealmsProvider>
+                            <FloatingNotesProvider>
+                              <QuantumAIProvider>
+                                <UnifiedDragDropProvider>
+                                  <MobileApp />
+                                </UnifiedDragDropProvider>
+                              </QuantumAIProvider>
+                            </FloatingNotesProvider>
+                          </ProjectRealmsProvider>
+                        </NotesProvider>
+                      </FoldersProvider>
+                    </ProtectedRoute>
+                  } />
                   
                   {/* Public Routes */}
                   <Route path="/" element={<HomeRedirect />} />
