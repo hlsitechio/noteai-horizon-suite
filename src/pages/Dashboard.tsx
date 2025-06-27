@@ -79,10 +79,10 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Full width grid */}
-        <div className="grid grid-cols-12 gap-6 items-start">
-          {/* Recent Activity - Takes more space */}
-          <div className="col-span-8">
+        {/* Main Content Area - Improved proportions */}
+        <div className="grid grid-cols-12 gap-6 items-start flex-1">
+          {/* Recent Activity - Better balanced width */}
+          <div className="col-span-7">
             <RecentActivity 
               recentNotes={recentNotes}
               onCreateNote={handleCreateNote}
@@ -90,8 +90,8 @@ const Dashboard: React.FC = () => {
             />
           </div>
 
-          {/* Quick Actions - Compact sidebar */}
-          <div className="col-span-4">
+          {/* Quick Actions - More space for better visibility */}
+          <div className="col-span-5">
             <WorkflowActions 
               notes={notes}
               onCreateNote={handleCreateNote}

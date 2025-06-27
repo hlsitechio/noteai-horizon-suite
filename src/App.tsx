@@ -16,7 +16,6 @@ import { UnifiedDragDropProvider } from '@/components/Layout/UnifiedDragDropProv
 import ErrorBoundary from '@/components/ErrorBoundary';
 import GlobalAICopilot from '@/components/Global/GlobalAICopilot';
 import FloatingNotesContainer from '@/components/FloatingNotes/FloatingNotesContainer';
-import { GPUPerformanceMonitor } from '@/components/GPUPerformanceMonitor';
 import MobileViewButton from '@/components/Layout/MobileViewButton';
 
 // Main layout with sidebar
@@ -105,7 +104,6 @@ function App() {
                                   </Layout>
                                   <FloatingNotesContainer />
                                   <GlobalAICopilot />
-                                  <GPUPerformanceMonitor />
                                   <MobileViewButton />
                                 </UnifiedDragDropProvider>
                               </QuantumAIProvider>
