@@ -132,7 +132,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ isCollapsed }) => {
             {/* Add separator after each item except the last one */}
             {index < allItems.length - 1 && (
               <div className={`${isCollapsed ? 'px-2' : 'px-3'} py-2`}>
-                <Separator className="bg-deep-carbon-700/30" />
+                <Separator className="bg-border/50" />
               </div>
             )}
           </div>
