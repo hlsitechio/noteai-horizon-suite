@@ -83,9 +83,18 @@ function App() {
                   {/* Public Routes */}
                   <Route path="/" element={<HomeRedirect />} />
                   <Route path="/landing" element={<Landing />} />
+                  
+                  {/* Auth Routes */}
                   <Route path="/auth/login" element={<Login />} />
                   <Route path="/auth/register" element={<Register />} />
                   <Route path="/auth/reset-password" element={<ResetPassword />} />
+                  
+                  {/* Redirect routes for convenience */}
+                  <Route path="/login" element={<Navigate to="/auth/login" replace />} />
+                  <Route path="/register" element={<Navigate to="/auth/register" replace />} />
+                  <Route path="/reset-password" element={<Navigate to="/auth/reset-password" replace />} />
+                  
+                  {/* Other Public Routes */}
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/terms" element={<Terms />} />
                   <Route path="/privacy" element={<Privacy />} />
