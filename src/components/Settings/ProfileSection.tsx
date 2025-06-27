@@ -21,19 +21,24 @@ const ProfileSection: React.FC = () => {
 
     setIsUpdating(true);
     try {
+      console.log('Updating profile for user:', user.id, 'with name:', name, 'and email:', email);
+      
       // Update the user profile in our profiles table
       const { error } = await supabase
         .from('user_profiles')
-        .update({
+        .upsert({
+          id: user.id,
           display_name: name,
           email: email,
-        })
-        .eq('id', user.id);
+        }, {
+          onConflict: 'id'
+        });
 
       if (error) {
         console.error('Profile update error:', error);
         toast.error('Failed to update profile');
       } else {
+        console.log('Profile updated successfully');
         toast.success('Profile updated successfully');
         // Refresh the user data in AuthContext
         await refreshUser();
@@ -65,15 +70,17 @@ const ProfileSection: React.FC = () => {
     setIsUploadingAvatar(true);
 
     try {
-      // Create a unique filename
+      // Create a unique filename with timestamp to avoid caching issues
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/avatar.${fileExt}`;
+      const fileName = `${user.id}/avatar-${Date.now()}.${fileExt}`;
+
+      console.log('Uploading avatar for user:', user.id, 'filename:', fileName);
 
       // Upload the file to Supabase storage
       const { error: uploadError } = await supabase.storage
-        .from('profile-pictures')
+        .from('avatars')
         .upload(fileName, file, {
-          upsert: true, // Replace existing file
+          upsert: true,
         });
 
       if (uploadError) {
@@ -84,21 +91,28 @@ const ProfileSection: React.FC = () => {
 
       // Get the public URL
       const { data } = supabase.storage
-        .from('profile-pictures')
+        .from('avatars')
         .getPublicUrl(fileName);
+
+      console.log('Avatar uploaded, public URL:', data.publicUrl);
 
       // Update the user profile with the new avatar URL
       const { error: updateError } = await supabase
         .from('user_profiles')
-        .update({
+        .upsert({
+          id: user.id,
           avatar_url: data.publicUrl,
-        })
-        .eq('id', user.id);
+          display_name: name || user.name,
+          email: email || user.email,
+        }, {
+          onConflict: 'id'
+        });
 
       if (updateError) {
         console.error('Profile update error:', updateError);
         toast.error('Failed to update profile picture');
       } else {
+        console.log('Profile picture updated successfully');
         toast.success('Profile picture updated successfully');
         // Refresh the user data in AuthContext
         await refreshUser();
