@@ -6,6 +6,7 @@ import AISettingsSection from '../components/Settings/AISettingsSection';
 import DataExportSection from '../components/Settings/DataExportSection';
 import AboutSection from '../components/Settings/AboutSection';
 import { AdvancedColorPicker } from '../components/Settings/AdvancedColorPicker';
+import DynamicAccentSection from '../components/Settings/DynamicAccentSection';
 import { Separator } from '@/components/ui/separator';
 import { useAccentColor } from '../contexts/AccentColorContext';
 
@@ -31,9 +32,14 @@ const Settings: React.FC = () => {
 
       {/* Main Content Grid */}
       <div className="grid gap-8">
-        {/* Profile Section - Now with better spacing */}
+        {/* Profile Section */}
         <section>
           <ProfileSection />
+        </section>
+
+        {/* Dynamic Accent Color Section */}
+        <section>
+          <DynamicAccentSection />
         </section>
 
         {/* Advanced Color Picker Section */}

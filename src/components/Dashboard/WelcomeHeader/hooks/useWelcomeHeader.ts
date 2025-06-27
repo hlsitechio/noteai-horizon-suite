@@ -1,10 +1,12 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../../contexts/AuthContext';
+import { useDynamicAccent } from '../../../../contexts/DynamicAccentContext';
 import { BannerStorageService } from '@/services/bannerStorage';
 
 export const useWelcomeHeader = () => {
   const { user } = useAuth();
+  const { extractColorFromMedia, isDynamicAccentEnabled } = useDynamicAccent();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [bannerData, setBannerData] = useState<{url: string, type: 'image' | 'video'} | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,10 +33,21 @@ export const useWelcomeHeader = () => {
         const banner = await BannerStorageService.getBanner('dashboard');
         if (banner) {
           console.log('WelcomeHeader: Banner loaded:', banner);
-          setBannerData({
+          const bannerData = {
             url: banner.file_url,
             type: banner.file_type
-          });
+          };
+          setBannerData(bannerData);
+          
+          // Extract color from the loaded banner if dynamic accent is enabled
+          if (isDynamicAccentEnabled) {
+            console.log('WelcomeHeader: Extracting color from loaded banner');
+            try {
+              await extractColorFromMedia(banner.file_url);
+            } catch (error) {
+              console.error('WelcomeHeader: Color extraction from loaded banner failed:', error);
+            }
+          }
         } else {
           console.log('WelcomeHeader: No banner found');
           setBannerData(null);
@@ -47,7 +60,7 @@ export const useWelcomeHeader = () => {
     };
 
     loadBanner();
-  }, [user]);
+  }, [user, isDynamicAccentEnabled, extractColorFromMedia]);
 
   const handleBannerUpdate = (bannerUrl: string, type: 'image' | 'video') => {
     console.log('WelcomeHeader: Banner updated:', type, bannerUrl.substring(0, 50) + '...');
@@ -74,6 +87,16 @@ export const useWelcomeHeader = () => {
           url: bannerData.file_url,
           type: bannerData.file_type
         });
+        
+        // Extract color from AI generated banner if dynamic accent is enabled
+        if (isDynamicAccentEnabled) {
+          console.log('WelcomeHeader: Extracting color from AI generated banner');
+          try {
+            await extractColorFromMedia(bannerData.file_url);
+          } catch (error) {
+            console.error('WelcomeHeader: Color extraction from AI banner failed:', error);
+          }
+        }
       }
     } catch (error) {
       console.error('WelcomeHeader: Error saving AI banner:', error);
