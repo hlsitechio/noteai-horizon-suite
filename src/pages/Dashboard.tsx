@@ -6,7 +6,7 @@ import { useIsMobile } from '../hooks/use-mobile';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
-import RecentActivity from '../components/Dashboard/RecentActivity';
+import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
 import FullscreenToggle from '../components/Dashboard/FullscreenToggle';
 
@@ -58,19 +58,20 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-full bg-background flex flex-col overflow-hidden">
+    <div className="w-full h-full flex flex-col bg-background">
       {/* Fullscreen Toggle Button */}
       <FullscreenToggle />
       
-      <div className="flex-1 flex flex-col px-2 py-1 space-y-2 overflow-hidden w-full">
+      {/* Optimized Container - Remove overflow hidden and use minimal gaps */}
+      <div className="flex-1 flex flex-col p-1 gap-1 w-full min-h-0">
         
-        {/* Compact Welcome Header */}
-        <div className="flex-shrink-0 w-full">
+        {/* Compact Welcome Header - Fixed height */}
+        <div className="flex-shrink-0 w-full h-40">
           <WelcomeHeader />
         </div>
 
-        {/* Compact KPI Stats */}
-        <div className="flex-shrink-0 w-full">
+        {/* Compact KPI Stats - Fixed height */}
+        <div className="flex-shrink-0 w-full h-20">
           <KPIStats 
             totalNotes={totalNotes}
             favoriteNotes={favoriteNotes}
@@ -79,19 +80,19 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Full width utilization */}
-        <div className="grid grid-cols-12 gap-2 flex-1 min-h-0 w-full">
-          {/* Recent Activity - Larger area */}
-          <div className="col-span-8 h-full">
-            <RecentActivity 
+        {/* Main Content Area - Rebalanced 7:5 ratio with minimal gap */}
+        <div className="grid grid-cols-12 gap-1 flex-1 min-h-0 w-full">
+          {/* Recent Activity - 7/12 columns for better content space */}
+          <div className="col-span-7 h-full min-h-0">
+            <SecureRecentActivity 
               recentNotes={recentNotes}
               onCreateNote={handleCreateNote}
               onEditNote={handleEditNote}
             />
           </div>
 
-          {/* Quick Actions - Compact area */}
-          <div className="col-span-4 h-full">
+          {/* Quick Actions - 5/12 columns for better balance */}
+          <div className="col-span-5 h-full min-h-0">
             <WorkflowActions 
               notes={notes}
               onCreateNote={handleCreateNote}

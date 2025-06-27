@@ -30,11 +30,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <SidebarInset className="flex-1 min-w-0 w-full flex flex-col">
               {/* Only show header on non-editor and non-dashboard pages */}
               {!isEditorPage && !isDashboardPage && <Header />}
-              <div className={`w-full h-full flex-1 min-h-0 ${
+              <div className={`w-full flex-1 min-h-0 ${
                 isEditorPage 
                   ? "h-screen" // Full height for editor
                   : isDashboardPage
-                    ? "h-screen overflow-hidden p-0" // Full height for dashboard with no padding
+                    ? "flex flex-col" // Flexbox for dashboard - remove fixed height
                     : isMobile 
                       ? "p-0.5" // Minimal padding on mobile
                       : "p-1" // Minimal padding on desktop
