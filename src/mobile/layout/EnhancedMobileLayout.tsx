@@ -9,8 +9,8 @@ const EnhancedMobileLayout: React.FC = () => {
   const isEditor = location.pathname === '/mobile/editor';
 
   return (
-    <div className="h-full w-full flex flex-col bg-background overflow-hidden relative">
-      {/* Main Content */}
+    <div className="h-screen w-full flex flex-col bg-background overflow-hidden relative">
+      {/* Main Content - Full container without any desktop sidebar */}
       <main className={`flex-1 min-h-0 w-full overflow-hidden ${isEditor ? 'h-full' : ''}`}>
         <Outlet />
       </main>
