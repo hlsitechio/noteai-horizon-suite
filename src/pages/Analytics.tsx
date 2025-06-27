@@ -2,24 +2,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNotes } from '../contexts/NotesContext';
-import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import AnalyticsHeader from '../components/Analytics/AnalyticsHeader';
 import OverviewStats from '../components/Analytics/OverviewStats';
-import WritingStatsCard from '../components/Analytics/WritingStatsCard';
-import DailyNotesChart from '../components/Analytics/DailyNotesChart';
 import CategoryDistribution from '../components/Analytics/CategoryDistribution';
 import WritingInsights from '../components/Analytics/WritingInsights';
 
 const Analytics: React.FC = () => {
   const { notes } = useNotes();
 
-  // Calculate analytics data
+  // Calculate stats
   const totalNotes = notes.length;
   const favoriteNotes = notes.filter(note => note.isFavorite).length;
-  const totalWords = notes.reduce((acc, note) => {
-    return acc + note.content.split(' ').filter(w => w.length > 0).length;
-  }, 0);
-  const totalCharacters = notes.reduce((acc, note) => acc + note.content.length, 0);
+  const categoryCounts = notes.reduce((acc, note) => {
+    const category = note.category || 'general';
+    acc[category] = (acc[category] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
   const weeklyNotes = notes.filter(note => {
     const weekAgo = new Date();
@@ -27,24 +25,15 @@ const Analytics: React.FC = () => {
     return new Date(note.createdAt) > weekAgo;
   }).length;
 
-  const categoryCounts = notes.reduce((acc, note) => {
-    acc[note.category] = (acc[note.category] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  // Calculate word and character counts
+  const totalWords = notes.reduce((acc, note) => {
+    const wordCount = note.content ? note.content.split(/\s+/).filter(word => word.length > 0).length : 0;
+    return acc + wordCount;
+  }, 0);
 
-  // Enhanced AI context integration
-  useQuantumAIIntegration({
-    page: '/app/analytics',
-    content: `Analytics overview: ${totalNotes} total notes, ${totalWords} total words, ${favoriteNotes} favorites`,
-    metadata: {
-      totalNotes,
-      favoriteNotes,
-      weeklyNotes,
-      totalWords,
-      totalCharacters,
-      categoryCounts
-    }
-  });
+  const totalCharacters = notes.reduce((acc, note) => {
+    return acc + (note.content ? note.content.length : 0);
+  }, 0);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -56,66 +45,40 @@ const Analytics: React.FC = () => {
     }
   };
 
-  // Sample content for writing stats (you might want to make this dynamic)
-  const sampleContent = notes.length > 0 ? notes[0].content : '';
-
   return (
-    <div className="min-h-screen bg-background flex flex-col w-full">
-      <div className="flex-1 flex flex-col w-full px-6 py-6 space-y-6">
-        
-        {/* Page Header */}
+    <div className="w-full h-full overflow-auto">
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
         <AnalyticsHeader />
-
-        {/* Overview Stats */}
-        <OverviewStats
-          totalNotes={totalNotes}
-          totalWords={totalWords}
-          weeklyNotes={weeklyNotes}
-          favoriteNotes={favoriteNotes}
-        />
-
-        {/* Main Analytics Content */}
+        
         <motion.div
           initial="hidden"
           animate="visible"
           variants={containerVariants}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+          className="space-y-6"
         >
-          {/* Writing Stats Card */}
-          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
-            <WritingStatsCard content={sampleContent} />
-          </motion.div>
-
-          {/* Daily Notes Chart */}
-          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="lg:col-span-1">
-            <DailyNotesChart />
-          </motion.div>
-        </motion.div>
-
-        {/* Additional Analytics Section */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-        >
-          {/* Category Distribution */}
-          <CategoryDistribution
-            categoryCounts={categoryCounts}
-            totalNotes={totalNotes}
-          />
-
-          {/* Writing Insights */}
-          <WritingInsights
+          {/* Overview Stats */}
+          <OverviewStats
             totalNotes={totalNotes}
             totalWords={totalWords}
-            totalCharacters={totalCharacters}
+            weeklyNotes={weeklyNotes}
             favoriteNotes={favoriteNotes}
           />
-        </motion.div>
 
-        {/* Footer spacing */}
-        <div className="h-20"></div>
+          {/* Charts and Insights */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <CategoryDistribution
+              categoryCounts={categoryCounts}
+              totalNotes={totalNotes}
+            />
+            
+            <WritingInsights
+              totalNotes={totalNotes}
+              totalWords={totalWords}
+              totalCharacters={totalCharacters}
+              favoriteNotes={favoriteNotes}
+            />
+          </div>
+        </motion.div>
       </div>
     </div>
   );

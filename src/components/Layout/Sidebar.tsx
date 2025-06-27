@@ -8,7 +8,8 @@ import {
   PlusIcon,
   MagnifyingGlassIcon,
   CodeBracketIcon,
-  Squares2X2Icon
+  Squares2X2Icon,
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -20,6 +21,7 @@ const menuItems = [
   { icon: PlusIcon, label: 'AI Chat', path: '/app/chat' },
   { icon: PencilIcon, label: 'Editor', path: '/app/editor' },
   { icon: MagnifyingGlassIcon, label: 'Notes', path: '/app/notes' },
+  { icon: ChartBarIcon, label: 'Analytics', path: '/app/analytics' },
   { icon: CogIcon, label: 'Settings', path: '/app/settings' },
 ];
 
@@ -29,7 +31,7 @@ const Sidebar: React.FC = () => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="fixed left-0 top-0 h-screen w-[280px] bg-background/95 backdrop-blur-md shadow-lg z-[1000] hidden md:block">
+    <div className="fixed left-0 top-0 h-screen w-[280px] bg-background border-r border-border shadow-lg z-[1000] hidden md:block">
       <div className="flex flex-col h-full">
         {/* Logo */}
         <div className="p-6">
@@ -43,6 +45,8 @@ const Sidebar: React.FC = () => {
           </div>
         </div>
 
+        <Separator className="mx-4" />
+
         {/* Menu Items */}
         <div className="flex-1 p-4 space-y-2">
           {menuItems.map((item) => (
@@ -51,7 +55,7 @@ const Sidebar: React.FC = () => {
               variant={location.pathname === item.path ? "secondary" : "ghost"}
               className={`w-full justify-start h-12 rounded-xl transition-all duration-200 ${
                 location.pathname === item.path 
-                  ? 'bg-primary/10 text-primary' 
+                  ? 'bg-primary/10 text-primary border border-primary/20' 
                   : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:translate-x-1'
               }`}
               onClick={() => navigate(item.path)}
@@ -62,14 +66,16 @@ const Sidebar: React.FC = () => {
           ))}
         </div>
 
-        <Separator />
+        <Separator className="mx-4" />
 
         {/* User Profile */}
         <div className="p-4">
           <div className="flex items-center gap-3 mb-4">
             <Avatar className="w-12 h-12">
               <AvatarImage src={user?.avatar} />
-              <AvatarFallback>{user?.name?.[0]}</AvatarFallback>
+              <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10">
+                {user?.name?.[0]}
+              </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <p className="font-semibold text-sm text-foreground">
