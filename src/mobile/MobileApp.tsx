@@ -30,19 +30,21 @@ const MobileApp: React.FC = () => {
   }, [noteId, notes, setCurrentNote]);
 
   return (
-    <div className="mobile-app h-full w-full overflow-hidden bg-background relative isolate">
-      <Routes>
-        <Route path="/" element={<EnhancedMobileLayout />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<MobileDashboard />} />
-          <Route path="notes" element={<EnhancedMobileNotes />} />
-          <Route path="editor" element={<MobileEditor />} />
-          <Route path="chat" element={<MobileChat />} />
-          <Route path="projects" element={<MobileProjects />} />
-          <Route path="analytics" element={<MobileAnalytics />} />
-          <Route path="settings" element={<EnhancedMobileSettings />} />
-        </Route>
-      </Routes>
+    <div className="mobile-app h-full w-full overflow-hidden bg-background relative z-[10001]" style={{ isolation: 'isolate' }}>
+      <div className="absolute inset-0 bg-background">
+        <Routes>
+          <Route path="/" element={<EnhancedMobileLayout />}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<MobileDashboard />} />
+            <Route path="notes" element={<EnhancedMobileNotes />} />
+            <Route path="editor" element={<MobileEditor />} />
+            <Route path="chat" element={<MobileChat />} />
+            <Route path="projects" element={<MobileProjects />} />
+            <Route path="analytics" element={<MobileAnalytics />} />
+            <Route path="settings" element={<EnhancedMobileSettings />} />
+          </Route>
+        </Routes>
+      </div>
     </div>
   );
 };
