@@ -83,7 +83,11 @@ function App() {
                   
                   {/* Public Routes */}
                   <Route path="/" element={<HomeRedirect />} />
-                  <Route path="/landing" element={<Landing />} />
+                  <Route path="/landing" element={
+                    <QuantumAIProvider>
+                      <Landing />
+                    </QuantumAIProvider>
+                  } />
                   <Route path="/auth/login" element={<Login />} />
                   <Route path="/auth/register" element={<Register />} />
                   <Route path="/auth/reset-password" element={<ResetPassword />} />
