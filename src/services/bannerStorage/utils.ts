@@ -24,7 +24,9 @@ export const checkBucketExists = async (): Promise<boolean> => {
     
     if (error) {
       console.error('BannerUtils: Error listing buckets:', error);
-      return false;
+      // If we can't list buckets, assume bucket exists to avoid blocking uploads
+      console.log('BannerUtils: Assuming bucket exists due to listing error');
+      return true;
     }
     
     console.log('BannerUtils: Available buckets:', buckets?.map(b => b.name));
@@ -34,7 +36,9 @@ export const checkBucketExists = async (): Promise<boolean> => {
     return bucketExists;
   } catch (error) {
     console.error('BannerUtils: Exception checking bucket existence:', error);
-    return false;
+    // If there's an exception, assume bucket exists to avoid blocking uploads
+    console.log('BannerUtils: Assuming bucket exists due to exception');
+    return true;
   }
 };
 
