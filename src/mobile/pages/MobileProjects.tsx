@@ -27,7 +27,7 @@ const MobileProjects: React.FC = () => {
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-background">
+    <div className="h-full overflow-y-auto bg-background relative isolate">
       <DynamicMobileHeader 
         title="Projects"
         rightActions={
@@ -38,7 +38,7 @@ const MobileProjects: React.FC = () => {
         }
       />
       
-      <div className="p-3 space-y-3">
+      <div className="p-3 space-y-3 pb-20">
         {/* Filter Tabs */}
         <div className="flex space-x-1 bg-muted p-1 rounded-lg">
           {['all', 'active', 'archived'].map((tab) => (
@@ -132,9 +132,6 @@ const MobileProjects: React.FC = () => {
             ))}
           </div>
         )}
-
-        {/* Bottom spacing for nav */}
-        <div className="h-16" />
       </div>
     </div>
   );

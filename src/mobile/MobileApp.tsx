@@ -30,7 +30,7 @@ const MobileApp: React.FC = () => {
   }, [noteId, notes, setCurrentNote]);
 
   return (
-    <div className="mobile-app h-screen w-full overflow-hidden bg-background">
+    <div className="mobile-app h-full w-full overflow-hidden bg-background relative isolate">
       <Routes>
         <Route path="/" element={<EnhancedMobileLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
