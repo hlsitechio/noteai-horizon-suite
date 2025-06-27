@@ -1,6 +1,8 @@
+
 import React from 'react';
-import { Bell, Settings, User } from 'lucide-react';
+import { Bell, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotes } from '../../contexts/NotesContext';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -75,9 +77,12 @@ const Header: React.FC = () => {
           </Button>
           
           <div className="flex items-center space-x-2">
-            <div className="w-7 h-7 bg-primary rounded-full flex items-center justify-center">
-              <User className="h-3 w-3 text-primary-foreground" />
-            </div>
+            <Avatar className="w-7 h-7">
+              <AvatarImage src={user?.avatar} />
+              <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-xs">
+                {user?.name?.[0]}
+              </AvatarFallback>
+            </Avatar>
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               {user?.email || 'User'}
             </span>

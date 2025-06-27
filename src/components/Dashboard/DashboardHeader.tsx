@@ -2,6 +2,7 @@
 import React from 'react';
 import { Plus, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIsMobile } from '../../hooks/use-mobile';
 
@@ -17,9 +18,12 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ onCreateNote }) => {
     <div className={`flex w-full ${isMobile ? 'flex-col space-y-6' : 'justify-between items-start'}`}>
       <div className={`${isMobile ? 'text-center' : ''} space-y-3`}>
         <div className="flex items-center gap-4 mb-3">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center shadow-premium border border-accent/20">
-            <Brain className="w-7 h-7 text-accent-foreground" />
-          </div>
+          <Avatar className="w-14 h-14 ring-2 ring-primary/20">
+            <AvatarImage src={user?.avatar} />
+            <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-lg">
+              {user?.name?.[0]}
+            </AvatarFallback>
+          </Avatar>
           <div>
             <h1 className={`font-bold text-foreground tracking-tight ${isMobile ? 'text-2xl' : 'text-4xl'}`}>
               Intelligence Dashboard

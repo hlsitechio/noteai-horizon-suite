@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 import { Menu, Search, ArrowLeft, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNotes } from '../../contexts/NotesContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SyncStatusIndicator from '@/components/SyncStatusIndicator';
 import MobileSidebar from './MobileSidebar';
@@ -24,6 +26,7 @@ const DynamicMobileHeader: React.FC<DynamicMobileHeaderProps> = ({
   rightActions
 }) => {
   const { syncStatus, filters, setFilters } = useNotes();
+  const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const location = useLocation();
@@ -97,6 +100,12 @@ const DynamicMobileHeader: React.FC<DynamicMobileHeaderProps> = ({
               </div>
             ) : (
               <div className="flex items-center space-x-2 flex-1">
+                <Avatar className="w-6 h-6">
+                  <AvatarImage src={user?.avatar} />
+                  <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-xs">
+                    {user?.name?.[0]}
+                  </AvatarFallback>
+                </Avatar>
                 <h1 className="text-lg font-semibold text-foreground truncate">
                   {getContextualTitle()}
                 </h1>

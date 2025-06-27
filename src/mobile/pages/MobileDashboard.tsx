@@ -3,15 +3,18 @@ import React from 'react';
 import { BarChart3, FileText, Users, Calendar, Plus, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../../contexts/NotesContext';
 import { useFolders } from '../../contexts/FoldersContext';
+import { useAuth } from '../../contexts/AuthContext';
 import DynamicMobileHeader from '../components/DynamicMobileHeader';
 
 const MobileDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { notes, createNote, setCurrentNote } = useNotes();
   const { folders } = useFolders();
+  const { user } = useAuth();
 
   const handleCreateNote = async () => {
     try {
@@ -83,10 +86,20 @@ const MobileDashboard: React.FC = () => {
       <DynamicMobileHeader title="Dashboard" />
       
       <div className="p-3 space-y-4">
-        {/* Welcome Section */}
+        {/* Welcome Section with Profile Picture */}
         <div className="text-center py-4">
-          <h1 className="text-xl font-bold mb-1">Welcome back!</h1>
-          <p className="text-sm text-muted-foreground">Ready to capture your thoughts?</p>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Avatar className="w-12 h-12 ring-2 ring-primary/20">
+              <AvatarImage src={user?.avatar} />
+              <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10">
+                {user?.name?.[0]}
+              </AvatarFallback>
+            </Avatar>
+            <div className="text-left">
+              <h1 className="text-xl font-bold mb-1">Welcome back!</h1>
+              <p className="text-sm text-muted-foreground">Ready to capture your thoughts?</p>
+            </div>
+          </div>
         </div>
 
         {/* Stats Grid */}
