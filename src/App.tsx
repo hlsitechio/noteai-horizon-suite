@@ -93,6 +93,9 @@ function App() {
                   <Route path="/sitemap" element={<Sitemap />} />
                   <Route path="/coming-soon" element={<ComingSoon />} />
                   
+                  {/* Direct dashboard route for convenience */}
+                  <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
+                  
                   {/* Protected App Routes */}
                   <Route path="/app/*" element={
                     <ProtectedRoute>
@@ -136,7 +139,7 @@ function App() {
               </Router>
               <Toaster />
             </NotificationsProvider>
-          </AccentColorProvider>
+          </AccentColorContext>
         </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>
