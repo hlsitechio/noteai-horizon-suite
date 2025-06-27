@@ -3,11 +3,16 @@ import React from 'react';
 import { Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const MobileViewButton: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const { user } = useAuth();
+
+  // Only show for your email address
+  const isAllowedUser = user?.email === 'hlarosesurprenant@gmail.com';
 
   const handleMobileView = () => {
     // Preserve note parameter when switching to mobile
@@ -19,8 +24,8 @@ const MobileViewButton: React.FC = () => {
     navigate(mobileUrl);
   };
 
-  // Show on notes and editor pages
-  if (!location.pathname.includes('/notes') && !location.pathname.includes('/editor')) {
+  // Show on notes and editor pages only for allowed user
+  if (!isAllowedUser || (!location.pathname.includes('/notes') && !location.pathname.includes('/editor'))) {
     return null;
   }
 
