@@ -97,46 +97,47 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ isCollapsed }) => {
     }
   ];
 
+  // Flatten all items to create a single list with separators between each item
+  const allItems = navigationGroups.flatMap(group => group.items);
+
   return (
-    <nav className="space-y-3">
-      {navigationGroups.map((group, groupIndex) => (
-        <div key={groupIndex}>
-          {group.items.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+    <nav className="space-y-1">
+      {allItems.map((item, index) => {
+        const Icon = item.icon;
+        const isActive = location.pathname === item.path;
+        
+        return (
+          <div key={item.path}>
+            <Link to={item.path}>
+              <Button
+                variant={isActive ? "secondary" : "ghost"}
+                className={`w-full justify-start transition-all duration-200 ${
+                  isCollapsed ? 'px-2' : 'px-3'
+                } ${isActive ? 'bg-primary/10 text-primary' : 'hover:bg-accent'}`}
+              >
+                <Icon className={`h-4 w-4 ${isCollapsed ? '' : 'mr-3'} ${
+                  isActive ? 'text-primary' : ''
+                }`} />
+                {!isCollapsed && (
+                  <div className="flex flex-col items-start">
+                    <span className="text-sm font-medium">{item.label}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {item.description}
+                    </span>
+                  </div>
+                )}
+              </Button>
+            </Link>
             
-            return (
-              <Link key={item.path} to={item.path}>
-                <Button
-                  variant={isActive ? "secondary" : "ghost"}
-                  className={`w-full justify-start transition-all duration-200 ${
-                    isCollapsed ? 'px-2' : 'px-3'
-                  } ${isActive ? 'bg-primary/10 text-primary' : 'hover:bg-accent'}`}
-                >
-                  <Icon className={`h-4 w-4 ${isCollapsed ? '' : 'mr-3'} ${
-                    isActive ? 'text-primary' : ''
-                  }`} />
-                  {!isCollapsed && (
-                    <div className="flex flex-col items-start">
-                      <span className="text-sm font-medium">{item.label}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {item.description}
-                      </span>
-                    </div>
-                  )}
-                </Button>
-              </Link>
-            );
-          })}
-          
-          {/* Add separator between groups, but not after the last group */}
-          {groupIndex < navigationGroups.length - 1 && (
-            <div className={`${isCollapsed ? 'px-2' : 'px-3'} py-2`}>
-              <Separator className="bg-deep-carbon-700/30" />
-            </div>
-          )}
-        </div>
-      ))}
+            {/* Add separator after each item except the last one */}
+            {index < allItems.length - 1 && (
+              <div className={`${isCollapsed ? 'px-2' : 'px-3'} py-2`}>
+                <Separator className="bg-deep-carbon-700/30" />
+              </div>
+            )}
+          </div>
+        );
+      })}
     </nav>
   );
 };
