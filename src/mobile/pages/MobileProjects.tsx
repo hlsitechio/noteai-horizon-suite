@@ -9,19 +9,19 @@ import DynamicMobileHeader from '../components/DynamicMobileHeader';
 
 const MobileProjects: React.FC = () => {
   const { projects } = useProjectRealms();
-  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [filter, setFilter] = useState<'all' | 'active' | 'archived'>('all');
 
   const filteredProjects = projects.filter(project => {
     if (filter === 'active') return project.status === 'active';
-    if (filter === 'completed') return project.status === 'completed';
+    if (filter === 'archived') return project.status === 'archived';
     return true;
   });
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'bg-green-500';
-      case 'completed': return 'bg-blue-500';
-      case 'on-hold': return 'bg-yellow-500';
+      case 'archived': return 'bg-blue-500';
+      case 'hibernating': return 'bg-yellow-500';
       default: return 'bg-gray-500';
     }
   };
@@ -41,7 +41,7 @@ const MobileProjects: React.FC = () => {
       <div className="p-4 space-y-4">
         {/* Filter Tabs */}
         <div className="flex space-x-2 bg-muted p-1 rounded-lg">
-          {['all', 'active', 'completed'].map((tab) => (
+          {['all', 'active', 'archived'].map((tab) => (
             <Button
               key={tab}
               variant={filter === tab ? 'default' : 'ghost'}
@@ -95,7 +95,7 @@ const MobileProjects: React.FC = () => {
                         </span>
                       </div>
                       <Badge variant="outline" className="text-xs">
-                        {project.category}
+                        Project
                       </Badge>
                     </div>
 
@@ -103,7 +103,7 @@ const MobileProjects: React.FC = () => {
                     <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                       <div className="flex items-center space-x-1">
                         <Calendar className="w-3 h-3" />
-                        <span>{new Date(project.createdAt).toLocaleDateString()}</span>
+                        <span>{new Date(project.created_at).toLocaleDateString()}</span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <Users className="w-3 h-3" />
@@ -111,17 +111,17 @@ const MobileProjects: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Tags */}
-                    {project.tags && project.tags.length > 0 && (
+                    {/* AI Agents Info */}
+                    {project.ai_config?.agents && project.ai_config.agents.length > 0 && (
                       <div className="flex flex-wrap gap-1">
-                        {project.tags.slice(0, 3).map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
+                        {project.ai_config.agents.slice(0, 3).map((agent, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {agent}
                           </Badge>
                         ))}
-                        {project.tags.length > 3 && (
+                        {project.ai_config.agents.length > 3 && (
                           <Badge variant="secondary" className="text-xs">
-                            +{project.tags.length - 3}
+                            +{project.ai_config.agents.length - 3} more
                           </Badge>
                         )}
                       </div>
