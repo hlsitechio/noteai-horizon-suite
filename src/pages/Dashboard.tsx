@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
@@ -5,12 +6,15 @@ import { useIsMobile } from '../hooks/use-mobile';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import { useDashboardLayout, DashboardBlock } from '../hooks/useDashboardLayout';
 import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
-import KPIStats from '../components/Dashboard/KPIStats';
-import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
 import AnalyticsOverview from '../components/Dashboard/AnalyticsOverview';
+import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
 import FullscreenToggle from '../components/Dashboard/FullscreenToggle';
 import DraggableBlock from '../components/Dashboard/DraggableBlock';
+import KPINotesBlock from '../components/Dashboard/KPIBlocks/KPINotesBlock';
+import KPIFavoritesBlock from '../components/Dashboard/KPIBlocks/KPIFavoritesBlock';
+import KPIAvgWordsBlock from '../components/Dashboard/KPIBlocks/KPIAvgWordsBlock';
+import KPICategoriesBlock from '../components/Dashboard/KPIBlocks/KPICategoriesBlock';
 import '../components/Dashboard/DragDropStyles.css';
 
 const Dashboard: React.FC = () => {
@@ -40,9 +44,53 @@ const Dashboard: React.FC = () => {
     return new Date(note.createdAt) > weekAgo;
   }).length;
 
+  const totalWords = notes.reduce((acc, note) => {
+    const wordCount = note.content ? note.content.split(/\s+/).filter(word => word.length > 0).length : 0;
+    return acc + wordCount;
+  }, 0);
+
+  const avgWordsPerNote = totalNotes > 0 ? Math.round(totalWords / totalNotes) : 0;
+
   // Initialize dashboard blocks
   useEffect(() => {
     const initialBlocks: DashboardBlock[] = [
+      // KPI Stats as individual draggable blocks
+      {
+        id: 'kpi-notes',
+        component: KPINotesBlock,
+        props: {
+          totalNotes,
+          weeklyNotes
+        },
+        gridClass: 'col-span-2'
+      },
+      {
+        id: 'kpi-favorites',
+        component: KPIFavoritesBlock,
+        props: {
+          favoriteNotes,
+          totalNotes
+        },
+        gridClass: 'col-span-2'
+      },
+      {
+        id: 'kpi-avg-words',
+        component: KPIAvgWordsBlock,
+        props: {
+          avgWordsPerNote,
+          totalWords
+        },
+        gridClass: 'col-span-2'
+      },
+      {
+        id: 'kpi-categories',
+        component: KPICategoriesBlock,
+        props: {
+          categoryCounts
+        },
+        gridClass: 'col-span-2'
+      },
+      // Main dashboard components
       {
         id: 'analytics',
         component: AnalyticsOverview,
@@ -53,7 +101,7 @@ const Dashboard: React.FC = () => {
           weeklyNotes,
           notes
         },
-        gridClass: 'col-span-5'
+        gridClass: 'col-span-4'
       },
       {
         id: 'recent-activity',
@@ -73,12 +121,12 @@ const Dashboard: React.FC = () => {
           onCreateNote: handleCreateNote,
           onEditNote: handleEditNote
         },
-        gridClass: 'col-span-3'
+        gridClass: 'col-span-4'
       }
     ];
     
     initializeBlocks(initialBlocks);
-  }, [totalNotes, favoriteNotes, categoryCounts, weeklyNotes, notes, recentNotes]);
+  }, [totalNotes, favoriteNotes, categoryCounts, weeklyNotes, notes, recentNotes, avgWordsPerNote, totalWords]);
 
   // Enhanced AI context integration with real user data
   useQuantumAIIntegration({
@@ -91,10 +139,7 @@ const Dashboard: React.FC = () => {
       categoryCounts,
       recentNotesCount: recentNotes.length,
       hasRecentActivity: recentNotes.length > 0,
-      totalWords: notes.reduce((acc, note) => {
-        const wordCount = note.content ? note.content.split(/\s+/).filter(word => word.length > 0).length : 0;
-        return acc + wordCount;
-      }, 0)
+      totalWords
     }
   });
 
@@ -138,19 +183,8 @@ const Dashboard: React.FC = () => {
           <WelcomeHeader />
         </div>
 
-        {/* KPI Stats - Optimized height for 1080p */}
-        <div className="flex-shrink-0 w-full h-[90px]">
-          <KPIStats 
-            totalNotes={totalNotes}
-            favoriteNotes={favoriteNotes}
-            categoryCounts={categoryCounts}
-            weeklyNotes={weeklyNotes}
-            notes={notes}
-          />
-        </div>
-
-        {/* Main Content Area - Enhanced with uniform sizing and better feedback */}
-        <div className={`dashboard-grid grid grid-cols-12 gap-4 flex-1 min-h-0 w-full h-[770px] relative transition-all duration-300 auto-rows-fr ${
+        {/* Main Content Area - All draggable components */}
+        <div className={`dashboard-grid grid grid-cols-12 gap-4 flex-1 min-h-0 w-full h-[850px] relative transition-all duration-300 auto-rows-fr ${
           isDragging ? 'dragging-active bg-gradient-to-br from-blue-50/20 to-purple-50/20' : ''
         }`}>
           {blocks.map((block) => {
@@ -159,7 +193,7 @@ const Dashboard: React.FC = () => {
               <DraggableBlock
                 key={block.id}
                 id={block.id}
-                gridClass={`${block.gridClass} min-h-[300px]`}
+                gridClass={`${block.gridClass} ${block.id.startsWith('kpi-') ? 'min-h-[120px]' : 'min-h-[300px]'}`}
                 onSwap={handleBlockSwap}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
