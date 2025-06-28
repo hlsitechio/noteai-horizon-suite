@@ -624,6 +624,39 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          email_address: string | null
+          email_notifications: boolean | null
+          id: string
+          phone_number: string | null
+          sms_notifications: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email_address?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          phone_number?: string | null
+          sms_notifications?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email_address?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          phone_number?: string | null
+          sms_notifications?: boolean | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       page_visits: {
         Row: {
           city: string | null
@@ -1250,6 +1283,19 @@ export type Database = {
           status: string
         }[]
       }
+      get_pending_reminders_with_preferences: {
+        Args: { user_uuid: string }
+        Returns: {
+          reminder_id: string
+          note_id: string
+          note_title: string
+          reminder_date: string
+          email_notifications: boolean
+          sms_notifications: boolean
+          phone_number: string
+          email_address: string
+        }[]
+      }
       get_user_notes_for_rag: {
         Args: { user_uuid: string }
         Returns: {
@@ -1261,6 +1307,15 @@ export type Database = {
           updated_at: string
           category: string
           is_favorite: boolean
+        }[]
+      }
+      get_user_notification_preferences: {
+        Args: { user_uuid: string }
+        Returns: {
+          email_notifications: boolean
+          sms_notifications: boolean
+          phone_number: string
+          email_address: string
         }[]
       }
       has_role: {
