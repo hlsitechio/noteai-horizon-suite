@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
@@ -14,7 +13,8 @@ import KPIWeeklyBlock from '../components/Dashboard/KPIBlocks/KPIWeeklyBlock';
 import AnalyticsOverview from '../components/Dashboard/AnalyticsOverview';
 import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
 import CategoriesOverview from '../components/Dashboard/CategoriesOverview';
-import WorkflowActions from '../components/Dashboard/WorkflowActions';
+import RecentNotesBlock from '../components/Dashboard/RecentNotesBlock';
+import QuickActionsBlock from '../components/Dashboard/QuickActionsBlock';
 
 export const useDashboard = () => {
   const { notes, setCurrentNote } = useNotes();
@@ -184,14 +184,21 @@ export const useDashboard = () => {
         gridClass: 'col-span-3'
       },
       {
-        id: 'workflow-actions',
-        component: WorkflowActions,
+        id: 'quick-actions',
+        component: QuickActionsBlock,
         props: {
-          notes,
-          onCreateNote: handleCreateNote,
-          onEditNote: handleEditNote
+          onCreateNote: handleCreateNote
         },
         gridClass: 'col-span-3'
+      },
+      {
+        id: 'recent-notes',
+        component: RecentNotesBlock,
+        props: {
+          notes,
+          onEditNote: handleEditNote
+        },
+        gridClass: 'col-span-6'
       }
     ];
   };
