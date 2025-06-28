@@ -1,49 +1,33 @@
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { EnhancedReminderService } from '../services/enhancedReminderService';
-import { NotificationService } from '../services/notificationService';
-import { PushNotificationService } from '../services/pushNotificationService';
-import { useNotifications } from '../contexts/NotificationsContext';
-import { toast } from 'sonner';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
 export const useReminderManager = () => {
-  const [isChecking, setIsChecking] = useState(false);
-  const [pendingReminders, setPendingReminders] = useState<any[]>([]);
-  const [pushEnabled, setPushEnabled] = useState(false);
-  const { addNotification } = useNotifications();
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isInitializedRef = useRef(false);
-
-  // Disabled reminder functionality - no initialization or checking
-  console.log('Reminder manager disabled - no reminders will be processed');
+  const [isChecking] = useState(false);
+  const [pendingReminders] = useState<any[]>([]);
+  const [pushEnabled] = useState(false);
+  
+  // Completely disabled reminder functionality
+  console.log('Reminder manager completely disabled - no background processes');
 
   const checkForReminders = useCallback(async () => {
-    console.log('Reminder checking is disabled');
+    // No-op - reminder checking is disabled
     return;
   }, []);
 
   const snoozeReminder = useCallback(async (reminderId: string, minutes: number = 15) => {
-    console.log('Reminder functionality is disabled');
+    // No-op - reminder functionality is disabled
     return false;
   }, []);
 
   const dismissReminder = useCallback(async (reminderId: string) => {
-    console.log('Reminder functionality is disabled');
+    // No-op - reminder functionality is disabled
     return false;
   }, []);
 
-  // Clear any existing intervals on mount and cleanup
+  // No intervals or background processes - completely clean
   useEffect(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      // Cleanup function for safety, though no intervals are created
     };
   }, []);
 

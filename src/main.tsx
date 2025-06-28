@@ -5,12 +5,7 @@ import './index.css'
 
 console.log('Main.tsx loading...');
 
-// Add debugging for UTS error
-console.log('Checking for UTS-related issues...');
-console.log('Window object keys:', Object.keys(window).filter(key => key.includes('UTS') || key.includes('NF')));
-console.log('Document readyState:', document.readyState);
-
-// Register optimized service worker with better error handling
+// Optimized service worker registration - only in production
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/optimized-sw.js')
@@ -23,21 +18,13 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
   });
 }
 
-// Improved global error handlers with UTS error filtering
+// Streamlined error handlers
 window.addEventListener('error', (event) => {
-  // Log UTS errors specifically for debugging
-  if (event.error?.message?.includes('UTS') || event.error?.message?.includes('No NF')) {
-    console.warn('UTS-related error detected:', {
-      message: event.error?.message,
-      filename: event.filename,
-      stack: event.error?.stack,
-      target: event.target
-    });
-  }
-
-  // Filter out lovable.js errors to prevent spam
+  // Filter out lovable.js and UTS errors to prevent spam
   if (event.error?.message?.includes('lovable') || 
-      event.filename?.includes('lovable.js')) {
+      event.filename?.includes('lovable.js') ||
+      event.error?.message?.includes('UTS') || 
+      event.error?.message?.includes('No NF')) {
     event.preventDefault();
     return;
   }
