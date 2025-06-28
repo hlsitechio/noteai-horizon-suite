@@ -32,17 +32,19 @@ const MobileFilterSheet: React.FC<MobileFilterSheetProps> = ({ isOpen, onClose }
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="bottom" className="h-[400px]">
-        <SheetHeader className="flex flex-row items-center justify-between">
-          <SheetTitle className="flex items-center gap-2">
-            <Filter className="w-5 h-5" />
-            Filter Notes
-          </SheetTitle>
+        <SheetHeader>
+          <div className="flex flex-row items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Filter className="w-5 h-5" />
+              <SheetTitle>Filter Notes</SheetTitle>
+            </div>
+            <Button variant="ghost" size="sm" onClick={onClose}>
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
           <SheetDescription>
             Filter your notes by category and favorites
           </SheetDescription>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="w-4 h-4" />
-          </Button>
         </SheetHeader>
         
         <div className="space-y-6 mt-6">
