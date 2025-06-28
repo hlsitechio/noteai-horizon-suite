@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell, Dot } from 'recharts';
 import { TrendingUp, BarChart3, PieChart as PieChartIcon } from 'lucide-react';
 import { Note } from '../../types/note';
 
@@ -60,27 +60,51 @@ const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
         </CardHeader>
         <CardContent className="flex-1 pb-2">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={weeklyData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+            <LineChart data={weeklyData} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
+              <defs>
+                <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#8B5CF6" stopOpacity={1} />
+                  <stop offset="50%" stopColor="#06B6D4" stopOpacity={1} />
+                  <stop offset="100%" stopColor="#10B981" stopOpacity={1} />
+                </linearGradient>
+                <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#8B5CF6" floodOpacity="0.3"/>
+                </filter>
+              </defs>
               <XAxis 
                 dataKey="day" 
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
               />
-              <YAxis hide />
-              <Bar 
-                dataKey="notes" 
-                fill="url(#barGradient)" 
-                radius={[2, 2, 0, 0]}
-                maxBarSize={40}
+              <YAxis 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+                domain={[0, 'dataMax + 1']}
               />
-              <defs>
-                <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#8B5CF6" stopOpacity={0.8} />
-                  <stop offset="100%" stopColor="#8B5CF6" stopOpacity={0.3} />
-                </linearGradient>
-              </defs>
-            </BarChart>
+              <Line
+                type="monotone"
+                dataKey="notes"
+                stroke="url(#lineGradient)"
+                strokeWidth={3}
+                dot={{ 
+                  fill: '#8B5CF6', 
+                  strokeWidth: 3,
+                  stroke: '#ffffff',
+                  r: 6,
+                  filter: 'url(#shadow)'
+                }}
+                activeDot={{ 
+                  r: 8, 
+                  fill: '#8B5CF6',
+                  stroke: '#ffffff',
+                  strokeWidth: 3,
+                  filter: 'url(#shadow)'
+                }}
+                connectNulls={false}
+              />
+            </LineChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
