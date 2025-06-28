@@ -25,9 +25,9 @@ const WelcomeHeader: React.FC = () => {
 
   return (
     <div className="space-y-2 h-full">
-      {/* Optimized Banner Section for 1080p */}
+      {/* Enhanced Banner Section with More Space */}
       <div 
-        className="relative h-[180px] overflow-hidden rounded-lg border border-blue-100 dark:border-slate-600 group"
+        className="relative h-[280px] overflow-hidden rounded-2xl border border-blue-100 dark:border-slate-600 group shadow-lg"
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => setShowControls(false)}
       >
