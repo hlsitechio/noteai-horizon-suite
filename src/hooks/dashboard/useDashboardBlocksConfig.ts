@@ -6,13 +6,9 @@ import KPINotesBlock from '../../components/Dashboard/KPIBlocks/KPINotesBlock';
 import KPIFavoritesBlock from '../../components/Dashboard/KPIBlocks/KPIFavoritesBlock';
 import KPIAvgWordsBlock from '../../components/Dashboard/KPIBlocks/KPIAvgWordsBlock';
 import KPICategoriesBlock from '../../components/Dashboard/KPIBlocks/KPICategoriesBlock';
-import KPITotalWordsBlock from '../../components/Dashboard/KPIBlocks/KPITotalWordsBlock';
-import KPIWeeklyBlock from '../../components/Dashboard/KPIBlocks/KPIWeeklyBlock';
 import AnalyticsOverview from '../../components/Dashboard/AnalyticsOverview';
 import SecureRecentActivity from '../../components/Dashboard/SecureRecentActivity';
-import CategoriesOverview from '../../components/Dashboard/CategoriesOverview';
-import RecentNotesBlock from '../../components/Dashboard/RecentNotesBlock';
-import QuickActionsBlock from '../../components/Dashboard/QuickActionsBlock';
+import WorkflowActions from '../../components/Dashboard/WorkflowActions';
 
 interface DashboardStats {
   totalNotes: number;
@@ -37,11 +33,11 @@ export const useDashboardBlocksConfig = ({
   handleCreateNote,
   handleEditNote
 }: BlocksConfigOptions) => {
-  // Properly memoize the blocks configuration with all dependencies
+  // Zone-aware blocks configuration with your finalized setup
   const getOriginalBlocks = useMemo((): DashboardBlock[] => {
-    console.log('Creating dashboard blocks configuration');
+    console.log('Creating zone-aware dashboard blocks configuration');
     return [
-      // KPI Stats as individual draggable blocks - Row 1
+      // ✅ KPI Zone
       {
         id: 'kpi-notes',
         component: KPINotesBlock,
@@ -49,7 +45,7 @@ export const useDashboardBlocksConfig = ({
           totalNotes: dashboardStats.totalNotes,
           weeklyNotes: dashboardStats.weeklyNotes
         },
-        gridClass: 'col-span-2'
+        gridClass: 'col-span-3'
       },
       {
         id: 'kpi-favorites',
@@ -58,7 +54,7 @@ export const useDashboardBlocksConfig = ({
           favoriteNotes: dashboardStats.favoriteNotes,
           totalNotes: dashboardStats.totalNotes
         },
-        gridClass: 'col-span-2'
+        gridClass: 'col-span-3'
       },
       {
         id: 'kpi-avg-words',
@@ -67,7 +63,7 @@ export const useDashboardBlocksConfig = ({
           avgWordsPerNote: dashboardStats.avgWordsPerNote,
           totalWords: dashboardStats.totalWords
         },
-        gridClass: 'col-span-2'
+        gridClass: 'col-span-3'
       },
       {
         id: 'kpi-categories',
@@ -75,25 +71,10 @@ export const useDashboardBlocksConfig = ({
         props: {
           categoryCounts: dashboardStats.categoryCounts
         },
-        gridClass: 'col-span-2'
+        gridClass: 'col-span-3'
       },
-      {
-        id: 'kpi-total-words',
-        component: KPITotalWordsBlock,
-        props: {
-          totalWords: dashboardStats.totalWords
-        },
-        gridClass: 'col-span-2'
-      },
-      {
-        id: 'kpi-weekly',
-        component: KPIWeeklyBlock,
-        props: {
-          weeklyNotes: dashboardStats.weeklyNotes
-        },
-        gridClass: 'col-span-2'
-      },
-      // Main dashboard components - Row 2
+
+      // 📊 Charts / Analytics Zone
       {
         id: 'analytics',
         component: AnalyticsOverview,
@@ -104,8 +85,22 @@ export const useDashboardBlocksConfig = ({
           weeklyNotes: dashboardStats.weeklyNotes,
           notes
         },
-        gridClass: 'col-span-3'
+        gridClass: 'col-span-6'
       },
+
+      // ⚡ Quick Actions Zone
+      {
+        id: 'workflow-actions',
+        component: WorkflowActions,
+        props: {
+          notes,
+          onCreateNote: handleCreateNote,
+          onEditNote: handleEditNote
+        },
+        gridClass: 'col-span-6'
+      },
+
+      // 🕒 Recent Activity Zone
       {
         id: 'recent-activity',
         component: SecureRecentActivity,
@@ -114,30 +109,16 @@ export const useDashboardBlocksConfig = ({
           onCreateNote: handleCreateNote,
           onEditNote: handleEditNote
         },
-        gridClass: 'col-span-3'
+        gridClass: 'col-span-6'
       },
-      {
-        id: 'categories-overview',
-        component: CategoriesOverview,
-        props: {
-          categoryCounts: dashboardStats.categoryCounts,
-          totalNotes: dashboardStats.totalNotes
-        },
-        gridClass: 'col-span-3'
-      },
-      {
-        id: 'quick-actions',
-        component: QuickActionsBlock,
-        props: {
-          onCreateNote: handleCreateNote
-        },
-        gridClass: 'col-span-3'
-      },
+
+      // 🧾 Recent Notes Zone
       {
         id: 'recent-notes',
-        component: RecentNotesBlock,
+        component: SecureRecentActivity,
         props: {
-          notes,
+          recentNotes: dashboardStats.recentNotes,
+          onCreateNote: handleCreateNote,
           onEditNote: handleEditNote
         },
         gridClass: 'col-span-6'
