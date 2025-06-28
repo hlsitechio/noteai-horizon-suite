@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Wand2, Sparkles, Loader2 } from 'lucide-react';
@@ -82,6 +82,9 @@ const AIBannerGenerator: React.FC<AIBannerGeneratorProps> = ({ onBannerGenerated
             <Sparkles className="w-5 h-5 text-purple-500" />
             AI Banner Generator
           </DialogTitle>
+          <DialogDescription>
+            Create a custom banner for your dashboard using AI. Describe your ideal scene and we'll generate it for you.
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-6">
