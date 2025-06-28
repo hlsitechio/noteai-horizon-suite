@@ -5,7 +5,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { NotesProvider } from './contexts/NotesContext';
 import { FoldersProvider } from './contexts/FoldersContext';
 import { QuantumAIProvider } from './contexts/QuantumAIContext';
-import { DynamicAccentProvider } from './contexts/DynamicAccentContext';
+import { AccentColorProvider } from './contexts/AccentColorContext';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import Layout from './components/Layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -30,7 +30,7 @@ function App() {
         <AuthProvider>
           <FoldersProvider>
             <NotesProvider>
-              <DynamicAccentProvider>
+              <AccentColorProvider>
                 <Router>
                   <QuantumAIProvider>
                     <div className="min-h-screen bg-background w-full">
@@ -67,7 +67,7 @@ function App() {
                     </div>
                   </QuantumAIProvider>
                 </Router>
-              </DynamicAccentProvider>
+              </AccentColorProvider>
             </NotesProvider>
           </FoldersProvider>
         </AuthProvider>
