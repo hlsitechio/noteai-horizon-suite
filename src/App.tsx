@@ -68,9 +68,10 @@ const ReminderManagerInit: React.FC<{ children: React.ReactNode }> = ({ children
 };
 
 function App() {
-  // Add debugging for UTS error
+  // Add debugging for routing and UTS error
   React.useEffect(() => {
     console.log('App component mounted');
+    console.log('Current location:', window.location.href);
     console.log('DOM loaded, checking for UTS-related elements...');
     
     // Check for any elements or scripts that might be related to UTS
@@ -84,6 +85,17 @@ function App() {
     if (utsRelated.length > 0) {
       console.warn('Found UTS-related scripts:', utsRelated);
     }
+    
+    // Add navigation listener
+    const handlePopState = () => {
+      console.log('Navigation detected:', window.location.href);
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, []);
 
   return (

@@ -12,61 +12,30 @@ const Index: React.FC = () => {
   console.log('Index component - Auth state:', { user: !!user, isLoading });
 
   useEffect(() => {
-    // Add a small delay to prevent rapid redirects
+    // Only redirect once auth loading is complete
     if (!isLoading) {
-      const timer = setTimeout(() => {
-        if (user) {
-          console.log('User authenticated, navigating to dashboard');
-          navigate('/app/dashboard', { replace: true });
-        } else {
-          console.log('User not authenticated, navigating to landing');
-          navigate('/landing', { replace: true });
-        }
-      }, 500); // Increase delay to 500ms
-
-      return () => clearTimeout(timer);
+      console.log('Index: Auth loaded, determining redirect');
+      
+      if (user) {
+        console.log('User authenticated, navigating to dashboard');
+        navigate('/app/dashboard', { replace: true });
+      } else {
+        console.log('User not authenticated, navigating to landing');
+        navigate('/landing', { replace: true });
+      }
     }
   }, [user, isLoading, navigate]);
 
-  // Show loading state while auth is being determined
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-        <PageAICopilot pageContext="loading" />
-      </div>
-    );
-  }
-
-  // Show loading state while redirecting with timeout fallback
+  // Show loading state while auth is being determined or while redirecting
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center">
         <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
-        <p className="text-muted-foreground">Redirecting...</p>
-        <div className="mt-4">
-          {!user && (
-            <button
-              onClick={() => navigate('/landing', { replace: true })}
-              className="text-sm text-blue-500 hover:underline"
-            >
-              Go to Landing Page
-            </button>
-          )}
-          {user && (
-            <button
-              onClick={() => navigate('/app/dashboard', { replace: true })}
-              className="text-sm text-blue-500 hover:underline"
-            >
-              Go to Dashboard
-            </button>
-          )}
-        </div>
+        <p className="text-muted-foreground">
+          {isLoading ? 'Loading...' : 'Redirecting...'}
+        </p>
       </div>
-      <PageAICopilot pageContext="redirecting" />
+      <PageAICopilot pageContext="loading" />
     </div>
   );
 };

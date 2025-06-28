@@ -26,8 +26,8 @@ const HomeRedirect: React.FC = () => {
     console.log('User authenticated, redirecting to dashboard from /app');
     return <Navigate to="/app/dashboard" replace />;
   } else {
-    console.log('User not authenticated, redirecting to landing from /app');
-    return <Navigate to="/landing" replace />;
+    console.log('User not authenticated, redirecting to login');
+    return <Navigate to="/login" replace />;
   }
 };
 

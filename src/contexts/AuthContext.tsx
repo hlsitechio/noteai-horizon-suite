@@ -58,25 +58,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     };
 
-    // Set up SINGLE auth state listener with debouncing
-    let debounceTimer: NodeJS.Timeout;
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (!mounted.current) return;
         
         console.log('Auth state changed:', event);
-        
-        // Clear any pending debounced calls
-        if (debounceTimer) {
-          clearTimeout(debounceTimer);
-        }
-        
-        // Debounce rapid auth state changes to prevent loops
-        debounceTimer = setTimeout(() => {
-          if (!mounted.current) return;
-          
-          setSession(session);
-        }, 100);
+        setSession(session);
       }
     );
 
@@ -87,9 +75,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('AuthProvider: Cleaning up');
       mounted.current = false;
       initialized.current = false;
-      if (debounceTimer) {
-        clearTimeout(debounceTimer);
-      }
       subscription.unsubscribe();
     };
   }, [setSession, clearAuth]);
