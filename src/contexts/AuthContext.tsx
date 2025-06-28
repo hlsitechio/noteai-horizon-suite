@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthContextType } from './auth/types';
@@ -120,3 +119,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
+
+// Export the context itself for use in App.tsx
+export { AuthContext };

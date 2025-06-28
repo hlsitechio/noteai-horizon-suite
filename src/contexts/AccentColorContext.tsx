@@ -63,3 +63,6 @@ export const useAccentColor = () => {
   }
   return context;
 };
+
+// Export the context itself for use in App.tsx
+export { AccentColorContext };

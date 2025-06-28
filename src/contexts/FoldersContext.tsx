@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Folder } from '../types/folder';
 import { SupabaseFoldersService } from '../services/supabaseFoldersService';
@@ -99,3 +98,6 @@ export const FoldersProvider: React.FC<{ children: React.ReactNode }> = ({ child
     </FoldersContext.Provider>
   );
 };
+
+// Export the context itself for use in App.tsx
+export { FoldersContext };

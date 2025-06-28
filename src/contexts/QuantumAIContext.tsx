@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -197,3 +196,6 @@ export const QuantumAIProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     </QuantumAIContext.Provider>
   );
 };
+
+// Export the context itself for use in App.tsx
+export { QuantumAIContext };

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ProjectRealm, ProjectAgent, ProjectFilters } from '../types/project';
 import { ProjectRealmsService } from '../services/projectRealmsService';
@@ -143,3 +142,6 @@ export const ProjectRealmsProvider: React.FC<{ children: React.ReactNode }> = ({
     </ProjectRealmsContext.Provider>
   );
 };
+
+// Export the context itself for use in App.tsx
+export { ProjectRealmsContext };

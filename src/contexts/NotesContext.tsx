@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Note, NoteFilters } from '../types/note';
 import { SupabaseNotesService } from '../services/supabaseNotesService';
@@ -290,3 +289,6 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     </NotesContext.Provider>
   );
 };
+
+// Export the context itself for use in App.tsx
+export { NotesContext };

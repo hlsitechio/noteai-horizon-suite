@@ -79,3 +79,6 @@ export const useDynamicAccent = () => {
   }
   return context;
 };
+
+// Export the context itself for use in App.tsx
+export { DynamicAccentContext };

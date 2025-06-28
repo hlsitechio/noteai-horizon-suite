@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface Notification {
@@ -87,3 +86,6 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({ ch
     </NotificationsContext.Provider>
   );
 };
+
+// Export the context itself for use in App.tsx
+export { NotificationsContext };

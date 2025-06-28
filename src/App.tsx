@@ -7,15 +7,15 @@ import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThemeProvider } from './providers/ThemeProvider';
-import { AuthContext } from './contexts/AuthContext';
-import { NotesContext } from './contexts/NotesContext';
-import { FoldersContext } from './contexts/FoldersContext';
-import { NotificationsContext } from './contexts/NotificationsContext';
-import { AccentColorContext } from './contexts/AccentColorContext';
-import { DynamicAccentContext } from './contexts/DynamicAccentContext';
-import { ProjectRealmsContext } from './contexts/ProjectRealmsContext';
-import { FloatingNotesContext } from './contexts/FloatingNotesContext';
-import { QuantumAIContext } from './contexts/QuantumAIContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { NotesProvider } from './contexts/NotesContext';
+import { FoldersProvider } from './contexts/FoldersContext';
+import { NotificationsProvider } from './contexts/NotificationsContext';
+import { AccentColorProvider } from './contexts/AccentColorContext';
+import { DynamicAccentProvider } from './contexts/DynamicAccentContext';
+import { ProjectRealmsProvider } from './contexts/ProjectRealmsContext';
+import { FloatingNotesProvider } from './contexts/FloatingNotesContext';
+import { QuantumAIProvider } from './contexts/QuantumAIContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout/Layout';
 import HomeRedirect from './components/HomeRedirect';
@@ -61,15 +61,15 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="online-note-ai-theme">
         <TooltipProvider>
-          <AuthContext>
-            <AccentColorContext>
-              <DynamicAccentContext>
-                <NotificationsContext>
-                  <FoldersContext>
-                    <NotesContext>
-                      <ProjectRealmsContext>
-                        <FloatingNotesContext>
-                          <QuantumAIContext>
+          <AuthProvider>
+            <AccentColorProvider>
+              <DynamicAccentProvider>
+                <NotificationsProvider>
+                  <FoldersProvider>
+                    <NotesProvider>
+                      <ProjectRealmsProvider>
+                        <FloatingNotesProvider>
+                          <QuantumAIProvider>
                             <Router>
                               <Routes>
                                 {/* Public Routes */}
@@ -115,15 +115,15 @@ function App() {
                             </Router>
                             <Toaster />
                             <Sonner />
-                          </QuantumAIContext>
-                        </FloatingNotesContext>
-                      </ProjectRealmsContext>
-                    </NotesContext>
-                  </FoldersContext>
-                </NotificationsContext>
-              </DynamicAccentContext>
-            </AccentColorContext>
-          </AuthContext>
+                          </QuantumAIProvider>
+                        </FloatingNotesProvider>
+                      </ProjectRealmsProvider>
+                    </NotesProvider>
+                  </FoldersProvider>
+                </NotificationsProvider>
+              </DynamicAccentProvider>
+            </AccentColorProvider>
+          </AuthProvider>
         </TooltipProvider>
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />

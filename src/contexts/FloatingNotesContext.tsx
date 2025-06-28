@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Note } from '../types/note';
 
@@ -168,3 +167,6 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
     </FloatingNotesContext.Provider>
   );
 };
+
+// Export the context itself for use in App.tsx
+export { FloatingNotesContext };
