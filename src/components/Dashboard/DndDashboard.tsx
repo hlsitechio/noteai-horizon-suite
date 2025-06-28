@@ -40,6 +40,8 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
   const [items, setItems] = useState(blocks.map((b) => b.id));
   const isMobile = useIsMobile();
 
+  console.log('DndDashboard: Render with blocks:', blocks.length, 'items:', items.length);
+
   // Enhanced sensors with better activation constraints
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -63,12 +65,14 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
   const handleDragStart = (event: DragStartEvent) => {
     const dragId = event.active.id as string;
     console.log(`DndDashboard: Starting drag for ${dragId}`);
+    console.log('DndDashboard: Drag event details:', event);
     onDragStart(dragId);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     console.log(`DndDashboard: Drag ended - active: ${active.id}, over: ${over?.id}`);
+    console.log('DndDashboard: Drag end event details:', event);
     
     onDragEnd();
 
@@ -77,6 +81,8 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
       const overId = over.id as string;
       const oldIndex = items.indexOf(activeId);
       const newIndex = items.indexOf(overId);
+      
+      console.log(`DndDashboard: Moving item from index ${oldIndex} to ${newIndex}`);
       
       if (oldIndex !== -1 && newIndex !== -1) {
         const newItems = arrayMove(items, oldIndex, newIndex);
@@ -90,9 +96,15 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
         const reordered = newItems.map((id) => blocks.find((b) => b.id === id)!).filter(Boolean);
         console.log('DndDashboard: Calling onSwap with reordered blocks:', reordered.map(b => b.id));
         onSwap(reordered);
+      } else {
+        console.warn('DndDashboard: Could not find indices for drag operation', { activeId, overId, oldIndex, newIndex });
       }
+    } else {
+      console.log('DndDashboard: No reorder needed - same position or invalid target');
     }
   };
+
+  console.log('DndDashboard: About to render with', items.length, 'items');
 
   return (
     <DndContext

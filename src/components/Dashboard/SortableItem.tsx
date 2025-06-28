@@ -20,9 +20,21 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, gridClass, children }) 
     isDragging,
   } = useSortable({ id });
 
+  console.log(`SortableItem ${id}: isDragging:`, isDragging, 'transform:', transform);
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition: transition || 'transform 200ms ease',
+  };
+
+  const handleDragHandleClick = (e: React.MouseEvent) => {
+    console.log(`SortableItem ${id}: Drag handle clicked`);
+    e.stopPropagation();
+  };
+
+  const handleDragHandleMouseDown = (e: React.MouseEvent) => {
+    console.log(`SortableItem ${id}: Drag handle mouse down`);
+    e.stopPropagation();
   };
 
   return (
@@ -45,6 +57,8 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, gridClass, children }) 
         aria-grabbed={isDragging}
         aria-label="Drag to reorder"
         tabIndex={0}
+        onClick={handleDragHandleClick}
+        onMouseDown={handleDragHandleMouseDown}
       >
         <GripVertical className={`w-3 h-3 transition-colors duration-200 ${
           isDragging ? 'text-blue-600' : 'text-muted-foreground hover:text-foreground'
