@@ -34,96 +34,98 @@ export const useDashboardBlocksConfig = ({
   handleEditNote
 }: BlocksConfigOptions) => {
   // Zone-aware blocks configuration with your finalized setup
-  const getOriginalBlocks = useMemo((): DashboardBlock[] => {
-    console.log('Creating zone-aware dashboard blocks configuration');
-    return [
-      // ✅ KPI Zone
-      {
-        id: 'kpi-notes',
-        component: KPINotesBlock,
-        props: {
-          totalNotes: dashboardStats.totalNotes,
-          weeklyNotes: dashboardStats.weeklyNotes
+  const getOriginalBlocks = useMemo(() => {
+    return (): DashboardBlock[] => {
+      console.log('Creating zone-aware dashboard blocks configuration');
+      return [
+        // ✅ KPI Zone
+        {
+          id: 'kpi-notes',
+          component: KPINotesBlock,
+          props: {
+            totalNotes: dashboardStats.totalNotes,
+            weeklyNotes: dashboardStats.weeklyNotes
+          },
+          gridClass: 'col-span-3'
         },
-        gridClass: 'col-span-3'
-      },
-      {
-        id: 'kpi-favorites',
-        component: KPIFavoritesBlock,
-        props: {
-          favoriteNotes: dashboardStats.favoriteNotes,
-          totalNotes: dashboardStats.totalNotes
+        {
+          id: 'kpi-favorites',
+          component: KPIFavoritesBlock,
+          props: {
+            favoriteNotes: dashboardStats.favoriteNotes,
+            totalNotes: dashboardStats.totalNotes
+          },
+          gridClass: 'col-span-3'
         },
-        gridClass: 'col-span-3'
-      },
-      {
-        id: 'kpi-avg-words',
-        component: KPIAvgWordsBlock,
-        props: {
-          avgWordsPerNote: dashboardStats.avgWordsPerNote,
-          totalWords: dashboardStats.totalWords
+        {
+          id: 'kpi-avg-words',
+          component: KPIAvgWordsBlock,
+          props: {
+            avgWordsPerNote: dashboardStats.avgWordsPerNote,
+            totalWords: dashboardStats.totalWords
+          },
+          gridClass: 'col-span-3'
         },
-        gridClass: 'col-span-3'
-      },
-      {
-        id: 'kpi-categories',
-        component: KPICategoriesBlock,
-        props: {
-          categoryCounts: dashboardStats.categoryCounts
+        {
+          id: 'kpi-categories',
+          component: KPICategoriesBlock,
+          props: {
+            categoryCounts: dashboardStats.categoryCounts
+          },
+          gridClass: 'col-span-3'
         },
-        gridClass: 'col-span-3'
-      },
 
-      // 📊 Charts / Analytics Zone
-      {
-        id: 'analytics',
-        component: AnalyticsOverview,
-        props: {
-          totalNotes: dashboardStats.totalNotes,
-          favoriteNotes: dashboardStats.favoriteNotes,
-          categoryCounts: dashboardStats.categoryCounts,
-          weeklyNotes: dashboardStats.weeklyNotes,
-          notes
+        // 📊 Charts / Analytics Zone
+        {
+          id: 'analytics',
+          component: AnalyticsOverview,
+          props: {
+            totalNotes: dashboardStats.totalNotes,
+            favoriteNotes: dashboardStats.favoriteNotes,
+            categoryCounts: dashboardStats.categoryCounts,
+            weeklyNotes: dashboardStats.weeklyNotes,
+            notes
+          },
+          gridClass: 'col-span-6'
         },
-        gridClass: 'col-span-6'
-      },
 
-      // ⚡ Quick Actions Zone
-      {
-        id: 'workflow-actions',
-        component: WorkflowActions,
-        props: {
-          notes,
-          onCreateNote: handleCreateNote,
-          onEditNote: handleEditNote
+        // ⚡ Quick Actions Zone
+        {
+          id: 'workflow-actions',
+          component: WorkflowActions,
+          props: {
+            notes,
+            onCreateNote: handleCreateNote,
+            onEditNote: handleEditNote
+          },
+          gridClass: 'col-span-6'
         },
-        gridClass: 'col-span-6'
-      },
 
-      // 🕒 Recent Activity Zone
-      {
-        id: 'recent-activity',
-        component: SecureRecentActivity,
-        props: {
-          recentNotes: dashboardStats.recentNotes,
-          onCreateNote: handleCreateNote,
-          onEditNote: handleEditNote
+        // 🕒 Recent Activity Zone
+        {
+          id: 'recent-activity',
+          component: SecureRecentActivity,
+          props: {
+            recentNotes: dashboardStats.recentNotes,
+            onCreateNote: handleCreateNote,
+            onEditNote: handleEditNote
+          },
+          gridClass: 'col-span-6'
         },
-        gridClass: 'col-span-6'
-      },
 
-      // 🧾 Recent Notes Zone
-      {
-        id: 'recent-notes',
-        component: SecureRecentActivity,
-        props: {
-          recentNotes: dashboardStats.recentNotes,
-          onCreateNote: handleCreateNote,
-          onEditNote: handleEditNote
-        },
-        gridClass: 'col-span-6'
-      }
-    ];
+        // 🧾 Recent Notes Zone
+        {
+          id: 'recent-notes',
+          component: SecureRecentActivity,
+          props: {
+            recentNotes: dashboardStats.recentNotes,
+            onCreateNote: handleCreateNote,
+            onEditNote: handleEditNote
+          },
+          gridClass: 'col-span-6'
+        }
+      ];
+    };
   }, [
     dashboardStats.totalNotes,
     dashboardStats.favoriteNotes,
