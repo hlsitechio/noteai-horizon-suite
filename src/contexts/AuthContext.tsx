@@ -37,13 +37,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const initializeAuth = async () => {
       try {
-        // Set a timeout to prevent infinite loading
+        // Set a shorter timeout to prevent infinite loading
         const timeoutId = setTimeout(() => {
           if (mounted.current) {
-            console.log('Auth initialization timeout, clearing auth');
+            console.log('Auth initialization timeout, clearing auth and setting loading to false');
             clearAuth();
           }
-        }, 5000);
+        }, 3000); // Reduced from 5000 to 3000ms
 
         const { data: { session }, error } = await supabase.auth.getSession();
         
@@ -57,6 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
 
+        console.log('Auth: Session retrieved, setting session state');
         setSession(session);
         console.log(session?.user ? `User authenticated: ${session.user.email}` : 'No active session');
       } catch (error) {
@@ -72,7 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       (event, session) => {
         if (!mounted.current) return;
         
-        console.log('Auth state changed:', event);
+        console.log('Auth state changed:', event, session ? 'with session' : 'no session');
         setSession(session);
       }
     );

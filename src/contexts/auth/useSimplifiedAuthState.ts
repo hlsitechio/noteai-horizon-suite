@@ -21,13 +21,18 @@ export const useSimplifiedAuthState = () => {
   const [state, setState] = useState<SimplifiedAuthState>(initialState);
 
   const setLoading = useCallback((loading: boolean) => {
+    console.log('Auth: Setting loading to', loading);
     setState(prev => ({ ...prev, isLoading: loading }));
   }, []);
 
   const setSession = useCallback((session: Session | null) => {
+    console.log('Auth: Setting session', session ? 'exists' : 'null');
     setState(prev => {
       // Only update if session actually changed
-      if (prev.session === session) return prev;
+      if (prev.session === session) {
+        console.log('Auth: Session unchanged, not updating state');
+        return prev;
+      }
       
       const user = session?.user ? {
         id: session.user.id,
@@ -35,6 +40,12 @@ export const useSimplifiedAuthState = () => {
         name: session.user.email?.split('@')[0] || 'User',
         avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(session.user.email?.split('@')[0] || 'User')}&background=6366f1&color=fff`
       } : null;
+
+      console.log('Auth: New state -', { 
+        hasUser: !!user, 
+        isAuthenticated: !!session?.user,
+        isLoading: false 
+      });
 
       return {
         ...prev,
@@ -47,6 +58,7 @@ export const useSimplifiedAuthState = () => {
   }, []);
 
   const clearAuth = useCallback(() => {
+    console.log('Auth: Clearing auth state');
     setState({
       user: null,
       session: null,

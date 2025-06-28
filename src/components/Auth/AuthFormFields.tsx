@@ -41,7 +41,7 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
           </Label>
           <Input
             id="auth-name"
-            name="name"
+            name="fullName"
             type="text"
             value={name}
             onChange={(e) => onNameChange(e.target.value)}
