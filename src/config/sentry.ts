@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/react";
 
 export const initSentry = () => {
   Sentry.init({
-    dsn: import.meta.env.VITE_SENTRY_DSN,
+    dsn: "https://209461c58ea399b71187c83f06ab7770@o4509521908400128.ingest.us.sentry.io/4509562204651520",
     integrations: [
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration({
@@ -26,8 +26,6 @@ export const initSentry = () => {
       if (import.meta.env.DEV) {
         console.log('Sentry event (dev mode):', event);
         console.log('Error details:', hint.originalException);
-        // Return the event to send it to Sentry even in dev mode
-        return event;
       }
       return event;
     },
