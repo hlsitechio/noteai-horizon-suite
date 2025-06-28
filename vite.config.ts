@@ -30,13 +30,17 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Performance optimizations
+    // Enhanced performance optimizations
     target: 'esnext',
     minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: mode === 'production',
         drop_debugger: mode === 'production',
+        pure_funcs: mode === 'production' ? ['console.log', 'console.debug'] : [],
+      },
+      mangle: {
+        safari10: true,
       },
     },
     rollupOptions: {
@@ -45,13 +49,26 @@ export default defineConfig(({ mode }) => ({
           vendor: ['react', 'react-dom'],
           ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs'],
           utils: ['clsx', 'tailwind-merge', 'date-fns'],
+          sentry: ['@sentry/react'],
+          supabase: ['@supabase/supabase-js'],
         },
       },
     },
     chunkSizeWarningLimit: 1000,
+    sourcemap: mode === 'development',
   },
   define: {
     // Remove development code in production
     __DEV__: mode === 'development',
+  },
+  // Enhanced dependency optimization
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      '@sentry/react',
+      '@supabase/supabase-js',
+    ],
+    exclude: ['@vite/client', '@vite/env'],
   },
 }));
