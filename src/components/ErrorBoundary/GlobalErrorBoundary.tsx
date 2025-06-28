@@ -28,12 +28,14 @@ class GlobalErrorBoundary extends Component<Props, State> {
     console.error('Global Error Boundary caught error:', error);
     
     // Send to Sentry with additional context
-    Sentry.captureException(error, { 
-      extra: info,
-      tags: {
-        errorBoundary: 'global',
+    Sentry.captureException(error, {
+      extra: {
         componentStack: info.componentStack,
+        errorBoundary: 'global'
       },
+      tags: {
+        errorBoundary: 'global'
+      }
     });
   }
 

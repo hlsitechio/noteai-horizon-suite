@@ -3,13 +3,6 @@
  * Safe analytics utilities with error handling
  */
 
-declare global {
-  interface Window {
-    gtag?: (...args: any[]) => void;
-    dataLayer?: any[];
-  }
-}
-
 export function safeSendAnalyticsEvent(eventName: string, eventParams?: Record<string, any>) {
   try {
     if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
