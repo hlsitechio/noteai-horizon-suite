@@ -37,24 +37,28 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   const handleDrag = (_e: any, data: any) => {
     setDragPosition({ x: data.x, y: data.y });
     
-    // Check for drop targets during drag
-    const element = document.elementFromPoint(data.lastX + data.x, data.lastY + data.y);
-    const targetBlock = element?.closest('[data-block-id]');
-    
-    // Remove previous drop target highlights
-    document.querySelectorAll('[data-block-id]').forEach(block => {
-      if (block !== nodeRef.current) {
-        block.classList.remove('drop-target-active');
+    // Use requestAnimationFrame for better accuracy and reduced flicker
+    requestAnimationFrame(() => {
+      const currentMouseX = data.lastX + data.x;
+      const currentMouseY = data.lastY + data.y;
+      const element = document.elementFromPoint(currentMouseX, currentMouseY);
+      const targetBlock = element?.closest('[data-block-id]');
+      
+      // Remove previous drop target highlights
+      document.querySelectorAll('[data-block-id]').forEach(block => {
+        if (block !== nodeRef.current) {
+          block.classList.remove('drop-target-active');
+        }
+      });
+      
+      // Highlight current drop target
+      if (targetBlock && targetBlock.getAttribute('data-block-id') !== id) {
+        targetBlock.classList.add('drop-target-active');
+        setIsDropTarget(true);
+      } else {
+        setIsDropTarget(false);
       }
     });
-    
-    // Highlight current drop target
-    if (targetBlock && targetBlock.getAttribute('data-block-id') !== id) {
-      targetBlock.classList.add('drop-target-active');
-      setIsDropTarget(true);
-    } else {
-      setIsDropTarget(false);
-    }
   };
 
   const handleStop = (_e: any, data: any) => {
@@ -71,17 +75,27 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       block.classList.remove('drop-target-active');
     });
 
-    // Check if we're over another draggable block for swapping
+    // Improved hit testing using bounding box logic
     const currentMouseX = data.lastX + data.x;
     const currentMouseY = data.lastY + data.y;
-    const element = document.elementFromPoint(currentMouseX, currentMouseY);
-    const targetBlock = element?.closest('[data-block-id]');
-    
-    if (targetBlock && targetBlock.getAttribute('data-block-id') !== id) {
-      const targetId = targetBlock.getAttribute('data-block-id');
-      if (targetId) {
-        console.log(`Swapping ${id} with ${targetId}`);
-        onSwap(id, targetId);
+    const elements = document.querySelectorAll('[data-block-id]');
+
+    for (const el of elements) {
+      if (el === nodeRef.current) continue;
+
+      const rect = el.getBoundingClientRect();
+      if (
+        currentMouseX >= rect.left &&
+        currentMouseX <= rect.right &&
+        currentMouseY >= rect.top &&
+        currentMouseY <= rect.bottom
+      ) {
+        const targetId = el.getAttribute('data-block-id');
+        if (targetId) {
+          console.log(`Swapping ${id} with ${targetId}`);
+          onSwap(id, targetId);
+          break;
+        }
       }
     }
   };
@@ -100,7 +114,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
 
   return (
     <div 
-      className={`${gridClass} h-full min-h-0 transition-all duration-200 ${
+      className={`${gridClass} h-full min-h-0 transition-all duration-300 ${
         isDropTarget && !isDragging ? 'ring-2 ring-blue-400 ring-opacity-60 bg-blue-50/30' : ''
       }`}
       data-block-id={id}
@@ -118,7 +132,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
       >
         <div 
           ref={nodeRef}
-          className={`relative h-full transition-all duration-200 ${
+          className={`relative h-full transition-all duration-300 ${
             isDragging ? 'z-50 scale-105 shadow-2xl rotate-1 opacity-90' : 'z-10'
           }`}
         >
@@ -132,7 +146,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
             </div>
           </div>
           
-          <div className={`h-full transition-all duration-200 ${
+          <div className={`h-full transition-all duration-300 ${
             isDragging ? 'ring-2 ring-blue-500 ring-opacity-50' : ''
           }`}>
             {children}
@@ -140,10 +154,10 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
         </div>
       </Draggable>
       
-      {/* Drop zone overlay when dragging */}
+      {/* Enhanced drop zone overlay with modern 2025 UX */}
       {!isDragging && document.body.classList.contains('dragging-active') && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center bg-blue-100/20 border-2 border-dashed border-blue-400 rounded-lg pointer-events-none">
-          <div className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-gradient-to-br from-blue-100/30 to-blue-200/20 border-2 border-dashed border-blue-400 rounded-xl pointer-events-none backdrop-blur-sm">
+          <div className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-md animate-bounce">
             Drop here to swap
           </div>
         </div>

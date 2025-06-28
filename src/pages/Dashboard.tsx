@@ -149,9 +149,9 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Enhanced with drag feedback */}
-        <div className={`grid grid-cols-12 gap-4 flex-1 min-h-0 w-full h-[770px] relative transition-all duration-200 ${
-          isDragging ? 'bg-blue-50/30' : ''
+        {/* Main Content Area - Enhanced with uniform sizing and better feedback */}
+        <div className={`dashboard-grid grid grid-cols-12 gap-4 flex-1 min-h-0 w-full h-[770px] relative transition-all duration-300 auto-rows-fr ${
+          isDragging ? 'dragging-active bg-gradient-to-br from-blue-50/20 to-purple-50/20' : ''
         }`}>
           {blocks.map((block) => {
             const BlockComponent = block.component;
@@ -159,7 +159,7 @@ const Dashboard: React.FC = () => {
               <DraggableBlock
                 key={block.id}
                 id={block.id}
-                gridClass={block.gridClass}
+                gridClass={`${block.gridClass} min-h-[300px]`}
                 onSwap={handleBlockSwap}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
@@ -169,10 +169,13 @@ const Dashboard: React.FC = () => {
             );
           })}
           
-          {/* Drag status indicator */}
+          {/* Enhanced drag status indicator with better positioning */}
           {isDragging && (
-            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg font-medium">
-              Dragging: {draggedBlockId} - Drop on another block to swap
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full shadow-xl font-semibold backdrop-blur-sm border border-white/20">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                Dragging: {draggedBlockId} - Drop on another block to swap
+              </div>
             </div>
           )}
         </div>

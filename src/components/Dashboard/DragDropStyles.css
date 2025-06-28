@@ -12,20 +12,33 @@
   pointer-events: auto;
 }
 
+/* Enhanced drop target styling with glow effect */
 .drop-target-active {
   transform: scale(1.02);
-  transition: all 0.2s ease;
-  box-shadow: 0 8px 25px -8px rgba(59, 130, 246, 0.3);
+  transition: all 0.3s ease;
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.4), 0 8px 25px -8px rgba(59, 130, 246, 0.3);
 }
 
 .drop-target-active::before {
   content: '';
   position: absolute;
-  inset: -2px;
-  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
-  border-radius: 12px;
+  inset: -3px;
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4);
+  border-radius: 14px;
   z-index: -1;
-  opacity: 0.3;
+  opacity: 0.4;
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.01);
+  }
 }
 
 /* Enhanced dragging visual feedback */
@@ -36,4 +49,29 @@
 .react-draggable-dragging .drag-handle {
   background: linear-gradient(45deg, #3b82f6, #8b5cf6) !important;
   color: white !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* Smooth grid transitions */
+.dashboard-grid {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard-grid.dragging-active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.02), rgba(139, 92, 246, 0.02));
+}
+
+/* Drop zone hover effects */
+[data-block-id]:not(.react-draggable-dragging):hover {
+  transition: all 0.2s ease;
+}
+
+body.dragging-active [data-block-id]:not(.react-draggable-dragging) {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+body.dragging-active [data-block-id]:not(.react-draggable-dragging):hover {
+  background: rgba(59, 130, 246, 0.05);
+  box-shadow: 0 4px 20px -4px rgba(59, 130, 246, 0.15);
 }
