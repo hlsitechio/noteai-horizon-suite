@@ -16,13 +16,17 @@ import {
   ChevronDown,
   FolderPlus,
   Star,
-  Edit
+  Edit,
+  Bell,
+  Clock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Note } from '../../../types/note';
 import { useNotes } from '../../../contexts/NotesContext';
 import DesktopPopOutButton from '../../FloatingNotes/DesktopPopOutButton';
+import { formatDistanceToNow } from 'date-fns';
 
 interface NotesListSectionProps {
   notes: Note[];
@@ -68,8 +72,19 @@ export function NotesListSection({
     return urlParams.get('note') === noteId;
   };
 
+  const formatReminderTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    if (date < now) {
+      return 'Overdue';
+    }
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
+
   const renderNoteItem = (note: Note, index: number) => {
     const isActive = isNoteActive(note.id);
+    const hasReminder = note.reminder_enabled && note.reminder_status === 'pending';
+    const reminderDate = note.reminder_date;
     
     return (
       <SidebarMenuItem key={note.id}>
@@ -83,10 +98,25 @@ export function NotesListSection({
               className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full text-left"
             >
               <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
-              <span className="truncate text-xs flex-1">{note.title}</span>
-              {note.isFavorite && (
-                <Star className="h-3 w-3 ml-1 text-accent fill-current flex-shrink-0" />
-              )}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1">
+                  <span className="truncate text-xs flex-1">{note.title}</span>
+                  {note.isFavorite && (
+                    <Star className="h-3 w-3 text-accent fill-current flex-shrink-0" />
+                  )}
+                  {hasReminder && (
+                    <Bell className="h-3 w-3 text-blue-500 flex-shrink-0" />
+                  )}
+                </div>
+                {hasReminder && reminderDate && (
+                  <div className="mt-1">
+                    <Badge variant="outline" className="text-xs px-1 py-0 h-4 text-blue-600 border-blue-200">
+                      <Clock className="w-2 h-2 mr-1" />
+                      {formatReminderTime(reminderDate)}
+                    </Badge>
+                  </div>
+                )}
+              </div>
             </button>
           </SidebarMenuButton>
           
