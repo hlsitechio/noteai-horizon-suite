@@ -1,128 +1,75 @@
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { FileText, Star, Calendar, TrendingUp, Clock, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { 
+  FileText, 
+  Heart, 
+  TrendingUp, 
+  Calendar,
+  Tag
+} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Note } from '../../types/note';
 
 interface KPIStatsProps {
   totalNotes: number;
   favoriteNotes: number;
   categoryCounts: Record<string, number>;
   weeklyNotes: number;
-  notes?: any[];
+  notes: Note[];
 }
 
-const KPIStats: React.FC<KPIStatsProps> = ({ 
-  totalNotes, 
-  favoriteNotes, 
-  categoryCounts, 
+const KPIStats: React.FC<KPIStatsProps> = ({
+  totalNotes,
+  favoriteNotes,
+  categoryCounts,
   weeklyNotes,
-  notes = []
+  notes,
 }) => {
-  // Calculate average words per note
-  const averageWordsPerNote = React.useMemo(() => {
-    if (notes.length === 0) return 0;
-    
-    const totalWords = notes.reduce((acc, note) => {
-      const wordCount = note.content ? note.content.split(/\s+/).filter(word => word.length > 0).length : 0;
-      return acc + wordCount;
-    }, 0);
-    
-    return Math.round(totalWords / notes.length);
-  }, [notes]);
+  const totalWords = notes.reduce((acc, note) => {
+    const wordCount = note.content ? note.content.split(/\s+/).filter(word => word.length > 0).length : 0;
+    return acc + wordCount;
+  }, 0);
 
-  // Calculate writing streak
-  const writingStreak = React.useMemo(() => {
-    if (notes.length === 0) return 0;
-    
-    const sortedNotes = [...notes].sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-    
-    let streak = 0;
-    let currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-    
-    for (let i = 0; i < 30; i++) { // Check last 30 days
-      const hasNoteOnDay = sortedNotes.some(note => {
-        const noteDate = new Date(note.createdAt);
-        noteDate.setHours(0, 0, 0, 0);
-        return noteDate.getTime() === currentDate.getTime();
-      });
-      
-      if (hasNoteOnDay) {
-        streak++;
-      } else if (i > 0) { // Don't break on first day if no notes today
-        break;
-      }
-      
-      currentDate.setDate(currentDate.getDate() - 1);
-    }
-    
-    return streak;
-  }, [notes]);
-
-  // Calculate total words written
-  const totalWords = React.useMemo(() => {
-    return notes.reduce((acc, note) => {
-      const wordCount = note.content ? note.content.split(/\s+/).filter(word => word.length > 0).length : 0;
-      return acc + wordCount;
-    }, 0);
-  }, [notes]);
+  const avgWordsPerNote = totalNotes > 0 ? Math.round(totalWords / totalNotes) : 0;
+  const topCategories = Object.entries(categoryCounts)
+    .sort(([,a], [,b]) => b - a)
+    .slice(0, 2);
 
   const stats = [
     {
       icon: FileText,
-      label: 'Total Notes',
-      value: totalNotes.toLocaleString(),
-      change: weeklyNotes > 0 ? `+${weeklyNotes} this week` : 'No new notes this week',
-      changeType: weeklyNotes > 0 ? 'positive' : 'neutral',
-      color: 'blue'
+      value: totalNotes,
+      label: 'Notes',
+      color: 'bg-blue-500',
+      detail: weeklyNotes > 0 ? `+${weeklyNotes} this week` : null
+    },
+    {
+      icon: Heart,
+      value: favoriteNotes,
+      label: 'Favorites',
+      color: 'bg-rose-500',
+      detail: totalNotes > 0 ? `${Math.round((favoriteNotes / totalNotes) * 100)}%` : '0%'
     },
     {
       icon: TrendingUp,
-      label: 'Total Words',
-      value: totalWords.toLocaleString(),
-      change: averageWordsPerNote > 0 ? `${averageWordsPerNote} avg per note` : 'Start writing',
-      changeType: averageWordsPerNote > 100 ? 'positive' : 'neutral',
-      color: 'green'
+      value: avgWordsPerNote,
+      label: 'Avg Words',
+      color: 'bg-green-500',
+      detail: totalWords > 0 ? `${totalWords.toLocaleString()} total` : null
     },
     {
-      icon: Star,
-      label: 'Favorites',
-      value: favoriteNotes.toString(),
-      change: totalNotes > 0 ? `${Math.round((favoriteNotes / totalNotes) * 100)}% of all notes` : '0% of notes',
-      changeType: favoriteNotes > 0 ? 'positive' : 'neutral',
-      color: 'yellow'
-    },
-    {
-      icon: Target,
-      label: 'Writing Streak',
-      value: `${writingStreak} days`,
-      change: writingStreak >= 7 ? 'Great consistency!' : writingStreak > 0 ? 'Keep it up!' : 'Start your streak',
-      changeType: writingStreak >= 3 ? 'positive' : 'neutral',
-      color: 'purple'
-    },
-    {
-      icon: Calendar,
-      label: 'This Week',
-      value: weeklyNotes.toString(),
-      change: weeklyNotes >= 5 ? 'Very productive!' : weeklyNotes >= 2 ? 'Good progress' : 'Room to grow',
-      changeType: weeklyNotes >= 3 ? 'positive' : 'neutral',
-      color: 'indigo'
-    },
-    {
-      icon: Clock,
+      icon: Tag,
+      value: Object.keys(categoryCounts).length,
       label: 'Categories',
-      value: Object.keys(categoryCounts).length.toString(),
-      change: Object.keys(categoryCounts).length > 3 ? 'Well organized' : 'Add more variety',
-      changeType: Object.keys(categoryCounts).length > 2 ? 'positive' : 'neutral',
-      color: 'pink'
+      color: 'bg-purple-500',
+      detail: topCategories.length > 0 ? topCategories[0][0] : null
     }
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 w-full">
+    <div className="grid grid-cols-4 gap-4 h-full">
       {stats.map((stat, index) => {
         const Icon = stat.icon;
         return (
@@ -131,26 +78,18 @@ const KPIStats: React.FC<KPIStatsProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="w-full"
           >
-            <Card className="border border-border/10 shadow-sm bg-card/50 backdrop-blur-xl hover:shadow-md transition-all duration-200 h-full">
-              <CardContent className="p-3">
-                <div className="flex items-start justify-between mb-2">
-                  <div className={`p-1.5 bg-${stat.color}-100 dark:bg-${stat.color}-900/20 rounded-lg`}>
-                    <Icon className={`w-3 h-3 text-${stat.color}-600 dark:text-${stat.color}-400`} />
-                  </div>
+            <Card className="h-full border-0 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm hover:from-card/90 hover:to-card/50 transition-all duration-300">
+              <CardContent className="p-4 flex items-center gap-3 h-full">
+                <div className={`w-12 h-12 rounded-xl ${stat.color} flex items-center justify-center flex-shrink-0`}>
+                  <Icon className="w-6 h-6 text-white" />
                 </div>
-                
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground font-medium">{stat.label}</p>
-                  <p className="text-lg font-bold text-foreground leading-none">{stat.value}</p>
-                  <p className={`text-xs leading-tight ${
-                    stat.changeType === 'positive' 
-                      ? 'text-green-600 dark:text-green-400' 
-                      : 'text-muted-foreground'
-                  }`}>
-                    {stat.change}
-                  </p>
+                <div className="flex-1 min-w-0">
+                  <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground truncate">{stat.label}</div>
+                  {stat.detail && (
+                    <div className="text-xs text-muted-foreground/80 mt-1">{stat.detail}</div>
+                  )}
                 </div>
               </CardContent>
             </Card>

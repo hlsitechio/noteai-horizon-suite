@@ -1,68 +1,48 @@
 
 import React from 'react';
-import { Clock } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useAuth } from '../../../contexts/AuthContext';
+import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 
 interface WelcomeContentProps {
-  currentTime: Date;
+  currentTime: string;
 }
 
 const WelcomeContent: React.FC<WelcomeContentProps> = ({ currentTime }) => {
-  const { user } = useAuth();
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
-    });
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString([], {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const getFirstName = (name: string) => {
-    return name?.split(' ')[0] || 'User';
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
   };
 
   return (
-    <div className="absolute inset-0 flex items-center justify-between p-4 text-white">
-      <div className="flex items-center gap-4">
-        <Avatar className="w-12 h-12 ring-2 ring-white/20">
-          <AvatarImage src={user?.avatar} />
-          <AvatarFallback className="bg-white/20 text-white">
-            {user?.name?.[0]}
-          </AvatarFallback>
-        </Avatar>
-        <div>
-          <h1 className="text-2xl font-bold mb-1">
-            Welcome back, {getFirstName(user?.name || '')}! 👋
+    <div className="absolute inset-0 flex items-center justify-center z-10">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-center text-white"
+      >
+        <motion.div
+          initial={{ scale: 0.9 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="flex items-center justify-center gap-3 mb-2"
+        >
+          <Sparkles className="w-8 h-8 text-yellow-300" />
+          <h1 className="text-4xl font-bold tracking-tight">
+            {getGreeting()}
           </h1>
-          <p className="text-sm opacity-90">
-            {formatDate(currentTime)}
-          </p>
-        </div>
-      </div>
-      
-      <div className="flex items-center gap-2 text-right">
-        <Clock className="w-4 h-4" />
-        <div>
-          <div className="text-lg font-semibold">
-            {formatTime(currentTime)}
-          </div>
-          <div className="text-xs opacity-75">
-            Local Time
-          </div>
-        </div>
-      </div>
+        </motion.div>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="text-lg text-white/90 font-medium"
+        >
+          {currentTime}
+        </motion.p>
+      </motion.div>
     </div>
   );
 };

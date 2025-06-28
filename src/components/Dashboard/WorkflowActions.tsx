@@ -1,11 +1,16 @@
 
 import React from 'react';
-import { Plus, FileText, MessageSquare, Star, Brain, Sparkles, Clock, Folder } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useNavigate } from 'react-router-dom';
-import { useIsMobile } from '../../hooks/use-mobile';
+import { 
+  Plus, 
+  Edit, 
+  Star, 
+  BarChart3,
+  Zap,
+  Clock
+} from 'lucide-react';
 import { Note } from '../../types/note';
 
 interface WorkflowActionsProps {
@@ -14,150 +19,116 @@ interface WorkflowActionsProps {
   onEditNote: (note: Note) => void;
 }
 
-const WorkflowActions: React.FC<WorkflowActionsProps> = ({ 
-  notes, 
-  onCreateNote, 
-  onEditNote 
+const WorkflowActions: React.FC<WorkflowActionsProps> = ({
+  notes,
+  onCreateNote,
+  onEditNote,
 }) => {
-  const navigate = useNavigate();
-  const isMobile = useIsMobile();
+  const recentNotes = notes
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .slice(0, 3);
 
-  const handlePriorityItems = () => {
-    const favoriteNotes = notes.filter(note => note.isFavorite);
-    if (favoriteNotes.length > 0) {
-      onEditNote(favoriteNotes[0]);
-    } else {
-      navigate('/app/notes');
+  const favoriteNotes = notes.filter(note => note.isFavorite).slice(0, 2);
+  
+  const quickActions = [
+    {
+      icon: Plus,
+      label: 'New Note',
+      action: onCreateNote,
+      color: 'bg-blue-500 hover:bg-blue-600',
+      primary: true
+    },
+    {
+      icon: BarChart3,
+      label: 'Analytics',
+      action: () => window.location.href = '/app/analytics',
+      color: 'bg-purple-500 hover:bg-purple-600',
+      primary: false
     }
-  };
-
-  // Calculate dynamic stats for quick access
-  const recentlyModified = notes
-    .filter(note => {
-      const hourAgo = new Date();
-      hourAgo.setHours(hourAgo.getHours() - 24);
-      return new Date(note.updatedAt) > hourAgo;
-    })
-    .slice(0, 3);
-
-  const topCategories = Object.entries(
-    notes.reduce((acc, note) => {
-      acc[note.category] = (acc[note.category] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>)
-  )
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 3);
+  ];
 
   return (
-    <Card className="w-full h-full border border-border/10 shadow-premium bg-card/50 backdrop-blur-xl rounded-2xl flex flex-col min-h-0">
-      <CardHeader className="p-4 pb-3 border-b border-border/10 flex-shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent/10 to-accent/5 flex items-center justify-center border border-accent/10">
-            <Sparkles className="w-4 h-4 text-accent" />
-          </div>
-          <CardTitle className="text-lg font-bold text-foreground">
+    <div className="h-full flex flex-col gap-4">
+      {/* Quick Actions */}
+      <Card className="border-0 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Zap className="w-5 h-5 text-orange-500" />
             Quick Actions
           </CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent className="p-4 flex-1 flex flex-col min-h-0 space-y-4 overflow-y-auto">
-        {/* Primary Actions - Optimized for 1080p height */}
-        <div className="grid grid-cols-1 gap-3">
-          <Button 
-            onClick={onCreateNote}
-            className="flex items-center gap-3 justify-start bg-accent hover:bg-accent/90 text-accent-foreground border-0 shadow-premium hover:shadow-large transition-all duration-300 hover:-translate-y-1 hover:scale-105 w-full rounded-xl h-14 text-base px-4 font-semibold"
-          >
-            <Plus className="w-5 h-5" />
-            <span>New Document</span>
-          </Button>
-          
-          <div className="grid grid-cols-2 gap-3">
-            <Button 
-              variant="outline"
-              onClick={() => navigate('/app/notes')}
-              className="flex-col gap-2 border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-accent/30 h-20 text-sm"
-            >
-              <FileText className="w-5 h-5" />
-              <span className="font-medium">Library</span>
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => navigate('/app/chat')}
-              className="flex-col gap-2 border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-accent/30 h-20 text-sm"
-            >
-              <Brain className="w-5 h-5" />
-              <span className="font-medium">AI Chat</span>
-            </Button>
-          </div>
-        </div>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {quickActions.map((action) => {
+            const Icon = action.icon;
+            return (
+              <Button
+                key={action.label}
+                onClick={action.action}
+                className={`w-full justify-start gap-3 h-12 ${action.color} text-white border-0 shadow-sm`}
+                size="lg"
+              >
+                <Icon className="w-5 h-5" />
+                {action.label}
+              </Button>
+            );
+          })}
+        </CardContent>
+      </Card>
 
-        {/* Recent Activity Section - Optimized spacing */}
-        {recentlyModified.length > 0 && (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-muted-foreground" />
-              <h4 className="text-sm font-semibold text-foreground">Recent</h4>
-            </div>
-            <div className="space-y-2">
-              {recentlyModified.map((note) => (
-                <button
-                  key={note.id}
-                  onClick={() => onEditNote(note)}
-                  className="w-full text-left p-3 rounded-lg hover:bg-accent/10 transition-colors duration-200 border border-transparent hover:border-accent/20"
-                >
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                    <span className="text-sm text-foreground truncate font-medium">
-                      {note.title}
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Categories Section - Optimized spacing */}
-        {topCategories.length > 0 && (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Folder className="w-4 h-4 text-muted-foreground" />
-              <h4 className="text-sm font-semibold text-foreground">Top Categories</h4>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {topCategories.map(([category, count]) => (
-                <Badge
-                  key={category}
-                  variant="secondary"
-                  className="text-xs bg-accent/10 text-accent border-accent/20 cursor-pointer hover:bg-accent/20 transition-colors px-3 py-1"
-                  onClick={() => navigate(`/app/notes?category=${category}`)}
-                >
-                  {category} ({count})
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Priority Items - Positioned at bottom */}
-        <div className="mt-auto pt-4">
-          <Button 
-            variant="outline"
-            onClick={handlePriorityItems}
-            className="flex items-center gap-3 justify-start border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-accent/30 h-12 text-sm"
-          >
-            <Star className="w-4 h-4" />
-            <span className="font-medium">Priority Items</span>
-            {notes.filter(note => note.isFavorite).length > 0 && (
-              <Badge variant="secondary" className="ml-auto text-xs">
-                {notes.filter(note => note.isFavorite).length}
-              </Badge>
+      {/* Recent Notes */}
+      <Card className="flex-1 border-0 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Clock className="w-5 h-5 text-green-500" />
+            Recent
+            {recentNotes.length > 0 && (
+              <Badge variant="secondary" className="ml-auto">{recentNotes.length}</Badge>
             )}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 flex-1">
+          {recentNotes.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <Edit className="w-8 h-8 text-muted-foreground/50 mb-2" />
+              <p className="text-sm text-muted-foreground">No notes yet</p>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={onCreateNote}
+                className="mt-2 text-blue-500 hover:text-blue-600"
+              >
+                Create your first note
+              </Button>
+            </div>
+          ) : (
+            recentNotes.map((note) => (
+              <div
+                key={note.id}
+                className="p-3 rounded-lg bg-background/50 hover:bg-background/80 cursor-pointer transition-colors border border-border/50"
+                onClick={() => onEditNote(note)}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <h4 className="text-sm font-medium truncate flex-1">
+                    {note.title || 'Untitled'}
+                  </h4>
+                  {note.isFavorite && (
+                    <Star className="w-3 h-3 text-yellow-500 fill-current ml-2" />
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">
+                    {note.category}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(note.updatedAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
