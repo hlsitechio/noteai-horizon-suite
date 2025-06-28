@@ -1,71 +1,194 @@
-
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
-import { useNavigate } from 'react-router-dom';
+import { useFolders } from '../contexts/FoldersContext';
 import EditorContent from '../components/Editor/EditorContent';
-import { useEditorState } from '../components/Editor/EditorState';
-import { useSecureEditorHandlers } from '../components/Editor/SecureEditorHandlers';
+import { CategoryOption } from '../types/note';
+import { toast } from 'sonner';
 
 const Editor: React.FC = () => {
-  const { currentNote, createNote, updateNote, setCurrentNote } = useNotes();
+  const { noteId } = useParams();
   const navigate = useNavigate();
+  const { notes, currentNote, setCurrentNote, createNote, updateNote, toggleFavorite } = useNotes();
+  const { folders } = useFolders();
 
-  // Initialize editor state
-  const editorState = useEditorState();
-  
-  // Initialize editor handlers with proper props
-  const editorHandlers = useSecureEditorHandlers({
-    ...editorState,
-    currentNote,
-  });
+  // Form state
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [category, setCategory] = useState('general');
+  const [tags, setTags] = useState<string[]>([]);
+  const [newTag, setNewTag] = useState('');
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Handler functions for EditorContent
-  const handleTitleChange = (title: string) => editorState.setTitle(title);
-  const handleContentChange = (content: string) => editorState.setContent(content);
-  const handleCategoryChange = (category: string) => editorState.setCategory(category);
-  const handleNewTagChange = (tag: string) => editorState.setNewTag(tag);
-  const handleFavoriteToggle = () => editorState.setIsFavorite(!editorState.isFavorite);
-  const handleFocusModeToggle = () => editorState.setIsFocusMode(!editorState.isFocusMode);
-  const handleHeaderCollapseToggle = () => editorState.setIsHeaderCollapsed(!editorState.isHeaderCollapsed);
-  const handleFocusModeClose = () => editorState.setIsFocusMode(false);
+  // UI state
+  const [isFocusMode, setIsFocusMode] = useState(false);
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+  const [isHeaderHidden, setIsHeaderHidden] = useState(false);
+  const [isAssistantCollapsed, setIsAssistantCollapsed] = useState(false);
+
+  // Refs for assistant control
+  const collapseAssistantRef = useRef<(() => void) | undefined>();
+  const expandAssistantRef = useRef<(() => void) | undefined>();
+
+  // Load note if noteId is provided
+  useEffect(() => {
+    if (noteId && noteId !== 'new') {
+      const note = notes.find(n => n.id === noteId);
+      if (note) {
+        setCurrentNote(note);
+        setTitle(note.title);
+        setContent(note.content);
+        setCategory(note.category);
+        setTags(note.tags);
+        setIsFavorite(note.isFavorite);
+      }
+    } else {
+      // Creating new note
+      setCurrentNote(null);
+      setTitle('');
+      setContent('');
+      setCategory('general');
+      setTags([]);
+      setIsFavorite(false);
+    }
+  }, [noteId, notes, setCurrentNote]);
+
+  // Auto-save functionality
+  useEffect(() => {
+    if (!title.trim() && !content.trim()) return;
+
+    const autoSaveTimer = setTimeout(() => {
+      handleSave();
+    }, 2000);
+
+    return () => clearTimeout(autoSaveTimer);
+  }, [title, content, category, tags]);
+
+  const handleSave = async () => {
+    if (!title.trim()) {
+      toast.error('Please enter a title');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const noteData = {
+        title,
+        content,
+        category,
+        tags,
+        isFavorite,
+        folderId: null,
+      };
+
+      if (currentNote?.id) {
+        await updateNote(currentNote.id, noteData);
+      } else {
+        const newNote = await createNote(noteData);
+        setCurrentNote(newNote);
+        navigate(`/app/editor/${newNote.id}`, { replace: true });
+      }
+    } catch (error) {
+      console.error('Failed to save note:', error);
+      toast.error('Failed to save note');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleFavoriteToggle = async () => {
+    if (!currentNote?.id) {
+      setIsFavorite(!isFavorite);
+      return;
+    }
+
+    try {
+      const updatedNote = await toggleFavorite(currentNote.id);
+      if (updatedNote) {
+        setIsFavorite(updatedNote.isFavorite);
+      }
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error);
+      toast.error('Failed to update favorite');
+    }
+  };
+
+  const handleTagAdd = () => {
+    if (newTag.trim() && !tags.includes(newTag.trim())) {
+      setTags([...tags, newTag.trim()]);
+      setNewTag('');
+    }
+  };
+
+  const handleTagRemove = (tagToRemove: string) => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
+  };
+
+  const handleSuggestionApply = (original: string, suggestion: string) => {
+    setContent(content.replace(original, suggestion));
+  };
+
+  // Focus Mode handlers
+  const handleFocusModeToggle = () => {
+    console.log('Focus mode toggle clicked:', !isFocusMode);
+    setIsFocusMode(!isFocusMode);
+  };
+
+  const handleFocusModeClose = () => {
+    console.log('Focus mode close clicked');
+    setIsFocusMode(false);
+  };
+
+  const handleCollapseAllBars = () => {
+    setIsHeaderHidden(true);
+    setIsAssistantCollapsed(true);
+    if (collapseAssistantRef.current) {
+      collapseAssistantRef.current();
+    }
+  };
 
   return (
-    <div className="h-full w-full">
-      <EditorContent
-        currentNote={currentNote}
-        // Form state
-        title={editorState.title}
-        content={editorState.content}
-        category={editorState.category}
-        tags={editorState.tags}
-        newTag={editorState.newTag}
-        isFavorite={editorState.isFavorite}
-        isSaving={editorState.isSaving}
-        // Form handlers
-        onTitleChange={handleTitleChange}
-        onContentChange={handleContentChange}
-        onCategoryChange={handleCategoryChange}
-        onNewTagChange={handleNewTagChange}
-        onAddTag={editorHandlers.addTag}
-        onRemoveTag={editorHandlers.removeTag}
-        onFavoriteToggle={handleFavoriteToggle}
-        onSave={editorHandlers.handleSave}
-        onSuggestionApply={editorHandlers.handleSuggestionApply}
-        // UI state
-        isFocusMode={editorState.isFocusMode}
-        isHeaderCollapsed={editorState.isHeaderCollapsed}
-        isHeaderHidden={editorState.isHeaderHidden}
-        isAssistantCollapsed={editorState.isAssistantCollapsed}
-        // UI handlers
-        onFocusModeToggle={handleFocusModeToggle}
-        onHeaderCollapseToggle={handleHeaderCollapseToggle}
-        onCollapseAllBars={editorHandlers.handleCollapseAllBars}
-        onFocusModeClose={handleFocusModeClose}
-        // Refs
-        collapseAssistantRef={editorState.collapseAssistantRef}
-        expandAssistantRef={editorState.expandAssistantRef}
-      />
-    </div>
+    <EditorContent
+      // Form state
+      title={title}
+      content={content}
+      category={category}
+      tags={tags}
+      newTag={newTag}
+      isFavorite={isFavorite}
+      isSaving={isSaving}
+      
+      // Form handlers
+      onTitleChange={setTitle}
+      onContentChange={setContent}
+      onCategoryChange={setCategory}
+      onNewTagChange={setNewTag}
+      onAddTag={handleTagAdd}
+      onRemoveTag={handleTagRemove}
+      onFavoriteToggle={handleFavoriteToggle}
+      onSave={handleSave}
+      onSuggestionApply={handleSuggestionApply}
+      
+      // UI state
+      isFocusMode={isFocusMode}
+      isHeaderCollapsed={isHeaderCollapsed}
+      isHeaderHidden={isHeaderHidden}
+      
+      // UI handlers
+      onFocusModeToggle={handleFocusModeToggle}
+      onHeaderCollapseToggle={() => setIsHeaderCollapsed(!isHeaderCollapsed)}
+      onCollapseAllBars={handleCollapseAllBars}
+      onFocusModeClose={handleFocusModeClose}
+      
+      // Refs
+      collapseAssistantRef={collapseAssistantRef}
+      expandAssistantRef={expandAssistantRef}
+      
+      // Other props
+      currentNote={currentNote}
+      isAssistantCollapsed={isAssistantCollapsed}
+    />
   );
 };
 
