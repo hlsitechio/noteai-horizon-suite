@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { ProjectRealm, ProjectAgent, ProjectFilters } from '../types/project';
 
@@ -6,7 +5,17 @@ export class ProjectRealmsService {
   static async getAllProjects(): Promise<ProjectRealm[]> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      if (!user) {
+        const authError = new Error('User not authenticated');
+        console.error('ProjectRealmsService: Authentication failed', {
+          hasUser: !!user,
+          userId: user?.id,
+          error: authError.message
+        });
+        throw authError;
+      }
+
+      console.log('ProjectRealmsService: Loading projects for user:', user.id);
 
       const { data, error } = await supabase
         .from('project_realms')
@@ -15,15 +24,39 @@ export class ProjectRealmsService {
         .order('last_activity_at', { ascending: false });
 
       if (error) {
-        console.error('Error loading projects:', error);
-        throw error;
+        console.error('ProjectRealmsService: Supabase query error', {
+          error: error,
+          errorMessage: error.message,
+          errorCode: error.code,
+          errorDetails: error.details,
+          errorHint: error.hint,
+          userId: user.id
+        });
+        throw new Error(`Failed to load projects: ${error.message} (Code: ${error.code})`);
       }
       
-      console.log('Loaded projects:', data);
+      console.log('ProjectRealmsService: Successfully loaded projects:', {
+        count: data?.length || 0,
+        userId: user.id,
+        projectIds: data?.map(p => p.id) || []
+      });
+      
       return (data || []) as ProjectRealm[];
     } catch (error) {
-      console.error('Error loading projects:', error);
-      return [];
+      const errorDetails = {
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        name: error instanceof Error ? error.name : 'UnknownError',
+        originalError: error
+      };
+      
+      console.error('ProjectRealmsService: Error in getAllProjects:', errorDetails);
+      
+      // Re-throw with enhanced error information
+      const enhancedError = new Error(`Project loading failed: ${errorDetails.message}`);
+      enhancedError.name = 'ProjectLoadingError';
+      enhancedError.stack = errorDetails.stack;
+      throw enhancedError;
     }
   }
 

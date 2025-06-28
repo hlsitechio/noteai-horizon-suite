@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ProjectRealm, ProjectAgent, ProjectFilters } from '../types/project';
 import { ProjectRealmsService } from '../services/projectRealmsService';
@@ -38,17 +39,34 @@ export const ProjectRealmsProvider: React.FC<{ children: React.ReactNode }> = ({
   const refreshProjects = async () => {
     setIsLoading(true);
     try {
+      console.log('ProjectRealmsProvider: Starting project refresh...');
       const loadedProjects = await ProjectRealmsService.getAllProjects();
+      console.log('ProjectRealmsProvider: Projects loaded successfully:', {
+        count: loadedProjects.length,
+        projects: loadedProjects.map(p => ({ id: p.id, title: p.title }))
+      });
       setProjects(loadedProjects);
     } catch (error) {
-      toast.error('Failed to load projects');
-      console.error('Error loading projects:', error);
+      const errorInfo = {
+        message: error instanceof Error ? error.message : String(error),
+        name: error instanceof Error ? error.name : 'UnknownError',
+        stack: error instanceof Error ? error.stack : undefined,
+        timestamp: new Date().toISOString()
+      };
+      
+      console.error('ProjectRealmsProvider: Failed to load projects', errorInfo);
+      toast.error(`Failed to load projects: ${errorInfo.message}`);
+      
+      // Set empty array on error to prevent app crashes
+      setProjects([]);
     } finally {
       setIsLoading(false);
+      console.log('ProjectRealmsProvider: Project refresh completed');
     }
   };
 
   useEffect(() => {
+    console.log('ProjectRealmsProvider: Component mounted, initializing...');
     refreshProjects();
   }, []);
 
