@@ -1,35 +1,39 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { Note } from '../types/note';
+import { requestDeduplicator } from '../utils/requestDeduplication';
 
 export class SupabaseNotesService {
   static async getAllNotes(): Promise<Note[]> {
-    try {
-      const { data, error } = await supabase
-        .from('notes_v2')
-        .select('*')
-        .order('updated_at', { ascending: false });
+    return requestDeduplicator.deduplicate('getAllNotes', async () => {
+      try {
+        const { data, error } = await supabase
+          .from('notes_v2')
+          .select('*')
+          .order('updated_at', { ascending: false });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      return data.map(note => ({
-        id: note.id,
-        title: note.title,
-        content: note.content,
-        category: note.content_type || 'general',
-        tags: note.tags || [],
-        createdAt: note.created_at,
-        updatedAt: note.updated_at,
-        isFavorite: note.is_public || false,
-        folder_id: note.folder_id,
-        reminder_date: note.reminder_date,
-        reminder_status: (note.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
-        reminder_frequency: (note.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
-        reminder_enabled: note.reminder_enabled || false,
-      }));
-    } catch (error) {
-      console.error('Error loading notes:', error);
-      return [];
-    }
+        return data.map(note => ({
+          id: note.id,
+          title: note.title,
+          content: note.content,
+          category: note.content_type || 'general',
+          tags: note.tags || [],
+          createdAt: note.created_at,
+          updatedAt: note.updated_at,
+          isFavorite: note.is_public || false,
+          folder_id: note.folder_id,
+          reminder_date: note.reminder_date,
+          reminder_status: (note.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
+          reminder_frequency: (note.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
+          reminder_enabled: note.reminder_enabled || false,
+        }));
+      } catch (error) {
+        console.error('Error loading notes:', error);
+        return [];
+      }
+    });
   }
 
   static async saveNote(noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Promise<Note> {

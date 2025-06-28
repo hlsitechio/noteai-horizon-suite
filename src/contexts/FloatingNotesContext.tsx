@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Note } from '../types/note';
 
 interface FloatingWindowState {
@@ -34,9 +34,13 @@ export const useFloatingNotes = () => {
 
 export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [floatingNotes, setFloatingNotes] = useState<FloatingWindowState[]>([]);
+  const initializationRef = useRef(false);
 
   // Load floating notes state from localStorage on mount
   useEffect(() => {
+    if (initializationRef.current) return;
+    initializationRef.current = true;
+
     try {
       const savedState = localStorage.getItem('floating-notes-state');
       if (savedState) {
@@ -44,28 +48,30 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
         setFloatingNotes(parsed);
       }
     } catch (error) {
-      // Silent error handling - don't log to console
+      console.warn('Failed to load floating notes state:', error);
     }
   }, []);
 
   // Save floating notes state to localStorage whenever it changes
   useEffect(() => {
+    if (!initializationRef.current) return;
+
     try {
       localStorage.setItem('floating-notes-state', JSON.stringify(floatingNotes));
     } catch (error) {
-      // Silent error handling - don't log to console
+      console.warn('Failed to save floating notes state:', error);
     }
   }, [floatingNotes]);
 
   const openFloatingNote = (note: Note) => {
-    // Check if note is already floating - use a more robust check
+    // Check if note is already floating
     const isAlreadyFloating = floatingNotes.some(fn => fn.noteId === note.id);
     
     if (isAlreadyFloating) {
       // Bring to front by moving to end of array
       setFloatingNotes(prev => {
         const existingIndex = prev.findIndex(fn => fn.noteId === note.id);
-        if (existingIndex === -1) return prev; // Safety check
+        if (existingIndex === -1) return prev;
         
         const updated = [...prev];
         const existing = updated.splice(existingIndex, 1)[0];

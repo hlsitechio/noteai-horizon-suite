@@ -5,12 +5,15 @@ import DndDashboard from './DndDashboard';
 import ResetZoneButton from './ResetZoneButton';
 import { useDashboard } from '../../hooks/useDashboard';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import SyncStatusIndicator from '../SyncStatusIndicator';
 
 const DashboardContent: React.FC = () => {
   const {
     blocks,
     isDragging,
     draggedBlockId,
+    isLoading,
+    syncStatus,
     handleBlocksReorder,
     handleDragStart,
     handleDragEnd,
@@ -29,21 +32,34 @@ const DashboardContent: React.FC = () => {
 
           {/* Dashboard Controls Section */}
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-foreground">Dashboard</h2>
+            <div className="flex items-center gap-4">
+              <h2 className="text-xl font-semibold text-foreground">Dashboard</h2>
+              <SyncStatusIndicator status={syncStatus} />
+            </div>
             <ResetZoneButton onReset={handleResetLayout} />
           </div>
 
+          {/* Loading State */}
+          {isLoading && (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <span className="ml-2 text-muted-foreground">Loading dashboard data...</span>
+            </div>
+          )}
+
           {/* Main Content Area - Reduced spacing */}
-          <div className="pt-2">
-            <DndDashboard
-              blocks={blocks}
-              onSwap={handleBlocksReorder}
-              isDragging={isDragging}
-              draggedBlockId={draggedBlockId}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-            />
-          </div>
+          {!isLoading && (
+            <div className="pt-2">
+              <DndDashboard
+                blocks={blocks}
+                onSwap={handleBlocksReorder}
+                isDragging={isDragging}
+                draggedBlockId={draggedBlockId}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              />
+            </div>
+          )}
         </div>
       </ScrollArea>
     </div>

@@ -1,84 +1,72 @@
 
-import { useEffect, useMemo } from 'react';
-import { useNotes } from '../contexts/NotesContext';
-import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
-import { useDashboardLayout } from './useDashboardLayout';
-import { useDashboardStats } from './useDashboardStats';
-import { useDashboardBlocks } from './useDashboardBlocks';
-import { useDashboardDrag } from './useDashboardDrag';
+import { useState, useCallback } from 'react';
+import { useDashboardData } from './useDashboardData';
+
+export interface DashboardBlock {
+  id: string;
+  type: 'kpi' | 'recent-notes' | 'quick-actions' | 'categories' | 'recent-activity' | 'workflow-actions';
+  title: string;
+  position: number;
+  isVisible: boolean;
+  size?: 'small' | 'medium' | 'large';
+}
+
+const defaultBlocks: DashboardBlock[] = [
+  { id: 'notes-count', type: 'kpi', title: 'Total Notes', position: 0, isVisible: true, size: 'small' },
+  { id: 'words-count', type: 'kpi', title: 'Total Words', position: 1, isVisible: true, size: 'small' },
+  { id: 'avg-words', type: 'kpi', title: 'Avg Words', position: 2, isVisible: true, size: 'small' },
+  { id: 'categories-count', type: 'kpi', title: 'Categories', position: 3, isVisible: true, size: 'small' },
+  { id: 'weekly-notes', type: 'kpi', title: 'Weekly Notes', position: 4, isVisible: true, size: 'small' },
+  { id: 'favorites-count', type: 'kpi', title: 'Favorites', position: 5, isVisible: true, size: 'small' },
+  { id: 'recent-notes', type: 'recent-notes', title: 'Recent Notes', position: 6, isVisible: true, size: 'large' },
+  { id: 'quick-actions', type: 'quick-actions', title: 'Quick Actions', position: 7, isVisible: true, size: 'medium' },
+  { id: 'categories', type: 'categories', title: 'Categories Overview', position: 8, isVisible: true, size: 'medium' },
+  { id: 'recent-activity', type: 'recent-activity', title: 'Recent Activity', position: 9, isVisible: true, size: 'medium' },
+  { id: 'workflow-actions', type: 'workflow-actions', title: 'Workflow Actions', position: 10, isVisible: true, size: 'medium' },
+];
 
 export const useDashboard = () => {
-  const { notes, setCurrentNote } = useNotes();
-  const { blocks, initializeBlocks, reorderBlocks } = useDashboardLayout();
-  
-  console.log('useDashboard: Render with', notes.length, 'notes and', blocks.length, 'blocks');
-  
-  // Use the separated hooks
-  const dashboardStats = useDashboardStats(notes);
-  const { getOriginalBlocks } = useDashboardBlocks(dashboardStats, notes, setCurrentNote);
-  const {
-    isDragging,
-    draggedBlockId,
-    handleDragStart,
-    handleDragEnd,
-    handleBlocksReorder: handleDragReorder
-  } = useDashboardDrag();
+  const dashboardData = useDashboardData();
+  const [blocks, setBlocks] = useState<DashboardBlock[]>(defaultBlocks);
+  const [isDragging, setIsDragging] = useState(false);
+  const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
 
-  console.log('useDashboard: Drag state - isDragging:', isDragging, 'draggedBlockId:', draggedBlockId);
+  const handleBlocksReorder = useCallback((startIndex: number, endIndex: number) => {
+    setBlocks(prev => {
+      const result = Array.from(prev);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      
+      // Update positions
+      return result.map((block, index) => ({
+        ...block,
+        position: index,
+      }));
+    });
+  }, []);
 
-  // Memoize the original blocks to prevent infinite re-renders
-  const memoizedOriginalBlocks = useMemo(() => {
-    console.log('useDashboard: Creating memoized original blocks');
-    return getOriginalBlocks;
-  }, [getOriginalBlocks]);
+  const handleDragStart = useCallback((blockId: string) => {
+    setIsDragging(true);
+    setDraggedBlockId(blockId);
+  }, []);
 
-  const handleBlocksReorder = (reorderedBlocks: any[]) => {
-    console.log('useDashboard: Reordering blocks to new order:', reorderedBlocks.map(b => b.id));
-    handleDragReorder(reorderedBlocks);
-    reorderBlocks(reorderedBlocks);
-  };
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false);
+    setDraggedBlockId(null);
+  }, []);
 
-  // Function to reset layout to original state
-  const handleResetLayout = () => {
-    console.log('useDashboard: Resetting dashboard layout to original state');
-    initializeBlocks(memoizedOriginalBlocks);
-  };
-
-  // Initialize dashboard blocks with stable dependencies - only run once
-  useEffect(() => {
-    console.log('useDashboard: Initializing dashboard blocks (should only run once)');
-    if (memoizedOriginalBlocks.length > 0) {
-      console.log('useDashboard: Initializing with', memoizedOriginalBlocks.length, 'blocks');
-      initializeBlocks(memoizedOriginalBlocks);
-    } else {
-      console.log('useDashboard: No blocks to initialize yet');
-    }
-  }, [memoizedOriginalBlocks, initializeBlocks]);
-
-  // Enhanced AI context integration with real user data
-  useQuantumAIIntegration({
-    page: '/app/dashboard',
-    content: `Dashboard overview: ${dashboardStats.totalNotes} total notes, ${dashboardStats.favoriteNotes} favorites, ${dashboardStats.weeklyNotes} notes this week. Categories: ${Object.keys(dashboardStats.categoryCounts).join(', ')}`,
-    metadata: {
-      totalNotes: dashboardStats.totalNotes,
-      favoriteNotes: dashboardStats.favoriteNotes,
-      weeklyNotes: dashboardStats.weeklyNotes,
-      categoryCounts: dashboardStats.categoryCounts,
-      recentNotesCount: dashboardStats.recentNotes.length,
-      hasRecentActivity: dashboardStats.recentNotes.length > 0,
-      totalWords: dashboardStats.totalWords
-    }
-  });
-
-  console.log('useDashboard: Returning dashboard state with', blocks.length, 'blocks');
+  const handleResetLayout = useCallback(() => {
+    setBlocks(defaultBlocks);
+  }, []);
 
   return {
+    ...dashboardData,
     blocks,
     isDragging,
     draggedBlockId,
     handleBlocksReorder,
     handleDragStart,
     handleDragEnd,
-    handleResetLayout
+    handleResetLayout,
   };
 };
