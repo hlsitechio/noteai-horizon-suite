@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -93,10 +94,12 @@ const Login: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm text-gray-600 mb-2 block">
+                  <Label htmlFor="login-email" className="text-sm text-gray-600 mb-2 block">
                     Email
-                  </label>
+                  </Label>
                   <Input
+                    id="login-email"
+                    name="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -104,15 +107,18 @@ const Login: React.FC = () => {
                     className="rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
                     required
                     disabled={isSubmitting}
+                    autoComplete="email"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray-600 mb-2 block">
+                  <Label htmlFor="login-password" className="text-sm text-gray-600 mb-2 block">
                     Password
-                  </label>
+                  </Label>
                   <div className="relative">
                     <Input
+                      id="login-password"
+                      name="password"
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -120,6 +126,7 @@ const Login: React.FC = () => {
                       className="rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100 pr-10"
                       required
                       disabled={isSubmitting}
+                      autoComplete="current-password"
                     />
                     <Button
                       type="button"
@@ -128,6 +135,7 @@ const Login: React.FC = () => {
                       className="absolute right-2 top-1/2 transform -translate-y-1/2"
                       onClick={() => setShowPassword(!showPassword)}
                       disabled={isSubmitting}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </Button>

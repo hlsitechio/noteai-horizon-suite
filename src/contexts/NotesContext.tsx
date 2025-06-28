@@ -257,6 +257,26 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [user?.id, authLoading]); // Only depend on user.id and authLoading
 
+  // Replace unload event listener with pagehide for better reliability
+  useEffect(() => {
+    const handlePageHide = () => {
+      if (channelRef.current) {
+        console.log('Page hiding, cleaning up real-time subscription');
+        supabase.removeChannel(channelRef.current).catch((error) => {
+          console.warn('Error removing channel on page hide:', error);
+        });
+        channelRef.current = null;
+      }
+    };
+
+    // Use pagehide instead of deprecated unload event
+    window.addEventListener('pagehide', handlePageHide);
+
+    return () => {
+      window.removeEventListener('pagehide', handlePageHide);
+    };
+  }, []);
+
   const createNote = async (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Promise<Note> => {
     if (!user) throw new Error('User not authenticated');
     

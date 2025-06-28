@@ -1,7 +1,9 @@
+
 import React, { useEffect, useRef } from 'react';
 import { ArrowLeft, Save, MoreVertical, Share2, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useNotes } from '../../contexts/NotesContext';
@@ -148,11 +150,17 @@ const MobileEditor: React.FC = () => {
             size="sm"
             onClick={handleToggleFavorite}
             className={currentNote.isFavorite ? 'text-yellow-500' : ''}
+            aria-label={currentNote.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
           >
             <Star className={`w-4 h-4 ${currentNote.isFavorite ? 'fill-current' : ''}`} />
           </Button>
           
-          <Button variant="ghost" size="sm" onClick={handleShare}>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleShare}
+            aria-label="Share note"
+          >
             <Share2 className="w-4 h-4" />
           </Button>
           
@@ -171,26 +179,41 @@ const MobileEditor: React.FC = () => {
       {/* Editor Content */}
       <div className="flex-1 flex flex-col p-4 space-y-4">
         {/* Title Input */}
-        <Input
-          ref={titleInputRef}
-          placeholder="Note title..."
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          onClick={handleTitleClick}
-          className="text-lg font-semibold border-none px-0 shadow-none focus-visible:ring-0"
-        />
+        <div>
+          <Label htmlFor="mobile-note-title" className="sr-only">
+            Note Title
+          </Label>
+          <Input
+            id="mobile-note-title"
+            name="noteTitle"
+            ref={titleInputRef}
+            placeholder="Note title..."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            onClick={handleTitleClick}
+            className="text-lg font-semibold border-none px-0 shadow-none focus-visible:ring-0"
+            autoComplete="off"
+          />
+        </div>
         
         {/* Content Textarea */}
-        <Textarea
-          ref={contentTextareaRef}
-          placeholder="Start writing your note..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          onClick={handleTextareaClick}
-          onTouchStart={handleTextareaClick}
-          className="flex-1 resize-none border-none px-0 shadow-none focus-visible:ring-0 text-base leading-relaxed"
-          autoFocus={false}
-        />
+        <div className="flex-1 flex flex-col">
+          <Label htmlFor="mobile-note-content" className="sr-only">
+            Note Content
+          </Label>
+          <Textarea
+            id="mobile-note-content"
+            name="noteContent"
+            ref={contentTextareaRef}
+            placeholder="Start writing your note..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            onClick={handleTextareaClick}
+            onTouchStart={handleTextareaClick}
+            className="flex-1 resize-none border-none px-0 shadow-none focus-visible:ring-0 text-base leading-relaxed"
+            autoFocus={false}
+          />
+        </div>
       </div>
 
       {/* Status Bar */}
