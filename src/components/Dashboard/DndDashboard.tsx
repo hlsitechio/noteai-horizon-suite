@@ -9,6 +9,7 @@ import {
   useSensors,
   DragEndEvent,
   DragStartEvent,
+  DragOverlay,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -38,6 +39,7 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
   onDragEnd
 }) => {
   const [items, setItems] = useState(blocks.map((b) => b.id));
+  const [activeId, setActiveId] = useState<string | null>(null);
   const isMobile = useIsMobile();
 
   console.log('DndDashboard: Render with blocks:', blocks.length, 'items:', items.length);
@@ -46,7 +48,7 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 5, // Small distance to prevent accidental drags
+        distance: 8, // Slightly more distance to prevent accidental drags
       },
     }),
     useSensor(KeyboardSensor)
@@ -66,6 +68,7 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
     const dragId = event.active.id as string;
     console.log(`DndDashboard: Starting drag for ${dragId}`);
     console.log('DndDashboard: Drag event details:', event);
+    setActiveId(dragId);
     onDragStart(dragId);
   };
 
@@ -74,6 +77,7 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
     console.log(`DndDashboard: Drag ended - active: ${active.id}, over: ${over?.id}`);
     console.log('DndDashboard: Drag end event details:', event);
     
+    setActiveId(null);
     onDragEnd();
 
     if (active.id !== over?.id && over?.id) {
@@ -103,6 +107,9 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
       console.log('DndDashboard: No reorder needed - same position or invalid target');
     }
   };
+
+  // Get the active block for drag overlay
+  const activeBlock = activeId ? blocks.find(block => block.id === activeId) : null;
 
   console.log('DndDashboard: About to render with', items.length, 'items');
 
@@ -145,6 +152,31 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
           })}
         </div>
       </SortableContext>
+      
+      {/* Drag Overlay */}
+      <DragOverlay>
+        {activeBlock ? (
+          <div className="opacity-95 transform rotate-3 scale-105 shadow-2xl">
+            <div className={`${isMobile 
+              ? (activeBlock.id.startsWith('kpi-') ? 'w-32' : 'w-64') 
+              : 'w-64'
+            } ${
+              activeBlock.id.startsWith('kpi-') ? 'h-24' : 'h-64'
+            } bg-background border-2 border-blue-400 rounded-lg p-4`}>
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <div className="text-sm font-medium text-foreground">
+                    {activeBlock.id}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Drop to reorder
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </DragOverlay>
       
       <DragStatusOverlay 
         isDragging={isDragging} 

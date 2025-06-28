@@ -24,7 +24,8 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, gridClass, children }) 
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: transition || 'transform 200ms ease',
+    transition: transition || 'transform 150ms ease',
+    zIndex: isDragging ? 1000 : 1,
   };
 
   const handleDragHandleClick = (e: React.MouseEvent) => {
@@ -42,7 +43,7 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, gridClass, children }) 
       ref={setNodeRef}
       style={style}
       className={`${gridClass} h-full min-h-0 transition-all duration-200 ease-out relative group ${
-        isDragging ? 'z-50 scale-105 shadow-2xl rotate-1 opacity-90 ring-2 ring-blue-500 ring-opacity-50' : 'z-10'
+        isDragging ? 'opacity-50' : 'opacity-100'
       }`}
       data-block-id={id}
     >
@@ -55,7 +56,7 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, gridClass, children }) 
         } p-2 rounded-lg hover:bg-background/80 bg-white/90 shadow-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
         role="button"
         aria-grabbed={isDragging}
-        aria-label="Drag to reorder"
+        aria-label={`Drag to reorder ${id}`}
         tabIndex={0}
         onClick={handleDragHandleClick}
         onMouseDown={handleDragHandleMouseDown}
@@ -71,15 +72,6 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, gridClass, children }) 
       }`}>
         {children}
       </div>
-
-      {/* Drop Zone Indicator */}
-      {isDragging && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center bg-gradient-to-br from-blue-100/30 to-blue-200/20 border-2 border-dashed border-blue-400 rounded-xl pointer-events-none backdrop-blur-sm">
-          <div className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-md animate-bounce">
-            Drop here to swap
-          </div>
-        </div>
-      )}
     </div>
   );
 };
