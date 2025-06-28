@@ -4,7 +4,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { EditorFormState, EditorFormHandlers } from './EditorFormProps';
 import { EditorRefs } from './EditorUIProps';
-import EditorToolbar from './EditorToolbar';
 import { useNotes } from '../../contexts/NotesContext';
 
 interface EditorContentLayoutProps extends EditorFormState, EditorFormHandlers, EditorRefs {
@@ -29,39 +28,25 @@ const EditorContentLayout: React.FC<EditorContentLayoutProps> = ({
   const { currentNote, refreshNotes } = useNotes();
   const canSave = title.trim().length > 0;
 
-  const handleReminderSet = () => {
-    // Refresh notes to get updated reminder data
-    refreshNotes();
-  };
-
   return (
-    <div className="h-full flex flex-col">
-      {/* Editor Toolbar */}
-      <EditorToolbar
-        note={currentNote}
-        canSave={canSave}
-        isSaving={isSaving}
-        onSave={onSave}
-        onReminderSet={handleReminderSet}
-      />
-
+    <div className="h-full flex flex-col bg-white">
       {/* Title Input */}
-      <div className="p-4 border-b">
+      <div className="p-6 border-b border-gray-200">
         <Input
-          placeholder="Enter your brilliant title..."
+          placeholder="Enter your title..."
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
-          className="text-xl font-semibold border-none shadow-none focus-visible:ring-0 px-0"
+          className="text-2xl font-bold border-none shadow-none focus-visible:ring-0 px-0 bg-transparent"
         />
       </div>
 
       {/* Content Editor */}
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-6">
         <Textarea
-          placeholder="Start writing your masterpiece..."
+          placeholder="Start writing..."
           value={content}
           onChange={(e) => onContentChange(e.target.value)}
-          className="h-full resize-none border-none shadow-none focus-visible:ring-0 text-base leading-relaxed"
+          className="h-full resize-none border-none shadow-none focus-visible:ring-0 text-base leading-relaxed bg-transparent"
         />
       </div>
     </div>

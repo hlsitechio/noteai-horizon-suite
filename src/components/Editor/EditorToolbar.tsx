@@ -34,16 +34,16 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
   onReminderSet
 }) => {
   return (
-    <div className="flex items-center gap-2 p-2 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="flex items-center gap-2 p-3 border-b border-gray-200 bg-white">
       {/* Text Formatting */}
       <div className="flex items-center gap-1">
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
           <Bold className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
           <Italic className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
           <Underline className="h-4 w-4" />
         </Button>
       </div>
@@ -52,10 +52,10 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
 
       {/* Lists */}
       <div className="flex items-center gap-1">
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
           <List className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
           <ListOrdered className="h-4 w-4" />
         </Button>
       </div>
@@ -64,16 +64,16 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
 
       {/* Other formatting */}
       <div className="flex items-center gap-1">
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
           <Quote className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
           <Code className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
           <Link className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
           <Image className="h-4 w-4" />
         </Button>
       </div>
@@ -82,10 +82,10 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
 
       {/* Undo/Redo */}
       <div className="flex items-center gap-1">
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
           <Undo className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
           <Redo className="h-4 w-4" />
         </Button>
       </div>

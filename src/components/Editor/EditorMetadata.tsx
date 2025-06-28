@@ -40,22 +40,22 @@ const EditorMetadata: React.FC<EditorMetadataProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 p-4 bg-gray-50 border-b border-gray-200">
       {/* Title and Category */}
       <div className="flex gap-4">
         <Input
-          placeholder="Enter your brilliant title..."
+          placeholder="Enter your title..."
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
-          className="text-2xl font-bold border-0 bg-white/10 backdrop-blur-sm rounded-2xl focus:bg-white/20 focus:ring-2 focus:ring-blue-200 shadow-soft dark:bg-slate-700/20 dark:focus:bg-slate-600/30 dark:text-slate-200 dark:placeholder-slate-400"
+          className="text-xl font-semibold"
         />
         <Select value={category} onValueChange={onCategoryChange}>
-          <SelectTrigger className="w-48 rounded-2xl bg-white/10 backdrop-blur-sm border-0 shadow-soft dark:bg-slate-700/20 dark:text-slate-200">
+          <SelectTrigger className="w-48">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="glass border-0 dark:text-slate-200">
+          <SelectContent>
             {categories.map((cat) => (
-              <SelectItem key={cat.value} value={cat.value} className="dark:text-slate-200 dark:focus:bg-slate-700/50">
+              <SelectItem key={cat.value} value={cat.value}>
                 {cat.label}
               </SelectItem>
             ))}
@@ -68,7 +68,8 @@ const EditorMetadata: React.FC<EditorMetadataProps> = ({
         {tags.map((tag) => (
           <Badge 
             key={tag}
-            className="bg-white/20 backdrop-blur-sm text-blue-700 border-0 rounded-full px-4 py-2 cursor-pointer hover:bg-white/30 transition-all hover:scale-105 dark:bg-blue-900/30 dark:text-blue-300"
+            variant="secondary"
+            className="cursor-pointer hover:bg-gray-300"
             onClick={() => onRemoveTag(tag)}
           >
             #{tag} ×
@@ -80,12 +81,12 @@ const EditorMetadata: React.FC<EditorMetadataProps> = ({
             value={newTag}
             onChange={(e) => onNewTagChange(e.target.value)}
             onKeyPress={handleKeyPress}
-            className="w-36 h-8 text-sm border-0 bg-white/10 backdrop-blur-sm rounded-full focus:bg-white/20 dark:bg-slate-500/20 dark:focus:bg-slate-400/30 dark:text-slate-200 dark:placeholder-slate-400"
+            className="w-36 h-8 text-sm"
           />
           <Button 
             size="sm" 
             variant="ghost" 
-            className="rounded-full h-8 w-8 p-0 hover:bg-white/20 backdrop-blur-sm border-0 dark:hover:bg-slate-700/30"
+            className="h-8 w-8 p-0 hover:bg-gray-100"
             onClick={onAddTag}
           >
             <Plus className="w-4 h-4" />
