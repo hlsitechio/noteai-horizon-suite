@@ -14,120 +14,30 @@ export const useReminderManager = () => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const isInitializedRef = useRef(false);
 
-  // Initialize push notifications
-  useEffect(() => {
-    if (isInitializedRef.current) return;
-    isInitializedRef.current = true;
-
-    const initializePushNotifications = async () => {
-      // Initialize service worker
-      const swInitialized = await PushNotificationService.initialize();
-      if (!swInitialized) {
-        console.warn('Push notifications not supported');
-        return;
-      }
-
-      // Request notification permission
-      const permissionGranted = await PushNotificationService.requestPermission();
-      if (!permissionGranted) {
-        console.warn('Notification permission not granted');
-        return;
-      }
-
-      // Subscribe to push notifications
-      const subscription = await PushNotificationService.subscribeToPush();
-      if (subscription) {
-        setPushEnabled(true);
-        console.log('Push notifications enabled');
-      }
-    };
-
-    initializePushNotifications();
-
-    // Request notification permission on mount
-    NotificationService.requestPermission().then(granted => {
-      if (!granted) {
-        toast.error('Please enable notifications to receive reminders');
-      }
-    });
-  }, []);
+  // Disabled reminder functionality - no initialization or checking
+  console.log('Reminder manager disabled - no reminders will be processed');
 
   const checkForReminders = useCallback(async () => {
-    if (isChecking) {
-      console.log('Reminder check already in progress, skipping...');
-      return;
-    }
-    
-    setIsChecking(true);
-    try {
-      const reminders = await EnhancedReminderService.getPendingRemindersWithPreferences();
-      setPendingReminders(reminders);
-
-      // Send all types of notifications for each reminder
-      for (const reminder of reminders) {
-        // Add to in-app notifications
-        addNotification({
-          title: `📝 Reminder: ${reminder.note_title}`,
-          message: 'Click to view your note',
-          type: 'info'
-        });
-
-        // Send all configured notifications (browser, push, email, SMS)
-        await EnhancedReminderService.sendReminderNotifications(reminder);
-      }
-    } catch (error) {
-      console.error('Error checking reminders:', error);
-    } finally {
-      setIsChecking(false);
-    }
-  }, [isChecking, addNotification]);
+    console.log('Reminder checking is disabled');
+    return;
+  }, []);
 
   const snoozeReminder = useCallback(async (reminderId: string, minutes: number = 15) => {
-    const success = await EnhancedReminderService.snoozeReminder(reminderId, minutes);
-    if (success) {
-      toast.success(`Reminder snoozed for ${minutes} minutes`);
-      setPendingReminders(prev => prev.filter(r => r.reminder_id !== reminderId));
-      
-      addNotification({
-        title: 'Reminder Snoozed',
-        message: `Reminder snoozed for ${minutes} minutes`,
-        type: 'success'
-      });
-    } else {
-      toast.error('Failed to snooze reminder');
-    }
-  }, [addNotification]);
+    console.log('Reminder functionality is disabled');
+    return false;
+  }, []);
 
   const dismissReminder = useCallback(async (reminderId: string) => {
-    const success = await EnhancedReminderService.markReminderSent(reminderId);
-    if (success) {
-      toast.success('Reminder dismissed');
-      setPendingReminders(prev => prev.filter(r => r.reminder_id !== reminderId));
-      
-      addNotification({
-        title: 'Reminder Dismissed',
-        message: 'Reminder has been dismissed',
-        type: 'success'
-      });
-    } else {
-      toast.error('Failed to dismiss reminder');
-    }
-  }, [addNotification]);
+    console.log('Reminder functionality is disabled');
+    return false;
+  }, []);
 
-  // Set up interval for checking reminders
+  // Clear any existing intervals on mount and cleanup
   useEffect(() => {
-    // Clear any existing interval
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
-
-    // Initial check
-    checkForReminders();
-
-    // Set up new interval - check every 60 seconds
-    intervalRef.current = setInterval(() => {
-      checkForReminders();
-    }, 60000);
 
     return () => {
       if (intervalRef.current) {
@@ -135,12 +45,12 @@ export const useReminderManager = () => {
         intervalRef.current = null;
       }
     };
-  }, [checkForReminders]);
+  }, []);
 
   return {
-    pendingReminders,
-    isChecking,
-    pushEnabled,
+    pendingReminders: [],
+    isChecking: false,
+    pushEnabled: false,
     checkForReminders,
     snoozeReminder,
     dismissReminder
