@@ -1,20 +1,23 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
+import { useDashboardLayout, DashboardBlock } from '../hooks/useDashboardLayout';
 import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
 import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
 import AnalyticsOverview from '../components/Dashboard/AnalyticsOverview';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
 import FullscreenToggle from '../components/Dashboard/FullscreenToggle';
+import DraggableBlock from '../components/Dashboard/DraggableBlock';
 
 const Dashboard: React.FC = () => {
   const { notes, setCurrentNote } = useNotes();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { blocks, initializeBlocks, swapBlocks } = useDashboardLayout();
 
   // Calculate stats from real user data
   const totalNotes = notes.length;
@@ -34,6 +37,46 @@ const Dashboard: React.FC = () => {
     weekAgo.setDate(weekAgo.getDate() - 7);
     return new Date(note.createdAt) > weekAgo;
   }).length;
+
+  // Initialize dashboard blocks
+  useEffect(() => {
+    const initialBlocks: DashboardBlock[] = [
+      {
+        id: 'analytics',
+        component: AnalyticsOverview,
+        props: {
+          totalNotes,
+          favoriteNotes,
+          categoryCounts,
+          weeklyNotes,
+          notes
+        },
+        gridClass: 'col-span-5'
+      },
+      {
+        id: 'recent-activity',
+        component: SecureRecentActivity,
+        props: {
+          recentNotes,
+          onCreateNote: handleCreateNote,
+          onEditNote: handleEditNote
+        },
+        gridClass: 'col-span-4'
+      },
+      {
+        id: 'workflow-actions',
+        component: WorkflowActions,
+        props: {
+          notes,
+          onCreateNote: handleCreateNote,
+          onEditNote: handleEditNote
+        },
+        gridClass: 'col-span-3'
+      }
+    ];
+    
+    initializeBlocks(initialBlocks);
+  }, [totalNotes, favoriteNotes, categoryCounts, weeklyNotes, notes, recentNotes]);
 
   // Enhanced AI context integration with real user data
   useQuantumAIIntegration({
@@ -63,6 +106,10 @@ const Dashboard: React.FC = () => {
     navigate('/app/editor');
   };
 
+  const handleBlockSwap = (draggedId: string, targetId: string) => {
+    swapBlocks(draggedId, targetId);
+  };
+
   return (
     <div className="w-full h-screen max-h-screen flex flex-col bg-background overflow-hidden">
       {/* Fullscreen Toggle Button */}
@@ -88,35 +135,20 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Main Content Area - Calculated height to fill remaining space */}
-        <div className="grid grid-cols-12 gap-4 flex-1 min-h-0 w-full h-[770px]">
-          {/* Analytics Overview - 5/12 columns */}
-          <div className="col-span-5 h-full min-h-0">
-            <AnalyticsOverview
-              totalNotes={totalNotes}
-              favoriteNotes={favoriteNotes}
-              categoryCounts={categoryCounts}
-              weeklyNotes={weeklyNotes}
-              notes={notes}
-            />
-          </div>
-
-          {/* Recent Activity - 4/12 columns */}
-          <div className="col-span-4 h-full min-h-0">
-            <SecureRecentActivity 
-              recentNotes={recentNotes}
-              onCreateNote={handleCreateNote}
-              onEditNote={handleEditNote}
-            />
-          </div>
-
-          {/* Quick Actions - 3/12 columns */}
-          <div className="col-span-3 h-full min-h-0">
-            <WorkflowActions 
-              notes={notes}
-              onCreateNote={handleCreateNote}
-              onEditNote={handleEditNote}
-            />
-          </div>
+        <div className="grid grid-cols-12 gap-4 flex-1 min-h-0 w-full h-[770px] relative">
+          {blocks.map((block) => {
+            const BlockComponent = block.component;
+            return (
+              <DraggableBlock
+                key={block.id}
+                id={block.id}
+                gridClass={block.gridClass}
+                onSwap={handleBlockSwap}
+              >
+                <BlockComponent {...block.props} />
+              </DraggableBlock>
+            );
+          })}
         </div>
       </div>
     </div>
