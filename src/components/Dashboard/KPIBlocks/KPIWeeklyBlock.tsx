@@ -9,7 +9,7 @@ interface KPIWeeklyBlockProps {
 
 const KPIWeeklyBlock: React.FC<KPIWeeklyBlockProps> = ({ weeklyNotes }) => {
   return (
-    <Card className="h-full border-0 bg-gradient-to-br from-orange-500 to-orange-600 text-white shadow-lg">
+    <Card className="h-full border-0 bg-gradient-to-br from-orange-500 to-orange-600 text-white shadow-lg rounded-2xl">
       <CardContent className="p-4 h-full flex flex-col justify-between">
         <div className="flex items-center justify-between">
           <Calendar className="w-6 h-6 text-orange-100" />

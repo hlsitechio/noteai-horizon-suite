@@ -15,17 +15,17 @@ const KPICategoriesBlock: React.FC<KPICategoriesBlockProps> = ({
     .sort(([,a], [,b]) => b - a)[0]?.[0] || 'general';
 
   return (
-    <Card className="h-full border-0 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm hover:from-card/90 hover:to-card/50 transition-all duration-300">
-      <CardContent className="p-4 flex items-center gap-3 h-full">
-        <div className="w-12 h-12 rounded-xl bg-purple-500 flex items-center justify-center flex-shrink-0">
-          <Tag className="w-6 h-6 text-white" />
+    <Card className="h-full border-0 bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg rounded-2xl">
+      <CardContent className="p-4 h-full flex flex-col justify-between">
+        <div className="flex items-center justify-between">
+          <Tag className="w-6 h-6 text-purple-100" />
+          <div className="text-right">
+            <div className="text-2xl font-bold">{totalCategories}</div>
+            <div className="text-purple-100 text-sm font-medium">Categories</div>
+          </div>
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="text-2xl font-bold text-foreground">{totalCategories}</div>
-          <div className="text-sm text-muted-foreground truncate">Categories</div>
-          {topCategory && (
-            <div className="text-xs text-muted-foreground/80 mt-1">{topCategory}</div>
-          )}
+        <div className="text-purple-100 text-xs">
+          {topCategory}
         </div>
       </CardContent>
     </Card>
