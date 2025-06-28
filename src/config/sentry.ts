@@ -10,6 +10,15 @@ export const initSentry = () => {
         maskAllText: false,
         blockAllMedia: false,
       }),
+      // Add breadcrumbs integration for better error context
+      Sentry.breadcrumbsIntegration({
+        console: true,
+        dom: true,
+        fetch: true,
+        history: true,
+        sentry: true,
+        xhr: true,
+      }),
     ],
     // Performance Monitoring
     tracesSampleRate: 1.0, // Capture 100% of the transactions
@@ -21,13 +30,42 @@ export const initSentry = () => {
     
     environment: import.meta.env.MODE,
     
+    // Enhanced error capturing
+    ignoreErrors: [
+      // Ignore common browser extension errors
+      'Non-Error promise rejection captured',
+      'ResizeObserver loop limit exceeded',
+      'Script error.',
+      'Network request failed',
+    ],
+    
+    // Capture all console errors
     beforeSend(event, hint) {
       // In development, log to console but still send to Sentry for testing
       if (import.meta.env.DEV) {
         console.log('Sentry event (dev mode):', event);
         console.log('Error details:', hint.originalException);
       }
+      
+      // Capture console errors in breadcrumbs
+      if (event.breadcrumbs) {
+        event.breadcrumbs.forEach(breadcrumb => {
+          if (breadcrumb.category === 'console' && breadcrumb.level === 'error') {
+            console.log('Console error captured:', breadcrumb.message);
+          }
+        });
+      }
+      
       return event;
     },
+    
+    // Enable debug mode in development
+    debug: import.meta.env.DEV,
+    
+    // Capture uncaught exceptions
+    autoSessionTracking: true,
+    
+    // Enhanced transport options
+    transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
   });
 };
