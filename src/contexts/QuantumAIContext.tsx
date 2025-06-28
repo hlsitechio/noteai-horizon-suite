@@ -40,8 +40,19 @@ export const useQuantumAI = () => {
   return context;
 };
 
+// Safe location hook that doesn't throw if Router is not available
+const useSafeLocation = () => {
+  try {
+    return useLocation();
+  } catch (error) {
+    // If useLocation fails (Router not available), return a default location
+    console.warn('Router context not available, using default location');
+    return { pathname: '/' };
+  }
+};
+
 export const QuantumAIProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const location = useLocation();
+  const location = useSafeLocation();
   const [state, setState] = useState<QuantumAIState>({
     isVisible: false,
     mode: 'command',
@@ -57,13 +68,15 @@ export const QuantumAIProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Update context when route changes
   useEffect(() => {
-    setState(prev => ({
-      ...prev,
-      currentContext: {
-        ...prev.currentContext,
-        page: location.pathname
-      }
-    }));
+    if (location && location.pathname) {
+      setState(prev => ({
+        ...prev,
+        currentContext: {
+          ...prev.currentContext,
+          page: location.pathname
+        }
+      }));
+    }
   }, [location]);
 
   // Global keyboard shortcut listener
