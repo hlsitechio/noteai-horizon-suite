@@ -1,5 +1,6 @@
 
 import React from 'react';
+import GlobalErrorBoundary from './ErrorBoundary/GlobalErrorBoundary';
 import { ErrorBoundaryWithTracing } from './ErrorBoundaryWithTracing';
 import { useGlobalErrorHandler } from '../hooks/useGlobalErrorHandler';
 
@@ -12,9 +13,11 @@ const AppWithErrorHandling: React.FC<AppWithErrorHandlingProps> = ({ children })
   useGlobalErrorHandler();
 
   return (
-    <ErrorBoundaryWithTracing>
-      {children}
-    </ErrorBoundaryWithTracing>
+    <GlobalErrorBoundary>
+      <ErrorBoundaryWithTracing>
+        {children}
+      </ErrorBoundaryWithTracing>
+    </GlobalErrorBoundary>
   );
 };
 

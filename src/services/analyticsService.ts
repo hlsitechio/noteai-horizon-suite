@@ -1,4 +1,6 @@
 
+import { safeSendAnalyticsEvent, safeSetAnalyticsUserId, safeTrackPageView, safeTrackError, enableAnalyticsDebugMode } from '@/utils/safeAnalytics';
+
 declare global {
   interface Window {
     gtag: (...args: any[]) => void;
@@ -13,49 +15,53 @@ export class AnalyticsService {
   static initialize() {
     if (this.isInitialized || typeof window === 'undefined') return;
 
-    // Initialize Google Analytics
-    this.loadGoogleAnalytics();
-    this.isInitialized = true;
+    try {
+      // Initialize Google Analytics
+      this.loadGoogleAnalytics();
+      this.isInitialized = true;
+      console.log('Analytics service initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize analytics:', error);
+    }
   }
 
   private static loadGoogleAnalytics() {
-    // Create gtag script
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${this.GA_MEASUREMENT_ID}`;
-    document.head.appendChild(script);
+    try {
+      // Create gtag script
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${this.GA_MEASUREMENT_ID}`;
+      document.head.appendChild(script);
 
-    // Initialize dataLayer and gtag
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = function gtag() {
-      window.dataLayer.push(arguments);
-    };
+      // Initialize dataLayer and gtag
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function gtag() {
+        window.dataLayer.push(arguments);
+      };
 
-    window.gtag('js', new Date());
-    window.gtag('config', this.GA_MEASUREMENT_ID, {
-      page_title: document.title,
-      page_location: window.location.href,
-    });
+      window.gtag('js', new Date());
+      window.gtag('config', this.GA_MEASUREMENT_ID, {
+        page_title: document.title,
+        page_location: window.location.href,
+      });
+
+      // Enable debug mode in development
+      if (import.meta.env.DEV) {
+        enableAnalyticsDebugMode();
+      }
+    } catch (error) {
+      console.error('Failed to load Google Analytics:', error);
+    }
   }
 
   static trackEvent(eventName: string, parameters?: Record<string, any>) {
-    if (!this.isInitialized || typeof window === 'undefined') return;
-
-    window.gtag('event', eventName, {
-      event_category: 'engagement',
-      event_label: parameters?.label || '',
-      value: parameters?.value || 0,
-      ...parameters,
-    });
+    if (!this.isInitialized) return;
+    safeSendAnalyticsEvent(eventName, parameters);
   }
 
   static trackPageView(pagePath: string, pageTitle?: string) {
-    if (!this.isInitialized || typeof window === 'undefined') return;
-
-    window.gtag('config', this.GA_MEASUREMENT_ID, {
-      page_path: pagePath,
-      page_title: pageTitle || document.title,
-    });
+    if (!this.isInitialized) return;
+    safeTrackPageView(pagePath, pageTitle);
   }
 
   static trackUserAction(action: string, category: string = 'user_interaction') {
@@ -66,18 +72,11 @@ export class AnalyticsService {
   }
 
   static trackError(error: Error, context?: string) {
-    this.trackEvent('exception', {
-      description: error.message,
-      fatal: false,
-      context: context || 'unknown',
-    });
+    safeTrackError(error, context);
   }
 
   static setUserId(userId: string) {
-    if (!this.isInitialized || typeof window === 'undefined') return;
-
-    window.gtag('config', this.GA_MEASUREMENT_ID, {
-      user_id: userId,
-    });
+    if (!this.isInitialized) return;
+    safeSetAnalyticsUserId(userId);
   }
 }
