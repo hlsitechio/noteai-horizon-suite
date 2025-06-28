@@ -6,10 +6,45 @@ import { useFolders } from '../contexts/FoldersContext';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import { ErrorBoundaryWithTracing } from '../components/ErrorBoundaryWithTracing';
 import NotesHeader from './Notes/NotesHeader';
-import NotesFilters from './Notes/NotesFilters';
 import NotesGrid from './Notes/NotesGrid';
 import { useState } from 'react';
 import { NoteFilters } from '../types/note';
+
+// Create a simple filters component since NotesFilters doesn't accept props
+const SimpleFilters: React.FC<{
+  filters: NoteFilters;
+  onFiltersChange: (filters: NoteFilters) => void;
+}> = ({ filters, onFiltersChange }) => {
+  return (
+    <div className="flex gap-4 p-4 bg-card rounded-lg border">
+      <input
+        type="text"
+        placeholder="Search notes..."
+        value={filters.searchTerm || ''}
+        onChange={(e) => onFiltersChange({ ...filters, searchTerm: e.target.value })}
+        className="flex-1 px-3 py-2 border rounded-md"
+      />
+      <select
+        value={filters.category || ''}
+        onChange={(e) => onFiltersChange({ ...filters, category: e.target.value || undefined })}
+        className="px-3 py-2 border rounded-md"
+      >
+        <option value="">All Categories</option>
+        <option value="personal">Personal</option>
+        <option value="work">Work</option>
+        <option value="ideas">Ideas</option>
+      </select>
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={filters.isFavorite || false}
+          onChange={(e) => onFiltersChange({ ...filters, isFavorite: e.target.checked ? true : undefined })}
+        />
+        Favorites Only
+      </label>
+    </div>
+  );
+};
 
 const NotesWithTracing: React.FC = () => {
   const [filters, setFilters] = useState<NoteFilters>({});
@@ -62,7 +97,7 @@ const NotesWithTracing: React.FC = () => {
     <ErrorBoundaryWithTracing>
       <div className="space-y-3 h-full">
         <NotesHeader />
-        <NotesFilters filters={filters} onFiltersChange={setFilters} />
+        <SimpleFilters filters={filters} onFiltersChange={setFilters} />
         <NotesGrid notes={notes} hasFilters={hasFilters} />
       </div>
     </ErrorBoundaryWithTracing>

@@ -53,10 +53,16 @@ export const useErrorTracing = () => {
       // Log to console for development
       console.error('Error Trace:', errorTrace);
 
-      // Store in Supabase for monitoring
+      // Store in security_audit_log table for monitoring
       const { error } = await supabase
-        .from('error_traces')
-        .insert(errorTrace);
+        .from('security_audit_log')
+        .insert({
+          user_id: user?.id,
+          action: 'error_trace',
+          table_name: payload.component,
+          record_id: traceId,
+          new_values: errorTrace,
+        });
 
       if (error) {
         console.error('Failed to store error trace:', error);

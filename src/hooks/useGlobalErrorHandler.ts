@@ -44,40 +44,50 @@ export const useGlobalErrorHandler = () => {
       toast.error('An unexpected error occurred');
     };
 
-    // Set up global query error handler
-    queryClient.setDefaultOptions({
-      queries: {
-        onError: (error) => {
-          console.error('Query error:', error);
+    // Set up global query error handler using query cache
+    const queryCache = queryClient.getQueryCache();
+    const mutationCache = queryClient.getMutationCache();
+
+    const unsubscribeQuery = queryCache.subscribe((event) => {
+      if (event.type === 'observerResultsUpdated') {
+        const { query } = event;
+        if (query.state.error) {
+          console.error('Query error:', query.state.error);
           
-          if (error instanceof Error) {
+          if (query.state.error instanceof Error) {
             traceError({
               component: 'GlobalErrorHandler',
               operation: 'queryError',
-              error,
+              error: query.state.error,
               context: {
                 type: 'tanstackQueryError',
+                queryKey: query.queryKey,
               },
             });
           }
-        },
-      },
-      mutations: {
-        onError: (error) => {
-          console.error('Mutation error:', error);
+        }
+      }
+    });
+
+    const unsubscribeMutation = mutationCache.subscribe((event) => {
+      if (event.type === 'observerResultsUpdated') {
+        const { mutation } = event;
+        if (mutation.state.error) {
+          console.error('Mutation error:', mutation.state.error);
           
-          if (error instanceof Error) {
+          if (mutation.state.error instanceof Error) {
             traceError({
               component: 'GlobalErrorHandler',
               operation: 'mutationError',
-              error,
+              error: mutation.state.error,
               context: {
                 type: 'tanstackMutationError',
+                mutationKey: mutation.options.mutationKey,
               },
             });
           }
-        },
-      },
+        }
+      }
     });
 
     // Add event listeners
@@ -88,6 +98,8 @@ export const useGlobalErrorHandler = () => {
     return () => {
       window.removeEventListener('unhandledrejection', handleUnhandledRejection);
       window.removeEventListener('error', handleError);
+      unsubscribeQuery();
+      unsubscribeMutation();
     };
   }, [traceError, queryClient]);
 };

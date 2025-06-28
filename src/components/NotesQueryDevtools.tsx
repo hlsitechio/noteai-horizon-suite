@@ -11,7 +11,7 @@ const NotesQueryDevtools: React.FC = () => {
   return (
     <ReactQueryDevtools
       initialIsOpen={false}
-      position="bottom-right"
+      position="bottom"
       toggleButtonProps={{
         style: {
           backgroundColor: '#3b82f6',

@@ -30,22 +30,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// Add global error handling
-queryClient.setDefaultOptions({
-  queries: {
-    ...queryClient.getDefaultOptions().queries,
-    onError: (error) => {
-      console.error('Global Query Error:', error);
-    },
-  },
-  mutations: {
-    ...queryClient.getDefaultOptions().mutations,
-    onError: (error) => {
-      console.error('Global Mutation Error:', error);
-    },
-  },
-});
-
 console.log('QueryClient created with enhanced error handling, rendering app...');
 
 const rootElement = document.getElementById("root");
@@ -60,7 +44,7 @@ if (!rootElement) {
       {import.meta.env.DEV && (
         <ReactQueryDevtools 
           initialIsOpen={false}
-          position="bottom-right"
+          position="bottom"
           toggleButtonProps={{
             style: {
               backgroundColor: '#3b82f6',
