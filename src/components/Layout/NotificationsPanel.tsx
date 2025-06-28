@@ -68,7 +68,7 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ isOpen, onClose
               </Badge>
             )}
           </div>
-          <SheetDescription className="sr-only">
+          <SheetDescription>
             View and manage your notifications
           </SheetDescription>
         </SheetHeader>

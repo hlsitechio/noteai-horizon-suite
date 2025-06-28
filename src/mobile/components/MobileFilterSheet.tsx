@@ -2,7 +2,7 @@
 import React from 'react';
 import { X, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -37,6 +37,9 @@ const MobileFilterSheet: React.FC<MobileFilterSheetProps> = ({ isOpen, onClose }
             <Filter className="w-5 h-5" />
             Filter Notes
           </SheetTitle>
+          <SheetDescription>
+            Filter your notes by category and favorites
+          </SheetDescription>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="w-4 h-4" />
           </Button>
