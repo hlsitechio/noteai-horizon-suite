@@ -42,9 +42,15 @@ export const useDashboardLayout = () => {
     });
   }, []);
 
+  const reorderBlocks = useCallback((reorderedBlocks: DashboardBlock[]) => {
+    console.log('useDashboardLayout: Reordering blocks to:', reorderedBlocks.map(b => b.id));
+    setBlocks(reorderedBlocks);
+  }, []);
+
   return {
     blocks,
     initializeBlocks,
-    swapBlocks
+    swapBlocks,
+    reorderBlocks
   };
 };

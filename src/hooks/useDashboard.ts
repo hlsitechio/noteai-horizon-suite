@@ -16,7 +16,7 @@ import WorkflowActions from '../components/Dashboard/WorkflowActions';
 export const useDashboard = () => {
   const { notes, setCurrentNote } = useNotes();
   const navigate = useNavigate();
-  const { blocks, initializeBlocks, swapBlocks } = useDashboardLayout();
+  const { blocks, initializeBlocks, reorderBlocks } = useDashboardLayout();
   const [isDragging, setIsDragging] = useState(false);
   const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
 
@@ -69,9 +69,9 @@ export const useDashboard = () => {
     navigate('/app/editor');
   };
 
-  const handleBlockSwap = (draggedId: string, targetId: string) => {
-    console.log('Dashboard: Swapping blocks', draggedId, 'with', targetId);
-    swapBlocks(draggedId, targetId);
+  const handleBlocksReorder = (reorderedBlocks: DashboardBlock[]) => {
+    console.log('Dashboard: Reordering blocks to new order:', reorderedBlocks.map(b => b.id));
+    reorderBlocks(reorderedBlocks);
   };
 
   const handleDragStart = (id: string) => {
@@ -189,7 +189,7 @@ export const useDashboard = () => {
     blocks,
     isDragging,
     draggedBlockId,
-    handleBlockSwap,
+    handleBlocksReorder,
     handleDragStart,
     handleDragEnd
   };

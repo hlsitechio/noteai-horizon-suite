@@ -1,7 +1,7 @@
 
 import React from 'react';
 import WelcomeHeader from './WelcomeHeader';
-import DashboardGrid from './DashboardGrid';
+import DndDashboard from './DndDashboard';
 import { useDashboard } from '../../hooks/useDashboard';
 
 const DashboardContent: React.FC = () => {
@@ -9,7 +9,7 @@ const DashboardContent: React.FC = () => {
     blocks,
     isDragging,
     draggedBlockId,
-    handleBlockSwap,
+    handleBlocksReorder,
     handleDragStart,
     handleDragEnd
   } = useDashboard();
@@ -22,11 +22,11 @@ const DashboardContent: React.FC = () => {
       </div>
 
       {/* Main Content Area - All draggable components with mobile optimization */}
-      <DashboardGrid
+      <DndDashboard
         blocks={blocks}
+        onSwap={handleBlocksReorder}
         isDragging={isDragging}
         draggedBlockId={draggedBlockId}
-        onBlockSwap={handleBlockSwap}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       />
