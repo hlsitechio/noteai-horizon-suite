@@ -42,21 +42,17 @@ import MobileApp from './mobile/MobileApp';
 
 import './App.css';
 
-// Debug UTS error on app initialization
-console.log('App component initializing...');
-console.log('Checking for missing dependencies or components...');
-
 // Create optimized QueryClient with reduced retry attempts
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
       gcTime: 1000 * 60 * 30, // 30 minutes
-      retry: 1, // Reduced from 2 to prevent excessive retries
+      retry: 1,
       refetchOnWindowFocus: false,
     },
     mutations: {
-      retry: 0, // No retries for mutations to prevent spam
+      retry: 0,
     },
   },
 });
@@ -68,25 +64,14 @@ const ReminderManagerInit: React.FC<{ children: React.ReactNode }> = ({ children
 };
 
 function App() {
+  console.log('App: Rendering with current location:', window.location.pathname);
+
   // Add debugging for routing and UTS error
   React.useEffect(() => {
     console.log('App component mounted');
     console.log('Current location:', window.location.href);
-    console.log('DOM loaded, checking for UTS-related elements...');
     
-    // Check for any elements or scripts that might be related to UTS
-    const scripts = document.querySelectorAll('script');
-    const utsRelated = Array.from(scripts).filter(script => 
-      script.src.includes('UTS') || 
-      script.innerHTML.includes('UTS') ||
-      script.innerHTML.includes('No NF')
-    );
-    
-    if (utsRelated.length > 0) {
-      console.warn('Found UTS-related scripts:', utsRelated);
-    }
-    
-    // Add navigation listener
+    // Add navigation listener for debugging
     const handlePopState = () => {
       console.log('Navigation detected:', window.location.href);
     };

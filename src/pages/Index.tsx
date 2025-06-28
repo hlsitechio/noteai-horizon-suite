@@ -12,21 +12,23 @@ const Index: React.FC = () => {
   console.log('Index component - Auth state:', { user: !!user, isLoading });
 
   useEffect(() => {
-    // Only redirect once auth loading is complete
-    if (!isLoading) {
-      console.log('Index: Auth loaded, determining redirect');
-      
-      if (user) {
-        console.log('User authenticated, navigating to dashboard');
-        navigate('/app/dashboard', { replace: true });
-      } else {
-        console.log('User not authenticated, navigating to landing');
-        navigate('/landing', { replace: true });
+    // Add a small delay to prevent rapid redirects
+    const redirectTimer = setTimeout(() => {
+      if (!isLoading) {
+        if (user) {
+          console.log('Index: User authenticated, navigating to dashboard');
+          navigate('/app/dashboard', { replace: true });
+        } else {
+          console.log('Index: User not authenticated, navigating to landing');
+          navigate('/landing', { replace: true });
+        }
       }
-    }
+    }, 100);
+
+    return () => clearTimeout(redirectTimer);
   }, [user, isLoading, navigate]);
 
-  // Show loading state while auth is being determined or while redirecting
+  // Show loading state while auth is being determined
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center">

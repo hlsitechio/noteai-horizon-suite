@@ -14,6 +14,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   console.log('ProtectedRoute - Auth state:', { user: !!user, isLoading, path: location.pathname });
 
+  // Show loading while determining auth state
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -25,13 +26,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
+  // Redirect to login if not authenticated
   if (!user) {
-    console.log('No user found, redirecting to login');
-    // Store the attempted location to redirect back after login
+    console.log('ProtectedRoute: No user found, redirecting to login');
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  console.log('User authenticated, rendering protected content');
+  console.log('ProtectedRoute: User authenticated, rendering protected content');
   return <>{children}</>;
 };
 

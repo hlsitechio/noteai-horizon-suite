@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthContextType } from './auth/types';
@@ -38,7 +37,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const initializeAuth = async () => {
       try {
+        // Set a timeout to prevent infinite loading
+        const timeoutId = setTimeout(() => {
+          if (mounted.current) {
+            console.log('Auth initialization timeout, clearing auth');
+            clearAuth();
+          }
+        }, 5000);
+
         const { data: { session }, error } = await supabase.auth.getSession();
+        
+        clearTimeout(timeoutId);
         
         if (!mounted.current) return;
         
