@@ -27,7 +27,7 @@ function App() {
         <NotesProvider>
           <QuantumAIProvider>
             <Router>
-              <div className="min-h-screen bg-background">
+              <div className="min-h-screen bg-background w-full">
                 <Routes>
                   {/* Public routes */}
                   <Route path="/" element={<Landing />} />
@@ -35,7 +35,7 @@ function App() {
                   <Route path="/login" element={<Login />} />
                   <Route path="/mobile/*" element={<MobileApp />} />
                   
-                  {/* Protected routes */}
+                  {/* Protected routes with layout */}
                   <Route path="/app" element={
                     <ProtectedRoute>
                       <SidebarProvider>
@@ -43,7 +43,7 @@ function App() {
                       </SidebarProvider>
                     </ProtectedRoute>
                   }>
-                    <Route index element={<Navigate to="/app/dashboard" replace />} />
+                    <Route index element={<Navigate to="dashboard" replace />} />
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="chat" element={<Chat />} />
                     <Route path="editor" element={<Editor />} />
@@ -52,11 +52,10 @@ function App() {
                     <Route path="settings" element={<Settings />} />
                   </Route>
                   
-                  {/* Redirect unknown routes to landing */}
+                  {/* Catch all route */}
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
                 
-                {/* Global components */}
                 <GlobalAICopilot />
                 <Toaster />
               </div>

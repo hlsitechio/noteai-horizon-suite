@@ -5,6 +5,8 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import App from './App.tsx'
 import './index.css'
 
+console.log('Main.tsx loading...');
+
 // Create a client with optimized settings for your app
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,9 +27,18 @@ const queryClient = new QueryClient({
   },
 });
 
-createRoot(document.getElementById("root")!).render(
-  <QueryClientProvider client={queryClient}>
-    <App />
-    <ReactQueryDevtools initialIsOpen={false} />
-  </QueryClientProvider>
-);
+console.log('QueryClient created, rendering app...');
+
+const rootElement = document.getElementById("root");
+if (!rootElement) {
+  console.error('Root element not found!');
+} else {
+  console.log('Root element found, creating React root...');
+  createRoot(rootElement).render(
+    <QueryClientProvider client={queryClient}>
+      <App />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
+  console.log('App rendered successfully');
+}
