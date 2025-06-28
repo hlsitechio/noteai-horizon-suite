@@ -43,7 +43,7 @@ if (!rootElement) {
       {/* Fixed React Query Devtools configuration with valid position */}
       <ReactQueryDevtools 
         initialIsOpen={false}
-        position="bottom-left"
+        position="bottom"
       />
     </QueryClientProvider>
   );
