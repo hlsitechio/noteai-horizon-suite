@@ -5,7 +5,6 @@ import Hero from '../components/Landing/Hero';
 import Features from '../components/Landing/Features';
 import Pricing from '../components/Landing/Pricing';
 import Footer from '../components/Landing/Footer';
-import ErrorTestButton from '../components/Testing/ErrorTestButton';
 
 const Landing: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -32,12 +31,6 @@ const Landing: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation isScrolled={isScrolled} mousePosition={mousePosition} />
-      
-      {/* Test Error Button - Remove this in production */}
-      <div className="fixed top-24 right-4 z-50">
-        <ErrorTestButton />
-      </div>
-      
       <Hero />
       <Features />
       <Pricing />
