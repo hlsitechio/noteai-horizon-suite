@@ -1,5 +1,4 @@
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
 import { useIsMobile } from '../hooks/use-mobile';
@@ -12,12 +11,15 @@ import AnalyticsOverview from '../components/Dashboard/AnalyticsOverview';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
 import FullscreenToggle from '../components/Dashboard/FullscreenToggle';
 import DraggableBlock from '../components/Dashboard/DraggableBlock';
+import '../components/Dashboard/DragDropStyles.css';
 
 const Dashboard: React.FC = () => {
   const { notes, setCurrentNote } = useNotes();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { blocks, initializeBlocks, swapBlocks } = useDashboardLayout();
+  const [isDragging, setIsDragging] = useState(false);
+  const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
 
   // Calculate stats from real user data
   const totalNotes = notes.length;
@@ -107,7 +109,20 @@ const Dashboard: React.FC = () => {
   };
 
   const handleBlockSwap = (draggedId: string, targetId: string) => {
+    console.log('Dashboard: Swapping blocks', draggedId, 'with', targetId);
     swapBlocks(draggedId, targetId);
+  };
+
+  const handleDragStart = (id: string) => {
+    setIsDragging(true);
+    setDraggedBlockId(id);
+    console.log('Drag started for block:', id);
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    setDraggedBlockId(null);
+    console.log('Drag ended');
   };
 
   return (
@@ -134,8 +149,10 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Calculated height to fill remaining space */}
-        <div className="grid grid-cols-12 gap-4 flex-1 min-h-0 w-full h-[770px] relative">
+        {/* Main Content Area - Enhanced with drag feedback */}
+        <div className={`grid grid-cols-12 gap-4 flex-1 min-h-0 w-full h-[770px] relative transition-all duration-200 ${
+          isDragging ? 'bg-blue-50/30' : ''
+        }`}>
           {blocks.map((block) => {
             const BlockComponent = block.component;
             return (
@@ -144,11 +161,20 @@ const Dashboard: React.FC = () => {
                 id={block.id}
                 gridClass={block.gridClass}
                 onSwap={handleBlockSwap}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
               >
                 <BlockComponent {...block.props} />
               </DraggableBlock>
             );
           })}
+          
+          {/* Drag status indicator */}
+          {isDragging && (
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg font-medium">
+              Dragging: {draggedBlockId} - Drop on another block to swap
+            </div>
+          )}
         </div>
       </div>
     </div>
