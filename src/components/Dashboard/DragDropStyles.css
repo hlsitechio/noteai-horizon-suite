@@ -12,10 +12,10 @@
   pointer-events: auto;
 }
 
-/* Enhanced drop target styling with glow effect */
+/* Enhanced drop target styling with improved glow effect */
 .drop-target-active {
   transform: scale(1.02);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 0 25px rgba(59, 130, 246, 0.4), 0 8px 25px -8px rgba(59, 130, 246, 0.3);
 }
 
@@ -52,7 +52,7 @@
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
-/* Smooth grid transitions */
+/* Smooth grid transitions with improved timing */
 .dashboard-grid {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -61,17 +61,29 @@
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.02), rgba(139, 92, 246, 0.02));
 }
 
-/* Drop zone hover effects */
+/* Drop zone hover effects with better transitions */
 [data-block-id]:not(.react-draggable-dragging):hover {
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.dragging-active [data-block-id]:not(.react-draggable-dragging) {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 12px;
 }
 
 body.dragging-active [data-block-id]:not(.react-draggable-dragging):hover {
   background: rgba(59, 130, 246, 0.05);
   box-shadow: 0 4px 20px -4px rgba(59, 130, 246, 0.15);
+  backdrop-filter: blur(2px);
+}
+
+/* Accessibility improvements */
+.drag-handle:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Grid snap visual indicator */
+.react-draggable-dragging {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
 }
