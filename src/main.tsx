@@ -20,14 +20,33 @@ const queryClient = new QueryClient({
         }
         return failureCount < 3;
       },
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
     },
     mutations: {
       retry: 1,
+      networkMode: 'offlineFirst',
     },
   },
 });
 
-console.log('QueryClient created, rendering app...');
+// Add global error handling
+queryClient.setDefaultOptions({
+  queries: {
+    ...queryClient.getDefaultOptions().queries,
+    onError: (error) => {
+      console.error('Global Query Error:', error);
+    },
+  },
+  mutations: {
+    ...queryClient.getDefaultOptions().mutations,
+    onError: (error) => {
+      console.error('Global Mutation Error:', error);
+    },
+  },
+});
+
+console.log('QueryClient created with enhanced error handling, rendering app...');
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -37,11 +56,27 @@ if (!rootElement) {
   createRoot(rootElement).render(
     <QueryClientProvider client={queryClient}>
       <App />
-      {/* Only show React Query Devtools in development */}
+      {/* Enhanced React Query Devtools with custom styling */}
       {import.meta.env.DEV && (
-        <ReactQueryDevtools initialIsOpen={false} />
+        <ReactQueryDevtools 
+          initialIsOpen={false}
+          position="bottom-right"
+          toggleButtonProps={{
+            style: {
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              fontSize: '12px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              zIndex: 99999,
+            }
+          }}
+        />
       )}
     </QueryClientProvider>
   );
-  console.log('App rendered successfully');
+  console.log('App rendered successfully with enhanced error handling');
 }
