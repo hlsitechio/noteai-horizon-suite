@@ -37,8 +37,9 @@ export const useDashboardBlocksConfig = ({
   handleCreateNote,
   handleEditNote
 }: BlocksConfigOptions) => {
-  // Function to get original blocks configuration
+  // Properly memoize the blocks configuration with all dependencies
   const getOriginalBlocks = useMemo((): DashboardBlock[] => {
+    console.log('Creating dashboard blocks configuration');
     return [
       // KPI Stats as individual draggable blocks - Row 1
       {
@@ -142,7 +143,18 @@ export const useDashboardBlocksConfig = ({
         gridClass: 'col-span-6'
       }
     ];
-  }, [dashboardStats, notes, handleCreateNote, handleEditNote]);
+  }, [
+    dashboardStats.totalNotes,
+    dashboardStats.favoriteNotes,
+    dashboardStats.avgWordsPerNote,
+    dashboardStats.totalWords,
+    dashboardStats.categoryCounts,
+    dashboardStats.weeklyNotes,
+    dashboardStats.recentNotes,
+    notes,
+    handleCreateNote,
+    handleEditNote
+  ]);
 
   return {
     getOriginalBlocks

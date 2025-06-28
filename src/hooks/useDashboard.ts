@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNotes } from '../contexts/NotesContext';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import { useDashboardLayout } from './useDashboardLayout';
@@ -22,7 +22,14 @@ export const useDashboard = () => {
     handleBlocksReorder: handleDragReorder
   } = useDashboardDrag();
 
+  // Memoize the original blocks to prevent infinite re-renders
+  const memoizedOriginalBlocks = useMemo(() => {
+    console.log('Creating memoized original blocks');
+    return getOriginalBlocks;
+  }, [getOriginalBlocks]);
+
   const handleBlocksReorder = (reorderedBlocks: any[]) => {
+    console.log('Dashboard: Reordering blocks to new order:', reorderedBlocks.map(b => b.id));
     handleDragReorder(reorderedBlocks);
     reorderBlocks(reorderedBlocks);
   };
@@ -30,15 +37,16 @@ export const useDashboard = () => {
   // Function to reset layout to original state
   const handleResetLayout = () => {
     console.log('Resetting dashboard layout to original state');
-    const originalBlocks = getOriginalBlocks;
-    initializeBlocks(originalBlocks);
+    initializeBlocks(memoizedOriginalBlocks);
   };
 
-  // Initialize dashboard blocks with stable dependencies
+  // Initialize dashboard blocks with stable dependencies - only run once
   useEffect(() => {
-    const initialBlocks = getOriginalBlocks;
-    initializeBlocks(initialBlocks);
-  }, [getOriginalBlocks, initializeBlocks]);
+    console.log('Initializing dashboard blocks (should only run once)');
+    if (memoizedOriginalBlocks.length > 0) {
+      initializeBlocks(memoizedOriginalBlocks);
+    }
+  }, [memoizedOriginalBlocks, initializeBlocks]);
 
   // Enhanced AI context integration with real user data
   useQuantumAIIntegration({

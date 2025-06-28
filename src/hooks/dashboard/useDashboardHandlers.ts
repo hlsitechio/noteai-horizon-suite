@@ -1,20 +1,22 @@
 
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Note } from '../../types/note';
 
 export const useDashboardHandlers = (setCurrentNote: (note: Note | null) => void) => {
   const navigate = useNavigate();
 
-  // Stable handler functions to prevent unnecessary re-renders
-  const handleCreateNote = () => {
+  const handleCreateNote = useCallback(() => {
+    console.log('Dashboard: Creating new note');
     setCurrentNote(null);
     navigate('/app/editor');
-  };
+  }, [navigate, setCurrentNote]);
 
-  const handleEditNote = (note: Note) => {
+  const handleEditNote = useCallback((note: Note) => {
+    console.log('Dashboard: Editing note:', note.id);
     setCurrentNote(note);
     navigate('/app/editor');
-  };
+  }, [navigate, setCurrentNote]);
 
   return {
     handleCreateNote,

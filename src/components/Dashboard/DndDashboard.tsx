@@ -50,16 +50,20 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
     useSensor(KeyboardSensor)
   );
 
-  // Update items when blocks change
+  // Update items when blocks change - but prevent infinite loops
   useEffect(() => {
     const newItems = blocks.map((b) => b.id);
-    setItems(newItems);
-    console.log('DndDashboard: Updated items:', newItems);
-  }, [blocks]);
+    // Only update if the items have actually changed
+    if (JSON.stringify(newItems) !== JSON.stringify(items)) {
+      console.log('DndDashboard: Items changed, updating from:', items, 'to:', newItems);
+      setItems(newItems);
+    }
+  }, [blocks]); // Remove items from dependencies to prevent infinite loop
 
   const handleDragStart = (event: DragStartEvent) => {
-    console.log(`DndDashboard: Starting drag for ${event.active.id}`);
-    onDragStart(event.active.id as string);
+    const dragId = event.active.id as string;
+    console.log(`DndDashboard: Starting drag for ${dragId}`);
+    onDragStart(dragId);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -69,8 +73,10 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
     onDragEnd();
 
     if (active.id !== over?.id && over?.id) {
-      const oldIndex = items.indexOf(active.id as string);
-      const newIndex = items.indexOf(over.id as string);
+      const activeId = active.id as string;
+      const overId = over.id as string;
+      const oldIndex = items.indexOf(activeId);
+      const newIndex = items.indexOf(overId);
       
       if (oldIndex !== -1 && newIndex !== -1) {
         const newItems = arrayMove(items, oldIndex, newIndex);
@@ -82,6 +88,7 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
 
         // Reorder blocks and notify parent
         const reordered = newItems.map((id) => blocks.find((b) => b.id === id)!).filter(Boolean);
+        console.log('DndDashboard: Calling onSwap with reordered blocks:', reordered.map(b => b.id));
         onSwap(reordered);
       }
     }
