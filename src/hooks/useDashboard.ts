@@ -9,6 +9,8 @@ import KPINotesBlock from '../components/Dashboard/KPIBlocks/KPINotesBlock';
 import KPIFavoritesBlock from '../components/Dashboard/KPIBlocks/KPIFavoritesBlock';
 import KPIAvgWordsBlock from '../components/Dashboard/KPIBlocks/KPIAvgWordsBlock';
 import KPICategoriesBlock from '../components/Dashboard/KPIBlocks/KPICategoriesBlock';
+import KPITotalWordsBlock from '../components/Dashboard/KPIBlocks/KPITotalWordsBlock';
+import KPIWeeklyBlock from '../components/Dashboard/KPIBlocks/KPIWeeklyBlock';
 import AnalyticsOverview from '../components/Dashboard/AnalyticsOverview';
 import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
@@ -86,10 +88,17 @@ export const useDashboard = () => {
     console.log('[DragAI] Drag ended');
   };
 
-  // Initialize dashboard blocks with stable dependencies
-  useEffect(() => {
-    const initialBlocks: DashboardBlock[] = [
-      // KPI Stats as individual draggable blocks
+  // Function to reset layout to original state
+  const handleResetLayout = () => {
+    console.log('Resetting dashboard layout to original state');
+    const originalBlocks = getOriginalBlocks();
+    initializeBlocks(originalBlocks);
+  };
+
+  // Function to get original blocks configuration
+  const getOriginalBlocks = (): DashboardBlock[] => {
+    return [
+      // KPI Stats as individual draggable blocks - Row 1
       {
         id: 'kpi-notes',
         component: KPINotesBlock,
@@ -125,7 +134,23 @@ export const useDashboard = () => {
         },
         gridClass: 'col-span-2'
       },
-      // Main dashboard components
+      {
+        id: 'kpi-total-words',
+        component: KPITotalWordsBlock,
+        props: {
+          totalWords: dashboardStats.totalWords
+        },
+        gridClass: 'col-span-2'
+      },
+      {
+        id: 'kpi-weekly',
+        component: KPIWeeklyBlock,
+        props: {
+          weeklyNotes: dashboardStats.weeklyNotes
+        },
+        gridClass: 'col-span-2'
+      },
+      // Main dashboard components - Row 2
       {
         id: 'analytics',
         component: AnalyticsOverview,
@@ -159,7 +184,11 @@ export const useDashboard = () => {
         gridClass: 'col-span-4'
       }
     ];
-    
+  };
+
+  // Initialize dashboard blocks with stable dependencies
+  useEffect(() => {
+    const initialBlocks = getOriginalBlocks();
     initializeBlocks(initialBlocks);
   }, [dashboardStats, initializeBlocks]);
 
@@ -191,6 +220,7 @@ export const useDashboard = () => {
     draggedBlockId,
     handleBlocksReorder,
     handleDragStart,
-    handleDragEnd
+    handleDragEnd,
+    handleResetLayout
   };
 };

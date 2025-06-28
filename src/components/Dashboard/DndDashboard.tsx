@@ -88,7 +88,7 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
       <SortableContext items={items} strategy={rectSortingStrategy}>
         <div className={`dashboard-grid grid ${
           isMobile ? 'grid-cols-1' : 'grid-cols-12'
-        } gap-4 flex-1 min-h-0 w-full h-[850px] relative transition-all duration-300 auto-rows-fr ${
+        } gap-4 flex-1 min-h-0 w-full h-[820px] relative transition-all duration-300 auto-rows-fr ${
           isDragging ? 'dragging-active bg-gradient-to-br from-blue-50/20 to-purple-50/20' : ''
         }`}>
           {items.map((id) => {
