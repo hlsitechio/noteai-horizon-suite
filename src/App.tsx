@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import * as Sentry from "@sentry/react";
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -45,6 +46,8 @@ import MobileApp from './mobile/MobileApp';
 
 import './App.css';
 
+const SentryRouter = Sentry.withSentryRouting(Router);
+
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="online-note-ai-theme">
@@ -58,7 +61,7 @@ function App() {
                     <ProjectRealmsProvider>
                       <FloatingNotesProvider>
                         <QuantumAIProvider>
-                          <Router>
+                          <SentryRouter>
                             <Routes>
                               {/* Public Routes */}
                               <Route path="/" element={<Index />} />
@@ -100,7 +103,7 @@ function App() {
                               {/* Catch all route */}
                               <Route path="*" element={<NotFound />} />
                             </Routes>
-                          </Router>
+                          </SentryRouter>
                           <Toaster />
                           <Sonner />
                         </QuantumAIProvider>
@@ -117,4 +120,4 @@ function App() {
   );
 }
 
-export default App;
+export default Sentry.withProfiler(App);

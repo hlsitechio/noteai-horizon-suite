@@ -1,6 +1,7 @@
 
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import * as Sentry from "@sentry/react";
 import { useErrorTracing } from './useErrorTracing';
 import { toast } from 'sonner';
 
@@ -12,6 +13,9 @@ export const useGlobalErrorHandler = () => {
     // Handle unhandled promise rejections
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       console.error('Unhandled promise rejection:', event.reason);
+      
+      // Send to Sentry
+      Sentry.captureException(event.reason);
       
       traceError({
         component: 'GlobalErrorHandler',
@@ -28,6 +32,9 @@ export const useGlobalErrorHandler = () => {
     // Handle JavaScript errors
     const handleError = (event: ErrorEvent) => {
       console.error('JavaScript error:', event.error);
+      
+      // Send to Sentry
+      Sentry.captureException(event.error);
       
       traceError({
         component: 'GlobalErrorHandler',
@@ -54,6 +61,9 @@ export const useGlobalErrorHandler = () => {
         if (query.state.error) {
           console.error('Query error:', query.state.error);
           
+          // Send to Sentry
+          Sentry.captureException(query.state.error);
+          
           if (query.state.error instanceof Error) {
             traceError({
               component: 'GlobalErrorHandler',
@@ -74,6 +84,9 @@ export const useGlobalErrorHandler = () => {
         const mutation = event.mutation;
         if (mutation.state.error) {
           console.error('Mutation error:', mutation.state.error);
+          
+          // Send to Sentry
+          Sentry.captureException(mutation.state.error);
           
           if (mutation.state.error instanceof Error) {
             traceError({
