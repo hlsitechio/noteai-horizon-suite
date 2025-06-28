@@ -6,6 +6,7 @@ import { NotesProvider } from './contexts/NotesContext';
 import { FoldersProvider } from './contexts/FoldersContext';
 import { QuantumAIProvider } from './contexts/QuantumAIContext';
 import { AccentColorProvider } from './contexts/AccentColorContext';
+import { NotificationsProvider } from './contexts/NotificationsContext';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import Layout from './components/Layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -28,48 +29,50 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <AuthProvider>
-          <FoldersProvider>
-            <NotesProvider>
-              <AccentColorProvider>
-                <Router>
-                  <QuantumAIProvider>
-                    <div className="min-h-screen bg-background w-full">
-                      <Routes>
-                        {/* Public routes */}
-                        <Route path="/" element={<Landing />} />
-                        <Route path="/auth" element={<Login />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/mobile/*" element={<MobileApp />} />
+          <NotificationsProvider>
+            <FoldersProvider>
+              <NotesProvider>
+                <AccentColorProvider>
+                  <Router>
+                    <QuantumAIProvider>
+                      <div className="min-h-screen bg-background w-full">
+                        <Routes>
+                          {/* Public routes */}
+                          <Route path="/" element={<Landing />} />
+                          <Route path="/auth" element={<Login />} />
+                          <Route path="/login" element={<Login />} />
+                          <Route path="/mobile/*" element={<MobileApp />} />
+                          
+                          {/* Protected routes with layout */}
+                          <Route path="/app" element={
+                            <ProtectedRoute>
+                              <SidebarProvider>
+                                <Layout />
+                              </SidebarProvider>
+                            </ProtectedRoute>
+                          }>
+                            <Route index element={<Navigate to="dashboard" replace />} />
+                            <Route path="dashboard" element={<Dashboard />} />
+                            <Route path="chat" element={<Chat />} />
+                            <Route path="editor" element={<Editor />} />
+                            <Route path="notes" element={<Notes />} />
+                            <Route path="analytics" element={<Analytics />} />
+                            <Route path="settings" element={<Settings />} />
+                          </Route>
+                          
+                          {/* Catch all route */}
+                          <Route path="*" element={<Navigate to="/" replace />} />
+                        </Routes>
                         
-                        {/* Protected routes with layout */}
-                        <Route path="/app" element={
-                          <ProtectedRoute>
-                            <SidebarProvider>
-                              <Layout />
-                            </SidebarProvider>
-                          </ProtectedRoute>
-                        }>
-                          <Route index element={<Navigate to="dashboard" replace />} />
-                          <Route path="dashboard" element={<Dashboard />} />
-                          <Route path="chat" element={<Chat />} />
-                          <Route path="editor" element={<Editor />} />
-                          <Route path="notes" element={<Notes />} />
-                          <Route path="analytics" element={<Analytics />} />
-                          <Route path="settings" element={<Settings />} />
-                        </Route>
-                        
-                        {/* Catch all route */}
-                        <Route path="*" element={<Navigate to="/" replace />} />
-                      </Routes>
-                      
-                      <GlobalAICopilot />
-                      <Toaster />
-                    </div>
-                  </QuantumAIProvider>
-                </Router>
-              </AccentColorProvider>
-            </NotesProvider>
-          </FoldersProvider>
+                        <GlobalAICopilot />
+                        <Toaster />
+                      </div>
+                    </QuantumAIProvider>
+                  </Router>
+                </AccentColorProvider>
+              </NotesProvider>
+            </FoldersProvider>
+          </NotificationsProvider>
         </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>
