@@ -142,7 +142,28 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
 
             const BlockComponent = block.component;
 
-            console.log(`DndDashboard: Rendering block ${id} with component:`, BlockComponent.name);
+            if (!BlockComponent) {
+              console.error(`DndDashboard: No component found for block ${id}`, block);
+              return (
+                <SortableItem 
+                  key={id} 
+                  id={id} 
+                  gridClass={`${isMobile 
+                    ? (block.id.startsWith('kpi-') ? 'col-span-1' : 'col-span-2') 
+                    : block.gridClass || 'col-span-4'
+                  } ${
+                    block.id.startsWith('kpi-') ? 'h-24' : 'min-h-[250px]'
+                  } transition-all duration-200 ease-out`}
+                >
+                  <div className="p-4 border border-red-300 bg-red-50 rounded-lg">
+                    <h3 className="text-red-600 font-medium">Missing Component</h3>
+                    <p className="text-red-500 text-sm">Block ID: {id}</p>
+                  </div>
+                </SortableItem>
+              );
+            }
+
+            console.log(`DndDashboard: Rendering block ${id} with component:`, BlockComponent.displayName || BlockComponent.name || 'Anonymous');
 
             return (
               <SortableItem 
@@ -150,12 +171,12 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
                 id={id} 
                 gridClass={`${isMobile 
                   ? (block.id.startsWith('kpi-') ? 'col-span-1' : 'col-span-2') 
-                  : block.gridClass
+                  : block.gridClass || 'col-span-4'
                 } ${
                   block.id.startsWith('kpi-') ? 'h-24' : 'min-h-[250px]'
                 } transition-all duration-200 ease-out`}
               >
-                <BlockComponent {...block.props} />
+                <BlockComponent {...(block.props || {})} />
               </SortableItem>
             );
           })}

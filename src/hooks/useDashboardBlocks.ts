@@ -1,5 +1,5 @@
 
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Note } from '../types/note';
 import { useDashboardHandlers } from './dashboard/useDashboardHandlers';
 import { useDashboardBlocksConfig } from './dashboard/useDashboardBlocksConfig';
