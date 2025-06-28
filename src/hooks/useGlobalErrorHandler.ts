@@ -49,8 +49,8 @@ export const useGlobalErrorHandler = () => {
     const mutationCache = queryClient.getMutationCache();
 
     const unsubscribeQuery = queryCache.subscribe((event) => {
-      if (event.type === 'observerResultsUpdated') {
-        const { query } = event;
+      if (event.type === 'updated') {
+        const query = event.query;
         if (query.state.error) {
           console.error('Query error:', query.state.error);
           
@@ -70,8 +70,8 @@ export const useGlobalErrorHandler = () => {
     });
 
     const unsubscribeMutation = mutationCache.subscribe((event) => {
-      if (event.type === 'observerResultsUpdated') {
-        const { mutation } = event;
+      if (event.type === 'updated') {
+        const mutation = event.mutation;
         if (mutation.state.error) {
           console.error('Mutation error:', mutation.state.error);
           

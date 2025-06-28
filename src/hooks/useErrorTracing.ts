@@ -57,11 +57,11 @@ export const useErrorTracing = () => {
       const { error } = await supabase
         .from('security_audit_log')
         .insert({
-          user_id: user?.id,
+          user_id: user?.id || null,
           action: 'error_trace',
           table_name: payload.component,
           record_id: traceId,
-          new_values: errorTrace,
+          new_values: errorTrace as any,
         });
 
       if (error) {
