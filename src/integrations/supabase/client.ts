@@ -14,9 +14,10 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
-    // Handle token refresh failures gracefully
+    // Disable popup-based authentication to avoid COOP issues
+    flowType: 'pkce',
+    // Force redirect-based authentication
     debug: process.env.NODE_ENV === 'development',
-    flowType: 'pkce'
   },
   global: {
     headers: {
