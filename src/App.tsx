@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { UnifiedProvider } from './contexts/UnifiedProvider';
-import { OptimizedNotesProvider } from './contexts/OptimizedNotesContext';
 import { FoldersProvider } from './contexts/FoldersContext';
 import { ProjectRealmsProvider } from './contexts/ProjectRealmsContext';
 import { FloatingNotesProvider } from './contexts/FloatingNotesContext';
@@ -88,63 +87,61 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <UnifiedProvider>
           <FoldersProvider>
-            <OptimizedNotesProvider>
-              <ProjectRealmsProvider>
-                <FloatingNotesProvider>
-                  <ReminderManagerInit>
-                    <Router>
-                      <QuantumAIProvider>
-                        <Routes>
-                          {/* Public Routes */}
-                          <Route path="/" element={<Index />} />
-                          <Route path="/landing" element={<Landing />} />
-                          <Route path="/login" element={<Login />} />
-                          <Route path="/register" element={<Register />} />
-                          <Route path="/reset-password" element={<ResetPassword />} />
-                          <Route path="/privacy" element={<Privacy />} />
-                          <Route path="/terms" element={<Terms />} />
-                          <Route path="/contact" element={<Contact />} />
-                          <Route path="/sitemap" element={<Sitemap />} />
+            <ProjectRealmsProvider>
+              <FloatingNotesProvider>
+                <ReminderManagerInit>
+                  <Router>
+                    <QuantumAIProvider>
+                      <Routes>
+                        {/* Public Routes */}
+                        <Route path="/" element={<Index />} />
+                        <Route path="/landing" element={<Landing />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
+                        <Route path="/privacy" element={<Privacy />} />
+                        <Route path="/terms" element={<Terms />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/sitemap" element={<Sitemap />} />
 
-                          {/* Mobile Routes */}
-                          <Route path="/mobile/*" element={
-                            <ProtectedRoute>
-                              <MobileApp />
-                            </ProtectedRoute>
-                          } />
+                        {/* Mobile Routes */}
+                        <Route path="/mobile/*" element={
+                          <ProtectedRoute>
+                            <MobileApp />
+                          </ProtectedRoute>
+                        } />
 
-                          {/* Protected App Routes */}
-                          <Route path="/app" element={
-                            <ProtectedRoute>
-                              <Layout />
-                            </ProtectedRoute>
-                          }>
-                            <Route index element={<HomeRedirect />} />
-                            <Route path="dashboard" element={<Dashboard />} />
-                            <Route path="editor" element={<Editor />} />
-                            <Route path="notes" element={<Notes />} />
-                            <Route path="analytics" element={<Analytics />} />
-                            <Route path="settings" element={<Settings />} />
-                            <Route path="chat" element={<Chat />} />
-                            <Route path="calendar" element={<Calendar />} />
-                            <Route path="projects" element={<ProjectRealms />} />
-                            <Route path="projects/:id" element={<ProjectDetail />} />
-                            <Route path="folders/:id" element={<FolderDetail />} />
-                          </Route>
+                        {/* Protected App Routes */}
+                        <Route path="/app" element={
+                          <ProtectedRoute>
+                            <Layout />
+                          </ProtectedRoute>
+                        }>
+                          <Route index element={<HomeRedirect />} />
+                          <Route path="dashboard" element={<Dashboard />} />
+                          <Route path="editor" element={<Editor />} />
+                          <Route path="notes" element={<Notes />} />
+                          <Route path="analytics" element={<Analytics />} />
+                          <Route path="settings" element={<Settings />} />
+                          <Route path="chat" element={<Chat />} />
+                          <Route path="calendar" element={<Calendar />} />
+                          <Route path="projects" element={<ProjectRealms />} />
+                          <Route path="projects/:id" element={<ProjectDetail />} />
+                          <Route path="folders/:id" element={<FolderDetail />} />
+                        </Route>
 
-                          {/* Catch all route */}
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                        {/* Only show React Query Devtools in development */}
-                        {import.meta.env.DEV && (
-                          <ReactQueryDevtools initialIsOpen={false} />
-                        )}
-                      </QuantumAIProvider>
-                    </Router>
-                  </ReminderManagerInit>
-                </FloatingNotesProvider>
-              </ProjectRealmsProvider>
-            </OptimizedNotesProvider>
+                        {/* Catch all route */}
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                      {/* Only show React Query Devtools in development */}
+                      {import.meta.env.DEV && (
+                        <ReactQueryDevtools initialIsOpen={false} />
+                      )}
+                    </QuantumAIProvider>
+                  </Router>
+                </ReminderManagerInit>
+              </FloatingNotesProvider>
+            </ProjectRealmsProvider>
           </FoldersProvider>
         </UnifiedProvider>
       </QueryClientProvider>

@@ -4,6 +4,7 @@ import { ThemeProvider } from '../providers/ThemeProvider';
 import { AuthProvider } from './AuthContext';
 import { AccentColorProvider } from './AccentColorContext';
 import { NotificationsProvider } from './NotificationsContext';
+import { OptimizedNotesProvider } from './OptimizedNotesContext';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
@@ -19,9 +20,11 @@ export const UnifiedProvider: React.FC<UnifiedProviderProps> = ({ children }) =>
         <AuthProvider>
           <AccentColorProvider>
             <NotificationsProvider>
-              {children}
-              <Toaster />
-              <Sonner />
+              <OptimizedNotesProvider>
+                {children}
+                <Toaster />
+                <Sonner />
+              </OptimizedNotesProvider>
             </NotificationsProvider>
           </AccentColorProvider>
         </AuthProvider>
