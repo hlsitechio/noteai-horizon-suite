@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import Draggable from 'react-draggable';
 import { Card } from '@/components/ui/card';
 import { GripVertical } from 'lucide-react';
@@ -25,85 +25,74 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
+  const [currentMousePos, setCurrentMousePos] = useState({ x: 0, y: 0 });
+
+  // Track mouse position during drag
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    setCurrentMousePos({ x: e.clientX, y: e.clientY });
+    
+    // Update drop target highlighting
+    const element = document.elementFromPoint(e.clientX, e.clientY);
+    const targetBlock = element?.closest('[data-block-id]');
+    
+    // Remove all previous highlights
+    document.querySelectorAll('[data-block-id]').forEach(block => {
+      if (block !== nodeRef.current) {
+        block.classList.remove('drop-target-active');
+      }
+    });
+    
+    // Add highlight to current target
+    if (targetBlock && targetBlock.getAttribute('data-block-id') !== id) {
+      targetBlock.classList.add('drop-target-active');
+    }
+  }, [id]);
 
   const handleStart = () => {
+    console.log(`Starting drag for block: ${id}`);
     setIsDragging(true);
     onDragStart?.(id);
     
-    // Add global drag class to body for styling with SSR guard
+    // Add global drag class and mouse tracking
     if (typeof document !== 'undefined') {
       document.body.classList.add('dragging-active');
+      document.addEventListener('mousemove', handleMouseMove);
     }
   };
 
   const handleDrag = (_e: any, data: any) => {
     setDragPosition({ x: data.x, y: data.y });
-    
-    // Use requestAnimationFrame for better accuracy and reduced flicker
-    requestAnimationFrame(() => {
-      if (typeof document === 'undefined') return;
-      
-      const currentMouseX = data.lastX + data.x;
-      const currentMouseY = data.lastY + data.y;
-      const element = document.elementFromPoint(currentMouseX, currentMouseY);
-      const targetBlock = element?.closest('[data-block-id]');
-      
-      // Remove previous drop target highlights
-      document.querySelectorAll('[data-block-id]').forEach(block => {
-        if (block !== nodeRef.current) {
-          block.classList.remove('drop-target-active');
-        }
-      });
-      
-      // Highlight current drop target
-      if (targetBlock && targetBlock.getAttribute('data-block-id') !== id) {
-        targetBlock.classList.add('drop-target-active');
-        setIsDropTarget(true);
-      } else {
-        setIsDropTarget(false);
-      }
-    });
   };
 
   const handleStop = (_e: any, data: any) => {
+    console.log(`Stopping drag for block: ${id} at position:`, currentMousePos);
     setIsDragging(false);
     setDragPosition({ x: 0, y: 0 });
     setIsDropTarget(false);
     onDragEnd?.();
 
-    // Remove global drag class with SSR guard
+    // Clean up event listeners and classes
     if (typeof document !== 'undefined') {
       document.body.classList.remove('dragging-active');
+      document.removeEventListener('mousemove', handleMouseMove);
       
       // Remove all drop target highlights
       document.querySelectorAll('[data-block-id]').forEach(block => {
         block.classList.remove('drop-target-active');
       });
 
-      // Improved hit testing using bounding box logic
-      const currentMouseX = data.lastX + data.x;
-      const currentMouseY = data.lastY + data.y;
-      const elements = document.querySelectorAll('[data-block-id]');
-
-      for (const el of elements) {
-        if (el === nodeRef.current) continue;
-
-        const rect = el.getBoundingClientRect();
-        if (
-          currentMouseX >= rect.left &&
-          currentMouseX <= rect.right &&
-          currentMouseY >= rect.top &&
-          currentMouseY <= rect.bottom
-        ) {
-          const targetId = el.getAttribute('data-block-id');
-          if (targetId) {
-            if (process.env.NODE_ENV === 'development') {
-              console.log(`Swapping ${id} with ${targetId}`);
-            }
-            onSwap(id, targetId);
-            break;
-          }
+      // Find the target element using the tracked mouse position
+      const targetElement = document.elementFromPoint(currentMousePos.x, currentMousePos.y);
+      const targetBlock = targetElement?.closest('[data-block-id]');
+      
+      if (targetBlock && targetBlock !== nodeRef.current) {
+        const targetId = targetBlock.getAttribute('data-block-id');
+        if (targetId && targetId !== id) {
+          console.log(`Swapping ${id} with ${targetId}`);
+          onSwap(id, targetId);
         }
+      } else {
+        console.log('No valid drop target found');
       }
     }
   };
@@ -175,7 +164,7 @@ const DraggableBlock: React.FC<DraggableBlockProps> = ({
         </div>
       </Draggable>
       
-      {/* Enhanced drop zone overlay with SSR guard and modern 2025 UX */}
+      {/* Enhanced drop zone overlay */}
       {!isDragging && typeof document !== 'undefined' && document.body.classList.contains('dragging-active') && (
         <div className="absolute inset-0 z-30 flex items-center justify-center bg-gradient-to-br from-blue-100/30 to-blue-200/20 border-2 border-dashed border-blue-400 rounded-xl pointer-events-none backdrop-blur-sm">
           <div className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-md animate-bounce">
