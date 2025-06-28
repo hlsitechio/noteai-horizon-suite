@@ -4,80 +4,31 @@
   cursor: grabbing !important;
 }
 
-.dragging-active * {
-  pointer-events: none;
+/* Enhanced sortable transitions */
+.sortable-item {
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.dragging-active .drag-handle {
-  pointer-events: auto;
+/* Enhanced hover states for better feedback */
+.group:hover .drag-handle {
+  transform: scale(1.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Enhanced drop target styling with improved glow effect */
-.drop-target-active {
-  transform: scale(1.02);
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 25px rgba(59, 130, 246, 0.4), 0 8px 25px -8px rgba(59, 130, 246, 0.3);
+/* Drag handle hover effects */
+.drag-handle:hover {
+  background: rgba(59, 130, 246, 0.1) !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
 }
 
-.drop-target-active::before {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4);
-  border-radius: 14px;
-  z-index: -1;
-  opacity: 0.4;
-  animation: pulse-glow 1.5s infinite;
+.drag-handle:active {
+  background: rgba(59, 130, 246, 0.2) !important;
+  transform: scale(0.95);
 }
 
-@keyframes pulse-glow {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(1.01);
-  }
-}
-
-/* Enhanced dragging visual feedback with faster animations */
-.react-draggable-dragging {
-  z-index: 1000 !important;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.react-draggable-dragging .drag-handle {
-  background: linear-gradient(45deg, #3b82f6, #8b5cf6) !important;
-  color: white !important;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Smooth grid transitions with improved timing */
-.dashboard-grid {
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.dashboard-grid.dragging-active {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.02), rgba(139, 92, 246, 0.02));
-}
-
-/* Drop zone hover effects with better transitions */
-[data-block-id]:not(.react-draggable-dragging):hover {
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-body.dragging-active [data-block-id]:not(.react-draggable-dragging) {
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 12px;
-}
-
-body.dragging-active [data-block-id]:not(.react-draggable-dragging):hover {
-  background: rgba(59, 130, 246, 0.05);
-  box-shadow: 0 4px 20px -4px rgba(59, 130, 246, 0.15);
-  backdrop-filter: blur(2px);
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+/* Enhanced dragging visual feedback */
+[data-sortable-id] {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Accessibility improvements */
@@ -86,19 +37,11 @@ body.dragging-active [data-block-id]:not(.react-draggable-dragging):hover {
   outline-offset: 2px;
 }
 
-/* Grid snap visual indicator with faster animations */
-.react-draggable-dragging {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+/* Smooth grid transitions */
+.dashboard-grid {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Smooth sortable transitions */
-.sortable-item {
-  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Enhanced hover states for better feedback */
-.group:hover .drag-handle {
-  transform: scale(1.05);
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+.dashboard-grid.dragging-active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.02), rgba(139, 92, 246, 0.02));
 }

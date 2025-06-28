@@ -8,6 +8,7 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragStartEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -39,11 +40,11 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
   const [items, setItems] = useState(blocks.map((b) => b.id));
   const isMobile = useIsMobile();
 
-  // Enhanced sensors with faster activation and smoother response
+  // Enhanced sensors with better activation constraints
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 3, // Reduced from 8 for faster activation
+        distance: 5, // Small distance to prevent accidental drags
       },
     }),
     useSensor(KeyboardSensor)
@@ -51,12 +52,14 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
 
   // Update items when blocks change
   useEffect(() => {
-    setItems(blocks.map((b) => b.id));
+    const newItems = blocks.map((b) => b.id);
+    setItems(newItems);
+    console.log('DndDashboard: Updated items:', newItems);
   }, [blocks]);
 
-  const handleDragStart = (event: any) => {
+  const handleDragStart = (event: DragStartEvent) => {
     console.log(`DndDashboard: Starting drag for ${event.active.id}`);
-    onDragStart(event.active.id);
+    onDragStart(event.active.id as string);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -68,14 +71,19 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
     if (active.id !== over?.id && over?.id) {
       const oldIndex = items.indexOf(active.id as string);
       const newIndex = items.indexOf(over.id as string);
-      const newItems = arrayMove(items, oldIndex, newIndex);
       
-      console.log(`DndDashboard: Reordering from index ${oldIndex} to ${newIndex}`);
-      setItems(newItems);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newItems = arrayMove(items, oldIndex, newIndex);
+        
+        console.log(`DndDashboard: Reordering from index ${oldIndex} to ${newIndex}`);
+        console.log('DndDashboard: New order:', newItems);
+        
+        setItems(newItems);
 
-      // Reorder blocks and notify parent
-      const reordered = newItems.map((id) => blocks.find((b) => b.id === id)!).filter(Boolean);
-      onSwap(reordered);
+        // Reorder blocks and notify parent
+        const reordered = newItems.map((id) => blocks.find((b) => b.id === id)!).filter(Boolean);
+        onSwap(reordered);
+      }
     }
   };
 
@@ -89,12 +97,15 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
       <SortableContext items={items} strategy={rectSortingStrategy}>
         <div className={`dashboard-grid grid ${
           isMobile ? 'grid-cols-2' : 'grid-cols-12'
-        } gap-4 w-full min-h-0 transition-all duration-150 ease-out ${
+        } gap-4 w-full min-h-0 transition-all duration-200 ease-out ${
           isDragging ? 'dragging-active bg-gradient-to-br from-blue-50/20 to-purple-50/20' : ''
         }`}>
           {items.map((id) => {
             const block = blocks.find((b) => b.id === id);
-            if (!block) return null;
+            if (!block) {
+              console.warn(`DndDashboard: Block not found for id: ${id}`);
+              return null;
+            }
 
             const BlockComponent = block.component;
 
@@ -107,7 +118,7 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
                   : block.gridClass
                 } ${
                   block.id.startsWith('kpi-') ? 'h-24' : 'min-h-[250px]'
-                } transition-all duration-150 ease-out`}
+                } transition-all duration-200 ease-out`}
               >
                 <BlockComponent {...block.props} />
               </SortableItem>
