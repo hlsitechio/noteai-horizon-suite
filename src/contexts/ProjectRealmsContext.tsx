@@ -1,6 +1,8 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ProjectRealm, ProjectAgent, ProjectFilters } from '../types/project';
 import { ProjectRealmsService } from '../services/projectRealmsService';
+import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
 
 interface ProjectRealmsContextType {
@@ -30,27 +32,43 @@ export const useProjectRealms = () => {
 };
 
 export const ProjectRealmsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, isLoading: authLoading } = useAuth();
   const [projects, setProjects] = useState<ProjectRealm[]>([]);
   const [currentProject, setCurrentProject] = useState<ProjectRealm | null>(null);
   const [filters, setFilters] = useState<ProjectFilters>({});
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const refreshProjects = async () => {
+    // Only load projects if user is authenticated
+    if (!user) {
+      console.log('ProjectRealms: User not authenticated, skipping project load');
+      setProjects([]);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     try {
+      console.log('ProjectRealms: Loading projects for authenticated user');
       const loadedProjects = await ProjectRealmsService.getAllProjects();
       setProjects(loadedProjects);
     } catch (error) {
-      toast.error('Failed to load projects');
       console.error('Error loading projects:', error);
+      // Only show error toast if user is authenticated
+      if (user) {
+        toast.error('Failed to load projects');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    refreshProjects();
-  }, []);
+    // Wait for auth to be resolved before attempting to load projects
+    if (!authLoading) {
+      refreshProjects();
+    }
+  }, [user, authLoading]);
 
   const createProject = async (projectData: Omit<ProjectRealm, 'id' | 'created_at' | 'updated_at' | 'last_activity_at' | 'creator_id'>): Promise<ProjectRealm | null> => {
     try {

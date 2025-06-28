@@ -2,12 +2,10 @@
 const CACHE_NAME = 'notes-app-v2';
 const CRITICAL_RESOURCES = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
   '/manifest.json'
 ];
 
-// Install event - cache critical resources
+// Install event - cache critical resources with error handling
 self.addEventListener('install', (event) => {
   console.log('Service Worker: Installing optimized service worker v2');
   
@@ -15,10 +13,18 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Service Worker: Caching critical resources');
-        return cache.addAll(CRITICAL_RESOURCES.filter(Boolean));
+        // Cache resources individually to handle failures gracefully
+        return Promise.allSettled(
+          CRITICAL_RESOURCES.map(resource => 
+            cache.add(resource).catch(error => {
+              console.warn(`Service Worker: Failed to cache ${resource}:`, error);
+              return null;
+            })
+          )
+        );
       })
       .catch((error) => {
-        console.error('Service Worker: Failed to cache resources:', error);
+        console.error('Service Worker: Failed to open cache:', error);
       })
   );
   
@@ -93,6 +99,9 @@ self.addEventListener('fetch', (event) => {
               caches.open(CACHE_NAME)
                 .then((cache) => {
                   cache.put(request, responseToCache);
+                })
+                .catch(error => {
+                  console.warn('Service Worker: Failed to cache response:', error);
                 });
             }
             return response;

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProjectRealms } from '../contexts/ProjectRealmsContext';
+import { useAuth } from '../contexts/AuthContext';
 import { ProjectRealm } from '../types/project';
 import ProjectBanner from '../components/ProjectRealms/ProjectBanner';
 import ProjectOverview from '../components/ProjectRealms/ProjectOverview';
@@ -9,17 +10,19 @@ import ProjectContent from '../components/ProjectRealms/ProjectContent';
 import ProjectSidebar from '../components/ProjectRealms/ProjectSidebar';
 
 const ProjectDetail: React.FC = () => {
-  const { projectId } = useParams<{ projectId: string }>();
+  const { id: projectId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { projects, currentProject, setCurrentProject } = useProjectRealms();
+  const { user, isLoading: authLoading } = useAuth();
+  const { projects, currentProject, setCurrentProject, isLoading: projectsLoading } = useProjectRealms();
   const [project, setProject] = useState<ProjectRealm | null>(null);
   const [bannerImage, setBannerImage] = useState<string | null>(null);
 
   useEffect(() => {
     console.log('ProjectDetail: projectId from URL:', projectId);
     console.log('ProjectDetail: available projects:', projects);
+    console.log('ProjectDetail: auth loading:', authLoading, 'projects loading:', projectsLoading);
     
-    if (projectId) {
+    if (projectId && !authLoading && !projectsLoading) {
       const foundProject = projects.find(p => p.id === projectId);
       console.log('ProjectDetail: found project:', foundProject);
       
@@ -33,16 +36,16 @@ const ProjectDetail: React.FC = () => {
         console.log('ProjectDetail: Project not found, redirecting...');
         navigate('/app/projects');
       }
-      // If projects are still loading, wait for them
+      // If projects array is empty but not loading, user might not have projects yet
     }
-  }, [projectId, projects, setCurrentProject, navigate]);
+  }, [projectId, projects, authLoading, projectsLoading, setCurrentProject, navigate]);
 
   const handleImageUpdate = (imageUrl: string) => {
     setBannerImage(imageUrl);
   };
 
-  // Show loading if projects are still loading or project not found yet
-  if (!project && projects.length === 0) {
+  // Show loading if auth or projects are still loading
+  if (authLoading || projectsLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
@@ -53,7 +56,13 @@ const ProjectDetail: React.FC = () => {
     );
   }
 
-  // If projects are loaded but project not found
+  // If user is not authenticated, redirect to login
+  if (!user) {
+    navigate('/login');
+    return null;
+  }
+
+  // If loading is complete but project not found
   if (!project) {
     return (
       <div className="flex items-center justify-center h-64">
