@@ -26,14 +26,14 @@ const DashboardContent: React.FC = () => {
 
       {/* Scrollable Content */}
       <ScrollArea className="flex-1 w-full">
-        <div className="p-6 space-y-8 min-h-full">
-          {/* Welcome Header - Expanded space for larger banner */}
-          <div className="flex-shrink-0 w-full h-[400px]">
+        <div className="p-4 space-y-4 min-h-full">
+          {/* Welcome Header - Compact banner space */}
+          <div className="flex-shrink-0 w-full h-[280px]">
             <WelcomeHeader />
           </div>
 
-          {/* Main Content Area - Optimized spacing */}
-          <div className="pt-6">
+          {/* Main Content Area - Reduced spacing */}
+          <div className="pt-2">
             <DndDashboard
               blocks={blocks}
               onSwap={handleBlocksReorder}

@@ -24,10 +24,10 @@ const WelcomeHeader: React.FC = () => {
   } = useWelcomeHeader();
 
   return (
-    <div className="space-y-2 h-full">
-      {/* Enhanced Banner Section with More Space */}
+    <div className="h-full">
+      {/* Banner Section - Full height */}
       <div 
-        className="relative h-[280px] overflow-hidden rounded-2xl border border-blue-100 dark:border-slate-600 group shadow-lg"
+        className="relative h-full overflow-hidden rounded-2xl border border-blue-100 dark:border-slate-600 group shadow-lg"
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => setShowControls(false)}
       >

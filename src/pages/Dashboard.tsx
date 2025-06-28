@@ -6,11 +6,11 @@ import '../components/Dashboard/DragDropStyles.css';
 
 const Dashboard: React.FC = () => {
   return (
-    <div className="w-full min-h-screen flex flex-col bg-background">
+    <div className="w-full h-screen flex flex-col bg-background">
       {/* Fullscreen Toggle Button */}
       <FullscreenToggle />
       
-      {/* Main Dashboard Container - Scrollable */}
+      {/* Main Dashboard Container - Full height, no extra spacing */}
       <DashboardContent />
     </div>
   );
