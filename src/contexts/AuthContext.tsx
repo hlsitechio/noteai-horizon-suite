@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthContextType } from './auth/types';
@@ -37,13 +38,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const initializeAuth = async () => {
       try {
-        // Set a shorter timeout to prevent infinite loading
+        // Set a timeout to ensure we don't stay in loading state forever
         const timeoutId = setTimeout(() => {
           if (mounted.current) {
-            console.log('Auth initialization timeout, clearing auth and setting loading to false');
+            console.log('Auth initialization timeout, setting loading to false');
             clearAuth();
           }
-        }, 3000); // Reduced from 5000 to 3000ms
+        }, 2000); // Reduced timeout to 2 seconds
 
         const { data: { session }, error } = await supabase.auth.getSession();
         
@@ -57,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
 
-        console.log('Auth: Session retrieved, setting session state');
+        console.log('Auth: Initial session check complete');
         setSession(session);
         console.log(session?.user ? `User authenticated: ${session.user.email}` : 'No active session');
       } catch (error) {

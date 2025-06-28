@@ -27,33 +27,25 @@ export const useSimplifiedAuthState = () => {
 
   const setSession = useCallback((session: Session | null) => {
     console.log('Auth: Setting session', session ? 'exists' : 'null');
-    setState(prev => {
-      // Only update if session actually changed
-      if (prev.session === session) {
-        console.log('Auth: Session unchanged, not updating state');
-        return prev;
-      }
-      
-      const user = session?.user ? {
-        id: session.user.id,
-        email: session.user.email || '',
-        name: session.user.email?.split('@')[0] || 'User',
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(session.user.email?.split('@')[0] || 'User')}&background=6366f1&color=fff`
-      } : null;
+    
+    const user = session?.user ? {
+      id: session.user.id,
+      email: session.user.email || '',
+      name: session.user.email?.split('@')[0] || 'User',
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(session.user.email?.split('@')[0] || 'User')}&background=6366f1&color=fff`
+    } : null;
 
-      console.log('Auth: New state -', { 
-        hasUser: !!user, 
-        isAuthenticated: !!session?.user,
-        isLoading: false 
-      });
+    console.log('Auth: New state -', { 
+      hasUser: !!user, 
+      isAuthenticated: !!session?.user,
+      isLoading: false 
+    });
 
-      return {
-        ...prev,
-        session,
-        user,
-        isLoading: false,
-        isAuthenticated: !!session?.user,
-      };
+    setState({
+      session,
+      user,
+      isLoading: false, // Always set loading to false when setting session
+      isAuthenticated: !!session?.user,
     });
   }, []);
 
@@ -62,7 +54,7 @@ export const useSimplifiedAuthState = () => {
     setState({
       user: null,
       session: null,
-      isLoading: false,
+      isLoading: false, // Ensure loading is false when clearing auth
       isAuthenticated: false,
     });
   }, []);
