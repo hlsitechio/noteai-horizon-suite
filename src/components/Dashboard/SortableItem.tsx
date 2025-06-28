@@ -30,17 +30,20 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, gridClass, children }) 
 
   // Debug event handlers
   const handleDragHandleClick = (e: React.MouseEvent) => {
-    console.log(`SortableItem ${id}: Drag handle clicked - this should start drag!`);
-    e.preventDefault();
+    console.log(`🔥 SortableItem ${id}: Drag handle CLICKED - starting drag!`);
     e.stopPropagation();
   };
 
   const handleDragHandleMouseDown = (e: React.MouseEvent) => {
-    console.log(`SortableItem ${id}: Drag handle mouse down - drag should be starting!`);
+    console.log(`🔥 SortableItem ${id}: Drag handle MOUSE DOWN - drag initiating!`);
   };
 
   const handleDragHandlePointerDown = (e: React.PointerEvent) => {
-    console.log(`SortableItem ${id}: Drag handle pointer down event`);
+    console.log(`🔥 SortableItem ${id}: Drag handle POINTER DOWN event - starting drag sequence!`);
+  };
+
+  const handleDragHandleTouchStart = (e: React.TouchEvent) => {
+    console.log(`🔥 SortableItem ${id}: Drag handle TOUCH START event!`);
   };
 
   return (
@@ -52,11 +55,11 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, gridClass, children }) 
       }`}
       data-block-id={id}
     >
-      {/* Simplified, always visible drag handle */}
+      {/* Improved drag handle with better event handling */}
       <div 
         {...attributes}
         {...listeners}
-        className="absolute top-2 right-2 z-50 p-3 rounded-lg bg-white/95 shadow-lg border border-gray-300 cursor-grab active:cursor-grabbing hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="absolute top-2 right-2 z-[60] p-2 rounded-md bg-white/95 shadow-md border border-gray-200 cursor-grab active:cursor-grabbing hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 touch-none select-none"
         role="button"
         aria-grabbed={isDragging}
         aria-label={`Drag to reorder ${id}`}
@@ -64,18 +67,25 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, gridClass, children }) 
         onClick={handleDragHandleClick}
         onMouseDown={handleDragHandleMouseDown}
         onPointerDown={handleDragHandlePointerDown}
+        onTouchStart={handleDragHandleTouchStart}
         style={{ 
-          opacity: 1, // Always visible for debugging
-          pointerEvents: 'auto' // Ensure it's clickable
+          opacity: 1,
+          pointerEvents: 'auto',
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+          WebkitTouchCallout: 'none'
         }}
       >
-        <GripVertical className="w-4 h-4 text-gray-600" />
+        <GripVertical className="w-4 h-4 text-gray-600 pointer-events-none" />
       </div>
       
-      {/* Content */}
-      <div className={`h-full transition-all duration-200 ${
-        isDragging ? 'ring-2 ring-blue-500 ring-opacity-30 rounded-lg' : ''
-      }`}>
+      {/* Content with drag interaction disabled */}
+      <div 
+        className={`h-full transition-all duration-200 ${
+          isDragging ? 'ring-2 ring-blue-500 ring-opacity-30 rounded-lg' : ''
+        }`}
+        style={{ pointerEvents: isDragging ? 'none' : 'auto' }}
+      >
         {children}
       </div>
     </div>

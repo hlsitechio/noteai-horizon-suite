@@ -5,6 +5,7 @@ import {
   closestCenter,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragEndEvent,
@@ -45,11 +46,17 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
   console.log('DndDashboard: Render with blocks:', blocks.length, 'items:', items.length);
   console.log('DndDashboard: Current items order:', items);
 
-  // More permissive sensors for debugging
+  // Improved sensors with better activation constraints
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 3, // Very small distance for easier activation
+        distance: 1, // Very small distance - almost immediate activation
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 100,
+        tolerance: 5,
       },
     }),
     useSensor(KeyboardSensor)
@@ -67,16 +74,16 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
 
   const handleDragStart = (event: DragStartEvent) => {
     const dragId = event.active.id as string;
-    console.log(`🔥 DndDashboard: DRAG STARTED for ${dragId}`);
-    console.log('DndDashboard: Full drag start event:', event);
+    console.log(`🔥🔥🔥 DndDashboard: DRAG STARTED for ${dragId}`);
+    console.log('🔥🔥🔥 DndDashboard: Full drag start event:', event);
     setActiveId(dragId);
     onDragStart(dragId);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    console.log(`🔥 DndDashboard: DRAG ENDED - active: ${active.id}, over: ${over?.id}`);
-    console.log('DndDashboard: Full drag end event:', event);
+    console.log(`🔥🔥🔥 DndDashboard: DRAG ENDED - active: ${active.id}, over: ${over?.id}`);
+    console.log('🔥🔥🔥 DndDashboard: Full drag end event:', event);
     
     setActiveId(null);
     onDragEnd();
@@ -87,24 +94,24 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
       const oldIndex = items.indexOf(activeId);
       const newIndex = items.indexOf(overId);
       
-      console.log(`🔥 DndDashboard: Moving item from index ${oldIndex} to ${newIndex}`);
+      console.log(`🔥🔥🔥 DndDashboard: Moving item from index ${oldIndex} to ${newIndex}`);
       
       if (oldIndex !== -1 && newIndex !== -1) {
         const newItems = arrayMove(items, oldIndex, newIndex);
         
-        console.log(`🔥 DndDashboard: New order after move:`, newItems);
+        console.log(`🔥🔥🔥 DndDashboard: New order after move:`, newItems);
         
         setItems(newItems);
 
         // Reorder blocks and notify parent
         const reordered = newItems.map((id) => blocks.find((b) => b.id === id)!).filter(Boolean);
-        console.log('🔥 DndDashboard: Calling onSwap with reordered blocks:', reordered.map(b => b.id));
+        console.log('🔥🔥🔥 DndDashboard: Calling onSwap with reordered blocks:', reordered.map(b => b.id));
         onSwap(reordered);
       } else {
-        console.warn('🔥 DndDashboard: Could not find indices for drag operation', { activeId, overId, oldIndex, newIndex });
+        console.warn('🔥🔥🔥 DndDashboard: Could not find indices for drag operation', { activeId, overId, oldIndex, newIndex });
       }
     } else {
-      console.log('🔥 DndDashboard: No reorder needed - same position or invalid target');
+      console.log('🔥🔥🔥 DndDashboard: No reorder needed - same position or invalid target');
     }
   };
 
