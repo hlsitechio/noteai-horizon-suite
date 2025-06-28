@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { EnhancedReminderService } from '../services/enhancedReminderService';
 import { NotificationService } from '../services/notificationService';
 import { PushNotificationService } from '../services/pushNotificationService';
@@ -11,9 +11,14 @@ export const useReminderManager = () => {
   const [pendingReminders, setPendingReminders] = useState<any[]>([]);
   const [pushEnabled, setPushEnabled] = useState(false);
   const { addNotification } = useNotifications();
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isInitializedRef = useRef(false);
 
   // Initialize push notifications
   useEffect(() => {
+    if (isInitializedRef.current) return;
+    isInitializedRef.current = true;
+
     const initializePushNotifications = async () => {
       // Initialize service worker
       const swInitialized = await PushNotificationService.initialize();
@@ -38,10 +43,20 @@ export const useReminderManager = () => {
     };
 
     initializePushNotifications();
+
+    // Request notification permission on mount
+    NotificationService.requestPermission().then(granted => {
+      if (!granted) {
+        toast.error('Please enable notifications to receive reminders');
+      }
+    });
   }, []);
 
   const checkForReminders = useCallback(async () => {
-    if (isChecking) return;
+    if (isChecking) {
+      console.log('Reminder check already in progress, skipping...');
+      return;
+    }
     
     setIsChecking(true);
     try {
@@ -99,25 +114,28 @@ export const useReminderManager = () => {
     }
   }, [addNotification]);
 
-  // Check for reminders every minute
+  // Set up interval for checking reminders
   useEffect(() => {
+    // Clear any existing interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
     // Initial check
     checkForReminders();
 
-    // Set up interval
-    const interval = setInterval(checkForReminders, 60000); // Check every minute
+    // Set up new interval - check every 60 seconds
+    intervalRef.current = setInterval(() => {
+      checkForReminders();
+    }, 60000);
 
-    return () => clearInterval(interval);
-  }, [checkForReminders]);
-
-  // Request notification permission on mount
-  useEffect(() => {
-    NotificationService.requestPermission().then(granted => {
-      if (!granted) {
-        toast.error('Please enable notifications to receive reminders');
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
-    });
-  }, []);
+    };
+  }, [checkForReminders]);
 
   return {
     pendingReminders,

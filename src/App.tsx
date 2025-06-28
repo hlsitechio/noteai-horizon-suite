@@ -56,7 +56,7 @@ const queryClient = new QueryClient({
   },
 });
 
-// Simplified Reminder Manager Component
+// Single instance of Reminder Manager Component
 const ReminderManagerInit: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   useReminderManager();
   return <>{children}</>;
@@ -90,8 +90,8 @@ function App() {
             <FoldersProvider>
               <ProjectRealmsProvider>
                 <FloatingNotesProvider>
-                  <ReminderManagerInit>
-                    <QuantumAIProvider>
+                  <QuantumAIProvider>
+                    <ReminderManagerInit>
                       <Routes>
                         {/* Public Routes */}
                         <Route path="/" element={<Index />} />
@@ -137,8 +137,8 @@ function App() {
                       {import.meta.env.DEV && (
                         <ReactQueryDevtools initialIsOpen={false} />
                       )}
-                    </QuantumAIProvider>
-                  </ReminderManagerInit>
+                    </ReminderManagerInit>
+                  </QuantumAIProvider>
                 </FloatingNotesProvider>
               </ProjectRealmsProvider>
             </FoldersProvider>
