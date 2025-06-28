@@ -51,8 +51,9 @@ const FolderDialog: React.FC<FolderDialogProps> = ({
             value={folderName}
             onChange={(e) => onFolderNameChange(e.target.value)}
             onKeyPress={handleKeyPress}
+            autoFocus
           />
-          <Button onClick={onSave}>
+          <Button onClick={onSave} disabled={!folderName.trim()}>
             {isCreating ? 'Create' : 'Save'}
           </Button>
         </div>
