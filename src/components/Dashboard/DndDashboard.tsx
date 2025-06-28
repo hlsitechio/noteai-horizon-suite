@@ -39,10 +39,11 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
   const [items, setItems] = useState(blocks.map((b) => b.id));
   const isMobile = useIsMobile();
 
+  // Enhanced sensors with faster activation and smoother response
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 3, // Reduced from 8 for faster activation
       },
     }),
     useSensor(KeyboardSensor)
@@ -88,7 +89,7 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
       <SortableContext items={items} strategy={rectSortingStrategy}>
         <div className={`dashboard-grid grid ${
           isMobile ? 'grid-cols-2' : 'grid-cols-12'
-        } gap-3 w-full min-h-0 transition-all duration-300 ${
+        } gap-4 w-full min-h-0 transition-all duration-150 ease-out ${
           isDragging ? 'dragging-active bg-gradient-to-br from-blue-50/20 to-purple-50/20' : ''
         }`}>
           {items.map((id) => {
@@ -106,7 +107,7 @@ const DndDashboard: React.FC<DndDashboardProps> = ({
                   : block.gridClass
                 } ${
                   block.id.startsWith('kpi-') ? 'h-24' : 'min-h-[250px]'
-                } transition-transform duration-300 ease-in-out`}
+                } transition-all duration-150 ease-out`}
               >
                 <BlockComponent {...block.props} />
               </SortableItem>

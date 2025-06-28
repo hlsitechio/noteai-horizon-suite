@@ -26,21 +26,23 @@ const DashboardContent: React.FC = () => {
 
       {/* Scrollable Content */}
       <ScrollArea className="flex-1 w-full">
-        <div className="p-4 space-y-4 min-h-full">
-          {/* Welcome Header - Compact for mobile */}
-          <div className="flex-shrink-0 w-full h-[120px]">
+        <div className="p-4 space-y-8 min-h-full">
+          {/* Welcome Header - Much larger space for banner */}
+          <div className="flex-shrink-0 w-full h-[300px]">
             <WelcomeHeader />
           </div>
 
-          {/* Main Content Area - All draggable components */}
-          <DndDashboard
-            blocks={blocks}
-            onSwap={handleBlocksReorder}
-            isDragging={isDragging}
-            draggedBlockId={draggedBlockId}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          />
+          {/* Main Content Area - Pushed further down with more spacing */}
+          <div className="pt-8">
+            <DndDashboard
+              blocks={blocks}
+              onSwap={handleBlocksReorder}
+              isDragging={isDragging}
+              draggedBlockId={draggedBlockId}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+            />
+          </div>
         </div>
       </ScrollArea>
     </div>

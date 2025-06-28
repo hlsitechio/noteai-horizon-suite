@@ -22,20 +22,20 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, gridClass, children }) 
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: transition || 'transform 150ms ease-out',
   };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`${gridClass} h-full min-h-0 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] relative group ${
+      className={`${gridClass} h-full min-h-0 transition-all duration-150 ease-out relative group ${
         isDragging ? 'z-50 scale-105 shadow-2xl rotate-1 opacity-90 ring-2 ring-blue-500 ring-opacity-50' : 'z-10'
       }`}
       data-block-id={id}
     >
       {/* Drag Handle - Hidden by default, shown on group hover */}
-      <div className={`absolute top-2 right-2 z-20 transition-all duration-200 opacity-0 group-hover:opacity-100 ${
+      <div className={`absolute top-2 right-2 z-20 transition-all duration-150 opacity-0 group-hover:opacity-100 ${
         isDragging ? 'scale-110 opacity-100' : ''
       }`}>
         <div 
@@ -44,7 +44,7 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, gridClass, children }) 
           role="button"
           aria-grabbed={isDragging}
           aria-label="Drag to reorder"
-          className="drag-handle cursor-move p-1.5 rounded-lg hover:bg-background/80 transition-colors bg-white/90 shadow-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          className="drag-handle cursor-move p-1.5 rounded-lg hover:bg-background/80 transition-all duration-150 bg-white/90 shadow-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -52,14 +52,14 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, gridClass, children }) 
             }
           }}
         >
-          <GripVertical className={`w-3 h-3 transition-colors ${
+          <GripVertical className={`w-3 h-3 transition-colors duration-150 ${
             isDragging ? 'text-blue-600' : 'text-muted-foreground hover:text-foreground'
           }`} />
         </div>
       </div>
       
       {/* Content */}
-      <div className={`h-full transition-all duration-300 ${
+      <div className={`h-full transition-all duration-150 ${
         isDragging ? 'ring-2 ring-blue-500 ring-opacity-50' : ''
       }`}>
         {children}
