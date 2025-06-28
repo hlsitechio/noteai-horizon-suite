@@ -1,73 +1,71 @@
 
-import React, { Component, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
 }
 
 interface State {
   hasError: boolean;
   error?: Error;
-  errorInfo?: React.ErrorInfo;
 }
 
-class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
-  }
+export class ErrorBoundary extends Component<Props, State> {
+  public state: State = {
+    hasError: false
+  };
 
-  static getDerivedStateFromError(error: Error): State {
+  public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error boundary caught an error:', error, errorInfo);
-    this.setState({ errorInfo });
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
 
-  render() {
+  private handleReset = () => {
+    this.setState({ hasError: false, error: undefined });
+    window.location.reload();
+  };
+
+  public render() {
     if (this.state.hasError) {
       return (
-        this.props.fallback || (
-          <div className="min-h-screen flex items-center justify-center bg-background">
-            <div className="text-center p-8 max-w-md">
-              <h1 className="text-2xl font-bold text-destructive mb-4">
-                Something went wrong
-              </h1>
-              <p className="text-muted-foreground mb-4">
-                The application encountered an error and couldn't render properly.
+        <div className="min-h-screen bg-background flex items-center justify-center p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+                <AlertTriangle className="w-6 h-6 text-destructive" />
+              </div>
+              <CardTitle>Something went wrong</CardTitle>
+            </CardHeader>
+            <CardContent className="text-center space-y-4">
+              <p className="text-muted-foreground">
+                The application encountered an unexpected error. Please try refreshing the page.
               </p>
-              <button
-                onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 mb-4"
-              >
-                Reload Page
-              </button>
               {this.state.error && (
-                <details className="mt-4 text-left">
-                  <summary className="cursor-pointer text-sm text-muted-foreground mb-2">
-                    Error Details
+                <details className="text-left">
+                  <summary className="text-sm cursor-pointer text-muted-foreground hover:text-foreground">
+                    Error details
                   </summary>
-                  <div className="text-xs text-destructive bg-destructive/10 p-3 rounded overflow-auto">
-                    <p className="font-semibold mb-2">Error: {this.state.error.toString()}</p>
-                    {this.state.errorInfo && (
-                      <pre className="whitespace-pre-wrap">
-                        {this.state.errorInfo.componentStack}
-                      </pre>
-                    )}
-                  </div>
+                  <pre className="text-xs mt-2 p-2 bg-muted rounded text-left overflow-auto">
+                    {this.state.error.message}
+                  </pre>
                 </details>
               )}
-            </div>
-          </div>
-        )
+              <Button onClick={this.handleReset} className="w-full">
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh Page
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       );
     }
 
     return this.props.children;
   }
 }
-
-export default ErrorBoundary;

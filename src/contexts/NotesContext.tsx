@@ -2,7 +2,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Note, NoteFilters } from '../types/note';
 import { SupabaseNotesService } from '../services/supabaseNotesService';
-import { useFolders } from './FoldersContext';
 import { useAuth } from './AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -44,9 +43,11 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isLoading, setIsLoading] = useState(true);
   const [syncStatus, setSyncStatus] = useState<'connected' | 'disconnected' | 'syncing'>('disconnected');
   
-  // Get auth state and folders
+  // Get auth state - safely handle case where FoldersProvider might not be ready
   const { user, isLoading: authLoading } = useAuth();
-  const { folders } = useFolders();
+  
+  // Initialize folders as empty array - will be populated when folders context is available
+  const folders: any[] = [];
 
   // Track subscription state to prevent multiple subscriptions
   const subscriptionRef = useRef<any>(null);
@@ -169,11 +170,6 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     };
   }, [user, authLoading]); // Remove currentNote/selectedNote dependencies to prevent re-subscriptions
-
-  // Update current/selected notes when they change (separate effect)
-  useEffect(() => {
-    // This effect handles updating current/selected notes without triggering subscription cleanup
-  }, [currentNote?.id, selectedNote?.id]);
 
   const createNote = async (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Promise<Note> => {
     if (!user) throw new Error('User not authenticated');

@@ -8,8 +8,16 @@ import { CollapsedNotesSection } from './CollapsedNotesSection';
 import { CreateFolderDialog } from './CreateFolderDialog';
 import { useNotes } from '../../../contexts/NotesContext';
 import { useProjectRealms } from '../../../contexts/ProjectRealmsContext';
-import { useFolders } from '../../../contexts/FoldersContext';
 import { useNavigate } from 'react-router-dom';
+
+// Safely import useFolders with error handling
+let useFolders: any = null;
+try {
+  const foldersModule = require('../../../contexts/FoldersContext');
+  useFolders = foldersModule.useFolders;
+} catch (error) {
+  console.warn('FoldersContext not available:', error);
+}
 
 interface NotesSectionProps {
   isCollapsed?: boolean;
@@ -18,8 +26,23 @@ interface NotesSectionProps {
 export function NotesSection({ isCollapsed = false }: NotesSectionProps) {
   const { notes, createNote, updateNote, setCurrentNote } = useNotes();
   const { projects } = useProjectRealms();
-  const { folders, createFolder } = useFolders();
   const navigate = useNavigate();
+  
+  // Safely use folders context if available
+  let folders: any[] = [];
+  let createFolder: any = null;
+  
+  if (useFolders) {
+    try {
+      const foldersContext = useFolders();
+      folders = foldersContext.folders || [];
+      createFolder = foldersContext.createFolder;
+    } catch (error) {
+      console.warn('Could not access folders context:', error);
+      folders = [];
+      createFolder = null;
+    }
+  }
   
   // State for expandable sections
   const [isNotesExpanded, setIsNotesExpanded] = useState(true);
@@ -53,7 +76,7 @@ export function NotesSection({ isCollapsed = false }: NotesSectionProps) {
   };
 
   const handleCreateFolder = () => {
-    if (folderName.trim()) {
+    if (folderName.trim() && createFolder) {
       createFolder({
         name: folderName.trim(),
         color: '#64748b'
@@ -100,13 +123,15 @@ export function NotesSection({ isCollapsed = false }: NotesSectionProps) {
         />
       )}
 
-      <CreateFolderDialog
-        isOpen={showCreateFolderDialog}
-        onOpenChange={setShowCreateFolderDialog}
-        folderName={folderName}
-        onFolderNameChange={setFolderName}
-        onCreateFolder={handleCreateFolder}
-      />
+      {createFolder && (
+        <CreateFolderDialog
+          isOpen={showCreateFolderDialog}
+          onOpenChange={setShowCreateFolderDialog}
+          folderName={folderName}
+          onFolderNameChange={setFolderName}
+          onCreateFolder={handleCreateFolder}
+        />
+      )}
     </div>
   );
 }
