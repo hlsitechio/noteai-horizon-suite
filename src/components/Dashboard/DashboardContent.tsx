@@ -4,6 +4,7 @@ import WelcomeHeader from './WelcomeHeader';
 import DndDashboard from './DndDashboard';
 import ResetZoneButton from './ResetZoneButton';
 import { useDashboard } from '../../hooks/useDashboard';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const DashboardContent: React.FC = () => {
   const {
@@ -17,24 +18,31 @@ const DashboardContent: React.FC = () => {
   } = useDashboard();
 
   return (
-    <div className="flex-1 flex flex-col p-4 gap-4 w-full max-w-[1920px] max-h-[1080px] mx-auto relative">
+    <div className="flex-1 flex flex-col w-full max-w-[1920px] mx-auto relative overflow-hidden">
       {/* Reset Layout Button */}
-      <ResetZoneButton onReset={handleResetLayout} />
-
-      {/* Welcome Header - Fixed height for 1080p */}
-      <div className="flex-shrink-0 w-full h-[180px]">
-        <WelcomeHeader />
+      <div className="absolute top-4 right-4 z-50">
+        <ResetZoneButton onReset={handleResetLayout} />
       </div>
 
-      {/* Main Content Area - All draggable components with mobile optimization */}
-      <DndDashboard
-        blocks={blocks}
-        onSwap={handleBlocksReorder}
-        isDragging={isDragging}
-        draggedBlockId={draggedBlockId}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      />
+      {/* Scrollable Content */}
+      <ScrollArea className="flex-1 w-full">
+        <div className="p-4 space-y-4 min-h-full">
+          {/* Welcome Header - Compact for mobile */}
+          <div className="flex-shrink-0 w-full h-[120px]">
+            <WelcomeHeader />
+          </div>
+
+          {/* Main Content Area - All draggable components */}
+          <DndDashboard
+            blocks={blocks}
+            onSwap={handleBlocksReorder}
+            isDragging={isDragging}
+            draggedBlockId={draggedBlockId}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          />
+        </div>
+      </ScrollArea>
     </div>
   );
 };
