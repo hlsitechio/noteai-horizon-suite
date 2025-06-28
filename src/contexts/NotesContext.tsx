@@ -222,17 +222,19 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           );
 
         // Subscribe to the channel
-        const subscriptionResponse = await channel.subscribe();
-        
-        if (subscriptionResponse === 'SUBSCRIBED') {
-          console.log('Successfully subscribed to real-time updates');
-          channelRef.current = channel;
-          isInitializedRef.current = true;
-          setSyncStatus('connected');
-        } else {
-          console.error('Failed to subscribe to real-time updates:', subscriptionResponse);
-          setSyncStatus('disconnected');
-        }
+        channel.subscribe((status) => {
+          console.log('Subscription status:', status);
+          
+          if (status === 'SUBSCRIBED') {
+            console.log('Successfully subscribed to real-time updates');
+            channelRef.current = channel;
+            isInitializedRef.current = true;
+            setSyncStatus('connected');
+          } else if (status === 'CHANNEL_ERROR') {
+            console.error('Failed to subscribe to real-time updates');
+            setSyncStatus('disconnected');
+          }
+        });
 
       } catch (error) {
         console.error('Error setting up real-time subscription:', error);
