@@ -50,15 +50,15 @@ export function SidebarMain() {
       <motion.div
         variants={sidebarVariants}
         animate={isCollapsed ? 'collapsed' : 'expanded'}
-        className="bg-deep-carbon-900/95 backdrop-blur-md border-r border-deep-carbon-700/50 h-screen overflow-hidden shadow-premium z-40"
+        className="bg-sidebar border-r border-sidebar-border h-screen overflow-hidden shadow-lg z-40"
       >
         <Sidebar collapsible="icon" className="bg-transparent border-0 h-full flex flex-col">
           {/* Header */}
-          <SidebarHeader className="p-3 pb-2 bg-deep-carbon-900/90 flex-shrink-0">
+          <SidebarHeader className="p-3 pb-2 flex-shrink-0">
             <CustomSidebarHeader />
           </SidebarHeader>
 
-          <SidebarContent className="px-0 bg-deep-carbon-900/80 flex-1 min-h-0 overflow-y-auto">
+          <SidebarContent className="px-0 flex-1 min-h-0 overflow-y-auto">
             {/* Navigation Menu */}
             <SidebarGroup className="py-2">
               <SidebarGroupContent>
@@ -67,23 +67,23 @@ export function SidebarMain() {
             </SidebarGroup>
 
             {/* First Separator */}
-            <SidebarSeparator className="mx-4 my-2 bg-deep-carbon-700/30" />
+            <SidebarSeparator className="mx-4 my-2" />
 
             {/* Collapsed Summary */}
-            <CollapsedSummary />
+            {isCollapsed && <CollapsedSummary />}
 
-            {/* Second Separator */}
-            <SidebarSeparator className="mx-4 my-2 bg-deep-carbon-700/30" />
+            {/* Second Separator - only show when collapsed */}
+            {isCollapsed && <SidebarSeparator className="mx-4 my-2" />}
 
             {/* Notes Section - This is the main content area */}
             <NotesSection />
           </SidebarContent>
 
           {/* Footer Separator */}
-          <SidebarSeparator className="mx-4 my-1 bg-deep-carbon-700/30" />
+          <SidebarSeparator className="mx-4 my-1" />
 
           {/* Footer with Notifications */}
-          <SidebarFooter className="p-2 pt-1 z-30 bg-deep-carbon-900/90 flex-shrink-0">
+          <SidebarFooter className="p-2 pt-1 z-30 flex-shrink-0">
             <CustomSidebarFooter />
           </SidebarFooter>
         </Sidebar>
