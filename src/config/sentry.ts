@@ -62,9 +62,6 @@ export const initSentry = () => {
     // Enable debug mode in development
     debug: import.meta.env.DEV,
     
-    // Capture uncaught exceptions
-    autoSessionTracking: true,
-    
     // Enhanced transport options
     transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
   });
