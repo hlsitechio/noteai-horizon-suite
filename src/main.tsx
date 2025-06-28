@@ -40,10 +40,10 @@ if (!rootElement) {
   createRoot(rootElement).render(
     <QueryClientProvider client={queryClient}>
       <App />
-      {/* Fixed React Query Devtools configuration */}
+      {/* Fixed React Query Devtools configuration with valid position */}
       <ReactQueryDevtools 
         initialIsOpen={false}
-        position="bottom-right"
+        position="bottom-left"
       />
     </QueryClientProvider>
   );
