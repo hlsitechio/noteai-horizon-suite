@@ -53,27 +53,36 @@ export function SidebarMain() {
         className="bg-deep-carbon-900/95 backdrop-blur-md border-r border-deep-carbon-700/50 h-screen overflow-hidden shadow-premium z-40"
       >
         <Sidebar collapsible="icon" className="bg-transparent border-0 h-full flex flex-col">
+          {/* Header */}
           <SidebarHeader className="p-3 pb-2 bg-deep-carbon-900/90 flex-shrink-0">
             <CustomSidebarHeader />
           </SidebarHeader>
 
           <SidebarContent className="px-0 bg-deep-carbon-900/80 flex-1 min-h-0 overflow-y-auto">
+            {/* Navigation Menu */}
             <SidebarGroup className="py-2">
               <SidebarGroupContent>
                 <NavigationMenu isCollapsed={isCollapsed} />
               </SidebarGroupContent>
             </SidebarGroup>
 
+            {/* First Separator */}
             <SidebarSeparator className="mx-4 my-2 bg-deep-carbon-700/30" />
 
+            {/* Collapsed Summary */}
             <CollapsedSummary />
 
-            {/* Notes Section */}
+            {/* Second Separator */}
+            <SidebarSeparator className="mx-4 my-2 bg-deep-carbon-700/30" />
+
+            {/* Notes Section - This is the main content area */}
             <NotesSection />
           </SidebarContent>
 
+          {/* Footer Separator */}
           <SidebarSeparator className="mx-4 my-1 bg-deep-carbon-700/30" />
 
+          {/* Footer with Notifications */}
           <SidebarFooter className="p-2 pt-1 z-30 bg-deep-carbon-900/90 flex-shrink-0">
             <CustomSidebarFooter />
           </SidebarFooter>

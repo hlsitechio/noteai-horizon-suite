@@ -1,23 +1,11 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { Bell, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MoreVertical } from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth } from '../../../contexts/AuthContext';
 import { useNotifications } from '../../../contexts/NotificationsContext';
-import { SidebarProfile } from './SidebarProfile';
-import { SidebarActions } from './SidebarActions';
 
 interface SidebarMenuButtonProps {
   isCollapsed: boolean;
@@ -25,77 +13,53 @@ interface SidebarMenuButtonProps {
 }
 
 export function SidebarMenuButton({ isCollapsed, onNotificationsClick }: SidebarMenuButtonProps) {
+  const { user } = useAuth();
   const { unreadCount } = useNotifications();
 
   if (isCollapsed) {
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-11 h-11 rounded-xl hover:bg-accent/10 relative"
-              >
-                <MoreVertical className="w-5 h-5" />
-                {unreadCount > 0 && (
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" as const }}
-                    className="absolute -top-1 -right-1"
-                  >
-                    <Badge className="h-4 min-w-4 p-0 bg-red-500 border-0 text-xs">
-                      {unreadCount > 99 ? '99+' : unreadCount}
-                    </Badge>
-                  </motion.div>
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Menu</p>
-            </TooltipContent>
-          </Tooltip>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent side="right" align="start" className="w-56">
-          <SidebarProfile />
-          <DropdownMenuSeparator />
-          <SidebarActions onNotificationsClick={onNotificationsClick} />
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
+    return null;
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start h-9 rounded-lg hover:bg-accent/10 transition-colors relative"
-          >
-            <MoreVertical className="w-4 h-4 mr-2" />
-            Menu
-            {unreadCount > 0 && (
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" as const }}
-                className="ml-auto"
-              >
-                <Badge className="h-4 min-w-4 p-0 bg-red-500 border-0 text-xs">
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </Badge>
-              </motion.div>
-            )}
-          </Button>
-        </motion.div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent side="top" align="start" className="w-56">
-        <SidebarProfile />
-        <DropdownMenuSeparator />
-        <SidebarActions onNotificationsClick={onNotificationsClick} />
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="space-y-2">
+      {/* User Profile Section */}
+      <div className="flex items-center gap-3 p-2 rounded-lg bg-deep-carbon-800/50 hover:bg-deep-carbon-800/70 transition-colors">
+        <Avatar className="w-10 h-10 border-2 border-deep-carbon-600">
+          <AvatarImage src={user?.avatar} />
+          <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">
+            {user?.name?.[0] || <User className="w-5 h-5" />}
+          </AvatarFallback>
+        </Avatar>
+        
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-sm text-white truncate">
+            {user?.name || 'User'}
+          </p>
+          <p className="text-xs text-deep-carbon-300 truncate">
+            {user?.email || 'user@example.com'}
+          </p>
+        </div>
+      </div>
+
+      {/* Notifications Button */}
+      <Button
+        variant="ghost"
+        onClick={onNotificationsClick}
+        className="w-full justify-start h-10 text-deep-carbon-200 hover:text-white hover:bg-deep-carbon-800/50 transition-colors"
+      >
+        <div className="relative flex items-center gap-3">
+          <Bell className="w-5 h-5" />
+          <span>Notifications</span>
+          {unreadCount > 0 && (
+            <Badge 
+              variant="destructive" 
+              className="ml-auto h-5 min-w-5 text-xs bg-red-500 hover:bg-red-600"
+            >
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </Badge>
+          )}
+        </div>
+      </Button>
+    </div>
   );
 }

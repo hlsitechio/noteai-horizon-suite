@@ -1,137 +1,57 @@
 
-import React, { useState } from 'react';
-import { NotesListSection } from './NotesListSection';
-import { ProjectsListSection } from './ProjectsListSection';
-import { FavoritesListSection } from './FavoritesListSection';
-import { FoldersListSection } from './FoldersListSection';
-import { CollapsedNotesSection } from './CollapsedNotesSection';
-import { CreateFolderDialog } from './CreateFolderDialog';
-import { useNotes } from '../../../contexts/NotesContext';
-import { useProjectRealms } from '../../../contexts/ProjectRealmsContext';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useSidebar } from '@/components/ui/sidebar';
+import { SidebarGroup, SidebarGroupContent } from '@/components/ui/sidebar';
+import NotesTree from '../../Sidebar/NotesTree';
 
-// Safely import useFolders with error handling
-let useFolders: any = null;
-try {
-  const foldersModule = require('../../../contexts/FoldersContext');
-  useFolders = foldersModule.useFolders;
-} catch (error) {
-  console.warn('FoldersContext not available:', error);
-}
-
-interface NotesSectionProps {
-  isCollapsed?: boolean;
-}
-
-export function NotesSection({ isCollapsed = false }: NotesSectionProps) {
-  const { notes, createNote, updateNote, setCurrentNote } = useNotes();
-  const { projects } = useProjectRealms();
-  const navigate = useNavigate();
-  
-  // Safely use folders context if available
-  let folders: any[] = [];
-  let createFolder: any = null;
-  
-  if (useFolders) {
-    try {
-      const foldersContext = useFolders();
-      folders = foldersContext.folders || [];
-      createFolder = foldersContext.createFolder;
-    } catch (error) {
-      console.warn('Could not access folders context:', error);
-      folders = [];
-      createFolder = null;
+const contentVariants = {
+  expanded: {
+    opacity: 1,
+    height: 'auto',
+    transition: {
+      delay: 0.1,
+      duration: 0.3
+    }
+  },
+  collapsed: {
+    opacity: 0,
+    height: 0,
+    transition: {
+      duration: 0.2
     }
   }
-  
-  // State for expandable sections
-  const [isNotesExpanded, setIsNotesExpanded] = useState(true);
-  const [isProjectsExpanded, setIsProjectsExpanded] = useState(true);
-  const [isFavoritesExpanded, setIsFavoritesExpanded] = useState(true);
-  const [isFoldersExpanded, setIsFoldersExpanded] = useState(true);
-  
-  // State for folder creation dialog
-  const [showCreateFolderDialog, setShowCreateFolderDialog] = useState(false);
-  const [folderName, setFolderName] = useState('');
+};
 
-  const favoriteNotes = notes.filter(note => note.isFavorite);
-
-  const handleCreateNote = async () => {
-    try {
-      const newNote = await createNote({
-        title: 'Untitled Note',
-        content: '',
-        category: 'general' as const,
-        tags: [],
-        isFavorite: false,
-        folder_id: null
-      });
-      
-      // Set the new note as current and navigate to editor
-      setCurrentNote(newNote);
-      navigate('/app/editor');
-    } catch (error) {
-      console.error('Failed to create note:', error);
-    }
-  };
-
-  const handleCreateFolder = () => {
-    if (folderName.trim() && createFolder) {
-      createFolder({
-        name: folderName.trim(),
-        color: '#64748b'
-      });
-      setFolderName('');
-      setShowCreateFolderDialog(false);
-    }
-  };
-
-  if (isCollapsed) {
-    return <CollapsedNotesSection />;
-  }
+export function NotesSection() {
+  const { state } = useSidebar();
+  const isCollapsed = state === 'collapsed';
 
   return (
-    <div className="space-y-2">
-      <NotesListSection
-        notes={notes}
-        isExpanded={isNotesExpanded}
-        onToggle={() => setIsNotesExpanded(!isNotesExpanded)}
-        onCreateNote={handleCreateNote}
-        onCreateFolder={() => setShowCreateFolderDialog(true)}
-      />
-
-      {folders.length > 0 && (
-        <FoldersListSection
-          folders={folders}
-          notes={notes}
-          isExpanded={isFoldersExpanded}
-          onToggle={() => setIsFoldersExpanded(!isFoldersExpanded)}
-        />
-      )}
-      
-      <ProjectsListSection
-        projects={projects}
-        isExpanded={isProjectsExpanded}
-        onToggle={() => setIsProjectsExpanded(!isProjectsExpanded)}
-      />
-      
-      {favoriteNotes.length > 0 && (
-        <FavoritesListSection
-          favoriteNotes={favoriteNotes}
-          isExpanded={isFavoritesExpanded}
-          onToggle={() => setIsFavoritesExpanded(!isFavoritesExpanded)}
-        />
-      )}
-
-      {createFolder && (
-        <CreateFolderDialog
-          isOpen={showCreateFolderDialog}
-          onOpenChange={setShowCreateFolderDialog}
-          folderName={folderName}
-          onFolderNameChange={setFolderName}
-          onCreateFolder={handleCreateFolder}
-        />
-      )}
-    </div>
+    <SidebarGroup className="flex-1 min-h-0">
+      <SidebarGroupContent className="h-full">
+        <AnimatePresence>
+          {!isCollapsed ? (
+            <motion.div
+              variants={contentVariants}
+              initial="collapsed"
+              animate="expanded"
+              exit="collapsed"
+              className="h-full overflow-hidden"
+            >
+              <div className="h-full overflow-y-auto">
+                <NotesTree />
+              </div>
+            </motion.div>
+          ) : (
+            <div className="px-2 py-1">
+              <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                <span className="text-xs font-medium text-primary">N</span>
+              </div>
+            </div>
+          )}
+        </AnimatePresence>
+      </SidebarGroupContent>
+    </SidebarGroup>
   );
 }
