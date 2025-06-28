@@ -40,13 +40,19 @@ export const OptimizedNotesProvider: React.FC<{ children: React.ReactNode }> = (
   
   const { user, isLoading: authLoading } = useAuth();
   
-  // Use refs to prevent memory leaks
+  // Prevent memory leaks and multiple subscriptions
   const channelRef = useRef<any>(null);
   const mountedRef = useRef(true);
   const subscriptionActiveRef = useRef(false);
+  const refreshTimeoutRef = useRef<NodeJS.Timeout>();
 
   const refreshNotes = useCallback(async () => {
     if (!user || !mountedRef.current) return;
+
+    // Clear any pending refresh
+    if (refreshTimeoutRef.current) {
+      clearTimeout(refreshTimeoutRef.current);
+    }
 
     setIsLoading(true);
     setSyncStatus('syncing');
@@ -114,11 +120,15 @@ export const OptimizedNotesProvider: React.FC<{ children: React.ReactNode }> = (
               console.log('Real-time notes update:', payload.eventType);
               
               // Debounce updates to prevent excessive re-renders
-              setTimeout(() => {
+              if (refreshTimeoutRef.current) {
+                clearTimeout(refreshTimeoutRef.current);
+              }
+              
+              refreshTimeoutRef.current = setTimeout(() => {
                 if (mountedRef.current) {
                   refreshNotes();
                 }
-              }, 500);
+              }, 1000); // Increased debounce time
             }
           );
 
@@ -155,6 +165,9 @@ export const OptimizedNotesProvider: React.FC<{ children: React.ReactNode }> = (
   useEffect(() => {
     return () => {
       mountedRef.current = false;
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
       cleanupSubscription();
     };
   }, [cleanupSubscription]);

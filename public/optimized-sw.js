@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'notes-app-v1';
+const CACHE_NAME = 'notes-app-v2';
 const CRITICAL_RESOURCES = [
   '/',
   '/static/js/bundle.js',
@@ -9,7 +9,7 @@ const CRITICAL_RESOURCES = [
 
 // Install event - cache critical resources
 self.addEventListener('install', (event) => {
-  console.log('Service Worker: Installing optimized service worker');
+  console.log('Service Worker: Installing optimized service worker v2');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -28,7 +28,7 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker: Activating optimized service worker');
+  console.log('Service Worker: Activating optimized service worker v2');
   
   event.waitUntil(
     Promise.all([
@@ -49,7 +49,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - serve from cache when offline, network first for API calls
+// Fetch event - optimized caching strategy
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
@@ -59,12 +59,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
+  // Skip lovable.js to prevent conflicts
+  if (url.pathname.includes('lovable.js')) {
+    return;
+  }
+  
   // Network first for API calls and Supabase requests
-  if (url.pathname.includes('/api/') || url.hostname.includes('supabase')) {
+  if (url.pathname.includes('/api/') || 
+      url.hostname.includes('supabase') || 
+      url.pathname.includes('/auth/')) {
     event.respondWith(
       fetch(request)
         .catch(() => {
-          console.log('Service Worker: Network failed for API request');
           return new Response('Offline', { status: 503 });
         })
     );
@@ -76,7 +82,6 @@ self.addEventListener('fetch', (event) => {
     caches.match(request)
       .then((response) => {
         if (response) {
-          console.log('Service Worker: Serving from cache:', request.url);
           return response;
         }
         
@@ -100,9 +105,9 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Handle service worker errors
+// Simplified error handling
 self.addEventListener('error', (event) => {
-  console.error('Service Worker: Global error:', event.error);
+  console.error('Service Worker: Error:', event.error);
 });
 
 self.addEventListener('unhandledrejection', (event) => {

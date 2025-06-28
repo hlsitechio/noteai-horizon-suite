@@ -1,9 +1,9 @@
 
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthContextType } from './auth/types';
-import { useAuthState } from './auth/useAuthState';
-import { loginUser, registerUser, logoutUser, initializeAuthSession } from './auth/authService';
+import { useSimplifiedAuthState } from './auth/useSimplifiedAuthState';
+import { toast } from 'sonner';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -24,86 +24,100 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading,
     setSession,
     clearAuth,
-    refreshUser,
-  } = useAuthState();
+  } = useSimplifiedAuthState();
 
-  console.log('AuthProvider render - Auth state:', {
-    hasUser: !!user,
-    hasSession: !!session,
-    isLoading,
-    userEmail: user?.email
-  });
+  const mounted = useRef(true);
+  const initialized = useRef(false);
 
   useEffect(() => {
-    console.log('AuthProvider: Setting up auth state listener');
-    
-    let mounted = true;
-    let authInitialized = false;
-    
+    // Prevent multiple initializations
+    if (initialized.current) return;
+    initialized.current = true;
+
+    console.log('AuthProvider: Initializing auth state');
+
     const initializeAuth = async () => {
-      if (authInitialized) return;
-      authInitialized = true;
-      
-      const { session, error } = await initializeAuthSession();
-      
-      if (!mounted) return;
-      
-      if (error) {
-        clearAuth();
-        return;
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (!mounted.current) return;
+        
+        if (error) {
+          console.error('Auth initialization error:', error);
+          clearAuth();
+          return;
+        }
+
+        setSession(session);
+        console.log(session?.user ? `User authenticated: ${session.user.email}` : 'No active session');
+      } catch (error) {
+        console.error('Auth initialization exception:', error);
+        if (mounted.current) {
+          clearAuth();
+        }
       }
-      
-      setSession(session);
     };
 
-    // Set up auth state listener with debouncing
+    // Set up SINGLE auth state listener with debouncing
     let debounceTimer: NodeJS.Timeout;
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
+      (event, session) => {
+        if (!mounted.current) return;
         
-        if (!mounted) return;
+        console.log('Auth state changed:', event);
         
         // Clear any pending debounced calls
         if (debounceTimer) {
           clearTimeout(debounceTimer);
         }
         
-        // Debounce rapid auth state changes
+        // Debounce rapid auth state changes to prevent loops
         debounceTimer = setTimeout(() => {
-          if (!mounted) return;
-          
-          // Handle token refresh errors
-          if (event === 'TOKEN_REFRESHED' && !session) {
-            console.log('Token refresh failed, clearing session');
-            clearAuth();
-            return;
-          }
+          if (!mounted.current) return;
           
           setSession(session);
-          console.log(session?.user ? `User authenticated: ${session.user.email}` : 'User logged out');
-        }, 100); // 100ms debounce
+        }, 100);
       }
     );
 
-    // Initialize auth only once
+    // Initialize auth
     initializeAuth();
 
     return () => {
-      console.log('AuthProvider: Cleaning up auth listener');
-      mounted = false;
-      authInitialized = false;
+      console.log('AuthProvider: Cleaning up');
+      mounted.current = false;
+      initialized.current = false;
       if (debounceTimer) {
         clearTimeout(debounceTimer);
       }
       subscription.unsubscribe();
     };
-  }, []); // Remove dependencies to prevent re-initialization
+  }, [setSession, clearAuth]);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setLoading(true);
     try {
-      return await loginUser(email, password);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error('Login error:', error);
+        toast.error(error.message);
+        return false;
+      }
+
+      if (data.user) {
+        toast.success('Welcome back!');
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('Login exception:', error);
+      toast.error('Login failed. Please try again.');
+      return false;
     } finally {
       setLoading(false);
     }
@@ -112,14 +126,63 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     setLoading(true);
     try {
-      return await registerUser(name, email, password);
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            display_name: name,
+          }
+        }
+      });
+
+      if (error) {
+        console.error('Registration error:', error);
+        toast.error(error.message);
+        return false;
+      }
+
+      if (data.user) {
+        toast.success('Account created successfully! Please check your email to verify your account.');
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('Registration exception:', error);
+      toast.error('Registration failed. Please try again.');
+      return false;
     } finally {
       setLoading(false);
     }
   };
 
   const logout = async () => {
-    await logoutUser();
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Logout error:', error);
+        toast.error('Logout failed');
+      } else {
+        toast.success('Logged out successfully');
+        // Clear local storage
+        localStorage.removeItem('supabase.auth.token');
+        localStorage.removeItem('sb-qrdulwzjgbfgaplazgsh-auth-token');
+      }
+    } catch (error) {
+      console.error('Logout exception:', error);
+      toast.error('Logout failed');
+    }
+  };
+
+  const refreshUser = async () => {
+    // Simplified refresh - just use current session data
+    if (session?.user) {
+      console.log('User data refreshed from session');
+    }
   };
 
   const contextValue: AuthContextType = {
@@ -139,5 +202,4 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-// Export the context itself for use in App.tsx
 export { AuthContext };

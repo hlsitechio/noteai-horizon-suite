@@ -42,27 +42,22 @@ import MobileApp from './mobile/MobileApp';
 
 import './App.css';
 
-// Create optimized QueryClient
+// Create optimized QueryClient with reduced retry attempts
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
       gcTime: 1000 * 60 * 30, // 30 minutes
-      retry: (failureCount, error) => {
-        if (error && typeof error === 'object' && 'status' in error) {
-          return (error.status as number) >= 500 && failureCount < 2;
-        }
-        return failureCount < 2;
-      },
-      refetchOnWindowFocus: false, // Reduce unnecessary refetches
+      retry: 1, // Reduced from 2 to prevent excessive retries
+      refetchOnWindowFocus: false,
     },
     mutations: {
-      retry: 1,
+      retry: 0, // No retries for mutations to prevent spam
     },
   },
 });
 
-// Reminder Manager Component
+// Simplified Reminder Manager Component
 const ReminderManagerInit: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   useReminderManager();
   return <>{children}</>;

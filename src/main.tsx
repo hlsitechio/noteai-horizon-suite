@@ -5,7 +5,7 @@ import './index.css'
 
 console.log('Main.tsx loading...');
 
-// Register optimized service worker
+// Register optimized service worker with better error handling
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/optimized-sw.js')
@@ -18,23 +18,27 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
   });
 }
 
-// Global error handlers
+// Improved global error handlers
 window.addEventListener('error', (event) => {
-  console.error('Global error caught:', event.error);
-  // Prevent lovable.js errors from crashing the app
-  if (event.error?.message?.includes('lovable')) {
+  // Filter out lovable.js errors to prevent spam
+  if (event.error?.message?.includes('lovable') || 
+      event.filename?.includes('lovable.js')) {
     event.preventDefault();
-    console.log('Prevented lovable.js error from crashing app');
+    return;
   }
+  
+  console.error('Global error caught:', event.error);
 });
 
 window.addEventListener('unhandledrejection', (event) => {
-  console.error('Unhandled promise rejection:', event.reason);
-  // Prevent promise rejection crashes
-  if (event.reason?.message?.includes('lovable')) {
+  // Filter out lovable.js promise rejections
+  if (event.reason?.message?.includes('lovable') ||
+      event.reason?.stack?.includes('lovable.js')) {
     event.preventDefault();
-    console.log('Prevented lovable.js promise rejection from crashing app');
+    return;
   }
+  
+  console.error('Unhandled promise rejection:', event.reason);
 });
 
 const rootElement = document.getElementById("root");
