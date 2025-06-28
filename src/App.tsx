@@ -29,8 +29,8 @@ function App() {
         <AuthProvider>
           <FoldersProvider>
             <NotesProvider>
-              <QuantumAIProvider>
-                <Router>
+              <Router>
+                <QuantumAIProvider>
                   <div className="min-h-screen bg-background w-full">
                     <Routes>
                       {/* Public routes */}
@@ -63,8 +63,8 @@ function App() {
                     <GlobalAICopilot />
                     <Toaster />
                   </div>
-                </Router>
-              </QuantumAIProvider>
+                </QuantumAIProvider>
+              </Router>
             </NotesProvider>
           </FoldersProvider>
         </AuthProvider>
