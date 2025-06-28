@@ -37,7 +37,10 @@ if (!rootElement) {
   createRoot(rootElement).render(
     <QueryClientProvider client={queryClient}>
       <App />
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* Only show React Query Devtools in development */}
+      {import.meta.env.DEV && (
+        <ReactQueryDevtools initialIsOpen={false} />
+      )}
     </QueryClientProvider>
   );
   console.log('App rendered successfully');
