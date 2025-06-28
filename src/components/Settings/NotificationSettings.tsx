@@ -5,7 +5,7 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Bell, BellOff, Settings, Mail, Phone } from 'lucide-react';
+import { Bell, BellOff, Settings, Mail, Phone, AlertCircle } from 'lucide-react';
 import { PushNotificationService } from '../../services/pushNotificationService';
 import { NotificationService } from '../../services/notificationService';
 import { NotificationPreferencesService } from '../../services/notificationPreferencesService';
@@ -19,6 +19,7 @@ const NotificationSettings: React.FC = () => {
   const [emailAddress, setEmailAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [permissionDenied, setPermissionDenied] = useState(false);
 
   useEffect(() => {
     // Load notification preferences on mount
@@ -33,16 +34,31 @@ const NotificationSettings: React.FC = () => {
     };
 
     // Check current notification status
-    const checkNotificationStatus = () => {
-      setBrowserNotifications(NotificationService.canShowNotifications());
+    const checkNotificationStatus = async () => {
+      console.log('Checking notification status...');
+      console.log('Notification permission:', Notification.permission);
       
-      // Check if service worker is registered and push notifications are available
+      // Check browser notifications
+      const canShow = NotificationService.canShowNotifications();
+      setBrowserNotifications(canShow);
+      console.log('Can show notifications:', canShow);
+      
+      // Check if permission was explicitly denied
+      if (Notification.permission === 'denied') {
+        setPermissionDenied(true);
+        console.log('Notification permission denied');
+      }
+      
+      // Check push notifications
       if ('serviceWorker' in navigator && 'PushManager' in window) {
-        navigator.serviceWorker.ready.then(registration => {
-          registration.pushManager.getSubscription().then(subscription => {
-            setPushNotifications(!!subscription);
-          });
-        });
+        try {
+          const registration = await navigator.serviceWorker.ready;
+          const subscription = await registration.pushManager.getSubscription();
+          setPushNotifications(!!subscription);
+          console.log('Push subscription exists:', !!subscription);
+        } catch (error) {
+          console.error('Error checking push subscription:', error);
+        }
       }
     };
 
@@ -73,60 +89,98 @@ const NotificationSettings: React.FC = () => {
   };
 
   const handleBrowserNotificationToggle = async () => {
+    console.log('Toggling browser notifications...');
     setIsLoading(true);
+    
     try {
       if (!browserNotifications) {
+        console.log('Requesting notification permission...');
+        
+        // Reset permission denied state
+        setPermissionDenied(false);
+        
         const granted = await NotificationService.requestPermission();
+        console.log('Permission granted:', granted);
+        
         if (granted) {
           setBrowserNotifications(true);
           toast.success('Browser notifications enabled');
         } else {
-          toast.error('Please allow notifications in your browser settings');
+          console.log('Permission denied or dismissed');
+          if (Notification.permission === 'denied') {
+            setPermissionDenied(true);
+            toast.error('Notifications blocked. Please enable them in your browser settings.');
+          } else {
+            toast.error('Please allow notifications when prompted');
+          }
         }
       } else {
+        // We can't actually disable browser notifications programmatically
+        // But we can update our local state
         setBrowserNotifications(false);
-        toast.info('Browser notifications disabled');
+        toast.info('Browser notifications disabled locally. To fully disable, go to browser settings.');
       }
     } catch (error) {
-      toast.error('Failed to update notification settings');
+      console.error('Error toggling browser notifications:', error);
+      toast.error('Failed to update browser notification settings');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handlePushNotificationToggle = async () => {
+    console.log('Toggling push notifications...');
     setIsLoading(true);
+    
     try {
       if (!pushNotifications) {
-        // Initialize and enable push notifications
+        console.log('Enabling push notifications...');
+        
+        // First ensure browser notifications are enabled
+        if (!browserNotifications) {
+          const granted = await NotificationService.requestPermission();
+          if (!granted) {
+            toast.error('Browser notifications must be enabled first');
+            setIsLoading(false);
+            return;
+          }
+          setBrowserNotifications(true);
+        }
+
+        // Initialize service worker
         const swInitialized = await PushNotificationService.initialize();
         if (!swInitialized) {
           toast.error('Push notifications are not supported in this browser');
+          setIsLoading(false);
           return;
         }
 
-        const permissionGranted = await PushNotificationService.requestPermission();
-        if (!permissionGranted) {
-          toast.error('Please allow notifications in your browser settings');
-          return;
-        }
-
+        // Subscribe to push notifications
         const subscription = await PushNotificationService.subscribeToPush();
         if (subscription) {
           setPushNotifications(true);
           toast.success('Push notifications enabled');
+          console.log('Push notifications enabled successfully');
         } else {
           toast.error('Failed to enable push notifications');
         }
       } else {
+        console.log('Disabling push notifications...');
+        
         // Disable push notifications
         if ('serviceWorker' in navigator) {
-          const registration = await navigator.serviceWorker.ready;
-          const subscription = await registration.pushManager.getSubscription();
-          if (subscription) {
-            await subscription.unsubscribe();
-            setPushNotifications(false);
-            toast.success('Push notifications disabled');
+          try {
+            const registration = await navigator.serviceWorker.ready;
+            const subscription = await registration.pushManager.getSubscription();
+            if (subscription) {
+              await subscription.unsubscribe();
+              setPushNotifications(false);
+              toast.success('Push notifications disabled');
+              console.log('Push notifications disabled successfully');
+            }
+          } catch (error) {
+            console.error('Error disabling push notifications:', error);
+            toast.error('Failed to disable push notifications');
           }
         }
       }
@@ -139,11 +193,14 @@ const NotificationSettings: React.FC = () => {
   };
 
   const testNotification = async () => {
+    console.log('Testing notifications...');
+    
     if (browserNotifications) {
       NotificationService.showNotification('Test Notification', {
         body: 'This is a test notification from your notes app!',
         tag: 'test-notification'
       });
+      console.log('Browser notification sent');
     }
 
     if (pushNotifications) {
@@ -151,11 +208,18 @@ const NotificationSettings: React.FC = () => {
         body: 'This is a test push notification!',
         tag: 'test-push'
       });
+      console.log('Push notification sent');
     }
 
     if (!browserNotifications && !pushNotifications) {
       toast.info('Please enable notifications first to test them');
+    } else {
+      toast.success('Test notification sent!');
     }
+  };
+
+  const openBrowserSettings = () => {
+    toast.info('Open your browser settings and look for "Notifications" or "Site Settings" to manage permissions for this site');
   };
 
   return (
@@ -176,12 +240,30 @@ const NotificationSettings: React.FC = () => {
             <p className="text-sm text-muted-foreground">
               Show notifications in your browser when reminders are due
             </p>
+            {permissionDenied && (
+              <div className="flex items-center gap-2 text-sm text-destructive">
+                <AlertCircle className="w-4 h-4" />
+                <span>Notifications blocked by browser</span>
+              </div>
+            )}
           </div>
-          <Switch
-            checked={browserNotifications}
-            onCheckedChange={handleBrowserNotificationToggle}
-            disabled={isLoading}
-          />
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={browserNotifications}
+              onCheckedChange={handleBrowserNotificationToggle}
+              disabled={isLoading}
+            />
+            {permissionDenied && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={openBrowserSettings}
+                className="ml-2"
+              >
+                Settings
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center justify-between">
@@ -278,7 +360,7 @@ const NotificationSettings: React.FC = () => {
             className="w-full"
           >
             <Settings className="w-4 h-4 mr-2" />
-            Test Browser Notifications
+            Test Notifications
           </Button>
         </div>
 
