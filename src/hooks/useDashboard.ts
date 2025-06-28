@@ -13,6 +13,7 @@ import KPITotalWordsBlock from '../components/Dashboard/KPIBlocks/KPITotalWordsB
 import KPIWeeklyBlock from '../components/Dashboard/KPIBlocks/KPIWeeklyBlock';
 import AnalyticsOverview from '../components/Dashboard/AnalyticsOverview';
 import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
+import CategoriesOverview from '../components/Dashboard/CategoriesOverview';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
 
 export const useDashboard = () => {
@@ -161,7 +162,7 @@ export const useDashboard = () => {
           weeklyNotes: dashboardStats.weeklyNotes,
           notes
         },
-        gridClass: 'col-span-4'
+        gridClass: 'col-span-3'
       },
       {
         id: 'recent-activity',
@@ -171,7 +172,16 @@ export const useDashboard = () => {
           onCreateNote: handleCreateNote,
           onEditNote: handleEditNote
         },
-        gridClass: 'col-span-4'
+        gridClass: 'col-span-3'
+      },
+      {
+        id: 'categories-overview',
+        component: CategoriesOverview,
+        props: {
+          categoryCounts: dashboardStats.categoryCounts,
+          totalNotes: dashboardStats.totalNotes
+        },
+        gridClass: 'col-span-3'
       },
       {
         id: 'workflow-actions',
@@ -181,7 +191,7 @@ export const useDashboard = () => {
           onCreateNote: handleCreateNote,
           onEditNote: handleEditNote
         },
-        gridClass: 'col-span-4'
+        gridClass: 'col-span-3'
       }
     ];
   };
