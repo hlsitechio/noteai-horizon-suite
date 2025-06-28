@@ -1,10 +1,11 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import { useDashboardLayout, DashboardBlock } from '../hooks/useDashboardLayout';
+import { Note } from '../types/note';
 import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
 import AnalyticsOverview from '../components/Dashboard/AnalyticsOverview';
 import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
@@ -25,33 +26,56 @@ const Dashboard: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [draggedBlockId, setDraggedBlockId] = useState<string | null>(null);
 
-  // Calculate stats from real user data
-  const totalNotes = notes.length;
-  const favoriteNotes = notes.filter(note => note.isFavorite).length;
-  const recentNotes = notes
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-    .slice(0, 5);
+  // 🚀 Memoize derived stats to prevent redundant calculations
+  const dashboardStats = useMemo(() => {
+    const totalNotes = notes.length;
+    const favoriteNotes = notes.filter(note => note.isFavorite).length;
+    const recentNotes = [...notes]
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+      .slice(0, 5);
+    
+    const categoryCounts = notes.reduce((acc, note) => {
+      const category = note.category || 'general';
+      acc[category] = (acc[category] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const weeklyNotes = notes.filter(note => {
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      return new Date(note.createdAt) > weekAgo;
+    }).length;
+    
+    const totalWords = notes.reduce((acc, note) => {
+      const wordCount = note.content?.split(/\s+/).filter(Boolean).length || 0;
+      return acc + wordCount;
+    }, 0);
+    
+    const avgWordsPerNote = totalNotes ? Math.round(totalWords / totalNotes) : 0;
 
-  const categoryCounts = notes.reduce((acc, note) => {
-    const category = note.category || 'general';
-    acc[category] = (acc[category] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+    return {
+      totalNotes,
+      favoriteNotes,
+      recentNotes,
+      categoryCounts,
+      weeklyNotes,
+      totalWords,
+      avgWordsPerNote
+    };
+  }, [notes]);
 
-  const weeklyNotes = notes.filter(note => {
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    return new Date(note.createdAt) > weekAgo;
-  }).length;
+  // Stable handler functions to prevent unnecessary re-renders
+  const handleCreateNote = () => {
+    setCurrentNote(null);
+    navigate('/app/editor');
+  };
 
-  const totalWords = notes.reduce((acc, note) => {
-    const wordCount = note.content ? note.content.split(/\s+/).filter(word => word.length > 0).length : 0;
-    return acc + wordCount;
-  }, 0);
+  const handleEditNote = (note: Note) => {
+    setCurrentNote(note);
+    navigate('/app/editor');
+  };
 
-  const avgWordsPerNote = totalNotes > 0 ? Math.round(totalWords / totalNotes) : 0;
-
-  // Initialize dashboard blocks
+  // Initialize dashboard blocks with stable dependencies
   useEffect(() => {
     const initialBlocks: DashboardBlock[] = [
       // KPI Stats as individual draggable blocks
@@ -59,8 +83,8 @@ const Dashboard: React.FC = () => {
         id: 'kpi-notes',
         component: KPINotesBlock,
         props: {
-          totalNotes,
-          weeklyNotes
+          totalNotes: dashboardStats.totalNotes,
+          weeklyNotes: dashboardStats.weeklyNotes
         },
         gridClass: 'col-span-2'
       },
@@ -68,8 +92,8 @@ const Dashboard: React.FC = () => {
         id: 'kpi-favorites',
         component: KPIFavoritesBlock,
         props: {
-          favoriteNotes,
-          totalNotes
+          favoriteNotes: dashboardStats.favoriteNotes,
+          totalNotes: dashboardStats.totalNotes
         },
         gridClass: 'col-span-2'
       },
@@ -77,8 +101,8 @@ const Dashboard: React.FC = () => {
         id: 'kpi-avg-words',
         component: KPIAvgWordsBlock,
         props: {
-          avgWordsPerNote,
-          totalWords
+          avgWordsPerNote: dashboardStats.avgWordsPerNote,
+          totalWords: dashboardStats.totalWords
         },
         gridClass: 'col-span-2'
       },
@@ -86,7 +110,7 @@ const Dashboard: React.FC = () => {
         id: 'kpi-categories',
         component: KPICategoriesBlock,
         props: {
-          categoryCounts
+          categoryCounts: dashboardStats.categoryCounts
         },
         gridClass: 'col-span-2'
       },
@@ -95,10 +119,10 @@ const Dashboard: React.FC = () => {
         id: 'analytics',
         component: AnalyticsOverview,
         props: {
-          totalNotes,
-          favoriteNotes,
-          categoryCounts,
-          weeklyNotes,
+          totalNotes: dashboardStats.totalNotes,
+          favoriteNotes: dashboardStats.favoriteNotes,
+          categoryCounts: dashboardStats.categoryCounts,
+          weeklyNotes: dashboardStats.weeklyNotes,
           notes
         },
         gridClass: 'col-span-4'
@@ -107,7 +131,7 @@ const Dashboard: React.FC = () => {
         id: 'recent-activity',
         component: SecureRecentActivity,
         props: {
-          recentNotes,
+          recentNotes: dashboardStats.recentNotes,
           onCreateNote: handleCreateNote,
           onEditNote: handleEditNote
         },
@@ -126,32 +150,22 @@ const Dashboard: React.FC = () => {
     ];
     
     initializeBlocks(initialBlocks);
-  }, [totalNotes, favoriteNotes, categoryCounts, weeklyNotes, notes, recentNotes, avgWordsPerNote, totalWords]);
+  }, [dashboardStats, initializeBlocks]);
 
   // Enhanced AI context integration with real user data
   useQuantumAIIntegration({
     page: '/app/dashboard',
-    content: `Dashboard overview: ${totalNotes} total notes, ${favoriteNotes} favorites, ${weeklyNotes} notes this week. Categories: ${Object.keys(categoryCounts).join(', ')}`,
+    content: `Dashboard overview: ${dashboardStats.totalNotes} total notes, ${dashboardStats.favoriteNotes} favorites, ${dashboardStats.weeklyNotes} notes this week. Categories: ${Object.keys(dashboardStats.categoryCounts).join(', ')}`,
     metadata: {
-      totalNotes,
-      favoriteNotes,
-      weeklyNotes,
-      categoryCounts,
-      recentNotesCount: recentNotes.length,
-      hasRecentActivity: recentNotes.length > 0,
-      totalWords
+      totalNotes: dashboardStats.totalNotes,
+      favoriteNotes: dashboardStats.favoriteNotes,
+      weeklyNotes: dashboardStats.weeklyNotes,
+      categoryCounts: dashboardStats.categoryCounts,
+      recentNotesCount: dashboardStats.recentNotes.length,
+      hasRecentActivity: dashboardStats.recentNotes.length > 0,
+      totalWords: dashboardStats.totalWords
     }
   });
-
-  const handleCreateNote = () => {
-    setCurrentNote(null);
-    navigate('/app/editor');
-  };
-
-  const handleEditNote = (note: any) => {
-    setCurrentNote(note);
-    navigate('/app/editor');
-  };
 
   const handleBlockSwap = (draggedId: string, targetId: string) => {
     console.log('Dashboard: Swapping blocks', draggedId, 'with', targetId);
@@ -161,14 +175,21 @@ const Dashboard: React.FC = () => {
   const handleDragStart = (id: string) => {
     setIsDragging(true);
     setDraggedBlockId(id);
-    console.log('Drag started for block:', id);
+    console.log(`[DragAI] User dragging block: ${id}`);
   };
 
   const handleDragEnd = () => {
     setIsDragging(false);
     setDraggedBlockId(null);
-    console.log('Drag ended');
+    console.log('[DragAI] Drag ended');
   };
+
+  // 🧠 Enhanced drag telemetry for AI insights
+  useEffect(() => {
+    if (isDragging && draggedBlockId) {
+      console.log(`[DragAI] Active drag session: ${draggedBlockId}`);
+    }
+  }, [isDragging, draggedBlockId]);
 
   return (
     <div className="w-full h-screen max-h-screen flex flex-col bg-background overflow-hidden">
@@ -183,8 +204,10 @@ const Dashboard: React.FC = () => {
           <WelcomeHeader />
         </div>
 
-        {/* Main Content Area - All draggable components */}
-        <div className={`dashboard-grid grid grid-cols-12 gap-4 flex-1 min-h-0 w-full h-[850px] relative transition-all duration-300 auto-rows-fr ${
+        {/* Main Content Area - All draggable components with mobile optimization */}
+        <div className={`dashboard-grid grid ${
+          isMobile ? 'grid-cols-1' : 'grid-cols-12'
+        } gap-4 flex-1 min-h-0 w-full h-[850px] relative transition-all duration-300 auto-rows-fr ${
           isDragging ? 'dragging-active bg-gradient-to-br from-blue-50/20 to-purple-50/20' : ''
         }`}>
           {blocks.map((block) => {
@@ -193,7 +216,9 @@ const Dashboard: React.FC = () => {
               <DraggableBlock
                 key={block.id}
                 id={block.id}
-                gridClass={`${block.gridClass} ${block.id.startsWith('kpi-') ? 'min-h-[120px]' : 'min-h-[300px]'}`}
+                gridClass={`${isMobile ? 'col-span-1' : block.gridClass} ${
+                  block.id.startsWith('kpi-') ? 'min-h-[120px]' : 'min-h-[300px]'
+                } transition-transform duration-300 ease-in-out`}
                 onSwap={handleBlockSwap}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
@@ -204,12 +229,19 @@ const Dashboard: React.FC = () => {
           })}
           
           {/* Enhanced drag status indicator with better positioning */}
-          {isDragging && (
+          {isDragging && draggedBlockId && (
             <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full shadow-xl font-semibold backdrop-blur-sm border border-white/20">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                 Dragging: {draggedBlockId} - Drop on another block to swap
               </div>
+            </div>
+          )}
+
+          {/* 📦 Drag Preview Overlay that follows cursor */}
+          {isDragging && draggedBlockId && (
+            <div className="fixed pointer-events-none top-0 left-0 z-50 text-white text-sm px-4 py-2 bg-gray-900/90 rounded shadow-lg transition-all duration-150">
+              Dragging {draggedBlockId}
             </div>
           )}
         </div>
