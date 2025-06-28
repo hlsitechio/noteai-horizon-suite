@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
@@ -63,9 +64,9 @@ function App() {
                   <NotesProvider>
                     <ProjectRealmsProvider>
                       <FloatingNotesProvider>
-                        <QuantumAIProvider>
-                          <ReminderManagerInit>
-                            <Router>
+                        <ReminderManagerInit>
+                          <Router>
+                            <QuantumAIProvider>
                               <Routes>
                                 {/* Public Routes */}
                                 <Route path="/" element={<Index />} />
@@ -107,11 +108,11 @@ function App() {
                                 {/* Catch all route */}
                                 <Route path="*" element={<NotFound />} />
                               </Routes>
-                            </Router>
-                          </ReminderManagerInit>
-                          <Toaster />
-                          <Sonner />
-                        </QuantumAIProvider>
+                              <Toaster />
+                              <Sonner />
+                            </QuantumAIProvider>
+                          </Router>
+                        </ReminderManagerInit>
                       </FloatingNotesProvider>
                     </ProjectRealmsProvider>
                   </NotesProvider>
