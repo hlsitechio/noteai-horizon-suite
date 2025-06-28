@@ -16,7 +16,10 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     detectSessionInUrl: true,
     // Handle token refresh failures gracefully
     debug: process.env.NODE_ENV === 'development',
-    flowType: 'pkce'
+    flowType: 'pkce',
+    // Disable third-party auth providers - only email/password
+    storageKey: 'sb-qrdulwzjgbfgaplazgsh-auth-token',
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
   },
   global: {
     headers: {

@@ -45,21 +45,24 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
             placeholder="Enter your full name"
             className="h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 focus:ring-blue-500"
             required
+            minLength={2}
+            maxLength={50}
           />
         </div>
       )}
 
       <div>
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-          Email
+          Email Address
         </label>
         <Input
           type="email"
           value={email}
           onChange={(e) => onEmailChange(e.target.value)}
-          placeholder="Enter your email"
+          placeholder="Enter your email address"
           className="h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 focus:ring-blue-500"
           required
+          autoComplete="email"
         />
       </div>
 
@@ -72,9 +75,11 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
             type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(e) => onPasswordChange(e.target.value)}
-            placeholder={isSignUp ? "Create a password" : "Enter your password"}
+            placeholder={isSignUp ? "Create a strong password (min. 6 characters)" : "Enter your password"}
             className="h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 focus:ring-blue-500 pr-12"
             required
+            minLength={6}
+            autoComplete={isSignUp ? "new-password" : "current-password"}
           />
           <Button
             type="button"
@@ -82,10 +87,16 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
             size="sm"
             className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             onClick={onTogglePassword}
+            tabIndex={-1}
           >
             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </Button>
         </div>
+        {isSignUp && (
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Password must be at least 6 characters long
+          </p>
+        )}
       </div>
 
       {isSignUp && (
@@ -100,7 +111,13 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
             placeholder="Confirm your password"
             className="h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 focus:ring-blue-500"
             required
+            autoComplete="new-password"
           />
+          {password && confirmPassword && password !== confirmPassword && (
+            <p className="text-xs text-red-500 mt-1">
+              Passwords do not match
+            </p>
+          )}
         </div>
       )}
 
@@ -108,9 +125,14 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
         <div className="text-right">
           <button
             type="button"
-            className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            className="text-sm text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
+            onClick={() => {
+              // This would open a password reset modal or navigate to reset page
+              console.log('Password reset requested');
+              // For now, we'll just log it - you can implement a reset modal later
+            }}
           >
-            Forgot password?
+            Forgot your password?
           </button>
         </div>
       )}

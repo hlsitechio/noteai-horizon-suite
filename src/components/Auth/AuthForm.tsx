@@ -18,22 +18,48 @@ const AuthForm: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const validateForm = (): boolean => {
+    if (!email.trim() || !password.trim()) {
+      return false;
+    }
+
+    if (isSignUp) {
+      if (!name.trim() || name.trim().length < 2) {
+        return false;
+      }
+      if (password.length < 6) {
+        return false;
+      }
+      if (password !== confirmPassword) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isSignUp) {
-      if (password !== confirmPassword) {
-        return;
+    if (!validateForm()) {
+      return;
+    }
+    
+    try {
+      if (isSignUp) {
+        const success = await register(name.trim(), email.trim(), password);
+        if (success) {
+          // Don't navigate immediately for signup - user might need to verify email
+          console.log('Registration successful');
+        }
+      } else {
+        const success = await login(email.trim(), password);
+        if (success) {
+          navigate('/app/dashboard', { replace: true });
+        }
       }
-      const success = await register(name, email, password);
-      if (success) {
-        navigate('/dashboard');
-      }
-    } else {
-      const success = await login(email, password);
-      if (success) {
-        navigate('/dashboard');
-      }
+    } catch (error) {
+      console.error('Auth form error:', error);
     }
   };
 
@@ -67,12 +93,12 @@ const AuthForm: React.FC = () => {
           {/* Form Header */}
           <div className="text-center">
             <h2 className="text-3xl font-bold text-white mb-2">
-              {isSignUp ? 'Create Account' : 'Welcome Back'}
+              {isSignUp ? 'Create Your Account' : 'Welcome Back'}
             </h2>
             <p className="text-gray-300 mt-2">
               {isSignUp 
-                ? 'Join thousands of users organizing their thoughts'
-                : 'Sign in to your account to continue'
+                ? 'Join thousands of users organizing their thoughts with AI'
+                : 'Sign in to access your AI-powered notes'
               }
             </p>
           </div>
@@ -96,18 +122,32 @@ const AuthForm: React.FC = () => {
             <Button
               type="submit"
               size="lg"
-              className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-              disabled={isLoading}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading || !validateForm()}
             >
               {isLoading 
-                ? (isSignUp ? 'Creating account...' : 'Signing in...') 
+                ? (isSignUp ? 'Creating Account...' : 'Signing In...') 
                 : (isSignUp ? 'Create Account' : 'Sign In')
               }
             </Button>
           </form>
 
-          {/* Demo credentials for sign in */}
-          {!isSignUp && <DemoCredentials />}
+          {/* Info section */}
+          <DemoCredentials />
+
+          {/* Additional info */}
+          <div className="text-center text-xs text-gray-400">
+            <p>
+              By {isSignUp ? 'creating an account' : 'signing in'}, you agree to our{' '}
+              <button className="underline hover:text-gray-300 focus:outline-none focus:ring-1 focus:ring-white focus:ring-offset-1 rounded">
+                Terms of Service
+              </button>{' '}
+              and{' '}
+              <button className="underline hover:text-gray-300 focus:outline-none focus:ring-1 focus:ring-white focus:ring-offset-1 rounded">
+                Privacy Policy
+              </button>
+            </p>
+          </div>
         </div>
       </div>
     </div>
