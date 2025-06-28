@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { ReminderService } from '../services/reminderService';
+import { EnhancedReminderService } from '../services/enhancedReminderService';
 import { NotificationService } from '../services/notificationService';
 import { PushNotificationService } from '../services/pushNotificationService';
 import { useNotifications } from '../contexts/NotificationsContext';
@@ -45,10 +45,10 @@ export const useReminderManager = () => {
     
     setIsChecking(true);
     try {
-      const reminders = await ReminderService.getPendingReminders();
+      const reminders = await EnhancedReminderService.getPendingRemindersWithPreferences();
       setPendingReminders(reminders);
 
-      // Show notifications for new reminders
+      // Send all types of notifications for each reminder
       for (const reminder of reminders) {
         // Add to in-app notifications
         addNotification({
@@ -57,54 +57,18 @@ export const useReminderManager = () => {
           type: 'info'
         });
 
-        // Show browser notification
-        const notification = NotificationService.showReminderNotification(
-          reminder.note_title,
-          reminder.note_id,
-          reminder.reminder_id
-        );
-
-        // Show push notification if enabled
-        if (pushEnabled) {
-          await PushNotificationService.showLocalNotification(
-            `📝 Reminder: ${reminder.note_title}`,
-            {
-              body: 'Click to view your note',
-              tag: `reminder-${reminder.reminder_id}`,
-              data: {
-                noteId: reminder.note_id,
-                reminderId: reminder.reminder_id
-              },
-              actions: [
-                { action: 'view', title: 'View Note' },
-                { action: 'snooze', title: 'Snooze 15min' },
-                { action: 'dismiss', title: 'Dismiss' }
-              ]
-            }
-          );
-        }
-
-        if (notification) {
-          // Handle notification click
-          notification.onclick = () => {
-            window.focus();
-            window.location.href = `/app/editor?noteId=${reminder.note_id}`;
-            notification.close();
-          };
-
-          // Mark as sent
-          await ReminderService.markReminderSent(reminder.reminder_id);
-        }
+        // Send all configured notifications (browser, push, email, SMS)
+        await EnhancedReminderService.sendReminderNotifications(reminder);
       }
     } catch (error) {
       console.error('Error checking reminders:', error);
     } finally {
       setIsChecking(false);
     }
-  }, [isChecking, pushEnabled, addNotification]);
+  }, [isChecking, addNotification]);
 
   const snoozeReminder = useCallback(async (reminderId: string, minutes: number = 15) => {
-    const success = await ReminderService.snoozeReminder(reminderId, minutes);
+    const success = await EnhancedReminderService.snoozeReminder(reminderId, minutes);
     if (success) {
       toast.success(`Reminder snoozed for ${minutes} minutes`);
       setPendingReminders(prev => prev.filter(r => r.reminder_id !== reminderId));
@@ -120,7 +84,7 @@ export const useReminderManager = () => {
   }, [addNotification]);
 
   const dismissReminder = useCallback(async (reminderId: string) => {
-    const success = await ReminderService.markReminderSent(reminderId);
+    const success = await EnhancedReminderService.markReminderSent(reminderId);
     if (success) {
       toast.success('Reminder dismissed');
       setPendingReminders(prev => prev.filter(r => r.reminder_id !== reminderId));

@@ -83,7 +83,6 @@ export class PushNotificationService {
     badge?: string;
     tag?: string;
     data?: any;
-    actions?: Array<{ action: string; title: string; icon?: string }>;
   }): Promise<void> {
     if (!this.registration) {
       console.error('Service Worker not registered');
@@ -97,7 +96,6 @@ export class PushNotificationService {
         badge: options?.badge || '/favicon.ico',
         tag: options?.tag,
         data: options?.data,
-        actions: options?.actions,
         requireInteraction: true,
         silent: false
       });
@@ -120,12 +118,7 @@ export class PushNotificationService {
     setTimeout(async () => {
       await this.showLocalNotification(title, { 
         body, 
-        data,
-        actions: [
-          { action: 'view', title: 'View Note' },
-          { action: 'snooze', title: 'Snooze 15min' },
-          { action: 'dismiss', title: 'Dismiss' }
-        ]
+        data
       });
     }, delay);
   }
