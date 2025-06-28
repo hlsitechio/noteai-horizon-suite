@@ -40,14 +40,11 @@ if (!rootElement) {
   createRoot(rootElement).render(
     <QueryClientProvider client={queryClient}>
       <App />
-      {/* Enhanced React Query Devtools with simpler configuration */}
-      {import.meta.env.DEV && (
-        <ReactQueryDevtools 
-          initialIsOpen={false}
-          position="bottom"
-          buttonPosition="bottom-right"
-        />
-      )}
+      {/* Fixed React Query Devtools configuration */}
+      <ReactQueryDevtools 
+        initialIsOpen={false}
+        position="bottom-right"
+      />
     </QueryClientProvider>
   );
   console.log('App rendered successfully with enhanced error handling');
