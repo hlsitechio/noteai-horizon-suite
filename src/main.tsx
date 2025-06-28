@@ -2,14 +2,14 @@
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { initSentry } from './config/sentry'
+import { AppInitializationService } from './services/appInitializationService'
 import App from './App.tsx'
 import './index.css'
 
 console.log('Main.tsx loading...');
 
-// Initialize Sentry
-initSentry();
+// Initialize the application services
+AppInitializationService.initialize();
 
 // Create a client with optimized settings for your app
 const queryClient = new QueryClient({
@@ -51,5 +51,5 @@ if (!rootElement) {
       />
     </QueryClientProvider>
   );
-  console.log('App rendered successfully with enhanced error handling');
+  console.log('App rendered successfully with enhanced error handling and security');
 }
