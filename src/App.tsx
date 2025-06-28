@@ -85,12 +85,12 @@ function App() {
   return (
     <EnhancedErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <UnifiedProvider>
-          <FoldersProvider>
-            <ProjectRealmsProvider>
-              <FloatingNotesProvider>
-                <ReminderManagerInit>
-                  <Router>
+        <Router>
+          <UnifiedProvider>
+            <FoldersProvider>
+              <ProjectRealmsProvider>
+                <FloatingNotesProvider>
+                  <ReminderManagerInit>
                     <QuantumAIProvider>
                       <Routes>
                         {/* Public Routes */}
@@ -138,12 +138,12 @@ function App() {
                         <ReactQueryDevtools initialIsOpen={false} />
                       )}
                     </QuantumAIProvider>
-                  </Router>
-                </ReminderManagerInit>
-              </FloatingNotesProvider>
-            </ProjectRealmsProvider>
-          </FoldersProvider>
-        </UnifiedProvider>
+                  </ReminderManagerInit>
+                </FloatingNotesProvider>
+              </ProjectRealmsProvider>
+            </FoldersProvider>
+          </UnifiedProvider>
+        </Router>
       </QueryClientProvider>
     </EnhancedErrorBoundary>
   );
