@@ -26,13 +26,15 @@ interface FoldersListSectionProps {
   notes: Note[];
   isExpanded: boolean;
   onToggle: () => void;
+  onCreateFolder: () => Promise<void>;
 }
 
 export function FoldersListSection({ 
   folders, 
   notes,
   isExpanded, 
-  onToggle 
+  onToggle,
+  onCreateFolder
 }: FoldersListSectionProps) {
   const [expandedFolders, setExpandedFolders] = React.useState<Set<string>>(new Set());
 

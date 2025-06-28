@@ -18,13 +18,13 @@ import { Link } from 'react-router-dom';
 import { Note } from '../../../types/note';
 
 interface FavoritesListSectionProps {
-  favoriteNotes: Note[];
+  notes: Note[];
   isExpanded: boolean;
   onToggle: () => void;
 }
 
 export function FavoritesListSection({ 
-  favoriteNotes, 
+  notes, 
   isExpanded, 
   onToggle 
 }: FavoritesListSectionProps) {
@@ -54,8 +54,8 @@ export function FavoritesListSection({
           >
             <SidebarGroupContent>
               <SidebarMenu>
-                {favoriteNotes.length > 0 ? (
-                  favoriteNotes.map((note) => (
+                {notes.length > 0 ? (
+                  notes.map((note) => (
                     <SidebarMenuItem key={note.id}>
                       <SidebarMenuButton asChild>
                         <Link 
