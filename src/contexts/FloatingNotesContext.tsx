@@ -44,13 +44,17 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
         setFloatingNotes(parsed);
       }
     } catch (error) {
-      console.error('Error loading floating notes state:', error);
+      // Silent error handling - don't log to console
     }
   }, []);
 
   // Save floating notes state to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('floating-notes-state', JSON.stringify(floatingNotes));
+    try {
+      localStorage.setItem('floating-notes-state', JSON.stringify(floatingNotes));
+    } catch (error) {
+      // Silent error handling - don't log to console
+    }
   }, [floatingNotes]);
 
   const openFloatingNote = (note: Note) => {
