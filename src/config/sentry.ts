@@ -22,10 +22,12 @@ export const initSentry = () => {
     environment: import.meta.env.MODE,
     
     beforeSend(event, hint) {
-      // Don't send events in development
+      // In development, log to console but still send to Sentry for testing
       if (import.meta.env.DEV) {
         console.log('Sentry event (dev mode):', event);
-        return null;
+        console.log('Error details:', hint.originalException);
+        // Return the event to send it to Sentry even in dev mode
+        return event;
       }
       return event;
     },

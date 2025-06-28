@@ -15,6 +15,7 @@ import { DynamicAccentProvider } from './contexts/DynamicAccentContext';
 import { ProjectRealmsProvider } from './contexts/ProjectRealmsContext';
 import { FloatingNotesProvider } from './contexts/FloatingNotesContext';
 import { QuantumAIProvider } from './contexts/QuantumAIContext';
+import AppWithErrorHandling from './components/AppWithErrorHandling';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout/Layout';
 import HomeRedirect from './components/HomeRedirect';
@@ -50,73 +51,75 @@ const SentryRouter = Sentry.withSentryRouting(Router);
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="online-note-ai-theme">
-      <TooltipProvider>
-        <AuthProvider>
-          <AccentColorProvider>
-            <DynamicAccentProvider>
-              <NotificationsProvider>
-                <FoldersProvider>
-                  <NotesProvider>
-                    <ProjectRealmsProvider>
-                      <FloatingNotesProvider>
-                        <QuantumAIProvider>
-                          <SentryRouter>
-                            <Routes>
-                              {/* Public Routes */}
-                              <Route path="/" element={<Index />} />
-                              <Route path="/landing" element={<Landing />} />
-                              <Route path="/login" element={<Login />} />
-                              <Route path="/register" element={<Register />} />
-                              <Route path="/reset-password" element={<ResetPassword />} />
-                              <Route path="/privacy" element={<Privacy />} />
-                              <Route path="/terms" element={<Terms />} />
-                              <Route path="/contact" element={<Contact />} />
-                              <Route path="/sitemap" element={<Sitemap />} />
+    <AppWithErrorHandling>
+      <ThemeProvider defaultTheme="dark" storageKey="online-note-ai-theme">
+        <TooltipProvider>
+          <AuthProvider>
+            <AccentColorProvider>
+              <DynamicAccentProvider>
+                <NotificationsProvider>
+                  <FoldersProvider>
+                    <NotesProvider>
+                      <ProjectRealmsProvider>
+                        <FloatingNotesProvider>
+                          <QuantumAIProvider>
+                            <SentryRouter>
+                              <Routes>
+                                {/* Public Routes */}
+                                <Route path="/" element={<Index />} />
+                                <Route path="/landing" element={<Landing />} />
+                                <Route path="/login" element={<Login />} />
+                                <Route path="/register" element={<Register />} />
+                                <Route path="/reset-password" element={<ResetPassword />} />
+                                <Route path="/privacy" element={<Privacy />} />
+                                <Route path="/terms" element={<Terms />} />
+                                <Route path="/contact" element={<Contact />} />
+                                <Route path="/sitemap" element={<Sitemap />} />
 
-                              {/* Mobile Routes */}
-                              <Route path="/mobile/*" element={
-                                <ProtectedRoute>
-                                  <MobileApp />
-                                </ProtectedRoute>
-                              } />
+                                {/* Mobile Routes */}
+                                <Route path="/mobile/*" element={
+                                  <ProtectedRoute>
+                                    <MobileApp />
+                                  </ProtectedRoute>
+                                } />
 
-                              {/* Protected App Routes */}
-                              <Route path="/app" element={
-                                <ProtectedRoute>
-                                  <Layout />
-                                </ProtectedRoute>
-                              }>
-                                <Route index element={<HomeRedirect />} />
-                                <Route path="dashboard" element={<Dashboard />} />
-                                <Route path="editor" element={<Editor />} />
-                                <Route path="notes" element={<Notes />} />
-                                <Route path="analytics" element={<Analytics />} />
-                                <Route path="settings" element={<Settings />} />
-                                <Route path="chat" element={<Chat />} />
-                                <Route path="calendar" element={<Calendar />} />
-                                <Route path="projects" element={<ProjectRealms />} />
-                                <Route path="projects/:id" element={<ProjectDetail />} />
-                                <Route path="folders/:id" element={<FolderDetail />} />
-                              </Route>
+                                {/* Protected App Routes */}
+                                <Route path="/app" element={
+                                  <ProtectedRoute>
+                                    <Layout />
+                                  </ProtectedRoute>
+                                }>
+                                  <Route index element={<HomeRedirect />} />
+                                  <Route path="dashboard" element={<Dashboard />} />
+                                  <Route path="editor" element={<Editor />} />
+                                  <Route path="notes" element={<Notes />} />
+                                  <Route path="analytics" element={<Analytics />} />
+                                  <Route path="settings" element={<Settings />} />
+                                  <Route path="chat" element={<Chat />} />
+                                  <Route path="calendar" element={<Calendar />} />
+                                  <Route path="projects" element={<ProjectRealms />} />
+                                  <Route path="projects/:id" element={<ProjectDetail />} />
+                                  <Route path="folders/:id" element={<FolderDetail />} />
+                                </Route>
 
-                              {/* Catch all route */}
-                              <Route path="*" element={<NotFound />} />
-                            </Routes>
-                          </SentryRouter>
-                          <Toaster />
-                          <Sonner />
-                        </QuantumAIProvider>
-                      </FloatingNotesProvider>
-                    </ProjectRealmsProvider>
-                  </NotesProvider>
-                </FoldersProvider>
-              </NotificationsProvider>
-            </DynamicAccentProvider>
-          </AccentColorProvider>
-        </AuthProvider>
-      </TooltipProvider>
-    </ThemeProvider>
+                                {/* Catch all route */}
+                                <Route path="*" element={<NotFound />} />
+                              </Routes>
+                            </SentryRouter>
+                            <Toaster />
+                            <Sonner />
+                          </QuantumAIProvider>
+                        </FloatingNotesProvider>
+                      </ProjectRealmsProvider>
+                    </NotesProvider>
+                  </FoldersProvider>
+                </NotificationsProvider>
+              </DynamicAccentProvider>
+            </AccentColorProvider>
+          </AuthProvider>
+        </TooltipProvider>
+      </ThemeProvider>
+    </AppWithErrorHandling>
   );
 }
 
