@@ -19,17 +19,18 @@ const DashboardContent: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col w-full max-w-[1920px] mx-auto relative overflow-hidden">
-      {/* Reset Layout Button */}
-      <div className="absolute top-4 right-4 z-50">
-        <ResetZoneButton onReset={handleResetLayout} />
-      </div>
-
       {/* Scrollable Content */}
       <ScrollArea className="flex-1 w-full">
         <div className="p-4 space-y-4 min-h-full">
           {/* Welcome Header - Compact banner space */}
           <div className="flex-shrink-0 w-full h-[280px]">
             <WelcomeHeader />
+          </div>
+
+          {/* Dashboard Controls Section */}
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold text-foreground">Dashboard</h2>
+            <ResetZoneButton onReset={handleResetLayout} />
           </div>
 
           {/* Main Content Area - Reduced spacing */}

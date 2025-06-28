@@ -13,7 +13,7 @@ const ResetZoneButton: React.FC<ResetZoneButtonProps> = ({ onReset }) => {
       onClick={onReset}
       variant="outline"
       size="sm"
-      className="absolute top-4 right-4 z-50 bg-white/90 hover:bg-white shadow-md border border-gray-200"
+      className="bg-background/80 hover:bg-background shadow-sm border border-border/50 hover:border-border transition-all duration-200"
     >
       <RotateCcw className="w-4 h-4 mr-2" />
       Reset Layout
