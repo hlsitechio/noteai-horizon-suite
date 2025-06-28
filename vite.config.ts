@@ -1,4 +1,3 @@
-
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -20,39 +19,4 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  build: {
-    // Clear output directory completely on build
-    emptyOutDir: true,
-    // Ensure consistent asset naming with timestamps for better cache busting
-    rollupOptions: {
-      output: {
-        // Use timestamp-based hashing for better cache invalidation
-        assetFileNames: (assetInfo) => {
-          if (!assetInfo.name) {
-            return `assets/[name]-[hash][extname]`;
-          }
-          const info = assetInfo.name.split('.');
-          const ext = info[info.length - 1];
-          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
-            return `assets/images/[name]-[hash][extname]`;
-          }
-          return `assets/[name]-[hash][extname]`;
-        },
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
-      },
-    },
-    // Ensure manifests are generated correctly
-    manifest: true,
-    // Disable CSS code splitting to avoid loading issues
-    cssCodeSplit: false,
-  },
-  // Ensure proper cache headers in development
-  preview: {
-    headers: {
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0'
-    }
-  }
 }));

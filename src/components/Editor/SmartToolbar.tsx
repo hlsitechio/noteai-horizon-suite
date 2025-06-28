@@ -94,7 +94,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
 
   return (
     <>
-      <div className="flex items-center gap-1 p-4 bg-white border-b border-gray-200">
+      <div className="flex items-center gap-1 p-4 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-b-2 border-blue-200/50 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 dark:border-slate-600/50">
         {/* Text Formatting */}
         <div className="flex items-center gap-1">
           {formatButtons.map(({ id, icon, title }) => (
@@ -110,7 +110,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
           ))}
         </div>
 
-        <Separator orientation="vertical" className="h-6 mx-2 bg-gray-200" />
+        <Separator orientation="vertical" className="h-6 mx-2 bg-blue-200 dark:bg-slate-500" />
 
         {/* Block Formatting */}
         <div className="flex items-center gap-1">
@@ -127,7 +127,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
           ))}
         </div>
 
-        <Separator orientation="vertical" className="h-6 mx-2 bg-gray-200" />
+        <Separator orientation="vertical" className="h-6 mx-2 bg-purple-200 dark:bg-slate-500" />
 
         {/* Font Controls */}
         <div className="flex items-center gap-2">
@@ -141,7 +141,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
           />
         </div>
 
-        <Separator orientation="vertical" className="h-6 mx-2 bg-gray-200" />
+        <Separator orientation="vertical" className="h-6 mx-2 bg-orange-200 dark:bg-slate-500" />
 
         {/* Media Tools */}
         <MediaToolsGroup
@@ -150,7 +150,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
           onOCROpen={() => setShowOCR(true)}
         />
 
-        <Separator orientation="vertical" className="h-6 mx-2 bg-gray-200" />
+        <Separator orientation="vertical" className="h-6 mx-2 bg-green-200 dark:bg-slate-500" />
 
         {/* AI Assistant */}
         <div className="flex items-center gap-2">

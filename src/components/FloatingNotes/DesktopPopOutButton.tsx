@@ -24,6 +24,7 @@ const DesktopPopOutButton: React.FC<DesktopPopOutButtonProps> = ({
   const handlePopOut = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    console.log('DesktopPopOutButton: Opening desktop floating note', note.id, note.title);
     openFloatingNote(note);
   };
 

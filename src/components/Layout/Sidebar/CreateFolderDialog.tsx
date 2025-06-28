@@ -2,13 +2,7 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle,
-  DialogDescription 
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface CreateFolderDialogProps {
   isOpen: boolean;
@@ -36,9 +30,6 @@ export function CreateFolderDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Create New Folder</DialogTitle>
-          <DialogDescription>
-            Enter a name for your new folder to organize your notes.
-          </DialogDescription>
         </DialogHeader>
         <div className="flex items-center space-x-2">
           <Input
@@ -46,11 +37,8 @@ export function CreateFolderDialog({
             value={folderName}
             onChange={(e) => onFolderNameChange(e.target.value)}
             onKeyPress={handleKeyPress}
-            autoFocus
           />
-          <Button onClick={onCreateFolder} disabled={!folderName.trim()}>
-            Create
-          </Button>
+          <Button onClick={onCreateFolder}>Create</Button>
         </div>
       </DialogContent>
     </Dialog>

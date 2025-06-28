@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Settings, Users, FileText, Download, Plus, Trash2 } from 'lucide-react';
 import { ProjectRealm } from '../../types/project';
 import { useProjectRealms } from '../../contexts/ProjectRealmsContext';
@@ -121,16 +122,15 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({ project }) => {
         </CardHeader>
         <CardContent className="space-y-3">
           <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-            <Button className="w-full justify-start" onClick={handleProjectSettings}>
-              <Settings className="h-4 w-4 mr-2" />
-              Project Settings
-            </Button>
+            <DialogTrigger asChild>
+              <Button className="w-full justify-start" onClick={handleProjectSettings}>
+                <Settings className="h-4 w-4 mr-2" />
+                Project Settings
+              </Button>
+            </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Project Settings</DialogTitle>
-                <DialogDescription>
-                  Configure your project settings and status
-                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
@@ -170,16 +170,15 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({ project }) => {
           </Dialog>
 
           <Dialog open={isAgentsOpen} onOpenChange={setIsAgentsOpen}>
-            <Button variant="outline" className="w-full justify-start" onClick={handleManageAgents}>
-              <Users className="h-4 w-4 mr-2" />
-              Manage Agents
-            </Button>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="w-full justify-start" onClick={handleManageAgents}>
+                <Users className="h-4 w-4 mr-2" />
+                Manage Agents
+              </Button>
+            </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Manage AI Agents</DialogTitle>
-                <DialogDescription>
-                  Add or remove AI agents for your project
-                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">

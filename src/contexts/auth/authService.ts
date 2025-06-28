@@ -111,36 +111,3 @@ export const initializeAuthSession = async () => {
     return { session: null, error };
   }
 };
-
-// Helper function for OAuth sign-in with redirect (no popup)
-export const signInWithOAuth = async (provider: 'google' | 'github' | 'discord') => {
-  try {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: redirectUrl,
-        // Ensure we use redirect flow, not popup
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
-      },
-    });
-
-    if (error) {
-      console.error('OAuth sign-in error:', error);
-      toast.error(`Failed to sign in with ${provider}`);
-      return false;
-    }
-
-    // With redirect flow, we don't get immediate response
-    // The user will be redirected and handled by onAuthStateChange
-    return true;
-  } catch (error) {
-    console.error('OAuth sign-in exception:', error);
-    toast.error(`Failed to sign in with ${provider}`);
-    return false;
-  }
-};

@@ -59,16 +59,16 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ isOpen, onClose
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="right" className="w-96 p-0">
         <SheetHeader className="px-6 py-4 border-b border-border">
-          <SheetTitle className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <Bell className="w-5 h-5" />
-            Notifications
+            <SheetTitle className="text-lg font-semibold">Notifications</SheetTitle>
             {unreadCount > 0 && (
               <Badge variant="destructive" className="h-5 min-w-5 text-xs">
                 {unreadCount}
               </Badge>
             )}
-          </SheetTitle>
-          <SheetDescription>
+          </div>
+          <SheetDescription className="sr-only">
             View and manage your notifications
           </SheetDescription>
         </SheetHeader>

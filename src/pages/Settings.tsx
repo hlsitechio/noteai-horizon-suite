@@ -5,7 +5,6 @@ import PreferencesSection from '../components/Settings/PreferencesSection';
 import AISettingsSection from '../components/Settings/AISettingsSection';
 import DataExportSection from '../components/Settings/DataExportSection';
 import AboutSection from '../components/Settings/AboutSection';
-import NotificationSettings from '../components/Settings/NotificationSettings';
 import { AdvancedColorPicker } from '../components/Settings/AdvancedColorPicker';
 import DynamicAccentSection from '../components/Settings/DynamicAccentSection';
 import { Separator } from '@/components/ui/separator';
@@ -36,11 +35,6 @@ const Settings: React.FC = () => {
         {/* Profile Section */}
         <section>
           <ProfileSection />
-        </section>
-
-        {/* Notification Settings */}
-        <section>
-          <NotificationSettings />
         </section>
 
         {/* Dynamic Accent Color Section */}

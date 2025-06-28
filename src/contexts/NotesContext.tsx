@@ -49,8 +49,8 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const folders: any[] = [];
 
   // Track subscription state to prevent multiple subscriptions
-  const channelRef = useRef<any>(null);
-  const isInitializedRef = useRef(false);
+  const subscriptionRef = useRef<any>(null);
+  const isSubscribedRef = useRef(false);
 
   const refreshNotes = async () => {
     if (!user) {
@@ -86,21 +86,10 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return;
       }
 
-      // Prevent multiple initializations
-      if (isInitializedRef.current) {
-        console.log('Real-time subscription already initialized, skipping setup');
+      // Prevent multiple subscriptions
+      if (isSubscribedRef.current || subscriptionRef.current) {
+        console.log('Real-time subscription already exists, skipping setup');
         return;
-      }
-
-      // Clean up any existing channel first
-      if (channelRef.current) {
-        console.log('Cleaning up existing channel before creating new one');
-        try {
-          await supabase.removeChannel(channelRef.current);
-        } catch (error) {
-          console.warn('Error removing existing channel:', error);
-        }
-        channelRef.current = null;
       }
 
       try {
@@ -110,132 +99,58 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         // Set up real-time subscription only if user is authenticated
         console.log('Setting up real-time subscription for user:', user.id);
         
-        // Create a unique channel name to avoid conflicts
-        const channelName = `notes-changes-${user.id}-${Date.now()}`;
-        const channel = supabase
-          .channel(channelName)
-          .on(
-            'postgres_changes',
-            {
-              event: 'INSERT',
-              schema: 'public',
-              table: 'notes_v2',
-              filter: `user_id=eq.${user.id}`
-            },
-            (payload) => {
-              console.log('Real-time: Note inserted', payload);
-              if (payload.new) {
-                const newNote: Note = {
-                  id: payload.new.id,
-                  title: payload.new.title,
-                  content: payload.new.content,
-                  category: payload.new.content_type || 'general',
-                  tags: payload.new.tags || [],
-                  createdAt: payload.new.created_at,
-                  updatedAt: payload.new.updated_at,
-                  isFavorite: payload.new.is_public || false,
-                  folder_id: payload.new.folder_id,
-                  reminder_date: payload.new.reminder_date,
-                  reminder_status: (payload.new.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
-                  reminder_frequency: (payload.new.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
-                  reminder_enabled: payload.new.reminder_enabled || false,
-                };
-                
-                setNotes(prev => {
-                  // Check if note already exists to avoid duplicates
-                  const exists = prev.find(note => note.id === newNote.id);
-                  if (exists) return prev;
-                  
-                  toast.success(`New note synced: ${newNote.title}`);
-                  return [newNote, ...prev];
-                });
-              }
+        const channel = SupabaseNotesService.subscribeToNoteChanges(
+          user.id,
+          // onInsert
+          (newNote) => {
+            console.log('Real-time: Note inserted', newNote);
+            setNotes(prev => {
+              // Check if note already exists to avoid duplicates
+              const exists = prev.find(note => note.id === newNote.id);
+              if (exists) return prev;
+              
+              toast.success(`New note synced: ${newNote.title}`);
+              return [newNote, ...prev];
+            });
+          },
+          // onUpdate
+          (updatedNote) => {
+            console.log('Real-time: Note updated', updatedNote);
+            setNotes(prev => prev.map(note => 
+              note.id === updatedNote.id ? updatedNote : note
+            ));
+            
+            // Update current note if it's the one being edited
+            if (currentNote?.id === updatedNote.id) {
+              setCurrentNote(updatedNote);
             }
-          )
-          .on(
-            'postgres_changes',
-            {
-              event: 'UPDATE',
-              schema: 'public',
-              table: 'notes_v2',
-              filter: `user_id=eq.${user.id}`
-            },
-            (payload) => {
-              console.log('Real-time: Note updated', payload);
-              if (payload.new) {
-                const updatedNote: Note = {
-                  id: payload.new.id,
-                  title: payload.new.title,
-                  content: payload.new.content,
-                  category: payload.new.content_type || 'general',
-                  tags: payload.new.tags || [],
-                  createdAt: payload.new.created_at,
-                  updatedAt: payload.new.updated_at,
-                  isFavorite: payload.new.is_public || false,
-                  folder_id: payload.new.folder_id,
-                  reminder_date: payload.new.reminder_date,
-                  reminder_status: (payload.new.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
-                  reminder_frequency: (payload.new.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
-                  reminder_enabled: payload.new.reminder_enabled || false,
-                };
-                
-                setNotes(prev => prev.map(note => 
-                  note.id === updatedNote.id ? updatedNote : note
-                ));
-                
-                // Update current note if it's the one being edited
-                if (currentNote?.id === updatedNote.id) {
-                  setCurrentNote(updatedNote);
-                }
-                if (selectedNote?.id === updatedNote.id) {
-                  setSelectedNote(updatedNote);
-                }
-                
-                toast.success(`Note synced: ${updatedNote.title}`);
-              }
+            if (selectedNote?.id === updatedNote.id) {
+              setSelectedNote(updatedNote);
             }
-          )
-          .on(
-            'postgres_changes',
-            {
-              event: 'DELETE',
-              schema: 'public',
-              table: 'notes_v2',
-              filter: `user_id=eq.${user.id}`
-            },
-            (payload) => {
-              console.log('Real-time: Note deleted', payload);
-              if (payload.old) {
-                setNotes(prev => prev.filter(note => note.id !== payload.old.id));
-                
-                // Clear current note if it was deleted
-                if (currentNote?.id === payload.old.id) {
-                  setCurrentNote(null);
-                }
-                if (selectedNote?.id === payload.old.id) {
-                  setSelectedNote(null);
-                }
-                
-                toast.info('Note deleted on another device');
-              }
+            
+            toast.success(`Note synced: ${updatedNote.title}`);
+          },
+          // onDelete
+          (deletedNoteId) => {
+            console.log('Real-time: Note deleted', deletedNoteId);
+            setNotes(prev => prev.filter(note => note.id !== deletedNoteId));
+            
+            // Clear current note if it was deleted
+            if (currentNote?.id === deletedNoteId) {
+              setCurrentNote(null);
             }
-          );
-
-        // Subscribe to the channel
-        channel.subscribe((status) => {
-          console.log('Subscription status:', status);
-          
-          if (status === 'SUBSCRIBED') {
-            console.log('Successfully subscribed to real-time updates');
-            channelRef.current = channel;
-            isInitializedRef.current = true;
-            setSyncStatus('connected');
-          } else if (status === 'CHANNEL_ERROR') {
-            console.error('Failed to subscribe to real-time updates');
-            setSyncStatus('disconnected');
+            if (selectedNote?.id === deletedNoteId) {
+              setSelectedNote(null);
+            }
+            
+            toast.info('Note deleted on another device');
           }
-        });
+        );
 
+        // Store the channel reference and mark as subscribed
+        subscriptionRef.current = channel;
+        isSubscribedRef.current = true;
+        setSyncStatus('connected');
       } catch (error) {
         console.error('Error setting up real-time subscription:', error);
         setSyncStatus('disconnected');
@@ -246,38 +161,14 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // Cleanup subscription on unmount or when user changes
     return () => {
-      if (channelRef.current) {
+      if (subscriptionRef.current) {
         console.log('Cleaning up real-time subscription');
-        supabase.removeChannel(channelRef.current).then(() => {
-          console.log('Channel removed successfully');
-        }).catch((error) => {
-          console.warn('Error removing channel:', error);
-        });
-        channelRef.current = null;
-      }
-      isInitializedRef.current = false;
-    };
-  }, [user?.id, authLoading]); // Only depend on user.id and authLoading
-
-  // Replace unload event listener with pagehide for better reliability
-  useEffect(() => {
-    const handlePageHide = () => {
-      if (channelRef.current) {
-        console.log('Page hiding, cleaning up real-time subscription');
-        supabase.removeChannel(channelRef.current).catch((error) => {
-          console.warn('Error removing channel on page hide:', error);
-        });
-        channelRef.current = null;
+        supabase.removeChannel(subscriptionRef.current);
+        subscriptionRef.current = null;
+        isSubscribedRef.current = false;
       }
     };
-
-    // Use pagehide instead of deprecated unload event
-    window.addEventListener('pagehide', handlePageHide);
-
-    return () => {
-      window.removeEventListener('pagehide', handlePageHide);
-    };
-  }, []);
+  }, [user, authLoading]); // Remove currentNote/selectedNote dependencies to prevent re-subscriptions
 
   const createNote = async (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Promise<Note> => {
     if (!user) throw new Error('User not authenticated');

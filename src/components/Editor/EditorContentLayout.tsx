@@ -1,55 +1,58 @@
 
 import React from 'react';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
+import EditorLayout from './EditorLayout';
 import { EditorFormState, EditorFormHandlers } from './EditorFormProps';
-import { EditorRefs } from './EditorUIProps';
-import { useNotes } from '../../contexts/NotesContext';
+import { CategoryOption } from '../../types/note';
 
-interface EditorContentLayoutProps extends EditorFormState, EditorFormHandlers, EditorRefs {
-  collapseAssistantRef: any;
-  expandAssistantRef: any;
-  isHeaderHidden: boolean;
-  isHeaderCollapsed: boolean;
-  isAssistantCollapsed: boolean;
-  onCollapseAllBars: () => void;
+interface EditorContentLayoutProps extends EditorFormState, EditorFormHandlers {
+  collapseAssistantRef?: React.MutableRefObject<(() => void) | undefined>;
+  expandAssistantRef?: React.MutableRefObject<(() => void) | undefined>;
+  isHeaderHidden?: boolean;
+  isHeaderCollapsed?: boolean;
+  isAssistantCollapsed?: boolean;
+  onCollapseAllBars?: () => void;
   isMobile?: boolean;
 }
 
-const EditorContentLayout: React.FC<EditorContentLayoutProps> = ({
-  title,
-  content,
-  isSaving,
-  onTitleChange,
-  onContentChange,
-  onSave,
-  isMobile = false,
-}) => {
-  const { currentNote, refreshNotes } = useNotes();
-  const canSave = title.trim().length > 0;
+const EditorContentLayout: React.FC<EditorContentLayoutProps> = (props) => {
+  console.log('EditorContentLayout rendering with props:', {
+    title: props.title,
+    isMobile: props.isMobile,
+    isAssistantCollapsed: props.isAssistantCollapsed
+  });
+
+  // Get available categories - using CategoryOption interface
+  const categories: CategoryOption[] = [
+    { value: 'general', label: 'General', color: '#6366f1' },
+    { value: 'work', label: 'Work', color: '#059669' },
+    { value: 'personal', label: 'Personal', color: '#dc2626' },
+    { value: 'ideas', label: 'Ideas', color: '#7c3aed' },
+    { value: 'research', label: 'Research', color: '#ea580c' },
+  ];
 
   return (
-    <div className="h-full flex flex-col bg-white">
-      {/* Title Input */}
-      <div className="p-6 border-b border-gray-200">
-        <Input
-          placeholder="Enter your title..."
-          value={title}
-          onChange={(e) => onTitleChange(e.target.value)}
-          className="text-2xl font-bold border-none shadow-none focus-visible:ring-0 px-0 bg-transparent"
-        />
-      </div>
-
-      {/* Content Editor */}
-      <div className="flex-1 p-6">
-        <Textarea
-          placeholder="Start writing..."
-          value={content}
-          onChange={(e) => onContentChange(e.target.value)}
-          className="h-full resize-none border-none shadow-none focus-visible:ring-0 text-base leading-relaxed bg-transparent"
-        />
-      </div>
-    </div>
+    <EditorLayout
+      title={props.title}
+      content={props.content}
+      category={props.category}
+      tags={props.tags}
+      newTag={props.newTag}
+      categories={categories}
+      onTitleChange={props.onTitleChange}
+      onContentChange={props.onContentChange}
+      onCategoryChange={props.onCategoryChange}
+      onNewTagChange={props.onNewTagChange}
+      onAddTag={props.onAddTag}
+      onRemoveTag={props.onRemoveTag}
+      onSuggestionApply={props.onSuggestionApply}
+      onSave={props.onSave}
+      canSave={props.title?.trim().length > 0}
+      isSaving={props.isSaving}
+      collapseAssistantRef={props.collapseAssistantRef}
+      expandAssistantRef={props.expandAssistantRef}
+      isAssistantCollapsed={props.isAssistantCollapsed}
+      isMobile={props.isMobile}
+    />
   );
 };
 

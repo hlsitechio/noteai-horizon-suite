@@ -1,12 +1,6 @@
 
 import React, { useState } from 'react';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle,
-  DialogDescription 
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -64,21 +58,13 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
     }
   };
 
-  const isEditing = !!initialData;
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? 'Edit Project' : 'Create New Project'}
+            {initialData ? 'Edit Project' : 'Create New Project'}
           </DialogTitle>
-          <DialogDescription>
-            {isEditing 
-              ? 'Update your project settings and configuration.'
-              : 'Create a new project to organize your work and collaborate with AI.'
-            }
-          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -89,7 +75,6 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="Enter project title"
               required
-              autoFocus
             />
           </div>
           
@@ -146,7 +131,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting || !formData.title.trim()}>
-              {isSubmitting ? 'Processing...' : isEditing ? 'Update' : 'Create'}
+              {isSubmitting ? 'Creating...' : initialData ? 'Update' : 'Create'}
             </Button>
           </div>
         </form>

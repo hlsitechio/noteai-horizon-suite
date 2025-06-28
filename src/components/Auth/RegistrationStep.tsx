@@ -50,9 +50,6 @@ const RegistrationStep: React.FC<RegistrationStepProps> = ({
       exit={{ opacity: 0, y: -20, scale: 0.95 }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
       className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/50 p-8"
-      role="dialog"
-      aria-labelledby="registration-title"
-      aria-describedby="registration-description"
     >
       {/* Back button */}
       {canGoBack && (
@@ -77,8 +74,8 @@ const RegistrationStep: React.FC<RegistrationStepProps> = ({
         >
           <stepContent.icon className="text-white w-8 h-8" />
         </motion.div>
-        <h2 id="registration-title" className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Create Account</h2>
-        <p id="registration-description" className="text-gray-600 dark:text-gray-300">{stepContent.label}</p>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Create Account</h2>
+        <p className="text-gray-600 dark:text-gray-300">{stepContent.label}</p>
       </div>
 
       <div className="space-y-6">
@@ -91,7 +88,6 @@ const RegistrationStep: React.FC<RegistrationStepProps> = ({
             className="h-14 rounded-xl text-lg pr-20 bg-gray-50 dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:bg-white dark:focus:bg-slate-600 focus:border-blue-300 dark:focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/20"
             autoFocus
             disabled={isCheckingEmail}
-            aria-describedby={emailExists ? "email-error" : undefined}
           />
           
           {stepContent.showEye && (
@@ -101,7 +97,6 @@ const RegistrationStep: React.FC<RegistrationStepProps> = ({
               size="sm"
               className="absolute right-12 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
               onClick={() => onTogglePassword(currentStep as 'password' | 'confirmPassword')}
-              aria-label={`${(currentStep === 'password' ? showPassword : showConfirmPassword) ? 'Hide' : 'Show'} password`}
             >
               {(currentStep === 'password' ? showPassword : showConfirmPassword) ? 
                 <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />
@@ -110,7 +105,7 @@ const RegistrationStep: React.FC<RegistrationStepProps> = ({
           )}
 
           {isCheckingEmail && currentStep === 'email' && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2" aria-label="Checking email availability">
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
             </div>
           )}
@@ -124,7 +119,6 @@ const RegistrationStep: React.FC<RegistrationStepProps> = ({
                 exit={{ scale: 0, opacity: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 rounded-full flex items-center justify-center text-white shadow-lg"
-                aria-label="Email already exists"
               >
                 <X className="w-4 h-4" />
               </motion.div>
@@ -139,7 +133,6 @@ const RegistrationStep: React.FC<RegistrationStepProps> = ({
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 onClick={onNext}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all duration-200"
-                aria-label="Continue to next step"
               >
                 <Check className="w-4 h-4" />
               </motion.button>
@@ -153,7 +146,6 @@ const RegistrationStep: React.FC<RegistrationStepProps> = ({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
-            id="email-error"
           >
             <p className="text-gray-600 dark:text-gray-400 text-sm">
               This email is already registered.{' '}

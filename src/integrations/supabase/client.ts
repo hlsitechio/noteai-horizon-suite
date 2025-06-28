@@ -14,26 +14,18 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
-    flowType: 'pkce',
-    // DISABLE DEBUG LOGGING to prevent spam
-    debug: false,
-    storage: localStorage,
-    storageKey: 'sb-qrdulwzjgbfgaplazgsh-auth-token',
+    // Handle token refresh failures gracefully
+    debug: process.env.NODE_ENV === 'development',
+    flowType: 'pkce'
   },
   global: {
     headers: {
       'x-my-custom-header': 'notes-app',
     },
   },
-  // Reduce realtime connection retries to prevent spam
-  realtime: {
-    params: {
-      eventsPerSecond: 10,
-    },
-  },
 });
 
-// Simplified error handling for token refresh failures
+// Add error handling for token refresh failures
 supabase.auth.onAuthStateChange((event, session) => {
   if (event === 'TOKEN_REFRESHED' && !session) {
     console.warn('Token refresh failed, session is null');

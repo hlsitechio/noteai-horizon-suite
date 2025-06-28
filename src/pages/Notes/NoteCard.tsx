@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Heart, Calendar, Trash2, Bell, Clock } from 'lucide-react';
+import { Heart, Calendar, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../../contexts/NotesContext';
 import { Note, CategoryOption } from '../../types/note';
 import NoteShareButton from '../../components/Sharing/NoteShareButton';
-import { formatDistanceToNow } from 'date-fns';
 
 const categories: CategoryOption[] = [
   { value: 'all', label: 'All Categories', color: 'gray' },
@@ -48,18 +47,6 @@ const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
     }).format(date);
   };
 
-  const formatReminderTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    if (date < now) {
-      return 'Overdue';
-    }
-    return formatDistanceToNow(date, { addSuffix: true });
-  };
-
-  const hasReminder = note.reminder_enabled && note.reminder_status === 'pending';
-  const reminderDate = note.reminder_date;
-
   return (
     <Card 
       className="cursor-pointer hover:shadow-md transition-shadow group"
@@ -73,9 +60,6 @@ const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             {note.isFavorite && (
               <Heart className="w-4 h-4 text-red-500 fill-current" />
-            )}
-            {hasReminder && (
-              <Bell className="w-4 h-4 text-blue-500" />
             )}
             <NoteShareButton note={note} />
             <Button
@@ -94,12 +78,6 @@ const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
           <Badge variant="secondary" className="text-xs">
             {categories.find(c => c.value === note.category)?.label || note.category}
           </Badge>
-          {hasReminder && reminderDate && (
-            <Badge variant="outline" className="text-xs flex items-center gap-1 text-blue-600 border-blue-200">
-              <Clock className="w-3 h-3" />
-              {formatReminderTime(reminderDate)}
-            </Badge>
-          )}
         </div>
       </CardHeader>
       <CardContent className="pt-0">

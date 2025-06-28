@@ -7,7 +7,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
 
 interface FolderDialogProps {
@@ -33,17 +32,11 @@ const FolderDialog: React.FC<FolderDialogProps> = ({
     }
   };
 
-  const isCreating = title.includes('Create');
-  const description = isCreating 
-    ? 'Enter a name for your new folder to organize your notes.'
-    : 'Enter a new name for this folder.';
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <div className="flex items-center space-x-2">
           <Input
@@ -51,10 +44,9 @@ const FolderDialog: React.FC<FolderDialogProps> = ({
             value={folderName}
             onChange={(e) => onFolderNameChange(e.target.value)}
             onKeyPress={handleKeyPress}
-            autoFocus
           />
-          <Button onClick={onSave} disabled={!folderName.trim()}>
-            {isCreating ? 'Create' : 'Save'}
+          <Button onClick={onSave}>
+            {title.includes('Create') ? 'Create' : 'Save'}
           </Button>
         </div>
       </DialogContent>

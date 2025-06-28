@@ -21,9 +21,14 @@ const HomeRedirect: React.FC = () => {
     );
   }
 
-  // Simple redirect - if we're here, user is authenticated (due to ProtectedRoute)
-  console.log('HomeRedirect: Redirecting authenticated user to dashboard');
-  return <Navigate to="/app/dashboard" replace />;
+  // Redirect based on authentication status
+  if (user) {
+    console.log('User authenticated, redirecting to dashboard from /home');
+    return <Navigate to="/app/dashboard" replace />;
+  } else {
+    console.log('User not authenticated, redirecting to landing from /home');
+    return <Navigate to="/landing" replace />;
+  }
 };
 
 export default HomeRedirect;

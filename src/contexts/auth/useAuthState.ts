@@ -1,5 +1,5 @@
 
-import { useReducer, useCallback, useMemo } from 'react';
+import { useReducer, useCallback } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { AuthState, AuthAction, User } from './types';
 import { transformUser } from './utils';
@@ -37,9 +37,6 @@ export const useAuthState = () => {
   }, []);
 
   const setSession = useCallback(async (session: Session | null) => {
-    // Prevent unnecessary re-renders if session hasn't changed
-    if (state.session === session) return;
-    
     dispatch({ type: 'SET_SESSION', payload: session });
     
     // Transform and set user when session changes
@@ -54,7 +51,7 @@ export const useAuthState = () => {
     } else {
       dispatch({ type: 'SET_USER', payload: null });
     }
-  }, [state.session]);
+  }, []);
 
   const setUser = useCallback((user: User | null) => {
     dispatch({ type: 'SET_USER', payload: user });
@@ -75,8 +72,7 @@ export const useAuthState = () => {
     }
   }, [state.session, setUser]);
 
-  // Memoize the return value to prevent unnecessary re-renders
-  const memoizedState = useMemo(() => ({
+  return {
     ...state,
     setLoading,
     setSession,
@@ -84,7 +80,5 @@ export const useAuthState = () => {
     clearAuth,
     refreshUser,
     isAuthenticated: !!state.user && !!state.session,
-  }), [state, setLoading, setSession, setUser, clearAuth, refreshUser]);
-
-  return memoizedState;
+  };
 };

@@ -1,65 +1,112 @@
 
 .editor-toolbar {
-  @apply flex items-center justify-between p-4 bg-white border-b border-gray-200;
+  @apply flex items-center justify-between p-4 bg-gradient-to-r from-slate-50/80 to-white/90 backdrop-blur-xl shadow-lg dark:from-slate-800/80 dark:to-slate-900/90;
 }
 
 .editor-button {
-  @apply relative transition-all duration-200 hover:bg-gray-100 hover:text-gray-700 rounded-md px-3 py-2;
+  @apply relative transition-all duration-300 hover:bg-gradient-to-r from-blue-50 to-purple-50 hover:text-slate-700 hover:shadow-md hover:scale-105 backdrop-blur-sm rounded-lg px-3 py-2 dark:hover:from-slate-700 dark:hover:to-slate-600 dark:hover:text-slate-200;
 }
 
 .editor-button.active {
-  @apply bg-blue-500 text-white shadow-sm;
+  @apply bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg backdrop-blur-md scale-105 dark:from-blue-600 dark:to-purple-700;
 }
 
 .editor-content {
-  @apply p-6 min-h-[400px] max-h-[600px] overflow-y-auto bg-white;
+  @apply p-8 min-h-[400px] max-h-[600px] overflow-y-auto bg-gradient-to-br from-white/95 to-slate-50/90 backdrop-blur-xl shadow-inner dark:from-slate-900/95 dark:to-slate-800/90;
 }
 
 .editor-content .prose {
-  @apply text-gray-800;
+  @apply text-slate-800 dark:text-slate-100;
 }
 
 .editor-content .prose p {
-  @apply leading-relaxed mb-4 text-gray-700;
+  @apply leading-relaxed mb-4 text-slate-700 dark:text-slate-200;
 }
 
 .editor-content .prose h1 {
-  @apply text-3xl font-bold mb-6 text-gray-900;
+  @apply text-3xl font-bold mb-6 text-slate-900 pb-2 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent dark:from-slate-100 dark:to-slate-300;
 }
 
 .editor-content .prose h2 {
-  @apply text-2xl font-semibold mb-4 text-gray-800;
+  @apply text-2xl font-semibold mb-4 text-slate-800 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent dark:from-slate-200 dark:to-slate-400;
 }
 
 .editor-content .prose blockquote {
-  @apply pl-6 py-3 italic text-gray-700 bg-gray-50 rounded-r-lg my-4 border-l-4 border-blue-400;
+  @apply pl-6 py-3 italic text-slate-700 bg-gradient-to-r from-blue-50/80 to-purple-50/60 backdrop-blur-sm rounded-r-xl my-4 shadow-sm dark:from-blue-900/30 dark:to-purple-900/20 dark:text-slate-300;
+  border-left: 4px solid;
+  border-image: linear-gradient(to bottom, #3b82f6, #9333ea) 1;
+}
+
+.dark .editor-content .prose blockquote {
+  border-image: linear-gradient(to bottom, #60a5fa, #a855f7) 1;
 }
 
 .editor-content .prose ul,
 .editor-content .prose ol {
-  @apply space-y-2 my-4 pl-6 text-gray-700;
+  @apply space-y-2 my-4 pl-6 text-slate-700 dark:text-slate-200;
 }
 
 .editor-content .prose li {
-  @apply leading-relaxed text-gray-700;
+  @apply leading-relaxed text-slate-700 dark:text-slate-200;
 }
 
 .editor-content .prose code {
-  @apply bg-gray-100 px-3 py-1 rounded-lg text-sm font-mono text-gray-800;
+  @apply bg-gradient-to-r from-slate-100 to-slate-200 backdrop-blur-sm px-3 py-1 rounded-lg text-sm font-mono shadow-sm text-slate-800 dark:from-slate-800 dark:to-slate-700 dark:text-blue-300;
 }
 
 .editor-content .prose pre {
-  @apply bg-gray-900 p-6 rounded-xl font-mono text-sm my-4 overflow-x-auto text-gray-100;
+  @apply bg-gradient-to-br from-slate-900 to-slate-800 p-6 rounded-xl font-mono text-sm my-4 overflow-x-auto shadow-lg text-slate-100 dark:from-slate-800 dark:to-slate-900;
 }
 
-.editor-content [data-slate-placeholder] {
-  @apply text-gray-400 !important;
+/* Enhanced dark mode placeholder styling with premium colors */
+.dark .editor-content [data-slate-placeholder] {
+  @apply text-slate-400 !important;
+}
+
+/* Premium selection styling */
+.dark .editor-content ::selection {
+  @apply bg-gradient-to-r from-blue-500/40 to-purple-500/40 !important;
 }
 
 .editor-content ::selection {
-  @apply bg-blue-200 !important;
+  @apply bg-gradient-to-r from-blue-200/60 to-purple-200/60 !important;
 }
 
+/* Smooth premium animations */
+.animate-scale-in {
+  animation: scale-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Enhanced focus states with premium gradients */
 .editor-content:focus-within {
-  @apply ring-2 ring-blue-300 ring-opacity-50;
+  @apply ring-2 shadow-lg dark:ring-blue-400/40;
+  ring-color: rgba(59, 130, 246, 0.3);
+}
+
+/* Premium glassmorphic editor enhancements */
+.dark .editor-content {
+  @apply bg-gradient-to-br from-slate-900/95 to-slate-800/90 backdrop-blur-xl text-slate-100;
+}
+
+.dark .editor-content .prose strong {
+  @apply text-slate-50 font-semibold;
+}
+
+.dark .editor-content .prose em {
+  @apply text-slate-200 italic;
+}
+
+.dark .editor-content .prose u {
+  @apply text-slate-100 decoration-blue-400/80 decoration-2;
 }
