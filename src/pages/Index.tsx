@@ -10,11 +10,9 @@ const Index: React.FC = () => {
   const navigate = useNavigate();
 
   console.log('Index component - Auth state:', { user: !!user, isLoading });
-  console.log('Index component - Current URL:', window.location.href);
 
   useEffect(() => {
-    console.log('Index useEffect - Auth state:', { user: !!user, isLoading });
-    
+    // Add a small delay to prevent rapid redirects
     if (!isLoading) {
       const timer = setTimeout(() => {
         if (user) {
@@ -24,13 +22,11 @@ const Index: React.FC = () => {
           console.log('User not authenticated, navigating to landing');
           navigate('/landing', { replace: true });
         }
-      }, 100);
+      }, 500); // Increase delay to 500ms
 
       return () => clearTimeout(timer);
     }
   }, [user, isLoading, navigate]);
-
-  console.log('Index component rendering - isLoading:', isLoading);
 
   // Show loading state while auth is being determined
   if (isLoading) {
@@ -45,15 +41,30 @@ const Index: React.FC = () => {
     );
   }
 
-  // Show loading state while redirecting
+  // Show loading state while redirecting with timeout fallback
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center">
         <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
         <p className="text-muted-foreground">Redirecting...</p>
-        <p className="text-xs text-muted-foreground mt-2">
-          Debug: User {user ? 'found' : 'not found'}, Loading: {isLoading ? 'yes' : 'no'}
-        </p>
+        <div className="mt-4">
+          {!user && (
+            <button
+              onClick={() => navigate('/landing', { replace: true })}
+              className="text-sm text-blue-500 hover:underline"
+            >
+              Go to Landing Page
+            </button>
+          )}
+          {user && (
+            <button
+              onClick={() => navigate('/app/dashboard', { replace: true })}
+              className="text-sm text-blue-500 hover:underline"
+            >
+              Go to Dashboard
+            </button>
+          )}
+        </div>
       </div>
       <PageAICopilot pageContext="redirecting" />
     </div>

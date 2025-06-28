@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 
@@ -10,8 +10,9 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, isLoading } = useAuth();
+  const location = useLocation();
 
-  console.log('ProtectedRoute - Auth state:', { user: !!user, isLoading });
+  console.log('ProtectedRoute - Auth state:', { user: !!user, isLoading, path: location.pathname });
 
   if (isLoading) {
     return (
@@ -26,7 +27,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (!user) {
     console.log('No user found, redirecting to login');
-    return <Navigate to="/login" replace />;
+    // Store the attempted location to redirect back after login
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   console.log('User authenticated, rendering protected content');

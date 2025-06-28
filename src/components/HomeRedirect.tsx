@@ -23,10 +23,10 @@ const HomeRedirect: React.FC = () => {
 
   // Redirect based on authentication status
   if (user) {
-    console.log('User authenticated, redirecting to dashboard from /home');
+    console.log('User authenticated, redirecting to dashboard from /app');
     return <Navigate to="/app/dashboard" replace />;
   } else {
-    console.log('User not authenticated, redirecting to landing from /home');
+    console.log('User not authenticated, redirecting to landing from /app');
     return <Navigate to="/landing" replace />;
   }
 };
