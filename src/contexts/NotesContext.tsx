@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Note, NoteFilters } from '../types/note';
 import { SupabaseNotesService } from '../services/supabaseNotesService';
@@ -48,9 +49,10 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Initialize folders as empty array - will be populated when folders context is available
   const folders: any[] = [];
 
-  // Track subscription state to prevent multiple subscriptions
+  // Track subscription state with refs to prevent multiple subscriptions
   const subscriptionRef = useRef<any>(null);
-  const isSubscribedRef = useRef(false);
+  const hasSubscribedRef = useRef(false);
+  const currentUserIdRef = useRef<string | null>(null);
 
   const refreshNotes = async () => {
     if (!user) {
@@ -77,28 +79,46 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  // Cleanup function to properly remove subscriptions
+  const cleanupSubscription = () => {
+    if (subscriptionRef.current) {
+      console.log('Cleaning up existing real-time subscription');
+      supabase.removeChannel(subscriptionRef.current);
+      subscriptionRef.current = null;
+      hasSubscribedRef.current = false;
+    }
+  };
+
   // Set up real-time subscription only when user is authenticated
   useEffect(() => {
     const setupRealtimeSubscription = async () => {
+      // Clean up any existing subscription first
+      cleanupSubscription();
+
       // Wait for auth to be ready and ensure user is authenticated
       if (authLoading || !user) {
         console.log('Auth not ready or no user, skipping real-time setup');
+        setIsLoading(false);
         return;
       }
 
-      // Prevent multiple subscriptions
-      if (isSubscribedRef.current || subscriptionRef.current) {
-        console.log('Real-time subscription already exists, skipping setup');
+      // Check if user changed - if so, we need to set up a new subscription
+      const userChanged = currentUserIdRef.current !== user.id;
+      currentUserIdRef.current = user.id;
+
+      // Prevent multiple subscriptions for the same user
+      if (hasSubscribedRef.current && !userChanged) {
+        console.log('Real-time subscription already exists for current user, skipping setup');
         return;
       }
 
       try {
+        console.log('Setting up real-time subscription for user:', user.id);
+        
         // Initial load
         await refreshNotes();
 
-        // Set up real-time subscription only if user is authenticated
-        console.log('Setting up real-time subscription for user:', user.id);
-        
+        // Set up real-time subscription
         const channel = SupabaseNotesService.subscribeToNoteChanges(
           user.id,
           // onInsert
@@ -149,11 +169,14 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
         // Store the channel reference and mark as subscribed
         subscriptionRef.current = channel;
-        isSubscribedRef.current = true;
+        hasSubscribedRef.current = true;
         setSyncStatus('connected');
+        
+        console.log('Real-time subscription setup completed');
       } catch (error) {
         console.error('Error setting up real-time subscription:', error);
         setSyncStatus('disconnected');
+        hasSubscribedRef.current = false;
       }
     };
 
@@ -161,14 +184,10 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // Cleanup subscription on unmount or when user changes
     return () => {
-      if (subscriptionRef.current) {
-        console.log('Cleaning up real-time subscription');
-        supabase.removeChannel(subscriptionRef.current);
-        subscriptionRef.current = null;
-        isSubscribedRef.current = false;
-      }
+      cleanupSubscription();
+      currentUserIdRef.current = null;
     };
-  }, [user, authLoading]); // Remove currentNote/selectedNote dependencies to prevent re-subscriptions
+  }, [user?.id, authLoading]); // Only depend on user ID and auth loading state
 
   const createNote = async (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Promise<Note> => {
     if (!user) throw new Error('User not authenticated');
