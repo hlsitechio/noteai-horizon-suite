@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { useDynamicAccent } from '../../../../contexts/DynamicAccentContext';
@@ -7,16 +6,31 @@ import { BannerStorageService } from '@/services/bannerStorage';
 export const useWelcomeHeader = () => {
   const { user } = useAuth();
   const { extractColorFromMedia, isDynamicAccentEnabled } = useDynamicAccent();
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState('');
   const [bannerData, setBannerData] = useState<{url: string, type: 'image' | 'video'} | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [showControls, setShowControls] = useState(false);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+    const updateTime = () => {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+      const dateString = now.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      setCurrentTime(`${timeString} • ${dateString}`);
+    };
+
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
 
     return () => clearInterval(timer);
   }, []);
