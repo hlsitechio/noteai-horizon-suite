@@ -1,9 +1,9 @@
+
 import React, { createContext, useContext, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthContextType } from './auth/types';
 import { useAuthState } from './auth/useAuthState';
 import { loginUser, registerUser, logoutUser, initializeAuthSession } from './auth/authService';
-import { handleRefreshTokenError, clearCorruptedSession } from './auth/utils';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -38,8 +38,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log('AuthProvider: Setting up auth state listener');
     
     let mounted = true;
+    let authInitialized = false;
     
     const initializeAuth = async () => {
+      if (authInitialized) return;
+      authInitialized = true;
+      
       const { session, error } = await initializeAuthSession();
       
       if (!mounted) return;
@@ -52,34 +56,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
     };
 
-    // Set up auth state listener
+    // Set up auth state listener with debouncing
+    let debounceTimer: NodeJS.Timeout;
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         
         if (!mounted) return;
         
-        // Handle token refresh errors
-        if (event === 'TOKEN_REFRESHED' && !session) {
-          console.log('Token refresh failed, clearing session');
-          await clearCorruptedSession();
-          clearAuth();
-          return;
+        // Clear any pending debounced calls
+        if (debounceTimer) {
+          clearTimeout(debounceTimer);
         }
         
-        setSession(session);
-        console.log(session?.user ? `User authenticated: ${session.user.email}` : 'User logged out');
+        // Debounce rapid auth state changes
+        debounceTimer = setTimeout(() => {
+          if (!mounted) return;
+          
+          // Handle token refresh errors
+          if (event === 'TOKEN_REFRESHED' && !session) {
+            console.log('Token refresh failed, clearing session');
+            clearAuth();
+            return;
+          }
+          
+          setSession(session);
+          console.log(session?.user ? `User authenticated: ${session.user.email}` : 'User logged out');
+        }, 100); // 100ms debounce
       }
     );
 
+    // Initialize auth only once
     initializeAuth();
 
     return () => {
       console.log('AuthProvider: Cleaning up auth listener');
       mounted = false;
+      authInitialized = false;
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
       subscription.unsubscribe();
     };
-  }, [setSession, clearAuth]);
+  }, []); // Remove dependencies to prevent re-initialization
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setLoading(true);
