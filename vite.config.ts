@@ -21,10 +21,12 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Ensure consistent asset naming and prevent cache issues
+    // Clear output directory completely on build
+    emptyOutDir: true,
+    // Ensure consistent asset naming with timestamps for better cache busting
     rollupOptions: {
       output: {
-        // Use consistent naming for assets
+        // Use timestamp-based hashing for better cache invalidation
         assetFileNames: (assetInfo) => {
           if (!assetInfo.name) {
             return `assets/[name]-[hash][extname]`;
@@ -40,7 +42,17 @@ export default defineConfig(({ mode }) => ({
         entryFileNames: 'assets/js/[name]-[hash].js',
       },
     },
-    // Clear output directory on build
-    emptyOutDir: true,
+    // Ensure manifests are generated correctly
+    manifest: true,
+    // Disable CSS code splitting to avoid loading issues
+    cssCodeSplit: false,
   },
+  // Ensure proper cache headers in development
+  preview: {
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    }
+  }
 }));
