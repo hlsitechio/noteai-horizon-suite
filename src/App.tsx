@@ -42,6 +42,10 @@ import MobileApp from './mobile/MobileApp';
 
 import './App.css';
 
+// Debug UTS error on app initialization
+console.log('App component initializing...');
+console.log('Checking for missing dependencies or components...');
+
 // Create optimized QueryClient with reduced retry attempts
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -64,6 +68,24 @@ const ReminderManagerInit: React.FC<{ children: React.ReactNode }> = ({ children
 };
 
 function App() {
+  // Add debugging for UTS error
+  React.useEffect(() => {
+    console.log('App component mounted');
+    console.log('DOM loaded, checking for UTS-related elements...');
+    
+    // Check for any elements or scripts that might be related to UTS
+    const scripts = document.querySelectorAll('script');
+    const utsRelated = Array.from(scripts).filter(script => 
+      script.src.includes('UTS') || 
+      script.innerHTML.includes('UTS') ||
+      script.innerHTML.includes('No NF')
+    );
+    
+    if (utsRelated.length > 0) {
+      console.warn('Found UTS-related scripts:', utsRelated);
+    }
+  }, []);
+
   return (
     <EnhancedErrorBoundary>
       <QueryClientProvider client={queryClient}>
