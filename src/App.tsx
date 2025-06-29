@@ -19,6 +19,7 @@ import AppWithErrorHandling from './components/AppWithErrorHandling';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout/Layout';
 import HomeRedirect from './components/HomeRedirect';
+import RouteDebugger from './components/RouteDebugger';
 
 // Pages
 import Index from './pages/Index';
@@ -36,6 +37,7 @@ import Calendar from './pages/Calendar';
 import ProjectRealms from './pages/ProjectRealms';
 import ProjectDetail from './pages/ProjectDetail';
 import FolderDetail from './pages/FolderDetail';
+import ErrorMonitoring from './pages/ErrorMonitoring';
 import NotFound from './pages/NotFound';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
@@ -64,6 +66,7 @@ function App() {
                         <FloatingNotesProvider>
                           <QuantumAIProvider>
                             <SentryRouter>
+                              <RouteDebugger />
                               <Routes>
                                 {/* Public Routes */}
                                 <Route path="/" element={<Index />} />
@@ -100,6 +103,7 @@ function App() {
                                   <Route path="projects" element={<ProjectRealms />} />
                                   <Route path="projects/:id" element={<ProjectDetail />} />
                                   <Route path="folders/:id" element={<FolderDetail />} />
+                                  <Route path="error-monitoring" element={<ErrorMonitoring />} />
                                 </Route>
 
                                 {/* Catch all route */}
