@@ -16,7 +16,14 @@ interface ResourceError {
 class ResourceLoadingErrorManager {
   private failedResources: Map<string, ResourceError> = new Map();
   private fallbackResources: Map<string, string> = new Map();
-  private maxRetries = 2;
+  private maxRetries = 1; // Reduced from 2 to 1 to prevent excessive retries
+  private blockedDomains = new Set([
+    'static.cloudflareinsights.com',
+    'www.googletagmanager.com',
+    'connect.facebook.net',
+    'analytics.tiktok.com',
+    'www.redditstatic.com'
+  ]);
 
   constructor() {
     this.setupResourceErrorHandling();
@@ -51,6 +58,14 @@ class ResourceLoadingErrorManager {
   private handleResourceError(element: HTMLElement, event: ErrorEvent) {
     const url = this.getResourceUrl(element);
     if (!url) return;
+
+    // Don't retry resources from blocked domains (likely blocked by ad blockers)
+    const urlObj = new URL(url);
+    if (this.blockedDomains.has(urlObj.hostname)) {
+      console.log(`Skipping retry for blocked domain: ${urlObj.hostname}`);
+      this.hideFailedResource(element);
+      return;
+    }
 
     const type = this.getResourceType(element);
     const resourceKey = `${type}:${url}`;
@@ -125,7 +140,7 @@ class ResourceLoadingErrorManager {
       } else if (type === 'stylesheet' && element instanceof HTMLLinkElement) {
         element.href = url + '?retry=' + resourceError.retryCount;
       }
-    }, 1000 * resourceError.retryCount); // Exponential backoff
+    }, 2000 * resourceError.retryCount); // Increased delay to reduce spam
   }
 
   private applyFallback(resourceError: ResourceError) {

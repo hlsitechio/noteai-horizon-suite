@@ -1,7 +1,9 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Folder } from '../types/folder';
 import { SupabaseFoldersService } from '../services/supabaseFoldersService';
 import { toast } from 'sonner';
+import { useAuth } from './AuthContext';
 
 interface FoldersContextType {
   folders: Folder[];
@@ -24,24 +26,38 @@ export const useFolders = () => {
 
 export const FoldersProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [folders, setFolders] = useState<Folder[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const { user, isLoading: authLoading } = useAuth();
 
   const refreshFolders = async () => {
+    // Don't try to load folders if user is not authenticated
+    if (!user || authLoading) {
+      setFolders([]);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     try {
       const loadedFolders = await SupabaseFoldersService.getAllFolders();
       setFolders(loadedFolders);
     } catch (error) {
-      toast.error('Failed to load folders');
       console.error('Error loading folders:', error);
+      // Don't show toast error if it's just an auth issue
+      if (user) {
+        toast.error('Failed to load folders');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    refreshFolders();
-  }, []);
+    // Only refresh folders when auth state is settled and user is authenticated
+    if (!authLoading) {
+      refreshFolders();
+    }
+  }, [user, authLoading]);
 
   const createFolder = async (folderData: Omit<Folder, 'id' | 'createdAt' | 'updatedAt'>): Promise<Folder> => {
     try {
