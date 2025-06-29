@@ -1,6 +1,7 @@
+
 import { useState, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from './useToast';
+import { useToast } from '@/hooks/use-toast';
 import { useGPUAcceleration } from './useGPUAcceleration';
 import { GPUTextProcessingService } from '@/services/gpuTextProcessing';
 

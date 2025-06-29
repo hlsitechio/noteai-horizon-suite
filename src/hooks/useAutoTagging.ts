@@ -1,7 +1,6 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from './useToast';
+import { useToast } from '@/hooks/use-toast';
 
 export const useAutoTagging = () => {
   const [isGeneratingTags, setIsGeneratingTags] = useState(false);

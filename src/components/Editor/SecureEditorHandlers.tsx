@@ -1,7 +1,7 @@
 
 import { useNotes } from '../../contexts/NotesContext';
 import { useAutoTagging } from '../../hooks/useAutoTagging';
-import { useToast } from '../../hooks/useToast';
+import { useToast } from '@/hooks/use-toast';
 import { 
   validateNoteTitle, 
   validateNoteContent, 

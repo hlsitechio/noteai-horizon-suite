@@ -1,11 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import Navigation from '../components/Landing/Navigation';
 import Hero from '../components/Landing/Hero';
 import Features from '../components/Landing/Features';
 import Pricing from '../components/Landing/Pricing';
 import Footer from '../components/Landing/Footer';
-import SecurityHeaders from '../components/Security/SecurityHeaders';
 import { AnalyticsService } from '../services/analyticsService';
 
 const Landing: React.FC = () => {
@@ -59,7 +57,6 @@ const Landing: React.FC = () => {
 
   return (
     <>
-      <SecurityHeaders />
       <div className="min-h-screen bg-background">
         <Navigation isScrolled={isScrolled} mousePosition={mousePosition} />
         <Hero />
