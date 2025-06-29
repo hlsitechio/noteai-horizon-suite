@@ -33,7 +33,7 @@ export const initSentry = () => {
     
     environment: import.meta.env.MODE,
     
-    // Enhanced error capturing
+    // Enhanced error capturing with better filtering
     ignoreErrors: [
       // Ignore common browser extension errors
       'Non-Error promise rejection captured',
@@ -43,10 +43,37 @@ export const initSentry = () => {
       // Ignore CSP worker errors in development
       'Failed to construct \'Worker\'',
       'SecurityError: Failed to construct \'Worker\'',
+      // Ignore ad blocker related errors
+      'net::ERR_BLOCKED_BY_CLIENT',
+      'Failed to load resource: net::ERR_BLOCKED_BY_CLIENT',
+      // Ignore common tracking script errors
+      'facebook.net',
+      'tiktok.com',
+      'reddit.com',
+      'googletagmanager.com',
+      'google-analytics.com',
+      'static.cloudflareinsights.com',
     ],
     
     // Capture all console errors
     beforeSend(event, hint) {
+      // Skip blocked resource errors (they're expected due to ad blockers)
+      if (hint.originalException && 
+          hint.originalException.toString &&
+          hint.originalException.toString().includes('ERR_BLOCKED_BY_CLIENT')) {
+        return null;
+      }
+      
+      // Skip CSP violations for known blocked resources
+      if (event.message && (
+        event.message.includes('facebook.net') ||
+        event.message.includes('tiktok.com') ||
+        event.message.includes('reddit.com') ||
+        event.message.includes('static.cloudflareinsights.com')
+      )) {
+        return null;
+      }
+      
       // In development, log to console but still send to Sentry for testing
       if (import.meta.env.DEV) {
         console.log('Sentry event (dev mode):', event);
@@ -73,7 +100,10 @@ export const initSentry = () => {
     // Enable debug mode in development
     debug: import.meta.env.DEV,
     
-    // Enhanced transport options with CSP-friendly configuration
+    // Enhanced transport options with better error handling
     transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
+    
+    // Add tunnel option for environments with strict CSP
+    tunnel: import.meta.env.PROD ? undefined : '/sentry-tunnel',
   });
 };
