@@ -1,55 +1,67 @@
 
-import { createRoot } from 'react-dom/client'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { AppInitializationService } from './services/appInitializationService'
-import App from './App.tsx'
-import './index.css'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Toaster } from '@/components/ui/sonner';
+import { AuthProvider } from './contexts/AuthContext';
+import { NotesProvider } from './contexts/NotesContext';
+import { FoldersProvider } from './contexts/FoldersContext';
+import { ProjectRealmsProvider } from './contexts/ProjectRealmsContext';
+import { QuantumAIProvider } from './contexts/QuantumAIContext';
+import { AccentColorProvider } from './contexts/AccentColorContext';
+import { ThemeProvider } from './providers/ThemeProvider';
+import { masterErrorResolutionSystem } from './utils/masterErrorResolutionSystem';
 
-console.log('Main.tsx loading...');
+// Initialize error resolution system immediately
+masterErrorResolutionSystem.initialize({
+  developmentMode: import.meta.env.DEV,
+  enableConsoleErrorSuppression: true,
+  enableReactDevToolsSuppression: true,
+  enableBrowserCompatibility: true,
+  enableNetworkRecovery: true,
+  enableResourceErrorHandling: true,
+  enableErrorThrottling: true,
+  enableExtensionConflictHandling: true,
+});
 
-// Initialize the application services
-AppInitializationService.initialize();
-
-// Create a client with optimized settings for your app
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30, // 30 minutes (formerly cacheTime)
-      retry: (failureCount, error) => {
+      staleTime: 1000 * 60 * 5,
+      retry: (failureCount, error: any) => {
         // Don't retry on 4xx errors
-        if (error && typeof error === 'object' && 'status' in error) {
-          return (error.status as number) >= 500 && failureCount < 3;
+        if (error?.status >= 400 && error?.status < 500) {
+          return false;
         }
         return failureCount < 3;
       },
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always',
-    },
-    mutations: {
-      retry: 1,
-      networkMode: 'offlineFirst',
     },
   },
 });
 
-console.log('QueryClient created with enhanced error handling, rendering app...');
-
-const rootElement = document.getElementById("root");
-if (!rootElement) {
-  console.error('Root element not found!');
-} else {
-  console.log('Root element found, creating React root...');
-  createRoot(rootElement).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App />
-      {/* Fixed React Query Devtools configuration with valid position */}
-      <ReactQueryDevtools 
-        initialIsOpen={false}
-        position="bottom"
-      />
+      <ThemeProvider>
+        <AccentColorProvider>
+          <AuthProvider>
+            <NotesProvider>
+              <FoldersProvider>
+                <ProjectRealmsProvider>
+                  <QuantumAIProvider>
+                    <App />
+                    <Toaster />
+                    <ReactQueryDevtools initialIsOpen={false} />
+                  </QuantumAIProvider>
+                </ProjectRealmsProvider>
+              </FoldersProvider>
+            </NotesProvider>
+          </AuthProvider>
+        </AccentColorProvider>
+      </ThemeProvider>
     </QueryClientProvider>
-  );
-  console.log('App rendered successfully with enhanced error handling and security');
-}
+  </React.StrictMode>,
+);
