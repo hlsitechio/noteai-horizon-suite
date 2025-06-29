@@ -1,3 +1,4 @@
+
 /**
  * Security Monitor - Real-time security monitoring and threat detection
  */
@@ -220,11 +221,12 @@ class SecurityMonitor {
     };
   }
 
-  private checkRequest(url: string, options: any) {
+  private checkRequest(url: string | URL, options: any) {
     // Check for suspicious request patterns
+    const urlString = typeof url === 'string' ? url : url.toString();
     const data = {
       type: 'api_request',
-      endpoint: typeof url === 'string' ? url : url.toString(),
+      endpoint: urlString,
       method: options.method || 'GET',
       headers: options.headers || {},
       body: options.body
@@ -233,7 +235,7 @@ class SecurityMonitor {
     this.applyRules(data);
   }
 
-  private checkResponse(response: Response, url: string) {
+  private checkResponse(response: Response, url: string | URL) {
     // Check response headers for security issues
     const securityHeaders = [
       'Content-Security-Policy',
@@ -250,7 +252,7 @@ class SecurityMonitor {
         type: 'csrf',
         severity: 'low',
         description: 'Missing security headers',
-        metadata: { url, missingHeaders },
+        metadata: { url: url.toString(), missingHeaders },
         timestamp: new Date()
       });
     }
@@ -293,7 +295,8 @@ class SecurityMonitor {
     });
   }
 
-  private applyRules(data: any) {
+  // Make applyRules public so it can be used by other components
+  applyRules(data: any) {
     this.rules.forEach(rule => {
       let isMatch = false;
       

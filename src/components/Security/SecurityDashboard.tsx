@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, AlertTriangle, CheckCircle, XCircle, Refresh, Trash2 } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle, XCircle, RefreshCw, Trash2 } from 'lucide-react';
 import { securityMonitor } from '@/utils/securityMonitor';
 import { authSecurityEnhancer } from '@/utils/authSecurityEnhancer';
 import { enhancedRateLimiter } from '@/utils/securityUtils';
@@ -89,7 +89,7 @@ const SecurityDashboard: React.FC = () => {
             onClick={refreshData}
             disabled={refreshing}
           >
-            <Refresh className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
           <Button 
@@ -207,7 +207,7 @@ const SecurityDashboard: React.FC = () => {
                       <div className="text-2xl">{getTypeIcon(threat.type)}</div>
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
-                          <Badge variant={getSeverityColor(threat.severity)}>
+                          <Badge variant={getSeverityColor(threat.severity) as any}>
                             {threat.severity.toUpperCase()}
                           </Badge>
                           <Badge variant="outline">{threat.type}</Badge>
@@ -244,7 +244,7 @@ const SecurityDashboard: React.FC = () => {
                         <span className="mr-2">{getTypeIcon(type)}</span>
                         {type}
                       </span>
-                      <Badge variant="outline">{count}</Badge>
+                      <Badge variant="outline">{String(count)}</Badge>
                     </div>
                   ))}
                 </div>
@@ -260,7 +260,7 @@ const SecurityDashboard: React.FC = () => {
                   {Object.entries(stats.bySeverity).map(([severity, count]) => (
                     <div key={severity} className="flex justify-between items-center">
                       <span>{severity}</span>
-                      <Badge variant={getSeverityColor(severity)}>{count}</Badge>
+                      <Badge variant={getSeverityColor(severity) as any}>{String(count)}</Badge>
                     </div>
                   ))}
                 </div>
