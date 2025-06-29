@@ -50,6 +50,34 @@ class ErrorThrottlingManager {
     return entry.count <= this.maxErrorsPerWindow;
   }
 
+  getErrorStats() {
+    const now = Date.now();
+    let totalUniqueErrors = 0;
+    let totalOccurrences = 0;
+    let suppressedErrors = 0;
+
+    for (const [key, entry] of this.throttleMap.entries()) {
+      // Only count active entries (not expired)
+      if (now - entry.lastSeen <= this.windowDuration) {
+        totalUniqueErrors++;
+        totalOccurrences += entry.count;
+        if (entry.count > this.maxErrorsPerWindow) {
+          suppressedErrors += entry.count - this.maxErrorsPerWindow;
+        }
+      }
+    }
+
+    return {
+      totalUniqueErrors,
+      totalOccurrences,
+      suppressedErrors
+    };
+  }
+
+  clearAllErrors() {
+    this.throttleMap.clear();
+  }
+
   private getErrorKey(error: Error): string {
     return `${error.name}:${error.message}`;
   }
