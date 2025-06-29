@@ -1,7 +1,7 @@
 
 /**
  * Network Error Recovery System
- * Handles network failures with intelligent retry mechanisms
+ * Handles network failures with intelligent retry mechanisms and CORS compliance
  */
 
 interface RetryConfig {
@@ -19,6 +19,7 @@ interface NetworkError {
   message: string;
   timestamp: Date;
   retryCount: number;
+  isCorsError?: boolean;
 }
 
 class NetworkErrorRecoveryManager {
@@ -56,8 +57,11 @@ class NetworkErrorRecoveryManager {
       const urlString = typeof url === 'string' ? url : url.url;
       const method = options?.method || 'GET';
 
+      // Add CORS-friendly headers for external APIs
+      const enhancedOptions = this.enhanceRequestOptions(urlString, options);
+
       try {
-        const response = await this.originalFetch(url, options);
+        const response = await this.originalFetch(url, enhancedOptions);
         
         // Remove from failed requests if successful
         const requestKey = `${method}:${urlString}`;
@@ -67,11 +71,63 @@ class NetworkErrorRecoveryManager {
 
         return response;
       } catch (error: any) {
+        // Detect CORS errors
+        const isCorsError = this.isCorsError(error);
+        if (isCorsError) {
+          console.warn(`CORS error detected for ${urlString}:`, error);
+        }
+
         return this.handleNetworkError(urlString, method, error, () => 
-          this.originalFetch(url, options)
+          this.originalFetch(url, enhancedOptions), isCorsError
         );
       }
     };
+  }
+
+  private enhanceRequestOptions(url: string, options?: RequestInit): RequestInit {
+    const enhancedOptions: RequestInit = { ...options };
+
+    // Add CORS headers for external API calls
+    if (this.isExternalAPI(url)) {
+      enhancedOptions.headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...enhancedOptions.headers,
+      };
+
+      // Ensure mode is set appropriately
+      if (!enhancedOptions.mode) {
+        enhancedOptions.mode = 'cors';
+      }
+    }
+
+    // Special handling for Supabase requests
+    if (url.includes('supabase.co')) {
+      enhancedOptions.credentials = 'include';
+      enhancedOptions.headers = {
+        'X-Client-Info': 'online-note-ai@1.0.0',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        ...enhancedOptions.headers,
+      };
+    }
+
+    return enhancedOptions;
+  }
+
+  private isExternalAPI(url: string): boolean {
+    return url.includes('api.openai.com') || 
+           url.includes('api.openrouter.ai') || 
+           url.includes('supabase.co') ||
+           url.includes('google-analytics.com');
+  }
+
+  private isCorsError(error: any): boolean {
+    return error.name === 'TypeError' && 
+           (error.message.includes('CORS') || 
+            error.message.includes('cross-origin') ||
+            error.message.includes('NetworkError') ||
+            error.message.includes('Failed to fetch'));
   }
 
   private async handleNetworkError(
@@ -79,6 +135,7 @@ class NetworkErrorRecoveryManager {
     method: string, 
     error: any,
     retryFn: () => Promise<Response>,
+    isCorsError: boolean = false,
     config: Partial<RetryConfig> = {}
   ): Promise<Response> {
     const finalConfig = { ...this.defaultRetryConfig, ...config };
@@ -91,12 +148,34 @@ class NetworkErrorRecoveryManager {
         method,
         message: error.message,
         timestamp: new Date(),
-        retryCount: 0
+        retryCount: 0,
+        isCorsError
       };
       this.failedRequests.set(requestKey, networkError);
     }
 
     networkError.retryCount++;
+
+    // Don't retry CORS errors immediately - they need different handling
+    if (isCorsError && networkError.retryCount === 1) {
+      console.warn(`CORS error for ${url} - attempting with different configuration`);
+      
+      // Try with simplified request for CORS issues
+      try {
+        const simplifiedOptions: RequestInit = {
+          method,
+          mode: 'cors',
+          credentials: 'omit',
+          headers: {
+            'Accept': 'application/json',
+          }
+        };
+        
+        return await this.originalFetch(url, simplifiedOptions);
+      } catch (corsRetryError) {
+        console.error(`CORS retry failed for ${url}:`, corsRetryError);
+      }
+    }
 
     if (networkError.retryCount <= finalConfig.maxRetries && finalConfig.retryCondition!(error)) {
       const delay = Math.min(
@@ -104,14 +183,15 @@ class NetworkErrorRecoveryManager {
         finalConfig.maxDelay
       );
 
-      console.warn(`Network error for ${url}, retrying in ${delay}ms (attempt ${networkError.retryCount}/${finalConfig.maxRetries})`);
+      const errorType = isCorsError ? 'CORS' : 'Network';
+      console.warn(`${errorType} error for ${url}, retrying in ${delay}ms (attempt ${networkError.retryCount}/${finalConfig.maxRetries})`);
 
       await this.delay(delay);
 
       try {
         return await retryFn();
       } catch (retryError) {
-        return this.handleNetworkError(url, method, retryError, retryFn, config);
+        return this.handleNetworkError(url, method, retryError, retryFn, isCorsError, config);
       }
     }
 
@@ -124,9 +204,9 @@ class NetworkErrorRecoveryManager {
   }
 
   private shouldRetry(error: any): boolean {
-    // Don't retry on client errors (4xx)
+    // Don't retry on client errors (4xx) except for 408 (timeout) and 429 (rate limit)
     if (error.status && error.status >= 400 && error.status < 500) {
-      return false;
+      return error.status === 408 || error.status === 429;
     }
 
     // Retry on network errors, server errors (5xx), and timeouts
@@ -172,7 +252,8 @@ class NetworkErrorRecoveryManager {
     }
 
     try {
-      await this.originalFetch(url, { method });
+      const enhancedOptions = this.enhanceRequestOptions(url, { method });
+      await this.originalFetch(url, enhancedOptions);
       this.failedRequests.delete(requestKey);
       return true;
     } catch (error) {
@@ -193,7 +274,8 @@ class NetworkErrorRecoveryManager {
     return {
       isOnline: this.isOnline,
       failedRequestsCount: this.failedRequests.size,
-      queuedRequestsCount: this.retryQueue.length
+      queuedRequestsCount: this.retryQueue.length,
+      corsErrors: Array.from(this.failedRequests.values()).filter(req => req.isCorsError).length
     };
   }
 }
