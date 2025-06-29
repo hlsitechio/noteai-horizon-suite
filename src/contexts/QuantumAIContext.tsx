@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 interface QuantumAIState {
@@ -42,8 +42,8 @@ export const useQuantumAI = () => {
 
 // Safe location hook that handles router context gracefully
 const useSafeLocation = () => {
-  const [hasRouterContext, setHasRouterContext] = useState(true);
-  const fallbackLocation = { pathname: '/', search: '', hash: '' };
+  const [hasRouterContext] = useState(true);
+  const fallbackLocation = useMemo(() => ({ pathname: '/', search: '', hash: '' }), []);
   
   try {
     const location = useLocation();
@@ -52,7 +52,6 @@ const useSafeLocation = () => {
     // Only log once per component instance
     if (hasRouterContext) {
       console.log('QuantumAI: Router context not available, using fallback location');
-      setHasRouterContext(false);
     }
     return fallbackLocation;
   }
@@ -73,6 +72,9 @@ export const QuantumAIProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     sessionMemory: []
   });
 
+  // Use ref to track if handlers are already set up
+  const handlersSetup = useRef(false);
+
   // Update context when route changes - only if we have a valid location
   useEffect(() => {
     if (location && location.pathname) {
@@ -84,48 +86,65 @@ export const QuantumAIProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
       }));
     }
-  }, [location]);
+  }, [location?.pathname]); // Fixed dependency array
 
-  // Global keyboard shortcut listener
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Cmd+K / Ctrl+K for command palette
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        showCommandPalette();
-      }
-      
-      // Escape to hide
-      if (e.key === 'Escape' && state.isVisible) {
-        hideAssistant();
-      }
-    };
+  // Memoized event handlers to prevent recreation on every render
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    // Cmd+K / Ctrl+K for command palette
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      setState(prev => ({
+        ...prev,
+        isVisible: true,
+        mode: 'command',
+        position: null
+      }));
+    }
+    
+    // Escape to hide
+    if (e.key === 'Escape') {
+      setState(prev => ({ ...prev, isVisible: false, selectedText: '', position: null }));
+    }
+  }, []);
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [state.isVisible]);
-
-  // Global text selection listener
-  useEffect(() => {
-    const handleTextSelection = () => {
-      const selection = window.getSelection();
-      const selectedText = selection?.toString().trim();
-      
-      if (selectedText && selectedText.length > 3) {
-        const range = selection?.getRangeAt(0);
-        if (range) {
-          const rect = range.getBoundingClientRect();
-          showContextualAssistant(selectedText, {
+  const handleTextSelection = useCallback(() => {
+    const selection = window.getSelection();
+    const selectedText = selection?.toString().trim();
+    
+    if (selectedText && selectedText.length > 3) {
+      const range = selection?.getRangeAt(0);
+      if (range) {
+        const rect = range.getBoundingClientRect();
+        setState(prev => ({
+          ...prev,
+          isVisible: true,
+          mode: 'selection',
+          selectedText: selectedText,
+          position: {
             x: rect.left + rect.width / 2,
             y: rect.top - 10
-          });
-        }
+          }
+        }));
+      }
+    }
+  }, []);
+
+  // Global keyboard shortcut listener - only set up once
+  useEffect(() => {
+    if (!handlersSetup.current) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.addEventListener('mouseup', handleTextSelection);
+      handlersSetup.current = true;
+    }
+
+    return () => {
+      if (handlersSetup.current) {
+        window.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('mouseup', handleTextSelection);
+        handlersSetup.current = false;
       }
     };
-
-    document.addEventListener('mouseup', handleTextSelection);
-    return () => document.removeEventListener('mouseup', handleTextSelection);
-  }, []);
+  }, []); // Empty dependency array - only run once
 
   const showCommandPalette = useCallback(() => {
     setState(prev => ({
@@ -188,7 +207,7 @@ export const QuantumAIProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     ).slice(-5); // Return last 5 relevant items
   }, [state.sessionMemory]);
 
-  const value = {
+  const value = useMemo(() => ({
     state,
     showCommandPalette,
     showContextualAssistant,
@@ -196,7 +215,7 @@ export const QuantumAIProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     updateContext,
     addToMemory,
     getRelevantMemory
-  };
+  }), [state, showCommandPalette, showContextualAssistant, hideAssistant, updateContext, addToMemory, getRelevantMemory]);
 
   return (
     <QuantumAIContext.Provider value={value}>
