@@ -29,7 +29,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary
       });
       setHasTracedError(true);
     }
-  }, [error, traceError, hasTracgedError]);
+  }, [error, traceError, hasTracedError]);
 
   return (
     <div className="min-h-[400px] flex items-center justify-center p-4">
