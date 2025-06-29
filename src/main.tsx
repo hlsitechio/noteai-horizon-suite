@@ -14,6 +14,9 @@ if (import.meta.env.DEV) {
   // Import new diagnostic tools
   import('./utils/errorDiagnostics');
   import('./utils/emergencyErrorShutdown');
+  // Import advanced debugging tools
+  import('./utils/advancedErrorDebugger');
+  import('./utils/errorEmergencyTools');
 }
 
 // Initialize the application services
