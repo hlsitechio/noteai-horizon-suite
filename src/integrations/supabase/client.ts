@@ -21,10 +21,11 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       'Content-Type': 'application/json'
     },
     fetch: (url, options: RequestInit = {}) => {
-      // Fix CORS issue by not including credentials for API requests when not authenticated
+      // Fix CORS issue by removing credentials for cross-origin requests
       return fetch(url, {
         ...options,
-        credentials: 'same-origin', // Changed from 'include' to 'same-origin'
+        // Remove credentials to prevent CORS issues with wildcard origins
+        credentials: 'omit',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',

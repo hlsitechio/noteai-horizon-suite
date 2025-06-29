@@ -1,4 +1,3 @@
-
 /**
  * Network Error Recovery System
  * Handles network failures with intelligent retry mechanisms and CORS compliance
@@ -104,9 +103,9 @@ class NetworkErrorRecoveryManager {
       }
     }
 
-    // Special handling for Supabase requests
+    // Special handling for Supabase requests - no credentials to prevent CORS issues
     if (url.includes('supabase.co')) {
-      enhancedOptions.credentials = 'include';
+      enhancedOptions.credentials = 'omit'; // Changed from 'include' to 'omit'
       enhancedOptions.headers = {
         'X-Client-Info': 'online-note-ai@1.0.0',
         'Accept': 'application/json',
@@ -168,7 +167,7 @@ class NetworkErrorRecoveryManager {
         const simplifiedOptions: RequestInit = {
           method,
           mode: 'cors',
-          credentials: 'omit',
+          credentials: 'omit', // Always omit credentials for CORS compliance
           headers: {
             'Accept': 'application/json',
           }

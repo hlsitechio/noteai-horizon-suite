@@ -1,4 +1,3 @@
-
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -18,7 +17,7 @@ export default defineConfig(({ mode }) => ({
         /^https:\/\/.*\.lovable\.app$/,
         /^https:\/\/.*\.supabase\.co$/
       ],
-      credentials: true,
+      credentials: false, // Changed from true to false to prevent CORS issues
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
       allowedHeaders: [
         'Content-Type',
@@ -51,11 +50,10 @@ export default defineConfig(({ mode }) => ({
         "frame-ancestors 'self' https://lovable.dev",
         "upgrade-insecure-requests"
       ].join('; '),
-      // CORS headers
+      // CORS headers - remove credentials support
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With, Accept, Origin, apikey, x-client-info',
-      'Access-Control-Allow-Credentials': 'true',
       'Access-Control-Max-Age': '86400'
     },
   },
