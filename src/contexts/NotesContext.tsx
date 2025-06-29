@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Note, NoteFilters } from '../types/note';
 import { SupabaseNotesService } from '../services/supabaseNotesService';
@@ -42,20 +43,15 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isLoading, setIsLoading] = useState(true);
   const [syncStatus, setSyncStatus] = useState<'connected' | 'disconnected' | 'syncing'>('disconnected');
   
-  // Get auth state - safely handle case where FoldersProvider might not be ready
   const { user, isLoading: authLoading } = useAuth();
-  
-  // Initialize folders as empty array - will be populated when folders context is available
   const folders: any[] = [];
 
-  // Track subscription state with refs to prevent multiple subscriptions
   const subscriptionRef = useRef<any>(null);
   const isSubscribedRef = useRef(false);
   const currentUserIdRef = useRef<string | null>(null);
 
   const refreshNotes = async () => {
     if (!user) {
-      console.log('No user, skipping notes refresh');
       setIsLoading(false);
       return;
     }
@@ -69,7 +65,6 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch (error) {
       setSyncStatus('disconnected');
       console.error('Error loading notes:', error);
-      // Only show toast if user is authenticated (to avoid errors on public pages)
       if (user) {
         toast.error('Failed to load notes');
       }
@@ -78,10 +73,8 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  // Cleanup function to properly remove subscriptions
   const cleanupSubscription = () => {
     if (subscriptionRef.current) {
-      console.log('Cleaning up existing real-time subscription');
       try {
         supabase.removeChannel(subscriptionRef.current);
       } catch (error) {
@@ -92,61 +85,41 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  // Set up real-time subscription only when user is authenticated
   useEffect(() => {
     const setupRealtimeSubscription = async () => {
-      // Wait for auth to be ready and ensure user is authenticated
       if (authLoading || !user) {
-        console.log('Auth not ready or no user, skipping real-time setup');
         setIsLoading(false);
         return;
       }
 
-      // Check if user changed - if so, we need to set up a new subscription
       const userChanged = currentUserIdRef.current !== user.id;
       
-      // If already subscribed for the same user, don't subscribe again
       if (isSubscribedRef.current && !userChanged) {
-        console.log('Real-time subscription already exists for current user, skipping setup');
         return;
       }
 
-      // Clean up any existing subscription first
       cleanupSubscription();
-      
-      // Update current user reference
       currentUserIdRef.current = user.id;
 
       try {
-        console.log('Setting up real-time subscription for user:', user.id);
-        
-        // Initial load
         await refreshNotes();
 
-        // Set up real-time subscription only if not already subscribed
         if (!isSubscribedRef.current) {
           const channel = SupabaseNotesService.subscribeToNoteChanges(
             user.id,
-            // onInsert
             (newNote) => {
-              console.log('Real-time: Note inserted', newNote);
               setNotes(prev => {
-                // Check if note already exists to avoid duplicates
                 const exists = prev.find(note => note.id === newNote.id);
                 if (exists) return prev;
-                
                 toast.success(`New note synced: ${newNote.title}`);
                 return [newNote, ...prev];
               });
             },
-            // onUpdate
             (updatedNote) => {
-              console.log('Real-time: Note updated', updatedNote);
               setNotes(prev => prev.map(note => 
                 note.id === updatedNote.id ? updatedNote : note
               ));
               
-              // Update current note if it's the one being edited
               if (currentNote?.id === updatedNote.id) {
                 setCurrentNote(updatedNote);
               }
@@ -156,12 +129,9 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               
               toast.success(`Note synced: ${updatedNote.title}`);
             },
-            // onDelete
             (deletedNoteId) => {
-              console.log('Real-time: Note deleted', deletedNoteId);
               setNotes(prev => prev.filter(note => note.id !== deletedNoteId));
               
-              // Clear current note if it was deleted
               if (currentNote?.id === deletedNoteId) {
                 setCurrentNote(null);
               }
@@ -173,12 +143,9 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             }
           );
 
-          // Store the channel reference and mark as subscribed
           subscriptionRef.current = channel;
           isSubscribedRef.current = true;
           setSyncStatus('connected');
-          
-          console.log('Real-time subscription setup completed');
         }
       } catch (error) {
         console.error('Error setting up real-time subscription:', error);
@@ -189,12 +156,11 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     setupRealtimeSubscription();
 
-    // Cleanup subscription on unmount or when user changes
     return () => {
       cleanupSubscription();
       currentUserIdRef.current = null;
     };
-  }, [user?.id, authLoading]); // Only depend on user ID and auth loading state
+  }, [user?.id, authLoading]);
 
   const createNote = async (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Promise<Note> => {
     if (!user) throw new Error('User not authenticated');
@@ -202,7 +168,6 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setSyncStatus('syncing');
     try {
       const newNote = await SupabaseNotesService.saveNote(noteData);
-      // Note will be added via real-time subscription
       setSyncStatus('connected');
       toast.success('Note created and synced');
       return newNote;
@@ -220,7 +185,6 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       const updatedNote = await SupabaseNotesService.updateNote(id, updates);
       if (updatedNote) {
-        // Note will be updated via real-time subscription
         setSyncStatus('connected');
         toast.success('Note updated and synced');
       }
@@ -239,7 +203,6 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       const success = await SupabaseNotesService.deleteNote(id);
       if (success) {
-        // Note will be removed via real-time subscription
         setSyncStatus('connected');
         toast.success('Note deleted and synced');
       }
@@ -258,7 +221,6 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       const updatedNote = await SupabaseNotesService.toggleFavorite(id);
       if (updatedNote) {
-        // Note will be updated via real-time subscription
         setSyncStatus('connected');
         toast.success(updatedNote.isFavorite ? 'Added to favorites' : 'Removed from favorites');
       }
@@ -270,7 +232,6 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  // Filter notes based on current filters
   const filteredNotes = notes.filter(note => {
     if (filters.category && note.category !== filters.category) return false;
     if (filters.isFavorite !== undefined && note.isFavorite !== filters.isFavorite) return false;
@@ -316,5 +277,4 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   );
 };
 
-// Export the context itself for use in App.tsx
 export { NotesContext };
