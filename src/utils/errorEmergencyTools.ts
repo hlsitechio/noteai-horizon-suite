@@ -1,4 +1,3 @@
-
 /**
  * Error Emergency Tools - Enhanced with correction capabilities
  */
@@ -148,7 +147,7 @@ class ErrorEmergencyTools {
     scripts.forEach(script => script.remove());
     
     // Clear all intervals and timeouts
-    const highestTimeoutId = setTimeout(() => {}, 0);
+    const highestTimeoutId = window.setTimeout(() => {}, 0);
     for (let i = 0; i < highestTimeoutId; i++) {
       clearTimeout(i);
       clearInterval(i);

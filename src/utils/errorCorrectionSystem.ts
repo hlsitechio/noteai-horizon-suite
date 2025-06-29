@@ -1,10 +1,9 @@
-
 /**
  * Error Correction System - Actively fixes errors instead of just monitoring
  */
 
 interface ErrorCorrection {
-  pattern: string;
+  pattern: RegExp;
   correctionType: 'suppress' | 'fix' | 'prevent' | 'redirect';
   action: () => void;
   description: string;
