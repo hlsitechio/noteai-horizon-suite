@@ -1,6 +1,5 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { DynamicAccentProvider } from './DynamicAccentContext';
 
 interface AccentColorContextType {
   accentColor: string;
@@ -49,9 +48,7 @@ export const AccentColorProvider: React.FC<AccentColorProviderProps> = ({ childr
 
   return (
     <AccentColorContext.Provider value={{ accentColor, accentColorHsl, setAccentColor }}>
-      <DynamicAccentProvider>
-        {children}
-      </DynamicAccentProvider>
+      {children}
     </AccentColorContext.Provider>
   );
 };
