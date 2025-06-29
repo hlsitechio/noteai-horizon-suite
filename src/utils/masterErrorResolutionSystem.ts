@@ -7,10 +7,10 @@
 import { consoleErrorManager } from './consoleErrorSuppression';
 import { reactDevToolsErrorManager } from './reactDevToolsErrorSuppression';
 import { browserCompatibilityManager } from './browserCompatibilityHandler';
-import { networkErrorRecovery } from './networkErrorRecovery';
-import { resourceLoadingErrorHandler } from './resourceLoadingErrorHandler';
-import { errorThrottlingSystem } from './errorThrottlingDeduplication';
-import { chromeExtensionConflictHandler } from './chromeExtensionConflictHandler';
+import { networkErrorRecoveryManager } from './networkErrorRecovery';
+import { resourceLoadingErrorManager } from './resourceLoadingErrorHandler';
+import { errorThrottlingManager } from './errorThrottlingDeduplication';
+import { chromeExtensionConflictManager } from './chromeExtensionConflictHandler';
 
 interface MasterErrorConfig {
   developmentMode?: boolean;
@@ -102,28 +102,28 @@ class MasterErrorResolutionSystem {
     }
 
     if (config.enableNetworkRecovery) {
-      networkErrorRecovery.initialize();
+      // Network error recovery manager is already initialized globally
       if (config.enableDetailedLogging) {
         console.log('✓ Network Error Recovery: Active');
       }
     }
 
     if (config.enableResourceErrorHandling) {
-      resourceLoadingErrorHandler.initialize();
+      // Resource loading error manager is already initialized globally
       if (config.enableDetailedLogging) {
         console.log('✓ Resource Loading Error Handler: Active');
       }
     }
 
     if (config.enableErrorThrottling) {
-      errorThrottlingSystem.initialize(config.maxErrorsPerMinute);
+      errorThrottlingManager.setThrottleConfig(60000, config.maxErrorsPerMinute || 100);
       if (config.enableDetailedLogging) {
         console.log('✓ Error Throttling System: Active');
       }
     }
 
     if (config.enableExtensionConflictHandling) {
-      chromeExtensionConflictHandler.initialize();
+      // Chrome extension conflict manager is already initialized globally
       if (config.enableDetailedLogging) {
         console.log('✓ Chrome Extension Conflict Handler: Active');
       }
@@ -166,7 +166,7 @@ class MasterErrorResolutionSystem {
     this.errorStats.totalProcessed++;
 
     // Apply error throttling
-    if (this.config.enableErrorThrottling && !errorThrottlingSystem.shouldProcessError(error)) {
+    if (this.config.enableErrorThrottling && !errorThrottlingManager.shouldReportError(error)) {
       this.errorStats.totalSuppressed++;
       return;
     }
