@@ -3,10 +3,15 @@ import { User as SupabaseUser } from '@supabase/supabase-js';
 import { User } from './types';
 import { supabase } from '@/integrations/supabase/client';
 
-const supabaseProjectRef = new URL(
-  import.meta.env.VITE_SUPABASE_URL as string
-).hostname.split('.')[0]
-const AUTH_TOKEN_KEY = `sb-${supabaseProjectRef}-auth-token`
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
+if (!supabaseUrl) {
+  console.warn('Supabase URL is not configured')
+}
+const supabaseProjectRef = supabaseUrl ?
+  new URL(supabaseUrl).hostname.split('.')[0] : ''
+const AUTH_TOKEN_KEY = supabaseProjectRef
+  ? `sb-${supabaseProjectRef}-auth-token`
+  : 'supabase.auth.token'
 
 export const transformUser = async (supabaseUser: SupabaseUser): Promise<User> => {
   try {
