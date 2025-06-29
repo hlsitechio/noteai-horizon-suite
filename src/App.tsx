@@ -64,8 +64,10 @@ function App() {
                         <QuantumAIProvider>
                           <SentryRouter>
                             <Routes>
-                              {/* Public Routes */}
+                              {/* Root Route */}
                               <Route path="/" element={<Index />} />
+                              
+                              {/* Public Routes */}
                               <Route path="/landing" element={<Landing />} />
                               <Route path="/login" element={<Login />} />
                               <Route path="/register" element={<Register />} />
@@ -75,14 +77,14 @@ function App() {
                               <Route path="/contact" element={<Contact />} />
                               <Route path="/sitemap" element={<Sitemap />} />
 
-                              {/* Mobile Routes */}
+                              {/* Protected Mobile Routes */}
                               <Route path="/mobile/*" element={
                                 <ProtectedRoute>
                                   <MobileApp />
                                 </ProtectedRoute>
                               } />
 
-                              {/* Protected App Routes */}
+                              {/* Protected Desktop App Routes */}
                               <Route path="/app" element={
                                 <ProtectedRoute>
                                   <Layout />
@@ -102,7 +104,7 @@ function App() {
                                 <Route path="error-monitoring" element={<ErrorMonitoring />} />
                               </Route>
 
-                              {/* Catch all route */}
+                              {/* Catch all route - must be last */}
                               <Route path="*" element={<NotFound />} />
                             </Routes>
                           </SentryRouter>

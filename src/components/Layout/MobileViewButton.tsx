@@ -11,21 +11,32 @@ const MobileViewButton: React.FC = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
 
-  // Only show for your email address
+  // Only show for authorized user
   const isAllowedUser = user?.email === 'hlarosesurprenant@gmail.com';
 
   const handleMobileView = () => {
-    // Preserve note parameter when switching to mobile
+    // Map desktop routes to mobile routes
+    const routeMapping: Record<string, string> = {
+      '/app': '/mobile/dashboard',
+      '/app/dashboard': '/mobile/dashboard',
+      '/app/notes': '/mobile/notes',
+      '/app/editor': '/mobile/editor',
+      '/app/chat': '/mobile/chat',
+      '/app/projects': '/mobile/projects',
+      '/app/analytics': '/mobile/analytics',
+      '/app/settings': '/mobile/settings'
+    };
+
     const noteParam = searchParams.get('note');
-    const mobileUrl = noteParam 
-      ? `/mobile/notes?note=${noteParam}` 
-      : '/mobile/notes';
+    const mobileRoute = routeMapping[location.pathname] || '/mobile/dashboard';
+    const mobileUrl = noteParam ? `${mobileRoute}?note=${noteParam}` : mobileRoute;
     
+    console.log('Switching to mobile view:', { from: location.pathname, to: mobileUrl });
     navigate(mobileUrl);
   };
 
-  // Show on notes and editor pages only for allowed user
-  if (!isAllowedUser || (!location.pathname.includes('/notes') && !location.pathname.includes('/editor'))) {
+  // Show on main app pages only for allowed user
+  if (!isAllowedUser || !location.pathname.startsWith('/app')) {
     return null;
   }
 

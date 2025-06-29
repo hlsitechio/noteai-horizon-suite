@@ -18,9 +18,9 @@ const MobileApp: React.FC = () => {
   const noteId = searchParams.get('note');
   const { notes, setCurrentNote } = useNotes();
 
-  console.log('Enhanced MobileApp rendering', { noteId, notesCount: notes.length });
+  console.log('MobileApp rendering', { noteId, notesCount: notes.length });
 
-  // Handle note routing - if a note ID is provided, set it as current and navigate to editor
+  // Handle note routing - if a note ID is provided, set it as current
   React.useEffect(() => {
     if (noteId) {
       const note = notes.find(n => n.id === noteId);
@@ -34,7 +34,10 @@ const MobileApp: React.FC = () => {
     <div className="h-full w-full overflow-hidden">
       <Routes>
         <Route path="/" element={<EnhancedMobileLayout />}>
+          {/* Default mobile route redirects to dashboard */}
           <Route index element={<Navigate to="dashboard" replace />} />
+          
+          {/* Mobile App Pages */}
           <Route path="dashboard" element={<MobileDashboard />} />
           <Route path="notes" element={<EnhancedMobileNotes />} />
           <Route path="editor" element={<MobileEditor />} />
@@ -42,8 +45,12 @@ const MobileApp: React.FC = () => {
           <Route path="projects" element={<MobileProjects />} />
           <Route path="analytics" element={<MobileAnalytics />} />
           <Route path="settings" element={<EnhancedMobileSettings />} />
+          
           {/* Fallback settings route for compatibility */}
           <Route path="settings-simple" element={<MobileSettings />} />
+          
+          {/* Mobile 404 fallback - redirect to dashboard */}
+          <Route path="*" element={<Navigate to="dashboard" replace />} />
         </Route>
       </Routes>
     </div>
