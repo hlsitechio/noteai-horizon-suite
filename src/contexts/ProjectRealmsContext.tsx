@@ -1,8 +1,8 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ProjectRealm, ProjectAgent, ProjectFilters } from '../types/project';
 import { ProjectRealmsService } from '../services/projectRealmsService';
 import { toast } from 'sonner';
+import { useAuth } from '../contexts/AuthContext';
 
 interface ProjectRealmsContextType {
   projects: ProjectRealm[];
@@ -31,15 +31,28 @@ export const useProjectRealms = () => {
 };
 
 export const ProjectRealmsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [projects, setProjects] = useState<ProjectRealm[]>([]);
   const [currentProject, setCurrentProject] = useState<ProjectRealm | null>(null);
   const [filters, setFilters] = useState<ProjectFilters>({});
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const refreshProjects = async () => {
+    // Don't try to load projects if auth is still loading or user is not authenticated
+    if (authLoading || !isAuthenticated || !user) {
+      console.log('ProjectRealmsProvider: Skipping project refresh - auth not ready', {
+        authLoading,
+        isAuthenticated,
+        hasUser: !!user
+      });
+      setProjects([]);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     try {
-      console.log('ProjectRealmsProvider: Starting project refresh...');
+      console.log('ProjectRealmsProvider: Starting project refresh for authenticated user...');
       const loadedProjects = await ProjectRealmsService.getAllProjects();
       console.log('ProjectRealmsProvider: Projects loaded successfully:', {
         count: loadedProjects.length,
@@ -65,10 +78,17 @@ export const ProjectRealmsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  // Only refresh projects when authentication state changes to authenticated
   useEffect(() => {
-    console.log('ProjectRealmsProvider: Component mounted, initializing...');
-    refreshProjects();
-  }, []);
+    if (!authLoading && isAuthenticated && user) {
+      console.log('ProjectRealmsProvider: User authenticated, refreshing projects...');
+      refreshProjects();
+    } else if (!authLoading && !isAuthenticated) {
+      console.log('ProjectRealmsProvider: User not authenticated, clearing projects...');
+      setProjects([]);
+      setIsLoading(false);
+    }
+  }, [authLoading, isAuthenticated, user?.id]);
 
   const createProject = async (projectData: Omit<ProjectRealm, 'id' | 'created_at' | 'updated_at' | 'last_activity_at' | 'creator_id'>): Promise<ProjectRealm | null> => {
     try {

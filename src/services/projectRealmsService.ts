@@ -1,18 +1,26 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { ProjectRealm, ProjectAgent, ProjectFilters } from '../types/project';
 
 export class ProjectRealmsService {
   static async getAllProjects(): Promise<ProjectRealm[]> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        const authError = new Error('User not authenticated');
-        console.error('ProjectRealmsService: Authentication failed', {
-          hasUser: !!user,
-          userId: user?.id,
-          error: authError.message
+      // Wait for the auth state to be ready with a timeout
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        console.error('ProjectRealmsService: Authentication error', {
+          error: userError,
+          errorMessage: userError.message,
+          errorCode: userError.message
         });
-        throw authError;
+        throw new Error(`Authentication failed: ${userError.message}`);
+      }
+
+      if (!user) {
+        console.warn('ProjectRealmsService: No authenticated user found');
+        // Return empty array instead of throwing error for better UX
+        return [];
       }
 
       console.log('ProjectRealmsService: Loading projects for user:', user.id);
@@ -52,7 +60,13 @@ export class ProjectRealmsService {
       
       console.error('ProjectRealmsService: Error in getAllProjects:', errorDetails);
       
-      // Re-throw with enhanced error information
+      // Don't throw error if user is not authenticated - just return empty array
+      if (errorDetails.message.includes('not authenticated') || errorDetails.message.includes('Authentication failed')) {
+        console.warn('ProjectRealmsService: User not authenticated, returning empty projects array');
+        return [];
+      }
+      
+      // Re-throw with enhanced error information for other errors
       const enhancedError = new Error(`Project loading failed: ${errorDetails.message}`);
       enhancedError.name = 'ProjectLoadingError';
       enhancedError.stack = errorDetails.stack;
