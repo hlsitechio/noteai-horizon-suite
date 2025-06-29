@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -21,7 +22,10 @@ export const useAutoTagging = () => {
       });
       
       // Show loading notification
-      toast.info('Generating tags automatically...', 'Please wait while we analyze your content');
+      toast({
+        title: "Generating Tags",
+        description: "Please wait while we analyze your content"
+      });
       
       const { data, error } = await supabase.functions.invoke('generate-note-tags', {
         body: { title, content }
@@ -29,28 +33,46 @@ export const useAutoTagging = () => {
 
       if (error) {
         console.error('Supabase function error:', error);
-        toast.error(`Failed to generate tags: ${error.message}`);
+        toast({
+          variant: "destructive",
+          title: "Tag Generation Failed",
+          description: `Failed to generate tags: ${error.message}`
+        });
         return [];
       }
 
       if (!data) {
         console.error('No data returned from tag generation function');
-        toast.error('No response from tag generation service');
+        toast({
+          variant: "destructive",
+          title: "No Response",
+          description: "No response from tag generation service"
+        });
         return [];
       }
 
       if (!data.tags || !Array.isArray(data.tags)) {
         console.error('Invalid response format from tag generation:', data);
-        toast.error('Invalid response from tag generation service');
+        toast({
+          variant: "destructive",
+          title: "Invalid Response",
+          description: "Invalid response from tag generation service"
+        });
         return [];
       }
 
       console.log('Successfully generated tags:', data.tags);
       
       if (data.tags.length > 0) {
-        toast.success(`Generated ${data.tags.length} tags automatically`);
+        toast({
+          title: "Tags Generated",
+          description: `Generated ${data.tags.length} tags automatically`
+        });
       } else {
-        toast.info('No relevant tags could be generated for this content');
+        toast({
+          title: "No Tags Generated",
+          description: "No relevant tags could be generated for this content"
+        });
       }
       
       return data.tags;
@@ -60,11 +82,23 @@ export const useAutoTagging = () => {
       
       // More specific error messages
       if (error.message?.includes('Function not found')) {
-        toast.error('Tag generation service not available');
+        toast({
+          variant: "destructive",
+          title: "Service Unavailable",
+          description: "Tag generation service not available"
+        });
       } else if (error.message?.includes('network')) {
-        toast.error('Network error while generating tags');
+        toast({
+          variant: "destructive",
+          title: "Network Error",
+          description: "Network error while generating tags"
+        });
       } else {
-        toast.error(`Failed to generate tags: ${error.message || 'Unknown error'}`);
+        toast({
+          variant: "destructive",
+          title: "Tag Generation Failed",
+          description: `Failed to generate tags: ${error.message || 'Unknown error'}`
+        });
       }
       
       return [];

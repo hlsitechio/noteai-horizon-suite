@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -96,17 +97,41 @@ export const useRAGChat = () => {
       
       // More specific error messages based on the error type
       if (error.message?.includes('OPENROUTER_API_KEY')) {
-        toast.error('AI service not configured. Please contact support.');
+        toast({
+          variant: "destructive",
+          title: "Configuration Error",
+          description: "AI service not configured. Please contact support."
+        });
       } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
-        toast.error('Network error. Please check your connection and try again.');
+        toast({
+          variant: "destructive",
+          title: "Network Error",
+          description: "Network error. Please check your connection and try again."
+        });
       } else if (error.message?.includes('Authentication') || error.message?.includes('auth')) {
-        toast.error('Please log in to use the AI assistant.');
+        toast({
+          variant: "destructive",
+          title: "Authentication Error",
+          description: "Please log in to use the AI assistant."
+        });
       } else if (error.message?.includes('Rate limit')) {
-        toast.error('Rate limit exceeded. Please wait a moment and try again.');
+        toast({
+          variant: "destructive",
+          title: "Rate Limit Exceeded",
+          description: "Rate limit exceeded. Please wait a moment and try again."
+        });
       } else if (error.message?.includes('credits') || error.message?.includes('quota')) {
-        toast.error('API quota exceeded. Please try again later.');
+        toast({
+          variant: "destructive",
+          title: "Quota Exceeded",
+          description: "API quota exceeded. Please try again later."
+        });
       } else {
-        toast.error(`AI chat failed: ${error.message}`);
+        toast({
+          variant: "destructive",
+          title: "AI Chat Failed",
+          description: error.message
+        });
       }
       
       throw error;

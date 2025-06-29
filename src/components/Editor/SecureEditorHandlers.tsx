@@ -52,26 +52,42 @@ export const useSecureEditorHandlers = ({
     // Rate limiting check
     const userId = currentNote?.user_id || 'anonymous';
     if (!rateLimiter.checkLimit(`save_${userId}`, 30, 60000)) {
-      toast.error('Too many save attempts. Please wait a moment.');
+      toast({
+        variant: "destructive",
+        title: "Rate Limit",
+        description: "Too many save attempts. Please wait a moment."
+      });
       return;
     }
 
     // Input validation
     const titleValidation = validateNoteTitle(title);
     if (!titleValidation.isValid) {
-      toast.error(titleValidation.error || 'Invalid title');
+      toast({
+        variant: "destructive",
+        title: "Invalid Title",
+        description: titleValidation.error || 'Invalid title'
+      });
       return;
     }
 
     const contentValidation = validateNoteContent(content);
     if (!contentValidation.isValid) {
-      toast.error(contentValidation.error || 'Invalid content');
+      toast({
+        variant: "destructive",
+        title: "Invalid Content",
+        description: contentValidation.error || 'Invalid content'
+      });
       return;
     }
 
     const tagsValidation = validateTags(tags);
     if (!tagsValidation.isValid) {
-      toast.error(tagsValidation.error || 'Invalid tags');
+      toast({
+        variant: "destructive",
+        title: "Invalid Tags",
+        description: tagsValidation.error || 'Invalid tags'
+      });
       return;
     }
 
@@ -104,11 +120,18 @@ export const useSecureEditorHandlers = ({
             // Update the tags state so user can see the generated tags
             setTags(finalTags);
             
-            toast.success(`Generated ${uniqueAutoTags.length} new tags automatically`);
+            toast({
+              title: "Tags Generated",
+              description: `Generated ${uniqueAutoTags.length} new tags automatically`
+            });
           }
         } catch (tagError) {
           secureLog.error('Auto-tagging failed', tagError);
-          toast.error('Auto-tagging failed, but note will still be saved');
+          toast({
+            variant: "destructive",
+            title: "Auto-tagging Failed",
+            description: "Auto-tagging failed, but note will still be saved"
+          });
           // Continue with save even if auto-tagging fails
         }
       }
@@ -126,15 +149,25 @@ export const useSecureEditorHandlers = ({
       if (currentNote) {
         await updateNote(currentNote.id, noteData);
         secureLog.info('Note updated successfully');
-        toast.success('Note updated successfully');
+        toast({
+          title: "Note Updated",
+          description: "Note updated successfully"
+        });
       } else {
         await createNote(noteData);
         secureLog.info('Note created successfully');
-        toast.success('Note created successfully');
+        toast({
+          title: "Note Created",
+          description: "Note created successfully"
+        });
       }
     } catch (error) {
       secureLog.error('Error saving note', error);
-      toast.error('Failed to save note');
+      toast({
+        variant: "destructive",
+        title: "Save Failed",
+        description: "Failed to save note"
+      });
     } finally {
       setIsSaving(false);
     }
@@ -144,22 +177,38 @@ export const useSecureEditorHandlers = ({
     const sanitizedTag = sanitizeText(newTag.trim());
     
     if (!sanitizedTag) {
-      toast.error('Tag cannot be empty');
+      toast({
+        variant: "destructive",
+        title: "Invalid Tag",
+        description: "Tag cannot be empty"
+      });
       return;
     }
     
     if (sanitizedTag.length > 50) {
-      toast.error('Tag too long (max 50 characters)');
+      toast({
+        variant: "destructive",
+        title: "Tag Too Long",
+        description: "Tag too long (max 50 characters)"
+      });
       return;
     }
     
     if (tags.includes(sanitizedTag)) {
-      toast.error('Tag already exists');
+      toast({
+        variant: "destructive",
+        title: "Duplicate Tag",
+        description: "Tag already exists"
+      });
       return;
     }
     
     if (tags.length >= 20) {
-      toast.error('Maximum 20 tags allowed');
+      toast({
+        variant: "destructive",
+        title: "Too Many Tags",
+        description: "Maximum 20 tags allowed"
+      });
       return;
     }
 
@@ -175,7 +224,11 @@ export const useSecureEditorHandlers = ({
     // Validate suggestion before applying
     const suggestionValidation = validateNoteContent(suggestion);
     if (!suggestionValidation.isValid) {
-      toast.error('Invalid suggestion content');
+      toast({
+        variant: "destructive",
+        title: "Invalid Suggestion",
+        description: "Invalid suggestion content"
+      });
       return;
     }
 
