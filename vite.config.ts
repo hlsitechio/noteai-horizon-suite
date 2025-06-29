@@ -44,7 +44,7 @@ export default defineConfig(({ mode }) => ({
         "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
         "img-src 'self' data: https: blob:",
         "connect-src 'self' https://qrdulwzjgbfgaplazgsh.supabase.co https://www.google-analytics.com https://api.openai.com https://api.openrouter.ai https://ingest.us.sentry.io wss://qrdulwzjgbfgaplazgsh.supabase.co",
-        "worker-src 'self' blob:",
+        "worker-src 'self' blob: data:",
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'",

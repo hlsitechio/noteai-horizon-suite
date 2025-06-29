@@ -1,4 +1,3 @@
-
 /**
  * Security Monitor - Real-time security monitoring and threat detection
  */
@@ -202,9 +201,21 @@ class SecurityMonitor {
     // Monitor console errors for security issues
     const originalError = console.error;
     console.error = (...args: any[]) => {
-      const message = args.join(' ');
+      // Call original console.error
+      originalError.apply(console, args);
       
       // Check for security-related errors
+      const message = args.join(' ');
+      
+      // Skip CSP violations in development mode to reduce noise
+      if (import.meta.env.DEV && (
+        message.includes('Content Security Policy') ||
+        message.includes('Failed to construct \'Worker\'') ||
+        message.includes('SecurityError')
+      )) {
+        return;
+      }
+      
       if (message.includes('Content Security Policy') || 
           message.includes('Mixed Content') ||
           message.includes('CORS')) {
@@ -216,8 +227,6 @@ class SecurityMonitor {
           timestamp: new Date()
         });
       }
-      
-      return originalError.apply(console, args);
     };
   }
 

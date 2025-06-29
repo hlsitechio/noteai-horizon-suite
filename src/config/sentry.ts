@@ -6,10 +6,13 @@ export const initSentry = () => {
     dsn: "https://209461c58ea399b71187c83f06ab7770@o4509521908400128.ingest.us.sentry.io/4509562204651520",
     integrations: [
       Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration({
+      // Only enable replay in production to avoid CSP issues in development
+      ...(import.meta.env.PROD ? [Sentry.replayIntegration({
         maskAllText: false,
         blockAllMedia: false,
-      }),
+        // Disable worker to avoid CSP issues
+        useCompression: false,
+      })] : []),
       // Add breadcrumbs integration for better error context
       Sentry.breadcrumbsIntegration({
         console: true,
@@ -24,9 +27,9 @@ export const initSentry = () => {
     tracesSampleRate: 1.0, // Capture 100% of the transactions
     // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
     tracePropagationTargets: ["localhost", /^https:\/\/yourserver\.io\/api/],
-    // Session Replay
-    replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-    replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+    // Session Replay - only in production
+    replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 0, // 10% in production, 0% in dev
+    replaysOnErrorSampleRate: import.meta.env.PROD ? 1.0 : 0, // 100% on errors in production, 0% in dev
     
     environment: import.meta.env.MODE,
     
@@ -37,6 +40,9 @@ export const initSentry = () => {
       'ResizeObserver loop limit exceeded',
       'Script error.',
       'Network request failed',
+      // Ignore CSP worker errors in development
+      'Failed to construct \'Worker\'',
+      'SecurityError: Failed to construct \'Worker\'',
     ],
     
     // Capture all console errors
@@ -45,6 +51,11 @@ export const initSentry = () => {
       if (import.meta.env.DEV) {
         console.log('Sentry event (dev mode):', event);
         console.log('Error details:', hint.originalException);
+        
+        // Skip CSP violations in development
+        if (hint.originalException && hint.originalException.toString().includes('Content Security Policy')) {
+          return null;
+        }
       }
       
       // Capture console errors in breadcrumbs
@@ -62,7 +73,7 @@ export const initSentry = () => {
     // Enable debug mode in development
     debug: import.meta.env.DEV,
     
-    // Enhanced transport options
+    // Enhanced transport options with CSP-friendly configuration
     transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
   });
 };
