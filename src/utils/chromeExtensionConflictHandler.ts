@@ -4,6 +4,15 @@
  * Detects and manages conflicts with browser extensions
  */
 
+// Type declarations for Chrome API
+declare global {
+  interface Window {
+    chrome?: {
+      runtime?: any;
+    };
+  }
+}
+
 interface ExtensionConflict {
   type: string;
   description: string;
@@ -46,7 +55,7 @@ class ChromeExtensionConflictManager {
 
   private checkForScriptBlockers() {
     // Check for script blocking extensions
-    if (typeof window.chrome !== 'undefined' && window.chrome.runtime) {
+    if (typeof window !== 'undefined' && window.chrome?.runtime) {
       // Extension environment detected
       this.addConflict({
         type: 'extension_environment',

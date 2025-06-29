@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '@/integrations/supabase/client';
+import { errorThrottlingManager } from '@/utils/errorThrottlingDeduplication';
 
 interface ErrorTrace {
   id: string;
@@ -31,6 +32,13 @@ export const useErrorTracing = () => {
 
   const logErrorMutation = useMutation({
     mutationFn: async (payload: ErrorTracePayload) => {
+      // Check if this error should be throttled
+      const errorKey = `${payload.component}_${payload.operation}_${payload.error.message}`;
+      if (errorThrottlingManager.shouldThrottleError(errorKey)) {
+        console.log('Error throttled:', errorKey);
+        return null;
+      }
+
       const traceId = uuidv4();
       const { data: { user } } = await supabase.auth.getUser();
       
@@ -50,8 +58,15 @@ export const useErrorTracing = () => {
         url: window.location.href,
       };
 
-      // Log to console for development
-      console.error('Error Trace:', errorTrace);
+      // Only log to console in development, and limit the output
+      if (import.meta.env.DEV) {
+        console.warn('Error Trace:', {
+          component: errorTrace.component,
+          operation: errorTrace.operation,
+          message: errorTrace.error.message,
+          id: errorTrace.id
+        });
+      }
 
       // Store in security_audit_log table for monitoring
       const { error } = await supabase
@@ -76,6 +91,14 @@ export const useErrorTracing = () => {
   });
 
   const traceError = (payload: ErrorTracePayload) => {
+    // Additional throttling at the hook level
+    if (payload.component === 'ErrorBoundary' && payload.operation === 'componentError') {
+      const errorKey = `ErrorBoundary_${payload.error.message}`;
+      if (errorThrottlingManager.shouldThrottleError(errorKey)) {
+        return;
+      }
+    }
+    
     logErrorMutation.mutate(payload);
   };
 

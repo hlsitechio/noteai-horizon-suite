@@ -13,17 +13,23 @@ interface ErrorFallbackProps {
 
 const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary }) => {
   const { traceError } = useErrorTracing();
+  const [hasTracedError, setHasTracedError] = React.useState(false);
 
   React.useEffect(() => {
-    traceError({
-      component: 'ErrorBoundary',
-      operation: 'componentError',
-      error,
-      context: {
-        timestamp: new Date().toISOString(),
-      },
-    });
-  }, [error, traceError]);
+    // Only trace the error once per error instance
+    if (!hasTracedError) {
+      traceError({
+        component: 'ErrorBoundary',
+        operation: 'componentError',
+        error,
+        context: {
+          timestamp: new Date().toISOString(),
+          errorMessage: error.message,
+        },
+      });
+      setHasTracedError(true);
+    }
+  }, [error, traceError, hasTracgedError]);
 
   return (
     <div className="min-h-[400px] flex items-center justify-center p-4">
@@ -39,11 +45,13 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary
             We've encountered an unexpected error. Our team has been notified and is working on a fix.
           </p>
           
-          <div className="bg-gray-50 rounded-lg p-3 text-left">
-            <p className="text-sm font-mono text-gray-800 break-all">
-              {error.message}
-            </p>
-          </div>
+          {import.meta.env.DEV && (
+            <div className="bg-gray-50 rounded-lg p-3 text-left">
+              <p className="text-sm font-mono text-gray-800 break-all">
+                {error.message}
+              </p>
+            </div>
+          )}
           
           <div className="flex gap-2 justify-center">
             <Button
@@ -80,7 +88,10 @@ export const ErrorBoundaryWithTracing: React.FC<ErrorBoundaryWithTracingProps> =
     <ErrorBoundary
       FallbackComponent={FallbackComponent}
       onError={(error, errorInfo) => {
-        console.error('Error Boundary caught an error:', error, errorInfo);
+        // Only log in development to avoid console spam
+        if (import.meta.env.DEV) {
+          console.error('Error Boundary caught an error:', error.message);
+        }
       }}
     >
       {children}
