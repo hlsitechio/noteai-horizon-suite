@@ -8,6 +8,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Supabase environment variables are not configured')
 }
 
+if (import.meta.env.PROD && supabaseUrl.startsWith('http://')) {
+  throw new Error('Supabase URL must use HTTPS in production')
+}
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
