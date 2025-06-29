@@ -20,15 +20,15 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    fetch: (url, options = {}) => {
+    fetch: (url, options: RequestInit = {}) => {
       // Ensure proper CORS handling for Supabase requests
       return fetch(url, {
         ...options,
         credentials: 'include',
         headers: {
-          ...options.headers,
           'Accept': 'application/json',
           'Content-Type': 'application/json',
+          ...(options.headers || {}),
         }
       });
     }
