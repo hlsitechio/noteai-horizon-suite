@@ -3,12 +3,14 @@ import { useNotes } from '../../contexts/NotesContext';
 import { useAutoTagging } from '../useAutoTagging';
 import { useEditorSecurity } from './useEditorSecurity';
 import { EditorState } from './useEditorState';
+import { Note } from '../../types/note';
 
 interface EditorHandlersProps extends EditorState {
   setTags: (tags: string[]) => void;
   setNewTag: (tag: string) => void;
   setContent: (content: string) => void;
   setIsSaving: (saving: boolean) => void;
+  currentNote: Note | null;
 }
 
 export const useEditorHandlers = (state: EditorHandlersProps) => {
