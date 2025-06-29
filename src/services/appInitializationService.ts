@@ -2,6 +2,7 @@
 import { AnalyticsService } from './analyticsService';
 import { PerformanceService } from './performanceService';
 import { initSentry } from '../config/sentry';
+import { launchDarklyService } from './launchDarklyService';
 import * as Sentry from "@sentry/react";
 
 export class AppInitializationService {
@@ -33,6 +34,10 @@ export class AppInitializationService {
       this.setupPerformanceMonitoring();
       console.log('✅ Performance monitoring set up');
 
+      // Initialize LaunchDarkly (optional - can be done later with specific user context)
+      await this.initializeLaunchDarkly();
+      console.log('✅ LaunchDarkly setup completed');
+
       this.isInitialized = true;
       console.log('🎉 Application initialization complete');
       
@@ -45,6 +50,20 @@ export class AppInitializationService {
     } catch (error) {
       console.error('❌ Failed to initialize application:', error);
       Sentry.captureException(error);
+    }
+  }
+
+  private static async initializeLaunchDarkly() {
+    try {
+      // Note: Replace 'your-client-id-here' with actual LaunchDarkly client ID
+      // This is just a placeholder - actual initialization should be done when user context is available
+      console.log('🏁 LaunchDarkly service ready for initialization');
+      
+      // For testing purposes, you can uncomment the line below:
+      // await launchDarklyService.initialize('your-client-id', { kind: "user", key: "test-user" });
+    } catch (error) {
+      console.warn('LaunchDarkly initialization skipped:', error);
+      // Don't throw here as this is optional and shouldn't break app initialization
     }
   }
 

@@ -6,6 +6,8 @@ export const initSentry = () => {
     dsn: "https://209461c58ea399b71187c83f06ab7770@o4509521908400128.ingest.us.sentry.io/4509562204651520",
     integrations: [
       Sentry.browserTracingIntegration(),
+      // LaunchDarkly integration for feature flag monitoring
+      Sentry.launchDarklyIntegration(),
       // Only enable replay in production to avoid CSP issues in development
       ...(import.meta.env.PROD ? [Sentry.replayIntegration({
         maskAllText: false,
