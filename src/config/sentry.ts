@@ -2,8 +2,15 @@
 import * as Sentry from "@sentry/react";
 
 export const initSentry = () => {
+  const dsn = import.meta.env.VITE_SENTRY_DSN as string | undefined
+
+  if (!dsn) {
+    console.warn('Sentry DSN is not configured')
+    return
+  }
+
   Sentry.init({
-    dsn: "https://209461c58ea399b71187c83f06ab7770@o4509521908400128.ingest.us.sentry.io/4509562204651520",
+    dsn,
     integrations: [
       Sentry.browserTracingIntegration(),
       // LaunchDarkly integration for feature flag monitoring
