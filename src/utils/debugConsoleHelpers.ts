@@ -42,12 +42,19 @@ if (import.meta.env.DEV && typeof window !== 'undefined') {
     getMasterStats: () => masterErrorResolutionSystem.getErrorStats(),
     shutdownErrorSystems: () => masterErrorResolutionSystem.shutdown(),
     
+    // New Diagnostic Tools
+    getDiagnostics: () => (window as any).errorDiagnostics?.getStats(),
+    resetDiagnostics: () => (window as any).errorDiagnostics?.reset(),
+    emergencyShutdown: () => (window as any).emergencyShutdown?.shutdown(),
+    restartErrorSystems: () => (window as any).emergencyShutdown?.restart(),
+    
     // Quick Actions
     clearAllErrors: () => {
       consoleErrorManager.clearLog();
       networkErrorRecoveryManager.clearFailedRequests();
       resourceLoadingErrorManager.clearFailedResources();
       errorThrottlingManager.clearAllErrors();
+      (window as any).errorDiagnostics?.reset();
       console.log('✅ All error logs cleared');
     },
     
@@ -58,6 +65,7 @@ if (import.meta.env.DEV && typeof window !== 'undefined') {
         resource: resourceLoadingErrorManager.getStats(),
         throttling: errorThrottlingManager.getErrorStats(),
         master: masterErrorResolutionSystem.getErrorStats(),
+        diagnostics: (window as any).errorDiagnostics?.getStats(),
         debugger: {
           health: errorSystemDebugger.getCurrentHealth(),
           statsCount: errorSystemDebugger.getStats().length
@@ -66,11 +74,13 @@ if (import.meta.env.DEV && typeof window !== 'undefined') {
     }
   };
   
-  console.log('🛠️ Debug tools available in console as window.debugTools');
+  console.log('🛠️ Enhanced debug tools available in console as window.debugTools');
   console.log('📚 Available commands:');
   console.log('  - debugTools.getSystemOverview() - Get complete error system overview');
+  console.log('  - debugTools.getDiagnostics() - Get real-time error diagnostics');
   console.log('  - debugTools.clearAllErrors() - Clear all error logs');
+  console.log('  - debugTools.emergencyShutdown() - Emergency shutdown of all error systems');
+  console.log('  - debugTools.restartErrorSystems() - Restart all error systems');
   console.log('  - debugTools.startErrorDebugging() - Start real-time error monitoring');
   console.log('  - debugTools.stopErrorDebugging() - Stop error monitoring');
-  console.log('  - debugTools.shutdownErrorSystems() - Completely disable error systems');
 }

@@ -11,6 +11,9 @@ import './index.css';
 // Import debug tools in development
 if (import.meta.env.DEV) {
   import('./utils/debugConsoleHelpers');
+  // Import new diagnostic tools
+  import('./utils/errorDiagnostics');
+  import('./utils/emergencyErrorShutdown');
 }
 
 // Initialize the application services
