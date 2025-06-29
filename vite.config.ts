@@ -8,6 +8,9 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL || ''
 const supabaseOrigin = supabaseUrl ? new URL(supabaseUrl).origin : ''
 const supabaseWs = supabaseUrl ? `wss://${new URL(supabaseUrl).host}` : ''
 
+const sentryDsn = process.env.VITE_SENTRY_DSN || ''
+const sentryOrigin = sentryDsn ? new URL(sentryDsn).origin : ''
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -46,10 +49,10 @@ export default defineConfig(({ mode }) => ({
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "font-src 'self' https://fonts.gstatic.com",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://o4509521908400128.ingest.us.sentry.io https://*.sentry.io",
-        "script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://o4509521908400128.ingest.us.sentry.io https://*.sentry.io",
+        `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com ${sentryOrigin} https://*.sentry.io`,
+        `script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com ${sentryOrigin} https://*.sentry.io`,
         "img-src 'self' data: https: blob:",
-        `connect-src 'self' ${supabaseOrigin} https://www.google-analytics.com https://api.openai.com https://api.openrouter.ai https://o4509521908400128.ingest.us.sentry.io https://*.ingest.us.sentry.io https://*.sentry.io ${supabaseWs}`,
+        `connect-src 'self' ${supabaseOrigin} https://www.google-analytics.com https://api.openai.com https://api.openrouter.ai ${sentryOrigin} https://*.ingest.us.sentry.io https://*.sentry.io ${supabaseWs}`,
         "worker-src 'self' blob: data:",
         "object-src 'none'",
         "base-uri 'self'",
