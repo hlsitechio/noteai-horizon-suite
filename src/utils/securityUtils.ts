@@ -1,4 +1,3 @@
-
 import { toast } from 'sonner';
 
 // Basic validation functions
@@ -45,6 +44,9 @@ export const validateContent = (content: string): { isValid: boolean; error?: st
   
   return { isValid: true };
 };
+
+// Alias for backward compatibility
+export const validateNoteContent = validateContent;
 
 export const validateTags = (tags: string[]): { isValid: boolean; error?: string } => {
   if (!tags || tags.length === 0) {
@@ -207,6 +209,9 @@ export const sanitizeInput = (input: string): string => {
     .replace(/on\w+\s*=/gi, '')
     .trim();
 };
+
+// Alias for backward compatibility
+export const sanitizeText = sanitizeInput;
 
 // XSS prevention
 export const escapeHtml = (unsafe: string): string => {
