@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import SmartToolbar from './SmartToolbar';
-import EnhancedAIAssistant from './EnhancedAIAssistant';
 import TextSelectionContextMenu from './TextSelectionContextMenu';
 import EditorContent from './components/EditorContent';
 import ResizableImage from './ResizableImage';
@@ -156,15 +155,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         onTextInsert={handleAIInsert}
         position={contextMenuPosition}
         onClose={closeContextMenu}
-      />
-
-      <EnhancedAIAssistant
-        selectedText={selectedText}
-        onTextInsert={handleAIInsert}
-        onTextReplace={handleAIReplace}
-        isVisible={showAIAssistant}
-        onClose={() => setShowAIAssistant(false)}
-        position={assistantPosition}
       />
     </>
   );
