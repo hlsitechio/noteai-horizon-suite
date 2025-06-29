@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Note, NoteFilters } from '../types/note';
 import { SupabaseNotesService } from '../services/supabaseNotesService';
@@ -51,7 +50,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Track subscription state with refs to prevent multiple subscriptions
   const subscriptionRef = useRef<any>(null);
-  const hasSubscribedRef = useRef(false);
+  const isSubscribedRef = useRef(false);
   const currentUserIdRef = useRef<string | null>(null);
 
   const refreshNotes = async () => {
@@ -83,18 +82,19 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const cleanupSubscription = () => {
     if (subscriptionRef.current) {
       console.log('Cleaning up existing real-time subscription');
-      supabase.removeChannel(subscriptionRef.current);
+      try {
+        supabase.removeChannel(subscriptionRef.current);
+      } catch (error) {
+        console.warn('Error removing channel:', error);
+      }
       subscriptionRef.current = null;
-      hasSubscribedRef.current = false;
+      isSubscribedRef.current = false;
     }
   };
 
   // Set up real-time subscription only when user is authenticated
   useEffect(() => {
     const setupRealtimeSubscription = async () => {
-      // Clean up any existing subscription first
-      cleanupSubscription();
-
       // Wait for auth to be ready and ensure user is authenticated
       if (authLoading || !user) {
         console.log('Auth not ready or no user, skipping real-time setup');
@@ -104,13 +104,18 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       // Check if user changed - if so, we need to set up a new subscription
       const userChanged = currentUserIdRef.current !== user.id;
-      currentUserIdRef.current = user.id;
-
-      // Prevent multiple subscriptions for the same user
-      if (hasSubscribedRef.current && !userChanged) {
+      
+      // If already subscribed for the same user, don't subscribe again
+      if (isSubscribedRef.current && !userChanged) {
         console.log('Real-time subscription already exists for current user, skipping setup');
         return;
       }
+
+      // Clean up any existing subscription first
+      cleanupSubscription();
+      
+      // Update current user reference
+      currentUserIdRef.current = user.id;
 
       try {
         console.log('Setting up real-time subscription for user:', user.id);
@@ -118,65 +123,67 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         // Initial load
         await refreshNotes();
 
-        // Set up real-time subscription
-        const channel = SupabaseNotesService.subscribeToNoteChanges(
-          user.id,
-          // onInsert
-          (newNote) => {
-            console.log('Real-time: Note inserted', newNote);
-            setNotes(prev => {
-              // Check if note already exists to avoid duplicates
-              const exists = prev.find(note => note.id === newNote.id);
-              if (exists) return prev;
+        // Set up real-time subscription only if not already subscribed
+        if (!isSubscribedRef.current) {
+          const channel = SupabaseNotesService.subscribeToNoteChanges(
+            user.id,
+            // onInsert
+            (newNote) => {
+              console.log('Real-time: Note inserted', newNote);
+              setNotes(prev => {
+                // Check if note already exists to avoid duplicates
+                const exists = prev.find(note => note.id === newNote.id);
+                if (exists) return prev;
+                
+                toast.success(`New note synced: ${newNote.title}`);
+                return [newNote, ...prev];
+              });
+            },
+            // onUpdate
+            (updatedNote) => {
+              console.log('Real-time: Note updated', updatedNote);
+              setNotes(prev => prev.map(note => 
+                note.id === updatedNote.id ? updatedNote : note
+              ));
               
-              toast.success(`New note synced: ${newNote.title}`);
-              return [newNote, ...prev];
-            });
-          },
-          // onUpdate
-          (updatedNote) => {
-            console.log('Real-time: Note updated', updatedNote);
-            setNotes(prev => prev.map(note => 
-              note.id === updatedNote.id ? updatedNote : note
-            ));
-            
-            // Update current note if it's the one being edited
-            if (currentNote?.id === updatedNote.id) {
-              setCurrentNote(updatedNote);
+              // Update current note if it's the one being edited
+              if (currentNote?.id === updatedNote.id) {
+                setCurrentNote(updatedNote);
+              }
+              if (selectedNote?.id === updatedNote.id) {
+                setSelectedNote(updatedNote);
+              }
+              
+              toast.success(`Note synced: ${updatedNote.title}`);
+            },
+            // onDelete
+            (deletedNoteId) => {
+              console.log('Real-time: Note deleted', deletedNoteId);
+              setNotes(prev => prev.filter(note => note.id !== deletedNoteId));
+              
+              // Clear current note if it was deleted
+              if (currentNote?.id === deletedNoteId) {
+                setCurrentNote(null);
+              }
+              if (selectedNote?.id === deletedNoteId) {
+                setSelectedNote(null);
+              }
+              
+              toast.info('Note deleted on another device');
             }
-            if (selectedNote?.id === updatedNote.id) {
-              setSelectedNote(updatedNote);
-            }
-            
-            toast.success(`Note synced: ${updatedNote.title}`);
-          },
-          // onDelete
-          (deletedNoteId) => {
-            console.log('Real-time: Note deleted', deletedNoteId);
-            setNotes(prev => prev.filter(note => note.id !== deletedNoteId));
-            
-            // Clear current note if it was deleted
-            if (currentNote?.id === deletedNoteId) {
-              setCurrentNote(null);
-            }
-            if (selectedNote?.id === deletedNoteId) {
-              setSelectedNote(null);
-            }
-            
-            toast.info('Note deleted on another device');
-          }
-        );
+          );
 
-        // Store the channel reference and mark as subscribed
-        subscriptionRef.current = channel;
-        hasSubscribedRef.current = true;
-        setSyncStatus('connected');
-        
-        console.log('Real-time subscription setup completed');
+          // Store the channel reference and mark as subscribed
+          subscriptionRef.current = channel;
+          isSubscribedRef.current = true;
+          setSyncStatus('connected');
+          
+          console.log('Real-time subscription setup completed');
+        }
       } catch (error) {
         console.error('Error setting up real-time subscription:', error);
         setSyncStatus('disconnected');
-        hasSubscribedRef.current = false;
+        isSubscribedRef.current = false;
       }
     };
 

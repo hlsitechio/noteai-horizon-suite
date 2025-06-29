@@ -18,11 +18,10 @@ const SecurityHeaders = () => {
       "upgrade-insecure-requests"
     ].join('; ');
 
-    // Set meta tags for security
+    // Set meta tags for security (excluding X-Frame-Options as it should be HTTP header only)
     const metaTags = [
       { name: 'Content-Security-Policy', content: csp },
       { name: 'X-Content-Type-Options', content: 'nosniff' },
-      { name: 'X-Frame-Options', content: 'DENY' },
       { name: 'X-XSS-Protection', content: '1; mode=block' },
       { name: 'Referrer-Policy', content: 'strict-origin-when-cross-origin' },
       { name: 'Permissions-Policy', content: 'camera=(), microphone=(), geolocation=()' },
