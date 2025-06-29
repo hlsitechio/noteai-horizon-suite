@@ -1,35 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useNotes } from '../contexts/NotesContext';
-import { useFolders } from '../contexts/FoldersContext';
 import EditorContent from '../components/Editor/EditorContent';
-import { CategoryOption } from '../types/note';
+import { useEditorState } from '../hooks/editor/useEditorState';
+import { useEditorHandlers } from '../hooks/editor/useEditorHandlers';
 import { toast } from 'sonner';
 
 const Editor: React.FC = () => {
   const { noteId } = useParams();
   const navigate = useNavigate();
-  const { notes, currentNote, setCurrentNote, createNote, updateNote, toggleFavorite } = useNotes();
-  const { folders } = useFolders();
-
-  // Form state
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [category, setCategory] = useState('general');
-  const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState('');
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-
-  // UI state
-  const [isFocusMode, setIsFocusMode] = useState(false);
-  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
-  const [isHeaderHidden, setIsHeaderHidden] = useState(false);
-  const [isAssistantCollapsed, setIsAssistantCollapsed] = useState(false);
-
-  // Refs for assistant control
-  const collapseAssistantRef = useRef<(() => void) | undefined>();
-  const expandAssistantRef = useRef<(() => void) | undefined>();
+  const { notes, setCurrentNote, toggleFavorite } = useNotes();
+  
+  // Use the new refactored hooks
+  const editorState = useEditorState();
+  const editorHandlers = useEditorHandlers(editorState);
 
   // Load note if noteId is provided
   useEffect(() => {
@@ -37,76 +21,33 @@ const Editor: React.FC = () => {
       const note = notes.find(n => n.id === noteId);
       if (note) {
         setCurrentNote(note);
-        setTitle(note.title);
-        setContent(note.content);
-        setCategory(note.category);
-        setTags(note.tags);
-        setIsFavorite(note.isFavorite);
       }
     } else {
-      // Creating new note
       setCurrentNote(null);
-      setTitle('');
-      setContent('');
-      setCategory('general');
-      setTags([]);
-      setIsFavorite(false);
     }
   }, [noteId, notes, setCurrentNote]);
 
   // Auto-save functionality
   useEffect(() => {
-    if (!title.trim() && !content.trim()) return;
+    if (!editorState.title.trim() && !editorState.content.trim()) return;
 
     const autoSaveTimer = setTimeout(() => {
-      handleSave();
+      editorHandlers.handleSave();
     }, 2000);
 
     return () => clearTimeout(autoSaveTimer);
-  }, [title, content, category, tags]);
-
-  const handleSave = async () => {
-    if (!title.trim()) {
-      toast.error('Please enter a title');
-      return;
-    }
-
-    setIsSaving(true);
-    try {
-      const noteData = {
-        title,
-        content,
-        category,
-        tags,
-        isFavorite,
-        folderId: null,
-      };
-
-      if (currentNote?.id) {
-        await updateNote(currentNote.id, noteData);
-      } else {
-        const newNote = await createNote(noteData);
-        setCurrentNote(newNote);
-        navigate(`/app/editor/${newNote.id}`, { replace: true });
-      }
-    } catch (error) {
-      console.error('Failed to save note:', error);
-      toast.error('Failed to save note');
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  }, [editorState.title, editorState.content, editorState.category, editorState.tags]);
 
   const handleFavoriteToggle = async () => {
-    if (!currentNote?.id) {
-      setIsFavorite(!isFavorite);
+    if (!editorState.currentNote?.id) {
+      editorState.setIsFavorite(!editorState.isFavorite);
       return;
     }
 
     try {
-      const updatedNote = await toggleFavorite(currentNote.id);
+      const updatedNote = await toggleFavorite(editorState.currentNote.id);
       if (updatedNote) {
-        setIsFavorite(updatedNote.isFavorite);
+        editorState.setIsFavorite(updatedNote.isFavorite);
       }
     } catch (error) {
       console.error('Failed to toggle favorite:', error);
@@ -114,80 +55,51 @@ const Editor: React.FC = () => {
     }
   };
 
-  const handleTagAdd = () => {
-    if (newTag.trim() && !tags.includes(newTag.trim())) {
-      setTags([...tags, newTag.trim()]);
-      setNewTag('');
-    }
-  };
-
-  const handleTagRemove = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
-  };
-
-  const handleSuggestionApply = (original: string, suggestion: string) => {
-    setContent(content.replace(original, suggestion));
-  };
-
-  // Focus Mode handlers
-  const handleFocusModeToggle = () => {
-    console.log('Focus mode toggle clicked:', !isFocusMode);
-    setIsFocusMode(!isFocusMode);
-  };
-
-  const handleFocusModeClose = () => {
-    console.log('Focus mode close clicked');
-    setIsFocusMode(false);
-  };
-
   const handleCollapseAllBars = () => {
-    setIsHeaderHidden(true);
-    setIsAssistantCollapsed(true);
-    if (collapseAssistantRef.current) {
-      collapseAssistantRef.current();
-    }
+    editorState.setIsHeaderHidden(true);
+    editorState.setIsAssistantCollapsed(true);
   };
 
   return (
     <EditorContent
       // Form state
-      title={title}
-      content={content}
-      category={category}
-      tags={tags}
-      newTag={newTag}
-      isFavorite={isFavorite}
-      isSaving={isSaving}
+      title={editorState.title}
+      content={editorState.content}
+      category={editorState.category}
+      tags={editorState.tags}
+      newTag={editorState.newTag}
+      isFavorite={editorState.isFavorite}
+      isSaving={editorState.isSaving}
       
       // Form handlers
-      onTitleChange={setTitle}
-      onContentChange={setContent}
-      onCategoryChange={setCategory}
-      onNewTagChange={setNewTag}
-      onAddTag={handleTagAdd}
-      onRemoveTag={handleTagRemove}
+      onTitleChange={editorState.setTitle}
+      onContentChange={editorState.setContent}
+      onCategoryChange={editorState.setCategory}
+      onNewTagChange={editorState.setNewTag}
+      onAddTag={editorHandlers.addTag}
+      onRemoveTag={editorHandlers.removeTag}
       onFavoriteToggle={handleFavoriteToggle}
-      onSave={handleSave}
-      onSuggestionApply={handleSuggestionApply}
+      onSave={editorHandlers.handleSave}
+      onSuggestionApply={editorHandlers.handleSuggestionApply}
       
       // UI state
-      isFocusMode={isFocusMode}
-      isHeaderCollapsed={isHeaderCollapsed}
-      isHeaderHidden={isHeaderHidden}
+      isFocusMode={editorState.isFocusMode}
+      isHeaderCollapsed={editorState.isHeaderCollapsed}
+      isHeaderHidden={editorState.isHeaderHidden}
       
       // UI handlers
-      onFocusModeToggle={handleFocusModeToggle}
-      onHeaderCollapseToggle={() => setIsHeaderCollapsed(!isHeaderCollapsed)}
+      onFocusModeToggle={() => editorState.setIsFocusMode(!editorState.isFocusMode)}
+      onHeaderCollapseToggle={() => editorState.setIsHeaderCollapsed(!editorState.isHeaderCollapsed)}
       onCollapseAllBars={handleCollapseAllBars}
-      onFocusModeClose={handleFocusModeClose}
+      onFocusModeClose={() => editorState.setIsFocusMode(false)}
       
       // Refs
-      collapseAssistantRef={collapseAssistantRef}
-      expandAssistantRef={expandAssistantRef}
+      collapseAssistantRef={{ current: undefined }}
+      expandAssistantRef={{ current: undefined }}
       
       // Other props
-      currentNote={currentNote}
-      isAssistantCollapsed={isAssistantCollapsed}
+      currentNote={editorState.currentNote}
+      isAssistantCollapsed={editorState.isAssistantCollapsed}
     />
   );
 };

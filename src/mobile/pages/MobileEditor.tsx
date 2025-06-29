@@ -1,77 +1,55 @@
-import React, { useEffect, useRef } from 'react';
-import { ArrowLeft, Save, MoreVertical, Share2, Star } from 'lucide-react';
+
+import React, { useEffect } from 'react';
+import { Share2, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useNotes } from '../../contexts/NotesContext';
+import { useMobileNavigation } from '../../hooks/mobile/useMobileNavigation';
+import { useEditorState } from '../../hooks/editor/useEditorState';
+import { useEditorHandlers } from '../../hooks/editor/useEditorHandlers';
+import MobileLayout from '../../components/shared/MobileLayout';
+import LoadingSpinner from '../../components/shared/LoadingSpinner';
 import MobileEditorToolbar from '../components/MobileEditorToolbar';
 import { toast } from 'sonner';
 
 const MobileEditor: React.FC = () => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const noteId = searchParams.get('note');
-  const { currentNote, updateNote, notes, setCurrentNote, toggleFavorite } = useNotes();
-  const [title, setTitle] = React.useState(currentNote?.title || '');
-  const [content, setContent] = React.useState(currentNote?.content || '');
-  const [isSaving, setIsSaving] = React.useState(false);
-  const [hasChanges, setHasChanges] = React.useState(false);
+  const { notes, setCurrentNote, toggleFavorite } = useNotes();
+  const { navigateToNotes } = useMobileNavigation();
   
-  // Refs for focusing
-  const titleInputRef = useRef<HTMLInputElement>(null);
-  const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
+  // Use refactored hooks
+  const editorState = useEditorState();
+  const editorHandlers = useEditorHandlers(editorState);
+  
+  const [hasChanges, setHasChanges] = React.useState(false);
 
   // Load note from URL parameter if available
   useEffect(() => {
-    if (noteId && (!currentNote || currentNote.id !== noteId)) {
+    if (noteId && (!editorState.currentNote || editorState.currentNote.id !== noteId)) {
       const note = notes.find(n => n.id === noteId);
       if (note) {
         setCurrentNote(note);
-        setTitle(note.title);
-        setContent(note.content);
       }
     }
-  }, [noteId, notes, currentNote, setCurrentNote]);
-
-  // Update local state when currentNote changes
-  useEffect(() => {
-    if (currentNote) {
-      setTitle(currentNote.title);
-      setContent(currentNote.content);
-      setHasChanges(false);
-    }
-  }, [currentNote]);
+  }, [noteId, notes, editorState.currentNote, setCurrentNote]);
 
   // Track changes
   useEffect(() => {
-    if (currentNote) {
-      const hasChanged = title !== currentNote.title || content !== currentNote.content;
+    if (editorState.currentNote) {
+      const hasChanged = editorState.title !== editorState.currentNote.title || 
+                        editorState.content !== editorState.currentNote.content;
       setHasChanges(hasChanged);
     }
-  }, [title, content, currentNote]);
-
-  const handleSave = async () => {
-    if (!currentNote) return;
-    
-    setIsSaving(true);
-    try {
-      await updateNote(currentNote.id, { title, content });
-      setHasChanges(false);
-      toast.success('Note saved!');
-    } catch (error) {
-      console.error('Failed to save note:', error);
-      toast.error('Failed to save note');
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  }, [editorState.title, editorState.content, editorState.currentNote]);
 
   const handleToggleFavorite = async () => {
-    if (!currentNote) return;
+    if (!editorState.currentNote) return;
     
     try {
-      await toggleFavorite(currentNote.id);
+      await toggleFavorite(editorState.currentNote.id);
     } catch (error) {
       console.error('Failed to toggle favorite:', error);
       toast.error('Failed to update favorite');
@@ -80,116 +58,87 @@ const MobileEditor: React.FC = () => {
 
   const handleBack = () => {
     if (hasChanges) {
-      // Auto-save before leaving
-      handleSave();
+      editorHandlers.handleSave();
     }
-    navigate('/mobile/notes');
+    navigateToNotes();
   };
 
   const handleShare = () => {
-    if (navigator.share && currentNote) {
+    if (navigator.share && editorState.currentNote) {
       navigator.share({
-        title: currentNote.title,
-        text: currentNote.content,
+        title: editorState.currentNote.title,
+        text: editorState.currentNote.content,
       }).catch(console.error);
     } else {
       toast.info('Share feature not supported on this device');
     }
   };
 
-  // Handle mobile keyboard focus
-  const handleTextareaClick = () => {
-    // Small delay to ensure the click event is processed first
-    setTimeout(() => {
-      if (contentTextareaRef.current) {
-        contentTextareaRef.current.focus();
-        // For iOS, this helps ensure the keyboard appears
-        contentTextareaRef.current.click();
-      }
-    }, 100);
-  };
-
-  const handleTitleClick = () => {
-    setTimeout(() => {
-      if (titleInputRef.current) {
-        titleInputRef.current.focus();
-        titleInputRef.current.click();
-      }
-    }, 100);
-  };
-
-  if (!currentNote) {
+  if (!editorState.currentNote) {
     return (
-      <div className="h-full flex flex-col items-center justify-center bg-background p-4">
-        <div className="text-center">
+      <MobileLayout title="Editor" onBack={navigateToNotes}>
+        <div className="flex flex-col items-center justify-center p-4 text-center">
           <h2 className="text-lg font-semibold mb-2">No note selected</h2>
           <p className="text-muted-foreground mb-4">
             Select a note to start editing or create a new one
           </p>
-          <Button onClick={() => navigate('/mobile/notes')}>
+          <Button onClick={navigateToNotes}>
             Go to Notes
           </Button>
         </div>
-      </div>
+      </MobileLayout>
     );
   }
 
-  return (
-    <div className="h-full flex flex-col bg-background">
-      {/* Mobile Editor Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border flex-shrink-0">
-        <Button variant="ghost" size="sm" onClick={handleBack}>
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={handleToggleFavorite}
-            className={currentNote.isFavorite ? 'text-yellow-500' : ''}
-          >
-            <Star className={`w-4 h-4 ${currentNote.isFavorite ? 'fill-current' : ''}`} />
-          </Button>
-          
-          <Button variant="ghost" size="sm" onClick={handleShare}>
-            <Share2 className="w-4 h-4" />
-          </Button>
-          
-          <Button 
-            variant="default" 
-            size="sm" 
-            onClick={handleSave}
-            disabled={isSaving || !hasChanges}
-          >
-            <Save className="w-4 h-4 mr-1" />
-            {isSaving ? 'Saving...' : 'Save'}
-          </Button>
-        </div>
-      </div>
+  const rightActions = (
+    <>
+      <Button 
+        variant="ghost" 
+        size="sm"
+        onClick={handleToggleFavorite}
+        className={editorState.currentNote.isFavorite ? 'text-yellow-500' : ''}
+      >
+        <Star className={`w-4 h-4 ${editorState.currentNote.isFavorite ? 'fill-current' : ''}`} />
+      </Button>
+      
+      <Button variant="ghost" size="sm" onClick={handleShare}>
+        <Share2 className="w-4 h-4" />
+      </Button>
+      
+      <Button 
+        variant="default" 
+        size="sm" 
+        onClick={editorHandlers.handleSave}
+        disabled={editorState.isSaving || !hasChanges}
+      >
+        {editorState.isSaving ? <LoadingSpinner size="sm" className="mr-1" /> : null}
+        {editorState.isSaving ? 'Saving...' : 'Save'}
+      </Button>
+    </>
+  );
 
+  return (
+    <MobileLayout 
+      title="Editor" 
+      onBack={handleBack}
+      rightActions={rightActions}
+    >
       {/* Editor Content */}
       <div className="flex-1 flex flex-col p-4 space-y-4">
         {/* Title Input */}
         <Input
-          ref={titleInputRef}
           placeholder="Note title..."
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          onClick={handleTitleClick}
+          value={editorState.title}
+          onChange={(e) => editorState.setTitle(e.target.value)}
           className="text-lg font-semibold border-none px-0 shadow-none focus-visible:ring-0"
         />
         
         {/* Content Textarea */}
         <Textarea
-          ref={contentTextareaRef}
           placeholder="Start writing your note..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          onClick={handleTextareaClick}
-          onTouchStart={handleTextareaClick}
+          value={editorState.content}
+          onChange={(e) => editorState.setContent(e.target.value)}
           className="flex-1 resize-none border-none px-0 shadow-none focus-visible:ring-0 text-base leading-relaxed"
-          autoFocus={false}
         />
       </div>
 
@@ -202,7 +151,7 @@ const MobileEditor: React.FC = () => {
 
       {/* Mobile Toolbar */}
       <MobileEditorToolbar />
-    </div>
+    </MobileLayout>
   );
 };
 
