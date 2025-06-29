@@ -72,6 +72,13 @@ class SecureLogger {
     console.info(sanitizedMessage, sanitizedContext);
   }
 
+  security(message: string, context?: Record<string, any>) {
+    const sanitizedMessage = this.sanitizeMessage(message);
+    const sanitizedContext = context ? this.sanitizeContext(context) : {};
+    
+    console.warn(`🔐 SECURITY: ${sanitizedMessage}`, sanitizedContext);
+  }
+
   private sanitizeContext(context: Record<string, any>): Record<string, any> {
     const sanitized: Record<string, any> = {};
     
@@ -89,8 +96,65 @@ class SecureLogger {
   }
 }
 
+// Validation functions
+export const validateNoteTitle = (title: string): { isValid: boolean; error?: string } => {
+  if (!title || title.trim().length === 0) {
+    return { isValid: false, error: 'Title is required' };
+  }
+  
+  if (title.length > 200) {
+    return { isValid: false, error: 'Title too long (max 200 characters)' };
+  }
+
+  // Check for potentially dangerous content
+  if (/<script|javascript:|data:text\/html/i.test(title)) {
+    return { isValid: false, error: 'Title contains invalid content' };
+  }
+
+  return { isValid: true };
+};
+
+export const validateNoteContent = (content: string): { isValid: boolean; error?: string } => {
+  if (content.length > 1000000) { // 1MB limit
+    return { isValid: false, error: 'Content too long (max 1MB)' };
+  }
+
+  return { isValid: true };
+};
+
+export const validateTags = (tags: string[]): { isValid: boolean; error?: string } => {
+  if (tags.length > 20) {
+    return { isValid: false, error: 'Too many tags (max 20)' };
+  }
+
+  for (const tag of tags) {
+    if (tag.length > 50) {
+      return { isValid: false, error: 'Tag too long (max 50 characters)' };
+    }
+    
+    if (/<script|javascript:|data:text\/html/i.test(tag)) {
+      return { isValid: false, error: 'Tag contains invalid content' };
+    }
+  }
+
+  return { isValid: true };
+};
+
+export const sanitizeText = (text: string): string => {
+  return text
+    .replace(/<script[^>]*>.*?<\/script>/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/data:text\/html/gi, '')
+    .replace(/vbscript:/gi, '')
+    .replace(/on\w+\s*=/gi, '')
+    .trim();
+};
+
 export const rateLimiter = new RateLimiter();
 export const secureLog = new SecureLogger();
+
+// Enhanced rate limiter (alias for compatibility)
+export const enhancedRateLimiter = rateLimiter;
 
 // Cleanup rate limiter periodically
 if (typeof window !== 'undefined') {

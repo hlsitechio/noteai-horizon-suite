@@ -77,6 +77,25 @@ class ErrorThrottlingManager {
     };
   }
 
+  getErrorStats() {
+    const errors = Array.from(this.errorCounts.values());
+    return {
+      totalUniqueErrors: errors.length,
+      totalOccurrences: errors.reduce((sum, error) => sum + error.count, 0),
+      suppressedErrors: errors.filter(e => e.throttled).length,
+      byType: errors.reduce((acc, error) => {
+        const type = error.throttled ? 'throttled' : 'active';
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>)
+    };
+  }
+
+  clearAllErrors() {
+    this.errorCounts.clear();
+    console.log('🧹 Error throttling data cleared');
+  }
+
   cleanup() {
     const now = new Date();
     const cutoff = now.getTime() - (this.throttleWindow * 2);
