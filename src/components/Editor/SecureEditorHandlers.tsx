@@ -1,13 +1,12 @@
 
 import { useNotes } from '../../contexts/NotesContext';
 import { useAutoTagging } from '../../hooks/useAutoTagging';
-import { useToast } from '@/hooks/use-toast';
+import { useConsolidatedErrorHandler } from '../../hooks/useConsolidatedErrorHandler';
 import { 
   validateNoteTitle, 
   validateNoteContent, 
   validateTags, 
   sanitizeText,
-  secureLog,
   rateLimiter
 } from '../../utils/securityUtils';
 
@@ -46,16 +45,16 @@ export const useSecureEditorHandlers = ({
 }: SecureEditorHandlersProps) => {
   const { createNote, updateNote } = useNotes();
   const { generateTags, isGeneratingTags } = useAutoTagging();
-  const { toast } = useToast();
+  const { handleError } = useConsolidatedErrorHandler();
 
   const handleSave = async () => {
     // Rate limiting check
     const userId = currentNote?.user_id || 'anonymous';
     if (!rateLimiter.checkLimit(`save_${userId}`, 30, 60000)) {
-      toast({
-        variant: "destructive",
-        title: "Rate Limit",
-        description: "Too many save attempts. Please wait a moment."
+      handleError(new Error('Rate limit exceeded'), {
+        component: 'SecureEditorHandlers',
+        operation: 'handleSave',
+        severity: 'medium'
       });
       return;
     }
@@ -63,43 +62,35 @@ export const useSecureEditorHandlers = ({
     // Input validation
     const titleValidation = validateNoteTitle(title);
     if (!titleValidation.isValid) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Title",
-        description: titleValidation.error || 'Invalid title'
+      handleError(new Error(titleValidation.error || 'Invalid title'), {
+        component: 'SecureEditorHandlers',
+        operation: 'validateTitle',
+        severity: 'medium'
       });
       return;
     }
 
     const contentValidation = validateNoteContent(content);
     if (!contentValidation.isValid) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Content",
-        description: contentValidation.error || 'Invalid content'
+      handleError(new Error(contentValidation.error || 'Invalid content'), {
+        component: 'SecureEditorHandlers',
+        operation: 'validateContent',
+        severity: 'medium'
       });
       return;
     }
 
     const tagsValidation = validateTags(tags);
     if (!tagsValidation.isValid) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Tags",
-        description: tagsValidation.error || 'Invalid tags'
+      handleError(new Error(tagsValidation.error || 'Invalid tags'), {
+        component: 'SecureEditorHandlers',
+        operation: 'validateTags',
+        severity: 'medium'
       });
       return;
     }
 
     setIsSaving(true);
-    
-    // Secure logging - don't log full content
-    secureLog.info('Starting save process', { 
-      titleLength: title.length,
-      isNewNote: !currentNote,
-      tagCount: tags.length,
-      contentLength: content.length
-    });
 
     try {
       let finalTags = [...tags];
@@ -109,30 +100,20 @@ export const useSecureEditorHandlers = ({
       
       if (shouldGenerateTags && (title.trim() || content.trim())) {
         try {
-          secureLog.info('Attempting to generate tags');
           const autoTags = await generateTags(title, content);
           
           if (autoTags && autoTags.length > 0) {
-            // Merge auto-generated tags with existing tags, avoiding duplicates
             const uniqueAutoTags = autoTags.filter(tag => !finalTags.includes(tag));
             finalTags = [...finalTags, ...uniqueAutoTags];
-            
-            // Update the tags state so user can see the generated tags
             setTags(finalTags);
-            
-            toast({
-              title: "Tags Generated",
-              description: `Generated ${uniqueAutoTags.length} new tags automatically`
-            });
           }
         } catch (tagError) {
-          secureLog.error('Auto-tagging failed', tagError);
-          toast({
-            variant: "destructive",
-            title: "Auto-tagging Failed",
-            description: "Auto-tagging failed, but note will still be saved"
+          handleError(tagError as Error, {
+            component: 'SecureEditorHandlers',
+            operation: 'generateTags',
+            severity: 'low',
+            showToast: false
           });
-          // Continue with save even if auto-tagging fails
         }
       }
 
@@ -148,25 +129,14 @@ export const useSecureEditorHandlers = ({
 
       if (currentNote) {
         await updateNote(currentNote.id, noteData);
-        secureLog.info('Note updated successfully');
-        toast({
-          title: "Note Updated",
-          description: "Note updated successfully"
-        });
       } else {
         await createNote(noteData);
-        secureLog.info('Note created successfully');
-        toast({
-          title: "Note Created",
-          description: "Note created successfully"
-        });
       }
     } catch (error) {
-      secureLog.error('Error saving note', error);
-      toast({
-        variant: "destructive",
-        title: "Save Failed",
-        description: "Failed to save note"
+      handleError(error as Error, {
+        component: 'SecureEditorHandlers',
+        operation: 'saveNote',
+        severity: 'high'
       });
     } finally {
       setIsSaving(false);
@@ -177,37 +147,37 @@ export const useSecureEditorHandlers = ({
     const sanitizedTag = sanitizeText(newTag.trim());
     
     if (!sanitizedTag) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Tag",
-        description: "Tag cannot be empty"
+      handleError(new Error('Tag cannot be empty'), {
+        component: 'SecureEditorHandlers',
+        operation: 'addTag',
+        severity: 'low'
       });
       return;
     }
     
     if (sanitizedTag.length > 50) {
-      toast({
-        variant: "destructive",
-        title: "Tag Too Long",
-        description: "Tag too long (max 50 characters)"
+      handleError(new Error('Tag too long (max 50 characters)'), {
+        component: 'SecureEditorHandlers',
+        operation: 'addTag',
+        severity: 'medium'
       });
       return;
     }
     
     if (tags.includes(sanitizedTag)) {
-      toast({
-        variant: "destructive",
-        title: "Duplicate Tag",
-        description: "Tag already exists"
+      handleError(new Error('Tag already exists'), {
+        component: 'SecureEditorHandlers',
+        operation: 'addTag',
+        severity: 'low'
       });
       return;
     }
     
     if (tags.length >= 20) {
-      toast({
-        variant: "destructive",
-        title: "Too Many Tags",
-        description: "Maximum 20 tags allowed"
+      handleError(new Error('Maximum 20 tags allowed'), {
+        component: 'SecureEditorHandlers',
+        operation: 'addTag',
+        severity: 'medium'
       });
       return;
     }
@@ -221,32 +191,26 @@ export const useSecureEditorHandlers = ({
   };
 
   const handleSuggestionApply = (original: string, suggestion: string) => {
-    // Validate suggestion before applying
     const suggestionValidation = validateNoteContent(suggestion);
     if (!suggestionValidation.isValid) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Suggestion",
-        description: "Invalid suggestion content"
+      handleError(new Error('Invalid suggestion content'), {
+        component: 'SecureEditorHandlers',
+        operation: 'applySuggestion',
+        severity: 'medium'
       });
       return;
     }
 
-    // Simple text replacement with sanitization
     const sanitizedSuggestion = sanitizeText(suggestion);
     const updatedContent = content.replace(original, sanitizedSuggestion);
     setContent(updatedContent);
-    
-    secureLog.info('Applied writing suggestion');
   };
 
   const handleCollapseAllBars = () => {
     if (isHeaderHidden) {
-      // Currently collapsed - show all bars
       setIsHeaderHidden(false);
       setIsAssistantCollapsed(false);
     } else {
-      // Currently expanded - collapse all bars
       setIsHeaderHidden(true);
       setIsAssistantCollapsed(true);
     }

@@ -1,6 +1,6 @@
 
 /**
- * Security utilities for input validation and sanitization
+ * Security utilities for input validation and sanitization - Optimized
  */
 
 // Input validation patterns
@@ -32,9 +32,6 @@ export const sanitizeText = (input: string): string => {
     .replace(/data:text\/html/gi, '')
     .replace(/vbscript:/gi, '')
     .replace(/on(load|error|click|focus|blur|change|submit)=/gi, '')
-    .replace(/<iframe[^>]*src=/gi, '')
-    .replace(/<object[^>]*data=/gi, '')
-    .replace(/<embed[^>]*src=/gi, '')
     .trim();
 };
 
@@ -57,7 +54,7 @@ export const validateNoteTitle = (title: string): { isValid: boolean; error?: st
  * Validate note content
  */
 export const validateNoteContent = (content: string): { isValid: boolean; error?: string } => {
-  if (!content) return { isValid: true }; // Content can be empty
+  if (!content) return { isValid: true };
   
   if (content.length > MAX_LENGTHS.content) {
     return { isValid: false, error: 'Content too large (max 10MB)' };
@@ -69,10 +66,6 @@ export const validateNoteContent = (content: string): { isValid: boolean; error?
     /javascript:/gi,
     /data:text\/html/gi,
     /vbscript:/gi,
-    /on(load|error|click|focus|blur|change|submit)=/gi,
-    /<iframe[^>]*src=/gi,
-    /<object[^>]*data=/gi,
-    /<embed[^>]*src=/gi,
   ];
   
   for (const pattern of maliciousPatterns) {
@@ -101,28 +94,6 @@ export const validateTags = (tags: string[]): { isValid: boolean; error?: string
   }
   
   return { isValid: true };
-};
-
-/**
- * Validate folder name
- */
-export const validateFolderName = (name: string): { isValid: boolean; error?: string } => {
-  if (!name || name.trim().length === 0) {
-    return { isValid: false, error: 'Folder name cannot be empty' };
-  }
-  
-  if (name.length > MAX_LENGTHS.folderName) {
-    return { isValid: false, error: `Folder name too long (max ${MAX_LENGTHS.folderName} characters)` };
-  }
-  
-  return { isValid: true };
-};
-
-/**
- * Validate hex color
- */
-export const validateHexColor = (color: string): boolean => {
-  return VALIDATION_PATTERNS.hexColor.test(color);
 };
 
 /**
@@ -168,19 +139,18 @@ setInterval(() => rateLimiter.cleanup(), 5 * 60 * 1000);
  */
 export const secureLog = {
   info: (message: string, data?: any) => {
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.log(`[INFO] ${message}`, data ? sanitizeLogData(data) : '');
     }
   },
   
   warn: (message: string, data?: any) => {
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.warn(`[WARN] ${message}`, data ? sanitizeLogData(data) : '');
     }
   },
   
   error: (message: string, error?: any) => {
-    // Always log errors, but sanitize them
     console.error(`[ERROR] ${message}`, error ? sanitizeLogData(error) : '');
   },
 };
@@ -191,10 +161,7 @@ export const secureLog = {
 const sanitizeLogData = (data: any): any => {
   if (!data) return data;
   
-  // Create a copy to avoid mutating original data
   const sanitized = JSON.parse(JSON.stringify(data));
-  
-  // Remove sensitive fields
   const sensitiveFields = ['password', 'token', 'key', 'secret', 'auth', 'session'];
   
   const sanitizeObject = (obj: any): void => {
