@@ -39,10 +39,12 @@ export default defineConfig(({ mode }) => ({
       'Content-Security-Policy': [
         "default-src 'self'",
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "font-src 'self' https://fonts.gstatic.com",
         "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
+        "script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com",
         "img-src 'self' data: https: blob:",
-        "connect-src 'self' https://qrdulwzjgbfgaplazgsh.supabase.co https://www.google-analytics.com https://api.openai.com https://api.openrouter.ai https://ingest.us.sentry.io wss://qrdulwzjgbfgaplazgsh.supabase.co",
+        "connect-src 'self' https://qrdulwzjgbfgaplazgsh.supabase.co https://www.google-analytics.com https://api.openai.com https://api.openrouter.ai https://ingest.us.sentry.io https://o4509521908400128.ingest.us.sentry.io wss://qrdulwzjgbfgaplazgsh.supabase.co",
         "worker-src 'self' blob: data:",
         "object-src 'none'",
         "base-uri 'self'",
