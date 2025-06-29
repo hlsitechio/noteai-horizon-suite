@@ -1,8 +1,16 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = 'https://qrdulwzjgbfgaplazgsh.supabase.co'
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFyZHVsd3pqZ2JmZ2FwbGF6Z3NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc4ODAzOTEsImV4cCI6MjA2MzQ1NjM5MX0.1KYtfqg9iKuu9UfSuySWOH7XsCneoDTbnYqg9JqSvjY'
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Supabase environment variables are not configured')
+}
+
+if (import.meta.env.PROD && supabaseUrl.startsWith('http://')) {
+  throw new Error('Supabase URL must use HTTPS in production')
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {

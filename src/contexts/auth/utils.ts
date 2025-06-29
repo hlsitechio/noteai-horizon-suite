@@ -3,6 +3,16 @@ import { User as SupabaseUser } from '@supabase/supabase-js';
 import { User } from './types';
 import { supabase } from '@/integrations/supabase/client';
 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
+if (!supabaseUrl) {
+  console.warn('Supabase URL is not configured')
+}
+const supabaseProjectRef = supabaseUrl ?
+  new URL(supabaseUrl).hostname.split('.')[0] : ''
+const AUTH_TOKEN_KEY = supabaseProjectRef
+  ? `sb-${supabaseProjectRef}-auth-token`
+  : 'supabase.auth.token'
+
 export const transformUser = async (supabaseUser: SupabaseUser): Promise<User> => {
   try {
     // Fetch the user profile from our profiles table
@@ -55,7 +65,7 @@ export const clearCorruptedSession = async () => {
   try {
     await supabase.auth.signOut();
     localStorage.removeItem('supabase.auth.token');
-    localStorage.removeItem('sb-qrdulwzjgbfgaplazgsh-auth-token');
+    localStorage.removeItem(AUTH_TOKEN_KEY);
   } catch (error) {
     console.error('Error clearing session:', error);
   }
