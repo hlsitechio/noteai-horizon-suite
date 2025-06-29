@@ -26,8 +26,8 @@ class ResourceLoadingErrorManager {
   private setupResourceErrorHandling() {
     // Capture resource loading errors
     window.addEventListener('error', (event) => {
-      const target = event.target as HTMLElement;
-      if (target && target !== window) {
+      const target = event.target;
+      if (target && target instanceof HTMLElement) {
         this.handleResourceError(target, event);
       }
     }, true);

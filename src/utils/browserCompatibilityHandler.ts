@@ -96,16 +96,17 @@ class BrowserCompatibilityManager {
     switch (feature) {
       case 'ResizeObserver':
         if (!window.ResizeObserver) {
-          await import('resize-observer-polyfill').then(module => {
+          try {
+            const module = await import('resize-observer-polyfill');
             window.ResizeObserver = module.default;
-          }).catch(() => {
+          } catch (error) {
             // Provide minimal ResizeObserver polyfill
             window.ResizeObserver = class {
               observe() {}
               unobserve() {}
               disconnect() {}
             } as any;
-          });
+          }
         }
         break;
 

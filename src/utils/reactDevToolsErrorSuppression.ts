@@ -1,8 +1,16 @@
-
 /**
  * React DevTools Error Suppression
  * Handles React-specific development errors and warnings
  */
+
+// Type declarations for React DevTools
+declare global {
+  interface Window {
+    __REACT_DEVTOOLS_GLOBAL_HOOK__?: {
+      onCommitFiberRoot?: (id: any, root: any, ...args: any[]) => any;
+    };
+  }
+}
 
 interface ReactError {
   componentStack?: string;
@@ -39,15 +47,17 @@ class ReactDevToolsErrorManager {
       this.originalReactDevtoolsHook = window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
       
       const originalOnCommitFiberRoot = this.originalReactDevtoolsHook.onCommitFiberRoot;
-      this.originalReactDevtoolsHook.onCommitFiberRoot = (id: any, root: any, ...args: any[]) => {
-        try {
-          return originalOnCommitFiberRoot.call(this.originalReactDevtoolsHook, id, root, ...args);
-        } catch (error) {
-          if (!this.shouldSuppressReactError(error)) {
-            console.error('React DevTools Error:', error);
+      if (originalOnCommitFiberRoot) {
+        this.originalReactDevtoolsHook.onCommitFiberRoot = (id: any, root: any, ...args: any[]) => {
+          try {
+            return originalOnCommitFiberRoot.call(this.originalReactDevtoolsHook, id, root, ...args);
+          } catch (error) {
+            if (!this.shouldSuppressReactError(error)) {
+              console.error('React DevTools Error:', error);
+            }
           }
-        }
-      };
+        };
+      }
     }
   }
 
