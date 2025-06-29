@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import SmartToolbar from './SmartToolbar';
-import TextSelectionContextMenu from './TextSelectionContextMenu';
 import EditorContent from './components/EditorContent';
 import ResizableImage from './ResizableImage';
 import { useRichTextEditor } from './hooks/useRichTextEditor';
@@ -25,7 +24,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   canSave = true,
   isSaving = false
 }) => {
-  const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [editorFontFamily, setEditorFontFamily] = useState('inter');
   const [editorFontSize, setEditorFontSize] = useState(16);
   const [images, setImages] = useState<Array<{
@@ -41,17 +39,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     slateValue,
     handleChange,
     handleTextInsert,
-    handleAIInsert,
-    handleAIReplace,
   } = useRichTextEditor({ value, onChange });
 
   const {
     selectedText,
-    assistantPosition,
-    contextMenuPosition,
-    handleTextSelection,
-    handleContextMenuReplace,
-    closeContextMenu,
   } = useTextSelection(editor);
 
   const {
@@ -104,59 +95,45 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   };
 
   return (
-    <>
-      <div className="glass rounded-2xl shadow-large overflow-hidden bg-white/10 backdrop-blur-lg dark:bg-slate-800/20">
-        <SmartToolbar
-          onFormatClick={handleFormatClick}
-          onAIClick={() => setShowAIAssistant(true)}
-          onSave={onSave || (() => {})}
-          onTextInsert={handleTextInsert}
-          onImageInsert={handleImageInsert}
-          onFontChange={handleFontChange}
-          activeFormats={getActiveFormats()}
-          selectedText={selectedText}
-          canSave={canSave}
-          isSaving={isSaving}
-        />
-
-        <div style={editorStyle}>
-          <EditorContent
-            editor={editor}
-            slateValue={slateValue}
-            onChange={handleChange}
-            placeholder={placeholder}
-            onSelect={handleTextSelection}
-            onKeyDown={handleKeyboardShortcuts}
-            onAIToggle={() => setShowAIAssistant(true)}
-          />
-          
-          {/* Render images */}
-          {images.length > 0 && (
-            <div className="p-4 space-y-4">
-              {images.map((image) => (
-                <ResizableImage
-                  key={image.id}
-                  src={image.src}
-                  initialWidth={image.width}
-                  initialHeight={image.height}
-                  onRemove={() => handleImageRemove(image.id)}
-                  onSizeChange={(width, height) => handleImageSizeChange(image.id, width, height)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Context Menu for Text Selection */}
-      <TextSelectionContextMenu
+    <div className="glass rounded-2xl shadow-large overflow-hidden bg-white/10 backdrop-blur-lg dark:bg-slate-800/20">
+      <SmartToolbar
+        onFormatClick={handleFormatClick}
+        onSave={onSave || (() => {})}
+        onTextInsert={handleTextInsert}
+        onImageInsert={handleImageInsert}
+        onFontChange={handleFontChange}
+        activeFormats={getActiveFormats()}
         selectedText={selectedText}
-        onTextReplace={handleContextMenuReplace}
-        onTextInsert={handleAIInsert}
-        position={contextMenuPosition}
-        onClose={closeContextMenu}
+        canSave={canSave}
+        isSaving={isSaving}
       />
-    </>
+
+      <div style={editorStyle}>
+        <EditorContent
+          editor={editor}
+          slateValue={slateValue}
+          onChange={handleChange}
+          placeholder={placeholder}
+          onKeyDown={handleKeyboardShortcuts}
+        />
+        
+        {/* Render images */}
+        {images.length > 0 && (
+          <div className="p-4 space-y-4">
+            {images.map((image) => (
+              <ResizableImage
+                key={image.id}
+                src={image.src}
+                initialWidth={image.width}
+                initialHeight={image.height}
+                onRemove={() => handleImageRemove(image.id)}
+                onSizeChange={(width, height) => handleImageSizeChange(image.id, width, height)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

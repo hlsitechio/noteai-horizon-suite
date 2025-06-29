@@ -18,12 +18,10 @@ import FormatButton from './toolbar/FormatButton';
 import FontFamilySelector from './toolbar/FontFamilySelector';
 import FontSizeControl from './toolbar/FontSizeControl';
 import MediaToolsGroup from './toolbar/MediaToolsGroup';
-import AIAssistantControl from './toolbar/AIAssistantControl';
 import SaveButton from './toolbar/SaveButton';
 
 interface SmartToolbarProps {
   onFormatClick: (formatId: string, event: React.MouseEvent) => void;
-  onAIClick: () => void;
   onSave: () => void;
   onTextInsert?: (text: string) => void;
   onImageInsert?: (imageData: string, width?: number, height?: number) => void;
@@ -36,7 +34,6 @@ interface SmartToolbarProps {
 
 const SmartToolbar: React.FC<SmartToolbarProps> = ({ 
   onFormatClick, 
-  onAIClick,
   onSave,
   onTextInsert,
   onImageInsert,
@@ -152,20 +149,12 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
 
         <Separator orientation="vertical" className="h-6 mx-2 bg-green-200 dark:bg-slate-500" />
 
-        {/* AI Assistant */}
-        <div className="flex items-center gap-2">
-          <AIAssistantControl
-            selectedText={selectedText}
-            onAIClick={onAIClick}
-          />
-
-          {/* Save Note Button */}
-          <SaveButton
-            onSave={onSave}
-            canSave={canSave}
-            isSaving={isSaving}
-          />
-        </div>
+        {/* Save Note Button */}
+        <SaveButton
+          onSave={onSave}
+          canSave={canSave}
+          isSaving={isSaving}
+        />
       </div>
 
       {/* Speech to Text Modal */}

@@ -1,5 +1,5 @@
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '@/integrations/supabase/client';
 import { errorThrottlingManager } from '@/utils/errorThrottlingDeduplication';
@@ -28,8 +28,6 @@ interface ErrorTracePayload {
 }
 
 export const useErrorTracing = () => {
-  const queryClient = useQueryClient();
-
   const logErrorMutation = useMutation({
     mutationFn: async (payload: ErrorTracePayload) => {
       // Check if this error should be throttled
@@ -91,7 +89,7 @@ export const useErrorTracing = () => {
   });
 
   const traceError = (payload: ErrorTracePayload) => {
-    // Additional throttling at the hook level
+    // Basic throttling at the hook level
     if (payload.component === 'ErrorBoundary' && payload.operation === 'componentError') {
       const errorKey = `ErrorBoundary_${payload.error.message}`;
       if (errorThrottlingManager.shouldThrottleError(errorKey)) {
