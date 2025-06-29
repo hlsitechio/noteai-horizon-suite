@@ -3,90 +3,87 @@
  * Error Throttling and Deduplication System
  */
 
-interface ThrottleEntry {
+interface ThrottledError {
+  key: string;
   count: number;
-  firstSeen: number;
-  lastSeen: number;
+  firstSeen: Date;
+  lastSeen: Date;
+  throttled: boolean;
 }
 
 class ErrorThrottlingManager {
-  private throttleMap = new Map<string, ThrottleEntry>();
-  private maxErrorsPerWindow = 100;
-  private windowDuration = 60000; // 1 minute
+  private errorCounts: Map<string, ThrottledError> = new Map();
+  private throttleWindow = 60000; // 1 minute
+  private maxErrorsPerWindow = 50;
 
   setThrottleConfig(windowMs: number, maxErrors: number) {
-    this.windowDuration = windowMs;
+    this.throttleWindow = windowMs;
     this.maxErrorsPerWindow = maxErrors;
   }
 
-  shouldReportError(error: Error): boolean {
-    const errorKey = this.getErrorKey(error);
-    const now = Date.now();
-    const entry = this.throttleMap.get(errorKey);
-
-    if (!entry) {
-      this.throttleMap.set(errorKey, {
+  shouldThrottleError(errorMessage: string): boolean {
+    const errorKey = this.generateErrorKey(errorMessage);
+    const now = new Date();
+    
+    let errorInfo = this.errorCounts.get(errorKey);
+    
+    if (!errorInfo) {
+      errorInfo = {
+        key: errorKey,
         count: 1,
         firstSeen: now,
-        lastSeen: now
-      });
+        lastSeen: now,
+        throttled: false
+      };
+      this.errorCounts.set(errorKey, errorInfo);
+      return false;
+    }
+
+    // Reset count if window has passed
+    if (now.getTime() - errorInfo.firstSeen.getTime() > this.throttleWindow) {
+      errorInfo.count = 1;
+      errorInfo.firstSeen = now;
+      errorInfo.lastSeen = now;
+      errorInfo.throttled = false;
+      return false;
+    }
+
+    errorInfo.count++;
+    errorInfo.lastSeen = now;
+
+    // Throttle if exceeded max count
+    if (errorInfo.count > this.maxErrorsPerWindow) {
+      errorInfo.throttled = true;
       return true;
     }
 
-    // Reset if window has passed
-    if (now - entry.firstSeen > this.windowDuration) {
-      this.throttleMap.set(errorKey, {
-        count: 1,
-        firstSeen: now,
-        lastSeen: now
-      });
-      return true;
-    }
-
-    // Update existing entry
-    entry.count++;
-    entry.lastSeen = now;
-
-    return entry.count <= this.maxErrorsPerWindow;
+    return false;
   }
 
-  getErrorStats() {
-    const now = Date.now();
-    let totalUniqueErrors = 0;
-    let totalOccurrences = 0;
-    let suppressedErrors = 0;
+  private generateErrorKey(errorMessage: string): string {
+    // Create a normalized key for similar errors
+    return errorMessage
+      .replace(/\d+/g, 'N') // Replace numbers
+      .replace(/https?:\/\/[^\s]+/g, 'URL') // Replace URLs
+      .substring(0, 100);
+  }
 
-    for (const [key, entry] of this.throttleMap.entries()) {
-      // Only count active entries (not expired)
-      if (now - entry.lastSeen <= this.windowDuration) {
-        totalUniqueErrors++;
-        totalOccurrences += entry.count;
-        if (entry.count > this.maxErrorsPerWindow) {
-          suppressedErrors += entry.count - this.maxErrorsPerWindow;
-        }
-      }
-    }
-
+  getStats() {
     return {
-      totalUniqueErrors,
-      totalOccurrences,
-      suppressedErrors
+      totalUniqueErrors: this.errorCounts.size,
+      throttledErrors: Array.from(this.errorCounts.values()).filter(e => e.throttled).length,
+      windowSizeMs: this.throttleWindow,
+      maxErrorsPerWindow: this.maxErrorsPerWindow
     };
   }
 
-  clearAllErrors() {
-    this.throttleMap.clear();
-  }
-
-  private getErrorKey(error: Error): string {
-    return `${error.name}:${error.message}`;
-  }
-
   cleanup() {
-    const now = Date.now();
-    for (const [key, entry] of this.throttleMap.entries()) {
-      if (now - entry.lastSeen > this.windowDuration) {
-        this.throttleMap.delete(key);
+    const now = new Date();
+    const cutoff = now.getTime() - (this.throttleWindow * 2);
+    
+    for (const [key, error] of this.errorCounts.entries()) {
+      if (error.lastSeen.getTime() < cutoff) {
+        this.errorCounts.delete(key);
       }
     }
   }
@@ -94,7 +91,9 @@ class ErrorThrottlingManager {
 
 export const errorThrottlingManager = new ErrorThrottlingManager();
 
-// Cleanup old entries every 5 minutes
-setInterval(() => {
-  errorThrottlingManager.cleanup();
-}, 300000);
+// Cleanup old entries periodically
+if (typeof window !== 'undefined') {
+  setInterval(() => {
+    errorThrottlingManager.cleanup();
+  }, 300000); // Every 5 minutes
+}

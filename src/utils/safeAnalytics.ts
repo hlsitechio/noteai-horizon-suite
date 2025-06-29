@@ -1,75 +1,70 @@
 
 /**
- * Safe analytics utilities with error handling
+ * Safe Analytics Utilities
+ * Provides fallback methods for analytics operations
  */
 
-export function safeSendAnalyticsEvent(eventName: string, eventParams?: Record<string, any>) {
+export const safeSendAnalyticsEvent = (eventName: string, parameters?: Record<string, any>) => {
   try {
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('event', eventName, {
-        event_category: 'engagement',
-        event_label: eventParams?.label || '',
-        value: eventParams?.value || 0,
-        ...eventParams,
-      });
-      console.log('Analytics event sent:', eventName, eventParams);
-    } else {
-      console.warn('Google Analytics not available');
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', eventName, parameters);
     }
   } catch (error) {
-    console.warn('Analytics tracking failed:', error);
-    // Don't throw error, just log it
+    console.warn('Analytics event failed:', error);
   }
-}
+};
 
-export function safeSetAnalyticsUserId(userId: string) {
+export const safeSetAnalyticsUserId = (userId: string) => {
   try {
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+    if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('config', 'GA_MEASUREMENT_ID', {
-        user_id: userId,
+        user_id: userId
       });
-      console.log('Analytics user ID set:', userId);
     }
   } catch (error) {
-    console.warn('Failed to set analytics user ID:', error);
+    console.warn('Analytics user ID failed:', error);
   }
-}
+};
 
-export function safeTrackPageView(pagePath: string, pageTitle?: string) {
+export const safeTrackPageView = (pagePath: string, pageTitle?: string) => {
   try {
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+    if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('config', 'GA_MEASUREMENT_ID', {
         page_path: pagePath,
         page_title: pageTitle || document.title,
       });
-      console.log('Page view tracked:', pagePath, pageTitle);
     }
   } catch (error) {
-    console.warn('Failed to track page view:', error);
+    console.warn('Analytics page view failed:', error);
   }
-}
+};
 
-export function enableAnalyticsDebugMode() {
+export const safeTrackError = (error: Error, context?: string) => {
   try {
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('config', 'GA_MEASUREMENT_ID', {
-        debug_mode: true,
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'exception', {
+        description: error.message,
+        fatal: false,
+        custom_map: {
+          context: context || 'unknown'
+        }
       });
-      console.log('Analytics debug mode enabled');
+    }
+    console.error(`Error in ${context}:`, error);
+  } catch (analyticsError) {
+    console.warn('Analytics error tracking failed:', analyticsError);
+    console.error(`Original error in ${context}:`, error);
+  }
+};
+
+export const enableAnalyticsDebugMode = () => {
+  try {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('config', 'GA_MEASUREMENT_ID', {
+        debug_mode: true
+      });
     }
   } catch (error) {
-    console.warn('Failed to enable analytics debug mode:', error);
+    console.warn('Analytics debug mode failed:', error);
   }
-}
-
-export function safeTrackError(error: Error, context?: string) {
-  try {
-    safeSendAnalyticsEvent('exception', {
-      description: error.message,
-      fatal: false,
-      context: context || 'unknown',
-    });
-  } catch (trackingError) {
-    console.warn('Failed to track error to analytics:', trackingError);
-  }
-}
+};
