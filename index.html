@@ -14,8 +14,8 @@
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()" />
     
-    <!-- More permissive CSP for development while maintaining security -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://lovable.dev; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.gpteng.co https://static.cloudflareinsights.com https://lovable.dev; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://qrdulwzjgbfgaplazgsh.supabase.co https://www.google-analytics.com https://api.openai.com https://api.openrouter.ai https://ingest.us.sentry.io wss://qrdulwzjgbfgaplazgsh.supabase.co https://lovable.dev; worker-src 'self' blob:; frame-src 'self' https://lovable.dev; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;" />
+    <!-- Development-friendly CSP that allows Lovable scripts -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://lovable.dev; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.gpteng.co https://static.cloudflareinsights.com https://lovable.dev *.lovable.dev; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://qrdulwzjgbfgaplazgsh.supabase.co https://www.google-analytics.com https://api.openai.com https://api.openrouter.ai https://ingest.us.sentry.io wss://qrdulwzjgbfgaplazgsh.supabase.co https://lovable.dev *.lovable.dev; worker-src 'self' blob:; frame-src 'self' https://lovable.dev *.lovable.dev; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;" />
     
     <!-- DNS Prefetch for performance -->
     <link rel="dns-prefetch" href="//fonts.googleapis.com" />
