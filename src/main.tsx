@@ -15,17 +15,20 @@ import { AccentColorProvider } from './contexts/AccentColorContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { masterErrorResolutionSystem } from './utils/masterErrorResolutionSystem';
 
-// Initialize error resolution system immediately
-masterErrorResolutionSystem.initialize({
-  developmentMode: import.meta.env.DEV,
-  enableConsoleErrorSuppression: true,
-  enableReactDevToolsSuppression: true,
-  enableBrowserCompatibility: true,
-  enableNetworkRecovery: true,
-  enableResourceErrorHandling: true,
-  enableErrorThrottling: true,
-  enableExtensionConflictHandling: true,
-});
+// Initialize error resolution system only if not already initialized
+if (!masterErrorResolutionSystem.isInitialized()) {
+  masterErrorResolutionSystem.initialize({
+    developmentMode: import.meta.env.DEV,
+    enableConsoleErrorSuppression: true,
+    enableReactDevToolsSuppression: true,
+    enableBrowserCompatibility: true,
+    enableNetworkRecovery: true,
+    enableResourceErrorHandling: true,
+    enableErrorThrottling: true,
+    enableExtensionConflictHandling: true,
+    enableDetailedLogging: import.meta.env.DEV,
+  });
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
