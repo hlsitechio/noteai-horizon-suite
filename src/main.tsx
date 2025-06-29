@@ -11,12 +11,15 @@ import './index.css';
 // Import debug tools in development
 if (import.meta.env.DEV) {
   import('./utils/debugConsoleHelpers');
-  // Import new diagnostic tools
+  // Import diagnostic tools
   import('./utils/errorDiagnostics');
   import('./utils/emergencyErrorShutdown');
   // Import advanced debugging tools
   import('./utils/advancedErrorDebugger');
   import('./utils/errorEmergencyTools');
+  // Import new error correction and prevention systems
+  import('./utils/errorCorrectionSystem');
+  import('./utils/errorPreventionSystem');
 }
 
 // Initialize the application services

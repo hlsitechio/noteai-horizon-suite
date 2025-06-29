@@ -113,16 +113,16 @@ class AdvancedErrorDebugger {
       return false;
     };
 
-    // Promise rejection interception
+    // Promise rejection interception - Fixed TypeScript error
     const originalUnhandledRejection = window.onunhandledrejection;
-    window.onunhandledrejection = (event) => {
+    window.onunhandledrejection = (event: PromiseRejectionEvent) => {
       this.captureError('promise', 'unhandled_rejection', {
         reason: event.reason,
         promise: event.promise
       });
       
       if (originalUnhandledRejection) {
-        return originalUnhandledRejection(event);
+        return originalUnhandledRejection.call(window, event);
       }
     };
 
