@@ -26,7 +26,7 @@ class NetworkErrorRecoveryManager {
   private failedRequests: Map<string, NetworkError> = new Map();
   private retryQueue: Array<() => Promise<any>> = [];
   private isOnline = navigator.onLine;
-  private originalFetch = window.fetch;
+  private originalFetch: typeof fetch;
 
   private defaultRetryConfig: RetryConfig = {
     maxRetries: 3,
@@ -37,6 +37,7 @@ class NetworkErrorRecoveryManager {
   };
 
   constructor() {
+    this.originalFetch = window.fetch.bind(window);
     this.setupNetworkMonitoring();
     this.interceptFetch();
   }
@@ -53,32 +54,34 @@ class NetworkErrorRecoveryManager {
   }
 
   private interceptFetch() {
-    window.fetch = async (url: string | Request, options?: RequestInit): Promise<Response> => {
+    const self = this;
+    
+    window.fetch = async function(url: string | Request, options?: RequestInit): Promise<Response> {
       const urlString = typeof url === 'string' ? url : url.url;
       const method = options?.method || 'GET';
 
       // Add CORS-friendly headers for external APIs
-      const enhancedOptions = this.enhanceRequestOptions(urlString, options);
+      const enhancedOptions = self.enhanceRequestOptions(urlString, options);
 
       try {
-        const response = await this.originalFetch(url, enhancedOptions);
+        const response = await self.originalFetch(url, enhancedOptions);
         
         // Remove from failed requests if successful
         const requestKey = `${method}:${urlString}`;
-        if (this.failedRequests.has(requestKey)) {
-          this.failedRequests.delete(requestKey);
+        if (self.failedRequests.has(requestKey)) {
+          self.failedRequests.delete(requestKey);
         }
 
         return response;
       } catch (error: any) {
         // Detect CORS errors
-        const isCorsError = this.isCorsError(error);
+        const isCorsError = self.isCorsError(error);
         if (isCorsError) {
           console.warn(`CORS error detected for ${urlString}:`, error);
         }
 
-        return this.handleNetworkError(urlString, method, error, () => 
-          this.originalFetch(url, enhancedOptions), isCorsError
+        return self.handleNetworkError(urlString, method, error, () => 
+          self.originalFetch(url, enhancedOptions), isCorsError
         );
       }
     };
