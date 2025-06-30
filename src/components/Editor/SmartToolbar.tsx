@@ -19,11 +19,15 @@ import FontFamilySelector from './toolbar/FontFamilySelector';
 import FontSizeControl from './toolbar/FontSizeControl';
 import MediaToolsGroup from './toolbar/MediaToolsGroup';
 import SaveButton from './toolbar/SaveButton';
+import AIAssistantToolbar from './toolbar/AIAssistantToolbar';
+import { useAICopilot } from '@/hooks/useAICopilot';
+import { toast } from 'sonner';
 
 interface SmartToolbarProps {
   onFormatClick: (formatId: string, event: React.MouseEvent) => void;
   onSave: () => void;
   onTextInsert?: (text: string) => void;
+  onTextReplace?: (text: string) => void;
   onImageInsert?: (imageData: string, width?: number, height?: number) => void;
   onFontChange?: (fontFamily: string, fontSize: number) => void;
   activeFormats: Set<string>;
@@ -36,6 +40,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
   onFormatClick, 
   onSave,
   onTextInsert,
+  onTextReplace,
   onImageInsert,
   onFontChange,
   activeFormats,
@@ -47,6 +52,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
   const [showOCR, setShowOCR] = useState(false);
   const [fontSize, setFontSize] = useState(16);
   const [fontFamily, setFontFamily] = useState('inter');
+  const { processText, isLoading } = useAICopilot();
 
   const handleTextReceived = (text: string) => {
     if (onTextInsert) {
@@ -71,6 +77,28 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
     setFontFamily(newFontFamily);
     if (onFontChange) {
       onFontChange(newFontFamily, fontSize);
+    }
+  };
+
+  const handleAIAction = async (action: string) => {
+    if (!selectedText.trim()) {
+      toast.error('Please select some text first');
+      return;
+    }
+
+    try {
+      const response = await processText({
+        action: action as any,
+        text: selectedText,
+      });
+      
+      if (onTextReplace) {
+        onTextReplace(response.result);
+        toast.success(`Text ${action}d successfully!`);
+      }
+    } catch (error) {
+      console.error('AI processing error:', error);
+      toast.error('Failed to process text');
     }
   };
 
@@ -140,6 +168,15 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
 
         <Separator orientation="vertical" className="h-6 mx-2 bg-orange-200 dark:bg-slate-500" />
 
+        {/* AI Assistant */}
+        <AIAssistantToolbar
+          selectedText={selectedText}
+          onAIAction={handleAIAction}
+          isLoading={isLoading}
+        />
+
+        <Separator orientation="vertical" className="h-6 mx-2 bg-green-200 dark:bg-slate-500" />
+
         {/* Media Tools */}
         <MediaToolsGroup
           onImageInsert={handleImageInsert}
@@ -147,7 +184,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
           onOCROpen={() => setShowOCR(true)}
         />
 
-        <Separator orientation="vertical" className="h-6 mx-2 bg-green-200 dark:bg-slate-500" />
+        <Separator orientation="vertical" className="h-6 mx-2 bg-pink-200 dark:bg-slate-500" />
 
         {/* Save Note Button */}
         <SaveButton

@@ -52,8 +52,11 @@ export const useRichTextEditor = ({ value, onChange }: UseRichTextEditorProps) =
     if (selection && !Range.isCollapsed(selection)) {
       Transforms.delete(editor, { at: selection });
       Transforms.insertText(editor, text, { at: selection });
+    } else {
+      // If no selection, just insert the text
+      handleTextInsert(text);
     }
-  }, [editor]);
+  }, [editor, handleTextInsert]);
 
   return {
     editor,

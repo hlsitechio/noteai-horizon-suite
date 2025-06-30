@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import SmartToolbar from './SmartToolbar';
 import EditorContent from './components/EditorContent';
 import ResizableImage from './ResizableImage';
+import FloatingAIButton from '../AICopilot/FloatingAIButton';
 import { useRichTextEditor } from './hooks/useRichTextEditor';
 import { useTextSelection } from './hooks/useTextSelection';
 import { useEditorFormatting } from './hooks/useEditorFormatting';
@@ -39,6 +40,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     slateValue,
     handleChange,
     handleTextInsert,
+    handleAIReplace,
   } = useRichTextEditor({ value, onChange });
 
   const {
@@ -95,11 +97,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   };
 
   return (
-    <div className="glass rounded-2xl shadow-large overflow-hidden bg-white/10 backdrop-blur-lg dark:bg-slate-800/20">
+    <div className="glass rounded-2xl shadow-large overflow-hidden bg-white/10 backdrop-blur-lg dark:bg-slate-800/20 relative">
       <SmartToolbar
         onFormatClick={handleFormatClick}
         onSave={onSave || (() => {})}
         onTextInsert={handleTextInsert}
+        onTextReplace={handleAIReplace}
         onImageInsert={handleImageInsert}
         onFontChange={handleFontChange}
         activeFormats={getActiveFormats()}
@@ -133,6 +136,11 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           </div>
         )}
       </div>
+
+      {/* Floating AI Assistant */}
+      <FloatingAIButton
+        onTextInsert={handleTextInsert}
+      />
     </div>
   );
 };
