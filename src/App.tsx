@@ -43,8 +43,8 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TooltipProvider>
-            <QuantumAIProvider>
-              <AppWithAdvancedErrorHandling>
+            <AppWithAdvancedErrorHandling>
+              <QuantumAIProvider>
                 <Router>
                   <div className="min-h-screen bg-background">
                     <Routes>
@@ -56,8 +56,8 @@ function App() {
                     <QuantumAIIndicator />
                   </div>
                 </Router>
-              </AppWithAdvancedErrorHandling>
-            </QuantumAIProvider>
+              </QuantumAIProvider>
+            </AppWithAdvancedErrorHandling>
           </TooltipProvider>
         </ThemeProvider>
         <ReactQueryDevtools initialIsOpen={false} />
