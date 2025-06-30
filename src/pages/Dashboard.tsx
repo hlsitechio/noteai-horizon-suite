@@ -19,6 +19,7 @@ const mockNotes = [
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     category: 'general',
+    tags: ['welcome', 'demo'],
     isFavorite: false,
   },
   {
@@ -28,6 +29,7 @@ const mockNotes = [
     createdAt: new Date(Date.now() - 86400000).toISOString(),
     updatedAt: new Date(Date.now() - 86400000).toISOString(),
     category: 'tutorial',
+    tags: ['tutorial', 'getting-started'],
     isFavorite: true,
   },
 ];
