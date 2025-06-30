@@ -3,14 +3,14 @@ import { useEffect, useCallback } from 'react';
 import { DatabasePerformanceService } from '@/services/databasePerformanceService';
 
 export const useQueryPerformanceMonitor = () => {
-  const trackQuery = useCallback((queryName: string, startTime: number) => {
+  const trackQuery = useCallback((queryName: string, startTime: number, success: boolean = true) => {
     const executionTime = Date.now() - startTime;
-    DatabasePerformanceService.logQueryPerformance(queryName, executionTime);
+    DatabasePerformanceService.logQueryPerformance(queryName, executionTime, success);
   }, []);
 
   const startTimer = useCallback((queryName: string) => {
     const startTime = Date.now();
-    return () => trackQuery(queryName, startTime);
+    return (success: boolean = true) => trackQuery(queryName, startTime, success);
   }, [trackQuery]);
 
   const getPerformanceReport = useCallback(() => {
@@ -21,10 +21,25 @@ export const useQueryPerformanceMonitor = () => {
     return await DatabasePerformanceService.generateOptimizationPlan();
   }, []);
 
+  const analyzePerformance = useCallback(async () => {
+    return await DatabasePerformanceService.analyzeQueryPerformance();
+  }, []);
+
+  const getRecommendations = useCallback(async () => {
+    return await DatabasePerformanceService.getOptimizationRecommendations();
+  }, []);
+
+  // Generate some demo data on mount for testing
+  useEffect(() => {
+    DatabasePerformanceService.generateDemoData();
+  }, []);
+
   return {
     startTimer,
     trackQuery,
     getPerformanceReport,
-    getOptimizationPlan
+    getOptimizationPlan,
+    analyzePerformance,
+    getRecommendations
   };
 };
