@@ -10,6 +10,7 @@ import Layout from "@/components/Layout/Layout";
 import AppWithAdvancedErrorHandling from "@/components/AppWithAdvancedErrorHandling";
 import { AppInitializationService } from "@/services/appInitializationService";
 import { QuantumAIProvider } from "@/contexts/QuantumAIContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import QuantumAIInterface from "@/components/QuantumAI/QuantumAIInterface";
 import QuantumAIIndicator from "@/components/QuantumAI/QuantumAIIndicator";
 
@@ -44,19 +45,21 @@ function App() {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TooltipProvider>
             <AppWithAdvancedErrorHandling>
-              <QuantumAIProvider>
-                <Router>
-                  <div className="min-h-screen bg-background">
-                    <Routes>
-                      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                      <Route path="/*" element={<Layout />} />
-                    </Routes>
-                    <Toaster />
-                    <QuantumAIInterface />
-                    <QuantumAIIndicator />
-                  </div>
-                </Router>
-              </QuantumAIProvider>
+              <AuthProvider>
+                <QuantumAIProvider>
+                  <Router>
+                    <div className="min-h-screen bg-background">
+                      <Routes>
+                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                        <Route path="/*" element={<Layout />} />
+                      </Routes>
+                      <Toaster />
+                      <QuantumAIInterface />
+                      <QuantumAIIndicator />
+                    </div>
+                  </Router>
+                </QuantumAIProvider>
+              </AuthProvider>
             </AppWithAdvancedErrorHandling>
           </TooltipProvider>
         </ThemeProvider>
