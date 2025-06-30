@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from 'react';
 
-interface ChatMessage {
+export interface ChatMessage {
   id: string;
   content: string;
   isUser: boolean;
