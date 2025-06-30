@@ -2,7 +2,6 @@
  * Security Monitor - Real-time security monitoring and threat detection
  */
 
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 interface SecurityThreat {
@@ -41,7 +40,7 @@ class SecurityMonitor {
   }
 
   private setupSecurityRules() {
-    // XSS Detection Rules
+    // XSS Detection Rules - Only critical ones
     this.addRule({
       id: 'xss_script_tags',
       pattern: /<script[^>]*>.*?<\/script>/gi,
@@ -60,16 +59,7 @@ class SecurityMonitor {
       action: 'block'
     });
 
-    this.addRule({
-      id: 'xss_event_handlers',
-      pattern: /on\w+\s*=/gi,
-      severity: 'medium',
-      type: 'xss',
-      description: 'Event handler injection detected',
-      action: 'block'
-    });
-
-    // SQL Injection Detection
+    // SQL Injection Detection - Only critical ones
     this.addRule({
       id: 'sql_injection_union',
       pattern: /union\s+select/gi,
@@ -88,7 +78,7 @@ class SecurityMonitor {
       action: 'block'
     });
 
-    // Brute Force Detection
+    // Brute Force Detection - More reasonable thresholds
     this.addRule({
       id: 'brute_force_login',
       pattern: (data: any) => {
@@ -104,7 +94,7 @@ class SecurityMonitor {
           
           this.requestPatterns.set(key, pattern);
           
-          return pattern.count > 5; // More than 5 attempts in 15 minutes
+          return pattern.count > 10; // Increased threshold
         }
         return false;
       },
@@ -114,11 +104,16 @@ class SecurityMonitor {
       action: 'alert'
     });
 
-    // Suspicious Activity Detection
+    // Suspicious Activity Detection - Much higher threshold
     this.addRule({
       id: 'rapid_requests',
       pattern: (data: any) => {
         if (data.type === 'api_request') {
+          // Skip monitoring our own security logging requests
+          if (data.endpoint && data.endpoint.includes('security_audit_log')) {
+            return false;
+          }
+          
           const key = `api_${data.endpoint}`;
           const pattern = this.requestPatterns.get(key) || { count: 0, timestamps: [] };
           pattern.timestamps.push(Date.now());
@@ -129,14 +124,14 @@ class SecurityMonitor {
           
           this.requestPatterns.set(key, pattern);
           
-          return pattern.count > 30; // More than 30 requests per minute
+          return pattern.count > 100; // Much higher threshold
         }
         return false;
       },
       severity: 'medium',
       type: 'suspicious_activity',
       description: 'Rapid API requests detected',
-      action: 'alert'
+      action: 'log'
     });
   }
 
@@ -151,24 +146,34 @@ class SecurityMonitor {
       const url = args[0];
       const options = args[1] || {};
       
+      // Skip monitoring for security audit log requests to prevent loops
+      if (typeof url === 'string' && url.includes('security_audit_log')) {
+        return originalFetch.apply(window, args);
+      }
+      
       // Monitor for suspicious patterns in requests
       this.checkRequest(url, options);
       
       try {
         const response = await originalFetch.apply(window, args);
         
-        // Monitor response for security issues
-        this.checkResponse(response, url);
+        // Skip response checking for internal requests
+        if (typeof url === 'string' && !url.includes('security_audit_log')) {
+          this.checkResponse(response, url);
+        }
         
         return response;
       } catch (error) {
-        this.logThreat({
-          type: 'suspicious_activity',
-          severity: 'medium',
-          description: 'Network request failed',
-          metadata: { url, error: error instanceof Error ? error.message : String(error) },
-          timestamp: new Date()
-        });
+        // Only log actual network errors, not security-related ones
+        if (error instanceof Error && !error.message.includes('security')) {
+          this.logThreat({
+            type: 'suspicious_activity',
+            severity: 'low',
+            description: 'Network request failed',
+            metadata: { url, error: error.message },
+            timestamp: new Date()
+          });
+        }
         throw error;
       }
     };
@@ -198,7 +203,7 @@ class SecurityMonitor {
   }
 
   private setupNetworkMonitoring() {
-    // Monitor console errors for security issues
+    // Monitor console errors for security issues - but with reduced sensitivity
     const originalError = console.error;
     console.error = (...args: any[]) => {
       // Call original console.error
@@ -207,18 +212,18 @@ class SecurityMonitor {
       // Check for security-related errors
       const message = args.join(' ');
       
-      // Skip CSP violations in development mode to reduce noise
-      if (import.meta.env.DEV && (
-        message.includes('Content Security Policy') ||
-        message.includes('Failed to construct \'Worker\'') ||
-        message.includes('SecurityError')
-      )) {
+      // Skip common development and security monitoring related errors
+      if (import.meta.env.DEV || 
+          message.includes('Content Security Policy') ||
+          message.includes('Failed to construct \'Worker\'') ||
+          message.includes('SecurityError') ||
+          message.includes('security_audit_log') ||
+          message.includes('401') && message.includes('Unauthorized')) {
         return;
       }
       
-      if (message.includes('Content Security Policy') || 
-          message.includes('Mixed Content') ||
-          message.includes('CORS')) {
+      // Only log actual security violations
+      if (message.includes('Mixed Content') || message.includes('XSS')) {
         this.logThreat({
           type: 'csrf',
           severity: 'medium',
@@ -231,8 +236,12 @@ class SecurityMonitor {
   }
 
   private checkRequest(url: string | URL, options: any) {
-    // Check for suspicious request patterns
+    // Skip checking our own security logging requests
     const urlString = typeof url === 'string' ? url : url.toString();
+    if (urlString.includes('security_audit_log')) {
+      return;
+    }
+    
     const data = {
       type: 'api_request',
       endpoint: urlString,
@@ -245,23 +254,24 @@ class SecurityMonitor {
   }
 
   private checkResponse(response: Response, url: string | URL) {
-    // Check response headers for security issues
-    const securityHeaders = [
-      'Content-Security-Policy',
-      'X-Content-Type-Options',
-      'X-Frame-Options',
-      'X-XSS-Protection',
-      'Strict-Transport-Security'
-    ];
-
-    const missingHeaders = securityHeaders.filter(header => !response.headers.get(header));
+    // Skip response checking for internal/development requests
+    const urlString = typeof url === 'string' ? url : url.toString();
+    if (urlString.includes('supabase.co') || 
+        urlString.includes('localhost') || 
+        urlString.includes('lovable.app')) {
+      return;
+    }
     
-    if (missingHeaders.length > 0) {
+    // Only check for critical missing headers on external requests
+    const criticalHeaders = ['X-Content-Type-Options', 'X-XSS-Protection'];
+    const missingHeaders = criticalHeaders.filter(header => !response.headers.get(header));
+    
+    if (missingHeaders.length === criticalHeaders.length) {
       this.logThreat({
         type: 'csrf',
         severity: 'low',
-        description: 'Missing security headers',
-        metadata: { url: url.toString(), missingHeaders },
+        description: 'Missing critical security headers',
+        metadata: { url: urlString, missingHeaders },
         timestamp: new Date()
       });
     }
@@ -269,42 +279,29 @@ class SecurityMonitor {
 
   private checkDOMElement(element: Element) {
     const tagName = element.tagName.toLowerCase();
-    const attributes = Array.from(element.attributes);
     
-    // Check for dangerous elements
+    // Only check for dangerous script elements
     if (tagName === 'script') {
+      const src = element.getAttribute('src');
+      // Skip internal/trusted scripts
+      if (!src || src.includes('lovable') || src.includes('localhost')) {
+        return;
+      }
+      
       this.logThreat({
         type: 'xss',
-        severity: 'high',
-        description: 'Script element dynamically added',
+        severity: 'medium',
+        description: 'External script element added',
         metadata: { 
           tagName, 
-          src: element.getAttribute('src'),
+          src,
           innerHTML: element.innerHTML.substring(0, 100)
         },
         timestamp: new Date()
       });
     }
-
-    // Check for dangerous attributes
-    attributes.forEach(attr => {
-      if (attr.name.startsWith('on') && attr.value) {
-        this.logThreat({
-          type: 'xss',
-          severity: 'medium',
-          description: 'Event handler attribute detected',
-          metadata: { 
-            tagName, 
-            attribute: attr.name,
-            value: attr.value.substring(0, 100)
-          },
-          timestamp: new Date()
-        });
-      }
-    });
   }
 
-  // Make applyRules public so it can be used by other components
   applyRules(data: any) {
     this.rules.forEach(rule => {
       let isMatch = false;
@@ -313,7 +310,12 @@ class SecurityMonitor {
         const dataString = JSON.stringify(data);
         isMatch = rule.pattern.test(dataString);
       } else if (typeof rule.pattern === 'function') {
-        isMatch = rule.pattern(data);
+        try {
+          isMatch = rule.pattern(data);
+        } catch (error) {
+          // Ignore pattern matching errors
+          return;
+        }
       }
 
       if (isMatch) {
@@ -341,7 +343,7 @@ class SecurityMonitor {
         this.alertThreat(threat);
         break;
       case 'log':
-        // Already logged
+        // Already logged, no additional action
         break;
     }
   }
@@ -349,15 +351,17 @@ class SecurityMonitor {
   private logThreat(threat: SecurityThreat) {
     this.threats.push(threat);
     
-    // Keep only last 1000 threats
-    if (this.threats.length > 1000) {
-      this.threats = this.threats.slice(-1000);
+    // Keep only last 100 threats
+    if (this.threats.length > 100) {
+      this.threats = this.threats.slice(-100);
     }
 
-    console.warn(`🚨 Security Threat Detected: ${threat.type} - ${threat.description}`, threat);
+    // Only log high and critical threats to console to reduce noise
+    if (threat.severity === 'high' || threat.severity === 'critical') {
+      console.warn(`🚨 Security Threat Detected: ${threat.type} - ${threat.description}`, threat);
+    }
 
-    // Log to Supabase for analysis
-    this.logToDatabase(threat);
+    // Don't log to Supabase anymore since auth is removed
   }
 
   private blockThreat(threat: SecurityThreat) {
@@ -365,9 +369,8 @@ class SecurityMonitor {
       duration: 5000,
     });
 
-    // If critical, consider redirecting to safe page
     if (threat.severity === 'critical') {
-      console.error('🚨 Critical security threat detected, consider emergency measures');
+      console.error('🚨 Critical security threat detected');
     }
   }
 
@@ -376,22 +379,6 @@ class SecurityMonitor {
       toast.warning(`Security alert: ${threat.description}`, {
         duration: 8000,
       });
-    }
-  }
-
-  private async logToDatabase(threat: SecurityThreat) {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      await supabase.from('security_audit_log').insert({
-        user_id: user?.id || null,
-        action: 'security_threat_detected',
-        table_name: 'security_monitor',
-        record_id: null,
-        new_values: threat as any
-      });
-    } catch (error) {
-      console.error('Failed to log security threat to database:', error);
     }
   }
 
