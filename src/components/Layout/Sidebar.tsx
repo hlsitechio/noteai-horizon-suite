@@ -9,7 +9,8 @@ import {
   MagnifyingGlassIcon,
   CodeBracketIcon,
   Squares2X2Icon,
-  ChartBarIcon
+  ChartBarIcon,
+  CircleStackIcon
 } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -22,6 +23,7 @@ const menuItems = [
   { icon: PencilIcon, label: 'Editor', path: '/editor' },
   { icon: MagnifyingGlassIcon, label: 'Notes', path: '/notes' },
   { icon: ChartBarIcon, label: 'Analytics', path: '/analytics' },
+  { icon: CircleStackIcon, label: 'DB Performance', path: '/db-performance' },
   { icon: CogIcon, label: 'Settings', path: '/settings' },
 ];
 
@@ -33,6 +35,8 @@ const Sidebar: React.FC = () => {
   const handleMenuClick = (path: string) => {
     if (path === '/dashboard') {
       navigate('/dashboard');
+    } else if (path === '/db-performance') {
+      navigate('/db-performance');
     } else {
       console.log(`Navigation to ${path} - feature not implemented in demo`);
     }

@@ -3,6 +3,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Dashboard from '../../pages/Dashboard';
+import DatabasePerformance from '../../pages/DatabasePerformance';
 import { MockAuthProvider } from '../../contexts/MockAuthContext';
 
 const Layout: React.FC = () => {
@@ -14,6 +15,7 @@ const Layout: React.FC = () => {
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/db-performance" element={<DatabasePerformance />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>
