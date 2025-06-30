@@ -6,10 +6,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
-import AuthForm from "@/components/Auth/AuthForm";
 import Layout from "@/components/Layout/Layout";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import HomeRedirect from "@/components/HomeRedirect";
 import AppWithAdvancedErrorHandling from "@/components/AppWithAdvancedErrorHandling";
 import { AppInitializationService } from "@/services/appInitializationService";
 
@@ -47,17 +44,9 @@ function App() {
               <Router>
                 <div className="min-h-screen bg-background">
                   <Routes>
-                    <Route path="/auth" element={<AuthForm />} />
-                    <Route path="/" element={<HomeRedirect />} />
-                    <Route
-                      path="/dashboard/*"
-                      element={
-                        <ProtectedRoute>
-                          <Layout />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="*" element={<Navigate to="/" replace />} />
+                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="/dashboard/*" element={<Layout />} />
+                    <Route path="*" element={<Navigate to="/dashboard" replace />} />
                   </Routes>
                   <Toaster />
                 </div>

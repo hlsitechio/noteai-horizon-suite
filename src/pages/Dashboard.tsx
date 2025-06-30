@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useNotes } from '../contexts/NotesContext';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
@@ -11,31 +10,52 @@ import AnalyticsOverview from '../components/Dashboard/AnalyticsOverview';
 import WorkflowActions from '../components/Dashboard/WorkflowActions';
 import FullscreenToggle from '../components/Dashboard/FullscreenToggle';
 
+// Mock notes data
+const mockNotes = [
+  {
+    id: '1',
+    title: 'Welcome to Online Note AI',
+    content: 'This is a demo note to show how the dashboard works.',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    category: 'general',
+    isFavorite: false,
+  },
+  {
+    id: '2',
+    title: 'Getting Started',
+    content: 'Here are some tips to get you started with the application.',
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
+    updatedAt: new Date(Date.now() - 86400000).toISOString(),
+    category: 'tutorial',
+    isFavorite: true,
+  },
+];
+
 const Dashboard: React.FC = () => {
-  const { notes, setCurrentNote } = useNotes();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  // Calculate stats from real user data
-  const totalNotes = notes.length;
-  const favoriteNotes = notes.filter(note => note.isFavorite).length;
-  const recentNotes = notes
+  // Calculate stats from mock data
+  const totalNotes = mockNotes.length;
+  const favoriteNotes = mockNotes.filter(note => note.isFavorite).length;
+  const recentNotes = mockNotes
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
     .slice(0, 5);
 
-  const categoryCounts = notes.reduce((acc, note) => {
+  const categoryCounts = mockNotes.reduce((acc, note) => {
     const category = note.category || 'general';
     acc[category] = (acc[category] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
-  const weeklyNotes = notes.filter(note => {
+  const weeklyNotes = mockNotes.filter(note => {
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
     return new Date(note.createdAt) > weekAgo;
   }).length;
 
-  // Enhanced AI context integration with real user data
+  // Enhanced AI context integration with mock data
   useQuantumAIIntegration({
     page: '/app/dashboard',
     content: `Dashboard overview: ${totalNotes} total notes, ${favoriteNotes} favorites, ${weeklyNotes} notes this week. Categories: ${Object.keys(categoryCounts).join(', ')}`,
@@ -46,7 +66,7 @@ const Dashboard: React.FC = () => {
       categoryCounts,
       recentNotesCount: recentNotes.length,
       hasRecentActivity: recentNotes.length > 0,
-      totalWords: notes.reduce((acc, note) => {
+      totalWords: mockNotes.reduce((acc, note) => {
         const wordCount = note.content ? note.content.split(/\s+/).filter(word => word.length > 0).length : 0;
         return acc + wordCount;
       }, 0)
@@ -54,13 +74,11 @@ const Dashboard: React.FC = () => {
   });
 
   const handleCreateNote = () => {
-    setCurrentNote(null);
-    navigate('/app/editor');
+    console.log('Create note clicked - functionality not implemented in demo');
   };
 
   const handleEditNote = (note: any) => {
-    setCurrentNote(note);
-    navigate('/app/editor');
+    console.log('Edit note clicked:', note.title);
   };
 
   return (
@@ -83,7 +101,7 @@ const Dashboard: React.FC = () => {
             favoriteNotes={favoriteNotes}
             categoryCounts={categoryCounts}
             weeklyNotes={weeklyNotes}
-            notes={notes}
+            notes={mockNotes}
           />
         </div>
 
@@ -96,7 +114,7 @@ const Dashboard: React.FC = () => {
               favoriteNotes={favoriteNotes}
               categoryCounts={categoryCounts}
               weeklyNotes={weeklyNotes}
-              notes={notes}
+              notes={mockNotes}
             />
           </div>
 
@@ -112,7 +130,7 @@ const Dashboard: React.FC = () => {
           {/* Quick Actions - 3/12 columns */}
           <div className="col-span-3 h-full min-h-0">
             <WorkflowActions 
-              notes={notes}
+              notes={mockNotes}
               onCreateNote={handleCreateNote}
               onEditNote={handleEditNote}
             />

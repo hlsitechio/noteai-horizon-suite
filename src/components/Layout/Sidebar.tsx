@@ -14,21 +14,29 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/MockAuthContext';
 
 const menuItems = [
-  { icon: Squares2X2Icon, label: 'Dashboard', path: '/app/dashboard' },
-  { icon: PlusIcon, label: 'AI Chat', path: '/app/chat' },
-  { icon: PencilIcon, label: 'Editor', path: '/app/editor' },
-  { icon: MagnifyingGlassIcon, label: 'Notes', path: '/app/notes' },
-  { icon: ChartBarIcon, label: 'Analytics', path: '/app/analytics' },
-  { icon: CogIcon, label: 'Settings', path: '/app/settings' },
+  { icon: Squares2X2Icon, label: 'Dashboard', path: '/dashboard' },
+  { icon: PlusIcon, label: 'AI Chat', path: '/chat' },
+  { icon: PencilIcon, label: 'Editor', path: '/editor' },
+  { icon: MagnifyingGlassIcon, label: 'Notes', path: '/notes' },
+  { icon: ChartBarIcon, label: 'Analytics', path: '/analytics' },
+  { icon: CogIcon, label: 'Settings', path: '/settings' },
 ];
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+
+  const handleMenuClick = (path: string) => {
+    if (path === '/dashboard') {
+      navigate('/dashboard');
+    } else {
+      console.log(`Navigation to ${path} - feature not implemented in demo`);
+    }
+  };
 
   return (
     <div className="fixed left-0 top-0 h-screen w-[280px] bg-background border-r border-border shadow-lg z-[1000] hidden md:block">
@@ -58,7 +66,7 @@ const Sidebar: React.FC = () => {
                   ? 'bg-primary/10 text-primary border border-primary/20' 
                   : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:translate-x-1'
               }`}
-              onClick={() => navigate(item.path)}
+              onClick={() => handleMenuClick(item.path)}
             >
               <item.icon className="w-5 h-5 mr-3" />
               {item.label}
@@ -90,9 +98,9 @@ const Sidebar: React.FC = () => {
             variant="ghost"
             size="sm"
             className="w-full hover:bg-destructive/10 hover:text-destructive"
-            onClick={logout}
+            onClick={() => console.log('Sign out clicked - feature disabled in demo')}
           >
-            Sign Out
+            Demo Mode
           </Button>
         </div>
       </div>

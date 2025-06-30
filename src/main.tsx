@@ -5,18 +5,8 @@ import App from "./App.tsx";
 import "./index.css";
 
 // Initialize error handling systems first (before React)
-import { initSentry } from '@/config/sentry';
 import { errorPreventionSystem } from '@/utils/errorPreventionSystem';
 import { errorCorrectionSystem } from '@/utils/errorCorrectionSystem';
-
-// Initialize Sentry first
-console.log('🚀 Starting Online Note AI...');
-try {
-  initSentry();
-  console.log('✅ Sentry initialized');
-} catch (error) {
-  console.warn('⚠️ Sentry initialization failed:', error);
-}
 
 // Initialize error systems
 try {

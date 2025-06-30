@@ -1,19 +1,24 @@
 
 import React from 'react';
-import { Outlet } from 'react-router-dom';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { SidebarMain } from './Sidebar/SidebarMain';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Sidebar from './Sidebar';
+import Dashboard from '../../pages/Dashboard';
+import { MockAuthProvider } from '../../contexts/MockAuthContext';
 
 const Layout: React.FC = () => {
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
-        <SidebarMain />
-        <main className="flex-1 overflow-hidden">
-          <Outlet />
+    <MockAuthProvider>
+      <div className="flex h-screen bg-background">
+        <Sidebar />
+        <main className="flex-1 ml-[280px] overflow-auto">
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
         </main>
       </div>
-    </SidebarProvider>
+    </MockAuthProvider>
   );
 };
 
