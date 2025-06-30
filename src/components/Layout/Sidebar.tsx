@@ -15,7 +15,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import { useAuth } from '../../contexts/AuthContext';
 
 const menuItems = [
   { icon: Squares2X2Icon, label: 'Dashboard', path: '/dashboard' },
@@ -30,10 +29,13 @@ const menuItems = [
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
 
   const handleMenuClick = (path: string) => {
     navigate(path);
+  };
+
+  const handleLogout = () => {
+    console.log('Logout clicked');
   };
 
   return (
@@ -78,17 +80,17 @@ const Sidebar: React.FC = () => {
         <div className="p-4">
           <div className="flex items-center gap-3 mb-4">
             <Avatar className="w-12 h-12">
-              <AvatarImage src={user?.avatar} />
+              <AvatarImage src="" />
               <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10">
-                {user?.name?.[0]}
+                U
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <p className="font-semibold text-sm text-foreground">
-                {user?.name || user?.email}
+                Demo User
               </p>
               <p className="text-xs text-muted-foreground">
-                {user?.email}
+                demo@example.com
               </p>
             </div>
           </div>
@@ -96,7 +98,7 @@ const Sidebar: React.FC = () => {
             variant="ghost"
             size="sm"
             className="w-full hover:bg-destructive/10 hover:text-destructive"
-            onClick={logout}
+            onClick={handleLogout}
           >
             Sign Out
           </Button>
