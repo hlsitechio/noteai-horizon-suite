@@ -9,6 +9,9 @@ import { ThemeProvider } from "next-themes";
 import Layout from "@/components/Layout/Layout";
 import AppWithAdvancedErrorHandling from "@/components/AppWithAdvancedErrorHandling";
 import { AppInitializationService } from "@/services/appInitializationService";
+import { QuantumAIProvider } from "@/contexts/QuantumAIContext";
+import QuantumAIInterface from "@/components/QuantumAI/QuantumAIInterface";
+import QuantumAIIndicator from "@/components/QuantumAI/QuantumAIIndicator";
 
 // Create a stable QueryClient instance
 const queryClient = new QueryClient({
@@ -40,17 +43,21 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TooltipProvider>
-            <AppWithAdvancedErrorHandling>
-              <Router>
-                <div className="min-h-screen bg-background">
-                  <Routes>
-                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                    <Route path="/*" element={<Layout />} />
-                  </Routes>
-                  <Toaster />
-                </div>
-              </Router>
-            </AppWithAdvancedErrorHandling>
+            <QuantumAIProvider>
+              <AppWithAdvancedErrorHandling>
+                <Router>
+                  <div className="min-h-screen bg-background">
+                    <Routes>
+                      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                      <Route path="/*" element={<Layout />} />
+                    </Routes>
+                    <Toaster />
+                    <QuantumAIInterface />
+                    <QuantumAIIndicator />
+                  </div>
+                </Router>
+              </AppWithAdvancedErrorHandling>
+            </QuantumAIProvider>
           </TooltipProvider>
         </ThemeProvider>
         <ReactQueryDevtools initialIsOpen={false} />

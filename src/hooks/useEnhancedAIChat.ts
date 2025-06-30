@@ -1,12 +1,7 @@
 
-import { useState, useRef, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { useGPUAcceleration } from './useGPUAcceleration';
-import { GPUTextProcessingService } from '@/services/gpuTextProcessing';
+import { useState, useCallback } from 'react';
 
-// Export the ChatMessage type so it can be used by other components
-export interface ChatMessage {
+interface ChatMessage {
   id: string;
   content: string;
   isUser: boolean;
@@ -15,180 +10,36 @@ export interface ChatMessage {
 
 export const useEnhancedAIChat = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isProcessingLocally, setIsProcessingLocally] = useState(false);
-  const { toast } = useToast();
-  const { capabilities } = useGPUAcceleration();
-  const gpuServiceRef = useRef<GPUTextProcessingService | null>(null);
 
-  const initializeGPUService = useCallback(() => {
-    if (!gpuServiceRef.current && capabilities.isInitialized) {
-      gpuServiceRef.current = new GPUTextProcessingService(capabilities.preferredDevice);
-      console.log(`GPU service initialized with device: ${capabilities.preferredDevice}`);
-    }
-    return gpuServiceRef.current;
-  }, [capabilities]);
-
-  const analyzeMessageSentiment = useCallback(async (message: string) => {
-    const gpuService = initializeGPUService();
-    if (!gpuService) return null;
-
-    try {
-      setIsProcessingLocally(true);
-      const sentiment = await gpuService.classifyText(message);
-      console.log('Message sentiment analysis:', sentiment);
-      return sentiment;
-    } catch (error) {
-      console.error('Error analyzing sentiment:', error);
-      return null;
-    } finally {
-      setIsProcessingLocally(false);
-    }
-  }, [initializeGPUService]);
-
-  const generateMessageEmbeddings = useCallback(async (messages: string[]) => {
-    const gpuService = initializeGPUService();
-    if (!gpuService) return null;
-
-    try {
-      setIsProcessingLocally(true);
-      const embeddings = await gpuService.generateEmbeddings(messages);
-      console.log(`Generated embeddings for ${messages.length} messages using GPU`);
-      return embeddings;
-    } catch (error) {
-      console.error('Error generating embeddings:', error);
-      return null;
-    } finally {
-      setIsProcessingLocally(false);
-    }
-  }, [initializeGPUService]);
-
-  const sendMessage = async (
-    messages: ChatMessage[], 
-    responseFormat?: {
-      type: 'json_schema';
-      json_schema: {
-        name: string;
-        strict: boolean;
-        schema: object;
-      };
-    }
-  ): Promise<string> => {
+  const sendMessage = useCallback(async (messages: ChatMessage[]): Promise<string> => {
     setIsLoading(true);
     
     try {
-      console.log('Sending enhanced chat message to AI:', { 
-        messageCount: messages.length,
-        gpuDevice: capabilities.preferredDevice,
-        gpuSupported: capabilities.webGPUSupported || capabilities.webGLSupported,
-        hasStructuredOutput: !!responseFormat
-      });
+      // Simulate AI response for demo purposes
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Analyze sentiment of the last user message if GPU is available
-      const lastUserMessage = messages.filter(m => m.isUser).pop();
-      if (lastUserMessage && capabilities.preferredDevice !== 'cpu') {
-        await analyzeMessageSentiment(lastUserMessage.content);
-      }
+      const userMessage = messages[messages.length - 1]?.content || '';
       
-      // Convert messages to OpenAI format
-      const openAIMessages = messages.map(msg => ({
-        role: msg.isUser ? 'user' : 'assistant',
-        content: msg.content
-      }));
-
-      const requestBody: any = { 
-        messages: openAIMessages,
-        model: 'deepseek/deepseek-r1-0528:free'
-      };
-
-      // Add structured output format if provided
-      if (responseFormat) {
-        requestBody.response_format = responseFormat;
-      }
-
-      const { data, error } = await supabase.functions.invoke('chat-openrouter', {
-        body: requestBody
-      });
-
-      if (error) {
-        console.error('Supabase function error:', error);
-        throw new Error(`Failed to get AI response: ${error.message}`);
-      }
-
-      if (!data) {
-        throw new Error('No response from AI service');
-      }
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      if (!data.message) {
-        throw new Error('Invalid response format from AI service');
-      }
-
-      console.log('Enhanced AI response received successfully', {
-        structured: data.structured || false
-      });
-      return data.message;
-
-    } catch (error: any) {
-      console.error('Error sending enhanced chat message:', error);
-      
-      // More specific error messages
-      if (error.message?.includes('OPENROUTER_API_KEY')) {
-        toast({
-          variant: "destructive",
-          title: "Configuration Error",
-          description: "AI service not configured. Please contact support."
-        });
-      } else if (error.message?.includes('network')) {
-        toast({
-          variant: "destructive",
-          title: "Network Error",
-          description: "Network error. Please check your connection."
-        });
+      // Simple response logic for demo
+      if (userMessage.toLowerCase().includes('help')) {
+        return "I'm here to help! What would you like assistance with?";
+      } else if (userMessage.toLowerCase().includes('improve')) {
+        return "Here are some suggestions to improve your text: Consider adding more detail, checking grammar, and ensuring clarity.";
+      } else if (userMessage.toLowerCase().includes('summarize')) {
+        return "Here's a summary: The selected text appears to be about a specific topic that could benefit from condensation and key point extraction.";
       } else {
-        toast({
-          variant: "destructive",
-          title: "AI Chat Failed",
-          description: error.message
-        });
+        return "I understand your request. Let me help you with that. Could you provide more specific details about what you'd like me to do?";
       }
-      
-      throw error;
+    } catch (error) {
+      console.error('AI chat error:', error);
+      return "I apologize, but I encountered an error. Please try again.";
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const sendStructuredMessage = async (
-    messages: ChatMessage[],
-    schema: {
-      name: string;
-      schema: object;
-      description?: string;
-    }
-  ): Promise<string> => {
-    const responseFormat = {
-      type: 'json_schema' as const,
-      json_schema: {
-        name: schema.name,
-        strict: true,
-        schema: schema.schema
-      }
-    };
-
-    return sendMessage(messages, responseFormat);
-  };
+  }, []);
 
   return {
     sendMessage,
-    sendStructuredMessage,
-    isLoading,
-    isProcessingLocally,
-    analyzeMessageSentiment,
-    generateMessageEmbeddings,
-    gpuCapabilities: capabilities,
-    gpuService: gpuServiceRef.current,
+    isLoading
   };
 };
