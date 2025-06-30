@@ -45,8 +45,7 @@ function App() {
                 <div className="min-h-screen bg-background">
                   <Routes>
                     <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                    <Route path="/dashboard/*" element={<Layout />} />
-                    <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="/*" element={<Layout />} />
                   </Routes>
                   <Toaster />
                 </div>

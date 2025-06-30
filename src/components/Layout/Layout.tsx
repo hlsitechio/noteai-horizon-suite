@@ -13,9 +13,9 @@ const Layout: React.FC = () => {
         <Sidebar />
         <main className="flex-1 ml-[280px] overflow-auto">
           <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/db-performance" element={<DatabasePerformance />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>
