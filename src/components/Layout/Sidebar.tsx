@@ -30,16 +30,10 @@ const menuItems = [
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const handleMenuClick = (path: string) => {
-    if (path === '/dashboard') {
-      navigate('/dashboard');
-    } else if (path === '/db-performance') {
-      navigate('/db-performance');
-    } else {
-      console.log(`Navigation to ${path} - feature not implemented in demo`);
-    }
+    navigate(path);
   };
 
   return (
@@ -102,9 +96,9 @@ const Sidebar: React.FC = () => {
             variant="ghost"
             size="sm"
             className="w-full hover:bg-destructive/10 hover:text-destructive"
-            onClick={() => console.log('Sign out clicked - feature disabled in demo')}
+            onClick={logout}
           >
-            Demo Mode
+            Sign Out
           </Button>
         </div>
       </div>
