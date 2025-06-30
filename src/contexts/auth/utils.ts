@@ -3,10 +3,8 @@ import { User as SupabaseUser } from '@supabase/supabase-js';
 import { User } from './types';
 import { supabase } from '@/integrations/supabase/client';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
-if (!supabaseUrl) {
-  console.warn('Supabase URL is not configured')
-}
+// Use the actual Supabase URL directly
+const supabaseUrl = 'https://qrdulwzjgbfgaplazgsh.supabase.co'
 const supabaseProjectRef = supabaseUrl ?
   new URL(supabaseUrl).hostname.split('.')[0] : ''
 const AUTH_TOKEN_KEY = supabaseProjectRef
