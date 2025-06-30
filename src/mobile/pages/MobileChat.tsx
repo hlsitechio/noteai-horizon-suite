@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Send, Brain, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -65,7 +64,7 @@ const MobileChat: React.FC = () => {
     <div className="h-full flex flex-col bg-background">
       <DynamicMobileHeader 
         title="AI Chat" 
-        rightContent={
+        rightActions={
           <Badge variant="secondary" className="bg-purple-100 text-purple-700 text-xs">
             <Brain className="w-3 h-3 mr-1" />
             AI Assistant

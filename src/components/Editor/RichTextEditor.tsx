@@ -33,6 +33,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     width: number;
     height: number;
   }>>([]);
+  const [showAIToggle, setShowAIToggle] = useState(false);
 
   // Custom hooks for editor functionality
   const {
@@ -78,6 +79,16 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     ));
   };
 
+  const handleSelect = () => {
+    // Handle text selection for AI features
+    console.log('Text selected in editor');
+  };
+
+  const handleAIToggle = () => {
+    setShowAIToggle(!showAIToggle);
+    console.log('AI toggle activated');
+  };
+
   const getFontFamilyStyle = (family: string) => {
     const fontMap: Record<string, string> = {
       'inter': 'Inter, system-ui, sans-serif',
@@ -117,7 +128,9 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           slateValue={slateValue}
           onChange={handleChange}
           placeholder={placeholder}
+          onSelect={handleSelect}
           onKeyDown={handleKeyboardShortcuts}
+          onAIToggle={handleAIToggle}
         />
         
         {/* Render images */}
