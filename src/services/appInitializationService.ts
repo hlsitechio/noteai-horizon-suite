@@ -3,7 +3,6 @@ import { AnalyticsService } from './analyticsService';
 import { PerformanceService } from './performanceService';
 import { initSentry } from '../config/sentry';
 import { launchDarklyService } from './launchDarklyService';
-import * as Sentry from "@sentry/react";
 
 export class AppInitializationService {
   private static isInitialized = false;
@@ -14,9 +13,9 @@ export class AppInitializationService {
     try {
       console.log('🚀 Initializing Online Note AI application...');
       
-      // Initialize Sentry first for error tracking
+      // Initialize Sentry (will use Lovable internal tracking in development)
       initSentry();
-      console.log('✅ Sentry initialized');
+      console.log('✅ Error tracking initialized');
 
       // Initialize performance monitoring
       PerformanceService.initialize();
@@ -49,21 +48,24 @@ export class AppInitializationService {
 
     } catch (error) {
       console.error('❌ Failed to initialize application:', error);
-      Sentry.captureException(error);
+      // Use console.error instead of Sentry in development
+      if (import.meta.env.PROD) {
+        // Only use Sentry in production if available
+        try {
+          const Sentry = await import('@sentry/react');
+          Sentry.captureException(error);
+        } catch (sentryError) {
+          console.error('Sentry not available:', sentryError);
+        }
+      }
     }
   }
 
   private static async initializeLaunchDarkly() {
     try {
-      // Note: Replace 'your-client-id-here' with actual LaunchDarkly client ID
-      // This is just a placeholder - actual initialization should be done when user context is available
       console.log('🏁 LaunchDarkly service ready for initialization');
-      
-      // For testing purposes, you can uncomment the line below:
-      // await launchDarklyService.initialize('your-client-id', { kind: "user", key: "test-user" });
     } catch (error) {
       console.warn('LaunchDarkly initialization skipped:', error);
-      // Don't throw here as this is optional and shouldn't break app initialization
     }
   }
 
@@ -71,14 +73,28 @@ export class AppInitializationService {
     // Handle unhandled promise rejections
     window.addEventListener('unhandledrejection', (event) => {
       console.error('Unhandled promise rejection:', event.reason);
-      Sentry.captureException(event.reason);
+      if (import.meta.env.PROD) {
+        try {
+          const Sentry = require('@sentry/react');
+          Sentry.captureException(event.reason);
+        } catch (sentryError) {
+          // Sentry not available, continue without it
+        }
+      }
       AnalyticsService.trackError(new Error(String(event.reason)), 'unhandled_promise');
     });
 
     // Handle JavaScript errors
     window.addEventListener('error', (event) => {
       console.error('JavaScript error:', event.error);
-      Sentry.captureException(event.error);
+      if (import.meta.env.PROD) {
+        try {
+          const Sentry = require('@sentry/react');
+          Sentry.captureException(event.error);
+        } catch (sentryError) {
+          // Sentry not available, continue without it
+        }
+      }
       AnalyticsService.trackError(event.error, 'javascript_error');
     });
   }

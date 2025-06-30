@@ -2,117 +2,45 @@
 import * as Sentry from "@sentry/react";
 
 export const initSentry = () => {
-  const dsn = import.meta.env.VITE_SENTRY_DSN as string | undefined
-
-  if (!dsn) {
-    console.warn('Sentry DSN is not configured')
-    return
-  }
-
-  Sentry.init({
-    dsn,
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      // LaunchDarkly integration for feature flag monitoring
-      Sentry.launchDarklyIntegration(),
-      // Only enable replay in production to avoid CSP issues in development
-      ...(import.meta.env.PROD ? [Sentry.replayIntegration({
-        maskAllText: false,
-        blockAllMedia: false,
-        // Disable worker to avoid CSP issues
-        useCompression: false,
-      })] : []),
-      // Add breadcrumbs integration for better error context
-      Sentry.breadcrumbsIntegration({
-        console: true,
-        dom: true,
-        fetch: true,
-        history: true,
-        sentry: true,
-        xhr: true,
-      }),
-    ],
-    // Performance Monitoring
-    tracesSampleRate: 1.0, // Capture 100% of the transactions
-    // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
-    tracePropagationTargets: ["localhost", /^https:\/\/yourserver\.io\/api/],
-    // Session Replay - only in production
-    replaysSessionSampleRate: import.meta.env.PROD ? 0.1 : 0, // 10% in production, 0% in dev
-    replaysOnErrorSampleRate: import.meta.env.PROD ? 1.0 : 0, // 100% on errors in production, 0% in dev
-    
-    environment: import.meta.env.MODE,
-    
-    // Enhanced error capturing with better filtering
-    ignoreErrors: [
-      // Ignore common browser extension errors
-      'Non-Error promise rejection captured',
-      'ResizeObserver loop limit exceeded',
-      'Script error.',
-      'Network request failed',
-      // Ignore CSP worker errors in development
-      'Failed to construct \'Worker\'',
-      'SecurityError: Failed to construct \'Worker\'',
-      // Ignore ad blocker related errors
-      'net::ERR_BLOCKED_BY_CLIENT',
-      'Failed to load resource: net::ERR_BLOCKED_BY_CLIENT',
-      // Ignore common tracking script errors
-      'facebook.net',
-      'tiktok.com',
-      'reddit.com',
-      'googletagmanager.com',
-      'google-analytics.com',
-      'static.cloudflareinsights.com',
-    ],
-    
-    // Capture all console errors
-    beforeSend(event, hint) {
-      // Skip blocked resource errors (they're expected due to ad blockers)
-      if (hint.originalException && 
-          hint.originalException.toString &&
-          hint.originalException.toString().includes('ERR_BLOCKED_BY_CLIENT')) {
-        return null;
-      }
-      
-      // Skip CSP violations for known blocked resources
-      if (event.message && (
-        event.message.includes('facebook.net') ||
-        event.message.includes('tiktok.com') ||
-        event.message.includes('reddit.com') ||
-        event.message.includes('static.cloudflareinsights.com')
-      )) {
-        return null;
-      }
-      
-      // In development, log to console but still send to Sentry for testing
-      if (import.meta.env.DEV) {
-        console.log('Sentry event (dev mode):', event);
-        console.log('Error details:', hint.originalException);
-        
-        // Skip CSP violations in development
-        if (hint.originalException && hint.originalException.toString().includes('Content Security Policy')) {
-          return null;
-        }
-      }
-      
-      // Capture console errors in breadcrumbs
-      if (event.breadcrumbs) {
-        event.breadcrumbs.forEach(breadcrumb => {
-          if (breadcrumb.category === 'console' && breadcrumb.level === 'error') {
-            console.log('Console error captured:', breadcrumb.message);
+  // Only initialize Sentry in production and when DSN is available
+  if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
+    Sentry.init({
+      dsn: import.meta.env.VITE_SENTRY_DSN,
+      integrations: [
+        Sentry.browserTracingIntegration(),
+        Sentry.replayIntegration({
+          maskAllText: false,
+          blockAllMedia: false,
+        }),
+      ],
+      tracesSampleRate: 0.1,
+      replaysSessionSampleRate: 0.1,
+      replaysOnErrorSampleRate: 1.0,
+      environment: import.meta.env.MODE,
+      beforeSend(event) {
+        // Filter out non-critical errors
+        if (event.exception) {
+          const error = event.exception.values?.[0];
+          if (error?.type === 'ChunkLoadError' || 
+              error?.value?.includes('Loading chunk') ||
+              error?.value?.includes('ResizeObserver')) {
+            return null;
           }
-        });
-      }
-      
-      return event;
-    },
+        }
+        return event;
+      },
+    });
+  } else {
+    // Use Lovable's internal error tracking in development
+    console.log('🔧 Using Lovable internal error tracking');
     
-    // Enable debug mode in development
-    debug: import.meta.env.DEV,
+    // Set up basic error tracking for development
+    window.addEventListener('error', (event) => {
+      console.error('Global error caught:', event.error);
+    });
     
-    // Enhanced transport options with better error handling
-    transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
-    
-    // Add tunnel option for environments with strict CSP
-    tunnel: import.meta.env.PROD ? undefined : '/sentry-tunnel',
-  });
+    window.addEventListener('unhandledrejection', (event) => {
+      console.error('Unhandled promise rejection:', event.reason);
+    });
+  }
 };
