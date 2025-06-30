@@ -11,6 +11,8 @@ import AppWithAdvancedErrorHandling from "@/components/AppWithAdvancedErrorHandl
 import { AppInitializationService } from "@/services/appInitializationService";
 import { QuantumAIProvider } from "@/contexts/QuantumAIContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AccentColorProvider } from "@/contexts/AccentColorContext";
+import { DynamicAccentProvider } from "@/contexts/DynamicAccentContext";
 import QuantumAIInterface from "@/components/QuantumAI/QuantumAIInterface";
 import QuantumAIIndicator from "@/components/QuantumAI/QuantumAIIndicator";
 
@@ -46,19 +48,23 @@ function App() {
           <TooltipProvider>
             <AppWithAdvancedErrorHandling>
               <AuthProvider>
-                <QuantumAIProvider>
-                  <Router>
-                    <div className="min-h-screen bg-background">
-                      <Routes>
-                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                        <Route path="/*" element={<Layout />} />
-                      </Routes>
-                      <Toaster />
-                      <QuantumAIInterface />
-                      <QuantumAIIndicator />
-                    </div>
-                  </Router>
-                </QuantumAIProvider>
+                <AccentColorProvider>
+                  <DynamicAccentProvider>
+                    <QuantumAIProvider>
+                      <Router>
+                        <div className="min-h-screen bg-background">
+                          <Routes>
+                            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                            <Route path="/*" element={<Layout />} />
+                          </Routes>
+                          <Toaster />
+                          <QuantumAIInterface />
+                          <QuantumAIIndicator />
+                        </div>
+                      </Router>
+                    </QuantumAIProvider>
+                  </DynamicAccentProvider>
+                </AccentColorProvider>
               </AuthProvider>
             </AppWithAdvancedErrorHandling>
           </TooltipProvider>

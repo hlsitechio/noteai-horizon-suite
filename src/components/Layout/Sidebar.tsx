@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import { useAuth } from '../../contexts/MockAuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 const menuItems = [
   { icon: Squares2X2Icon, label: 'Dashboard', path: '/dashboard' },
@@ -91,7 +91,7 @@ const Sidebar: React.FC = () => {
             </Avatar>
             <div className="flex-1">
               <p className="font-semibold text-sm text-foreground">
-                {user?.name}
+                {user?.name || user?.email}
               </p>
               <p className="text-xs text-muted-foreground">
                 {user?.email}
