@@ -2,7 +2,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '../hooks/use-mobile';
-import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
 import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
@@ -57,23 +56,6 @@ const Dashboard: React.FC = () => {
     return new Date(note.createdAt) > weekAgo;
   }).length;
 
-  // Enhanced AI context integration with mock data
-  useQuantumAIIntegration({
-    page: '/app/dashboard',
-    content: `Dashboard overview: ${totalNotes} total notes, ${favoriteNotes} favorites, ${weeklyNotes} notes this week. Categories: ${Object.keys(categoryCounts).join(', ')}`,
-    metadata: {
-      totalNotes,
-      favoriteNotes,
-      weeklyNotes,
-      categoryCounts,
-      recentNotesCount: recentNotes.length,
-      hasRecentActivity: recentNotes.length > 0,
-      totalWords: mockNotes.reduce((acc, note) => {
-        const wordCount = note.content ? note.content.split(/\s+/).filter(word => word.length > 0).length : 0;
-        return acc + wordCount;
-      }, 0)
-    }
-  });
 
   const handleCreateNote = () => {
     console.log('Create note clicked - functionality not implemented in demo');
