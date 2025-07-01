@@ -53,6 +53,16 @@ class ConsoleErrorManager {
       /\[Violation\] 'setInterval' handler took \d+ms/i,
       /\[Violation\] 'setTimeout' handler took \d+ms/i,
       /\[Violation\] 'requestAnimationFrame' handler took \d+ms/i,
+      /\[Violation\] 'message' handler took \d+ms/i,
+      /\[Violation\] Forced reflow while executing JavaScript took \d+ms/i,
+      /Unrecognized feature:/i,
+      /iframe.*sandbox.*allow-scripts.*allow-same-origin/i,
+      /was preloaded using link preload but not used/i,
+      /\[vite\] connecting/i,
+      /\[vite\] connected/i,
+      /\[UTS\]/i,
+      /We're hiring!/i,
+      /content\.js:/i,
       /Script error\./i,
     ];
   }
