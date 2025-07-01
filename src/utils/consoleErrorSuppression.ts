@@ -50,6 +50,9 @@ class ConsoleErrorManager {
       /Refused to load the script.*because it violates.*Content Security Policy/i,
       /Refused to connect.*because it violates.*Content Security Policy/i,
       /Fetch API cannot load.*Refused to connect.*Content Security Policy/i,
+      /\[Violation\] 'setInterval' handler took \d+ms/i,
+      /\[Violation\] 'setTimeout' handler took \d+ms/i,
+      /\[Violation\] 'requestAnimationFrame' handler took \d+ms/i,
       /Script error\./i,
     ];
   }
