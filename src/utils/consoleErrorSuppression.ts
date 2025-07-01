@@ -44,6 +44,9 @@ class ConsoleErrorManager {
       /facebook\.com\/tr/i,
       /lovable\.js/i,
       /cdn\.gpteng\.co/i,
+      /violates the following Content Security Policy directive/i,
+      /script-src-elem.*cdn\.gpteng\.co/i,
+      /Refused to load the script.*cdn\.gpteng\.co/i,
       /Script error\./i,
     ];
   }
