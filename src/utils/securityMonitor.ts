@@ -436,8 +436,8 @@ class SecurityMonitor {
 
 export const securityMonitor = new SecurityMonitor();
 
-// Auto-initialize
+// Auto-initialize disabled for simple app
 if (typeof window !== 'undefined') {
-  securityMonitor.initialize();
+  // securityMonitor.initialize();
   (window as any).securityMonitor = securityMonitor;
 }

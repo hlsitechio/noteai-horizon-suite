@@ -29,10 +29,7 @@ export const useQueryPerformanceMonitor = () => {
     return await DatabasePerformanceService.getOptimizationRecommendations();
   }, []);
 
-  // Generate some demo data on mount for testing
-  useEffect(() => {
-    DatabasePerformanceService.generateDemoData();
-  }, []);
+  // Demo data generation disabled for simple app
 
   return {
     startTimer,
