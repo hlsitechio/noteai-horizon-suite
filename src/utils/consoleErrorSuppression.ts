@@ -39,6 +39,11 @@ class ConsoleErrorManager {
       /plausible\.io/i,
       /ResizeObserver loop limit exceeded/i,
       /Non-Error promise rejection captured/i,
+      /was preloaded using link preload but not used/i,
+      /preloaded.*not used within a few seconds/i,
+      /facebook\.com\/tr/i,
+      /lovable\.js/i,
+      /cdn\.gpteng\.co/i,
       /Script error\./i,
     ];
   }
