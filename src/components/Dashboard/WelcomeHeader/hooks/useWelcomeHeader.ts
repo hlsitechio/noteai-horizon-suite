@@ -1,15 +1,12 @@
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../../../contexts/AuthContext';
 import { useDynamicAccent } from '../../../../contexts/DynamicAccentContext';
-import { BannerStorageService } from '@/services/bannerStorage';
 
 export const useWelcomeHeader = () => {
-  const { user } = useAuth();
   const { extractColorFromMedia, isDynamicAccentEnabled } = useDynamicAccent();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [bannerData, setBannerData] = useState<{url: string, type: 'image' | 'video'} | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [showControls, setShowControls] = useState(false);
 
@@ -20,47 +17,6 @@ export const useWelcomeHeader = () => {
 
     return () => clearInterval(timer);
   }, []);
-
-  useEffect(() => {
-    const loadBanner = async () => {
-      if (!user) {
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        console.log('WelcomeHeader: Loading dashboard banner from Supabase');
-        const banner = await BannerStorageService.getBanner('dashboard');
-        if (banner) {
-          console.log('WelcomeHeader: Banner loaded:', banner);
-          const bannerData = {
-            url: banner.file_url,
-            type: banner.file_type
-          };
-          setBannerData(bannerData);
-          
-          // Extract color from the loaded banner if dynamic accent is enabled
-          if (isDynamicAccentEnabled) {
-            console.log('WelcomeHeader: Extracting color from loaded banner');
-            try {
-              await extractColorFromMedia(banner.file_url);
-            } catch (error) {
-              console.error('WelcomeHeader: Color extraction from loaded banner failed:', error);
-            }
-          }
-        } else {
-          console.log('WelcomeHeader: No banner found');
-          setBannerData(null);
-        }
-      } catch (error) {
-        console.error('WelcomeHeader: Error loading banner:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadBanner();
-  }, [user, isDynamicAccentEnabled, extractColorFromMedia]);
 
   const handleBannerUpdate = (bannerUrl: string, type: 'image' | 'video') => {
     console.log('WelcomeHeader: Banner updated:', type, bannerUrl.substring(0, 50) + '...');
@@ -74,34 +30,7 @@ export const useWelcomeHeader = () => {
 
   const handleAIBannerGenerated = async (imageUrl: string) => {
     console.log('WelcomeHeader: AI banner generated:', imageUrl.substring(0, 50) + '...');
-    
-    try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const file = new File([blob], 'ai-generated-banner.png', { type: 'image/png' });
-      
-      const bannerData = await BannerStorageService.uploadBanner(file, 'dashboard');
-      
-      if (bannerData) {
-        setBannerData({
-          url: bannerData.file_url,
-          type: bannerData.file_type
-        });
-        
-        // Extract color from AI generated banner if dynamic accent is enabled
-        if (isDynamicAccentEnabled) {
-          console.log('WelcomeHeader: Extracting color from AI generated banner');
-          try {
-            await extractColorFromMedia(bannerData.file_url);
-          } catch (error) {
-            console.error('WelcomeHeader: Color extraction from AI banner failed:', error);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('WelcomeHeader: Error saving AI banner:', error);
-      setBannerData({ url: imageUrl, type: 'image' });
-    }
+    setBannerData({ url: imageUrl, type: 'image' });
   };
 
   const handleFullscreenToggle = () => {
