@@ -47,6 +47,9 @@ class ConsoleErrorManager {
       /violates the following Content Security Policy directive/i,
       /script-src-elem.*cdn\.gpteng\.co/i,
       /Refused to load the script.*cdn\.gpteng\.co/i,
+      /Refused to load the script.*because it violates.*Content Security Policy/i,
+      /Refused to connect.*because it violates.*Content Security Policy/i,
+      /Fetch API cannot load.*Refused to connect.*Content Security Policy/i,
       /Script error\./i,
     ];
   }
