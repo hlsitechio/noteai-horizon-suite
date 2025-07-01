@@ -1,9 +1,7 @@
 
 import { useState, useEffect } from 'react';
-import { useDynamicAccent } from '../../../../contexts/DynamicAccentContext';
 
 export const useWelcomeHeader = () => {
-  const { extractColorFromMedia, isDynamicAccentEnabled } = useDynamicAccent();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [bannerData, setBannerData] = useState<{url: string, type: 'image' | 'video'} | null>(null);
   const [isLoading, setIsLoading] = useState(false);
