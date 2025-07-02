@@ -22,7 +22,8 @@ class ErrorPreventionSystem {
     'pagead2.googlesyndication.com',
     'googleads.g.doubleclick.net',
     'firestore.googleapis.com',
-    'lovable.dev/ingest'
+    'lovable.dev/ingest',
+    'cdn.gpteng.co'
   ]);
   private isActive = false;
 
@@ -61,6 +62,20 @@ class ErrorPreventionSystem {
       pattern: /Content Security Policy/i,
       action: 'ignore',
       description: 'Ignore CSP violations for blocked resources'
+    });
+
+    this.addRule({
+      id: 'ignore_lovable_script_csp',
+      pattern: /cdn\.gpteng\.co.*violates.*Content Security Policy/i,
+      action: 'ignore',
+      description: 'Ignore lovable.js CSP violations'
+    });
+
+    this.addRule({
+      id: 'ignore_script_src_elem_violations',
+      pattern: /script-src-elem.*violates/i,
+      action: 'ignore',
+      description: 'Ignore script-src-elem CSP violations'
     });
 
     this.addRule({
