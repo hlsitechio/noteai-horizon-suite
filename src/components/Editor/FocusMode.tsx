@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
-import RichTextEditor from './RichTextEditor';
 import FocusModeBackground from './FocusModeBackground';
 import FocusModeControls from './FocusModeControls';
 import FocusModeStats from './FocusModeStats';
@@ -206,13 +205,20 @@ const FocusMode: React.FC<FocusModeProps> = ({
                   transition={{ delay: 0.3 }}
                   className="h-full"
                 >
-                  <RichTextEditor
+                  <textarea
                     value={content}
-                    onChange={onContentChange}
+                    onChange={(e) => onContentChange(e.target.value)}
                     placeholder={isMobile 
                       ? "Start writing..." 
                       : "Focus on your writing... Let your thoughts flow without any distractions."
                     }
+                    className={`w-full h-full bg-transparent border-none outline-none resize-none text-white placeholder-white/40 leading-relaxed ${
+                      isMobile ? 'text-base' : 'text-lg'
+                    } font-normal`}
+                    style={{
+                      lineHeight: '1.8',
+                      fontFamily: 'Inter, system-ui, sans-serif',
+                    }}
                   />
                 </motion.div>
               </div>
@@ -282,10 +288,17 @@ const FocusMode: React.FC<FocusModeProps> = ({
                   transition={{ delay: 0.3 }}
                   className="h-full"
                 >
-                  <RichTextEditor
+                  <textarea
                     value={content}
-                    onChange={onContentChange}
+                    onChange={(e) => onContentChange(e.target.value)}
                     placeholder="Focus on your writing... Let your thoughts flow without any distractions."
+                    className={`w-full h-full bg-transparent border-none outline-none resize-none text-white placeholder-white/40 leading-relaxed ${
+                      isMobile ? 'text-base' : 'text-lg'
+                    } font-normal`}
+                    style={{
+                      lineHeight: '1.8',
+                      fontFamily: 'Inter, system-ui, sans-serif',
+                    }}
                   />
                 </motion.div>
               </CardContent>
