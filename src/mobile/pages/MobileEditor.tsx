@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { ArrowLeft, Save, MoreVertical, Share2, Star } from 'lucide-react';
+import { ArrowLeft, Save, MoreVertical, Share2, Star, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -22,6 +22,7 @@ const MobileEditor: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [showRichEditor, setShowRichEditor] = useState(false);
+  const [isFocusMode, setIsFocusMode] = useState(false);
   
   // Create Slate editor for formatting
   const editor = React.useMemo(() => withHistory(withReact(createEditor())), []);
@@ -164,6 +165,15 @@ const MobileEditor: React.FC = () => {
           <Button variant="ghost" size="sm" onClick={handleShare}>
             <Share2 className="w-4 h-4" />
           </Button>
+
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setIsFocusMode(true)}
+            className="text-purple-600"
+          >
+            <Eye className="w-4 h-4" />
+          </Button>
           
           <Button 
             variant="default" 
@@ -239,6 +249,54 @@ const MobileEditor: React.FC = () => {
           onFormatClick={handleFormatClick}
           activeFormats={getActiveFormats()}
         />
+      )}
+
+      {/* Focus Mode for Mobile */}
+      {isFocusMode && (
+        <div className="fixed inset-0 z-50 bg-black flex flex-col">
+          {/* Mobile Focus Mode Header */}
+          <div className="flex items-center justify-between p-4 bg-black/50 backdrop-blur-sm">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setIsFocusMode(false)}
+              className="text-white hover:bg-white/10"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleSave}
+              disabled={isSaving || !hasChanges}
+              className="text-white hover:bg-white/10"
+            >
+              <Save className="w-4 h-4 mr-1" />
+              {isSaving ? 'Saving...' : 'Save'}
+            </Button>
+          </div>
+
+          {/* Focus Mode Title */}
+          <div className="px-6 pt-8 pb-4">
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Your title..."
+              className="w-full bg-transparent border-none outline-none text-white placeholder-white/50 text-2xl font-bold"
+            />
+          </div>
+
+          {/* Focus Mode Content */}
+          <div className="flex-1 px-6 pb-6">
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Focus on your writing..."
+              className="w-full h-full bg-transparent border-none outline-none text-white placeholder-white/50 text-base leading-relaxed resize-none"
+            />
+          </div>
+        </div>
       )}
     </div>
   );

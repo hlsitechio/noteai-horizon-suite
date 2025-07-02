@@ -80,6 +80,7 @@ const EditorContent: React.FC<EditorContentProps> = ({
               }}
               onNewTagChange={onNewTagChange}
               onToggleFavorite={onFavoriteToggle}
+              onFocusModeToggle={onFocusModeToggle}
             />
           </div>
         )}
@@ -110,6 +111,7 @@ const EditorContent: React.FC<EditorContentProps> = ({
               isHeaderCollapsed={isHeaderCollapsed}
               isAssistantCollapsed={isAssistantCollapsed || isMobile}
               onCollapseAllBars={onCollapseAllBars}
+              onFocusModeToggle={onFocusModeToggle}
               isMobile={isMobile}
             />
           </div>

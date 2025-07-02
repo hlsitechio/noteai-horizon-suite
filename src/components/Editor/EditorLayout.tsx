@@ -18,6 +18,7 @@ interface EditorLayoutProps {
   onRemoveTag: (tag: string) => void;
   onSuggestionApply: (original: string, suggestion: string) => void;
   onSave?: () => void;
+  onFocusModeToggle?: () => void;
   canSave?: boolean;
   isSaving?: boolean;
   collapseAssistantRef?: React.MutableRefObject<(() => void) | undefined>;
@@ -44,6 +45,7 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
   onRemoveTag,
   onSuggestionApply,
   onSave,
+  onFocusModeToggle,
   canSave = true,
   isSaving = false,
   collapseAssistantRef,
@@ -73,6 +75,7 @@ const EditorLayout: React.FC<EditorLayoutProps> = ({
           onRemoveTag={onRemoveTag}
           onSuggestionApply={onSuggestionApply}
           onSave={onSave}
+          onFocusModeToggle={onFocusModeToggle}
           canSave={canSave}
           isSaving={isSaving}
           isDistractionFree={false}

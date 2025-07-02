@@ -14,6 +14,7 @@ interface RichTextEditorProps {
   onChange: (value: string) => void;
   placeholder?: string;
   onSave?: () => void;
+  onFocusModeToggle?: () => void;
   canSave?: boolean;
   isSaving?: boolean;
 }
@@ -23,6 +24,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   onChange, 
   placeholder = "Start writing something amazing...",
   onSave,
+  onFocusModeToggle,
   canSave = true,
   isSaving = false
 }) => {
@@ -114,6 +116,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           onTextInsert={handleTextInsert}
           onImageInsert={handleImageInsert}
           onFontChange={handleFontChange}
+          onFocusModeToggle={onFocusModeToggle}
           activeFormats={getActiveFormats()}
           selectedText={selectedText}
           canSave={canSave}

@@ -21,6 +21,7 @@ interface EditorMainColumnProps {
   onRemoveTag: (tag: string) => void;
   onSuggestionApply: (original: string, suggestion: string) => void;
   onSave?: () => void;
+  onFocusModeToggle?: () => void;
   canSave?: boolean;
   isSaving?: boolean;
   isDistractionFree: boolean;
@@ -42,6 +43,7 @@ const EditorMainColumn: React.FC<EditorMainColumnProps> = ({
   onRemoveTag,
   onSuggestionApply,
   onSave,
+  onFocusModeToggle,
   canSave = true,
   isSaving = false,
   isDistractionFree,
@@ -82,6 +84,7 @@ const EditorMainColumn: React.FC<EditorMainColumnProps> = ({
               value={content}
               onChange={onContentChange}
               onSave={onSave}
+              onFocusModeToggle={onFocusModeToggle}
               canSave={canSave}
               isSaving={isSaving}
               placeholder={isMobile 

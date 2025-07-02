@@ -9,8 +9,10 @@ import {
   H2Icon,
   ChatBubbleLeftRightIcon,
   ListBulletIcon,
-  NumberedListIcon
+  NumberedListIcon,
+  EyeIcon
 } from '@heroicons/react/24/outline';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import SpeechToText from './SpeechToText';
 import OCRScreenCapture from './OCRScreenCapture';
@@ -28,6 +30,7 @@ interface SmartToolbarProps {
   onTextInsert?: (text: string) => void;
   onImageInsert?: (imageData: string, width?: number, height?: number) => void;
   onFontChange?: (fontFamily: string, fontSize: number) => void;
+  onFocusModeToggle?: () => void;
   activeFormats: Set<string>;
   selectedText: string;
   canSave?: boolean;
@@ -41,6 +44,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
   onTextInsert,
   onImageInsert,
   onFontChange,
+  onFocusModeToggle,
   activeFormats,
   selectedText,
   canSave = true,
@@ -152,12 +156,26 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
 
         <Separator orientation="vertical" className="h-6 mx-2 bg-green-200 dark:bg-slate-500" />
 
-        {/* AI Assistant */}
+        {/* AI Assistant & Focus Mode */}
         <div className="flex items-center gap-2">
           <AIAssistantControl
             selectedText={selectedText}
             onAIClick={onAIClick}
           />
+
+          {/* Focus Mode Button */}
+          {onFocusModeToggle && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onFocusModeToggle}
+              className="h-8 px-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all"
+              title="Enter Focus Mode (F11)"
+            >
+              <EyeIcon className="w-4 h-4 mr-1" />
+              Focus
+            </Button>
+          )}
 
           {/* Save Note Button */}
           <SaveButton

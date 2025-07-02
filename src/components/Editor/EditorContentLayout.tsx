@@ -11,6 +11,7 @@ interface EditorContentLayoutProps extends EditorFormState, EditorFormHandlers {
   isHeaderCollapsed?: boolean;
   isAssistantCollapsed?: boolean;
   onCollapseAllBars?: () => void;
+  onFocusModeToggle?: () => void;
   isMobile?: boolean;
 }
 
@@ -46,6 +47,7 @@ const EditorContentLayout: React.FC<EditorContentLayoutProps> = (props) => {
       onRemoveTag={props.onRemoveTag}
       onSuggestionApply={props.onSuggestionApply}
       onSave={props.onSave}
+      onFocusModeToggle={props.onFocusModeToggle}
       canSave={props.title?.trim().length > 0}
       isSaving={props.isSaving}
       collapseAssistantRef={props.collapseAssistantRef}
