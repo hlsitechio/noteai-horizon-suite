@@ -15,11 +15,11 @@ import { DynamicAccentProvider } from './contexts/DynamicAccentContext';
 import { ProjectRealmsProvider } from './contexts/ProjectRealmsContext';
 import { FloatingNotesProvider } from './contexts/FloatingNotesContext';
 import { QuantumAIProvider } from './contexts/QuantumAIContext';
-import AppWithErrorHandling from './components/AppWithErrorHandling';
+// import AppWithErrorHandling from './components/AppWithErrorHandling';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout/Layout';
 import HomeRedirect from './components/HomeRedirect';
-import RouteDebugger from './components/RouteDebugger';
+// import RouteDebugger from './components/RouteDebugger';
 
 // Pages
 import Index from './pages/Index';
@@ -54,8 +54,7 @@ const SentryRouter = Sentry.withSentryRouting(Router);
 
 function App() {
   return (
-    <AppWithErrorHandling>
-      <ThemeProvider defaultTheme="dark" storageKey="online-note-ai-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="online-note-ai-theme">
         <TooltipProvider>
           <AuthProvider>
             <AccentColorProvider>
@@ -66,9 +65,8 @@ function App() {
                       <ProjectRealmsProvider>
                         <FloatingNotesProvider>
                           <QuantumAIProvider>
-                            <SentryRouter>
-                              <RouteDebugger />
-                              <Routes>
+                             <SentryRouter>
+                               <Routes>
                                 {/* Public Routes */}
                                 <Route path="/" element={<Index />} />
                                 <Route path="/landing" element={<Landing />} />
@@ -125,7 +123,6 @@ function App() {
           </AuthProvider>
         </TooltipProvider>
       </ThemeProvider>
-    </AppWithErrorHandling>
   );
 }
 
