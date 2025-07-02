@@ -53,18 +53,36 @@ export const transformUser = async (supabaseUser: SupabaseUser): Promise<User> =
 export const clearCorruptedSession = async () => {
   console.log('Clearing potentially corrupted session data');
   try {
-    await supabase.auth.signOut();
-    localStorage.removeItem('supabase.auth.token');
-    localStorage.removeItem('sb-qrdulwzjgbfgaplazgsh-auth-token');
+    // Clear all possible session storage keys
+    const authKeys = [
+      'supabase.auth.token',
+      'sb-qrdulwzjgbfgaplazgsh-auth-token',
+      'supabase-auth-token',
+      'sb-auth-token'
+    ];
+    
+    authKeys.forEach(key => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
+    
+    // Force sign out without waiting for response to avoid hanging
+    supabase.auth.signOut({ scope: 'local' });
+    
+    console.log('Session data cleared successfully');
   } catch (error) {
     console.error('Error clearing session:', error);
   }
 };
 
 export const handleRefreshTokenError = async (error: Error) => {
-  if (error.message.includes('Invalid Refresh Token') || 
-      error.message.includes('Refresh Token Not Found')) {
-    console.log('Invalid refresh token detected, clearing session');
+  const errorMessage = error.message.toLowerCase();
+  
+  if (errorMessage.includes('invalid refresh token') || 
+      errorMessage.includes('refresh token not found') ||
+      errorMessage.includes('jwt') ||
+      errorMessage.includes('expired')) {
+    console.log('Authentication error detected, clearing session:', error.message);
     await clearCorruptedSession();
     return true;
   }

@@ -104,25 +104,48 @@ export const logoutUser = async (): Promise<void> => {
 
 export const initializeAuthSession = async () => {
   try {
+    console.log('Initializing auth session...');
+    
+    // First, try to get the current session
     const { data: { session }, error } = await supabase.auth.getSession();
     
     if (error) {
       console.error('Error getting session:', error);
       
+      // Handle refresh token errors immediately
       if (await handleRefreshTokenError(error)) {
-        return { session: null, error };
+        console.log('Cleared corrupted session, user needs to login again');
+        return { session: null, error: null }; // Don't propagate auth errors
       }
       
       return { session: null, error };
     }
 
-    console.log('Initial session check:', session?.user?.email || 'No session');
+    if (session) {
+      console.log('Valid session found:', session.user?.email);
+      // Verify the session is actually valid by making a test request
+      try {
+        const { error: testError } = await supabase.auth.getUser();
+        if (testError && await handleRefreshTokenError(testError)) {
+          console.log('Session validation failed, clearing corrupted session');
+          return { session: null, error: null };
+        }
+      } catch (testError) {
+        console.error('Session validation error:', testError);
+        if (testError instanceof Error && await handleRefreshTokenError(testError)) {
+          return { session: null, error: null };
+        }
+      }
+    } else {
+      console.log('No active session found');
+    }
+
     return { session, error: null };
   } catch (error) {
     console.error('Error initializing auth:', error);
     
     if (error instanceof Error && await handleRefreshTokenError(error)) {
-      return { session: null, error };
+      return { session: null, error: null };
     }
     
     return { session: null, error };

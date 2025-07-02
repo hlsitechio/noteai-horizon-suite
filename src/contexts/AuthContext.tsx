@@ -52,23 +52,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
     };
 
-    // Set up auth state listener
+    // Set up auth state listener with error handling
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         
         if (!mounted) return;
         
-        // Handle token refresh errors
-        if (event === 'TOKEN_REFRESHED' && !session) {
-          console.log('Token refresh failed, clearing session');
-          await clearCorruptedSession();
-          clearAuth();
-          return;
+        try {
+          // Handle different auth events
+          switch (event) {
+            case 'TOKEN_REFRESHED':
+              if (!session) {
+                console.log('Token refresh failed, clearing session');
+                await clearCorruptedSession();
+                clearAuth();
+                return;
+              }
+              break;
+              
+            case 'SIGNED_OUT':
+              clearAuth();
+              return;
+              
+            case 'SIGNED_IN':
+              console.log(`User signed in: ${session?.user?.email}`);
+              break;
+          }
+          
+          setSession(session);
+        } catch (error) {
+          console.error('Error in auth state change:', error);
+          if (error instanceof Error && await handleRefreshTokenError(error)) {
+            clearAuth();
+          }
         }
-        
-        setSession(session);
-        console.log(session?.user ? `User authenticated: ${session.user.email}` : 'User logged out');
       }
     );
 
