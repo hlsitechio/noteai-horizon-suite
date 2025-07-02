@@ -845,6 +845,30 @@ export type Database = {
         }
         Relationships: []
       }
+      realtime_performance_log: {
+        Row: {
+          created_at: string | null
+          id: string
+          operation: string
+          table_name: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          operation: string
+          table_name: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          operation?: string
+          table_name?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       reminders: {
         Row: {
           created_at: string
@@ -1236,6 +1260,10 @@ export type Database = {
         Returns: boolean
       }
       cleanup_expired_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_realtime_logs: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
