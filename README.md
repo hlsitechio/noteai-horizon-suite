@@ -136,13 +136,10 @@ npm run build
 
 ## 🔐 Environment Variables
 
-Create a `.env.local` file for local development (see `.env.example`):
+Create a `.env.local` file for local development:
 ```env
 VITE_API_URL=http://localhost:5000/api
 VITE_AI_API_KEY=your_ai_api_key
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-VITE_SENTRY_DSN=your_sentry_dsn
 ```
 
 ## 📝 Backend Integration

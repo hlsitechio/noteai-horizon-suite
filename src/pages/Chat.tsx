@@ -1,113 +1,139 @@
 
 import React, { useState } from 'react';
-import { MessageCircle, Send, User, Bot } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
-interface Message {
-  id: string;
-  content: string;
-  sender: 'user' | 'bot';
-  timestamp: string;
-}
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Send, MessageCircle } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { useEnhancedAIChat, ChatMessage } from '../hooks/useEnhancedAIChat';
 
 const Chat: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      content: 'Hello! How can I help you today?',
-      sender: 'bot',
-      timestamp: new Date().toISOString(),
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const { sendMessage: sendAIMessage } = useEnhancedAIChat();
+
+  // Use TanStack Query mutation for chat messages
+  const chatMutation = useMutation({
+    mutationFn: async (newMessage: string) => {
+      const userMessage: ChatMessage = {
+        id: Date.now().toString(),
+        content: newMessage,
+        isUser: true,
+        timestamp: new Date()
+      };
+
+      const updatedMessages = [...messages, userMessage];
+      setMessages(updatedMessages);
+
+      const aiResponse = await sendAIMessage(updatedMessages);
+      
+      const aiMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        content: aiResponse,
+        isUser: false,
+        timestamp: new Date()
+      };
+
+      return { updatedMessages, aiMessage };
     },
-  ]);
-  const [inputMessage, setInputMessage] = useState('');
+    onSuccess: ({ updatedMessages, aiMessage }) => {
+      setMessages([...updatedMessages, aiMessage]);
+    },
+    onError: (error) => {
+      console.error('Error sending message:', error);
+    },
+  });
 
-  const handleSendMessage = () => {
-    if (!inputMessage.trim()) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      content: inputMessage,
-      sender: 'user',
-      timestamp: new Date().toISOString(),
-    };
-
-    const botMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      content: 'Thanks for your message! This is a demo response.',
-      sender: 'bot',
-      timestamp: new Date().toISOString(),
-    };
-
-    setMessages(prev => [...prev, userMessage, botMessage]);
-    setInputMessage('');
+  const handleSend = async () => {
+    if (message.trim()) {
+      chatMutation.mutate(message);
+      setMessage('');
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSendMessage();
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex items-center gap-3 mb-6">
-        <MessageCircle className="w-8 h-8 text-primary" />
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">AI Chat</h1>
-          <p className="text-muted-foreground">Chat with your AI assistant</p>
-        </div>
+    <div className="h-full flex flex-col">
+      <div className="flex-shrink-0 mb-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MessageCircle className="w-5 h-5" />
+              AI Chat Assistant
+            </CardTitle>
+          </CardHeader>
+        </Card>
       </div>
 
-      <Card className="h-[600px] flex flex-col">
-        <CardHeader>
-          <CardTitle>Chat Assistant</CardTitle>
-          <CardDescription>
-            Ask questions and get helpful responses
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex-1 flex flex-col">
-          <div className="flex-1 overflow-y-auto space-y-4 mb-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex items-start gap-3 ${
-                  message.sender === 'user' ? 'flex-row-reverse' : ''
-                }`}
-              >
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  {message.sender === 'user' ? (
-                    <User className="w-4 h-4" />
-                  ) : (
-                    <Bot className="w-4 h-4" />
-                  )}
-                </div>
-                <div
-                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                    message.sender === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
-                  }`}
-                >
-                  <p className="text-sm">{message.content}</p>
-                </div>
+      <div className="flex-1 flex flex-col min-h-0">
+        <Card className="flex-1 flex flex-col">
+          <CardContent className="flex-1 flex flex-col p-4">
+            <ScrollArea className="flex-1 mb-4">
+              <div className="space-y-4">
+                {messages.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-8">
+                    <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>Start a conversation with your AI assistant</p>
+                  </div>
+                ) : (
+                  messages.map((msg, index) => (
+                    <div
+                      key={index}
+                      className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[80%] p-3 rounded-lg ${
+                          msg.isUser
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted'
+                        }`}
+                      >
+                        <p className="text-sm">{msg.content}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+                {chatMutation.isPending && (
+                  <div className="flex justify-start">
+                    <div className="bg-muted p-3 rounded-lg">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <Input
-              placeholder="Type your message..."
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-            />
-            <Button onClick={handleSendMessage}>
-              <Send className="w-4 h-4" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+            </ScrollArea>
+
+            <div className="flex gap-2">
+              <Input
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Type your message..."
+                disabled={chatMutation.isPending}
+                className="flex-1"
+              />
+              <Button
+                onClick={handleSend}
+                disabled={chatMutation.isPending || !message.trim()}
+                size="sm"
+              >
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

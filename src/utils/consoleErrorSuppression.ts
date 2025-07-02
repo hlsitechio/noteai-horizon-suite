@@ -1,103 +1,52 @@
-
 /**
- * Console Error Suppression System
- * Intelligently suppresses known non-critical console errors
+ * Console Error Suppression and Logging System
+ * Intercepts and manages console errors with intelligent filtering
  */
 
-interface ConsoleErrorEntry {
-  message: string;
+interface ErrorLogEntry {
+  id: string;
   timestamp: Date;
-  count: number;
+  level: 'error' | 'warn' | 'info';
+  message: string;
+  stack?: string;
+  context?: Record<string, any>;
   suppressed: boolean;
+  count: number;
 }
 
 class ConsoleErrorManager {
-  private errorLog: Map<string, ConsoleErrorEntry> = new Map();
-  private suppressionPatterns: RegExp[] = [];
-  private originalConsoleError: typeof console.error;
-  private originalConsoleWarn: typeof console.warn;
-  private isActive = false;
+  private errorLog: ErrorLogEntry[] = [];
+  private suppressedPatterns: RegExp[] = [];
+  private maxLogSize = 1000;
+  private originalConsole = {
+    error: console.error,
+    warn: console.warn,
+    info: console.info,
+    log: console.log
+  };
 
   constructor() {
-    this.originalConsoleError = console.error.bind(console);
-    this.originalConsoleWarn = console.warn.bind(console);
     this.setupSuppressionPatterns();
+    this.interceptConsole();
   }
 
   private setupSuppressionPatterns() {
-    this.suppressionPatterns = [
-      /ERR_BLOCKED_BY_CLIENT/i,
-      /net::ERR_BLOCKED_BY_CLIENT/i,
-      /AdBlock/i,
-      /uBlock/i,
-      /Content Security Policy/i,
-      /connect\.facebook\.net/i,
-      /googletagmanager\.com/i,
-      /analytics\.tiktok\.com/i,
-      /www\.redditstatic\.com/i,
-      /static\.cloudflareinsights\.com/i,
-      /plausible\.io/i,
+    this.suppressedPatterns = [
       /ResizeObserver loop limit exceeded/i,
       /Non-Error promise rejection captured/i,
-      /was preloaded using link preload but not used/i,
-      /preloaded.*not used within a few seconds/i,
-      /facebook\.com\/tr/i,
-      /facebook\.com/i,
-      /connect\.facebook\.net/i,
-      /fbcdn\.net/i,
-      /facebook\.net/i,
-      /fb\.me/i,
-      /messenger\.com/i,
-      /instagram\.com/i,
-      /whatsapp\.com/i,
-      /meta\.com/i,
-      /fbsbx\.com/i,
-      /facebook-analytics/i,
-      /facebook-pixel/i,
-      /fb-pixel/i,
-      /\[Facebook\]/i,
-      /\[FB\]/i,
-      /www\.facebook\.com\/tr/i,
-      /facebook\.com.*was preloaded/i,
-      /resource.*facebook\.com.*preloaded/i,
-      /tr\?id=.*ev=PageView/i,
-      /lovable\.js/i,
-      /cdn\.gpteng\.co/i,
-      /violates the following Content Security Policy directive/i,
-      /script-src-elem.*cdn\.gpteng\.co/i,
-      /script-src-elem.*gpteng\.co/i,
-      /Refused to load the script.*cdn\.gpteng\.co/i,
-      /Refused to load the script.*gpteng\.co/i,
-      /Refused to load the script.*because it violates.*Content Security Policy/i,
-      /Refused to connect.*because it violates.*Content Security Policy/i,
-      /Fetch API cannot load.*Refused to connect.*Content Security Policy/i,
-      /script-src-elem.*because it violates/i,
-      /Refused to load.*script.*CSP/i,
-      /violates.*script-src-elem/i,
-      /cannot insert into view.*daily_visit_counts/i,
-      /\[Violation\] 'setInterval' handler took \d+ms/i,
-      /\[Violation\].*handler took.*ms/i,
-      /Violation.*setInterval.*took.*ms/i,
-      /Reason: \$\{e\}/i,
-      /\[Violation\] 'setTimeout' handler took \d+ms/i,
-      /\[Violation\] 'requestAnimationFrame' handler took \d+ms/i,
-      /\[Violation\] 'message' handler took \d+ms/i,
-      /\[Violation\] Forced reflow while executing JavaScript took \d+ms/i,
-      /Unrecognized feature:/i,
-      /iframe.*sandbox.*allow-scripts.*allow-same-origin/i,
-      /was preloaded using link preload but not used/i,
-      /\[vite\] connecting/i,
-      /\[vite\] connected/i,
-      /\[UTS\]/i,
-      /We're hiring!/i,
-      /content\.js:/i,
       /Script error\./i,
+      /Network request failed/i,
+      /Loading chunk \d+ failed/i,
+      /ChunkLoadError/i,
+      /dynamically imported module/i,
+      /Extension context invalidated/i,
+      /chrome-extension:/i,
+      /moz-extension:/i,
+      /webkit-masked-url:/i,
     ];
   }
 
-  activate() {
-    if (this.isActive) return;
-
+  private interceptConsole() {
     console.error = (...args: any[]) => {
       this.handleConsoleMessage('error', args);
     };
@@ -106,110 +55,85 @@ class ConsoleErrorManager {
       this.handleConsoleMessage('warn', args);
     };
 
-    this.isActive = true;
-  }
-
-  private handleConsoleMessage(level: 'error' | 'warn', args: any[]) {
-    const message = args.join(' ');
-    const messageKey = this.generateMessageKey(message);
-
-    // Check if this should be suppressed
-    if (this.shouldSuppress(message)) {
-      this.logSuppressedMessage(messageKey, message);
-      return; // Suppress the message
-    }
-
-    // Log the message normally
-    if (level === 'error') {
-      this.originalConsoleError(...args);
-    } else {
-      this.originalConsoleWarn(...args);
-    }
-
-    this.logMessage(messageKey, message, false);
-  }
-
-  private shouldSuppress(message: string): boolean {
-    return this.suppressionPatterns.some(pattern => pattern.test(message));
-  }
-
-  private generateMessageKey(message: string): string {
-    // Create a key based on the error pattern, not the exact message
-    for (const pattern of this.suppressionPatterns) {
-      if (pattern.test(message)) {
-        return pattern.source;
-      }
-    }
-    return message.substring(0, 100); // First 100 chars for unique messages
-  }
-
-  private logSuppressedMessage(key: string, message: string) {
-    const existing = this.errorLog.get(key);
-    if (existing) {
-      existing.count++;
-      existing.timestamp = new Date();
-    } else {
-      this.errorLog.set(key, {
-        message: message.substring(0, 200),
-        timestamp: new Date(),
-        count: 1,
-        suppressed: true
-      });
-    }
-  }
-
-  private logMessage(key: string, message: string, suppressed: boolean) {
-    const existing = this.errorLog.get(key);
-    if (existing) {
-      existing.count++;
-      existing.timestamp = new Date();
-    } else {
-      this.errorLog.set(key, {
-        message: message.substring(0, 200),
-        timestamp: new Date(),
-        count: 1,
-        suppressed
-      });
-    }
-  }
-
-  getErrorLog(): ConsoleErrorEntry[] {
-    return Array.from(this.errorLog.values());
-  }
-
-  getSuppressedCount(): number {
-    return Array.from(this.errorLog.values())
-      .filter(entry => entry.suppressed)
-      .reduce((sum, entry) => sum + entry.count, 0);
-  }
-
-  clearLog() {
-    this.errorLog.clear();
-  }
-
-  restore() {
-    if (!this.isActive) return;
-
-    console.error = this.originalConsoleError;
-    console.warn = this.originalConsoleWarn;
-    this.isActive = false;
-  }
-
-  getStats() {
-    const entries = Array.from(this.errorLog.values());
-    return {
-      totalMessages: entries.reduce((sum, entry) => sum + entry.count, 0),
-      uniqueMessages: entries.length,
-      suppressedMessages: entries.filter(e => e.suppressed).length,
-      suppressedCount: this.getSuppressedCount(),
-      isActive: this.isActive
+    console.info = (...args: any[]) => {
+      this.handleConsoleMessage('info', args);
     };
+  }
+
+  private handleConsoleMessage(level: 'error' | 'warn' | 'info', args: any[]) {
+    const message = args.map(arg => 
+      typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+    ).join(' ');
+
+    const shouldSuppress = this.shouldSuppressMessage(message);
+    
+    if (!shouldSuppress || import.meta.env.DEV) {
+      this.originalConsole[level](...args);
+    }
+
+    this.logError({
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      timestamp: new Date(),
+      level,
+      message,
+      stack: new Error().stack,
+      suppressed: shouldSuppress,
+      count: 1
+    });
+  }
+
+  private shouldSuppressMessage(message: string): boolean {
+    return this.suppressedPatterns.some(pattern => pattern.test(message));
+  }
+
+  private logError(entry: ErrorLogEntry) {
+    // Check for duplicate messages
+    const existing = this.errorLog.find(log => 
+      log.message === entry.message && log.level === entry.level
+    );
+
+    if (existing) {
+      existing.count++;
+      existing.timestamp = entry.timestamp;
+      return;
+    }
+
+    this.errorLog.unshift(entry);
+    
+    // Keep log size manageable
+    if (this.errorLog.length > this.maxLogSize) {
+      this.errorLog = this.errorLog.slice(0, this.maxLogSize);
+    }
+  }
+
+  public getErrorLog(): ErrorLogEntry[] {
+    return [...this.errorLog];
+  }
+
+  public clearLog() {
+    this.errorLog = [];
+  }
+
+  public addSuppressionPattern(pattern: RegExp) {
+    this.suppressedPatterns.push(pattern);
+  }
+
+  public getStats() {
+    const total = this.errorLog.length;
+    const suppressed = this.errorLog.filter(log => log.suppressed).length;
+    const byLevel = this.errorLog.reduce((acc, log) => {
+      acc[log.level] = (acc[log.level] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return { total, suppressed, byLevel };
+  }
+
+  public restore() {
+    console.error = this.originalConsole.error;
+    console.warn = this.originalConsole.warn;
+    console.info = this.originalConsole.info;
   }
 }
 
 export const consoleErrorManager = new ConsoleErrorManager();
-
-// Auto-activate
-if (typeof window !== 'undefined') {
-  consoleErrorManager.activate();
-}

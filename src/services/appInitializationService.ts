@@ -2,7 +2,7 @@
 import { AnalyticsService } from './analyticsService';
 import { PerformanceService } from './performanceService';
 import { initSentry } from '../config/sentry';
-import { launchDarklyService } from './launchDarklyService';
+import * as Sentry from "@sentry/react";
 
 export class AppInitializationService {
   private static isInitialized = false;
@@ -13,9 +13,9 @@ export class AppInitializationService {
     try {
       console.log('🚀 Initializing Online Note AI application...');
       
-      // Initialize Sentry (will use Lovable internal tracking in development)
+      // Initialize Sentry first for error tracking
       initSentry();
-      console.log('✅ Error tracking initialized');
+      console.log('✅ Sentry initialized');
 
       // Initialize performance monitoring
       PerformanceService.initialize();
@@ -33,10 +33,6 @@ export class AppInitializationService {
       this.setupPerformanceMonitoring();
       console.log('✅ Performance monitoring set up');
 
-      // Initialize LaunchDarkly (optional - can be done later with specific user context)
-      await this.initializeLaunchDarkly();
-      console.log('✅ LaunchDarkly setup completed');
-
       this.isInitialized = true;
       console.log('🎉 Application initialization complete');
       
@@ -48,24 +44,7 @@ export class AppInitializationService {
 
     } catch (error) {
       console.error('❌ Failed to initialize application:', error);
-      // Use console.error instead of Sentry in development
-      if (import.meta.env.PROD) {
-        // Only use Sentry in production if available
-        try {
-          const Sentry = await import('@sentry/react');
-          Sentry.captureException(error);
-        } catch (sentryError) {
-          console.error('Sentry not available:', sentryError);
-        }
-      }
-    }
-  }
-
-  private static async initializeLaunchDarkly() {
-    try {
-      console.log('🏁 LaunchDarkly service ready for initialization');
-    } catch (error) {
-      console.warn('LaunchDarkly initialization skipped:', error);
+      Sentry.captureException(error);
     }
   }
 
@@ -73,28 +52,14 @@ export class AppInitializationService {
     // Handle unhandled promise rejections
     window.addEventListener('unhandledrejection', (event) => {
       console.error('Unhandled promise rejection:', event.reason);
-      if (import.meta.env.PROD) {
-        try {
-          const Sentry = require('@sentry/react');
-          Sentry.captureException(event.reason);
-        } catch (sentryError) {
-          // Sentry not available, continue without it
-        }
-      }
+      Sentry.captureException(event.reason);
       AnalyticsService.trackError(new Error(String(event.reason)), 'unhandled_promise');
     });
 
     // Handle JavaScript errors
     window.addEventListener('error', (event) => {
       console.error('JavaScript error:', event.error);
-      if (import.meta.env.PROD) {
-        try {
-          const Sentry = require('@sentry/react');
-          Sentry.captureException(event.error);
-        } catch (sentryError) {
-          // Sentry not available, continue without it
-        }
-      }
+      Sentry.captureException(event.error);
       AnalyticsService.trackError(event.error, 'javascript_error');
     });
   }

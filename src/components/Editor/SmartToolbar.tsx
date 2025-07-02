@@ -1,22 +1,31 @@
 
 import React, { useState } from 'react';
+import { 
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  CodeBracketIcon,
+  H1Icon,
+  H2Icon,
+  ChatBubbleLeftRightIcon,
+  ListBulletIcon,
+  NumberedListIcon
+} from '@heroicons/react/24/outline';
+import { Separator } from '@/components/ui/separator';
 import SpeechToText from './SpeechToText';
 import OCRScreenCapture from './OCRScreenCapture';
-import ToolbarSection from './toolbar/ToolbarSection';
-import TextFormattingSection from './toolbar/TextFormattingSection';
-import BlockFormattingSection from './toolbar/BlockFormattingSection';
-import FontControlsSection from './toolbar/FontControlsSection';
+import FormatButton from './toolbar/FormatButton';
+import FontFamilySelector from './toolbar/FontFamilySelector';
+import FontSizeControl from './toolbar/FontSizeControl';
 import MediaToolsGroup from './toolbar/MediaToolsGroup';
+import AIAssistantControl from './toolbar/AIAssistantControl';
 import SaveButton from './toolbar/SaveButton';
-import AIAssistantToolbar from './toolbar/AIAssistantToolbar';
-import { useAICopilot } from '@/hooks/useAICopilot';
-import { toast } from 'sonner';
 
 interface SmartToolbarProps {
   onFormatClick: (formatId: string, event: React.MouseEvent) => void;
+  onAIClick: () => void;
   onSave: () => void;
   onTextInsert?: (text: string) => void;
-  onTextReplace?: (text: string) => void;
   onImageInsert?: (imageData: string, width?: number, height?: number) => void;
   onFontChange?: (fontFamily: string, fontSize: number) => void;
   activeFormats: Set<string>;
@@ -27,9 +36,9 @@ interface SmartToolbarProps {
 
 const SmartToolbar: React.FC<SmartToolbarProps> = ({ 
   onFormatClick, 
+  onAIClick,
   onSave,
   onTextInsert,
-  onTextReplace,
   onImageInsert,
   onFontChange,
   activeFormats,
@@ -41,7 +50,6 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
   const [showOCR, setShowOCR] = useState(false);
   const [fontSize, setFontSize] = useState(16);
   const [fontFamily, setFontFamily] = useState('inter');
-  const { processText, isLoading } = useAICopilot();
 
   const handleTextReceived = (text: string) => {
     if (onTextInsert) {
@@ -69,83 +77,95 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
     }
   };
 
-  const handleAIAction = async (action: string) => {
-    if (!selectedText.trim()) {
-      toast.error('Please select some text first');
-      return;
-    }
+  const formatButtons = [
+    { id: 'bold', icon: BoldIcon, title: 'Bold (Ctrl+B)' },
+    { id: 'italic', icon: ItalicIcon, title: 'Italic (Ctrl+I)' },
+    { id: 'underline', icon: UnderlineIcon, title: 'Underline (Ctrl+U)' },
+    { id: 'code', icon: CodeBracketIcon, title: 'Code (Ctrl+`)' },
+  ];
 
-    try {
-      const response = await processText({
-        action: action as any,
-        text: selectedText,
-      });
-      
-      if (onTextReplace) {
-        onTextReplace(response.result);
-        toast.success(`Text ${action}d successfully!`);
-      }
-    } catch (error) {
-      console.error('AI processing error:', error);
-      toast.error('Failed to process text');
-    }
-  };
+  const blockButtons = [
+    { id: 'heading-one', icon: H1Icon, title: 'Heading 1' },
+    { id: 'heading-two', icon: H2Icon, title: 'Heading 2' },
+    { id: 'block-quote', icon: ChatBubbleLeftRightIcon, title: 'Quote' },
+    { id: 'bulleted-list', icon: ListBulletIcon, title: 'Bullet List' },
+    { id: 'numbered-list', icon: NumberedListIcon, title: 'Numbered List' },
+  ];
 
   return (
     <>
       <div className="flex items-center gap-1 p-4 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-b-2 border-blue-200/50 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 dark:border-slate-600/50">
         {/* Text Formatting */}
-        <ToolbarSection separatorColor="bg-blue-200 dark:bg-slate-500">
-          <TextFormattingSection
-            onFormatClick={onFormatClick}
-            activeFormats={activeFormats}
-          />
-        </ToolbarSection>
+        <div className="flex items-center gap-1">
+          {formatButtons.map(({ id, icon, title }) => (
+            <FormatButton
+              key={id}
+              id={id}
+              icon={icon}
+              title={title}
+              isActive={activeFormats.has(id)}
+              onClick={onFormatClick}
+              variant="text"
+            />
+          ))}
+        </div>
+
+        <Separator orientation="vertical" className="h-6 mx-2 bg-blue-200 dark:bg-slate-500" />
 
         {/* Block Formatting */}
-        <ToolbarSection separatorColor="bg-purple-200 dark:bg-slate-500">
-          <BlockFormattingSection
-            onFormatClick={onFormatClick}
-            activeFormats={activeFormats}
-          />
-        </ToolbarSection>
+        <div className="flex items-center gap-1">
+          {blockButtons.map(({ id, icon, title }) => (
+            <FormatButton
+              key={id}
+              id={id}
+              icon={icon}
+              title={title}
+              isActive={activeFormats.has(id)}
+              onClick={onFormatClick}
+              variant="block"
+            />
+          ))}
+        </div>
+
+        <Separator orientation="vertical" className="h-6 mx-2 bg-purple-200 dark:bg-slate-500" />
 
         {/* Font Controls */}
-        <ToolbarSection separatorColor="bg-orange-200 dark:bg-slate-500">
-          <FontControlsSection
-            fontFamily={fontFamily}
+        <div className="flex items-center gap-2">
+          <FontFamilySelector
+            value={fontFamily}
+            onChange={handleFontFamilyChange}
+          />
+          <FontSizeControl
             fontSize={fontSize}
-            onFontFamilyChange={handleFontFamilyChange}
-            onFontSizeChange={handleFontSizeChange}
+            onChange={handleFontSizeChange}
           />
-        </ToolbarSection>
+        </div>
 
-        {/* AI Assistant */}
-        <ToolbarSection separatorColor="bg-green-200 dark:bg-slate-500">
-          <AIAssistantToolbar
-            selectedText={selectedText}
-            onAIAction={handleAIAction}
-            isLoading={isLoading}
-          />
-        </ToolbarSection>
+        <Separator orientation="vertical" className="h-6 mx-2 bg-orange-200 dark:bg-slate-500" />
 
         {/* Media Tools */}
-        <ToolbarSection separatorColor="bg-pink-200 dark:bg-slate-500">
-          <MediaToolsGroup
-            onImageInsert={handleImageInsert}
-            onSpeechToTextOpen={() => setShowSpeechToText(true)}
-            onOCROpen={() => setShowOCR(true)}
-          />
-        </ToolbarSection>
+        <MediaToolsGroup
+          onImageInsert={handleImageInsert}
+          onSpeechToTextOpen={() => setShowSpeechToText(true)}
+          onOCROpen={() => setShowOCR(true)}
+        />
 
-        {/* Save Note Button */}
-        <ToolbarSection showSeparator={false}>
+        <Separator orientation="vertical" className="h-6 mx-2 bg-green-200 dark:bg-slate-500" />
+
+        {/* AI Assistant */}
+        <div className="flex items-center gap-2">
+          <AIAssistantControl
+            selectedText={selectedText}
+            onAIClick={onAIClick}
+          />
+
+          {/* Save Note Button */}
           <SaveButton
             onSave={onSave}
             canSave={canSave}
             isSaving={isSaving}
           />
-        </ToolbarSection>
+        </div>
       </div>
 
       {/* Speech to Text Modal */}

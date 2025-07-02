@@ -12,7 +12,6 @@ const MobileDesktopViewButton: React.FC = () => {
   const handleDesktopView = () => {
     // Map mobile routes to desktop routes
     const routeMapping: Record<string, string> = {
-      '/mobile': '/app/dashboard',
       '/mobile/dashboard': '/app/dashboard',
       '/mobile/notes': '/app/notes',
       '/mobile/editor': '/app/editor',
@@ -26,7 +25,6 @@ const MobileDesktopViewButton: React.FC = () => {
     const desktopRoute = routeMapping[location.pathname] || '/app/dashboard';
     const desktopUrl = noteParam ? `${desktopRoute}?note=${noteParam}` : desktopRoute;
     
-    console.log('Switching to desktop view:', { from: location.pathname, to: desktopUrl });
     navigate(desktopUrl);
   };
 

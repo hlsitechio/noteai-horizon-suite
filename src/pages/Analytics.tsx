@@ -1,122 +1,84 @@
 
 import React from 'react';
-import { BarChart3, TrendingUp, FileText, Calendar } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { motion } from 'framer-motion';
+import { useNotes } from '../contexts/NotesContext';
+import AnalyticsHeader from '../components/Analytics/AnalyticsHeader';
+import OverviewStats from '../components/Analytics/OverviewStats';
+import CategoryDistribution from '../components/Analytics/CategoryDistribution';
+import WritingInsights from '../components/Analytics/WritingInsights';
 
 const Analytics: React.FC = () => {
+  const { notes } = useNotes();
+
+  // Calculate stats
+  const totalNotes = notes.length;
+  const favoriteNotes = notes.filter(note => note.isFavorite).length;
+  const categoryCounts = notes.reduce((acc, note) => {
+    const category = note.category || 'general';
+    acc[category] = (acc[category] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const weeklyNotes = notes.filter(note => {
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    return new Date(note.createdAt) > weekAgo;
+  }).length;
+
+  // Calculate word and character counts
+  const totalWords = notes.reduce((acc, note) => {
+    const wordCount = note.content ? note.content.split(/\s+/).filter(word => word.length > 0).length : 0;
+    return acc + wordCount;
+  }, 0);
+
+  const totalCharacters = notes.reduce((acc, note) => {
+    return acc + (note.content ? note.content.length : 0);
+  }, 0);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center gap-3">
-        <BarChart3 className="w-8 h-8 text-primary" />
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Analytics</h1>
-          <p className="text-muted-foreground">Track your productivity and insights</p>
-        </div>
-      </div>
+    <div className="w-full h-full overflow-auto">
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
+        <AnalyticsHeader />
+        
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          className="space-y-6"
+        >
+          {/* Overview Stats */}
+          <OverviewStats
+            totalNotes={totalNotes}
+            totalWords={totalWords}
+            weeklyNotes={weeklyNotes}
+            favoriteNotes={favoriteNotes}
+          />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Notes</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">24</div>
-            <p className="text-xs text-muted-foreground">
-              +2 from last week
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Words Written</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1,234</div>
-            <p className="text-xs text-muted-foreground">
-              +15% from last week
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Days</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">
-              This month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Productivity</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">85%</div>
-            <p className="text-xs text-muted-foreground">
-              +5% from last week
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Writing Activity</CardTitle>
-            <CardDescription>
-              Your writing activity over the past 7 days
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-8">
-              <BarChart3 className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">Chart visualization would go here</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>
-              Your latest notes and edits
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <FileText className="w-4 h-4 text-muted-foreground" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Created "Project Ideas"</p>
-                  <p className="text-xs text-muted-foreground">2 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <FileText className="w-4 h-4 text-muted-foreground" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Updated "Meeting Notes"</p>
-                  <p className="text-xs text-muted-foreground">4 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <FileText className="w-4 h-4 text-muted-foreground" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Created "Daily Journal"</p>
-                  <p className="text-xs text-muted-foreground">1 day ago</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Charts and Insights */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <CategoryDistribution
+              categoryCounts={categoryCounts}
+              totalNotes={totalNotes}
+            />
+            
+            <WritingInsights
+              totalNotes={totalNotes}
+              totalWords={totalWords}
+              totalCharacters={totalCharacters}
+              favoriteNotes={favoriteNotes}
+            />
+          </div>
+        </motion.div>
       </div>
     </div>
   );

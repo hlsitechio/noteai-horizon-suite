@@ -2,12 +2,14 @@
 import React from 'react';
 import { Clock } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface WelcomeContentProps {
   currentTime: Date;
 }
 
 const WelcomeContent: React.FC<WelcomeContentProps> = ({ currentTime }) => {
+  const { user } = useAuth();
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { 
@@ -35,14 +37,14 @@ const WelcomeContent: React.FC<WelcomeContentProps> = ({ currentTime }) => {
     <div className="absolute inset-0 flex items-center justify-between p-4 text-white">
       <div className="flex items-center gap-4">
         <Avatar className="w-12 h-12 ring-2 ring-white/20">
-          <AvatarImage src="" />
+          <AvatarImage src={user?.avatar} />
           <AvatarFallback className="bg-white/20 text-white">
-            U
+            {user?.name?.[0]}
           </AvatarFallback>
         </Avatar>
         <div>
           <h1 className="text-2xl font-bold mb-1">
-            Welcome back, Demo User! 👋
+            Welcome back, {getFirstName(user?.name || '')}! 👋
           </h1>
           <p className="text-sm opacity-90">
             {formatDate(currentTime)}

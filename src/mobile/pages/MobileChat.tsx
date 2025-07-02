@@ -1,155 +1,168 @@
+
 import React, { useState } from 'react';
-import { Send, Brain, Sparkles } from 'lucide-react';
+import { Send, Bot, User, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { useMutation } from '@tanstack/react-query';
-import { useEnhancedAIChat, ChatMessage } from '../../hooks/useEnhancedAIChat';
 import DynamicMobileHeader from '../components/DynamicMobileHeader';
 
+interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+}
+
 const MobileChat: React.FC = () => {
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const { sendMessage: sendAIMessage, isLoading } = useEnhancedAIChat();
-
-  // Use TanStack Query mutation for chat messages
-  const chatMutation = useMutation({
-    mutationFn: async (newMessage: string) => {
-      const userMessage: ChatMessage = {
-        id: Date.now().toString(),
-        content: newMessage,
-        isUser: true,
-        timestamp: new Date()
-      };
-
-      const updatedMessages = [...messages, userMessage];
-      setMessages(updatedMessages);
-
-      const aiResponse = await sendAIMessage(updatedMessages);
-      
-      const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        content: aiResponse,
-        isUser: false,
-        timestamp: new Date()
-      };
-
-      return { updatedMessages, aiMessage };
-    },
-    onSuccess: ({ updatedMessages, aiMessage }) => {
-      setMessages([...updatedMessages, aiMessage]);
-    },
-    onError: (error) => {
-      console.error('Error sending message:', error);
-    },
-  });
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      role: 'assistant',
+      content: 'Hello! I\'m your AI writing assistant. How can I help you with your notes today?',
+      timestamp: new Date()
+    }
+  ]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSend = async () => {
-    if (message.trim()) {
-      chatMutation.mutate(message);
-      setMessage('');
-    }
+    if (!input.trim()) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: input,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
+
+    // Simulate AI response
+    setTimeout(() => {
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'I understand you\'re looking for help with that. Let me assist you with your writing and note-taking needs.',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, aiMessage]);
+      setIsLoading(false);
+    }, 1000);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
+  const quickPrompts = [
+    'Help me organize my thoughts',
+    'Summarize my recent notes',
+    'Improve my writing style',
+    'Generate ideas for my project'
+  ];
 
   return (
     <div className="h-full flex flex-col bg-background">
-      <DynamicMobileHeader 
-        title="AI Chat" 
-        rightActions={
-          <Badge variant="secondary" className="bg-purple-100 text-purple-700 text-xs">
-            <Brain className="w-3 h-3 mr-1" />
-            AI Assistant
-          </Badge>
-        }
-      />
+      <DynamicMobileHeader title="AI Assistant" />
       
-      <div className="flex-1 flex flex-col p-4">
-        <ScrollArea className="flex-1 mb-4">
-          <div className="space-y-4">
-            {messages.length === 0 ? (
-              <div className="text-center py-8">
-                <div className="p-4 bg-gradient-to-br from-purple-100 to-blue-100 rounded-2xl mx-auto w-fit mb-4">
-                  <Brain className="w-12 h-12 mx-auto text-purple-600" />
+      {/* Messages */}
+      <ScrollArea className="flex-1 p-4">
+        <div className="space-y-4">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex gap-3 ${
+                message.role === 'user' ? 'justify-end' : 'justify-start'
+              }`}
+            >
+              {message.role === 'assistant' && (
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                  <Bot className="w-4 h-4 text-primary-foreground" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  AI Assistant Ready
-                </h3>
-                <p className="text-muted-foreground text-sm">
-                  Ask me anything or get help with your notes
-                </p>
+              )}
+              
+              <Card className={`max-w-[80%] ${
+                message.role === 'user' 
+                  ? 'bg-primary text-primary-foreground' 
+                  : 'bg-muted'
+              }`}>
+                <CardContent className="p-3">
+                  <p className="text-sm">{message.content}</p>
+                  <p className={`text-xs mt-1 ${
+                    message.role === 'user' 
+                      ? 'text-primary-foreground/70' 
+                      : 'text-muted-foreground'
+                  }`}>
+                    {message.timestamp.toLocaleTimeString([], { 
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })}
+                  </p>
+                </CardContent>
+              </Card>
+              
+              {message.role === 'user' && (
+                <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
+                  <User className="w-4 h-4 text-accent-foreground" />
+                </div>
+              )}
+            </div>
+          ))}
+          
+          {isLoading && (
+            <div className="flex gap-3 justify-start">
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                <Bot className="w-4 h-4 text-primary-foreground" />
               </div>
-            ) : (
-              messages.map((msg, index) => (
-                <div
-                  key={index}
-                  className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[85%] p-3 rounded-2xl ${
-                      msg.isUser
-                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
-                        : 'bg-muted border'
-                    }`}
-                  >
-                    {!msg.isUser && (
-                      <div className="flex items-center gap-2 mb-1">
-                        <Brain className="w-3 h-3 text-purple-600" />
-                        <span className="text-xs font-medium text-purple-600">AI</span>
-                      </div>
-                    )}
-                    <p className="text-sm">{msg.content}</p>
+              <Card className="bg-muted">
+                <CardContent className="p-3">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                    <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                   </div>
-                </div>
-              ))
-            )}
-            {(chatMutation.isPending || isLoading) && (
-              <div className="flex justify-start">
-                <div className="bg-muted border p-3 rounded-2xl">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Brain className="w-3 h-3 text-purple-600" />
-                    <span className="text-xs font-medium text-purple-600">AI</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </ScrollArea>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </div>
+      </ScrollArea>
 
-        {/* Input */}
-        <div className="flex gap-2 p-3 bg-muted/50 rounded-xl">
+      {/* Quick Prompts */}
+      {messages.length === 1 && (
+        <div className="p-4 border-t">
+          <p className="text-sm text-muted-foreground mb-3">Try these prompts:</p>
+          <div className="grid grid-cols-1 gap-2">
+            {quickPrompts.map((prompt) => (
+              <Button
+                key={prompt}
+                variant="outline"
+                size="sm"
+                onClick={() => setInput(prompt)}
+                className="justify-start text-left h-auto py-2"
+              >
+                <Sparkles className="w-3 h-3 mr-2" />
+                {prompt}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Input */}
+      <div className="p-4 border-t bg-background">
+        <div className="flex gap-2">
           <Input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
             placeholder="Ask me anything..."
-            disabled={chatMutation.isPending || isLoading}
-            className="flex-1 bg-background"
+            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+            className="flex-1"
           />
-          <Button
-            onClick={handleSend}
-            disabled={chatMutation.isPending || isLoading || !message.trim()}
-            size="sm"
-            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+          <Button 
+            onClick={handleSend} 
+            disabled={!input.trim() || isLoading}
           >
-            {(chatMutation.isPending || isLoading) ? (
-              <Sparkles className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
+            <Send className="w-4 h-4" />
           </Button>
         </div>
       </div>

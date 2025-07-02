@@ -1,164 +1,214 @@
 
 /**
- * Security Utilities
- * Provides rate limiting and secure logging capabilities
+ * Security utilities for input validation and sanitization
  */
 
-interface RateLimitEntry {
-  count: number;
-  resetTime: number;
-}
+// Input validation patterns
+export const VALIDATION_PATTERNS = {
+  title: /^[a-zA-Z0-9\s\-_.,!?()[\]{}'"]+$/,
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  alphanumeric: /^[a-zA-Z0-9]+$/,
+  hexColor: /^#[0-9A-Fa-f]{6}$/,
+} as const;
 
+// Maximum lengths for different input types
+export const MAX_LENGTHS = {
+  title: 500,
+  content: 10485760, // 10MB
+  tag: 50,
+  folderName: 255,
+  displayName: 100,
+} as const;
+
+/**
+ * Sanitize text input to prevent XSS
+ */
+export const sanitizeText = (input: string): string => {
+  if (!input) return '';
+  
+  return input
+    .replace(/<script[^>]*>.*?<\/script>/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/data:text\/html/gi, '')
+    .replace(/vbscript:/gi, '')
+    .replace(/on(load|error|click|focus|blur|change|submit)=/gi, '')
+    .replace(/<iframe[^>]*src=/gi, '')
+    .replace(/<object[^>]*data=/gi, '')
+    .replace(/<embed[^>]*src=/gi, '')
+    .trim();
+};
+
+/**
+ * Validate note title
+ */
+export const validateNoteTitle = (title: string): { isValid: boolean; error?: string } => {
+  if (!title || title.trim().length === 0) {
+    return { isValid: false, error: 'Title cannot be empty' };
+  }
+  
+  if (title.length > MAX_LENGTHS.title) {
+    return { isValid: false, error: `Title too long (max ${MAX_LENGTHS.title} characters)` };
+  }
+  
+  return { isValid: true };
+};
+
+/**
+ * Validate note content
+ */
+export const validateNoteContent = (content: string): { isValid: boolean; error?: string } => {
+  if (!content) return { isValid: true }; // Content can be empty
+  
+  if (content.length > MAX_LENGTHS.content) {
+    return { isValid: false, error: 'Content too large (max 10MB)' };
+  }
+  
+  // Check for potentially malicious content
+  const maliciousPatterns = [
+    /<script[^>]*>.*?<\/script>/gi,
+    /javascript:/gi,
+    /data:text\/html/gi,
+    /vbscript:/gi,
+    /on(load|error|click|focus|blur|change|submit)=/gi,
+    /<iframe[^>]*src=/gi,
+    /<object[^>]*data=/gi,
+    /<embed[^>]*src=/gi,
+  ];
+  
+  for (const pattern of maliciousPatterns) {
+    if (pattern.test(content)) {
+      return { isValid: false, error: 'Content contains potentially malicious code' };
+    }
+  }
+  
+  return { isValid: true };
+};
+
+/**
+ * Validate tags array
+ */
+export const validateTags = (tags: string[]): { isValid: boolean; error?: string } => {
+  if (!tags) return { isValid: true };
+  
+  if (tags.length > 20) {
+    return { isValid: false, error: 'Too many tags (max 20)' };
+  }
+  
+  for (const tag of tags) {
+    if (tag.length > MAX_LENGTHS.tag) {
+      return { isValid: false, error: `Tag "${tag}" too long (max ${MAX_LENGTHS.tag} characters)` };
+    }
+  }
+  
+  return { isValid: true };
+};
+
+/**
+ * Validate folder name
+ */
+export const validateFolderName = (name: string): { isValid: boolean; error?: string } => {
+  if (!name || name.trim().length === 0) {
+    return { isValid: false, error: 'Folder name cannot be empty' };
+  }
+  
+  if (name.length > MAX_LENGTHS.folderName) {
+    return { isValid: false, error: `Folder name too long (max ${MAX_LENGTHS.folderName} characters)` };
+  }
+  
+  return { isValid: true };
+};
+
+/**
+ * Validate hex color
+ */
+export const validateHexColor = (color: string): boolean => {
+  return VALIDATION_PATTERNS.hexColor.test(color);
+};
+
+/**
+ * Rate limiting state management
+ */
 class RateLimiter {
-  private limits: Map<string, RateLimitEntry> = new Map();
-
-  checkLimit(key: string, maxRequests: number, windowMs: number): boolean {
+  private limits = new Map<string, { count: number; resetTime: number }>();
+  
+  checkLimit(key: string, maxRequests: number = 50, windowMs: number = 60000): boolean {
     const now = Date.now();
-    const entry = this.limits.get(key);
-
-    if (!entry || now > entry.resetTime) {
-      this.limits.set(key, {
-        count: 1,
-        resetTime: now + windowMs
-      });
+    const limit = this.limits.get(key);
+    
+    if (!limit || now > limit.resetTime) {
+      this.limits.set(key, { count: 1, resetTime: now + windowMs });
       return true;
     }
-
-    if (entry.count >= maxRequests) {
+    
+    if (limit.count >= maxRequests) {
       return false;
     }
-
-    entry.count++;
+    
+    limit.count++;
     return true;
   }
-
+  
   cleanup() {
     const now = Date.now();
-    for (const [key, entry] of this.limits.entries()) {
-      if (now > entry.resetTime) {
+    for (const [key, limit] of this.limits.entries()) {
+      if (now > limit.resetTime) {
         this.limits.delete(key);
       }
     }
   }
 }
 
-class SecureLogger {
-  private sanitizeMessage(message: string): string {
-    // Remove sensitive information
-    return message
-      .replace(/password[=:]\s*\S+/gi, 'password=***')
-      .replace(/token[=:]\s*\S+/gi, 'token=***')
-      .replace(/api[_-]?key[=:]\s*\S+/gi, 'api_key=***');
-  }
+export const rateLimiter = new RateLimiter();
 
-  error(message: string, context?: Record<string, any>) {
-    const sanitizedMessage = this.sanitizeMessage(message);
-    const sanitizedContext = context ? this.sanitizeContext(context) : {};
-    
-    console.error(sanitizedMessage, sanitizedContext);
-  }
+// Clean up rate limiter every 5 minutes
+setInterval(() => rateLimiter.cleanup(), 5 * 60 * 1000);
 
-  warn(message: string, context?: Record<string, any>) {
-    const sanitizedMessage = this.sanitizeMessage(message);
-    const sanitizedContext = context ? this.sanitizeContext(context) : {};
-    
-    console.warn(sanitizedMessage, sanitizedContext);
-  }
+/**
+ * Secure logging utility that filters sensitive information
+ */
+export const secureLog = {
+  info: (message: string, data?: any) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[INFO] ${message}`, data ? sanitizeLogData(data) : '');
+    }
+  },
+  
+  warn: (message: string, data?: any) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`[WARN] ${message}`, data ? sanitizeLogData(data) : '');
+    }
+  },
+  
+  error: (message: string, error?: any) => {
+    // Always log errors, but sanitize them
+    console.error(`[ERROR] ${message}`, error ? sanitizeLogData(error) : '');
+  },
+};
 
-  info(message: string, context?: Record<string, any>) {
-    const sanitizedMessage = this.sanitizeMessage(message);
-    const sanitizedContext = context ? this.sanitizeContext(context) : {};
+/**
+ * Sanitize data for logging by removing sensitive information
+ */
+const sanitizeLogData = (data: any): any => {
+  if (!data) return data;
+  
+  // Create a copy to avoid mutating original data
+  const sanitized = JSON.parse(JSON.stringify(data));
+  
+  // Remove sensitive fields
+  const sensitiveFields = ['password', 'token', 'key', 'secret', 'auth', 'session'];
+  
+  const sanitizeObject = (obj: any): void => {
+    if (typeof obj !== 'object' || obj === null) return;
     
-    console.info(sanitizedMessage, sanitizedContext);
-  }
-
-  security(message: string, context?: Record<string, any>) {
-    const sanitizedMessage = this.sanitizeMessage(message);
-    const sanitizedContext = context ? this.sanitizeContext(context) : {};
-    
-    console.warn(`🔐 SECURITY: ${sanitizedMessage}`, sanitizedContext);
-  }
-
-  private sanitizeContext(context: Record<string, any>): Record<string, any> {
-    const sanitized: Record<string, any> = {};
-    
-    for (const [key, value] of Object.entries(context)) {
-      if (typeof value === 'string') {
-        sanitized[key] = this.sanitizeMessage(value);
-      } else if (key.toLowerCase().includes('password') || key.toLowerCase().includes('token')) {
-        sanitized[key] = '***';
-      } else {
-        sanitized[key] = value;
+    for (const key in obj) {
+      if (sensitiveFields.some(field => key.toLowerCase().includes(field))) {
+        obj[key] = '[REDACTED]';
+      } else if (typeof obj[key] === 'object') {
+        sanitizeObject(obj[key]);
       }
     }
-    
-    return sanitized;
-  }
-}
-
-// Validation functions
-export const validateNoteTitle = (title: string): { isValid: boolean; error?: string } => {
-  if (!title || title.trim().length === 0) {
-    return { isValid: false, error: 'Title is required' };
-  }
+  };
   
-  if (title.length > 200) {
-    return { isValid: false, error: 'Title too long (max 200 characters)' };
-  }
-
-  // Check for potentially dangerous content
-  if (/<script|javascript:|data:text\/html/i.test(title)) {
-    return { isValid: false, error: 'Title contains invalid content' };
-  }
-
-  return { isValid: true };
+  sanitizeObject(sanitized);
+  return sanitized;
 };
-
-export const validateNoteContent = (content: string): { isValid: boolean; error?: string } => {
-  if (content.length > 1000000) { // 1MB limit
-    return { isValid: false, error: 'Content too long (max 1MB)' };
-  }
-
-  return { isValid: true };
-};
-
-export const validateTags = (tags: string[]): { isValid: boolean; error?: string } => {
-  if (tags.length > 20) {
-    return { isValid: false, error: 'Too many tags (max 20)' };
-  }
-
-  for (const tag of tags) {
-    if (tag.length > 50) {
-      return { isValid: false, error: 'Tag too long (max 50 characters)' };
-    }
-    
-    if (/<script|javascript:|data:text\/html/i.test(tag)) {
-      return { isValid: false, error: 'Tag contains invalid content' };
-    }
-  }
-
-  return { isValid: true };
-};
-
-export const sanitizeText = (text: string): string => {
-  return text
-    .replace(/<script[^>]*>.*?<\/script>/gi, '')
-    .replace(/javascript:/gi, '')
-    .replace(/data:text\/html/gi, '')
-    .replace(/vbscript:/gi, '')
-    .replace(/on\w+\s*=/gi, '')
-    .trim();
-};
-
-export const rateLimiter = new RateLimiter();
-export const secureLog = new SecureLogger();
-
-// Enhanced rate limiter (alias for compatibility)
-export const enhancedRateLimiter = rateLimiter;
-
-// Cleanup rate limiter periodically
-if (typeof window !== 'undefined') {
-  setInterval(() => {
-    rateLimiter.cleanup();
-  }, 60000); // Every minute
-}

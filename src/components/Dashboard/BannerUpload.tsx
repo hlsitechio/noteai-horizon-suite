@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Upload, AlertCircle, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import { BannerStorageService } from '@/services/bannerStorage';
+import { useDynamicAccent } from '../../contexts/DynamicAccentContext';
 import { BannerUploadProps, BannerState } from './BannerUpload/types';
 import { validateFile } from './BannerUpload/utils';
 import BannerPreview from './BannerUpload/BannerPreview';
@@ -24,6 +26,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
     uploadError: null
   });
   
+  const { extractColorFromMedia, isDynamicAccentEnabled, isExtracting } = useDynamicAccent();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const updateState = (updates: Partial<BannerState>) => {
@@ -54,6 +57,14 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
       const result = e.target?.result as string;
       console.log('BannerUpload: File read successfully, data URL length:', result.length);
       updateState({ selectedBanner: result });
+      
+      // Extract color from the selected file if dynamic accent is enabled
+      if (isDynamicAccentEnabled) {
+        console.log('BannerUpload: Extracting color from selected file');
+        extractColorFromMedia(file).catch(error => {
+          console.error('BannerUpload: Color extraction failed:', error);
+        });
+      }
     };
     reader.onerror = (e) => {
       console.error('BannerUpload: FileReader error:', e);
@@ -65,49 +76,72 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
 
   const handleUploadBanner = async () => {
     if (!state.selectedBanner || !state.selectedFile) {
-      console.error('BannerUpload: No file selected');
+      console.error('BannerUpload: No file selected - selectedBanner:', !!state.selectedBanner, 'selectedFile:', !!state.selectedFile);
       updateState({ uploadError: 'No file selected' });
       return;
     }
 
-    console.log('BannerUpload: Starting upload process (demo mode)');
+    console.log('BannerUpload: Starting upload process, type:', state.bannerType);
     updateState({ isUploading: true, uploadError: null });
     
     try {
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('BannerUpload: Uploading file:', state.selectedFile.name, state.selectedFile.size, state.selectedFile.type);
       
-      console.log('BannerUpload: Demo upload successful');
-      onBannerUpdate?.(state.selectedBanner, state.bannerType);
-      toast.success('Banner uploaded successfully!');
+      const bannerData = await BannerStorageService.uploadBanner(state.selectedFile, 'dashboard');
       
-      updateState({ 
-        isOpen: false, 
-        selectedBanner: null, 
-        selectedFile: null,
-        uploadError: null 
-      });
+      if (bannerData) {
+        console.log('BannerUpload: Upload successful:', bannerData);
+        onBannerUpdate?.(bannerData.file_url, bannerData.file_type);
+        
+        // Extract color from the uploaded banner URL if dynamic accent is enabled
+        if (isDynamicAccentEnabled) {
+          console.log('BannerUpload: Extracting color from uploaded banner');
+          try {
+            await extractColorFromMedia(bannerData.file_url);
+            toast.success('Banner uploaded and accent color updated!');
+          } catch (error) {
+            console.error('BannerUpload: Color extraction from uploaded banner failed:', error);
+            toast.success('Banner uploaded successfully!');
+          }
+        } else {
+          toast.success('Banner uploaded successfully!');
+        }
+        
+        updateState({ 
+          isOpen: false, 
+          selectedBanner: null, 
+          selectedFile: null,
+          uploadError: null 
+        });
+      } else {
+        console.error('BannerUpload: Upload returned null result');
+        updateState({ uploadError: 'Upload failed. Please try again.' });
+      }
     } catch (error) {
       console.error('BannerUpload: Upload error:', error);
-      updateState({ uploadError: 'Upload failed in demo mode' });
-      toast.error('Demo upload failed');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      updateState({ uploadError: `Upload failed: ${errorMessage}` });
+      toast.error('Failed to update dashboard banner');
     } finally {
       updateState({ isUploading: false });
     }
   };
 
   const handleDeleteBanner = async () => {
-    console.log('BannerUpload: Deleting banner (demo mode)');
+    console.log('BannerUpload: Deleting banner');
     updateState({ isDeleting: true });
     try {
-      // Simulate delete delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      onBannerDelete?.();
-      updateState({ isOpen: false });
-      toast.success('Dashboard banner deleted successfully!');
+      const success = await BannerStorageService.deleteBanner('dashboard');
+      if (success) {
+        onBannerDelete?.();
+        updateState({ isOpen: false });
+        toast.success('Dashboard banner deleted successfully!');
+      } else {
+        toast.error('Failed to delete banner');
+      }
     } catch (error) {
       console.error('BannerUpload: Delete error:', error);
-      toast.error('Demo delete failed');
+      toast.error('Failed to delete banner');
     } finally {
       updateState({ isDeleting: false });
     }
@@ -143,6 +177,12 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
           <DialogTitle>Dashboard Banner</DialogTitle>
           <DialogDescription>
             Upload an image or video to personalize your dashboard banner. Images should be max 10MB and videos max 50MB in MP4 format.
+            {isDynamicAccentEnabled && (
+              <span className="flex items-center gap-1 mt-2 text-accent">
+                <Sparkles className="w-4 h-4" />
+                Dynamic accent colors are enabled - your theme will automatically match your banner!
+              </span>
+            )}
           </DialogDescription>
         </DialogHeader>
         
@@ -155,6 +195,13 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
             </div>
           )}
 
+          {/* Color Extraction Status */}
+          {isExtracting && (
+            <div className="flex items-center gap-2 p-3 bg-accent/10 border border-accent/20 rounded-lg text-accent">
+              <Sparkles className="w-4 h-4 flex-shrink-0 animate-pulse" />
+              <span>Extracting colors from your media...</span>
+            </div>
+          )}
           
           {!state.selectedBanner ? (
             <FileSelector
@@ -180,7 +227,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
                 </Button>
                 <Button 
                   onClick={handleUploadBanner} 
-                  disabled={state.isUploading}
+                  disabled={state.isUploading || isExtracting}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
                   {state.isUploading ? 'Uploading...' : 'Update Banner'}

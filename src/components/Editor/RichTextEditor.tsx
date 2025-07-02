@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
 import SmartToolbar from './SmartToolbar';
+import EnhancedAIAssistant from './EnhancedAIAssistant';
+import TextSelectionContextMenu from './TextSelectionContextMenu';
 import EditorContent from './components/EditorContent';
 import ResizableImage from './ResizableImage';
-import FloatingAIButton from '../AICopilot/FloatingAIButton';
 import { useRichTextEditor } from './hooks/useRichTextEditor';
 import { useTextSelection } from './hooks/useTextSelection';
 import { useEditorFormatting } from './hooks/useEditorFormatting';
@@ -25,6 +26,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   canSave = true,
   isSaving = false
 }) => {
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [editorFontFamily, setEditorFontFamily] = useState('inter');
   const [editorFontSize, setEditorFontSize] = useState(16);
   const [images, setImages] = useState<Array<{
@@ -33,7 +35,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     width: number;
     height: number;
   }>>([]);
-  const [showAIToggle, setShowAIToggle] = useState(false);
 
   // Custom hooks for editor functionality
   const {
@@ -41,11 +42,17 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     slateValue,
     handleChange,
     handleTextInsert,
+    handleAIInsert,
     handleAIReplace,
   } = useRichTextEditor({ value, onChange });
 
   const {
     selectedText,
+    assistantPosition,
+    contextMenuPosition,
+    handleTextSelection,
+    handleContextMenuReplace,
+    closeContextMenu,
   } = useTextSelection(editor);
 
   const {
@@ -79,16 +86,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     ));
   };
 
-  const handleSelect = () => {
-    // Handle text selection for AI features
-    console.log('Text selected in editor');
-  };
-
-  const handleAIToggle = () => {
-    setShowAIToggle(!showAIToggle);
-    console.log('AI toggle activated');
-  };
-
   const getFontFamilyStyle = (family: string) => {
     const fontMap: Record<string, string> = {
       'inter': 'Inter, system-ui, sans-serif',
@@ -108,53 +105,68 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   };
 
   return (
-    <div className="glass rounded-2xl shadow-large overflow-hidden bg-white/10 backdrop-blur-lg dark:bg-slate-800/20 relative">
-      <SmartToolbar
-        onFormatClick={handleFormatClick}
-        onSave={onSave || (() => {})}
-        onTextInsert={handleTextInsert}
-        onTextReplace={handleAIReplace}
-        onImageInsert={handleImageInsert}
-        onFontChange={handleFontChange}
-        activeFormats={getActiveFormats()}
-        selectedText={selectedText}
-        canSave={canSave}
-        isSaving={isSaving}
-      />
-
-      <div style={editorStyle}>
-        <EditorContent
-          editor={editor}
-          slateValue={slateValue}
-          onChange={handleChange}
-          placeholder={placeholder}
-          onSelect={handleSelect}
-          onKeyDown={handleKeyboardShortcuts}
-          onAIToggle={handleAIToggle}
+    <>
+      <div className="glass rounded-2xl shadow-large overflow-hidden bg-white/10 backdrop-blur-lg dark:bg-slate-800/20">
+        <SmartToolbar
+          onFormatClick={handleFormatClick}
+          onAIClick={() => setShowAIAssistant(true)}
+          onSave={onSave || (() => {})}
+          onTextInsert={handleTextInsert}
+          onImageInsert={handleImageInsert}
+          onFontChange={handleFontChange}
+          activeFormats={getActiveFormats()}
+          selectedText={selectedText}
+          canSave={canSave}
+          isSaving={isSaving}
         />
-        
-        {/* Render images */}
-        {images.length > 0 && (
-          <div className="p-4 space-y-4">
-            {images.map((image) => (
-              <ResizableImage
-                key={image.id}
-                src={image.src}
-                initialWidth={image.width}
-                initialHeight={image.height}
-                onRemove={() => handleImageRemove(image.id)}
-                onSizeChange={(width, height) => handleImageSizeChange(image.id, width, height)}
-              />
-            ))}
-          </div>
-        )}
+
+        <div style={editorStyle}>
+          <EditorContent
+            editor={editor}
+            slateValue={slateValue}
+            onChange={handleChange}
+            placeholder={placeholder}
+            onSelect={handleTextSelection}
+            onKeyDown={handleKeyboardShortcuts}
+            onAIToggle={() => setShowAIAssistant(true)}
+          />
+          
+          {/* Render images */}
+          {images.length > 0 && (
+            <div className="p-4 space-y-4">
+              {images.map((image) => (
+                <ResizableImage
+                  key={image.id}
+                  src={image.src}
+                  initialWidth={image.width}
+                  initialHeight={image.height}
+                  onRemove={() => handleImageRemove(image.id)}
+                  onSizeChange={(width, height) => handleImageSizeChange(image.id, width, height)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Floating AI Assistant */}
-      <FloatingAIButton
-        onTextInsert={handleTextInsert}
+      {/* Context Menu for Text Selection */}
+      <TextSelectionContextMenu
+        selectedText={selectedText}
+        onTextReplace={handleContextMenuReplace}
+        onTextInsert={handleAIInsert}
+        position={contextMenuPosition}
+        onClose={closeContextMenu}
       />
-    </div>
+
+      <EnhancedAIAssistant
+        selectedText={selectedText}
+        onTextInsert={handleAIInsert}
+        onTextReplace={handleAIReplace}
+        isVisible={showAIAssistant}
+        onClose={() => setShowAIAssistant(false)}
+        position={assistantPosition}
+      />
+    </>
   );
 };
 

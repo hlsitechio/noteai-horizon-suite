@@ -9,34 +9,26 @@ import {
   MagnifyingGlassIcon,
   CodeBracketIcon,
   Squares2X2Icon,
-  ChartBarIcon,
-  CircleStackIcon
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import { useAuth } from '../../contexts/AuthContext';
 
 const menuItems = [
-  { icon: Squares2X2Icon, label: 'Dashboard', path: '/dashboard' },
-  { icon: PlusIcon, label: 'AI Chat', path: '/chat' },
-  { icon: PencilIcon, label: 'Editor', path: '/editor' },
-  { icon: MagnifyingGlassIcon, label: 'Notes', path: '/notes' },
-  { icon: ChartBarIcon, label: 'Analytics', path: '/analytics' },
-  { icon: CircleStackIcon, label: 'DB Performance', path: '/db-performance' },
-  { icon: CogIcon, label: 'Settings', path: '/settings' },
+  { icon: Squares2X2Icon, label: 'Dashboard', path: '/app/dashboard' },
+  { icon: PlusIcon, label: 'AI Chat', path: '/app/chat' },
+  { icon: PencilIcon, label: 'Editor', path: '/app/editor' },
+  { icon: MagnifyingGlassIcon, label: 'Notes', path: '/app/notes' },
+  { icon: ChartBarIcon, label: 'Analytics', path: '/app/analytics' },
+  { icon: CogIcon, label: 'Settings', path: '/app/settings' },
 ];
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
-  const handleMenuClick = (path: string) => {
-    navigate(path);
-  };
-
-  const handleLogout = () => {
-    console.log('Logout clicked');
-  };
+  const { user, logout } = useAuth();
 
   return (
     <div className="fixed left-0 top-0 h-screen w-[280px] bg-background border-r border-border shadow-lg z-[1000] hidden md:block">
@@ -66,7 +58,7 @@ const Sidebar: React.FC = () => {
                   ? 'bg-primary/10 text-primary border border-primary/20' 
                   : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:translate-x-1'
               }`}
-              onClick={() => handleMenuClick(item.path)}
+              onClick={() => navigate(item.path)}
             >
               <item.icon className="w-5 h-5 mr-3" />
               {item.label}
@@ -80,17 +72,17 @@ const Sidebar: React.FC = () => {
         <div className="p-4">
           <div className="flex items-center gap-3 mb-4">
             <Avatar className="w-12 h-12">
-              <AvatarImage src="" />
+              <AvatarImage src={user?.avatar} />
               <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10">
-                U
+                {user?.name?.[0]}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <p className="font-semibold text-sm text-foreground">
-                Demo User
+                {user?.name}
               </p>
               <p className="text-xs text-muted-foreground">
-                demo@example.com
+                {user?.email}
               </p>
             </div>
           </div>
@@ -98,7 +90,7 @@ const Sidebar: React.FC = () => {
             variant="ghost"
             size="sm"
             className="w-full hover:bg-destructive/10 hover:text-destructive"
-            onClick={handleLogout}
+            onClick={logout}
           >
             Sign Out
           </Button>

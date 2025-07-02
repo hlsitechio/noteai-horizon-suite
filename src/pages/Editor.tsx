@@ -1,74 +1,194 @@
-
-import React, { useState } from 'react';
-import { PencilIcon, Save, FileText } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useNotes } from '../contexts/NotesContext';
+import { useFolders } from '../contexts/FoldersContext';
+import EditorContent from '../components/Editor/EditorContent';
+import { CategoryOption } from '../types/note';
+import { toast } from 'sonner';
 
 const Editor: React.FC = () => {
+  const { noteId } = useParams();
+  const navigate = useNavigate();
+  const { notes, currentNote, setCurrentNote, createNote, updateNote, toggleFavorite } = useNotes();
+  const { folders } = useFolders();
+
+  // Form state
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [category, setCategory] = useState('general');
+  const [tags, setTags] = useState<string[]>([]);
+  const [newTag, setNewTag] = useState('');
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
-    console.log('Saving note:', { title, content });
-    // Here you would typically save to local storage or a backend
+  // UI state
+  const [isFocusMode, setIsFocusMode] = useState(false);
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+  const [isHeaderHidden, setIsHeaderHidden] = useState(false);
+  const [isAssistantCollapsed, setIsAssistantCollapsed] = useState(false);
+
+  // Refs for assistant control
+  const collapseAssistantRef = useRef<(() => void) | undefined>();
+  const expandAssistantRef = useRef<(() => void) | undefined>();
+
+  // Load note if noteId is provided
+  useEffect(() => {
+    if (noteId && noteId !== 'new') {
+      const note = notes.find(n => n.id === noteId);
+      if (note) {
+        setCurrentNote(note);
+        setTitle(note.title);
+        setContent(note.content);
+        setCategory(note.category);
+        setTags(note.tags);
+        setIsFavorite(note.isFavorite);
+      }
+    } else {
+      // Creating new note
+      setCurrentNote(null);
+      setTitle('');
+      setContent('');
+      setCategory('general');
+      setTags([]);
+      setIsFavorite(false);
+    }
+  }, [noteId, notes, setCurrentNote]);
+
+  // Auto-save functionality
+  useEffect(() => {
+    if (!title.trim() && !content.trim()) return;
+
+    const autoSaveTimer = setTimeout(() => {
+      handleSave();
+    }, 2000);
+
+    return () => clearTimeout(autoSaveTimer);
+  }, [title, content, category, tags]);
+
+  const handleSave = async () => {
+    if (!title.trim()) {
+      toast.error('Please enter a title');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const noteData = {
+        title,
+        content,
+        category,
+        tags,
+        isFavorite,
+        folderId: null,
+      };
+
+      if (currentNote?.id) {
+        await updateNote(currentNote.id, noteData);
+      } else {
+        const newNote = await createNote(noteData);
+        setCurrentNote(newNote);
+        navigate(`/app/editor/${newNote.id}`, { replace: true });
+      }
+    } catch (error) {
+      console.error('Failed to save note:', error);
+      toast.error('Failed to save note');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleFavoriteToggle = async () => {
+    if (!currentNote?.id) {
+      setIsFavorite(!isFavorite);
+      return;
+    }
+
+    try {
+      const updatedNote = await toggleFavorite(currentNote.id);
+      if (updatedNote) {
+        setIsFavorite(updatedNote.isFavorite);
+      }
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error);
+      toast.error('Failed to update favorite');
+    }
+  };
+
+  const handleTagAdd = () => {
+    if (newTag.trim() && !tags.includes(newTag.trim())) {
+      setTags([...tags, newTag.trim()]);
+      setNewTag('');
+    }
+  };
+
+  const handleTagRemove = (tagToRemove: string) => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
+  };
+
+  const handleSuggestionApply = (original: string, suggestion: string) => {
+    setContent(content.replace(original, suggestion));
+  };
+
+  // Focus Mode handlers
+  const handleFocusModeToggle = () => {
+    console.log('Focus mode toggle clicked:', !isFocusMode);
+    setIsFocusMode(!isFocusMode);
+  };
+
+  const handleFocusModeClose = () => {
+    console.log('Focus mode close clicked');
+    setIsFocusMode(false);
+  };
+
+  const handleCollapseAllBars = () => {
+    setIsHeaderHidden(true);
+    setIsAssistantCollapsed(true);
+    if (collapseAssistantRef.current) {
+      collapseAssistantRef.current();
+    }
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <PencilIcon className="w-8 h-8 text-primary" />
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Editor</h1>
-            <p className="text-muted-foreground">Create and edit your notes</p>
-          </div>
-        </div>
-        <Button onClick={handleSave} className="flex items-center gap-2">
-          <Save className="w-4 h-4" />
-          Save Note
-        </Button>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5" />
-            Note Editor
-          </CardTitle>
-          <CardDescription>
-            Write your thoughts, ideas, and notes here
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium mb-2">
-              Title
-            </label>
-            <Input
-              id="title"
-              placeholder="Enter note title..."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="content" className="block text-sm font-medium mb-2">
-              Content
-            </label>
-            <Textarea
-              id="content"
-              placeholder="Start writing your note..."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={15}
-              className="resize-none"
-            />
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <EditorContent
+      // Form state
+      title={title}
+      content={content}
+      category={category}
+      tags={tags}
+      newTag={newTag}
+      isFavorite={isFavorite}
+      isSaving={isSaving}
+      
+      // Form handlers
+      onTitleChange={setTitle}
+      onContentChange={setContent}
+      onCategoryChange={setCategory}
+      onNewTagChange={setNewTag}
+      onAddTag={handleTagAdd}
+      onRemoveTag={handleTagRemove}
+      onFavoriteToggle={handleFavoriteToggle}
+      onSave={handleSave}
+      onSuggestionApply={handleSuggestionApply}
+      
+      // UI state
+      isFocusMode={isFocusMode}
+      isHeaderCollapsed={isHeaderCollapsed}
+      isHeaderHidden={isHeaderHidden}
+      
+      // UI handlers
+      onFocusModeToggle={handleFocusModeToggle}
+      onHeaderCollapseToggle={() => setIsHeaderCollapsed(!isHeaderCollapsed)}
+      onCollapseAllBars={handleCollapseAllBars}
+      onFocusModeClose={handleFocusModeClose}
+      
+      // Refs
+      collapseAssistantRef={collapseAssistantRef}
+      expandAssistantRef={expandAssistantRef}
+      
+      // Other props
+      currentNote={currentNote}
+      isAssistantCollapsed={isAssistantCollapsed}
+    />
   );
 };
 

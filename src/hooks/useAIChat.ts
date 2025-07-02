@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from './useToast';
 
 export interface ChatMessage {
   id: string;
@@ -58,23 +58,11 @@ export const useAIChat = () => {
       
       // More specific error messages
       if (error.message?.includes('OPENROUTER_API_KEY')) {
-        toast({
-          variant: "destructive",
-          title: "Configuration Error",
-          description: "AI service not configured. Please contact support."
-        });
+        toast.error('AI service not configured. Please contact support.');
       } else if (error.message?.includes('network')) {
-        toast({
-          variant: "destructive",
-          title: "Network Error",
-          description: "Network error. Please check your connection."
-        });
+        toast.error('Network error. Please check your connection.');
       } else {
-        toast({
-          variant: "destructive",
-          title: "AI Chat Failed",
-          description: error.message
-        });
+        toast.error(`AI chat failed: ${error.message}`);
       }
       
       throw error;

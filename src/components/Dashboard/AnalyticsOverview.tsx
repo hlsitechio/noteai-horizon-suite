@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, TrendingUp, Calendar, Target } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { motion } from 'framer-motion';
-
+import { useAuth } from '../../contexts/AuthContext';
 
 interface AnalyticsOverviewProps {
   totalNotes: number;
@@ -21,7 +21,7 @@ const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
   weeklyNotes,
   notes
 }) => {
-  
+  const { user } = useAuth();
 
   // Generate weekly activity data from real user notes
   const weeklyData = React.useMemo(() => {
