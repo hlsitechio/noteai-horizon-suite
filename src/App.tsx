@@ -43,6 +43,7 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Contact from './pages/Contact';
 import Sitemap from './pages/Sitemap';
+import EditorControlsTest from './components/Editor/EditorControlsTest';
 
 // Mobile Components
 import MobileApp from './mobile/MobileApp';
@@ -101,9 +102,10 @@ function App() {
                                   <Route path="chat" element={<Chat />} />
                                   <Route path="calendar" element={<Calendar />} />
                                   <Route path="projects" element={<ProjectRealms />} />
-                                  <Route path="projects/:id" element={<ProjectDetail />} />
-                                  <Route path="folders/:id" element={<FolderDetail />} />
-                                  <Route path="error-monitoring" element={<ErrorMonitoring />} />
+                                   <Route path="projects/:id" element={<ProjectDetail />} />
+                                   <Route path="folders/:id" element={<FolderDetail />} />
+                                   <Route path="error-monitoring" element={<ErrorMonitoring />} />
+                                   <Route path="editor-test" element={<EditorControlsTest />} />
                                 </Route>
 
                                 {/* Catch all route */}

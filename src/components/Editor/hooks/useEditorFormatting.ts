@@ -50,7 +50,7 @@ export const useEditorFormatting = (editor: Editor) => {
   }, [editor]);
 
   const handleKeyboardShortcuts = useCallback((event: React.KeyboardEvent) => {
-    if (!event.ctrlKey) return;
+    if (!event.ctrlKey && !event.metaKey) return;
 
     switch (event.key) {
       case 'b': {
@@ -71,6 +71,25 @@ export const useEditorFormatting = (editor: Editor) => {
       case '`': {
         event.preventDefault();
         toggleMark(editor, 'code');
+        break;
+      }
+      case '1': {
+        if (event.shiftKey) {
+          event.preventDefault();
+          toggleBlock(editor, 'heading-one');
+        }
+        break;
+      }
+      case '2': {
+        if (event.shiftKey) {
+          event.preventDefault();
+          toggleBlock(editor, 'heading-two');
+        }
+        break;
+      }
+      case 'q': {
+        event.preventDefault();
+        toggleBlock(editor, 'block-quote');
         break;
       }
     }

@@ -1,11 +1,15 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { ArrowLeft, Save, MoreVertical, Share2, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useNotes } from '../../contexts/NotesContext';
 import MobileEditorToolbar from '../components/MobileEditorToolbar';
+import RichTextEditor from '../../components/Editor/RichTextEditor';
+import { useEditorFormatting } from '../../components/Editor/hooks/useEditorFormatting';
+import { createEditor } from 'slate';
+import { withReact } from 'slate-react';
+import { withHistory } from 'slate-history';
 import { toast } from 'sonner';
 
 const MobileEditor: React.FC = () => {
@@ -13,10 +17,15 @@ const MobileEditor: React.FC = () => {
   const [searchParams] = useSearchParams();
   const noteId = searchParams.get('note');
   const { currentNote, updateNote, notes, setCurrentNote, toggleFavorite } = useNotes();
-  const [title, setTitle] = React.useState(currentNote?.title || '');
-  const [content, setContent] = React.useState(currentNote?.content || '');
-  const [isSaving, setIsSaving] = React.useState(false);
-  const [hasChanges, setHasChanges] = React.useState(false);
+  const [title, setTitle] = useState(currentNote?.title || '');
+  const [content, setContent] = useState(currentNote?.content || '');
+  const [isSaving, setIsSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [showRichEditor, setShowRichEditor] = useState(false);
+  
+  // Create Slate editor for formatting
+  const editor = React.useMemo(() => withHistory(withReact(createEditor())), []);
+  const { handleFormatClick, getActiveFormats } = useEditorFormatting(editor);
   
   // Refs for focusing
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -180,17 +189,41 @@ const MobileEditor: React.FC = () => {
           className="text-lg font-semibold border-none px-0 shadow-none focus-visible:ring-0"
         />
         
-        {/* Content Textarea */}
-        <Textarea
-          ref={contentTextareaRef}
-          placeholder="Start writing your note..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          onClick={handleTextareaClick}
-          onTouchStart={handleTextareaClick}
-          className="flex-1 resize-none border-none px-0 shadow-none focus-visible:ring-0 text-base leading-relaxed"
-          autoFocus={false}
-        />
+        {/* Rich Text Editor Toggle */}
+        <div className="flex items-center gap-2 mb-4">
+          <Button
+            variant={showRichEditor ? "default" : "outline"}
+            size="sm"
+            onClick={() => setShowRichEditor(!showRichEditor)}
+            className="text-xs"
+          >
+            {showRichEditor ? "Simple Editor" : "Rich Editor"}
+          </Button>
+        </div>
+
+        {/* Content Editor */}
+        {showRichEditor ? (
+          <div className="flex-1 min-h-0">
+            <RichTextEditor
+              value={content}
+              onChange={setContent}
+              placeholder="Start writing your note..."
+              canSave={true}
+              isSaving={isSaving}
+            />
+          </div>
+        ) : (
+          <textarea
+            ref={contentTextareaRef}
+            placeholder="Start writing your note..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            onClick={handleTextareaClick}
+            onTouchStart={handleTextareaClick}
+            className="flex-1 resize-none border-none px-0 shadow-none focus-visible:ring-0 text-base leading-relaxed bg-transparent"
+            autoFocus={false}
+          />
+        )}
       </div>
 
       {/* Status Bar */}
@@ -200,8 +233,13 @@ const MobileEditor: React.FC = () => {
         </div>
       )}
 
-      {/* Mobile Toolbar */}
-      <MobileEditorToolbar />
+      {/* Mobile Toolbar - Only show for rich editor */}
+      {showRichEditor && (
+        <MobileEditorToolbar 
+          onFormatClick={handleFormatClick}
+          activeFormats={getActiveFormats()}
+        />
+      )}
     </div>
   );
 };
