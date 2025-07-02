@@ -20,17 +20,17 @@ const EnhancedSecurityHeaders = () => {
       "block-all-mixed-content",
     ].join('; ');
 
-    // Enhanced security headers (Note: Some headers like X-Frame-Options should be set via HTTP headers in production)
+    // Development-friendly security headers (stricter in production)
     const securityHeaders = [
-      { name: 'Content-Security-Policy', content: csp },
       { name: 'X-Content-Type-Options', content: 'nosniff' },
       { name: 'X-XSS-Protection', content: '1; mode=block' },
       { name: 'Referrer-Policy', content: 'strict-origin-when-cross-origin' },
-      { name: 'Permissions-Policy', content: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()' },
-      { name: 'Cross-Origin-Embedder-Policy', content: 'require-corp' },
-      { name: 'Cross-Origin-Opener-Policy', content: 'same-origin' },
-      { name: 'Cross-Origin-Resource-Policy', content: 'same-origin' },
-      { name: 'Strict-Transport-Security', content: 'max-age=31536000; includeSubDomains; preload' },
+      // Only apply strict headers in production
+      ...(import.meta.env.PROD ? [
+        { name: 'Content-Security-Policy', content: csp },
+        { name: 'Permissions-Policy', content: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()' },
+        { name: 'X-Frame-Options', content: 'SAMEORIGIN' }, // Less restrictive than DENY
+      ] : [])
     ];
 
     // Set meta tags for security headers
