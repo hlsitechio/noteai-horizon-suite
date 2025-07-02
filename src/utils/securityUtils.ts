@@ -126,26 +126,72 @@ export const validateHexColor = (color: string): boolean => {
 };
 
 /**
- * Rate limiting state management
+ * Enhanced Rate limiting state management with adaptive thresholds
  */
-class RateLimiter {
-  private limits = new Map<string, { count: number; resetTime: number }>();
+class EnhancedRateLimiter {
+  private limits = new Map<string, { count: number; resetTime: number; violations: number }>();
+  private blockedIPs = new Set<string>();
+  private suspiciousPatterns = new Map<string, number>();
   
-  checkLimit(key: string, maxRequests: number = 50, windowMs: number = 60000): boolean {
+  checkLimit(
+    key: string, 
+    maxRequests: number = 50, 
+    windowMs: number = 60000,
+    options: { 
+      adaptive?: boolean; 
+      trackViolations?: boolean;
+      ipAddress?: string;
+    } = {}
+  ): boolean {
+    const { adaptive = true, trackViolations = true, ipAddress } = options;
     const now = Date.now();
     const limit = this.limits.get(key);
     
+    // Check if IP is blocked
+    if (ipAddress && this.blockedIPs.has(ipAddress)) {
+      return false;
+    }
+    
     if (!limit || now > limit.resetTime) {
-      this.limits.set(key, { count: 1, resetTime: now + windowMs });
+      this.limits.set(key, { count: 1, resetTime: now + windowMs, violations: 0 });
       return true;
     }
     
-    if (limit.count >= maxRequests) {
+    // Adaptive threshold based on previous violations
+    let adaptiveMax = maxRequests;
+    if (adaptive && limit.violations > 0) {
+      adaptiveMax = Math.max(5, maxRequests - (limit.violations * 10));
+    }
+    
+    if (limit.count >= adaptiveMax) {
+      if (trackViolations) {
+        limit.violations++;
+        
+        // Block IP after repeated violations
+        if (limit.violations > 3 && ipAddress) {
+          this.blockedIPs.add(ipAddress);
+          setTimeout(() => this.blockedIPs.delete(ipAddress), 300000); // 5 minutes
+        }
+      }
       return false;
     }
     
     limit.count++;
     return true;
+  }
+  
+  reportSuspiciousPattern(pattern: string) {
+    const count = this.suspiciousPatterns.get(pattern) || 0;
+    this.suspiciousPatterns.set(pattern, count + 1);
+    
+    // Auto-adjust rate limits for suspicious patterns
+    if (count > 10) {
+      console.warn(`Suspicious pattern detected: ${pattern} (${count} times)`);
+    }
+  }
+  
+  isPatternSuspicious(pattern: string): boolean {
+    return (this.suspiciousPatterns.get(pattern) || 0) > 5;
   }
   
   cleanup() {
@@ -155,13 +201,26 @@ class RateLimiter {
         this.limits.delete(key);
       }
     }
+    
+    // Clear old suspicious patterns
+    if (Math.random() < 0.1) { // 10% chance to cleanup
+      this.suspiciousPatterns.clear();
+    }
+  }
+  
+  getStats() {
+    return {
+      activeLimits: this.limits.size,
+      blockedIPs: this.blockedIPs.size,
+      suspiciousPatterns: this.suspiciousPatterns.size,
+    };
   }
 }
 
-export const rateLimiter = new RateLimiter();
+export const rateLimiter = new EnhancedRateLimiter();
 
-// Clean up rate limiter every 5 minutes
-setInterval(() => rateLimiter.cleanup(), 5 * 60 * 1000);
+// Clean up rate limiter every 2 minutes for better responsiveness
+setInterval(() => rateLimiter.cleanup(), 2 * 60 * 1000);
 
 /**
  * Secure logging utility that filters sensitive information

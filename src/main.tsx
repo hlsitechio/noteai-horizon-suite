@@ -14,6 +14,7 @@ import { QuantumAIProvider } from './contexts/QuantumAIContext';
 import { AccentColorProvider } from './contexts/AccentColorContext';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { masterErrorResolutionSystem } from './utils/masterErrorResolutionSystem';
+import EnhancedSecurityHeaders from './components/Security/EnhancedSecurityHeaders';
 
 // Initialize error resolution system immediately
 masterErrorResolutionSystem.initialize({
@@ -44,6 +45,7 @@ const queryClient = new QueryClient({
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
+    <EnhancedSecurityHeaders />
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AccentColorProvider>
