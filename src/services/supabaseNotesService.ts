@@ -187,8 +187,11 @@ export class SupabaseNotesService {
     onUpdate?: (note: Note) => void,
     onDelete?: (noteId: string) => void
   ) {
+    // Create a unique channel name to prevent conflicts
+    const channelName = `notes-changes-${userId}-${Date.now()}`;
+    
     const channel = supabase
-      .channel('notes-changes')
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -264,7 +267,9 @@ export class SupabaseNotesService {
           }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log(`Channel ${channelName} subscription status:`, status);
+      });
 
     return channel;
   }

@@ -83,7 +83,24 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const cleanupSubscription = () => {
     if (subscriptionRef.current) {
       console.log('Cleaning up existing real-time subscription');
-      supabase.removeChannel(subscriptionRef.current);
+      
+      // First unsubscribe from the channel
+      subscriptionRef.current.unsubscribe().then(() => {
+        console.log('Successfully unsubscribed from channel');
+        
+        // Then remove the channel
+        if (subscriptionRef.current) {
+          supabase.removeChannel(subscriptionRef.current);
+          console.log('Channel removed');
+        }
+      }).catch((error) => {
+        console.error('Error during unsubscribe:', error);
+        // Force remove the channel even if unsubscribe fails
+        if (subscriptionRef.current) {
+          supabase.removeChannel(subscriptionRef.current);
+        }
+      });
+      
       subscriptionRef.current = null;
       hasSubscribedRef.current = false;
     }
