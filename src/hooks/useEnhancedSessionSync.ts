@@ -3,7 +3,7 @@ import { useEffect, useCallback } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import * as Sentry from '@sentry/react';
-import { useEnhancedCleanupManager } from './useEnhancedCleanupManager';
+import { useAdvancedCleanup } from './useAdvancedCleanup';
 
 interface UseEnhancedSessionSyncProps {
   setSession: (session: Session | null) => void;
@@ -16,7 +16,7 @@ export function useEnhancedSessionSync({
   onError, 
   onSessionChange 
 }: UseEnhancedSessionSyncProps) {
-  const cleanup = useEnhancedCleanupManager();
+  const cleanup = useAdvancedCleanup();
 
   const syncSession = useCallback(async () => {
     try {

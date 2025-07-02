@@ -22,7 +22,6 @@ import HomeRedirect from './components/HomeRedirect';
 // import RouteDebugger from './components/RouteDebugger';
 
 // Pages
-import Index from './pages/Index';
 import Landing from './pages/Landing';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
@@ -37,7 +36,7 @@ import Calendar from './pages/Calendar';
 import ProjectRealms from './pages/ProjectRealms';
 import ProjectDetail from './pages/ProjectDetail';
 import FolderDetail from './pages/FolderDetail';
-import ErrorMonitoring from './pages/ErrorMonitoring';
+
 import NotFound from './pages/NotFound';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
@@ -68,7 +67,7 @@ function App() {
                              <SentryRouter>
                                <Routes>
                                 {/* Public Routes */}
-                                <Route path="/" element={<Index />} />
+                                <Route path="/" element={<HomeRedirect />} />
                                 <Route path="/landing" element={<Landing />} />
                                 <Route path="/login" element={<Login />} />
                                 <Route path="/register" element={<Register />} />
@@ -102,7 +101,7 @@ function App() {
                                   <Route path="projects" element={<ProjectRealms />} />
                                    <Route path="projects/:id" element={<ProjectDetail />} />
                                    <Route path="folders/:id" element={<FolderDetail />} />
-                                   <Route path="error-monitoring" element={<ErrorMonitoring />} />
+                                   
                                    <Route path="editor-test" element={<EditorControlsTest />} />
                                 </Route>
 

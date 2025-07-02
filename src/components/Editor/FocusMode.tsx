@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/card';
 import FocusModeBackground from './FocusModeBackground';
 import FocusModeControls from './FocusModeControls';
 import FocusModeStats from './FocusModeStats';
 import FocusModeKeyboardShortcuts from './FocusModeKeyboardShortcuts';
+import FocusModeEditor from './FocusMode/FocusModeEditor';
 import { useFocusModeTimer } from './hooks/useFocusModeTimer';
 import { useFocusModeStats } from './hooks/useFocusModeStats';
 import { useFocusModeControls } from './hooks/useFocusModeControls';
@@ -146,164 +146,33 @@ const FocusMode: React.FC<FocusModeProps> = ({
                 : 'max-w-6xl h-[95vh] p-6'
           }`}
         >
-          {isBackgroundHidden ? (
-            /* Pure black background container when ambience is 100% or mobile */
-            <div className="h-full bg-black overflow-hidden">
-              {shouldShowControls && (
-                <FocusModeControls
-                  isControlsVisible={shouldShowControls}
-                  isZenMode={isZenMode}
-                  onZenModeToggle={() => setIsZenMode(!isZenMode)}
-                  showStats={showStats}
-                  onStatsToggle={() => setShowStats(!showStats)}
-                  onSave={onSave}
-                  onClose={onClose}
-                  isSaving={isSaving}
-                  title={title}
-                  wordCount={wordCount}
-                  timeSpent={timeSpent}
-                  formatTime={formatTime}
-                />
-              )}
-
-              {/* Title Input - Mobile responsive */}
-              <div className={`${
-                isMobile 
-                  ? 'pt-12 px-4' 
-                  : isZenMode 
-                    ? 'pt-24 px-12' 
-                    : isDistractionFree 
-                      ? 'pt-12 px-12' 
-                      : 'pt-20 px-12'
-              }`}>
-                <motion.input
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  type="text"
-                  value={title}
-                  onChange={(e) => onTitleChange(e.target.value)}
-                  placeholder={isMobile ? "Your title..." : "Enter your title..."}
-                  className={`w-full bg-transparent border-none outline-none text-white placeholder-white/50 mb-8 leading-tight ${
-                    isMobile ? 'text-2xl font-bold' : 'text-4xl font-bold'
-                  }`}
-                  autoFocus={!isMobile} // Don't auto-focus on mobile to avoid keyboard popup
-                />
-              </div>
-
-              {/* Editor Content - Mobile responsive */}
-              <div className={`${
-                isMobile 
-                  ? 'h-[calc(100%-140px)] px-4 pb-4' 
-                  : isZenMode 
-                    ? 'h-[calc(100%-140px)] px-12 pb-12' 
-                    : 'h-[calc(100%-140px)] px-12 pb-6'
-              }`}>
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="h-full"
-                >
-                  <textarea
-                    value={content}
-                    onChange={(e) => onContentChange(e.target.value)}
-                    placeholder={isMobile 
-                      ? "Start writing..." 
-                      : "Focus on your writing... Let your thoughts flow without any distractions."
-                    }
-                    className={`w-full h-full bg-transparent border-none outline-none resize-none text-white placeholder-white/40 leading-relaxed ${
-                      isMobile ? 'text-base' : 'text-lg'
-                    } font-normal`}
-                    style={{
-                      lineHeight: '1.8',
-                      fontFamily: 'Inter, system-ui, sans-serif',
-                    }}
-                  />
-                </motion.div>
-              </div>
-            </div>
-          ) : (
-            /* Card container when ambience is less than 100% and not mobile */
-            <Card className={`h-full glass shadow-2xl overflow-hidden transition-all duration-500 ${
-              isMobile 
-                ? 'rounded-lg border-none' 
-                : isZenMode 
-                  ? 'rounded-none border-none' 
-                  : 'rounded-3xl'
-            }`}>
-              {shouldShowControls && (
-                <FocusModeControls
-                  isControlsVisible={shouldShowControls}
-                  isZenMode={isZenMode}
-                  onZenModeToggle={() => setIsZenMode(!isZenMode)}
-                  showStats={showStats}
-                  onStatsToggle={() => setShowStats(!showStats)}
-                  onSave={onSave}
-                  onClose={onClose}
-                  isSaving={isSaving}
-                  title={title}
-                  wordCount={wordCount}
-                  timeSpent={timeSpent}
-                  formatTime={formatTime}
-                />
-              )}
-
-              {/* Title Input - Mobile responsive */}
-              <div className={`${
-                isMobile 
-                  ? 'pt-8 px-4' 
-                  : isZenMode 
-                    ? 'pt-24 px-12' 
-                    : isDistractionFree 
-                      ? 'pt-12 px-12' 
-                      : 'pt-20 px-12'
-              }`}>
-                <motion.input
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  type="text"
-                  value={title}
-                  onChange={(e) => onTitleChange(e.target.value)}
-                  placeholder="Enter your title..."
-                  className={`w-full bg-transparent border-none outline-none text-white placeholder-white/50 mb-8 leading-tight ${
-                    isMobile ? 'text-2xl font-bold' : 'text-4xl font-bold'
-                  }`}
-                  autoFocus
-                />
-              </div>
-
-              {/* Editor Content - Mobile responsive */}
-              <CardContent className={`${
-                isMobile 
-                  ? 'h-[calc(100%-120px)] px-4 pb-4' 
-                  : isZenMode 
-                    ? 'h-[calc(100%-140px)] px-12 pb-12' 
-                    : 'h-[calc(100%-140px)] px-12 pb-6'
-              }`}>
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="h-full"
-                >
-                  <textarea
-                    value={content}
-                    onChange={(e) => onContentChange(e.target.value)}
-                    placeholder="Focus on your writing... Let your thoughts flow without any distractions."
-                    className={`w-full h-full bg-transparent border-none outline-none resize-none text-white placeholder-white/40 leading-relaxed ${
-                      isMobile ? 'text-base' : 'text-lg'
-                    } font-normal`}
-                    style={{
-                      lineHeight: '1.8',
-                      fontFamily: 'Inter, system-ui, sans-serif',
-                    }}
-                  />
-                </motion.div>
-              </CardContent>
-            </Card>
+          {shouldShowControls && (
+            <FocusModeControls
+              isControlsVisible={shouldShowControls}
+              isZenMode={isZenMode}
+              onZenModeToggle={() => setIsZenMode(!isZenMode)}
+              showStats={showStats}
+              onStatsToggle={() => setShowStats(!showStats)}
+              onSave={onSave}
+              onClose={onClose}
+              isSaving={isSaving}
+              title={title}
+              wordCount={wordCount}
+              timeSpent={timeSpent}
+              formatTime={formatTime}
+            />
           )}
+
+          <FocusModeEditor
+            title={title}
+            content={content}
+            onTitleChange={onTitleChange}
+            onContentChange={onContentChange}
+            isMobile={isMobile}
+            isZenMode={isZenMode}
+            isDistractionFree={isDistractionFree}
+            isBackgroundHidden={isBackgroundHidden}
+          />
 
           {!isDistractionFree && !isMobile && (
             <>
