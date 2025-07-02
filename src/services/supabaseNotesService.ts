@@ -188,10 +188,22 @@ export class SupabaseNotesService {
     onDelete?: (noteId: string) => void
   ) {
     // Create a unique channel name to prevent conflicts
-    const channelName = `notes-changes-${userId}-${Date.now()}`;
+    const channelName = `notes-${userId}`;
+    
+    // First, remove any existing channels with the same name
+    const existingChannel = supabase.getChannels().find(ch => ch.topic === channelName);
+    if (existingChannel) {
+      console.log('Removing existing channel:', channelName);
+      supabase.removeChannel(existingChannel);
+    }
     
     const channel = supabase
-      .channel(channelName)
+      .channel(channelName, {
+        config: {
+          broadcast: { self: false },
+          presence: { key: userId }
+        }
+      })
       .on(
         'postgres_changes',
         {
@@ -203,22 +215,26 @@ export class SupabaseNotesService {
         (payload) => {
           console.log('Real-time INSERT:', payload);
           if (onInsert && payload.new) {
-            const note: Note = {
-              id: payload.new.id,
-              title: payload.new.title,
-              content: payload.new.content,
-              category: payload.new.content_type || 'general',
-              tags: payload.new.tags || [],
-              createdAt: payload.new.created_at,
-              updatedAt: payload.new.updated_at,
-              isFavorite: payload.new.is_public || false,
-              folder_id: payload.new.folder_id,
-              reminder_date: payload.new.reminder_date,
-              reminder_status: (payload.new.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
-              reminder_frequency: (payload.new.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
-              reminder_enabled: payload.new.reminder_enabled || false,
-            };
-            onInsert(note);
+            try {
+              const note: Note = {
+                id: payload.new.id,
+                title: payload.new.title,
+                content: payload.new.content,
+                category: payload.new.content_type || 'general',
+                tags: payload.new.tags || [],
+                createdAt: payload.new.created_at,
+                updatedAt: payload.new.updated_at,
+                isFavorite: payload.new.is_public || false,
+                folder_id: payload.new.folder_id,
+                reminder_date: payload.new.reminder_date,
+                reminder_status: (payload.new.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
+                reminder_frequency: (payload.new.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
+                reminder_enabled: payload.new.reminder_enabled || false,
+              };
+              onInsert(note);
+            } catch (error) {
+              console.error('Error processing INSERT payload:', error);
+            }
           }
         }
       )
@@ -233,22 +249,26 @@ export class SupabaseNotesService {
         (payload) => {
           console.log('Real-time UPDATE:', payload);
           if (onUpdate && payload.new) {
-            const note: Note = {
-              id: payload.new.id,
-              title: payload.new.title,
-              content: payload.new.content,
-              category: payload.new.content_type || 'general',
-              tags: payload.new.tags || [],
-              createdAt: payload.new.created_at,
-              updatedAt: payload.new.updated_at,
-              isFavorite: payload.new.is_public || false,
-              folder_id: payload.new.folder_id,
-              reminder_date: payload.new.reminder_date,
-              reminder_status: (payload.new.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
-              reminder_frequency: (payload.new.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
-              reminder_enabled: payload.new.reminder_enabled || false,
-            };
-            onUpdate(note);
+            try {
+              const note: Note = {
+                id: payload.new.id,
+                title: payload.new.title,
+                content: payload.new.content,
+                category: payload.new.content_type || 'general',
+                tags: payload.new.tags || [],
+                createdAt: payload.new.created_at,
+                updatedAt: payload.new.updated_at,
+                isFavorite: payload.new.is_public || false,
+                folder_id: payload.new.folder_id,
+                reminder_date: payload.new.reminder_date,
+                reminder_status: (payload.new.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
+                reminder_frequency: (payload.new.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
+                reminder_enabled: payload.new.reminder_enabled || false,
+              };
+              onUpdate(note);
+            } catch (error) {
+              console.error('Error processing UPDATE payload:', error);
+            }
           }
         }
       )
@@ -263,12 +283,19 @@ export class SupabaseNotesService {
         (payload) => {
           console.log('Real-time DELETE:', payload);
           if (onDelete && payload.old) {
-            onDelete(payload.old.id);
+            try {
+              onDelete(payload.old.id);
+            } catch (error) {
+              console.error('Error processing DELETE payload:', error);
+            }
           }
         }
       )
       .subscribe((status) => {
         console.log(`Channel ${channelName} subscription status:`, status);
+        if (status === 'CHANNEL_ERROR') {
+          console.error('Real-time subscription error');
+        }
       });
 
     return channel;

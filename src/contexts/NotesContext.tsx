@@ -108,7 +108,17 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Set up real-time subscription only when user is authenticated
   useEffect(() => {
+    let isSetupInProgress = false;
+    
     const setupRealtimeSubscription = async () => {
+      // Prevent concurrent setups
+      if (isSetupInProgress) {
+        console.log('Real-time setup already in progress, skipping');
+        return;
+      }
+      
+      isSetupInProgress = true;
+
       // Clean up any existing subscription first
       cleanupSubscription();
 
@@ -116,6 +126,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (authLoading || !user) {
         console.log('Auth not ready or no user, skipping real-time setup');
         setIsLoading(false);
+        isSetupInProgress = false;
         return;
       }
 
@@ -126,6 +137,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // Prevent multiple subscriptions for the same user
       if (hasSubscribedRef.current && !userChanged) {
         console.log('Real-time subscription already exists for current user, skipping setup');
+        isSetupInProgress = false;
         return;
       }
 
@@ -135,23 +147,22 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         // Initial load
         await refreshNotes();
 
-        // Set up real-time subscription
+        // Set up real-time subscription with debounced handlers
         const channel = SupabaseNotesService.subscribeToNoteChanges(
           user.id,
-          // onInsert
-          (newNote) => {
+          // onInsert - debounced to prevent spam
+          debounce((newNote) => {
             console.log('Real-time: Note inserted', newNote);
             setNotes(prev => {
               // Check if note already exists to avoid duplicates
               const exists = prev.find(note => note.id === newNote.id);
               if (exists) return prev;
               
-              toast.success(`New note synced: ${newNote.title}`);
               return [newNote, ...prev];
             });
-          },
-          // onUpdate
-          (updatedNote) => {
+          }, 100),
+          // onUpdate - debounced to prevent spam
+          debounce((updatedNote) => {
             console.log('Real-time: Note updated', updatedNote);
             setNotes(prev => prev.map(note => 
               note.id === updatedNote.id ? updatedNote : note
@@ -164,11 +175,9 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             if (selectedNote?.id === updatedNote.id) {
               setSelectedNote(updatedNote);
             }
-            
-            toast.success(`Note synced: ${updatedNote.title}`);
-          },
-          // onDelete
-          (deletedNoteId) => {
+          }, 100),
+          // onDelete - debounced to prevent spam
+          debounce((deletedNoteId) => {
             console.log('Real-time: Note deleted', deletedNoteId);
             setNotes(prev => prev.filter(note => note.id !== deletedNoteId));
             
@@ -179,9 +188,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             if (selectedNote?.id === deletedNoteId) {
               setSelectedNote(null);
             }
-            
-            toast.info('Note deleted on another device');
-          }
+          }, 100)
         );
 
         // Store the channel reference and mark as subscribed
@@ -194,17 +201,31 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.error('Error setting up real-time subscription:', error);
         setSyncStatus('disconnected');
         hasSubscribedRef.current = false;
+      } finally {
+        isSetupInProgress = false;
       }
     };
 
-    setupRealtimeSubscription();
+    // Debounce the setup function to prevent rapid calls
+    const debouncedSetup = debounce(setupRealtimeSubscription, 1000);
+    debouncedSetup();
 
     // Cleanup subscription on unmount or when user changes
     return () => {
       cleanupSubscription();
       currentUserIdRef.current = null;
+      isSetupInProgress = false;
     };
   }, [user?.id, authLoading]); // Only depend on user ID and auth loading state
+
+  // Debounce utility function
+  const debounce = (func: (...args: any[]) => void, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
 
   const createNote = async (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Promise<Note> => {
     if (!user) throw new Error('User not authenticated');
