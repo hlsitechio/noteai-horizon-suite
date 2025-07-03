@@ -1,6 +1,6 @@
 
 import React from 'react';
-import PageAICopilot from '../components/Global/PageAICopilot';
+
 
 const Contact: React.FC = () => {
   return (
@@ -64,7 +64,7 @@ const Contact: React.FC = () => {
           </div>
         </div>
       </div>
-      <PageAICopilot pageContext="contact" />
+      
     </div>
   );
 };

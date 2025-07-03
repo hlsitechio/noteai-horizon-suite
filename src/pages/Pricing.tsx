@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Check, Sparkles, Zap, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import PageAICopilot from '../components/Global/PageAICopilot';
+
 
 const Pricing: React.FC = () => {
   const plans = [
@@ -171,7 +171,7 @@ const Pricing: React.FC = () => {
         </div>
       </section>
 
-      <PageAICopilot pageContext="pricing" />
+      
     </div>
   );
 };

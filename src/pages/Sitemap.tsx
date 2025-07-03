@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import PageAICopilot from '../components/Global/PageAICopilot';
+
 
 const Sitemap: React.FC = () => {
   return (
@@ -52,7 +52,7 @@ const Sitemap: React.FC = () => {
           </div>
         </div>
       </section>
-      <PageAICopilot pageContext="sitemap" />
+      
     </div>
   );
 };

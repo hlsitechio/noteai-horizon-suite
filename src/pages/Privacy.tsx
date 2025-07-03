@@ -1,6 +1,6 @@
 
 import React from 'react';
-import PageAICopilot from '../components/Global/PageAICopilot';
+
 
 const Privacy: React.FC = () => {
   return (
@@ -44,7 +44,7 @@ const Privacy: React.FC = () => {
           </section>
         </div>
       </div>
-      <PageAICopilot pageContext="privacy" />
+      
     </div>
   );
 };

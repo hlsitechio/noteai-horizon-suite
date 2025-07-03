@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Target, Users, Lightbulb } from 'lucide-react';
-import PageAICopilot from '../components/Global/PageAICopilot';
+
 
 const About: React.FC = () => {
   const values = [
@@ -168,7 +168,7 @@ const About: React.FC = () => {
         </div>
       </section>
 
-      <PageAICopilot pageContext="about" />
+      
     </div>
   );
 };
