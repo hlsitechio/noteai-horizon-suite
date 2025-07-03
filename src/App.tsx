@@ -42,6 +42,9 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Contact from './pages/Contact';
 import Sitemap from './pages/Sitemap';
+import Features from './pages/Features';
+import Pricing from './pages/Pricing';
+import About from './pages/About';
 import EditorControlsTest from './components/Editor/EditorControlsTest';
 
 // Mobile Components
@@ -72,10 +75,13 @@ function App() {
                                 <Route path="/login" element={<Login />} />
                                 <Route path="/register" element={<Register />} />
                                 <Route path="/reset-password" element={<ResetPassword />} />
-                                <Route path="/privacy" element={<Privacy />} />
-                                <Route path="/terms" element={<Terms />} />
-                                <Route path="/contact" element={<Contact />} />
-                                <Route path="/sitemap" element={<Sitemap />} />
+                                 <Route path="/features" element={<Features />} />
+                                 <Route path="/pricing" element={<Pricing />} />
+                                 <Route path="/about" element={<About />} />
+                                 <Route path="/privacy" element={<Privacy />} />
+                                 <Route path="/terms" element={<Terms />} />
+                                 <Route path="/contact" element={<Contact />} />
+                                 <Route path="/sitemap" element={<Sitemap />} />
 
                                 {/* Mobile Routes */}
                                 <Route path="/mobile/*" element={
