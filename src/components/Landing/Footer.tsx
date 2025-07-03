@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -27,31 +28,37 @@ const Footer = () => {
           <div>
             <h4 className="text-white font-bold mb-6 text-lg">Product</h4>
             <ul className="space-y-3 text-gray-400">
-              <li><a href="/features" className="hover:text-cyan-400 transition-colors">Features</a></li>
-              <li><a href="/pricing" className="hover:text-cyan-400 transition-colors">Pricing</a></li>
+              <li><Link to="/features" className="hover:text-cyan-400 transition-colors">Features</Link></li>
+              <li><Link to="/pricing" className="hover:text-cyan-400 transition-colors">Pricing</Link></li>
             </ul>
           </div>
           
           <div>
             <h4 className="text-white font-bold mb-6 text-lg">Company</h4>
             <ul className="space-y-3 text-gray-400">
-              <li><a href="/about" className="hover:text-cyan-400 transition-colors">About</a></li>
-              <li><a href="/contact" className="hover:text-cyan-400 transition-colors">Contact</a></li>
+              <li><Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link></li>
+              <li><Link to="/contact" className="hover:text-cyan-400 transition-colors">Contact</Link></li>
             </ul>
           </div>
           
           <div>
             <h4 className="text-white font-bold mb-6 text-lg">Legal</h4>
             <ul className="space-y-3 text-gray-400">
-              <li><a href="/privacy" className="hover:text-cyan-400 transition-colors">Privacy</a></li>
-              <li><a href="/terms" className="hover:text-cyan-400 transition-colors">Terms</a></li>
-              <li><a href="/sitemap" className="hover:text-cyan-400 transition-colors">Sitemap</a></li>
+              <li><Link to="/privacy" className="hover:text-cyan-400 transition-colors">Privacy</Link></li>
+              <li><Link to="/terms" className="hover:text-cyan-400 transition-colors">Terms</Link></li>
+              <li><Link to="/sitemap" className="hover:text-cyan-400 transition-colors">Sitemap</Link></li>
             </ul>
           </div>
         </div>
         
-        <div className="pt-8 border-t border-white/10 text-center">
-          <p className="text-gray-400">&copy; 2024 OnlineNote AI. All rights reserved. Crafted with innovation.</p>
+        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-400 mb-4 md:mb-0">&copy; 2024 OnlineNote AI. All rights reserved. Crafted with innovation.</p>
+          <Link 
+            to="/register" 
+            className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white font-semibold px-6 py-3 rounded-xl shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_50px_rgba(59,130,246,0.5)] transition-all duration-300 transform hover:scale-105"
+          >
+            Get Started Free
+          </Link>
         </div>
       </div>
     </footer>

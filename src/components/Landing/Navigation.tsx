@@ -17,10 +17,10 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
   const navigate = useNavigate();
 
   const navigationItems = [
-    { name: 'Features', href: '#features' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'About', href: '#about' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Features', href: '/features' },
+    { name: 'Pricing', href: '/pricing' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact', href: '/contact' },
   ];
 
   useEffect(() => {
@@ -99,14 +99,18 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
 
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex space-x-8">
-                  {navigationItems.map((item, index) => (
+                {navigationItems.map((item, index) => (
                     <motion.a
                       key={item.name}
                       initial={{ opacity: 0, y: -20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
                       href={item.href}
-                      className="relative text-gray-300 hover:text-white transition-all duration-300 font-medium px-4 py-2 group"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(item.href);
+                      }}
+                      className="relative text-gray-300 hover:text-white transition-all duration-300 font-medium px-4 py-2 group cursor-pointer"
                     >
                       {item.name}
                       <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
@@ -158,8 +162,12 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
                       <a
                         key={item.name}
                         href={item.href}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="block text-gray-300 hover:text-white transition-colors py-2"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate(item.href);
+                          setMobileMenuOpen(false);
+                        }}
+                        className="block text-gray-300 hover:text-white transition-colors py-2 cursor-pointer"
                       >
                         {item.name}
                       </a>
