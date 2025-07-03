@@ -1,12 +1,14 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Rocket, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import DashboardDemo from './DashboardDemo';
 
 const Hero = () => {
   const navigate = useNavigate();
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center px-4 pt-20">
@@ -67,6 +69,7 @@ const Hero = () => {
             <Button
               variant="outline"
               size="lg"
+              onClick={() => setIsDemoOpen(true)}
               className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-6 text-lg sm:text-xl font-semibold rounded-2xl text-white hover:bg-white/10 backdrop-blur-xl transition-all duration-300 transform hover:scale-105"
             >
               <Globe className="mr-2 sm:mr-3 w-5 h-5 sm:w-6 sm:h-6" />
@@ -96,6 +99,12 @@ const Hero = () => {
           </motion.div>
         </motion.div>
       </div>
+
+      {/* Dashboard Demo Modal */}
+      <DashboardDemo 
+        isOpen={isDemoOpen} 
+        onClose={() => setIsDemoOpen(false)} 
+      />
     </section>
   );
 };
