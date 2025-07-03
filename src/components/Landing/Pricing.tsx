@@ -13,13 +13,14 @@ const Pricing = () => {
       name: 'Free',
       monthlyPrice: 0,
       yearlyPrice: 0,
-      description: 'Perfect for getting started',
+      description: 'Perfect for personal use',
       icon: Sparkles,
       features: [
         '10 notes maximum',
         'Basic AI writing assistance',
         '1 GB storage',
         'Web access only',
+        'Basic security',
         'Email support'
       ],
       popular: false,
@@ -41,8 +42,8 @@ const Pricing = () => {
         'Real-time sync',
         'Folders & organization',
         'Advanced analytics',
-        'Priority support',
-        '14-day free trial'
+        'Enhanced security',
+        'Priority support'
       ],
       popular: true,
       gradient: 'from-white/8 to-white/4',
@@ -59,12 +60,10 @@ const Pricing = () => {
         'Project Realms',
         'Team collaboration',
         '500 GB storage',
-        'Advanced AI models',
-        'Custom AI training',
-        'Advanced security',
+        'Custom AI models',
         'API access',
-        'Dedicated support',
-        '14-day free trial'
+        'Enterprise security',
+        'Dedicated support'
       ],
       popular: false,
       gradient: 'from-white/5 to-white/3',
