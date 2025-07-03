@@ -164,10 +164,10 @@ const Pricing: React.FC = () => {
                   spotlightColor={plan.popular ? "rgba(59, 130, 246, 0.2)" : "rgba(139, 92, 246, 0.15)"}
                 >
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                    <div className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 text-white px-8 py-2 rounded-full text-sm font-bold shadow-[0_0_30px_rgba(59,130,246,0.5)] border border-white/20">
                       Most Popular
-                    </span>
+                    </div>
                   </div>
                 )}
                 
