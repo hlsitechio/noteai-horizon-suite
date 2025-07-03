@@ -5,6 +5,7 @@ import { SupabaseNotesService } from '../services/supabaseNotesService';
 import { useAuth } from './AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useOptimizedNotes } from './OptimizedNotesContext';
 
 interface NotesContextType {
   notes: Note[];
@@ -30,8 +31,7 @@ const NotesContext = createContext<NotesContextType | undefined>(undefined);
 export const useNotes = () => {
   console.warn('NotesContext is deprecated. Please migrate to OptimizedNotesContext for better performance.');
   
-  // Import the optimized hook dynamically to avoid circular dependencies
-  const { useOptimizedNotes } = require('./OptimizedNotesContext');
+  // Use the imported optimized hook
   return useOptimizedNotes();
 };
 
