@@ -7,7 +7,7 @@ import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { AuthProvider } from './contexts/AuthContext';
-import { NotesProvider } from './contexts/NotesContext';
+import { OptimizedNotesProvider } from './contexts/OptimizedNotesContext';
 import { FoldersProvider } from './contexts/FoldersContext';
 import { NotificationsProvider } from './contexts/NotificationsContext';
 import { AccentColorProvider } from './contexts/AccentColorContext';
@@ -60,7 +60,7 @@ function App() {
               <DynamicAccentProvider>
                 <NotificationsProvider>
                   <FoldersProvider>
-                    <NotesProvider>
+                    <OptimizedNotesProvider>
                       <ProjectRealmsProvider>
                         <FloatingNotesProvider>
                           <QuantumAIProvider>
@@ -114,7 +114,7 @@ function App() {
                           </QuantumAIProvider>
                         </FloatingNotesProvider>
                       </ProjectRealmsProvider>
-                    </NotesProvider>
+                    </OptimizedNotesProvider>
                   </FoldersProvider>
                 </NotificationsProvider>
               </DynamicAccentProvider>

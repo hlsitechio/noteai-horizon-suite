@@ -28,11 +28,11 @@ interface NotesContextType {
 const NotesContext = createContext<NotesContextType | undefined>(undefined);
 
 export const useNotes = () => {
-  const context = useContext(NotesContext);
-  if (!context) {
-    throw new Error('useNotes must be used within a NotesProvider');
-  }
-  return context;
+  console.warn('NotesContext is deprecated. Please migrate to OptimizedNotesContext for better performance.');
+  
+  // Import the optimized hook dynamically to avoid circular dependencies
+  const { useOptimizedNotes } = require('./OptimizedNotesContext');
+  return useOptimizedNotes();
 };
 
 export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

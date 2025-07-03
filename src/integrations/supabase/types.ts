@@ -1373,6 +1373,30 @@ export type Database = {
           is_favorite: boolean
         }[]
       }
+      get_user_notes_optimized: {
+        Args: {
+          p_user_id: string
+          p_limit?: number
+          p_offset?: number
+          p_folder_id?: string
+          p_search_term?: string
+        }
+        Returns: {
+          id: string
+          title: string
+          content: string
+          content_type: string
+          tags: string[]
+          created_at: string
+          updated_at: string
+          is_public: boolean
+          folder_id: string
+          reminder_date: string
+          reminder_status: string
+          reminder_frequency: string
+          reminder_enabled: boolean
+        }[]
+      }
       get_user_notification_preferences: {
         Args: { user_uuid: string }
         Returns: {

@@ -136,20 +136,23 @@ const MobileAnalytics: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {Object.entries(categoryStats).map(([category, count]) => (
+              {Object.entries(categoryStats).map(([category, count]) => {
+                const countNum = count as number; // Type assertion for the count
+                return (
                 <div key={category} className="flex justify-between items-center">
                   <span className="text-sm capitalize">{category}</span>
                   <div className="flex items-center space-x-2">
                     <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
                       <div 
                         className="h-full bg-primary rounded-full transition-all"
-                        style={{ width: `${(count / totalNotes) * 100}%` }}
+                        style={{ width: `${(countNum / totalNotes) * 100}%` }}
                       />
                     </div>
-                    <span className="text-sm font-medium w-8 text-right">{count}</span>
+                    <span className="text-sm font-medium w-8 text-right">{countNum}</span>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </CardContent>
         </Card>
