@@ -111,12 +111,12 @@ const AIAssistantDemo = () => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center">
-                      <Brain className="w-5 h-5 text-white" />
+                    <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center">
+                      <Brain className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-white font-semibold">AI Assistant Demo</h3>
-                      <p className="text-white/60 text-sm">Try the AI features below</p>
+                      <h3 className="text-white font-bold text-lg">AI Assistant Demo</h3>
+                      <p className="text-white/80 text-base">Try the AI features below</p>
                     </div>
                   </div>
                   {(aiSelectedText || aiResult) && (
@@ -132,50 +132,50 @@ const AIAssistantDemo = () => {
                 </div>
 
                 {/* Example Buttons */}
-                <div className="space-y-3">
-                  <p className="text-white/60 text-sm">Try these examples:</p>
-                  <div className="grid gap-2">
+                <div className="space-y-4">
+                  <p className="text-white/90 text-base font-medium">Try these examples:</p>
+                  <div className="grid gap-3">
                     <Button 
-                      size="sm" 
+                      size="lg" 
                       onClick={() => handleExampleClick('improve')}
                       disabled={aiProcessing}
-                      className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:scale-105 transition-all justify-start text-left h-auto p-3"
+                      className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:scale-105 transition-all justify-start text-left h-auto p-4 text-white font-medium"
                     >
-                      <Sparkles className="w-4 h-4 mr-2 flex-shrink-0" />
+                      <Sparkles className="w-5 h-5 mr-3 flex-shrink-0" />
                       <div className="text-left">
-                        <div className="font-medium">Improve Writing</div>
-                        <div className="text-xs opacity-80">Make text clearer and more engaging</div>
+                        <div className="font-semibold text-base">Improve Writing</div>
+                        <div className="text-sm opacity-90 leading-relaxed">Make text clearer and more engaging</div>
                       </div>
                     </Button>
                     <Button 
-                      size="sm" 
+                      size="lg" 
                       onClick={() => handleExampleClick('translate')}
                       disabled={aiProcessing}
-                      className="bg-gradient-to-r from-green-500 to-teal-600 hover:scale-105 transition-all justify-start text-left h-auto p-3"
+                      className="bg-gradient-to-r from-green-500 to-teal-600 hover:scale-105 transition-all justify-start text-left h-auto p-4 text-white font-medium"
                     >
-                      <Languages className="w-4 h-4 mr-2 flex-shrink-0" />
+                      <Languages className="w-5 h-5 mr-3 flex-shrink-0" />
                       <div className="text-left">
-                        <div className="font-medium">Translate Text</div>
-                        <div className="text-xs opacity-80">Convert to different languages</div>
+                        <div className="font-semibold text-base">Translate Text</div>
+                        <div className="text-sm opacity-90 leading-relaxed">Convert to different languages</div>
                       </div>
                     </Button>
                     <Button 
-                      size="sm" 
+                      size="lg" 
                       onClick={() => handleExampleClick('summarize')}
                       disabled={aiProcessing}
-                      className="bg-gradient-to-r from-purple-500 to-pink-600 hover:scale-105 transition-all justify-start text-left h-auto p-3"
+                      className="bg-gradient-to-r from-purple-500 to-pink-600 hover:scale-105 transition-all justify-start text-left h-auto p-4 text-white font-medium"
                     >
-                      <Lightbulb className="w-4 h-4 mr-2 flex-shrink-0" />
+                      <Lightbulb className="w-5 h-5 mr-3 flex-shrink-0" />
                       <div className="text-left">
-                        <div className="font-medium">Summarize Content</div>
-                        <div className="text-xs opacity-80">Extract key points and insights</div>
+                        <div className="font-semibold text-base">Summarize Content</div>
+                        <div className="text-sm opacity-90 leading-relaxed">Extract key points and insights</div>
                       </div>
                     </Button>
                   </div>
                 </div>
 
-                <div className="border-t border-white/10 pt-4">
-                  <p className="text-white/60 text-sm mb-3">Or enter your own text:</p>
+                <div className="border-t border-white/10 pt-6">
+                  <p className="text-white/90 text-base font-medium mb-4">Or enter your own text:</p>
                   
                   <AnimatePresence mode="wait">
                     <motion.div
@@ -189,7 +189,7 @@ const AIAssistantDemo = () => {
                         placeholder="Enter some text to process with AI..."
                         value={aiSelectedText}
                         onChange={(e) => setAiSelectedText(e.target.value)}
-                        className="w-full bg-white/10 border-0 text-white placeholder-white/50 rounded-xl min-h-[100px]"
+                        className="w-full bg-white/10 border-0 text-white placeholder-white/60 rounded-xl min-h-[120px] text-base leading-relaxed"
                       />
                     </motion.div>
                   </AnimatePresence>
@@ -233,11 +233,11 @@ const AIAssistantDemo = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     className="flex items-center justify-center py-6"
                   >
-                    <div className="flex items-center gap-3 text-sm text-white/60">
-                      <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full flex items-center justify-center">
-                        <Bot className="w-4 h-4 animate-pulse text-white" />
+                    <div className="flex items-center gap-3 text-base text-white/80">
+                      <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <Bot className="w-5 h-5 animate-pulse text-white" />
                       </div>
-                      <span>AI is processing...</span>
+                      <span className="font-medium">AI is processing...</span>
                     </div>
                   </motion.div>
                 )}
