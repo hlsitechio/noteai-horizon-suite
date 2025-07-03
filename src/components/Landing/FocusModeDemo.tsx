@@ -71,18 +71,18 @@ const FocusModeDemo = () => {
           </div>
             
           {/* Live Demo - 16:9 Landscape Container */}
-          <div className="bg-black/40 relative" style={{ aspectRatio: '16/9' }}>
+          <div className="bg-black/40 relative overflow-hidden" style={{ aspectRatio: '16/9' }}>
             <Tabs defaultValue="focus-mode" className="h-full">
-              <TabsList className="absolute top-4 left-4 z-10 bg-white/5 border-0">
-                <TabsTrigger value="focus-mode" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white text-sm">
+              <TabsList className="absolute top-4 left-4 z-20 bg-black/50 backdrop-blur-md border border-white/20">
+                <TabsTrigger value="focus-mode" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white text-sm px-4 py-2">
                   Focus Mode
                 </TabsTrigger>
-                <TabsTrigger value="editor-test" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white text-sm">
+                <TabsTrigger value="editor-test" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white text-sm px-4 py-2">
                   Editor Test
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="focus-mode" className="mt-0 h-full">
+              <TabsContent value="focus-mode" className="mt-0 h-full pt-16">{/* Added pt-16 to avoid tab overlap */}
                 {!isInFocusMode ? (
                   /* Normal Editor View */
                   <div className="h-full flex flex-col">
@@ -204,7 +204,7 @@ const FocusModeDemo = () => {
                 )}
               </TabsContent>
 
-              <TabsContent value="editor-test" className="mt-0 h-full overflow-hidden">
+              <TabsContent value="editor-test" className="mt-0 h-full pt-16 overflow-hidden">
                 <div className="p-4 h-full overflow-auto">
                   <EditorControlsTest />
                 </div>
