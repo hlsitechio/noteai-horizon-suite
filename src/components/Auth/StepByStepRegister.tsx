@@ -8,6 +8,7 @@ import { useEmailValidation } from './hooks/useEmailValidation';
 import RegistrationStep from './RegistrationStep';
 import RegistrationSummary from './RegistrationSummary';
 import { Step, StepContent, RegistrationData } from './types';
+import registerBg from '../../assets/register-gradient-bg.jpg';
 
 const StepByStepRegister: React.FC = () => {
   const navigate = useNavigate();
@@ -164,7 +165,10 @@ const StepByStepRegister: React.FC = () => {
   const stepContent = getStepContent();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-4">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${registerBg})` }}
+    >
       <div className="w-full max-w-md">
         <AnimatePresence mode="wait">
           {currentStep !== 'summary' && stepContent && (
