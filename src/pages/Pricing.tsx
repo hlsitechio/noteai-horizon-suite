@@ -1,65 +1,76 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Sparkles, Zap, Crown } from 'lucide-react';
+import { Check, X, Sparkles, Zap, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
+import { Card, CardContent } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 
 const Pricing: React.FC = () => {
+  const [isYearly, setIsYearly] = useState(false);
+
   const plans = [
     {
       name: "Free",
-      price: "$0",
-      period: "forever",
+      monthlyPrice: 0,
+      yearlyPrice: 0,
       description: "Perfect for personal use",
       icon: Sparkles,
-      features: [
-        "Up to 100 notes",
-        "Basic AI assistance",
-        "5GB storage",
-        "Web access",
-        "Basic encryption"
-      ],
-      cta: "Get Started Free",
       popular: false
     },
     {
       name: "Pro",
-      price: "$9",
-      period: "per month",
+      monthlyPrice: 9,
+      yearlyPrice: 90, // 2 months free
       description: "For power users and professionals",
       icon: Zap,
-      features: [
-        "Unlimited notes",
-        "Advanced AI features",
-        "100GB storage",
-        "All device access",
-        "Priority support",
-        "Real-time collaboration",
-        "Advanced encryption"
-      ],
-      cta: "Start Pro Trial",
       popular: true
     },
     {
-      name: "Enterprise",
-      price: "$29",
-      period: "per user/month",
-      description: "For teams and organizations",
+      name: "Premium",
+      monthlyPrice: 19,
+      yearlyPrice: 190, // 2 months free
+      description: "For teams and advanced users",
       icon: Crown,
-      features: [
-        "Everything in Pro",
-        "Unlimited storage",
-        "Team management",
-        "SSO integration",
-        "Custom AI models",
-        "Dedicated support",
-        "Compliance tools",
-        "API access"
-      ],
-      cta: "Contact Sales",
       popular: false
     }
   ];
+
+  const features = [
+    { name: "Notes limit", free: "10 notes", pro: "Unlimited", premium: "Unlimited" },
+    { name: "AI Writing Assistant", free: "Basic", pro: "Advanced", premium: "Advanced + Custom Models" },
+    { name: "Storage", free: "1 GB", pro: "50 GB", premium: "500 GB" },
+    { name: "Device Access", free: "Web only", pro: "All devices", premium: "All devices" },
+    { name: "Real-time Sync", free: false, pro: true, premium: true },
+    { name: "Focus Mode", free: false, pro: true, premium: true },
+    { name: "Folders & Organization", free: false, pro: true, premium: true },
+    { name: "Advanced Analytics", free: false, pro: true, premium: true },
+    { name: "Project Realms", free: false, pro: false, premium: true },
+    { name: "Team Collaboration", free: false, pro: false, premium: true },
+    { name: "API Access", free: false, pro: false, premium: true },
+    { name: "Custom AI Training", free: false, pro: false, premium: true },
+    { name: "Advanced Security", free: "Basic", pro: "Enhanced", premium: "Enterprise Grade" },
+    { name: "Support", free: "Email", pro: "Priority", premium: "Dedicated" },
+    { name: "Free Trial", free: "N/A", pro: "14 days", premium: "14 days" }
+  ];
+
+  const getPrice = (plan: typeof plans[0]) => {
+    if (plan.monthlyPrice === 0) return '$0';
+    const price = isYearly ? plan.yearlyPrice / 12 : plan.monthlyPrice;
+    return `$${Math.round(price)}`;
+  };
+
+  const getOriginalPrice = (plan: typeof plans[0]) => {
+    if (plan.monthlyPrice === 0 || !isYearly) return null;
+    return `$${plan.monthlyPrice}`;
+  };
+
+  const getFeatureValue = (feature: typeof features[0], plan: string) => {
+    const value = feature[plan as keyof typeof feature];
+    if (typeof value === 'boolean') {
+      return value ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <X className="w-5 h-5 text-red-500 mx-auto" />;
+    }
+    return <span className="text-sm">{value}</span>;
+  };
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
@@ -106,15 +117,36 @@ const Pricing: React.FC = () => {
             transition={{ delay: 0.2 }}
             className="text-xl text-gray-300 max-w-2xl mx-auto mb-12"
           >
-            Choose the perfect plan for your needs. Start free and upgrade as you grow.
+            Choose the perfect plan for your needs. Start with a 14-day free trial.
           </motion.p>
+          
+          {/* Billing Toggle */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex items-center justify-center gap-4 mb-16"
+          >
+            <span className={`text-lg ${!isYearly ? 'text-white' : 'text-gray-400'}`}>Monthly</span>
+            <Switch
+              checked={isYearly}
+              onCheckedChange={setIsYearly}
+              className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-cyan-500 data-[state=checked]:to-blue-500"
+            />
+            <span className={`text-lg ${isYearly ? 'text-white' : 'text-gray-400'}`}>Yearly</span>
+            {isYearly && (
+              <span className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium ml-2">
+                Save 17%
+              </span>
+            )}
+          </motion.div>
         </div>
       </section>
 
       {/* Pricing Cards */}
-      <section className="relative z-10 px-4 pb-32">
+      <section className="relative z-10 px-4 pb-20">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 mb-20">
             {plans.map((plan, index) => (
               <motion.div
                 key={plan.name}
@@ -142,18 +174,21 @@ const Pricing: React.FC = () => {
                   <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
                   <p className="text-gray-400 mb-4">{plan.description}</p>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold text-white">{plan.price}</span>
-                    <span className="text-gray-400 ml-2">/{plan.period}</span>
-                  </div>
-                </div>
-
-                <div className="space-y-4 mb-8">
-                  {plan.features.map((feature, featureIndex) => (
-                    <div key={featureIndex} className="flex items-center space-x-3">
-                      <Check className="w-5 h-5 text-cyan-400 flex-shrink-0" />
-                      <span className="text-gray-300">{feature}</span>
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="text-4xl font-bold text-white">{getPrice(plan)}</span>
+                      <div className="flex flex-col">
+                        {getOriginalPrice(plan) && (
+                          <span className="text-gray-400 text-sm line-through">{getOriginalPrice(plan)}</span>
+                        )}
+                        <span className="text-gray-400 text-sm">
+                          {plan.monthlyPrice === 0 ? 'forever' : '/month'}
+                        </span>
+                      </div>
                     </div>
-                  ))}
+                    {isYearly && plan.monthlyPrice > 0 && (
+                      <p className="text-cyan-400 text-sm mt-1">Billed annually</p>
+                    )}
+                  </div>
                 </div>
 
                 <Button
@@ -163,15 +198,63 @@ const Pricing: React.FC = () => {
                       : 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
                   } py-3 font-semibold transition-all`}
                 >
-                  {plan.cta}
+                  {plan.monthlyPrice === 0 ? 'Get Started Free' : 'Start 14-Day Free Trial'}
                 </Button>
               </motion.div>
             ))}
           </div>
+
+          {/* Feature Comparison Table */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="bg-card/20 backdrop-blur-xl rounded-2xl border border-border/10 overflow-hidden"
+          >
+            <div className="p-8">
+              <h3 className="text-3xl font-bold text-white text-center mb-8">Feature Comparison</h3>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border/20">
+                      <th className="text-left py-4 px-6 text-gray-300 font-medium">Features</th>
+                      <th className="text-center py-4 px-6 text-white font-semibold">Free</th>
+                      <th className="text-center py-4 px-6 text-white font-semibold">Pro</th>
+                      <th className="text-center py-4 px-6 text-white font-semibold">Premium</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {features.map((feature, index) => (
+                      <tr key={feature.name} className={`border-b border-border/10 ${index % 2 === 0 ? 'bg-white/5' : ''}`}>
+                        <td className="py-4 px-6 text-gray-300 font-medium">{feature.name}</td>
+                        <td className="py-4 px-6 text-center">{getFeatureValue(feature, 'free')}</td>
+                        <td className="py-4 px-6 text-center">{getFeatureValue(feature, 'pro')}</td>
+                        <td className="py-4 px-6 text-center">{getFeatureValue(feature, 'premium')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Additional Info */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="text-center mt-16"
+          >
+            <p className="text-gray-300 mb-4">
+              All plans include bank-level security, instant sync, and mobile apps
+            </p>
+            <p className="text-gray-400 text-sm">
+              Cancel anytime • No hidden fees • 30-day money-back guarantee
+            </p>
+          </motion.div>
         </div>
       </section>
-
-      
     </div>
   );
 };
