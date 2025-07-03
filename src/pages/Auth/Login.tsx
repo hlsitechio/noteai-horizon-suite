@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import loginBg from '../../assets/login-gradient-bg.jpg';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -63,8 +64,11 @@ const Login: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
-      <Card className="max-w-md w-full shadow-2xl">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${loginBg})` }}
+    >
+      <Card className="max-w-md w-full shadow-2xl bg-white/95 backdrop-blur-sm">
         <CardContent className="p-8">
           <div className="space-y-8">
             {/* Logo */}
@@ -117,7 +121,7 @@ const Login: React.FC = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
-                      className="rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100 pr-10"
+                      className="rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100 pr-10 text-black"
                       required
                       disabled={isSubmitting}
                     />
