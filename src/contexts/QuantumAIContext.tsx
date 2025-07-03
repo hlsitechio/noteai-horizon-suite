@@ -1,6 +1,5 @@
 
 import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 
 interface QuantumAIState {
   isVisible: boolean;
@@ -40,20 +39,26 @@ export const useQuantumAI = () => {
   return context;
 };
 
-// Safe location hook that only warns once and caches the result
+// Safe location hook that gracefully handles router unavailability
 const useSafeLocation = () => {
-  const hasWarnedRef = useRef(false);
+  const [cachedLocation, setCachedLocation] = useState<{ pathname: string } | null>(null);
+  const hasCheckedRef = useRef(false);
   
-  try {
-    return useLocation();
-  } catch (error) {
-    // Only warn once per component instance
-    if (!hasWarnedRef.current) {
-      console.warn('Router context not available in QuantumAI, using default location');
-      hasWarnedRef.current = true;
+  useEffect(() => {
+    // Only check once per component lifecycle
+    if (hasCheckedRef.current) return;
+    hasCheckedRef.current = true;
+    
+    try {
+      // Try to get the current location from the URL directly
+      const pathname = window.location.pathname;
+      setCachedLocation({ pathname });
+    } catch (error) {
+      setCachedLocation({ pathname: '/' });
     }
-    return { pathname: '/' };
-  }
+  }, []);
+  
+  return cachedLocation || { pathname: '/' };
 };
 
 export const QuantumAIProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
