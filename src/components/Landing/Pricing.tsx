@@ -20,7 +20,6 @@ const Pricing = () => {
         'Basic AI writing assistance',
         '1 GB storage',
         'Web access only',
-        'Basic encryption',
         'Email support'
       ],
       popular: false,
