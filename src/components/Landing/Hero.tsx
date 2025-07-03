@@ -35,7 +35,7 @@ const Hero = () => {
             <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
           </motion.div>
 
-          <h1 className="text-6xl md:text-8xl font-bold leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold leading-tight">
             <span className="bg-gradient-to-r from-white via-cyan-200 to-blue-200 bg-clip-text text-transparent">
               The Future of
             </span>
@@ -45,20 +45,20 @@ const Hero = () => {
             </span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed px-4">
             Experience the revolution in AI-driven note-taking and productivity.
-            <br />
+            <br className="hidden sm:block" />
             <span className="text-cyan-300 font-semibold">Create, collaborate, and innovate</span> with unprecedented intelligence.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8">
-            <div className="relative group">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center pt-8 px-4">
+            <div className="relative group w-full sm:w-auto">
               <Button
                 onClick={() => navigate('/register')}
                 size="lg"
-                className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white px-10 py-6 text-xl font-bold rounded-2xl shadow-[0_0_50px_rgba(59,130,246,0.4)] hover:shadow-[0_0_80px_rgba(59,130,246,0.6)] transition-all duration-500 transform hover:scale-105"
+                className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white px-8 sm:px-10 py-4 sm:py-6 text-lg sm:text-xl font-bold rounded-2xl shadow-[0_0_50px_rgba(59,130,246,0.4)] hover:shadow-[0_0_80px_rgba(59,130,246,0.6)] transition-all duration-500 transform hover:scale-105"
               >
-                <Rocket className="mr-3 w-6 h-6" />
+                <Rocket className="mr-2 sm:mr-3 w-5 h-5 sm:w-6 sm:h-6" />
                 Start Free Trial
               </Button>
               <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-2xl blur-2xl opacity-0 group-hover:opacity-40 transition-opacity duration-500" />
@@ -67,9 +67,9 @@ const Hero = () => {
             <Button
               variant="outline"
               size="lg"
-              className="px-10 py-6 text-xl font-semibold rounded-2xl text-white hover:bg-white/10 backdrop-blur-xl transition-all duration-300 transform hover:scale-105"
+              className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-6 text-lg sm:text-xl font-semibold rounded-2xl text-white hover:bg-white/10 backdrop-blur-xl transition-all duration-300 transform hover:scale-105"
             >
-              <Globe className="mr-3 w-6 h-6" />
+              <Globe className="mr-2 sm:mr-3 w-5 h-5 sm:w-6 sm:h-6" />
               Watch Demo
             </Button>
           </div>
@@ -79,7 +79,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="grid grid-cols-3 gap-8 pt-16 max-w-2xl mx-auto"
+            className="grid grid-cols-3 gap-4 sm:gap-8 pt-12 sm:pt-16 max-w-2xl mx-auto px-4"
           >
             {[
               { number: '50K+', label: 'Active Users' },
@@ -87,10 +87,10 @@ const Hero = () => {
               { number: '24/7', label: 'Support' }
             ].map((stat, index) => (
               <div key={stat.label} className="text-center">
-                <div className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                   {stat.number}
                 </div>
-                <div className="text-gray-400 text-sm mt-1">{stat.label}</div>
+                <div className="text-gray-400 text-xs sm:text-sm mt-1">{stat.label}</div>
               </div>
             ))}
           </motion.div>

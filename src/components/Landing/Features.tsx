@@ -16,15 +16,15 @@ const Features = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-20"
         >
-          <h2 className="text-5xl md:text-6xl font-bold mb-8 bg-gradient-to-r from-white via-cyan-200 to-blue-200 bg-clip-text text-transparent">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8 bg-gradient-to-r from-white via-cyan-200 to-blue-200 bg-clip-text text-transparent px-4">
             Revolutionary Features
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto px-4">
             Experience the power of our platform with these interactive demos. Try them right here!
           </p>
         </motion.div>
 
-        <div className="space-y-20">
+        <div className="space-y-12 sm:space-y-20">
           {/* Focus Mode Demo */}
           <FocusModeDemo />
 

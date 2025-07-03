@@ -77,13 +77,13 @@ const FocusModeDemo = () => {
           </div>
             
           {/* Live Demo */}
-          <div className="bg-black/40 relative overflow-hidden" style={{ aspectRatio: '16/9', minHeight: '500px' }}>
+          <div className="bg-black/40 relative overflow-hidden" style={{ aspectRatio: '16/9', minHeight: '400px' }}>
             <Tabs defaultValue="focus-mode" className="h-full">
-              <TabsList className="absolute top-6 left-6 z-20 bg-black/50 backdrop-blur-md border border-white/20">
-                <TabsTrigger value="focus-mode" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white text-sm px-4 py-2">
+              <TabsList className="absolute top-3 sm:top-6 left-3 sm:left-6 z-20 bg-black/50 backdrop-blur-md border border-white/20">
+                <TabsTrigger value="focus-mode" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white text-xs sm:text-sm px-2 sm:px-4 py-1.5 sm:py-2">
                   Focus Mode
                 </TabsTrigger>
-                <TabsTrigger value="editor-test" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white text-sm px-4 py-2">
+                <TabsTrigger value="editor-test" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white text-xs sm:text-sm px-2 sm:px-4 py-1.5 sm:py-2">
                   Editor Test
                 </TabsTrigger>
               </TabsList>
@@ -100,43 +100,43 @@ const FocusModeDemo = () => {
                       className="h-full flex flex-col"
                     >
                       {/* Editor Toolbar */}
-                      <div className="bg-gradient-to-r from-slate-800/50 to-slate-700/50 p-4 border-b border-white/10 mt-16">
+                      <div className="bg-gradient-to-r from-slate-800/50 to-slate-700/50 p-3 sm:p-4 border-b border-white/10 mt-12 sm:mt-16">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <Button
                               onClick={handleFocusModeToggle}
                               size="sm"
-                              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium px-4 py-2 shadow-lg"
+                              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium px-3 sm:px-4 py-2 shadow-lg text-xs sm:text-sm"
                             >
-                              <Maximize2 className="w-4 h-4 mr-2" />
-                              Enter Focus Mode
+                              <Maximize2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                              <span className="hidden sm:inline">Enter </span>Focus Mode
                             </Button>
-                            <div className="text-white/60 text-sm">Transform your writing experience</div>
+                            <div className="text-white/60 text-xs sm:text-sm hidden md:block">Transform your writing experience</div>
                           </div>
-                          <div className="flex items-center gap-2 text-white/40 text-sm">
-                            <Clock className="w-4 h-4" />
-                            <span>Ready to focus</span>
+                          <div className="flex items-center gap-2 text-white/40 text-xs sm:text-sm">
+                            <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                            <span className="hidden sm:inline">Ready to focus</span>
                           </div>
                         </div>
                       </div>
 
                       {/* Preview Content */}
-                      <div className="flex-1 p-8 flex items-center justify-center">
-                        <div className="max-w-2xl text-center space-y-6">
-                          <div className="text-white/30 text-sm uppercase tracking-wider">Preview Mode</div>
-                          <h2 className="text-3xl font-bold text-white/80">Ready to Focus?</h2>
-                          <p className="text-white/60 text-lg leading-relaxed">
-                            Click "Enter Focus Mode" to experience distraction-free writing with immersive backgrounds, 
+                      <div className="flex-1 p-4 sm:p-8 flex items-center justify-center">
+                        <div className="max-w-2xl text-center space-y-4 sm:space-y-6">
+                          <div className="text-white/30 text-xs sm:text-sm uppercase tracking-wider">Preview Mode</div>
+                          <h2 className="text-2xl sm:text-3xl font-bold text-white/80">Ready to Focus?</h2>
+                          <p className="text-white/60 text-sm sm:text-lg leading-relaxed px-4">
+                            Click "Focus Mode" to experience distraction-free writing with immersive backgrounds, 
                             real-time stats, and an environment designed for deep focus.
                           </p>
-                          <div className="flex items-center justify-center gap-6 pt-4">
+                          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-4">
                             <div className="flex items-center gap-2 text-white/40">
-                              <Target className="w-5 h-5" />
-                              <span className="text-sm">Distraction-Free</span>
+                              <Target className="w-4 h-4 sm:w-5 sm:h-5" />
+                              <span className="text-xs sm:text-sm">Distraction-Free</span>
                             </div>
                             <div className="flex items-center gap-2 text-white/40">
-                              <Zap className="w-5 h-5" />
-                              <span className="text-sm">Real-time Stats</span>
+                              <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
+                              <span className="text-xs sm:text-sm">Real-time Stats</span>
                             </div>
                           </div>
                         </div>
@@ -160,7 +160,7 @@ const FocusModeDemo = () => {
                       <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="absolute top-6 right-6 z-10 flex items-center gap-3"
+                        className="absolute top-3 sm:top-6 right-3 sm:right-6 z-10 flex items-center gap-2 sm:gap-3"
                       >
                         <motion.button
                           whileHover={{ scale: 1.05 }}
@@ -181,12 +181,12 @@ const FocusModeDemo = () => {
                       </motion.div>
 
                       {/* Writing Area */}
-                      <div className="h-full flex flex-col justify-center items-center p-12">
+                      <div className="h-full flex flex-col justify-center items-center p-4 sm:p-8 lg:p-12">
                         <motion.div
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.2 }}
-                          className="w-full max-w-4xl space-y-8"
+                          className="w-full max-w-4xl space-y-4 sm:space-y-8"
                         >
                           {/* Title Input */}
                           <motion.input
@@ -196,7 +196,7 @@ const FocusModeDemo = () => {
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            className="w-full bg-transparent outline-none text-white text-4xl font-bold text-center placeholder-white/30 border-b border-white/20 pb-4"
+                            className="w-full bg-transparent outline-none text-white text-2xl sm:text-3xl lg:text-4xl font-bold text-center placeholder-white/30 border-b border-white/20 pb-3 sm:pb-4"
                             placeholder="Your masterpiece begins here..."
                           />
                           
@@ -211,7 +211,7 @@ const FocusModeDemo = () => {
                               value={autoText}
                               onChange={() => {}}
                               placeholder="Let your thoughts flow freely..."
-                              className="w-full min-h-[200px] bg-transparent outline-none text-white text-xl leading-relaxed placeholder-white/30 resize-none border-0 text-center"
+                              className="w-full min-h-[150px] sm:min-h-[200px] bg-transparent outline-none text-white text-lg sm:text-xl leading-relaxed placeholder-white/30 resize-none border-0 text-center"
                               readOnly
                             />
                             {/* Typing cursor effect */}
@@ -240,18 +240,18 @@ const FocusModeDemo = () => {
                             exit={{ opacity: 0, y: 50 }}
                             className="absolute bottom-6 left-1/2 transform -translate-x-1/2"
                           >
-                            <div className="bg-black/30 backdrop-blur-xl border border-white/20 rounded-2xl px-8 py-4 flex items-center gap-8">
+                            <div className="bg-black/30 backdrop-blur-xl border border-white/20 rounded-2xl px-4 sm:px-8 py-3 sm:py-4 flex items-center gap-4 sm:gap-8">
                               <div className="text-center">
-                                <div className="text-white text-2xl font-bold">{autoText.trim().split(/\s+/).filter(word => word.length > 0).length}</div>
-                                <div className="text-white/60 text-sm">Words</div>
+                                <div className="text-white text-lg sm:text-2xl font-bold">{autoText.trim().split(/\s+/).filter(word => word.length > 0).length}</div>
+                                <div className="text-white/60 text-xs sm:text-sm">Words</div>
                               </div>
                               <div className="text-center">
-                                <div className="text-white text-2xl font-bold">{formatTime(Math.floor(autoIndex / 20))}</div>
-                                <div className="text-white/60 text-sm">Time</div>
+                                <div className="text-white text-lg sm:text-2xl font-bold">{formatTime(Math.floor(autoIndex / 20))}</div>
+                                <div className="text-white/60 text-xs sm:text-sm">Time</div>
                               </div>
                               <div className="text-center">
-                                <div className="text-white text-2xl font-bold">{Math.floor(Math.random() * 20) + 40}</div>
-                                <div className="text-white/60 text-sm">WPM</div>
+                                <div className="text-white text-lg sm:text-2xl font-bold">{Math.floor(Math.random() * 20) + 40}</div>
+                                <div className="text-white/60 text-xs sm:text-sm">WPM</div>
                               </div>
                             </div>
                           </motion.div>
@@ -262,8 +262,8 @@ const FocusModeDemo = () => {
                 </AnimatePresence>
               </TabsContent>
 
-              <TabsContent value="editor-test" className="mt-0 h-full pt-20">
-                <div className="p-6 h-full">
+              <TabsContent value="editor-test" className="mt-0 h-full pt-16 sm:pt-20">
+                <div className="p-3 sm:p-6 h-full">
                   <EditorControlsTest />
                 </div>
               </TabsContent>
