@@ -187,10 +187,12 @@ export class SupabaseNotesService {
     onUpdate?: (note: Note) => void,
     onDelete?: (noteId: string) => void
   ) {
-    // Create a unique channel name to prevent conflicts
+    // DEPRECATED: Use useOptimizedRealtime hook instead
+    // This method is kept for backwards compatibility
+    console.warn('SupabaseNotesService.subscribeToNoteChanges is deprecated. Use useOptimizedRealtime hook instead.');
+    
     const channelName = `notes-${userId}-${Date.now()}`;
     
-    // Conservative real-time setup to prevent performance issues
     const channel = supabase
       .channel(channelName, {
         config: {
@@ -209,21 +211,7 @@ export class SupabaseNotesService {
         (payload) => {
           if (onInsert && payload.new) {
             try {
-              const note: Note = {
-                id: payload.new.id,
-                title: payload.new.title,
-                content: payload.new.content,
-                category: payload.new.content_type || 'general',
-                tags: payload.new.tags || [],
-                createdAt: payload.new.created_at,
-                updatedAt: payload.new.updated_at,
-                isFavorite: payload.new.is_public || false,
-                folder_id: payload.new.folder_id,
-                reminder_date: payload.new.reminder_date,
-                reminder_status: (payload.new.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
-                reminder_frequency: (payload.new.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
-                reminder_enabled: payload.new.reminder_enabled || false,
-              };
+              const note: Note = this.transformPayloadToNote(payload.new);
               onInsert(note);
             } catch (error) {
               console.error('Error processing INSERT payload:', error);
@@ -242,21 +230,7 @@ export class SupabaseNotesService {
         (payload) => {
           if (onUpdate && payload.new) {
             try {
-              const note: Note = {
-                id: payload.new.id,
-                title: payload.new.title,
-                content: payload.new.content,
-                category: payload.new.content_type || 'general',
-                tags: payload.new.tags || [],
-                createdAt: payload.new.created_at,
-                updatedAt: payload.new.updated_at,
-                isFavorite: payload.new.is_public || false,
-                folder_id: payload.new.folder_id,
-                reminder_date: payload.new.reminder_date,
-                reminder_status: (payload.new.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
-                reminder_frequency: (payload.new.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
-                reminder_enabled: payload.new.reminder_enabled || false,
-              };
+              const note: Note = this.transformPayloadToNote(payload.new);
               onUpdate(note);
             } catch (error) {
               console.error('Error processing UPDATE payload:', error);
@@ -287,5 +261,24 @@ export class SupabaseNotesService {
       });
 
     return channel;
+  }
+
+  // Helper method to transform database payload to Note object
+  private static transformPayloadToNote(payload: any): Note {
+    return {
+      id: payload.id,
+      title: payload.title,
+      content: payload.content,
+      category: payload.content_type || 'general',
+      tags: payload.tags || [],
+      createdAt: payload.created_at,
+      updatedAt: payload.updated_at,
+      isFavorite: payload.is_public || false,
+      folder_id: payload.folder_id,
+      reminder_date: payload.reminder_date,
+      reminder_status: (payload.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
+      reminder_frequency: (payload.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
+      reminder_enabled: payload.reminder_enabled || false,
+    };
   }
 }
