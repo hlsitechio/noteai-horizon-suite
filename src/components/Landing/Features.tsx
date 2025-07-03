@@ -3,7 +3,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import FocusModeDemo from './FocusModeDemo';
 import AIAssistantDemo from './AIAssistantDemo';
-import StaticFeatures from './StaticFeatures';
+import PerformanceDemo from './PerformanceDemo';
+import SecurityDemo from './SecurityDemo';
 
 const Features = () => {
   return (
@@ -30,8 +31,11 @@ const Features = () => {
           {/* AI Assistant Demo */}
           <AIAssistantDemo />
 
-          {/* Static Feature Cards */}
-          <StaticFeatures />
+          {/* Performance Demo */}
+          <PerformanceDemo />
+
+          {/* Security Demo */}
+          <SecurityDemo />
         </div>
       </div>
     </section>
