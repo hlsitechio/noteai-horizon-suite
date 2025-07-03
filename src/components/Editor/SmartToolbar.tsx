@@ -98,7 +98,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
 
   return (
     <>
-      <div className="flex items-center gap-1 p-4 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-b-2 border-blue-200/50 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 dark:border-slate-600/50">
+      <div className="flex items-center gap-1 p-4 bg-black border-b border-gray-400/30">
         {/* Text Formatting */}
         <div className="flex items-center gap-1">
           {formatButtons.map(({ id, icon, title }) => (
@@ -114,7 +114,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
           ))}
         </div>
 
-        <Separator orientation="vertical" className="h-6 mx-2 bg-blue-200 dark:bg-slate-500" />
+        <Separator orientation="vertical" className="h-6 mx-2 bg-gray-400/50" />
 
         {/* Block Formatting */}
         <div className="flex items-center gap-1">
@@ -131,7 +131,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
           ))}
         </div>
 
-        <Separator orientation="vertical" className="h-6 mx-2 bg-purple-200 dark:bg-slate-500" />
+        <Separator orientation="vertical" className="h-6 mx-2 bg-gray-400/50" />
 
         {/* Font Controls */}
         <div className="flex items-center gap-2">
@@ -145,7 +145,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
           />
         </div>
 
-        <Separator orientation="vertical" className="h-6 mx-2 bg-orange-200 dark:bg-slate-500" />
+        <Separator orientation="vertical" className="h-6 mx-2 bg-gray-400/50" />
 
         {/* Media Tools */}
         <MediaToolsGroup
@@ -154,7 +154,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
           onOCROpen={() => setShowOCR(true)}
         />
 
-        <Separator orientation="vertical" className="h-6 mx-2 bg-green-200 dark:bg-slate-500" />
+        <Separator orientation="vertical" className="h-6 mx-2 bg-gray-400/50" />
 
         {/* AI Assistant & Focus Mode */}
         <div className="flex items-center gap-2">
@@ -169,7 +169,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
               variant="ghost"
               size="sm"
               onClick={onFocusModeToggle}
-              className="h-8 px-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all"
+              className="h-8 px-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 text-white border border-gray-400/30 shadow-md hover:shadow-lg transition-all"
               title="Enter Focus Mode (F11)"
             >
               <EyeIcon className="w-4 h-4 mr-1" />

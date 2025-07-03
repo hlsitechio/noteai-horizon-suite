@@ -108,7 +108,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   return (
     <>
-      <div className="glass rounded-2xl shadow-large overflow-hidden bg-white/10 backdrop-blur-lg dark:bg-slate-800/20">
+      <div className="rounded-2xl shadow-large overflow-hidden bg-black border border-silver/20">
         <SmartToolbar
           onFormatClick={handleFormatClick}
           onAIClick={() => setShowAIAssistant(true)}
@@ -123,7 +123,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           isSaving={isSaving}
         />
 
-        <div style={editorStyle}>
+        <div style={editorStyle} className="bg-black">
           <EditorContent
             editor={editor}
             slateValue={slateValue}
@@ -136,7 +136,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           
           {/* Render images */}
           {images.length > 0 && (
-            <div className="p-4 space-y-4">
+            <div className="p-4 space-y-4 bg-black">
               {images.map((image) => (
                 <ResizableImage
                   key={image.id}
