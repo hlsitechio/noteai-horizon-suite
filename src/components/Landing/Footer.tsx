@@ -4,7 +4,7 @@ import { Sparkles } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="py-20 px-4 border-t border-white/10 bg-gradient-to-br from-slate-900/50 to-black">
+    <footer className="relative z-[100] py-20 px-4 border-t border-white/10 bg-gradient-to-br from-slate-900/50 to-black">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           <div>
