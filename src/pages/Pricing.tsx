@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, X, Sparkles, Zap, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import SpotlightCard from '@/components/ui/spotlight-card';
 
 const Pricing: React.FC = () => {
   const [isYearly, setIsYearly] = useState(false);
@@ -153,12 +153,16 @@ const Pricing: React.FC = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className={`relative bg-card/20 backdrop-blur-xl rounded-2xl p-8 border ${
+                className={`relative transition-all group ${
                   plan.popular 
-                    ? 'border-primary/50 scale-105' 
-                    : 'border-border/10'
-                } hover:border-primary/20 transition-all group`}
+                    ? 'scale-105' 
+                    : ''
+                }`}
               >
+                <SpotlightCard 
+                  className="p-8"
+                  spotlightColor={plan.popular ? "rgba(59, 130, 246, 0.2)" : "rgba(139, 92, 246, 0.15)"}
+                >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <span className="bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-4 py-1 rounded-full text-sm font-medium">
@@ -191,15 +195,16 @@ const Pricing: React.FC = () => {
                   </div>
                 </div>
 
-                <Button
-                  className={`w-full ${
-                    plan.popular
-                      ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500'
-                      : 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
-                  } py-3 font-semibold transition-all`}
-                >
-                  {plan.monthlyPrice === 0 ? 'Get Started Free' : 'Start 14-Day Free Trial'}
-                </Button>
+                  <Button
+                    className={`w-full ${
+                      plan.popular
+                        ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500'
+                        : 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
+                    } py-3 font-semibold transition-all`}
+                  >
+                    {plan.monthlyPrice === 0 ? 'Get Started Free' : 'Start 14-Day Free Trial'}
+                  </Button>
+                </SpotlightCard>
               </motion.div>
             ))}
           </div>
@@ -209,34 +214,35 @@ const Pricing: React.FC = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="bg-card/20 backdrop-blur-xl rounded-2xl border border-border/10 overflow-hidden"
           >
-            <div className="p-8">
-              <h3 className="text-3xl font-bold text-white text-center mb-8">Feature Comparison</h3>
-              
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-border/20">
-                      <th className="text-left py-4 px-6 text-gray-300 font-medium">Features</th>
-                      <th className="text-center py-4 px-6 text-white font-semibold">Free</th>
-                      <th className="text-center py-4 px-6 text-white font-semibold">Pro</th>
-                      <th className="text-center py-4 px-6 text-white font-semibold">Premium</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {features.map((feature, index) => (
-                      <tr key={feature.name} className={`border-b border-border/10 ${index % 2 === 0 ? 'bg-white/5' : ''}`}>
-                        <td className="py-4 px-6 text-gray-300 font-medium">{feature.name}</td>
-                        <td className="py-4 px-6 text-center">{getFeatureValue(feature, 'free')}</td>
-                        <td className="py-4 px-6 text-center">{getFeatureValue(feature, 'pro')}</td>
-                        <td className="py-4 px-6 text-center">{getFeatureValue(feature, 'premium')}</td>
+            <SpotlightCard className="overflow-hidden" spotlightColor="rgba(59, 130, 246, 0.1)">
+              <div className="p-8">
+                <h3 className="text-3xl font-bold text-white text-center mb-8">Feature Comparison</h3>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border/20">
+                        <th className="text-left py-4 px-6 text-gray-300 font-medium">Features</th>
+                        <th className="text-center py-4 px-6 text-white font-semibold">Free</th>
+                        <th className="text-center py-4 px-6 text-white font-semibold">Pro</th>
+                        <th className="text-center py-4 px-6 text-white font-semibold">Premium</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {features.map((feature, index) => (
+                        <tr key={feature.name} className={`border-b border-border/10 ${index % 2 === 0 ? 'bg-white/5' : ''}`}>
+                          <td className="py-4 px-6 text-gray-300 font-medium">{feature.name}</td>
+                          <td className="py-4 px-6 text-center">{getFeatureValue(feature, 'free')}</td>
+                          <td className="py-4 px-6 text-center">{getFeatureValue(feature, 'pro')}</td>
+                          <td className="py-4 px-6 text-center">{getFeatureValue(feature, 'premium')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
+            </SpotlightCard>
           </motion.div>
 
           {/* Additional Info */}

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Sparkles, Zap, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import SpotlightCard from '@/components/ui/spotlight-card';
 
 const Pricing = () => {
   const [isYearly, setIsYearly] = useState(false);
@@ -132,8 +132,11 @@ const Pricing = () => {
                 </div>
               )}
               
-              <Card className={`h-full bg-gradient-to-br ${plan.gradient} backdrop-blur-xl border-0 transition-all duration-500 hover:scale-105 rounded-3xl overflow-hidden ${plan.popular ? 'shadow-[0_0_50px_rgba(59,130,246,0.3)]' : 'shadow-xl'} hover:shadow-2xl`}>
-                <CardContent className="p-10 text-center relative">
+              <SpotlightCard 
+                className={`h-full transition-all duration-500 hover:scale-105 ${plan.popular ? 'shadow-[0_0_50px_rgba(59,130,246,0.3)]' : 'shadow-xl'} hover:shadow-2xl`}
+                spotlightColor={plan.popular ? "rgba(59, 130, 246, 0.2)" : "rgba(139, 92, 246, 0.15)"}
+              >
+                <div className="p-10 text-center relative">
                   <div className="w-16 h-16 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
                     <plan.icon className="w-8 h-8 text-cyan-400" />
                   </div>
@@ -178,9 +181,8 @@ const Pricing = () => {
                       <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-2xl blur-xl opacity-0 group-hover/button:opacity-40 transition-opacity duration-500" />
                     )}
                   </div>
-                </CardContent>
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </Card>
+                </div>
+              </SpotlightCard>
             </motion.div>
           ))}
         </div>
