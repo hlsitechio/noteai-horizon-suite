@@ -8,7 +8,7 @@ import { useEmailValidation } from './hooks/useEmailValidation';
 import RegistrationStep from './RegistrationStep';
 import RegistrationSummary from './RegistrationSummary';
 import { Step, StepContent, RegistrationData } from './types';
-import registerBg from '../../assets/register-gradient-bg.jpg';
+import registerBg from '../../assets/register-gradient-bg-hq.jpg';
 
 const StepByStepRegister: React.FC = () => {
   const navigate = useNavigate();
