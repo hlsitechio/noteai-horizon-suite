@@ -45,171 +45,171 @@ const FocusModeDemo = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -50 }}
-      whileInView={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      className="group"
+      className="group w-full max-w-7xl mx-auto"
     >
       <Card className="bg-gradient-to-br from-slate-900/5 to-slate-800/5 backdrop-blur-xl border-0 transition-all duration-500 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(168,85,247,0.3)] hover:shadow-2xl">
         <CardContent className="p-0">
-          <div className="grid lg:grid-cols-2 gap-0">
-            {/* Feature Description */}
-            <div className="p-10 flex flex-col justify-center">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-r from-purple-400 via-pink-500 to-red-600 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
-                <Eye className="w-10 h-10 text-white" />
+          {/* Feature Description - Compact Header */}
+          <div className="p-6 text-center bg-gradient-to-r from-purple-900/20 via-blue-900/20 to-pink-900/20">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-400 via-pink-500 to-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shadow-xl">
+                <Eye className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-6">Focus Mode Experience</h3>
-              <p className="text-gray-300 leading-relaxed text-lg mb-6">
-                Transform your writing environment into a distraction-free zone. Click the focus button in the demo to experience our immersive writing mode with real-time stats.
-              </p>
-              <Badge className="w-fit bg-purple-500/20 text-purple-300 border-0">
-                Interactive Demo
-              </Badge>
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-1">Focus Mode Experience</h3>
+                <Badge className="bg-purple-500/20 text-purple-300 border-0 text-xs">
+                  Interactive Demo
+                </Badge>
+              </div>
             </div>
+            <p className="text-gray-300 leading-relaxed text-base max-w-3xl mx-auto">
+              Experience distraction-free writing with real-time stats and advanced editor controls.
+            </p>
+          </div>
             
-            {/* Live Demo */}
-            <div className="bg-black/40 p-0 relative overflow-hidden">
-              <Tabs defaultValue="focus-mode" className="h-full">
-                <TabsList className="m-4 bg-white/5 border-0">
-                  <TabsTrigger value="focus-mode" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-                    Focus Mode
-                  </TabsTrigger>
-                  <TabsTrigger value="editor-test" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-                    Editor Test
-                  </TabsTrigger>
-                </TabsList>
+          {/* Live Demo - 16:9 Landscape Container */}
+          <div className="bg-black/40 relative" style={{ aspectRatio: '16/9' }}>
+            <Tabs defaultValue="focus-mode" className="h-full">
+              <TabsList className="absolute top-4 left-4 z-10 bg-white/5 border-0">
+                <TabsTrigger value="focus-mode" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white text-sm">
+                  Focus Mode
+                </TabsTrigger>
+                <TabsTrigger value="editor-test" className="text-white data-[state=active]:bg-purple-600 data-[state=active]:text-white text-sm">
+                  Editor Test
+                </TabsTrigger>
+              </TabsList>
 
-                <TabsContent value="focus-mode" className="mt-0 h-[calc(100%-60px)]">
-                  {!isInFocusMode ? (
-                    /* Normal Editor View */
-                    <div className="h-full">
-                      {/* Editor Header */}
-                      <div className="bg-gradient-to-r from-blue-50/5 via-purple-50/5 to-pink-50/5 p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Button
-                              onClick={handleFocusModeToggle}
-                              size="sm"
-                              className="bg-purple-600 hover:bg-purple-700 text-white"
-                            >
-                              <Eye className="w-4 h-4 mr-1" />
-                              Focus
-                            </Button>
-                            <Button size="sm" variant="ghost" className="text-white/70 hover:text-white">
-                              <Heart className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="ghost" className="text-white/70 hover:text-white">
-                              <Save className="w-4 h-4 mr-1" />
-                              Save
-                            </Button>
-                          </div>
+              <TabsContent value="focus-mode" className="mt-0 h-full">
+                {!isInFocusMode ? (
+                  /* Normal Editor View */
+                  <div className="h-full flex flex-col">
+                    {/* Editor Header */}
+                    <div className="bg-gradient-to-r from-blue-50/5 via-purple-50/5 to-pink-50/5 p-3 flex-shrink-0">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            onClick={handleFocusModeToggle}
+                            size="sm"
+                            className="bg-purple-600 hover:bg-purple-700 text-white text-xs"
+                          >
+                            <Eye className="w-3 h-3 mr-1" />
+                            Focus
+                          </Button>
                           <Button size="sm" variant="ghost" className="text-white/70 hover:text-white">
-                            <Sparkles className="w-4 h-4 mr-1" />
-                            AI
+                            <Heart className="w-3 h-3" />
+                          </Button>
+                          <Button size="sm" variant="ghost" className="text-white/70 hover:text-white">
+                            <Save className="w-3 h-3 mr-1" />
+                            Save
                           </Button>
                         </div>
+                        <Button size="sm" variant="ghost" className="text-white/70 hover:text-white">
+                          <Sparkles className="w-3 h-3 mr-1" />
+                          AI
+                        </Button>
                       </div>
+                    </div>
 
-                      {/* Editor Content */}
-                      <div className="p-6 space-y-4">
+                    {/* Editor Content */}
+                    <div className="flex-1 p-4 flex gap-4">
+                      <div className="flex-1 space-y-3">
                         <input
                           type="text"
                           value={title}
                           onChange={(e) => setTitle(e.target.value)}
-                          className="w-full bg-transparent outline-none text-white text-2xl font-bold placeholder-white/50"
+                          className="w-full bg-transparent outline-none text-white text-lg font-bold placeholder-white/50"
                           placeholder="Your title here..."
                         />
                         
-                        <div className="bg-white/5 rounded-xl p-4 min-h-[200px] backdrop-blur-sm border-0">
+                        <div className="bg-white/5 rounded-lg p-3 flex-1 backdrop-blur-sm border-0">
                           <Textarea
                             value={content}
                             onChange={(e) => handleContentChange(e.target.value)}
                             placeholder="Start writing your story..."
-                            className="w-full h-full bg-transparent outline-none text-white placeholder-white/50 resize-none text-base leading-relaxed border-0"
+                            className="w-full h-32 bg-transparent outline-none text-white placeholder-white/50 resize-none text-sm leading-relaxed border-0"
                           />
                         </div>
+                      </div>
 
-                        {/* Sidebar Preview */}
-                        <div className="flex gap-4">
-                          <div className="flex-1">
-                            <div className="bg-white/5 rounded-lg p-3 border-0">
-                              <div className="text-white/60 text-xs mb-2">Category</div>
-                              <div className="text-white text-sm">Personal</div>
-                            </div>
-                          </div>
-                          <div className="flex-1">
-                            <div className="bg-white/5 rounded-lg p-3 border-0">
-                              <div className="text-white/60 text-xs mb-2">Words</div>
-                              <div className="text-white text-sm">{content.trim().split(/\s+/).length}</div>
-                            </div>
-                          </div>
+                      {/* Sidebar */}
+                      <div className="w-48 space-y-3">
+                        <div className="bg-white/5 rounded-lg p-3 border-0">
+                          <div className="text-white/60 text-xs mb-1">Category</div>
+                          <div className="text-white text-sm">Personal</div>
+                        </div>
+                        <div className="bg-white/5 rounded-lg p-3 border-0">
+                          <div className="text-white/60 text-xs mb-1">Words</div>
+                          <div className="text-white text-sm">{content.trim().split(/\s+/).length}</div>
                         </div>
                       </div>
                     </div>
-                  ) : (
-                    /* Focus Mode View */
-                    <div className="h-full bg-black/90 relative">
-                      {/* Focus Mode Header */}
-                      <div className="absolute top-4 right-4 z-10">
-                        <Button
-                          onClick={handleFocusModeToggle}
-                          size="sm"
-                          variant="ghost"
-                          className="text-white/70 hover:text-white"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-
-                      {/* Focus Mode Content */}
-                      <div className="p-8 pt-16 h-full">
-                        <motion.input
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          type="text"
-                          value={title}
-                          onChange={(e) => setTitle(e.target.value)}
-                          className="w-full bg-transparent outline-none text-white text-3xl font-bold mb-8 placeholder-white/50"
-                          placeholder="Your masterpiece title..."
-                        />
-                        
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1 }}
-                          className="h-[calc(100%-140px)]"
-                        >
-                          <Textarea
-                            value={content}
-                            onChange={(e) => handleContentChange(e.target.value)}
-                            placeholder="Focus on your writing... Let your thoughts flow without any distractions."
-                            className="w-full h-full bg-transparent outline-none text-white placeholder-white/30 resize-none text-lg leading-relaxed"
-                          />
-                        </motion.div>
-
-                        {/* Focus Stats */}
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.2 }}
-                          className="absolute bottom-4 left-8 right-8 flex justify-between text-white/40 text-sm bg-white/5 rounded-lg p-3 backdrop-blur-sm border-0"
-                        >
-                          <span>Words: {focusStats.words}</span>
-                          <span>Time: {formatTime(focusStats.time)}</span>
-                          <span>WPM: {focusStats.wpm}</span>
-                        </motion.div>
-                      </div>
-                    </div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="editor-test" className="mt-0 h-[calc(100%-60px)] overflow-auto">
-                  <div className="p-4 h-full">
-                    <EditorControlsTest />
                   </div>
-                </TabsContent>
-              </Tabs>
-            </div>
+                ) : (
+                  /* Focus Mode View */
+                  <div className="h-full bg-black/90 relative">
+                    {/* Focus Mode Header */}
+                    <div className="absolute top-4 right-4 z-10">
+                      <Button
+                        onClick={handleFocusModeToggle}
+                        size="sm"
+                        variant="ghost"
+                        className="text-white/70 hover:text-white"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+
+                    {/* Focus Mode Content */}
+                    <div className="p-8 h-full flex flex-col">
+                      <motion.input
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className="w-full bg-transparent outline-none text-white text-2xl font-bold mb-6 placeholder-white/50"
+                        placeholder="Your masterpiece title..."
+                      />
+                      
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="flex-1"
+                      >
+                        <Textarea
+                          value={content}
+                          onChange={(e) => handleContentChange(e.target.value)}
+                          placeholder="Focus on your writing... Let your thoughts flow without any distractions."
+                          className="w-full h-full bg-transparent outline-none text-white placeholder-white/30 resize-none text-base leading-relaxed border-0"
+                        />
+                      </motion.div>
+
+                      {/* Focus Stats */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="flex justify-between text-white/40 text-sm bg-white/5 rounded-lg p-3 backdrop-blur-sm border-0 mt-4"
+                      >
+                        <span>Words: {focusStats.words}</span>
+                        <span>Time: {formatTime(focusStats.time)}</span>
+                        <span>WPM: {focusStats.wpm}</span>
+                      </motion.div>
+                    </div>
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="editor-test" className="mt-0 h-full overflow-hidden">
+                <div className="p-4 h-full overflow-auto">
+                  <EditorControlsTest />
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         </CardContent>
       </Card>
