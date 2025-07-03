@@ -693,6 +693,21 @@ export type Database = {
         }
         Relationships: []
       }
+      password_failed_verification_attempts: {
+        Row: {
+          last_failed_at: string
+          user_id: string
+        }
+        Insert: {
+          last_failed_at?: string
+          user_id: string
+        }
+        Update: {
+          last_failed_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       project_agents: {
         Row: {
           agent_type: string
@@ -1373,6 +1388,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
         }
         Returns: boolean
+      }
+      hook_password_verification_attempt: {
+        Args: { event: Json }
+        Returns: Json
       }
       mark_reminder_sent: {
         Args: { reminder_uuid: string }
