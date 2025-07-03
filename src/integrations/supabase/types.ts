@@ -1218,6 +1218,16 @@ export type Database = {
         }
         Relationships: []
       }
+      realtime_throttling_stats: {
+        Row: {
+          affected_users: number | null
+          first_throttled_at: string | null
+          last_throttled_at: string | null
+          table_name: string | null
+          throttled_count: number | null
+        }
+        Relationships: []
+      }
       visitor_stats: {
         Row: {
           last_visit_date: string | null
@@ -1279,6 +1289,14 @@ export type Database = {
           content: string
           created_at: string
         }[]
+      }
+      fix_function_search_paths: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      fix_view_security_temporarily: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       get_current_user_data: {
         Args: Record<PropertyKey, never>
@@ -1359,6 +1377,10 @@ export type Database = {
       mark_reminder_sent: {
         Args: { reminder_uuid: string }
         Returns: boolean
+      }
+      optimize_realtime_performance: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       sanitize_input: {
         Args: { input_text: string }

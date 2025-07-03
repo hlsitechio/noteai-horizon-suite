@@ -147,12 +147,12 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         // Initial load
         await refreshNotes();
 
-        // Set up real-time subscription with debounced handlers
+        // Set up VERY conservative real-time subscription to prevent performance issues
+        // Heavily debounced to prevent query flooding
         const channel = SupabaseNotesService.subscribeToNoteChanges(
           user.id,
-          // onInsert - debounced to prevent spam
+          // onInsert - heavily debounced and throttled
           debounce((newNote) => {
-            console.log('Real-time: Note inserted', newNote);
             setNotes(prev => {
               // Check if note already exists to avoid duplicates
               const exists = prev.find(note => note.id === newNote.id);
@@ -160,10 +160,9 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               
               return [newNote, ...prev];
             });
-          }, 100),
-          // onUpdate - debounced to prevent spam
+          }, 2000), // 2 second debounce to prevent rapid-fire updates
+          // onUpdate - heavily debounced and throttled
           debounce((updatedNote) => {
-            console.log('Real-time: Note updated', updatedNote);
             setNotes(prev => prev.map(note => 
               note.id === updatedNote.id ? updatedNote : note
             ));
@@ -175,10 +174,9 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             if (selectedNote?.id === updatedNote.id) {
               setSelectedNote(updatedNote);
             }
-          }, 100),
-          // onDelete - debounced to prevent spam
+          }, 2000), // 2 second debounce
+          // onDelete - heavily debounced
           debounce((deletedNoteId) => {
-            console.log('Real-time: Note deleted', deletedNoteId);
             setNotes(prev => prev.filter(note => note.id !== deletedNoteId));
             
             // Clear current note if it was deleted
@@ -188,7 +186,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             if (selectedNote?.id === deletedNoteId) {
               setSelectedNote(null);
             }
-          }, 100)
+          }, 1000) // 1 second debounce for deletes
         );
 
         // Store the channel reference and mark as subscribed

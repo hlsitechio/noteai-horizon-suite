@@ -188,15 +188,9 @@ export class SupabaseNotesService {
     onDelete?: (noteId: string) => void
   ) {
     // Create a unique channel name to prevent conflicts
-    const channelName = `notes-${userId}`;
+    const channelName = `notes-${userId}-${Date.now()}`;
     
-    // First, remove any existing channels with the same name
-    const existingChannel = supabase.getChannels().find(ch => ch.topic === channelName);
-    if (existingChannel) {
-      console.log('Removing existing channel:', channelName);
-      supabase.removeChannel(existingChannel);
-    }
-    
+    // Conservative real-time setup to prevent performance issues
     const channel = supabase
       .channel(channelName, {
         config: {
@@ -213,7 +207,6 @@ export class SupabaseNotesService {
           filter: `user_id=eq.${userId}`
         },
         (payload) => {
-          console.log('Real-time INSERT:', payload);
           if (onInsert && payload.new) {
             try {
               const note: Note = {
@@ -247,7 +240,6 @@ export class SupabaseNotesService {
           filter: `user_id=eq.${userId}`
         },
         (payload) => {
-          console.log('Real-time UPDATE:', payload);
           if (onUpdate && payload.new) {
             try {
               const note: Note = {
@@ -281,7 +273,6 @@ export class SupabaseNotesService {
           filter: `user_id=eq.${userId}`
         },
         (payload) => {
-          console.log('Real-time DELETE:', payload);
           if (onDelete && payload.old) {
             try {
               onDelete(payload.old.id);
@@ -293,9 +284,6 @@ export class SupabaseNotesService {
       )
       .subscribe((status) => {
         console.log(`Channel ${channelName} subscription status:`, status);
-        if (status === 'CHANNEL_ERROR') {
-          console.error('Real-time subscription error');
-        }
       });
 
     return channel;
