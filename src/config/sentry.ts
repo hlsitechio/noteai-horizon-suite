@@ -1,5 +1,6 @@
 
 import * as Sentry from "@sentry/react";
+import * as LaunchDarkly from "launchdarkly-js-client-sdk";
 
 export const initSentry = () => {
   Sentry.init({
@@ -19,6 +20,8 @@ export const initSentry = () => {
         sentry: true,
         xhr: true,
       }),
+      // LaunchDarkly integration for feature flag tracking
+      Sentry.launchDarklyIntegration(),
     ],
     // Performance Monitoring
     tracesSampleRate: 1.0, // Capture 100% of the transactions
