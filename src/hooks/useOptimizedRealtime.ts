@@ -22,6 +22,10 @@ export const useOptimizedRealtime = ({
   const channelRef = useRef<any>(null);
   const subscriptionActiveRef = useRef(false);
   const lastEventTimeRef = useRef<Record<string, number>>({});
+  
+  // Store callbacks in refs to prevent recreation
+  const callbacksRef = useRef({ onInsert, onUpdate, onDelete });
+  callbacksRef.current = { onInsert, onUpdate, onDelete };
 
   // Throttle function to prevent event flooding
   const throttleEvent = useCallback((eventKey: string, callback: () => void) => {
@@ -54,7 +58,7 @@ export const useOptimizedRealtime = ({
       return;
     }
 
-    if (subscriptionActiveRef.current) {
+    if (subscriptionActiveRef.current && channelRef.current) {
       console.log('Realtime subscription already active');
       return;
     }
@@ -80,7 +84,8 @@ export const useOptimizedRealtime = ({
             filter: `user_id=eq.${user.id}`
           },
           (payload) => {
-            if (onInsert && payload.new) {
+            const { onInsert: currentOnInsert } = callbacksRef.current;
+            if (currentOnInsert && payload.new) {
               throttleEvent('insert', () => {
                 try {
                   const note: Note = {
@@ -98,7 +103,7 @@ export const useOptimizedRealtime = ({
                     reminder_frequency: (payload.new.reminder_frequency || 'once') as any,
                     reminder_enabled: payload.new.reminder_enabled || false,
                   };
-                  onInsert(note);
+                  currentOnInsert(note);
                 } catch (error) {
                   console.error('Error processing INSERT event:', error);
                 }
@@ -115,7 +120,8 @@ export const useOptimizedRealtime = ({
             filter: `user_id=eq.${user.id}`
           },
           (payload) => {
-            if (onUpdate && payload.new) {
+            const { onUpdate: currentOnUpdate } = callbacksRef.current;
+            if (currentOnUpdate && payload.new) {
               throttleEvent('update', () => {
                 try {
                   const note: Note = {
@@ -133,7 +139,7 @@ export const useOptimizedRealtime = ({
                     reminder_frequency: (payload.new.reminder_frequency || 'once') as any,
                     reminder_enabled: payload.new.reminder_enabled || false,
                   };
-                  onUpdate(note);
+                  currentOnUpdate(note);
                 } catch (error) {
                   console.error('Error processing UPDATE event:', error);
                 }
@@ -150,10 +156,11 @@ export const useOptimizedRealtime = ({
             filter: `user_id=eq.${user.id}`
           },
           (payload) => {
-            if (onDelete && payload.old) {
+            const { onDelete: currentOnDelete } = callbacksRef.current;
+            if (currentOnDelete && payload.old) {
               throttleEvent('delete', () => {
                 try {
-                  onDelete(payload.old.id);
+                  currentOnDelete(payload.old.id);
                 } catch (error) {
                   console.error('Error processing DELETE event:', error);
                 }
@@ -177,7 +184,7 @@ export const useOptimizedRealtime = ({
       console.error('Error setting up realtime subscription:', error);
       subscriptionActiveRef.current = false;
     }
-  }, [enabled, isAuthenticated, user, onInsert, onUpdate, onDelete, throttleEvent, cleanup]);
+  }, [enabled, isAuthenticated, user?.id, throttleEvent, cleanup]);
 
   useEffect(() => {
     setupRealtime();
