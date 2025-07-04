@@ -29,6 +29,12 @@ export class AppInitializationService {
 
       this.isInitialized = true;
       
+      // Show the clean welcome message before console override happens
+      const originalConsoleInfo = console.info;
+      setTimeout(() => {
+        originalConsoleInfo('🚀 Welcome to Online Note AI!');
+      }, 100);
+      
       // Track initialization
       AnalyticsService.trackEvent('app_initialized', {
         timestamp: Date.now(),
@@ -44,14 +50,12 @@ export class AppInitializationService {
   private static setupGlobalErrorHandlers() {
     // Handle unhandled promise rejections
     window.addEventListener('unhandledrejection', (event) => {
-      logger.error('Unhandled promise rejection:', event.reason);
       Sentry.captureException(event.reason);
       AnalyticsService.trackError(new Error(String(event.reason)), 'unhandled_promise');
     });
 
     // Handle JavaScript errors
     window.addEventListener('error', (event) => {
-      logger.error('JavaScript error:', event.error);
       Sentry.captureException(event.error);
       AnalyticsService.trackError(event.error, 'javascript_error');
     });

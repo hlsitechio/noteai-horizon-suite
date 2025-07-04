@@ -31,15 +31,16 @@ export const useGlobalErrorHandler = () => {
         }
       }
     } catch (analysisError) {
-      console.warn('Bug resolution analysis failed:', analysisError);
+      // Send analysis errors to Sentry instead of console
+      Sentry.captureException(analysisError, {
+        tags: { source: 'bugResolutionAnalysis' }
+      });
     }
   };
 
   useEffect(() => {
     // Handle unhandled promise rejections
     const handleUnhandledRejection = async (event: PromiseRejectionEvent) => {
-      console.error('Unhandled promise rejection:', event.reason);
-      
       const error = event.reason instanceof Error ? event.reason : new Error(String(event.reason));
       
       // Analyze error for intelligent resolution
@@ -73,8 +74,6 @@ export const useGlobalErrorHandler = () => {
 
     // Handle JavaScript errors
     const handleError = async (event: ErrorEvent) => {
-      console.error('JavaScript error:', event.error);
-      
       const error = event.error || new Error(event.message);
       
       // Analyze error for intelligent resolution
@@ -120,8 +119,6 @@ export const useGlobalErrorHandler = () => {
       const target = event.target as HTMLElement;
       const errorMessage = `Failed to load resource: ${target.tagName} - ${(target as any).src || (target as any).href}`;
       
-      console.error('Resource loading error:', errorMessage);
-      
       Sentry.captureMessage(errorMessage, 'error');
       
       traceError({
@@ -136,38 +133,44 @@ export const useGlobalErrorHandler = () => {
       });
     };
 
-    // Handle console errors - only in production
+    // Handle console errors - override console methods to send to Sentry
     let originalConsoleError: (...args: any[]) => void = console.error;
     let originalConsoleWarn: (...args: any[]) => void = console.warn;
+    let originalConsoleInfo: (...args: any[]) => void = console.info;
+    let originalConsoleLog: (...args: any[]) => void = console.log;
     
-    if (import.meta.env.PROD) {
-      originalConsoleError = console.error;
-      console.error = (...args: any[]) => {
-        // Call original console.error
-        originalConsoleError.apply(console, args);
-        
-        // Capture in Sentry
-        const errorMessage = args.map(arg => 
-          typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-        ).join(' ');
-        
-        Sentry.captureMessage(`Console Error: ${errorMessage}`, 'error');
-      };
+    // Override console methods to be silent but send to Sentry
+    console.error = (...args: any[]) => {
+      const errorMessage = args.map(arg => 
+        typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+      ).join(' ');
+      
+      Sentry.captureMessage(`Console Error: ${errorMessage}`, 'error');
+    };
 
-      // Handle console warnings - only in production
-      originalConsoleWarn = console.warn;
-      console.warn = (...args: any[]) => {
-        // Call original console.warn
-        originalConsoleWarn.apply(console, args);
-        
-        // Capture in Sentry
-        const warnMessage = args.map(arg => 
-          typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-        ).join(' ');
-        
-        Sentry.captureMessage(`Console Warning: ${warnMessage}`, 'warning');
-      };
-    }
+    console.warn = (...args: any[]) => {
+      const warnMessage = args.map(arg => 
+        typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+      ).join(' ');
+      
+      Sentry.captureMessage(`Console Warning: ${warnMessage}`, 'warning');
+    };
+
+    console.info = (...args: any[]) => {
+      const infoMessage = args.map(arg => 
+        typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+      ).join(' ');
+      
+      Sentry.captureMessage(`Console Info: ${infoMessage}`, 'info');
+    };
+
+    console.log = (...args: any[]) => {
+      const logMessage = args.map(arg => 
+        typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+      ).join(' ');
+      
+      Sentry.captureMessage(`Console Log: ${logMessage}`, 'info');
+    };
 
     // Set up global query error handler using query cache
     const queryCache = queryClient.getQueryCache();
@@ -177,8 +180,6 @@ export const useGlobalErrorHandler = () => {
       if (event.type === 'updated') {
         const query = event.query;
         if (query.state.error && query.state.error instanceof Error) {
-          console.error('Query error:', query.state.error);
-          
           // Analyze error for intelligent resolution
           await analyzeErrorWithResolution(query.state.error, {
             type: 'tanstackQueryError',
@@ -214,8 +215,6 @@ export const useGlobalErrorHandler = () => {
       if (event.type === 'updated') {
         const mutation = event.mutation;
         if (mutation.state.error && mutation.state.error instanceof Error) {
-          console.error('Mutation error:', mutation.state.error);
-          
           // Analyze error for intelligent resolution
           await analyzeErrorWithResolution(mutation.state.error, {
             type: 'tanstackMutationError',
@@ -261,6 +260,8 @@ export const useGlobalErrorHandler = () => {
       // Restore original console methods
       console.error = originalConsoleError;
       console.warn = originalConsoleWarn;
+      console.info = originalConsoleInfo;
+      console.log = originalConsoleLog;
       
       unsubscribeQuery();
       unsubscribeMutation();
