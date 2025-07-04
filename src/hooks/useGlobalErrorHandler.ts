@@ -91,33 +91,38 @@ export const useGlobalErrorHandler = () => {
       });
     };
 
-    // Handle console errors
-    const originalConsoleError = console.error;
-    console.error = (...args: any[]) => {
-      // Call original console.error
-      originalConsoleError.apply(console, args);
-      
-      // Capture in Sentry
-      const errorMessage = args.map(arg => 
-        typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-      ).join(' ');
-      
-      Sentry.captureMessage(`Console Error: ${errorMessage}`, 'error');
-    };
+    // Handle console errors - only in production
+    let originalConsoleError: (...args: any[]) => void = console.error;
+    let originalConsoleWarn: (...args: any[]) => void = console.warn;
+    
+    if (process.env.NODE_ENV === 'production') {
+      originalConsoleError = console.error;
+      console.error = (...args: any[]) => {
+        // Call original console.error
+        originalConsoleError.apply(console, args);
+        
+        // Capture in Sentry
+        const errorMessage = args.map(arg => 
+          typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+        ).join(' ');
+        
+        Sentry.captureMessage(`Console Error: ${errorMessage}`, 'error');
+      };
 
-    // Handle console warnings
-    const originalConsoleWarn = console.warn;
-    console.warn = (...args: any[]) => {
-      // Call original console.warn
-      originalConsoleWarn.apply(console, args);
-      
-      // Capture in Sentry
-      const warnMessage = args.map(arg => 
-        typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-      ).join(' ');
-      
-      Sentry.captureMessage(`Console Warning: ${warnMessage}`, 'warning');
-    };
+      // Handle console warnings - only in production
+      originalConsoleWarn = console.warn;
+      console.warn = (...args: any[]) => {
+        // Call original console.warn
+        originalConsoleWarn.apply(console, args);
+        
+        // Capture in Sentry
+        const warnMessage = args.map(arg => 
+          typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+        ).join(' ');
+        
+        Sentry.captureMessage(`Console Warning: ${warnMessage}`, 'warning');
+      };
+    }
 
     // Set up global query error handler using query cache
     const queryCache = queryClient.getQueryCache();

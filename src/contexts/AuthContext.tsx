@@ -27,15 +27,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     refreshUser,
   } = useAuthState();
 
-  console.log('AuthProvider render - Auth state:', {
-    hasUser: !!user,
-    hasSession: !!session,
-    isLoading,
-    userEmail: user?.email
-  });
+  if (process.env.NODE_ENV === 'development') {
+    console.log('AuthProvider render - Auth state:', {
+      hasUser: !!user,
+      hasSession: !!session,
+      isLoading,
+      userEmail: user?.email
+    });
+  }
 
   useEffect(() => {
-    console.log('AuthProvider: Setting up auth state listener');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('AuthProvider: Setting up auth state listener');
+    }
     
     let mounted = true;
     
@@ -55,7 +59,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener with error handling
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Auth state changed:', event, session?.user?.email);
+        }
         
         if (!mounted) return;
         
@@ -64,7 +70,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           switch (event) {
             case 'TOKEN_REFRESHED':
               if (!session) {
-                console.log('Token refresh failed, clearing session');
+                if (process.env.NODE_ENV === 'development') {
+                  console.log('Token refresh failed, clearing session');
+                }
                 await clearCorruptedSession();
                 clearAuth();
                 return;
@@ -76,7 +84,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               return;
               
             case 'SIGNED_IN':
-              console.log(`User signed in: ${session?.user?.email}`);
+              if (process.env.NODE_ENV === 'development') {
+                console.log(`User signed in: ${session?.user?.email}`);
+              }
               break;
           }
           
@@ -93,7 +103,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initializeAuth();
 
     return () => {
-      console.log('AuthProvider: Cleaning up auth listener');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('AuthProvider: Cleaning up auth listener');
+      }
       mounted = false;
       subscription.unsubscribe();
     };

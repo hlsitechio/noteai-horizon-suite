@@ -19,7 +19,9 @@ export class AnalyticsService {
       // Initialize Google Analytics
       this.loadGoogleAnalytics();
       this.isInitialized = true;
-      console.log('Analytics service initialized successfully');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Analytics service initialized successfully');
+      }
     } catch (error) {
       console.error('Failed to initialize analytics:', error);
     }

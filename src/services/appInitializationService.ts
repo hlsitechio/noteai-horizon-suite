@@ -11,30 +11,44 @@ export class AppInitializationService {
     if (this.isInitialized) return;
 
     try {
-      console.log('🚀 Initializing Online Note AI application...');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🚀 Initializing Online Note AI application...');
+      }
       
       // Initialize Sentry first for error tracking
       initSentry();
-      console.log('✅ Sentry initialized');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Sentry initialized');
+      }
 
       // Initialize performance monitoring
       PerformanceService.initialize();
-      console.log('✅ Performance monitoring initialized');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Performance monitoring initialized');
+      }
 
       // Initialize analytics
       AnalyticsService.initialize();
-      console.log('✅ Analytics initialized');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Analytics initialized');
+      }
 
       // Set up global error handlers
       this.setupGlobalErrorHandlers();
-      console.log('✅ Global error handlers set up');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Global error handlers set up');
+      }
 
       // Set up performance monitoring
       this.setupPerformanceMonitoring();
-      console.log('✅ Performance monitoring set up');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Performance monitoring set up');
+      }
 
       this.isInitialized = true;
-      console.log('🎉 Application initialization complete');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🎉 Application initialization complete');
+      }
       
       // Track initialization
       AnalyticsService.trackEvent('app_initialized', {
