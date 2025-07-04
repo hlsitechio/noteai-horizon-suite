@@ -97,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [setSession, clearAuth]);
+  }, []); // Empty dependency array since functions are now stable
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setLoading(true);

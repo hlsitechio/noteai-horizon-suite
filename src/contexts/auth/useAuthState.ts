@@ -32,11 +32,11 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 export const useAuthState = () => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  const setLoading = useCallback((loading: boolean) => {
+  const setLoading = (loading: boolean) => {
     dispatch({ type: 'SET_LOADING', payload: loading });
-  }, []);
+  };
 
-  const setSession = useCallback(async (session: Session | null) => {
+  const setSession = async (session: Session | null) => {
     dispatch({ type: 'SET_SESSION', payload: session });
     
     // Transform and set user when session changes
@@ -51,17 +51,17 @@ export const useAuthState = () => {
     } else {
       dispatch({ type: 'SET_USER', payload: null });
     }
-  }, []);
+  };
 
-  const setUser = useCallback((user: User | null) => {
+  const setUser = (user: User | null) => {
     dispatch({ type: 'SET_USER', payload: user });
-  }, []);
+  };
 
-  const clearAuth = useCallback(() => {
+  const clearAuth = () => {
     dispatch({ type: 'CLEAR_AUTH' });
-  }, []);
+  };
 
-  const refreshUser = useCallback(async () => {
+  const refreshUser = async () => {
     if (state.session?.user) {
       try {
         const transformedUser = await transformUser(state.session.user);
@@ -70,7 +70,7 @@ export const useAuthState = () => {
         console.error('Error refreshing user:', error);
       }
     }
-  }, [state.session, setUser]);
+  };
 
   return {
     ...state,
