@@ -4,10 +4,12 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { initSentry } from './config/sentry';
+import { AppInitializationService } from './services/appInitializationService';
+import { initPerfMonitor } from './utils/perfMonitor';
 
-// Initialize Sentry before anything else
-initSentry();
+// Initialize app with performance monitoring
+AppInitializationService.initialize();
+initPerfMonitor();
 
 const queryClient = new QueryClient({
   defaultOptions: {
