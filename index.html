@@ -45,22 +45,29 @@
           window.chrome.loadTimes = function() { return {}; };
         }
         
-        // Override Performance Observer to prevent violation detection
+        // Override Performance Observer to prevent ALL performance monitoring
         if (window.PerformanceObserver) {
+          const originalPerfObserver = window.PerformanceObserver;
           window.PerformanceObserver = function() {
             return {
-              observe: function() {},
-              disconnect: function() {},
+              observe: voidFunction,
+              disconnect: voidFunction,
               takeRecords: function() { return []; }
             };
           };
           window.PerformanceObserver.supportedEntryTypes = [];
+          
+          // Block specific performance entry types that cause INP reporting
+          if (originalPerfObserver.supportedEntryTypes) {
+            originalPerfObserver.supportedEntryTypes = [];
+          }
         }
         
-        // Override Performance interface methods that trigger violations
+        // Complete Performance API shutdown including INP/CLS/LCP monitoring
         if (window.performance) {
           const noop = function() {};
           const emptyArray = function() { return []; };
+          const zeroReturn = function() { return 0; };
           
           // Override all performance methods that could trigger violations
           window.performance.mark = noop;
@@ -70,17 +77,35 @@
           window.performance.getEntries = emptyArray;
           window.performance.getEntriesByName = emptyArray;
           window.performance.getEntriesByType = emptyArray;
+          window.performance.now = function() { return Date.now(); };
           
-          // Override timing properties
+          // Block Core Web Vitals monitoring specifically
+          window.performance.navigation = {};
+          window.performance.timing = {};
+          
+          // Override timing properties that track INP/CLS/LCP
           Object.defineProperty(window.performance, 'timing', {
-            value: {},
-            writable: false
+            value: {
+              navigationStart: 0,
+              loadEventEnd: 0,
+              domContentLoadedEventEnd: 0,
+              responseStart: 0,
+              fetchStart: 0
+            },
+            writable: false,
+            configurable: false
           });
           
           Object.defineProperty(window.performance, 'navigation', {
-            value: {},
-            writable: false
+            value: { type: 0, redirectCount: 0 },
+            writable: false,
+            configurable: false
           });
+          
+          // Completely disable performance entry creation
+          if (window.performance.getEntriesByType) {
+            window.performance.getEntriesByType = emptyArray;
+          }
         }
         
         // Complete console silence
@@ -124,10 +149,11 @@
           return originalDefineProperty.call(this, obj, prop, descriptor);
         };
         
-        // Block all error and performance reporting
+        // Block ALL performance and interaction reporting including INP
         const blockedEvents = [
           'error', 'unhandledrejection', 'securitypolicyviolation',
-          'violation', 'longanimationframe', 'longtask', 'performanceviolation'
+          'violation', 'longanimationframe', 'longtask', 'performanceviolation',
+          'inp', 'cls', 'lcp', 'fid', 'ttfb', 'fcp', 'performance-observer-entry'
         ];
         
         const originalAddEventListener = EventTarget.prototype.addEventListener;
@@ -198,15 +224,21 @@
           return originalSetInterval(wrappedCallback, delay);
         };
         
-        // Continuous aggressive protection
-        const protectionInterval = setInterval(function() {
-          nukeConsole();
-          
-          // Re-disable performance monitoring
-          if (window.PerformanceObserver && window.PerformanceObserver.prototype) {
-            window.PerformanceObserver.prototype.observe = voidFunction;
-          }
-        }, 50); // Every 50ms for maximum protection
+          // Continuous aggressive protection including INP monitoring
+          const protectionInterval = setInterval(function() {
+            nukeConsole();
+            
+            // Re-disable performance monitoring and Core Web Vitals
+            if (window.PerformanceObserver && window.PerformanceObserver.prototype) {
+              window.PerformanceObserver.prototype.observe = voidFunction;
+              window.PerformanceObserver.supportedEntryTypes = [];
+            }
+            
+            // Block any restored performance monitoring
+            if (window.performance && window.performance.getEntriesByType) {
+              window.performance.getEntriesByType = function() { return []; };
+            }
+          }, 50); // Every 50ms for maximum protection
         
         // Show welcome message only
         window.addEventListener('load', function() {
