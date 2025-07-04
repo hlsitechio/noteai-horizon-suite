@@ -12,13 +12,12 @@ export class PerformanceService {
   }
 
   private static observeWebVitals() {
-    // Core Web Vitals
+    // Core Web Vitals - silent monitoring
     if ('PerformanceObserver' in window) {
       // Largest Contentful Paint (LCP)
       const lcpObserver = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
           this.metrics.set('LCP', Math.round(entry.startTime));
-          console.log('LCP:', Math.round(entry.startTime), 'ms');
         }
       });
       lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
@@ -29,7 +28,6 @@ export class PerformanceService {
         for (const entry of list.getEntries()) {
           const fid = (entry as any).processingStart - entry.startTime;
           this.metrics.set('FID', Math.round(fid));
-          console.log('FID:', Math.round(fid), 'ms');
         }
       });
       fidObserver.observe({ type: 'first-input', buffered: true });
@@ -44,7 +42,6 @@ export class PerformanceService {
           }
         }
         this.metrics.set('CLS', Math.round(clsValue * 1000) / 1000);
-        console.log('CLS:', Math.round(clsValue * 1000) / 1000);
       });
       clsObserver.observe({ type: 'layout-shift', buffered: true });
       this.observers.push(clsObserver);
@@ -59,12 +56,6 @@ export class PerformanceService {
           this.metrics.set('TTFB', Math.round(navEntry.responseStart - navEntry.fetchStart));
           this.metrics.set('DOM_LOAD', Math.round(navEntry.domContentLoadedEventEnd - navEntry.fetchStart));
           this.metrics.set('FULL_LOAD', Math.round(navEntry.loadEventEnd - navEntry.fetchStart));
-          
-          console.log('Navigation Timing:', {
-            TTFB: Math.round(navEntry.responseStart - navEntry.fetchStart),
-            DOMLoad: Math.round(navEntry.domContentLoadedEventEnd - navEntry.fetchStart),
-            FullLoad: Math.round(navEntry.loadEventEnd - navEntry.fetchStart),
-          });
         }
       });
       navObserver.observe({ type: 'navigation', buffered: true });
@@ -77,12 +68,9 @@ export class PerformanceService {
       const resourceObserver = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
           const resourceEntry = entry as PerformanceResourceTiming;
-          if (resourceEntry.transferSize > 100000) { // Log large resources (>100KB)
-            console.warn('Large resource detected:', {
-              name: resourceEntry.name,
-              size: Math.round(resourceEntry.transferSize / 1024) + 'KB',
-              duration: Math.round(resourceEntry.duration) + 'ms',
-            });
+          // Silent monitoring - only store metrics, no console output
+          if (resourceEntry.transferSize > 100000) {
+            this.metrics.set('LARGE_RESOURCE_' + Date.now(), resourceEntry.transferSize);
           }
         }
       });

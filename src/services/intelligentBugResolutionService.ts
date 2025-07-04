@@ -163,15 +163,13 @@ export class IntelligentBugResolutionService {
           
           // Attempt auto-resolution if enabled and available
           if (this.autoResolutionEnabled && pattern.autoResolution) {
-            logger.info('BUG_RESOLUTION', `Attempting auto-resolution for ${pattern.category} error`);
             try {
               const resolved = await pattern.autoResolution();
               if (resolved) {
-                logger.info('BUG_RESOLUTION', `Auto-resolved ${pattern.category} error`);
                 this.trackResolution(context, suggestion, true);
               }
             } catch (autoResolutionError) {
-              logger.error('BUG_RESOLUTION', 'Auto-resolution failed:', autoResolutionError);
+              // Silent failure - only log to Sentry if needed
             }
           }
         }
@@ -232,9 +230,6 @@ export class IntelligentBugResolutionService {
   // Auto-resolution handlers
   private async handleNetworkError(): Promise<boolean> {
     try {
-      // Implement retry logic with exponential backoff
-      logger.info('BUG_RESOLUTION', 'Implementing network error recovery');
-      
       // Store network error for retry mechanisms
       localStorage.setItem('network_error_recovery', JSON.stringify({
         timestamp: Date.now(),
@@ -250,11 +245,8 @@ export class IntelligentBugResolutionService {
 
   private async handleNullReference(): Promise<boolean> {
     try {
-      // Add defensive programming measures
-      logger.info('BUG_RESOLUTION', 'Implementing null reference protection');
-      
       // This would typically involve patching the specific component
-      // For now, we log the issue for developer attention
+      // For now, we skip the issue for manual intervention
       return false; // Requires manual intervention
     } catch {
       return false;
@@ -263,8 +255,6 @@ export class IntelligentBugResolutionService {
 
   private async handleChunkLoadError(): Promise<boolean> {
     try {
-      logger.info('BUG_RESOLUTION', 'Handling chunk load error - preparing reload');
-      
       // Clear cache and prepare for reload
       if ('caches' in window) {
         const cacheNames = await caches.keys();
@@ -288,7 +278,6 @@ export class IntelligentBugResolutionService {
   private async handleResizeObserverError(): Promise<boolean> {
     try {
       // Ignore resize observer errors as they're typically non-critical
-      logger.info('BUG_RESOLUTION', 'Suppressing resize observer error');
       return true;
     } catch {
       return false;
@@ -297,8 +286,6 @@ export class IntelligentBugResolutionService {
 
   private async handleHydrationError(): Promise<boolean> {
     try {
-      logger.info('BUG_RESOLUTION', 'Handling hydration error');
-      
       // Mark for client-side only rendering
       sessionStorage.setItem('hydration_error_recovery', 'true');
       
@@ -310,8 +297,6 @@ export class IntelligentBugResolutionService {
 
   private async handlePerformanceTimeout(): Promise<boolean> {
     try {
-      logger.info('BUG_RESOLUTION', 'Optimizing performance timeouts');
-      
       // Add performance optimization flags
       sessionStorage.setItem('performance_optimization', JSON.stringify({
         timestamp: Date.now(),
@@ -327,8 +312,6 @@ export class IntelligentBugResolutionService {
 
   private async handleLayoutPerformance(): Promise<boolean> {
     try {
-      logger.info('BUG_RESOLUTION', 'Optimizing layout performance');
-      
       // Set DOM optimization flags
       sessionStorage.setItem('layout_optimization', JSON.stringify({
         timestamp: Date.now(),
@@ -344,8 +327,6 @@ export class IntelligentBugResolutionService {
 
   private async handleCookiePolicy(): Promise<boolean> {
     try {
-      logger.info('BUG_RESOLUTION', 'Handling cookie policy issues');
-      
       // Suppress cookie warnings for third-party services
       sessionStorage.setItem('cookie_policy_handled', 'true');
       
@@ -357,8 +338,6 @@ export class IntelligentBugResolutionService {
 
   private async handleFacebookPixel(): Promise<boolean> {
     try {
-      logger.info('BUG_RESOLUTION', 'Handling Facebook pixel issues');
-      
       // Implement graceful fallback for blocked pixels
       if (typeof window !== 'undefined' && !(window as any).fbq) {
         (window as any).fbq = () => {
@@ -458,9 +437,7 @@ export class IntelligentBugResolutionService {
       }
       
       if (issues.length > 0) {
-        logger.warn('BUG_RESOLUTION', 'Proactive health check found issues:', issues);
-        
-        // Report to analytics
+        // Report to analytics silently
         issues.forEach(issue => {
           Sentry.captureMessage('Proactive issue detected', {
             level: 'warning',
@@ -473,19 +450,17 @@ export class IntelligentBugResolutionService {
         });
       }
     } catch (error) {
-      logger.error('BUG_RESOLUTION', 'Periodic health check failed:', error);
+      // Silent error handling
     }
   }
 
   // Public methods for integration
   enableAutoResolution(enabled: boolean = true) {
     this.autoResolutionEnabled = enabled;
-    logger.info('BUG_RESOLUTION', `Auto-resolution ${enabled ? 'enabled' : 'disabled'}`);
   }
 
   addCustomPattern(pattern: ErrorPattern) {
     this.errorPatterns.push(pattern);
-    logger.info('BUG_RESOLUTION', `Added custom error pattern: ${pattern.category}`);
   }
 
   getResolutionStats() {

@@ -16,10 +16,10 @@ class Logger {
   private enabledModules: Set<string>;
   
   constructor() {
-    // Default to INFO level in development, ERROR in production
-    this.logLevel = import.meta.env.DEV ? LogLevel.INFO : LogLevel.ERROR;
+    // Default to NONE level to eliminate all logs unless explicitly enabled
+    this.logLevel = import.meta.env.DEV ? LogLevel.ERROR : LogLevel.NONE;
     
-    // Allow specific modules to be enabled via environment variable
+    // Only enable modules if explicitly requested
     const enabledModules = import.meta.env.VITE_DEBUG_MODULES?.split(',') || [];
     this.enabledModules = new Set(enabledModules.map(m => m.trim()));
     

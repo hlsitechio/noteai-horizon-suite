@@ -12,30 +12,22 @@ export class AppInitializationService {
     if (this.isInitialized) return;
 
     try {
-      logger.info('🚀 Initializing Online Note AI application...');
-      
       // Initialize Sentry first for error tracking
       initSentry();
-      logger.info('✅ Sentry initialized');
 
       // Initialize performance monitoring
       PerformanceService.initialize();
-      logger.info('✅ Performance monitoring initialized');
 
       // Initialize analytics
       AnalyticsService.initialize();
-      logger.info('✅ Analytics initialized');
 
       // Set up global error handlers
       this.setupGlobalErrorHandlers();
-      logger.info('✅ Global error handlers set up');
 
       // Set up performance monitoring
       this.setupPerformanceMonitoring();
-      logger.info('✅ Performance monitoring set up');
 
       this.isInitialized = true;
-      logger.info('🎉 Application initialization complete');
       
       // Track initialization
       AnalyticsService.trackEvent('app_initialized', {
