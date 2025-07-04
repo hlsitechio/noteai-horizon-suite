@@ -35,6 +35,53 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <!-- Complete Console Override - Runs before ANY other JavaScript -->
+    <script>
+      (function() {
+        // Store original console.info for our welcome message
+        const originalInfo = console.info;
+        
+        // Completely silent function that sends to Sentry when available
+        const silentLog = function(...args) {
+          // Only send to Sentry if it's available (after app loads)
+          if (window.Sentry && window.Sentry.captureMessage) {
+            const message = args.map(arg => 
+              typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+            ).join(' ');
+            window.Sentry.captureMessage(`Console: ${message}`, 'debug');
+          }
+        };
+        
+        // Override ALL console methods before any other code runs
+        console.log = silentLog;
+        console.debug = silentLog;
+        console.info = silentLog;
+        console.warn = silentLog;
+        console.error = silentLog;
+        console.trace = silentLog;
+        console.group = silentLog;
+        console.groupCollapsed = silentLog;
+        console.groupEnd = silentLog;
+        console.table = silentLog;
+        console.time = silentLog;
+        console.timeEnd = silentLog;
+        console.timeLog = silentLog;
+        console.count = silentLog;
+        console.countReset = silentLog;
+        console.clear = silentLog;
+        console.assert = silentLog;
+        console.dir = silentLog;
+        console.dirxml = silentLog;
+        
+        // Show our welcome message after everything loads
+        window.addEventListener('load', function() {
+          setTimeout(function() {
+            originalInfo('🚀 Welcome to Online Note AI!');
+          }, 500);
+        });
+      })();
+    </script>
   </head>
 
   <body>
