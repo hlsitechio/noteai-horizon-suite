@@ -40,7 +40,9 @@ export const useOptimizedRealtime = ({
 
   const cleanup = useCallback(() => {
     if (channelRef.current) {
-      console.log('Cleaning up realtime subscription');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Cleaning up realtime subscription');
+      }
       try {
         channelRef.current.unsubscribe();
         supabase.removeChannel(channelRef.current);
@@ -54,19 +56,25 @@ export const useOptimizedRealtime = ({
 
   const setupRealtime = useCallback(async () => {
     if (!enabled || !isAuthenticated || !user) {
-      console.log('Realtime disabled or user not authenticated');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Realtime disabled or user not authenticated');
+      }
       return;
     }
 
     if (subscriptionActiveRef.current && channelRef.current) {
-      console.log('Realtime subscription already active');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Realtime subscription already active');
+      }
       return;
     }
 
     cleanup(); // Clean up any existing subscription
 
     try {
-      console.log('Setting up optimized realtime subscription for user:', user.id);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Setting up optimized realtime subscription for user:', user.id);
+      }
 
       const channel = supabase
         .channel(`notes-${user.id}-${Date.now()}`, {
@@ -170,7 +178,9 @@ export const useOptimizedRealtime = ({
         );
 
       channel.subscribe((status) => {
-        console.log(`Realtime subscription status: ${status}`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`Realtime subscription status: ${status}`);
+        }
         if (status === 'SUBSCRIBED') {
           subscriptionActiveRef.current = true;
         } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
@@ -179,7 +189,9 @@ export const useOptimizedRealtime = ({
       });
 
       channelRef.current = channel;
-      console.log('Optimized realtime subscription setup completed');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Optimized realtime subscription setup completed');
+      }
     } catch (error) {
       console.error('Error setting up realtime subscription:', error);
       subscriptionActiveRef.current = false;

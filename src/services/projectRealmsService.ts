@@ -23,7 +23,9 @@ export class ProjectRealmsService {
         return [];
       }
 
-      console.log('ProjectRealmsService: Loading projects for user:', user.id);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('ProjectRealmsService: Loading projects for user:', user.id);
+      }
 
       const { data, error } = await supabase
         .from('project_realms')
@@ -43,11 +45,13 @@ export class ProjectRealmsService {
         throw new Error(`Failed to load projects: ${error.message} (Code: ${error.code})`);
       }
       
-      console.log('ProjectRealmsService: Successfully loaded projects:', {
-        count: data?.length || 0,
-        userId: user.id,
-        projectIds: data?.map(p => p.id) || []
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('ProjectRealmsService: Successfully loaded projects:', {
+          count: data?.length || 0,
+          userId: user.id,
+          projectIds: data?.map(p => p.id) || []
+        });
+      }
       
       return (data || []) as ProjectRealm[];
     } catch (error) {

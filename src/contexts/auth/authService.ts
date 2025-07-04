@@ -104,7 +104,9 @@ export const logoutUser = async (): Promise<void> => {
 
 export const initializeAuthSession = async () => {
   try {
-    console.log('Initializing auth session...');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Initializing auth session...');
+    }
     
     // First, try to get the current session
     const { data: { session }, error } = await supabase.auth.getSession();
@@ -122,7 +124,9 @@ export const initializeAuthSession = async () => {
     }
 
     if (session) {
-      console.log('Valid session found:', session.user?.email);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Valid session found:', session.user?.email);
+      }
       // Verify the session is actually valid by making a test request
       try {
         const { error: testError } = await supabase.auth.getUser();

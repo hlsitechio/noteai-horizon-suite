@@ -7,7 +7,9 @@ import { Loader2 } from 'lucide-react';
 const HomeRedirect: React.FC = () => {
   const { user, isLoading } = useAuth();
 
-  console.log('HomeRedirect - Auth state:', { user: !!user, isLoading });
+  if (process.env.NODE_ENV === 'development') {
+    console.log('HomeRedirect - Auth state:', { user: !!user, isLoading });
+  }
 
   // Show loading state while auth is being determined
   if (isLoading) {
@@ -23,10 +25,14 @@ const HomeRedirect: React.FC = () => {
 
   // Redirect based on authentication status
   if (user) {
-    console.log('User authenticated, redirecting to dashboard from /home');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('User authenticated, redirecting to dashboard from /home');
+    }
     return <Navigate to="/app/dashboard" replace />;
   } else {
-    console.log('User not authenticated, redirecting to landing from /home');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('User not authenticated, redirecting to landing from /home');
+    }
     return <Navigate to="/landing" replace />;
   }
 };
