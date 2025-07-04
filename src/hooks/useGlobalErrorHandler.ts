@@ -3,16 +3,50 @@ import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Sentry from "@sentry/react";
 import { useErrorTracing } from './useErrorTracing';
+import { bugResolutionService } from '@/services/intelligentBugResolutionService';
 import { toast } from 'sonner';
 
 export const useGlobalErrorHandler = () => {
   const { traceError } = useErrorTracing();
   const queryClient = useQueryClient();
 
+  // Helper function to analyze errors with intelligent bug resolution
+  const analyzeErrorWithResolution = async (error: Error, context: any) => {
+    try {
+      const suggestions = await bugResolutionService.analyzeError({
+        errorMessage: error.message,
+        stackTrace: error.stack,
+        userAgent: navigator.userAgent,
+        url: window.location.href,
+        timestamp: Date.now(),
+        ...context
+      });
+
+      if (suggestions.length > 0) {
+        const topSuggestion = suggestions[0];
+        if (topSuggestion.confidence > 0.8 && topSuggestion.canAutoResolve) {
+          toast.success(`Auto-resolving ${topSuggestion.category} error`);
+        } else if (topSuggestion.confidence > 0.6) {
+          toast.info(`Potential solution detected for ${topSuggestion.category} error`);
+        }
+      }
+    } catch (analysisError) {
+      console.warn('Bug resolution analysis failed:', analysisError);
+    }
+  };
+
   useEffect(() => {
     // Handle unhandled promise rejections
-    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+    const handleUnhandledRejection = async (event: PromiseRejectionEvent) => {
       console.error('Unhandled promise rejection:', event.reason);
+      
+      const error = event.reason instanceof Error ? event.reason : new Error(String(event.reason));
+      
+      // Analyze error for intelligent resolution
+      await analyzeErrorWithResolution(error, {
+        type: 'unhandledPromiseRejection',
+        breadcrumbs: []
+      });
       
       // Send to Sentry with additional context
       Sentry.captureException(event.reason, {
@@ -28,7 +62,7 @@ export const useGlobalErrorHandler = () => {
       traceError({
         component: 'GlobalErrorHandler',
         operation: 'unhandledPromiseRejection',
-        error: event.reason instanceof Error ? event.reason : new Error(String(event.reason)),
+        error,
         context: {
           type: 'unhandledPromiseRejection',
         },
@@ -38,8 +72,19 @@ export const useGlobalErrorHandler = () => {
     };
 
     // Handle JavaScript errors
-    const handleError = (event: ErrorEvent) => {
+    const handleError = async (event: ErrorEvent) => {
       console.error('JavaScript error:', event.error);
+      
+      const error = event.error || new Error(event.message);
+      
+      // Analyze error for intelligent resolution
+      await analyzeErrorWithResolution(error, {
+        type: 'javascriptError',
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno,
+        breadcrumbs: []
+      });
       
       // Send to Sentry with additional context
       Sentry.captureException(event.error, {
@@ -58,7 +103,7 @@ export const useGlobalErrorHandler = () => {
       traceError({
         component: 'GlobalErrorHandler',
         operation: 'javascriptError',
-        error: event.error || new Error(event.message),
+        error,
         context: {
           type: 'javascriptError',
           filename: event.filename,
@@ -95,7 +140,7 @@ export const useGlobalErrorHandler = () => {
     let originalConsoleError: (...args: any[]) => void = console.error;
     let originalConsoleWarn: (...args: any[]) => void = console.warn;
     
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.PROD) {
       originalConsoleError = console.error;
       console.error = (...args: any[]) => {
         // Call original console.error
@@ -128,11 +173,18 @@ export const useGlobalErrorHandler = () => {
     const queryCache = queryClient.getQueryCache();
     const mutationCache = queryClient.getMutationCache();
 
-    const unsubscribeQuery = queryCache.subscribe((event) => {
+    const unsubscribeQuery = queryCache.subscribe(async (event) => {
       if (event.type === 'updated') {
         const query = event.query;
-        if (query.state.error) {
+        if (query.state.error && query.state.error instanceof Error) {
           console.error('Query error:', query.state.error);
+          
+          // Analyze error for intelligent resolution
+          await analyzeErrorWithResolution(query.state.error, {
+            type: 'tanstackQueryError',
+            queryKey: query.queryKey,
+            breadcrumbs: []
+          });
           
           // Send to Sentry
           Sentry.captureException(query.state.error, {
@@ -145,26 +197,31 @@ export const useGlobalErrorHandler = () => {
             }
           });
           
-          if (query.state.error instanceof Error) {
-            traceError({
-              component: 'GlobalErrorHandler',
-              operation: 'queryError',
-              error: query.state.error,
-              context: {
-                type: 'tanstackQueryError',
-                queryKey: query.queryKey,
-              },
-            });
-          }
+          traceError({
+            component: 'GlobalErrorHandler',
+            operation: 'queryError',
+            error: query.state.error,
+            context: {
+              type: 'tanstackQueryError',
+              queryKey: query.queryKey,
+            },
+          });
         }
       }
     });
 
-    const unsubscribeMutation = mutationCache.subscribe((event) => {
+    const unsubscribeMutation = mutationCache.subscribe(async (event) => {
       if (event.type === 'updated') {
         const mutation = event.mutation;
-        if (mutation.state.error) {
+        if (mutation.state.error && mutation.state.error instanceof Error) {
           console.error('Mutation error:', mutation.state.error);
+          
+          // Analyze error for intelligent resolution
+          await analyzeErrorWithResolution(mutation.state.error, {
+            type: 'tanstackMutationError',
+            mutationKey: mutation.options.mutationKey,
+            breadcrumbs: []
+          });
           
           // Send to Sentry
           Sentry.captureException(mutation.state.error, {
@@ -177,17 +234,15 @@ export const useGlobalErrorHandler = () => {
             }
           });
           
-          if (mutation.state.error instanceof Error) {
-            traceError({
-              component: 'GlobalErrorHandler',
-              operation: 'mutationError',
-              error: mutation.state.error,
-              context: {
-                type: 'tanstackMutationError',
-                mutationKey: mutation.options.mutationKey,
-              },
-            });
-          }
+          traceError({
+            component: 'GlobalErrorHandler',
+            operation: 'mutationError',
+            error: mutation.state.error,
+            context: {
+              type: 'tanstackMutationError',
+              mutationKey: mutation.options.mutationKey,
+            },
+          });
         }
       }
     });
