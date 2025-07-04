@@ -17,11 +17,13 @@ export class AnalyticsService {
     if (this.isInitialized || typeof window === 'undefined') return;
 
     try {
-      // Skip GA loading in development or with placeholder ID
-      if (import.meta.env.DEV || this.GA_MEASUREMENT_ID === 'G-XXXXXXXXXX') {
-        logger.info('Analytics service initialized (GA disabled - placeholder ID)');
-      } else {
+      // Completely disable GA loading to prevent CSP violations
+      // Only enable when a real GA measurement ID is provided
+      if (this.GA_MEASUREMENT_ID && this.GA_MEASUREMENT_ID !== 'G-XXXXXXXXXX' && !import.meta.env.DEV) {
         this.loadGoogleAnalytics();
+        logger.info('Analytics service initialized with GA');
+      } else {
+        logger.info('Analytics service initialized (GA disabled - no valid ID provided)');
       }
       this.isInitialized = true;
     } catch (error) {
