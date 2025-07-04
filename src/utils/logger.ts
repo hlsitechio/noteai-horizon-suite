@@ -17,14 +17,14 @@ class Logger {
   
   constructor() {
     // Default to INFO level in development, ERROR in production
-    this.logLevel = process.env.NODE_ENV === 'development' ? LogLevel.INFO : LogLevel.ERROR;
+    this.logLevel = import.meta.env.DEV ? LogLevel.INFO : LogLevel.ERROR;
     
     // Allow specific modules to be enabled via environment variable
-    const enabledModules = process.env.VITE_DEBUG_MODULES?.split(',') || [];
+    const enabledModules = import.meta.env.VITE_DEBUG_MODULES?.split(',') || [];
     this.enabledModules = new Set(enabledModules.map(m => m.trim()));
     
     // Override log level if specified in environment
-    const envLogLevel = process.env.VITE_LOG_LEVEL;
+    const envLogLevel = import.meta.env.VITE_LOG_LEVEL;
     if (envLogLevel && envLogLevel in LogLevel) {
       this.logLevel = LogLevel[envLogLevel as keyof typeof LogLevel];
     }
