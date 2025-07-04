@@ -22,9 +22,9 @@ export const useOptimizedRealtime = ({
   const channelRef = useRef<any>(null);
   const subscriptionActiveRef = useRef(false);
   const lastEventTimeRef = useRef<Record<string, number>>({});
-  
-  // Store callbacks in refs to prevent recreation
   const callbacksRef = useRef({ onInsert, onUpdate, onDelete });
+  
+  // Update callbacks without changing hook order
   callbacksRef.current = { onInsert, onUpdate, onDelete };
 
   // Throttle function to prevent event flooding
