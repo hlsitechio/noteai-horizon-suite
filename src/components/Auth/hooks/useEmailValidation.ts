@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { supabase } from '../../../integrations/supabase/client';
+import { logger } from '../../../utils/logger';
 
 export const useEmailValidation = () => {
   const [emailExists, setEmailExists] = useState(false);
@@ -14,7 +15,7 @@ export const useEmailValidation = () => {
 
     setIsCheckingEmail(true);
     try {
-      console.log('Checking if email exists:', emailToCheck);
+      logger.auth.debug('Checking if email exists:', emailToCheck);
       
       // Check if user exists in user_profiles table
       const { data: profile, error } = await supabase
@@ -24,13 +25,13 @@ export const useEmailValidation = () => {
         .maybeSingle();
 
       if (error) {
-        console.error('Error checking email:', error);
+        logger.auth.error('Error checking email:', error);
         setEmailExists(false);
         return false;
       }
 
       const emailAlreadyExists = !!profile;
-      console.log('Email check result:', {
+      logger.auth.debug('Email check result:', {
         email: emailToCheck,
         exists: emailAlreadyExists,
         profile: profile
@@ -39,7 +40,7 @@ export const useEmailValidation = () => {
       setEmailExists(emailAlreadyExists);
       return emailAlreadyExists;
     } catch (error) {
-      console.error('Exception while checking email:', error);
+      logger.auth.error('Exception while checking email:', error);
       setEmailExists(false);
       return false;
     } finally {
@@ -48,7 +49,7 @@ export const useEmailValidation = () => {
   };
 
   const resetEmailExists = () => {
-    console.log('Resetting email exists state');
+    logger.auth.debug('Resetting email exists state');
     setEmailExists(false);
   };
 

@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { BannerData, BannerMetadata, BannerUploadResult } from './types';
 import { generateFileName, getFileExtension, verifyBannersStorageExists, getPublicUrl } from './utils';
+import { logger } from '@/utils/logger';
 
 export class BannerUploadService {
   static async uploadBanner(
@@ -11,52 +12,52 @@ export class BannerUploadService {
     projectId?: string
   ): Promise<BannerData | null> {
     try {
-      console.log('BannerUploadService: Starting upload process', { fileName: file.name, fileSize: file.size, fileType: file.type });
+      logger.debug('BANNER', 'Starting upload process', { fileName: file.name, fileSize: file.size, fileType: file.type });
       
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        console.error('BannerUploadService: No authenticated user found');
+        logger.error('BANNER', 'No authenticated user found');
         toast.error('Authentication required');
         return null;
       }
 
-      console.log('BannerUploadService: User authenticated', user.id);
+      logger.debug('BANNER', 'User authenticated', user.id);
 
       // Verify storage bucket exists (for logging - bucket is guaranteed to exist)
       const storageReady = await verifyBannersStorageExists();
-      console.log('BannerUploadService: Storage verification:', storageReady);
+      logger.debug('BANNER', 'Storage verification:', storageReady);
 
       const fileExt = getFileExtension(file.name);
       const fileName = generateFileName(user.id, bannerType, projectId, fileExt);
       
-      console.log('BannerUploadService: Generated file name:', fileName);
+      logger.debug('BANNER', 'Generated file name:', fileName);
 
       // Upload file to storage
       const uploadResult = await this.uploadFileToStorage(fileName, file);
       if (!uploadResult.success) {
-        console.error('BannerUploadService: File upload to storage failed');
+        logger.error('BANNER', 'File upload to storage failed');
         return null;
       }
 
-      console.log('BannerUploadService: File uploaded to storage successfully');
+      logger.debug('BANNER', 'File uploaded to storage successfully');
 
       // Get public URL
       const publicUrl = getPublicUrl(fileName);
-      console.log('BannerUploadService: Public URL generated:', publicUrl);
+      logger.debug('BANNER', 'Public URL generated:', publicUrl);
 
       // Save metadata to database
       const bannerData = await this.saveBannerMetadata(user.id, bannerType, projectId, publicUrl, file);
       if (!bannerData) {
-        console.error('BannerUploadService: Failed to save banner metadata to database');
+        logger.error('BANNER', 'Failed to save banner metadata to database');
         return null;
       }
 
-      console.log('BannerUploadService: Banner saved successfully:', bannerData);
+      logger.debug('BANNER', 'Banner saved successfully:', bannerData);
       toast.success('Banner uploaded successfully!');
       
       return bannerData;
     } catch (error) {
-      console.error('BannerUploadService: Upload exception:', error);
+      logger.error('BANNER', 'Upload exception:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast.error(`Upload failed: ${errorMessage}`);
       return null;
@@ -65,7 +66,7 @@ export class BannerUploadService {
 
   private static async uploadFileToStorage(fileName: string, file: File): Promise<BannerUploadResult> {
     try {
-      console.log('BannerUploadService: Uploading file to storage bucket "banners"', { fileName, fileSize: file.size, fileType: file.type });
+      logger.debug('BANNER', 'Uploading file to storage bucket "banners"', { fileName, fileSize: file.size, fileType: file.type });
       
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('banners')
@@ -75,15 +76,15 @@ export class BannerUploadService {
         });
 
       if (uploadError) {
-        console.error('BannerUploadService: Storage upload error:', uploadError);
+        logger.error('BANNER', 'Storage upload error:', uploadError);
         toast.error(`Storage upload failed: ${uploadError.message}`);
         return { success: false, error: uploadError.message };
       }
 
-      console.log('BannerUploadService: Storage upload successful:', uploadData);
+      logger.debug('BANNER', 'Storage upload successful:', uploadData);
       return { success: true };
     } catch (error) {
-      console.error('BannerUploadService: Storage upload exception:', error);
+      logger.error('BANNER', 'Storage upload exception:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown storage error';
       return { success: false, error: errorMessage };
     }
@@ -107,7 +108,7 @@ export class BannerUploadService {
         file_size: file.size
       };
 
-      console.log('BannerUploadService: Attempting to save banner metadata:', bannerMetadata);
+      logger.debug('BANNER', 'Attempting to save banner metadata:', bannerMetadata);
 
       // For dashboard banners, we need to handle the unique constraint properly
       if (bannerType === 'dashboard') {
@@ -121,13 +122,13 @@ export class BannerUploadService {
           .maybeSingle();
 
         if (selectError) {
-          console.error('BannerUploadService: Error checking existing banner:', selectError);
+          logger.error('BANNER', 'Error checking existing banner:', selectError);
           toast.error(`Database query error: ${selectError.message}`);
           return null;
         }
 
         if (existingBanner) {
-          console.log('BannerUploadService: Updating existing dashboard banner:', existingBanner.id);
+          logger.debug('BANNER', 'Updating existing dashboard banner:', existingBanner.id);
           
           const { data: updatedBanner, error: updateError } = await supabase
             .from('banners')
@@ -143,7 +144,7 @@ export class BannerUploadService {
             .single();
 
           if (updateError) {
-            console.error('BannerUploadService: Update error:', updateError);
+            logger.error('BANNER', 'Update error:', updateError);
             toast.error(`Database update error: ${updateError.message}`);
             return null;
           }
@@ -153,7 +154,7 @@ export class BannerUploadService {
             file_type: updatedBanner.file_type as 'image' | 'video'
           };
         } else {
-          console.log('BannerUploadService: Creating new dashboard banner');
+          logger.debug('BANNER', 'Creating new dashboard banner');
           
           const { data: newBanner, error: insertError } = await supabase
             .from('banners')
@@ -162,7 +163,7 @@ export class BannerUploadService {
             .single();
 
           if (insertError) {
-            console.error('BannerUploadService: Insert error:', insertError);
+            logger.error('BANNER', 'Insert error:', insertError);
             toast.error(`Database insert error: ${insertError.message}`);
             return null;
           }
@@ -174,7 +175,7 @@ export class BannerUploadService {
         }
       } else {
         // For project banners, use upsert with proper conflict resolution
-        console.log('BannerUploadService: Upserting project banner');
+        logger.debug('BANNER', 'Upserting project banner');
         
         const { data: bannerData, error: dbError } = await supabase
           .from('banners')
@@ -185,7 +186,7 @@ export class BannerUploadService {
           .single();
 
         if (dbError) {
-          console.error('BannerUploadService: Project banner upsert error:', dbError);
+          logger.error('BANNER', 'Project banner upsert error:', dbError);
           toast.error(`Database error: ${dbError.message}`);
           return null;
         }
@@ -196,7 +197,7 @@ export class BannerUploadService {
         };
       }
     } catch (error) {
-      console.error('BannerUploadService: Database operation exception:', error);
+      logger.error('BANNER', 'Database operation exception:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown database error';
       toast.error(`Database error: ${errorMessage}`);
       return null;

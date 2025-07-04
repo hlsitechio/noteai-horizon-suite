@@ -9,6 +9,7 @@ import RegistrationStep from './RegistrationStep';
 import RegistrationSummary from './RegistrationSummary';
 import { Step, StepContent, RegistrationData } from './types';
 import registerBg from '../../assets/register-gradient-bg-hq.jpg';
+import { logger } from '../../utils/logger';
 
 const StepByStepRegister: React.FC = () => {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ const StepByStepRegister: React.FC = () => {
   };
 
   const handleInputChange = async (value: string) => {
-    console.log('Input change:', { currentStep, value });
+    logger.auth.debug('Input change:', { currentStep, value });
     
     const updatedData = { ...registrationData };
     
@@ -66,7 +67,7 @@ const StepByStepRegister: React.FC = () => {
     
     // For email step, check if email exists after validation
     if (currentStep === 'email' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      console.log('Valid email format, checking if exists:', value);
+      logger.auth.debug('Valid email format, checking if exists:', value);
       setTimeout(async () => {
         await checkEmailExists(value);
       }, 500); // Slightly longer delay to avoid too many API calls
@@ -151,7 +152,7 @@ const StepByStepRegister: React.FC = () => {
 
   // Update validation when email check completes
   useEffect(() => {
-    console.log('Email validation state changed:', { emailExists, isCheckingEmail, currentStep });
+    logger.auth.debug('Email validation state changed:', { emailExists, isCheckingEmail, currentStep });
     if (currentStep === 'email') {
       setIsValid(validateCurrentStep());
     }

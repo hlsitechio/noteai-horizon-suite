@@ -1,5 +1,6 @@
 
 import { safeSendAnalyticsEvent, safeSetAnalyticsUserId, safeTrackPageView, safeTrackError, enableAnalyticsDebugMode } from '@/utils/safeAnalytics';
+import { logger } from '../utils/logger';
 
 declare global {
   interface Window {
@@ -19,11 +20,9 @@ export class AnalyticsService {
       // Initialize Google Analytics
       this.loadGoogleAnalytics();
       this.isInitialized = true;
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Analytics service initialized successfully');
-      }
+      logger.info('Analytics service initialized successfully');
     } catch (error) {
-      console.error('Failed to initialize analytics:', error);
+      logger.error('Failed to initialize analytics:', error);
     }
   }
 
@@ -52,7 +51,7 @@ export class AnalyticsService {
         enableAnalyticsDebugMode();
       }
     } catch (error) {
-      console.error('Failed to load Google Analytics:', error);
+      logger.error('Failed to load Google Analytics:', error);
     }
   }
 

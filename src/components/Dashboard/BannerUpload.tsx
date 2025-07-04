@@ -10,6 +10,7 @@ import { BannerUploadProps, BannerState } from './BannerUpload/types';
 import { validateFile } from './BannerUpload/utils';
 import BannerPreview from './BannerUpload/BannerPreview';
 import FileSelector from './BannerUpload/FileSelector';
+import { logger } from '../../utils/logger';
 
 const BannerUpload: React.FC<BannerUploadProps> = ({ 
   currentBannerUrl,
@@ -38,36 +39,36 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
     if (!file) return;
 
     updateState({ uploadError: null });
-    console.log('BannerUpload: File selected:', file.name, file.type, file.size);
+    logger.debug('BANNER', 'File selected:', file.name, file.type, file.size);
 
     const validation = validateFile(file);
     
     if (!validation.isValid) {
-      console.log('BannerUpload: File validation failed:', validation.error);
+      logger.debug('BANNER', 'File validation failed:', validation.error);
       toast.error(validation.error!);
       updateState({ uploadError: validation.error! });
       return;
     }
 
     updateState({ bannerType: validation.type!, selectedFile: file });
-    console.log('BannerUpload: Banner type set to:', validation.type);
+    logger.debug('BANNER', 'Banner type set to:', validation.type);
 
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
-      console.log('BannerUpload: File read successfully, data URL length:', result.length);
+      logger.debug('BANNER', 'File read successfully, data URL length:', result.length);
       updateState({ selectedBanner: result });
       
       // Extract color from the selected file if dynamic accent is enabled
       if (isDynamicAccentEnabled) {
-        console.log('BannerUpload: Extracting color from selected file');
+        logger.debug('BANNER', 'Extracting color from selected file');
         extractColorFromMedia(file).catch(error => {
-          console.error('BannerUpload: Color extraction failed:', error);
+          logger.error('BANNER', 'Color extraction failed:', error);
         });
       }
     };
     reader.onerror = (e) => {
-      console.error('BannerUpload: FileReader error:', e);
+      logger.error('BANNER', 'FileReader error:', e);
       toast.error('Failed to read file');
       updateState({ uploadError: 'Failed to read file' });
     };
@@ -76,31 +77,31 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
 
   const handleUploadBanner = async () => {
     if (!state.selectedBanner || !state.selectedFile) {
-      console.error('BannerUpload: No file selected - selectedBanner:', !!state.selectedBanner, 'selectedFile:', !!state.selectedFile);
+      logger.error('BANNER', 'No file selected - selectedBanner:', !!state.selectedBanner, 'selectedFile:', !!state.selectedFile);
       updateState({ uploadError: 'No file selected' });
       return;
     }
 
-    console.log('BannerUpload: Starting upload process, type:', state.bannerType);
+    logger.debug('BANNER', 'Starting upload process, type:', state.bannerType);
     updateState({ isUploading: true, uploadError: null });
     
     try {
-      console.log('BannerUpload: Uploading file:', state.selectedFile.name, state.selectedFile.size, state.selectedFile.type);
+      logger.debug('BANNER', 'Uploading file:', state.selectedFile.name, state.selectedFile.size, state.selectedFile.type);
       
       const bannerData = await BannerStorageService.uploadBanner(state.selectedFile, 'dashboard');
       
       if (bannerData) {
-        console.log('BannerUpload: Upload successful:', bannerData);
+        logger.debug('BANNER', 'Upload successful:', bannerData);
         onBannerUpdate?.(bannerData.file_url, bannerData.file_type);
         
         // Extract color from the uploaded banner URL if dynamic accent is enabled
         if (isDynamicAccentEnabled) {
-          console.log('BannerUpload: Extracting color from uploaded banner');
+          logger.debug('BANNER', 'Extracting color from uploaded banner');
           try {
             await extractColorFromMedia(bannerData.file_url);
             toast.success('Banner uploaded and accent color updated!');
           } catch (error) {
-            console.error('BannerUpload: Color extraction from uploaded banner failed:', error);
+            logger.error('BANNER', 'Color extraction from uploaded banner failed:', error);
             toast.success('Banner uploaded successfully!');
           }
         } else {
@@ -114,11 +115,11 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
           uploadError: null 
         });
       } else {
-        console.error('BannerUpload: Upload returned null result');
+        logger.error('BANNER', 'Upload returned null result');
         updateState({ uploadError: 'Upload failed. Please try again.' });
       }
     } catch (error) {
-      console.error('BannerUpload: Upload error:', error);
+      logger.error('BANNER', 'Upload error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       updateState({ uploadError: `Upload failed: ${errorMessage}` });
       toast.error('Failed to update dashboard banner');
@@ -128,7 +129,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
   };
 
   const handleDeleteBanner = async () => {
-    console.log('BannerUpload: Deleting banner');
+    logger.debug('BANNER', 'Deleting banner');
     updateState({ isDeleting: true });
     try {
       const success = await BannerStorageService.deleteBanner('dashboard');
@@ -140,7 +141,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
         toast.error('Failed to delete banner');
       }
     } catch (error) {
-      console.error('BannerUpload: Delete error:', error);
+      logger.error('BANNER', 'Delete error:', error);
       toast.error('Failed to delete banner');
     } finally {
       updateState({ isDeleting: false });
@@ -148,7 +149,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
   };
 
   const resetBanner = () => {
-    console.log('BannerUpload: Resetting banner');
+    logger.debug('BANNER', 'Resetting banner');
     updateState({ 
       selectedBanner: null, 
       selectedFile: null,
