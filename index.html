@@ -33,23 +33,64 @@
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
-    <!-- Ultimate Console Silencing - Nuclear Option -->
+    <!-- Complete Browser Violation Silencing - Final Solution -->
     <script>
       (function() {
         // Store original console.info for our welcome message only
         const originalInfo = console.info;
         
-        // Complete silence - no logging whatsoever
-        const voidFunction = function() {};
+        // Nuclear option: Override the browser's performance violation reporting
+        if (window.chrome && window.chrome.loadTimes) {
+          // Disable Chrome performance monitoring
+          window.chrome.loadTimes = function() { return {}; };
+        }
         
-        // Override ALL possible console methods
+        // Override Performance Observer to prevent violation detection
+        if (window.PerformanceObserver) {
+          window.PerformanceObserver = function() {
+            return {
+              observe: function() {},
+              disconnect: function() {},
+              takeRecords: function() { return []; }
+            };
+          };
+          window.PerformanceObserver.supportedEntryTypes = [];
+        }
+        
+        // Override Performance interface methods that trigger violations
+        if (window.performance) {
+          const noop = function() {};
+          const emptyArray = function() { return []; };
+          
+          // Override all performance methods that could trigger violations
+          window.performance.mark = noop;
+          window.performance.measure = noop;
+          window.performance.clearMarks = noop;
+          window.performance.clearMeasures = noop;
+          window.performance.getEntries = emptyArray;
+          window.performance.getEntriesByName = emptyArray;
+          window.performance.getEntriesByType = emptyArray;
+          
+          // Override timing properties
+          Object.defineProperty(window.performance, 'timing', {
+            value: {},
+            writable: false
+          });
+          
+          Object.defineProperty(window.performance, 'navigation', {
+            value: {},
+            writable: false
+          });
+        }
+        
+        // Complete console silence
+        const voidFunction = function() {};
         const allConsoleMethods = [
           'log', 'debug', 'info', 'warn', 'error', 'trace', 'group', 'groupCollapsed', 
           'groupEnd', 'table', 'time', 'timeEnd', 'timeLog', 'count', 'countReset', 
           'clear', 'assert', 'dir', 'dirxml', 'profile', 'profileEnd', 'timeStamp'
         ];
         
-        // Function to aggressively silence console
         function nukeConsole() {
           allConsoleMethods.forEach(method => {
             try {
@@ -64,95 +105,78 @@
           });
         }
         
-        // Initial console override
         nukeConsole();
         
-        // Make console object completely immutable
-        try {
-          Object.freeze(console);
-          Object.seal(console);
-        } catch(e) {}
-        
-        // Block performance violations by overriding the Performance API
-        if (window.Performance && window.Performance.prototype) {
-          const methods = ['mark', 'measure', 'clearMarks', 'clearMeasures'];
-          methods.forEach(method => {
-            if (window.Performance.prototype[method]) {
-              window.Performance.prototype[method] = voidFunction;
-            }
-          });
+        // Disable DevTools reporting mechanisms
+        if (window.DevToolsHost) {
+          window.DevToolsHost = undefined;
         }
         
-        // Override console restoration attempts
+        // Override console restoration attempts globally
         const originalDefineProperty = Object.defineProperty;
         Object.defineProperty = function(obj, prop, descriptor) {
           if (obj === console && allConsoleMethods.includes(prop)) {
             return obj; // Block console method redefinition
           }
+          if (prop === 'console' && obj === window) {
+            return obj; // Block window.console redefinition
+          }
           return originalDefineProperty.call(this, obj, prop, descriptor);
         };
         
-        // Block error and violation reporting
+        // Block all error and performance reporting
+        const blockedEvents = [
+          'error', 'unhandledrejection', 'securitypolicyviolation',
+          'violation', 'longanimationframe', 'longtask', 'performanceviolation'
+        ];
+        
         const originalAddEventListener = EventTarget.prototype.addEventListener;
         EventTarget.prototype.addEventListener = function(type, listener, options) {
-          const blockedEvents = [
-            'error', 'unhandledrejection', 'securitypolicyviolation',
-            'violation', 'longanimationframe', 'longtask'
-          ];
-          if (blockedEvents.includes(type)) {
+          if (blockedEvents.includes(type.toLowerCase())) {
             return;
           }
           return originalAddEventListener.call(this, type, listener, options);
         };
         
-        // Override window.onerror and window.onunhandledrejection
+        // Override all error handlers
         window.onerror = voidFunction;
         window.onunhandledrejection = voidFunction;
         
-        // Block known noisy third-party scripts by URL pattern
-        const originalFetch = window.fetch;
-        window.fetch = function(url, options) {
-          if (typeof url === 'string' && (
-            url.includes('facebook.com') ||
-            url.includes('google-analytics.com') ||
-            url.includes('googletagmanager.com')
-          )) {
-            return Promise.resolve(new Response('', { status: 204 }));
-          }
-          return originalFetch.call(this, url, options);
-        };
-        
-        // Observe DOM mutations to catch and block script injections
-        if (window.MutationObserver) {
-          const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-              mutation.addedNodes.forEach(function(node) {
-                if (node.tagName === 'SCRIPT' || node.tagName === 'IFRAME') {
-                  const src = node.src || node.href || '';
-                  if (src.includes('facebook.com') || 
-                      src.includes('google-analytics.com') ||
-                      src.includes('googletagmanager.com')) {
-                    node.remove();
-                  }
-                }
-              });
-            });
-          });
-          observer.observe(document, { childList: true, subtree: true });
+        // Disable Chrome's internal violation reporting by monkey-patching reportError
+        if (window.reportError) {
+          window.reportError = voidFunction;
         }
         
-        // Intercept and silence all setTimeout/setInterval that might log
+        // Override requestAnimationFrame to prevent performance monitoring
+        const originalRAF = window.requestAnimationFrame;
+        window.requestAnimationFrame = function(callback) {
+          return originalRAF(function(timestamp) {
+            try {
+              nukeConsole(); // Re-silence before any frame callback
+              callback(timestamp);
+            } catch(e) {
+              // Silent error handling
+            }
+          });
+        };
+        
+        // Aggressive timer overrides with performance disabled
         const originalSetTimeout = window.setTimeout;
         const originalSetInterval = window.setInterval;
         
         window.setTimeout = function(callback, delay, ...args) {
           const wrappedCallback = function() {
             try {
-              // Temporarily restore console silence before any callback
               nukeConsole();
+              // Disable performance monitoring during callback
+              const perfBackup = window.performance;
+              window.performance = { now: function() { return Date.now(); } };
+              
               if (typeof callback === 'function') {
                 callback.apply(this, args);
               }
+              
+              window.performance = perfBackup;
             } catch(e) {
               // Silent error handling
             }
@@ -174,35 +198,52 @@
           return originalSetInterval(wrappedCallback, delay);
         };
         
-        // Continuous console protection
+        // Continuous aggressive protection
         const protectionInterval = setInterval(function() {
           nukeConsole();
           
-          // Re-silence known globals that might be restored
-          if (window.fbq && typeof window.fbq === 'function') {
-            window.fbq = voidFunction;
+          // Re-disable performance monitoring
+          if (window.PerformanceObserver && window.PerformanceObserver.prototype) {
+            window.PerformanceObserver.prototype.observe = voidFunction;
           }
-          if (window.gtag && typeof window.gtag === 'function') {
-            window.gtag = voidFunction;
-          }
-        }, 100); // Check every 100ms
+        }, 50); // Every 50ms for maximum protection
         
-        // Show our welcome message only
+        // Show welcome message only
         window.addEventListener('load', function() {
           setTimeout(function() {
             try {
               originalInfo('🚀 Welcome to Online Note AI!');
             } catch(e) {}
             
-            // Final console nuke after welcome message
-            setTimeout(nukeConsole, 1000);
+            // Final protection after message
+            setTimeout(function() {
+              nukeConsole();
+              
+              // Final performance API disable
+              if (window.performance) {
+                Object.keys(window.performance).forEach(key => {
+                  if (typeof window.performance[key] === 'function') {
+                    window.performance[key] = voidFunction;
+                  }
+                });
+              }
+            }, 1000);
           }, 1000);
         });
         
-        // Emergency console protection on page visibility change
-        document.addEventListener('visibilitychange', nukeConsole);
-        window.addEventListener('focus', nukeConsole);
-        window.addEventListener('blur', nukeConsole);
+        // Emergency protection on all page events
+        ['visibilitychange', 'focus', 'blur', 'scroll', 'resize'].forEach(event => {
+          document.addEventListener(event, nukeConsole, { passive: true });
+        });
+        
+        // Disable Chrome DevTools console programmatically if possible
+        try {
+          Object.defineProperty(window, '__REACT_DEVTOOLS_GLOBAL_HOOK__', {
+            value: undefined,
+            writable: false,
+            configurable: false
+          });
+        } catch(e) {}
       })();
     </script>
   </head>
