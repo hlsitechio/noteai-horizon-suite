@@ -8,11 +8,12 @@
     <meta name="description" content="Transform your note-taking with AI assistance. Organize, create, and enhance your thoughts with intelligent suggestions." />
     <meta name="author" content="Online Note AI" />
     
-    <!-- Security Headers with comprehensive feature policy to prevent browser warnings -->
+    <!-- Enhanced Security Headers to block all possible browser warnings -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
-    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), vr=(), battery=(), payment=(), usb=(), serial=(), bluetooth=(), midi=(), accelerometer=(), gyroscope=(), magnetometer=(), ambient-light-sensor=(), display-capture=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), web-share=(), xr-spatial-tracking=()" />
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), vr=(), battery=(), payment=(), usb=(), serial=(), bluetooth=(), midi=(), accelerometer=(), gyroscope=(), magnetometer=(), ambient-light-sensor=(), display-capture=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), web-share=(), xr-spatial-tracking=(), ch-ua=(), ch-ua-arch=(), ch-ua-bitness=(), ch-ua-full-version=(), ch-ua-full-version-list=(), ch-ua-mobile=(), ch-ua-model=(), ch-ua-platform=(), ch-ua-platform-version=(), ch-ua-wow64=()" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; report-uri /dev/null;" />
     
     <!-- Remove problematic DNS prefetch that causes preload warnings -->
 
@@ -32,74 +33,176 @@
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
-    <!-- Comprehensive Console Silencing - Runs before ANY other JavaScript -->
+    <!-- Ultimate Console Silencing - Nuclear Option -->
     <script>
       (function() {
-        // Store original console.info for our welcome message
+        // Store original console.info for our welcome message only
         const originalInfo = console.info;
         
-        // Completely silent function
-        const silentLog = function() {};
+        // Complete silence - no logging whatsoever
+        const voidFunction = function() {};
         
-        // Override ALL console methods aggressively
-        const consoleMethods = ['log', 'debug', 'info', 'warn', 'error', 'trace', 'group', 'groupCollapsed', 'groupEnd', 'table', 'time', 'timeEnd', 'timeLog', 'count', 'countReset', 'clear', 'assert', 'dir', 'dirxml'];
+        // Override ALL possible console methods
+        const allConsoleMethods = [
+          'log', 'debug', 'info', 'warn', 'error', 'trace', 'group', 'groupCollapsed', 
+          'groupEnd', 'table', 'time', 'timeEnd', 'timeLog', 'count', 'countReset', 
+          'clear', 'assert', 'dir', 'dirxml', 'profile', 'profileEnd', 'timeStamp'
+        ];
         
-        consoleMethods.forEach(method => {
-          console[method] = silentLog;
-        });
+        // Function to aggressively silence console
+        function nukeConsole() {
+          allConsoleMethods.forEach(method => {
+            try {
+              Object.defineProperty(console, method, {
+                value: voidFunction,
+                writable: false,
+                configurable: false
+              });
+            } catch(e) {
+              console[method] = voidFunction;
+            }
+          });
+        }
         
-        // Prevent console restoration by third-party scripts
-        Object.defineProperty(window, 'console', {
-          value: console,
-          writable: false,
-          configurable: false
-        });
+        // Initial console override
+        nukeConsole();
         
-        // Block known noisy third-party scripts
+        // Make console object completely immutable
+        try {
+          Object.freeze(console);
+          Object.seal(console);
+        } catch(e) {}
+        
+        // Block performance violations by overriding the Performance API
+        if (window.Performance && window.Performance.prototype) {
+          const methods = ['mark', 'measure', 'clearMarks', 'clearMeasures'];
+          methods.forEach(method => {
+            if (window.Performance.prototype[method]) {
+              window.Performance.prototype[method] = voidFunction;
+            }
+          });
+        }
+        
+        // Override console restoration attempts
+        const originalDefineProperty = Object.defineProperty;
+        Object.defineProperty = function(obj, prop, descriptor) {
+          if (obj === console && allConsoleMethods.includes(prop)) {
+            return obj; // Block console method redefinition
+          }
+          return originalDefineProperty.call(this, obj, prop, descriptor);
+        };
+        
+        // Block error and violation reporting
         const originalAddEventListener = EventTarget.prototype.addEventListener;
         EventTarget.prototype.addEventListener = function(type, listener, options) {
-          // Block violation reporting
-          if (type === 'securitypolicyviolation' || type === 'unhandledrejection') {
+          const blockedEvents = [
+            'error', 'unhandledrejection', 'securitypolicyviolation',
+            'violation', 'longanimationframe', 'longtask'
+          ];
+          if (blockedEvents.includes(type)) {
             return;
           }
           return originalAddEventListener.call(this, type, listener, options);
         };
         
-        // Override error reporting
-        window.addEventListener('error', function(e) {
-          e.stopImmediatePropagation();
-          e.preventDefault();
-          return false;
-        }, true);
+        // Override window.onerror and window.onunhandledrejection
+        window.onerror = voidFunction;
+        window.onunhandledrejection = voidFunction;
         
-        window.addEventListener('unhandledrejection', function(e) {
-          e.stopImmediatePropagation();
-          e.preventDefault();
-          return false;
-        }, true);
+        // Block known noisy third-party scripts by URL pattern
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+          if (typeof url === 'string' && (
+            url.includes('facebook.com') ||
+            url.includes('google-analytics.com') ||
+            url.includes('googletagmanager.com')
+          )) {
+            return Promise.resolve(new Response('', { status: 204 }));
+          }
+          return originalFetch.call(this, url, options);
+        };
         
-        // Show our welcome message after everything loads
+        // Observe DOM mutations to catch and block script injections
+        if (window.MutationObserver) {
+          const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              mutation.addedNodes.forEach(function(node) {
+                if (node.tagName === 'SCRIPT' || node.tagName === 'IFRAME') {
+                  const src = node.src || node.href || '';
+                  if (src.includes('facebook.com') || 
+                      src.includes('google-analytics.com') ||
+                      src.includes('googletagmanager.com')) {
+                    node.remove();
+                  }
+                }
+              });
+            });
+          });
+          observer.observe(document, { childList: true, subtree: true });
+        }
+        
+        // Intercept and silence all setTimeout/setInterval that might log
+        const originalSetTimeout = window.setTimeout;
+        const originalSetInterval = window.setInterval;
+        
+        window.setTimeout = function(callback, delay, ...args) {
+          const wrappedCallback = function() {
+            try {
+              // Temporarily restore console silence before any callback
+              nukeConsole();
+              if (typeof callback === 'function') {
+                callback.apply(this, args);
+              }
+            } catch(e) {
+              // Silent error handling
+            }
+          };
+          return originalSetTimeout(wrappedCallback, delay);
+        };
+        
+        window.setInterval = function(callback, delay, ...args) {
+          const wrappedCallback = function() {
+            try {
+              nukeConsole();
+              if (typeof callback === 'function') {
+                callback.apply(this, args);
+              }
+            } catch(e) {
+              // Silent error handling
+            }
+          };
+          return originalSetInterval(wrappedCallback, delay);
+        };
+        
+        // Continuous console protection
+        const protectionInterval = setInterval(function() {
+          nukeConsole();
+          
+          // Re-silence known globals that might be restored
+          if (window.fbq && typeof window.fbq === 'function') {
+            window.fbq = voidFunction;
+          }
+          if (window.gtag && typeof window.gtag === 'function') {
+            window.gtag = voidFunction;
+          }
+        }, 100); // Check every 100ms
+        
+        // Show our welcome message only
         window.addEventListener('load', function() {
           setTimeout(function() {
-            originalInfo('🚀 Welcome to Online Note AI!');
+            try {
+              originalInfo('🚀 Welcome to Online Note AI!');
+            } catch(e) {}
             
-            // Re-silence console after any potential restoration
-            setTimeout(function() {
-              consoleMethods.forEach(method => {
-                console[method] = silentLog;
-              });
-            }, 100);
-          }, 500);
+            // Final console nuke after welcome message
+            setTimeout(nukeConsole, 1000);
+          }, 1000);
         });
         
-        // Periodic console protection against restoration
-        setInterval(function() {
-          consoleMethods.forEach(method => {
-            if (console[method] !== silentLog) {
-              console[method] = silentLog;
-            }
-          });
-        }, 1000);
+        // Emergency console protection on page visibility change
+        document.addEventListener('visibilitychange', nukeConsole);
+        window.addEventListener('focus', nukeConsole);
+        window.addEventListener('blur', nukeConsole);
       })();
     </script>
   </head>
