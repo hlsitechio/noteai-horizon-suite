@@ -133,44 +133,8 @@ export const useGlobalErrorHandler = () => {
       });
     };
 
-    // Handle console errors - override console methods to send to Sentry
-    let originalConsoleError: (...args: any[]) => void = console.error;
-    let originalConsoleWarn: (...args: any[]) => void = console.warn;
-    let originalConsoleInfo: (...args: any[]) => void = console.info;
-    let originalConsoleLog: (...args: any[]) => void = console.log;
-    
-    // Override console methods to be silent but send to Sentry
-    console.error = (...args: any[]) => {
-      const errorMessage = args.map(arg => 
-        typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-      ).join(' ');
-      
-      Sentry.captureMessage(`Console Error: ${errorMessage}`, 'error');
-    };
-
-    console.warn = (...args: any[]) => {
-      const warnMessage = args.map(arg => 
-        typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-      ).join(' ');
-      
-      Sentry.captureMessage(`Console Warning: ${warnMessage}`, 'warning');
-    };
-
-    console.info = (...args: any[]) => {
-      const infoMessage = args.map(arg => 
-        typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-      ).join(' ');
-      
-      Sentry.captureMessage(`Console Info: ${infoMessage}`, 'info');
-    };
-
-    console.log = (...args: any[]) => {
-      const logMessage = args.map(arg => 
-        typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-      ).join(' ');
-      
-      Sentry.captureMessage(`Console Log: ${logMessage}`, 'info');
-    };
+    // Console methods are already overridden in main.tsx
+    // Just send important messages to Sentry silently
 
     // Set up global query error handler using query cache
     const queryCache = queryClient.getQueryCache();
@@ -257,11 +221,7 @@ export const useGlobalErrorHandler = () => {
       window.removeEventListener('error', handleError);
       window.removeEventListener('error', handleResourceError, true);
       
-      // Restore original console methods
-      console.error = originalConsoleError;
-      console.warn = originalConsoleWarn;
-      console.info = originalConsoleInfo;
-      console.log = originalConsoleLog;
+      // Console methods remain overridden globally
       
       unsubscribeQuery();
       unsubscribeMutation();

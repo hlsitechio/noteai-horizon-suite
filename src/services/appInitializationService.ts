@@ -29,12 +29,6 @@ export class AppInitializationService {
 
       this.isInitialized = true;
       
-      // Show the clean welcome message before console override happens
-      const originalConsoleInfo = console.info;
-      setTimeout(() => {
-        originalConsoleInfo('🚀 Welcome to Online Note AI!');
-      }, 100);
-      
       // Track initialization
       AnalyticsService.trackEvent('app_initialized', {
         timestamp: Date.now(),
