@@ -122,7 +122,16 @@ Focus on actionable recommendations that would help the user organize and expand
           }
         };
 
-        const response = await sendStructuredMessage([analysisPrompt], schema);
+        // Add timeout to prevent infinite loading
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('AI analysis timeout')), 30000)
+        );
+
+        const response = await Promise.race([
+          sendStructuredMessage([analysisPrompt], schema),
+          timeoutPromise
+        ]) as string;
+        
         const analysis = JSON.parse(response);
 
         setRecommendations(analysis.recommendations || []);

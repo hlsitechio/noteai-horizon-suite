@@ -1,7 +1,7 @@
 
 import { pipeline } from '@huggingface/transformers';
 
-type DeviceType = 'webgpu' | 'cpu' | 'auto';
+type DeviceType = 'webgpu' | 'wasm';
 
 export class GPUTextProcessingService {
   private embeddingPipeline: any = null;
@@ -10,7 +10,8 @@ export class GPUTextProcessingService {
 
   constructor(device: 'webgpu' | 'webgl' | 'cpu' = 'cpu') {
     // Map our device types to Hugging Face device types
-    this.device = device === 'webgl' || device === 'cpu' ? 'cpu' : 'webgpu';
+    // HuggingFace transformers only supports 'webgpu' and 'wasm', not 'cpu'
+    this.device = device === 'webgpu' ? 'webgpu' : 'wasm';
   }
 
   async initializeEmbeddings() {
@@ -33,10 +34,10 @@ export class GPUTextProcessingService {
       return this.embeddingPipeline;
     } catch (error) {
       console.error('Failed to initialize embedding pipeline:', error);
-      // Fallback to CPU if GPU fails
-      if (this.device !== 'cpu') {
-        console.log('Falling back to CPU for embeddings');
-        this.device = 'cpu';
+      // Fallback to WASM if WebGPU fails
+      if (this.device !== 'wasm') {
+        console.log('Falling back to WASM for embeddings');
+        this.device = 'wasm';
         return this.initializeEmbeddings();
       }
       throw error;
@@ -62,10 +63,10 @@ export class GPUTextProcessingService {
       return this.classificationPipeline;
     } catch (error) {
       console.error('Failed to initialize classification pipeline:', error);
-      // Fallback to CPU if GPU fails
-      if (this.device !== 'cpu') {
-        console.log('Falling back to CPU for classification');
-        this.device = 'cpu';
+      // Fallback to WASM if WebGPU fails
+      if (this.device !== 'wasm') {
+        console.log('Falling back to WASM for classification');
+        this.device = 'wasm';
         return this.initializeClassification();
       }
       throw error;

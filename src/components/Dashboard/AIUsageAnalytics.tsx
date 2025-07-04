@@ -84,6 +84,15 @@ const AIUsageAnalytics: React.FC<AIUsageAnalyticsProps> = ({ className }) => {
 
       } catch (error) {
         console.error('Error fetching AI usage stats:', error);
+        // Set empty stats to prevent flashing
+        setStats({
+          totalSessions: 0,
+          averageProcessingTime: 0,
+          mostUsedAction: 'none',
+          totalTokensUsed: 0,
+          satisfactionScore: 0,
+          weeklyGrowth: 0
+        });
       } finally {
         setIsLoading(false);
       }
