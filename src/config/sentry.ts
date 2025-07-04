@@ -4,7 +4,7 @@ import * as LaunchDarkly from "launchdarkly-js-client-sdk";
 
 export const initSentry = () => {
   Sentry.init({
-    dsn: "https://209461c58ea399b71187c83f06ab7770@o4509521908400128.ingest.us.sentry.io/4509562204651520",
+    dsn: "https://5066bad906f0271cdf12ddb691b3066f@o4509521908400128.ingest.us.sentry.io/4509588661141504",
     integrations: [
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration({
@@ -23,6 +23,9 @@ export const initSentry = () => {
       // LaunchDarkly integration for feature flag tracking
       Sentry.launchDarklyIntegration(),
     ],
+    // Setting this option to true will send default PII data to Sentry.
+    // For example, automatic IP address collection on events
+    sendDefaultPii: true,
     // Performance Monitoring
     tracesSampleRate: 1.0, // Capture 100% of the transactions
     // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled

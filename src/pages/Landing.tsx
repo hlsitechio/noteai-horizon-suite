@@ -6,6 +6,7 @@ import Features from '../components/Landing/Features';
 import Pricing from '../components/Landing/Pricing';
 import Footer from '../components/Landing/Footer';
 import EnhancedSecurityHeaders from '../components/Security/EnhancedSecurityHeaders';
+import { SentryTestButton } from '../components/SentryTestButton';
 import { AnalyticsService } from '../services/analyticsService';
 
 const Landing: React.FC = () => {
@@ -63,6 +64,16 @@ const Landing: React.FC = () => {
       <div className="min-h-screen bg-background">
         <Navigation isScrolled={isScrolled} mousePosition={mousePosition} />
         <Hero />
+        
+        {/* Development Testing Section */}
+        {import.meta.env.DEV && (
+          <section className="py-12 bg-muted/50">
+            <div className="container mx-auto px-4 flex justify-center">
+              <SentryTestButton />
+            </div>
+          </section>
+        )}
+        
         <Features />
         <Pricing />
         <Footer />
