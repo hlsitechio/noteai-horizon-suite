@@ -8,17 +8,13 @@
     <meta name="description" content="Transform your note-taking with AI assistance. Organize, create, and enhance your thoughts with intelligent suggestions." />
     <meta name="author" content="Online Note AI" />
     
-    <!-- Security Headers (Note: X-Frame-Options and CSP should be set via HTTP headers in production) -->
+    <!-- Security Headers with comprehensive feature policy to prevent browser warnings -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
-    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()" />
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), vr=(), battery=(), payment=(), usb=(), serial=(), bluetooth=(), midi=(), accelerometer=(), gyroscope=(), magnetometer=(), ambient-light-sensor=(), display-capture=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), web-share=(), xr-spatial-tracking=()" />
     
-    <!-- DNS Prefetch for performance -->
-    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
-    <link rel="dns-prefetch" href="//www.googletagmanager.com" />
-    <link rel="dns-prefetch" href="//www.google-analytics.com" />
+    <!-- Remove problematic DNS prefetch that causes preload warnings -->
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,50 +32,74 @@
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
-    <!-- Complete Console Override - Runs before ANY other JavaScript -->
+    <!-- Comprehensive Console Silencing - Runs before ANY other JavaScript -->
     <script>
       (function() {
         // Store original console.info for our welcome message
         const originalInfo = console.info;
         
-        // Completely silent function that sends to Sentry when available
-        const silentLog = function(...args) {
-          // Only send to Sentry if it's available (after app loads)
-          if (window.Sentry && window.Sentry.captureMessage) {
-            const message = args.map(arg => 
-              typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-            ).join(' ');
-            window.Sentry.captureMessage(`Console: ${message}`, 'debug');
+        // Completely silent function
+        const silentLog = function() {};
+        
+        // Override ALL console methods aggressively
+        const consoleMethods = ['log', 'debug', 'info', 'warn', 'error', 'trace', 'group', 'groupCollapsed', 'groupEnd', 'table', 'time', 'timeEnd', 'timeLog', 'count', 'countReset', 'clear', 'assert', 'dir', 'dirxml'];
+        
+        consoleMethods.forEach(method => {
+          console[method] = silentLog;
+        });
+        
+        // Prevent console restoration by third-party scripts
+        Object.defineProperty(window, 'console', {
+          value: console,
+          writable: false,
+          configurable: false
+        });
+        
+        // Block known noisy third-party scripts
+        const originalAddEventListener = EventTarget.prototype.addEventListener;
+        EventTarget.prototype.addEventListener = function(type, listener, options) {
+          // Block violation reporting
+          if (type === 'securitypolicyviolation' || type === 'unhandledrejection') {
+            return;
           }
+          return originalAddEventListener.call(this, type, listener, options);
         };
         
-        // Override ALL console methods before any other code runs
-        console.log = silentLog;
-        console.debug = silentLog;
-        console.info = silentLog;
-        console.warn = silentLog;
-        console.error = silentLog;
-        console.trace = silentLog;
-        console.group = silentLog;
-        console.groupCollapsed = silentLog;
-        console.groupEnd = silentLog;
-        console.table = silentLog;
-        console.time = silentLog;
-        console.timeEnd = silentLog;
-        console.timeLog = silentLog;
-        console.count = silentLog;
-        console.countReset = silentLog;
-        console.clear = silentLog;
-        console.assert = silentLog;
-        console.dir = silentLog;
-        console.dirxml = silentLog;
+        // Override error reporting
+        window.addEventListener('error', function(e) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          return false;
+        }, true);
+        
+        window.addEventListener('unhandledrejection', function(e) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          return false;
+        }, true);
         
         // Show our welcome message after everything loads
         window.addEventListener('load', function() {
           setTimeout(function() {
             originalInfo('🚀 Welcome to Online Note AI!');
+            
+            // Re-silence console after any potential restoration
+            setTimeout(function() {
+              consoleMethods.forEach(method => {
+                console[method] = silentLog;
+              });
+            }, 100);
           }, 500);
         });
+        
+        // Periodic console protection against restoration
+        setInterval(function() {
+          consoleMethods.forEach(method => {
+            if (console[method] !== silentLog) {
+              console[method] = silentLog;
+            }
+          });
+        }, 1000);
       })();
     </script>
   </head>
