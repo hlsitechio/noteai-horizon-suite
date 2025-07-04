@@ -53,7 +53,7 @@ const FullscreenBanner: React.FC<FullscreenBannerProps> = ({
       {/* Loading indicator */}
       {!isLoaded && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-2 border-transparent border-t-accent"></div>
         </div>
       )}
 
