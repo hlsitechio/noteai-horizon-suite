@@ -25,6 +25,9 @@ const AIUsageAnalytics: React.FC<AIUsageAnalyticsProps> = ({ className }) => {
 
   useEffect(() => {
     const fetchAIUsageStats = async () => {
+      // Prevent multiple simultaneous requests
+      if (isLoading) return;
+
       try {
         setIsLoading(true);
         
@@ -98,8 +101,13 @@ const AIUsageAnalytics: React.FC<AIUsageAnalyticsProps> = ({ className }) => {
       }
     };
 
-    fetchAIUsageStats();
-  }, [getSessionAnalytics]);
+    // Add debounce to prevent too many requests
+    const timeoutId = setTimeout(() => {
+      fetchAIUsageStats();
+    }, 2000);
+
+    return () => clearTimeout(timeoutId);
+  }, []); // Empty dependency array - only run once on mount
 
   if (isLoading) {
     return (

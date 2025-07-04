@@ -46,6 +46,9 @@ const SmartNoteRecommendations: React.FC<SmartNoteRecommendationsProps> = ({
         return;
       }
 
+      // Prevent multiple simultaneous requests
+      if (isLoading) return;
+
       try {
         setIsLoading(true);
 
@@ -149,8 +152,13 @@ Focus on actionable recommendations that would help the user organize and expand
       }
     };
 
-    generateRecommendations();
-  }, [notes, sendStructuredMessage]);
+    // Add debounce to prevent too many requests
+    const timeoutId = setTimeout(() => {
+      generateRecommendations();
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [notes.length]); // Only depend on notes.length, not the full notes array or sendStructuredMessage
 
   const generateBasicRecommendations = (userNotes: any[]): NoteRecommendation[] => {
     if (userNotes.length === 0) return [];
