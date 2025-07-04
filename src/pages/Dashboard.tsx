@@ -10,6 +10,8 @@ import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
 import AnalyticsOverview from '../components/Dashboard/AnalyticsOverview';
 import ReminderManagement from '../components/Dashboard/ReminderManagement';
 import FullscreenToggle from '../components/Dashboard/FullscreenToggle';
+import AIUsageAnalytics from '../components/Dashboard/AIUsageAnalytics';
+import SmartNoteRecommendations from '../components/Dashboard/SmartNoteRecommendations';
 
 const Dashboard: React.FC = () => {
   const { notes, setCurrentNote } = useNotes();
@@ -89,8 +91,8 @@ const Dashboard: React.FC = () => {
 
         {/* Main Content Area - Calculated height to fill remaining space */}
         <div className="grid grid-cols-12 gap-4 flex-1 min-h-0 w-full h-[770px]">
-          {/* Analytics Overview - 5/12 columns */}
-          <div className="col-span-5 h-full min-h-0">
+          {/* Analytics Overview - 4/12 columns */}
+          <div className="col-span-4 h-full min-h-0">
             <AnalyticsOverview
               totalNotes={totalNotes}
               favoriteNotes={favoriteNotes}
@@ -100,21 +102,35 @@ const Dashboard: React.FC = () => {
             />
           </div>
 
-          {/* Recent Activity - 4/12 columns */}
-          <div className="col-span-4 h-full min-h-0">
-            <SecureRecentActivity 
-              recentNotes={recentNotes}
-              onCreateNote={handleCreateNote}
-              onEditNote={handleEditNote}
-            />
+          {/* AI Features Column - 4/12 columns */}
+          <div className="col-span-4 h-full min-h-0 space-y-4">
+            <div className="h-1/2">
+              <AIUsageAnalytics className="h-full" />
+            </div>
+            <div className="h-1/2">
+              <SmartNoteRecommendations 
+                notes={notes}
+                onEditNote={handleEditNote}
+                className="h-full"
+              />
+            </div>
           </div>
 
-          {/* Reminder Management - 3/12 columns */}
-          <div className="col-span-3 h-full min-h-0">
-            <ReminderManagement 
-              notes={notes}
-              onEditNote={handleEditNote}
-            />
+          {/* Activity & Reminders Column - 4/12 columns */}
+          <div className="col-span-4 h-full min-h-0 space-y-4">
+            <div className="h-2/3">
+              <SecureRecentActivity 
+                recentNotes={recentNotes}
+                onCreateNote={handleCreateNote}
+                onEditNote={handleEditNote}
+              />
+            </div>
+            <div className="h-1/3">
+              <ReminderManagement 
+                notes={notes}
+                onEditNote={handleEditNote}
+              />
+            </div>
           </div>
         </div>
       </div>
