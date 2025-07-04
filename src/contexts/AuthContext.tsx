@@ -4,6 +4,7 @@ import { AuthContextType } from './auth/types';
 import { useAuthState } from './auth/useAuthState';
 import { loginUser, registerUser, logoutUser, initializeAuthSession } from './auth/authService';
 import { handleRefreshTokenError, clearCorruptedSession } from './auth/utils';
+import { logger } from '../utils/logger';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -27,19 +28,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     refreshUser,
   } = useAuthState();
 
-  if (process.env.NODE_ENV === 'development') {
-    console.log('AuthProvider render - Auth state:', {
-      hasUser: !!user,
-      hasSession: !!session,
-      isLoading,
-      userEmail: user?.email
-    });
-  }
-
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('AuthProvider: Setting up auth state listener');
-    }
+    logger.auth.debug('Setting up auth state listener');
     
     let mounted = true;
     
@@ -56,12 +46,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
     };
 
-    // Set up auth state listener with error handling
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Auth state changed:', event, session?.user?.email);
-        }
+        logger.auth.debug('Auth state changed:', event, session?.user?.email);
         
         if (!mounted) return;
         
@@ -70,9 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           switch (event) {
             case 'TOKEN_REFRESHED':
               if (!session) {
-                if (process.env.NODE_ENV === 'development') {
-                  console.log('Token refresh failed, clearing session');
-                }
+                logger.auth.debug('Token refresh failed, clearing session');
                 await clearCorruptedSession();
                 clearAuth();
                 return;
@@ -84,15 +69,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               return;
               
             case 'SIGNED_IN':
-              if (process.env.NODE_ENV === 'development') {
-                console.log(`User signed in: ${session?.user?.email}`);
-              }
+              logger.auth.debug(`User signed in: ${session?.user?.email}`);
               break;
           }
           
           setSession(session);
         } catch (error) {
-          console.error('Error in auth state change:', error);
+          logger.auth.error('Error in auth state change:', error);
           if (error instanceof Error && await handleRefreshTokenError(error)) {
             clearAuth();
           }
@@ -103,9 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initializeAuth();
 
     return () => {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('AuthProvider: Cleaning up auth listener');
-      }
+      logger.auth.debug('Cleaning up auth listener');
       mounted = false;
       subscription.unsubscribe();
     };

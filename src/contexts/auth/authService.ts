@@ -2,6 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { clearCorruptedSession, handleRefreshTokenError } from './utils';
+import { logger } from '../../utils/logger';
 
 export const loginUser = async (email: string, password: string): Promise<boolean> => {
   try {
@@ -104,19 +105,17 @@ export const logoutUser = async (): Promise<void> => {
 
 export const initializeAuthSession = async () => {
   try {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Initializing auth session...');
-    }
+    logger.auth.debug('Initializing auth session...');
     
     // First, try to get the current session
     const { data: { session }, error } = await supabase.auth.getSession();
     
     if (error) {
-      console.error('Error getting session:', error);
+      logger.auth.error('Error getting session:', error);
       
       // Handle refresh token errors immediately
       if (await handleRefreshTokenError(error)) {
-        console.log('Cleared corrupted session, user needs to login again');
+        logger.auth.debug('Cleared corrupted session, user needs to login again');
         return { session: null, error: null }; // Don't propagate auth errors
       }
       
@@ -124,29 +123,27 @@ export const initializeAuthSession = async () => {
     }
 
     if (session) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Valid session found:', session.user?.email);
-      }
+      logger.auth.debug('Valid session found:', session.user?.email);
       // Verify the session is actually valid by making a test request
       try {
         const { error: testError } = await supabase.auth.getUser();
         if (testError && await handleRefreshTokenError(testError)) {
-          console.log('Session validation failed, clearing corrupted session');
+          logger.auth.debug('Session validation failed, clearing corrupted session');
           return { session: null, error: null };
         }
       } catch (testError) {
-        console.error('Session validation error:', testError);
+        logger.auth.error('Session validation error:', testError);
         if (testError instanceof Error && await handleRefreshTokenError(testError)) {
           return { session: null, error: null };
         }
       }
     } else {
-      console.log('No active session found');
+      logger.auth.debug('No active session found');
     }
 
     return { session, error: null };
   } catch (error) {
-    console.error('Error initializing auth:', error);
+    logger.auth.error('Error initializing auth:', error);
     
     if (error instanceof Error && await handleRefreshTokenError(error)) {
       return { session: null, error: null };

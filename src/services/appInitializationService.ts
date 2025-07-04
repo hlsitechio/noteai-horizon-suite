@@ -3,6 +3,7 @@ import { AnalyticsService } from './analyticsService';
 import { PerformanceService } from './performanceService';
 import { initSentry } from '../config/sentry';
 import * as Sentry from "@sentry/react";
+import { logger } from '../utils/logger';
 
 export class AppInitializationService {
   private static isInitialized = false;
@@ -11,44 +12,30 @@ export class AppInitializationService {
     if (this.isInitialized) return;
 
     try {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🚀 Initializing Online Note AI application...');
-      }
+      logger.info('🚀 Initializing Online Note AI application...');
       
       // Initialize Sentry first for error tracking
       initSentry();
-      if (process.env.NODE_ENV === 'development') {
-        console.log('✅ Sentry initialized');
-      }
+      logger.info('✅ Sentry initialized');
 
       // Initialize performance monitoring
       PerformanceService.initialize();
-      if (process.env.NODE_ENV === 'development') {
-        console.log('✅ Performance monitoring initialized');
-      }
+      logger.info('✅ Performance monitoring initialized');
 
       // Initialize analytics
       AnalyticsService.initialize();
-      if (process.env.NODE_ENV === 'development') {
-        console.log('✅ Analytics initialized');
-      }
+      logger.info('✅ Analytics initialized');
 
       // Set up global error handlers
       this.setupGlobalErrorHandlers();
-      if (process.env.NODE_ENV === 'development') {
-        console.log('✅ Global error handlers set up');
-      }
+      logger.info('✅ Global error handlers set up');
 
       // Set up performance monitoring
       this.setupPerformanceMonitoring();
-      if (process.env.NODE_ENV === 'development') {
-        console.log('✅ Performance monitoring set up');
-      }
+      logger.info('✅ Performance monitoring set up');
 
       this.isInitialized = true;
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🎉 Application initialization complete');
-      }
+      logger.info('🎉 Application initialization complete');
       
       // Track initialization
       AnalyticsService.trackEvent('app_initialized', {
@@ -57,7 +44,7 @@ export class AppInitializationService {
       });
 
     } catch (error) {
-      console.error('❌ Failed to initialize application:', error);
+      logger.error('❌ Failed to initialize application:', error);
       Sentry.captureException(error);
     }
   }

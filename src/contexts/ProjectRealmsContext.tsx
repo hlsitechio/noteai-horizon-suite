@@ -3,6 +3,7 @@ import { ProjectRealm, ProjectAgent, ProjectFilters } from '../types/project';
 import { ProjectRealmsService } from '../services/projectRealmsService';
 import { toast } from 'sonner';
 import { useAuth } from '../contexts/AuthContext';
+import { logger } from '../utils/logger';
 
 interface ProjectRealmsContextType {
   projects: ProjectRealm[];
@@ -40,13 +41,11 @@ export const ProjectRealmsProvider: React.FC<{ children: React.ReactNode }> = ({
   const refreshProjects = async () => {
     // Don't try to load projects if auth is still loading or user is not authenticated
     if (authLoading || !isAuthenticated || !user) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('ProjectRealmsProvider: Skipping project refresh - auth not ready', {
-          authLoading,
-          isAuthenticated,
-          hasUser: !!user
-        });
-      }
+      logger.projects.debug('Skipping project refresh - auth not ready', {
+        authLoading,
+        isAuthenticated,
+        hasUser: !!user
+      });
       setProjects([]);
       setIsLoading(false);
       return;
@@ -54,16 +53,12 @@ export const ProjectRealmsProvider: React.FC<{ children: React.ReactNode }> = ({
 
     setIsLoading(true);
     try {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('ProjectRealmsProvider: Starting project refresh for authenticated user...');
-      }
+      logger.projects.debug('Starting project refresh for authenticated user...');
       const loadedProjects = await ProjectRealmsService.getAllProjects();
-      if (process.env.NODE_ENV === 'development') {
-        console.log('ProjectRealmsProvider: Projects loaded successfully:', {
-          count: loadedProjects.length,
-          projects: loadedProjects.map(p => ({ id: p.id, title: p.title }))
-        });
-      }
+      logger.projects.debug('Projects loaded successfully:', {
+        count: loadedProjects.length,
+        projects: loadedProjects.map(p => ({ id: p.id, title: p.title }))
+      });
       setProjects(loadedProjects);
     } catch (error) {
       const errorInfo = {
@@ -73,30 +68,24 @@ export const ProjectRealmsProvider: React.FC<{ children: React.ReactNode }> = ({
         timestamp: new Date().toISOString()
       };
       
-      console.error('ProjectRealmsProvider: Failed to load projects', errorInfo);
+      logger.projects.error('Failed to load projects', errorInfo);
       toast.error(`Failed to load projects: ${errorInfo.message}`);
       
       // Set empty array on error to prevent app crashes
       setProjects([]);
     } finally {
       setIsLoading(false);
-      if (process.env.NODE_ENV === 'development') {
-        console.log('ProjectRealmsProvider: Project refresh completed');
-      }
+      logger.projects.debug('Project refresh completed');
     }
   };
 
   // Only refresh projects when authentication state changes to authenticated
   useEffect(() => {
     if (!authLoading && isAuthenticated && user) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('ProjectRealmsProvider: User authenticated, refreshing projects...');
-      }
+      logger.projects.debug('User authenticated, refreshing projects...');
       refreshProjects();
     } else if (!authLoading && !isAuthenticated) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('ProjectRealmsProvider: User not authenticated, clearing projects...');
-      }
+      logger.projects.debug('User not authenticated, clearing projects...');
       setProjects([]);
       setIsLoading(false);
     }

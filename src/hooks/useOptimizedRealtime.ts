@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Note } from '../types/note';
 import { useAuth } from '../contexts/AuthContext';
+import { logger } from '../utils/logger';
 
 interface UseOptimizedRealtimeOptions {
   onInsert?: (note: Note) => void;
@@ -40,14 +41,12 @@ export const useOptimizedRealtime = ({
 
   const cleanup = useCallback(() => {
     if (channelRef.current) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Cleaning up realtime subscription');
-      }
+      logger.realtime.debug('Cleaning up realtime subscription');
       try {
         channelRef.current.unsubscribe();
         supabase.removeChannel(channelRef.current);
       } catch (error) {
-        console.error('Error cleaning up realtime subscription:', error);
+        logger.realtime.error('Error cleaning up realtime subscription:', error);
       }
       channelRef.current = null;
       subscriptionActiveRef.current = false;
@@ -56,25 +55,19 @@ export const useOptimizedRealtime = ({
 
   const setupRealtime = useCallback(async () => {
     if (!enabled || !isAuthenticated || !user) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Realtime disabled or user not authenticated');
-      }
+      logger.realtime.debug('Realtime disabled or user not authenticated');
       return;
     }
 
     if (subscriptionActiveRef.current && channelRef.current) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Realtime subscription already active');
-      }
+      logger.realtime.debug('Realtime subscription already active');
       return;
     }
 
     cleanup(); // Clean up any existing subscription
 
     try {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Setting up optimized realtime subscription for user:', user.id);
-      }
+      logger.realtime.debug('Setting up optimized realtime subscription for user:', user.id);
 
       const channel = supabase
         .channel(`notes-${user.id}-${Date.now()}`, {
@@ -113,7 +106,7 @@ export const useOptimizedRealtime = ({
                   };
                   currentOnInsert(note);
                 } catch (error) {
-                  console.error('Error processing INSERT event:', error);
+                  logger.realtime.error('Error processing INSERT event:', error);
                 }
               });
             }
@@ -149,7 +142,7 @@ export const useOptimizedRealtime = ({
                   };
                   currentOnUpdate(note);
                 } catch (error) {
-                  console.error('Error processing UPDATE event:', error);
+                  logger.realtime.error('Error processing UPDATE event:', error);
                 }
               });
             }
@@ -170,7 +163,7 @@ export const useOptimizedRealtime = ({
                 try {
                   currentOnDelete(payload.old.id);
                 } catch (error) {
-                  console.error('Error processing DELETE event:', error);
+                  logger.realtime.error('Error processing DELETE event:', error);
                 }
               });
             }
@@ -178,9 +171,7 @@ export const useOptimizedRealtime = ({
         );
 
       channel.subscribe((status) => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`Realtime subscription status: ${status}`);
-        }
+        logger.realtime.debug(`Realtime subscription status: ${status}`);
         if (status === 'SUBSCRIBED') {
           subscriptionActiveRef.current = true;
         } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
@@ -189,11 +180,9 @@ export const useOptimizedRealtime = ({
       });
 
       channelRef.current = channel;
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Optimized realtime subscription setup completed');
-      }
+      logger.realtime.debug('Optimized realtime subscription setup completed');
     } catch (error) {
-      console.error('Error setting up realtime subscription:', error);
+      logger.realtime.error('Error setting up realtime subscription:', error);
       subscriptionActiveRef.current = false;
     }
   }, [enabled, isAuthenticated, user?.id, throttleEvent, cleanup]);

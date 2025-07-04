@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Note } from '../types/note';
+import { logger } from '../utils/logger';
 
 interface FloatingWindowState {
   id: string;
@@ -40,40 +41,30 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
       const savedState = localStorage.getItem('floating-notes-state');
       if (savedState) {
         const parsed = JSON.parse(savedState);
-        if (process.env.NODE_ENV === 'development') {
-          console.log('FloatingNotesProvider: Loaded state from localStorage', parsed);
-        }
+        logger.floating.debug('Loaded state from localStorage', parsed);
         setFloatingNotes(parsed);
       }
     } catch (error) {
-      console.error('Error loading floating notes state:', error);
+      logger.floating.error('Error loading floating notes state:', error);
     }
   }, []);
 
   // Save floating notes state to localStorage whenever it changes
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('FloatingNotesProvider: Saving state to localStorage', floatingNotes);
-    }
+    logger.floating.debug('Saving state to localStorage', floatingNotes);
     localStorage.setItem('floating-notes-state', JSON.stringify(floatingNotes));
   }, [floatingNotes]);
 
   const openFloatingNote = (note: Note) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('FloatingNotesProvider: Opening floating note', note.id, note.title);
-      console.log('FloatingNotesProvider: Current floating notes before check:', floatingNotes.map(fn => ({ id: fn.id, noteId: fn.noteId })));
-    }
+    logger.floating.debug('Opening floating note', note.id, note.title);
+    logger.floating.debug('Current floating notes before check:', floatingNotes.map(fn => ({ id: fn.id, noteId: fn.noteId })));
     
     // Check if note is already floating - use a more robust check
     const isAlreadyFloating = floatingNotes.some(fn => fn.noteId === note.id);
-    if (process.env.NODE_ENV === 'development') {
-      console.log('FloatingNotesProvider: Is note already floating?', isAlreadyFloating);
-    }
+    logger.floating.debug('Is note already floating?', isAlreadyFloating);
     
     if (isAlreadyFloating) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('FloatingNotesProvider: Note already floating, bringing to front');
-      }
+      logger.floating.debug('Note already floating, bringing to front');
       // Bring to front by moving to end of array
       setFloatingNotes(prev => {
         const existingIndex = prev.findIndex(fn => fn.noteId === note.id);
@@ -104,32 +95,22 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
       note,
     };
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('FloatingNotesProvider: Creating new floating note', newFloatingNote);
-    }
+    logger.floating.debug('Creating new floating note', newFloatingNote);
     setFloatingNotes(prev => {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('FloatingNotesProvider: Previous state before adding:', prev.map(fn => ({ id: fn.id, noteId: fn.noteId })));
-      }
+      logger.floating.debug('Previous state before adding:', prev.map(fn => ({ id: fn.id, noteId: fn.noteId })));
       const updated = [...prev, newFloatingNote];
-      if (process.env.NODE_ENV === 'development') {
-        console.log('FloatingNotesProvider: New state after adding:', updated.map(fn => ({ id: fn.id, noteId: fn.noteId })));
-      }
+      logger.floating.debug('New state after adding:', updated.map(fn => ({ id: fn.id, noteId: fn.noteId })));
       return updated;
     });
   };
 
   const closeFloatingNote = (noteId: string) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('FloatingNotesProvider: Closing floating note', noteId);
-    }
+    logger.floating.debug('Closing floating note', noteId);
     setFloatingNotes(prev => prev.filter(fn => fn.noteId !== noteId));
   };
 
   const minimizeFloatingNote = (noteId: string, minimized: boolean) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('FloatingNotesProvider: Minimizing floating note', noteId, minimized);
-    }
+    logger.floating.debug('Minimizing floating note', noteId, minimized);
     setFloatingNotes(prev =>
       prev.map(fn =>
         fn.noteId === noteId ? { ...fn, isMinimized: minimized } : fn
@@ -138,9 +119,7 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const updateFloatingNotePosition = (noteId: string, position: { x: number; y: number }) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('FloatingNotesProvider: Updating position', noteId, position);
-    }
+    logger.floating.debug('Updating position', noteId, position);
     setFloatingNotes(prev =>
       prev.map(fn =>
         fn.noteId === noteId ? { ...fn, position } : fn
@@ -149,9 +128,7 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const updateFloatingNoteSize = (noteId: string, size: { width: number; height: number }) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('FloatingNotesProvider: Updating size', noteId, size);
-    }
+    logger.floating.debug('Updating size', noteId, size);
     setFloatingNotes(prev =>
       prev.map(fn =>
         fn.noteId === noteId ? { ...fn, size } : fn
@@ -160,9 +137,7 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const updateFloatingNoteContent = (noteId: string, content: string) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('FloatingNotesProvider: Updating content', noteId);
-    }
+    logger.floating.debug('Updating content', noteId);
     setFloatingNotes(prev =>
       prev.map(fn =>
         fn.noteId === noteId ? { ...fn, note: { ...fn.note, content } } : fn
@@ -172,9 +147,7 @@ export const FloatingNotesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const isNoteFloating = (noteId: string) => {
     const isFloating = floatingNotes.some(fn => fn.noteId === noteId);
-    if (process.env.NODE_ENV === 'development') {
-      console.log('FloatingNotesProvider: isNoteFloating check', noteId, isFloating);
-    }
+    logger.floating.debug('isNoteFloating check', noteId, isFloating);
     return isFloating;
   };
 
