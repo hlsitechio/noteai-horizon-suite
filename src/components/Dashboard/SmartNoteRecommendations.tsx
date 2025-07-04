@@ -1,10 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Lightbulb, FileText, Tags, TrendingUp, Clock, ArrowRight, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
-import { useEnhancedAIChat } from '@/hooks/useEnhancedAIChat';
 
 interface NoteRecommendation {
   id: string;
@@ -34,132 +31,6 @@ const SmartNoteRecommendations: React.FC<SmartNoteRecommendationsProps> = ({
   onEditNote, 
   className 
 }) => {
-  const [recommendations, setRecommendations] = useState<NoteRecommendation[]>([]);
-  const [insights, setInsights] = useState<SmartInsight[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { sendStructuredMessage } = useEnhancedAIChat();
-
-  useEffect(() => {
-    const generateRecommendations = async () => {
-      if (notes.length === 0) {
-        setIsLoading(false);
-        return;
-      }
-
-      // Prevent multiple simultaneous requests
-      if (isLoading) return;
-
-      try {
-        setIsLoading(true);
-
-        // Analyze user's notes to generate recommendations
-        const recentNotes = notes.slice(0, 10);
-        const notesAnalysis = recentNotes.map(note => ({
-          title: note.title,
-          content: note.content.substring(0, 500), // Limit content for analysis
-          tags: note.tags || [],
-          category: note.category || 'general',
-          lastModified: note.updatedAt
-        }));
-
-        // Generate AI-powered recommendations
-        const analysisPrompt = {
-          id: Date.now().toString(),
-          content: `Analyze these notes and provide smart recommendations and insights:
-
-${JSON.stringify(notesAnalysis, null, 2)}
-
-Generate recommendations for:
-1. Related notes that could be connected
-2. Similar topics that appear frequently  
-3. Trending patterns in the user's writing
-4. Suggested new note topics based on gaps
-
-Also provide insights about:
-- Writing patterns and habits
-- Most discussed topics
-- Productivity trends
-- Areas for improvement
-
-Focus on actionable recommendations that would help the user organize and expand their knowledge.`,
-          isUser: true,
-          timestamp: new Date()
-        };
-
-        const schema = {
-          name: 'note_recommendations',
-          schema: {
-            type: 'object',
-            properties: {
-              recommendations: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string' },
-                    type: { type: 'string', enum: ['related', 'similar', 'trending', 'suggested'] },
-                    title: { type: 'string' },
-                    reason: { type: 'string' },
-                    confidence: { type: 'number' },
-                    tags: { type: 'array', items: { type: 'string' } },
-                    preview: { type: 'string' }
-                  },
-                  required: ['id', 'type', 'title', 'reason', 'confidence']
-                }
-              },
-              insights: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    type: { type: 'string', enum: ['pattern', 'topic', 'writing_style', 'productivity'] },
-                    title: { type: 'string' },
-                    description: { type: 'string' },
-                    actionable: { type: 'boolean' }
-                  },
-                  required: ['type', 'title', 'description', 'actionable']
-                }
-              }
-            },
-            required: ['recommendations', 'insights']
-          }
-        };
-
-        // Add timeout to prevent infinite loading
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('AI analysis timeout')), 30000)
-        );
-
-        const response = await Promise.race([
-          sendStructuredMessage([analysisPrompt], schema),
-          timeoutPromise
-        ]) as string;
-        
-        const analysis = JSON.parse(response);
-
-        setRecommendations(analysis.recommendations || []);
-        setInsights(analysis.insights || []);
-
-      } catch (error) {
-        console.error('Error generating recommendations:', error);
-        
-        // Fallback to basic recommendations based on existing data
-        const basicRecommendations = generateBasicRecommendations(notes);
-        setRecommendations(basicRecommendations);
-        setInsights(generateBasicInsights(notes));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    // Add debounce to prevent too many requests
-    const timeoutId = setTimeout(() => {
-      generateRecommendations();
-    }, 1000);
-
-    return () => clearTimeout(timeoutId);
-  }, [notes.length]); // Only depend on notes.length, not the full notes array or sendStructuredMessage
-
   const generateBasicRecommendations = (userNotes: any[]): NoteRecommendation[] => {
     if (userNotes.length === 0) return [];
 
@@ -237,6 +108,10 @@ Focus on actionable recommendations that would help the user organize and expand
     return insights;
   };
 
+  // Generate static recommendations based on actual user data
+  const recommendations = generateBasicRecommendations(notes);
+  const insights = generateBasicInsights(notes);
+
   const handleRecommendationClick = (recommendation: NoteRecommendation) => {
     if (recommendation.type === 'related' || recommendation.type === 'similar') {
       // Find and open the related note
@@ -254,27 +129,6 @@ Focus on actionable recommendations that would help the user organize and expand
     // For other types, we could navigate to relevant sections or create new notes
   };
 
-  if (isLoading) {
-    return (
-      <Card className={`border border-border/10 shadow-premium bg-card/50 backdrop-blur-xl rounded-2xl ${className}`}>
-        <CardHeader className="p-4 pb-3 border-b border-border/10">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-yellow-500/10 to-orange-500/10 flex items-center justify-center border border-yellow-500/10">
-              <Lightbulb className="w-4 h-4 text-yellow-600" />
-            </div>
-            <CardTitle className="text-lg font-bold text-foreground">
-              Smart Recommendations
-            </CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-center h-32">
-            <div className="w-6 h-6 border-2 border-transparent border-t-primary rounded-full animate-spin" />
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
 
   if (notes.length === 0) {
     return (

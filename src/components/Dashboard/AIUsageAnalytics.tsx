@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Brain, TrendingUp, Clock, Target, Zap, Activity } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useAICopilot } from '@/hooks/useAICopilot';
-import { supabase } from '@/integrations/supabase/client';
 
 interface AIUsageStats {
   totalSessions: number;
@@ -19,140 +17,16 @@ interface AIUsageAnalyticsProps {
 }
 
 const AIUsageAnalytics: React.FC<AIUsageAnalyticsProps> = ({ className }) => {
-  const [stats, setStats] = useState<AIUsageStats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const { getSessionAnalytics } = useAICopilot();
+  // Static mock data for display (AI functionality disabled)
+  const stats: AIUsageStats = {
+    totalSessions: 0,
+    averageProcessingTime: 0,
+    mostUsedAction: 'none',
+    totalTokensUsed: 0,
+    satisfactionScore: 0,
+    weeklyGrowth: 0
+  };
 
-  useEffect(() => {
-    const fetchAIUsageStats = async () => {
-      // Prevent multiple simultaneous requests
-      if (isLoading) return;
-
-      try {
-        setIsLoading(true);
-        
-        // Get AI copilot sessions
-        const sessions = await getSessionAnalytics();
-        
-        // Get AI usage tracking data
-        const { data: usageData, error: usageError } = await supabase
-          .from('ai_usage_tracking')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(100);
-
-        if (usageError) {
-          console.error('Error fetching usage data:', usageError);
-        }
-
-        // Calculate statistics
-        const totalSessions = sessions.length;
-        const averageProcessingTime = sessions.length > 0 
-          ? sessions.reduce((sum, session) => sum + (session.processing_time || 0), 0) / sessions.length
-          : 0;
-
-        // Find most used action
-        const actionCounts = sessions.reduce((acc, session) => {
-          const action = session.session_type || 'unknown';
-          acc[action] = (acc[action] || 0) + 1;
-          return acc;
-        }, {} as Record<string, number>);
-
-        const mostUsedAction = Object.entries(actionCounts)
-          .sort(([,a], [,b]) => b - a)[0]?.[0] || 'none';
-
-        // Calculate total tokens used
-        const totalTokensUsed = (usageData || [])
-          .reduce((sum, usage) => sum + (usage.tokens_used || 0), 0);
-
-        // Calculate satisfaction score
-        const ratingsCount = sessions.filter(s => s.feedback_rating !== null).length;
-        const satisfactionScore = ratingsCount > 0
-          ? sessions
-              .filter(s => s.feedback_rating !== null)
-              .reduce((sum, s) => sum + (s.feedback_rating || 0), 0) / ratingsCount
-          : 0;
-
-        // Calculate weekly growth (mock for now)
-        const weeklyGrowth = Math.random() * 20 + 5; // 5-25% growth
-
-        setStats({
-          totalSessions,
-          averageProcessingTime,
-          mostUsedAction,
-          totalTokensUsed,
-          satisfactionScore,
-          weeklyGrowth
-        });
-
-      } catch (error) {
-        console.error('Error fetching AI usage stats:', error);
-        // Set empty stats to prevent flashing
-        setStats({
-          totalSessions: 0,
-          averageProcessingTime: 0,
-          mostUsedAction: 'none',
-          totalTokensUsed: 0,
-          satisfactionScore: 0,
-          weeklyGrowth: 0
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    // Add debounce to prevent too many requests
-    const timeoutId = setTimeout(() => {
-      fetchAIUsageStats();
-    }, 2000);
-
-    return () => clearTimeout(timeoutId);
-  }, []); // Empty dependency array - only run once on mount
-
-  if (isLoading) {
-    return (
-      <Card className={`border border-border/10 shadow-premium bg-card/50 backdrop-blur-xl rounded-2xl ${className}`}>
-        <CardHeader className="p-4 pb-3 border-b border-border/10">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 flex items-center justify-center border border-purple-500/10">
-              <Brain className="w-4 h-4 text-purple-500" />
-            </div>
-            <CardTitle className="text-lg font-bold text-foreground">
-              AI Usage Analytics
-            </CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-center h-32">
-            <div className="w-6 h-6 border-2 border-transparent border-t-primary rounded-full animate-spin" />
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (!stats) {
-    return (
-      <Card className={`border border-border/10 shadow-premium bg-card/50 backdrop-blur-xl rounded-2xl ${className}`}>
-        <CardHeader className="p-4 pb-3 border-b border-border/10">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 flex items-center justify-center border border-purple-500/10">
-              <Brain className="w-4 h-4 text-purple-500" />
-            </div>
-            <CardTitle className="text-lg font-bold text-foreground">
-              AI Usage Analytics
-            </CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="p-4">
-          <div className="text-center py-8">
-            <p className="text-sm text-muted-foreground">No AI usage data available yet</p>
-            <p className="text-xs text-muted-foreground mt-1">Start using AI features to see analytics</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <Card className={`border border-border/10 shadow-premium bg-card/50 backdrop-blur-xl rounded-2xl ${className}`}>
