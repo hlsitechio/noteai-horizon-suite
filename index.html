@@ -220,6 +220,7 @@
           if (urlStr.includes('facebook.com') || 
               urlStr.includes('google-analytics.com') ||
               urlStr.includes('googletagmanager.com') ||
+              urlStr.includes('cloudflareinsights.com') ||
               urlStr.includes('tr?id=') ||
               urlStr.includes('fbq') ||
               urlStr.includes('gtag') ||
@@ -243,6 +244,7 @@
                 valueStr.includes('facebook.com') ||
                 valueStr.includes('google-analytics.com') ||
                 valueStr.includes('googletagmanager.com') ||
+                valueStr.includes('cloudflareinsights.com') ||
                 valueStr.includes('analytics') ||
                 valueStr.includes('tracking')
               )) {
@@ -264,7 +266,8 @@
             const trackingElements = document.querySelectorAll(
               'img[src*="facebook.com"], script[src*="facebook.com"], ' +
               'link[href*="facebook.com"], script[src*="analytics"], ' +
-              'script[src*="gtag"], script[src*="fbq"]'
+              'script[src*="gtag"], script[src*="fbq"], ' +
+              'script[src*="cloudflareinsights.com"]'
             );
             trackingElements.forEach(el => {
               try { el.remove(); } catch(e) {}
