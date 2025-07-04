@@ -1,8 +1,6 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './useToast';
-import { useGPUAcceleration } from './useGPUAcceleration';
-import { GPUTextProcessingService } from '@/services/gpuTextProcessing';
 
 // Export the ChatMessage type so it can be used by other components
 export interface ChatMessage {
@@ -14,52 +12,7 @@ export interface ChatMessage {
 
 export const useEnhancedAIChat = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isProcessingLocally, setIsProcessingLocally] = useState(false);
   const { toast } = useToast();
-  const { capabilities } = useGPUAcceleration();
-  const gpuServiceRef = useRef<GPUTextProcessingService | null>(null);
-
-  const initializeGPUService = useCallback(() => {
-    if (!gpuServiceRef.current && capabilities.isInitialized) {
-      gpuServiceRef.current = new GPUTextProcessingService(capabilities.preferredDevice);
-      console.log(`GPU service initialized with device: ${capabilities.preferredDevice}`);
-    }
-    return gpuServiceRef.current;
-  }, [capabilities]);
-
-  const analyzeMessageSentiment = useCallback(async (message: string) => {
-    const gpuService = initializeGPUService();
-    if (!gpuService) return null;
-
-    try {
-      setIsProcessingLocally(true);
-      const sentiment = await gpuService.classifyText(message);
-      console.log('Message sentiment analysis:', sentiment);
-      return sentiment;
-    } catch (error) {
-      console.error('Error analyzing sentiment:', error);
-      return null;
-    } finally {
-      setIsProcessingLocally(false);
-    }
-  }, [initializeGPUService]);
-
-  const generateMessageEmbeddings = useCallback(async (messages: string[]) => {
-    const gpuService = initializeGPUService();
-    if (!gpuService) return null;
-
-    try {
-      setIsProcessingLocally(true);
-      const embeddings = await gpuService.generateEmbeddings(messages);
-      console.log(`Generated embeddings for ${messages.length} messages using GPU`);
-      return embeddings;
-    } catch (error) {
-      console.error('Error generating embeddings:', error);
-      return null;
-    } finally {
-      setIsProcessingLocally(false);
-    }
-  }, [initializeGPUService]);
 
   const sendMessage = async (
     messages: ChatMessage[], 
@@ -75,18 +28,10 @@ export const useEnhancedAIChat = () => {
     setIsLoading(true);
     
     try {
-      console.log('Sending enhanced chat message to AI:', { 
+      console.log('Sending chat message to AI:', { 
         messageCount: messages.length,
-        gpuDevice: capabilities.preferredDevice,
-        gpuSupported: capabilities.webGPUSupported || capabilities.webGLSupported,
         hasStructuredOutput: !!responseFormat
       });
-      
-      // Analyze sentiment of the last user message if GPU is available
-      const lastUserMessage = messages.filter(m => m.isUser).pop();
-      if (lastUserMessage && capabilities.preferredDevice !== 'cpu') {
-        await analyzeMessageSentiment(lastUserMessage.content);
-      }
       
       // Convert messages to OpenAI format
       const openAIMessages = messages.map(msg => ({
@@ -96,7 +41,7 @@ export const useEnhancedAIChat = () => {
 
       const requestBody: any = { 
         messages: openAIMessages,
-        model: 'deepseek/deepseek-r1-0528:free'
+        model: 'deepseek/deepseek-chat-v3-0324:free'
       };
 
       // Add structured output format if provided
@@ -125,7 +70,7 @@ export const useEnhancedAIChat = () => {
         throw new Error('Invalid response format from AI service');
       }
 
-      console.log('Enhanced AI response received successfully', {
+      console.log('AI response received successfully', {
         structured: data.structured || false
       });
       return data.message;
@@ -172,10 +117,5 @@ export const useEnhancedAIChat = () => {
     sendMessage,
     sendStructuredMessage,
     isLoading,
-    isProcessingLocally,
-    analyzeMessageSentiment,
-    generateMessageEmbeddings,
-    gpuCapabilities: capabilities,
-    gpuService: gpuServiceRef.current,
   };
 };
