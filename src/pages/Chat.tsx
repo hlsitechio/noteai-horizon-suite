@@ -7,6 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, MessageCircle } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { useEnhancedAIChat, ChatMessage } from '../hooks/useEnhancedAIChat';
+import FormattedMessage from '../components/Chat/FormattedMessage';
 
 const Chat: React.FC = () => {
   const [message, setMessage] = useState('');
@@ -95,7 +96,7 @@ const Chat: React.FC = () => {
                             : 'bg-muted'
                         }`}
                       >
-                        <p className="text-sm">{msg.content}</p>
+                        <FormattedMessage content={msg.content} isUser={msg.isUser} />
                       </div>
                     </div>
                   ))
