@@ -13,7 +13,7 @@
     <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), vr=(), battery=(), payment=(), usb=(), serial=(), bluetooth=(), midi=(), accelerometer=(), gyroscope=(), magnetometer=(), ambient-light-sensor=(), display-capture=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), web-share=(), xr-spatial-tracking=(), ch-ua=(), ch-ua-arch=(), ch-ua-bitness=(), ch-ua-full-version=(), ch-ua-full-version-list=(), ch-ua-mobile=(), ch-ua-model=(), ch-ua-platform=(), ch-ua-platform-version=(), ch-ua-wow64=()" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: wss:; connect-src 'self' https: wss: *.supabase.co *.lovable.app; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https:;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: wss:; connect-src 'self' https: wss: *.supabase.co *.lovable.app *.cloudflareinsights.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https:;" />
     
     <!-- Remove problematic DNS prefetch that causes preload warnings -->
 
@@ -213,14 +213,13 @@
           return originalDefineProperty.call(this, obj, prop, descriptor);
         };
         
-        // Total network blocking for tracking scripts
+        // Total network blocking for tracking scripts (except Cloudflare Insights which is needed by Lovable)
         const originalFetch = window.fetch;
         window.fetch = function(url, options) {
           const urlStr = String(url);
           if (urlStr.includes('facebook.com') || 
               urlStr.includes('google-analytics.com') ||
               urlStr.includes('googletagmanager.com') ||
-              urlStr.includes('cloudflareinsights.com') ||
               urlStr.includes('tr?id=') ||
               urlStr.includes('fbq') ||
               urlStr.includes('gtag') ||
@@ -244,7 +243,6 @@
                 valueStr.includes('facebook.com') ||
                 valueStr.includes('google-analytics.com') ||
                 valueStr.includes('googletagmanager.com') ||
-                valueStr.includes('cloudflareinsights.com') ||
                 valueStr.includes('analytics') ||
                 valueStr.includes('tracking')
               )) {
@@ -266,8 +264,7 @@
             const trackingElements = document.querySelectorAll(
               'img[src*="facebook.com"], script[src*="facebook.com"], ' +
               'link[href*="facebook.com"], script[src*="analytics"], ' +
-              'script[src*="gtag"], script[src*="fbq"], ' +
-              'script[src*="cloudflareinsights.com"]'
+              'script[src*="gtag"], script[src*="fbq"]'
             );
             trackingElements.forEach(el => {
               try { el.remove(); } catch(e) {}
