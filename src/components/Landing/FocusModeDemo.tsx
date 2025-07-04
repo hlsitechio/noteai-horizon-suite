@@ -28,7 +28,7 @@ const FocusModeDemo = () => {
       }, 50);
       return () => clearTimeout(timer);
     }
-  }, [isInFocusMode, autoIndex]);
+  }, [isInFocusMode, autoIndex, demoText]);
 
   const handleFocusModeToggle = () => {
     setIsInFocusMode(!isInFocusMode);

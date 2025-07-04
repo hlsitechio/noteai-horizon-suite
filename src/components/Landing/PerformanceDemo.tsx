@@ -129,24 +129,26 @@ const PerformanceDemo = () => {
                   <Button 
                     onClick={startSyncDemo}
                     disabled={activeDemo === 'sync'}
-                    className="bg-gradient-to-r from-yellow-500 to-orange-600 hover:scale-105 transition-all justify-start text-left h-auto p-4"
+                    className="bg-gradient-to-r from-yellow-500 to-orange-600 hover:scale-105 transition-all justify-start text-left h-auto p-4 relative overflow-hidden"
                   >
+                    <div className="absolute inset-0 bg-black/50" />
                     <Globe className="w-5 h-5 mr-3 flex-shrink-0" />
                     <div className="text-left">
-                      <div className="font-medium">Real-time Sync Test</div>
-                      <div className="text-xs opacity-80">See instant sync across devices</div>
+                      <div className="font-bold drop-shadow-sm text-white">Real-time Sync Test</div>
+                      <div className="text-sm text-orange-100/90 drop-shadow-sm">See instant sync across devices</div>
                     </div>
                   </Button>
                   
                   <Button 
                     onClick={startSpeedDemo}
                     disabled={activeDemo === 'speed'}
-                    className="bg-gradient-to-r from-orange-500 to-red-600 hover:scale-105 transition-all justify-start text-left h-auto p-4"
+                    className="bg-gradient-to-r from-orange-500 to-red-600 hover:scale-105 transition-all justify-start text-left h-auto p-4 relative overflow-hidden"
                   >
+                    <div className="absolute inset-0 bg-black/50" />
                     <Zap className="w-5 h-5 mr-3 flex-shrink-0" />
                     <div className="text-left">
-                      <div className="font-medium">Speed Test</div>
-                      <div className="text-xs opacity-80">Measure loading performance</div>
+                      <div className="font-bold drop-shadow-sm text-white">Speed Test</div>
+                      <div className="text-sm text-red-100/90 drop-shadow-sm">Measure loading performance</div>
                     </div>
                   </Button>
                 </div>

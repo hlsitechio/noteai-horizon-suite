@@ -1,13 +1,44 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Rocket, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import DashboardDemo from './DashboardDemo';
 
 const Hero = () => {
   const navigate = useNavigate();
+
+  const sentence = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delay: 0.3,
+        staggerChildren: 0.06,
+      },
+    },
+  };
+
+  const letter = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+  const animatedTexts = [
+    "Experience the revolution in AI-driven note-taking and productivity.",
+    "Create, collaborate, and innovate with unprecedented intelligence.",
+    "Unlock your full potential with smart, automated workflows.",
+    "Transform your ideas into action with seamless organization.",
+  ];
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTextIndex((prevIndex) => (prevIndex + 1) % animatedTexts.length);
+    }, 4000); // Change text every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [animatedTexts.length]);
   const [isDemoOpen, setIsDemoOpen] = useState(false);
 
   return (
@@ -38,20 +69,33 @@ const Hero = () => {
           </motion.div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold leading-tight">
-            <span className="bg-gradient-to-r from-white via-cyan-200 to-blue-200 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-clip-text text-transparent bg-[size:200%_auto] animate-gradient-flow">
               The Future of
             </span>
             <br />
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-purple-500 via-blue-500 to-green-400 bg-clip-text text-transparent bg-[size:200%_auto] animate-gradient-flow">
               Smart Productivity
             </span>
           </h1>
 
-          <p className="text-lg sm:text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed px-4">
-            Experience the revolution in AI-driven note-taking and productivity.
-            <br className="hidden sm:block" />
-            <span className="text-cyan-300 font-semibold">Create, collaborate, and innovate</span> with unprecedented intelligence.
-          </p>
+          <div className="h-24 flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={currentTextIndex}
+                variants={sentence}
+                initial="hidden"
+                animate="visible"
+                exit={{ opacity: 0 }}
+                className="text-lg sm:text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed px-4 text-center"
+              >
+                {animatedTexts[currentTextIndex].split(" ").map((word, index) => (
+                  <motion.span key={word + "-" + index} variants={letter}>
+                    {word}{" "}
+                  </motion.span>
+                ))}
+              </motion.p>
+            </AnimatePresence>
+          </div>
 
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center pt-8 px-4">
             <div className="relative group w-full sm:w-auto">

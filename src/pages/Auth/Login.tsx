@@ -68,7 +68,7 @@ const Login: React.FC = () => {
       className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${loginBg})` }}
     >
-      <Card className="max-w-md w-full shadow-2xl bg-white/95 backdrop-blur-sm">
+      <Card className="max-w-md w-full shadow-2xl bg-black border border-neutral-800 backdrop-blur-sm">
         <CardContent className="p-8">
           <div className="space-y-8">
             {/* Logo */}

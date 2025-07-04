@@ -147,6 +147,43 @@ const DashboardDemo = ({ isOpen, onClose }: DashboardDemoProps) => {
     { icon: BarChart3, label: "Analytics", color: "from-orange-500 to-red-500" }
   ];
 
+  const showcaseFeatures = [
+    { 
+      icon: Sparkles, 
+      title: "AI-Powered Insights", 
+      subtitle: "Smart content analysis & suggestions", 
+      color: "from-emerald-400 to-teal-500", 
+      bgColor: "bg-gradient-to-br from-emerald-500/20 to-teal-600/20"
+    },
+    { 
+      icon: Zap, 
+      title: "Real-time Sync", 
+      subtitle: "See instant sync across devices", 
+      color: "from-orange-400 to-red-500", 
+      bgColor: "bg-gradient-to-br from-orange-500/20 to-red-600/20"
+    },
+    { 
+      icon: Target, 
+      title: "Encrypted Secure", 
+      subtitle: "End-to-end encryption protection", 
+      color: "from-blue-400 to-cyan-500", 
+      bgColor: "bg-gradient-to-br from-blue-500/20 to-cyan-600/20"
+    },
+    { 
+      icon: Activity, 
+      title: "Voice Transcription", 
+      subtitle: "Record, tag & auto-transcribe", 
+      color: "from-purple-400 to-pink-500", 
+      bgColor: "bg-gradient-to-br from-purple-500/20 to-pink-600/20"
+    }
+  ];
+
+  const smartCategories = [
+    { name: "Smart Notes", count: 24, color: "from-blue-400 to-cyan-500" },
+    { name: "Research", count: 18, color: "from-green-400 to-emerald-500" },
+    { name: "Projects", count: 12, color: "from-purple-400 to-pink-500" }
+  ];
+
   const activityItems = [
     { action: "Created", item: "AI Strategy Notes", time: "5 min ago", color: "text-green-400", icon: Plus },
     { action: "Updated", item: "Project Roadmap", time: "1 hour ago", color: "text-blue-400", icon: Clock },
@@ -510,11 +547,14 @@ const DashboardDemo = ({ isOpen, onClose }: DashboardDemoProps) => {
                               boxShadow: "0 10px 25px rgba(0,0,0,0.3)"
                             }}
                             whileTap={{ scale: 0.95 }}
-                            className={`p-4 rounded-xl bg-gradient-to-r ${action.color} text-white font-medium transition-all hover:shadow-lg flex flex-col items-center gap-2 relative overflow-hidden group`}
+                            className={`p-4 rounded-xl bg-gradient-to-r ${action.color} text-white font-bold transition-all hover:shadow-lg flex flex-col items-center gap-2 relative overflow-hidden group shadow-lg`}
                           >
+                            {/* Dark overlay for better text contrast */}
+                            <div className="absolute inset-0 bg-black/20 rounded-xl" />
+                            
                             {/* Animated shimmer effect */}
                             <motion.div
-                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
                               animate={{
                                 x: ["-100%", "100%"]
                               }}
@@ -540,9 +580,9 @@ const DashboardDemo = ({ isOpen, onClose }: DashboardDemoProps) => {
                               }}
                               className="relative z-10"
                             >
-                              <action.icon className="w-6 h-6" />
+                              <action.icon className="w-6 h-6 drop-shadow-md" />
                             </motion.div>
-                            <span className="text-sm relative z-10">{action.label}</span>
+                            <span className="text-sm relative z-10 font-bold drop-shadow-md">{action.label}</span>
                           </motion.button>
                         ))}
                       </div>
@@ -656,6 +696,170 @@ const DashboardDemo = ({ isOpen, onClose }: DashboardDemoProps) => {
                   </Card>
                 </motion.div>
               </div>
+
+              {/* Enhanced Showcase Features Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: animationStep >= 4 ? 1 : 0, y: animationStep >= 4 ? 0 : 30 }}
+                transition={{ delay: 2.2 }}
+                className="mt-8"
+              >
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                    <motion.div
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                    >
+                      <Sparkles className="w-6 h-6 text-cyan-400" />
+                    </motion.div>
+                    Featured Capabilities
+                  </h2>
+                  <p className="text-white/60">Experience the power of AI-enhanced note-taking</p>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-6 mb-8">
+                  {showcaseFeatures.map((feature, index) => (
+                    <motion.div
+                      key={feature.title}
+                      initial={{ opacity: 0, scale: 0.9, rotateY: -15 }}
+                      animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+                      transition={{ 
+                        delay: 2.4 + index * 0.15,
+                        type: "spring",
+                        stiffness: 150
+                      }}
+                      whileHover={{ 
+                        scale: 1.02,
+                        rotateY: 2,
+                        transition: { duration: 0.2 }
+                      }}
+                      className={`${feature.bgColor} backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-white/30 transition-all duration-300 relative overflow-hidden group cursor-pointer`}
+                    >
+                      {/* Enhanced background with better contrast */}
+                      <div className="absolute inset-0 bg-black/30 rounded-2xl" />
+                      <div className={`absolute inset-0 bg-gradient-to-br ${feature.color.replace('400', '500').replace('500', '600')}/10 rounded-2xl`} />
+                      
+                      {/* Animated grid pattern */}
+                      <div 
+                        className="absolute inset-0 opacity-5"
+                        style={{
+                          backgroundImage: `
+                            linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
+                          `,
+                          backgroundSize: '15px 15px'
+                        }}
+                      />
+                      
+                      <div className="relative z-10 flex items-start gap-4">
+                        <motion.div
+                          animate={{ 
+                            scale: [1, 1.1, 1],
+                            rotate: [0, 5, -5, 0]
+                          }}
+                          transition={{ 
+                            duration: 4,
+                            repeat: Infinity,
+                            delay: index * 0.5
+                          }}
+                          className={`p-3 rounded-xl bg-gradient-to-br ${feature.color} shadow-lg`}
+                        >
+                          <feature.icon className="w-6 h-6 text-white drop-shadow-md" />
+                        </motion.div>
+                        
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-white mb-2 drop-shadow-md group-hover:text-cyan-100 transition-colors">
+                            {feature.title}
+                          </h3>
+                          <p className="text-white/80 font-medium drop-shadow-sm group-hover:text-white/90 transition-colors">
+                            {feature.subtitle}
+                          </p>
+                        </div>
+                        
+                        {/* Pulse indicator */}
+                        <motion.div
+                          animate={{ 
+                            scale: [1, 1.3, 1],
+                            opacity: [0.7, 1, 0.7]
+                          }}
+                          transition={{ 
+                            duration: 2,
+                            repeat: Infinity,
+                            delay: index * 0.3
+                          }}
+                          className="w-3 h-3 bg-white/60 rounded-full"
+                        />
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+                
+                {/* Smart Categories */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: animationStep >= 5 ? 1 : 0, y: animationStep >= 5 ? 0 : 20 }}
+                  transition={{ delay: 3.0 }}
+                  className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                      <motion.div
+                        animate={{ rotate: [0, 360] }}
+                        transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                      >
+                        <Target className="w-5 h-5 text-purple-400" />
+                      </motion.div>
+                      Smart Categories
+                    </h3>
+                    <Badge className="bg-purple-500/20 text-purple-300 border-0">
+                      Auto-organized
+                    </Badge>
+                  </div>
+                  
+                  <div className="flex gap-3">
+                    {smartCategories.map((category, index) => (
+                      <motion.button
+                        key={category.name}
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ 
+                          delay: 3.2 + index * 0.1,
+                          type: "spring",
+                          stiffness: 200
+                        }}
+                        whileHover={{ 
+                          scale: 1.05,
+                          y: -2,
+                          transition: { duration: 0.2 }
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`flex-1 p-4 rounded-xl bg-gradient-to-r ${category.color} text-white font-bold transition-all hover:shadow-lg relative overflow-hidden group`}
+                      >
+                        {/* Better contrast overlay */}
+                        <div className="absolute inset-0 bg-black/25 rounded-xl" />
+                        
+                        <div className="relative z-10">
+                          <div className="text-lg font-bold drop-shadow-md">{category.name}</div>
+                          <div className="text-sm opacity-90 font-semibold drop-shadow-sm">{category.count} items</div>
+                        </div>
+                        
+                        {/* Animated glow effect */}
+                        <motion.div
+                          animate={{
+                            opacity: [0, 0.3, 0]
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            delay: index * 0.7
+                          }}
+                          className="absolute inset-0 bg-white/20 rounded-xl"
+                        />
+                      </motion.button>
+                    ))}
+                  </div>
+                </motion.div>
+              </motion.div>
             </div>
           </motion.div>
         </motion.div>

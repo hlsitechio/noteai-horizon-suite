@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, Sparkles, Zap, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import SpotlightCard from '@/components/ui/spotlight-card';
 
 const Pricing = () => {
+  const navigate = useNavigate();
   const [isYearly, setIsYearly] = useState(false);
 
   const pricingPlans = [
@@ -167,7 +169,7 @@ const Pricing = () => {
                     ))}
                   </ul>
                   <div className="relative group/button">
-                    <Button
+                    <Button onClick={() => navigate('/register')}
                       className={`w-full py-4 text-lg font-bold rounded-2xl transition-all duration-500 transform hover:scale-105 ${
                         plan.popular
                           ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white shadow-[0_0_30px_rgba(59,130,246,0.4)]'

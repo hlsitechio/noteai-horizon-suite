@@ -98,24 +98,26 @@ const SecurityDemo = () => {
                   <Button 
                     onClick={startEncryptionDemo}
                     disabled={activeDemo === 'encryption'}
-                    className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:scale-105 transition-all justify-start text-left h-auto p-4"
+                    className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:scale-105 transition-all justify-start text-left h-auto p-4 relative overflow-hidden"
                   >
+                    <div className="absolute inset-0 bg-black/50" />
                     <Lock className="w-5 h-5 mr-3 flex-shrink-0" />
                     <div className="text-left">
-                      <div className="font-medium">Encryption Demo</div>
-                      <div className="text-xs opacity-80">See real-time data encryption</div>
+                      <div className="font-bold drop-shadow-sm text-white">Encryption Demo</div>
+                      <div className="text-sm text-cyan-100/90 drop-shadow-sm">See real-time data encryption</div>
                     </div>
                   </Button>
                   
                   <Button 
                     onClick={startSecurityDemo}
                     disabled={activeDemo === 'security'}
-                    className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:scale-105 transition-all justify-start text-left h-auto p-4"
+                    className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:scale-105 transition-all justify-start text-left h-auto p-4 relative overflow-hidden"
                   >
+                    <div className="absolute inset-0 bg-black/50" />
                     <Shield className="w-5 h-5 mr-3 flex-shrink-0" />
                     <div className="text-left">
-                      <div className="font-medium">Security Scan</div>
-                      <div className="text-xs opacity-80">Verify protection layers</div>
+                      <div className="font-bold drop-shadow-sm text-white">Security Scan</div>
+                      <div className="text-sm text-teal-100/90 drop-shadow-sm">Verify protection layers</div>
                     </div>
                   </Button>
                 </div>

@@ -15,6 +15,7 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const navigate = useNavigate();
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const navigationItems = [
     { name: 'Features', href: '/features' },
@@ -27,11 +28,9 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
-      // Show navigation when at the top
       if (currentScrollY < 10) {
         setIsVisible(true);
       } 
-      // Hide when scrolling down, show when scrolling up
       else if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsVisible(false);
       } else if (currentScrollY < lastScrollY) {
@@ -73,9 +72,8 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
             animate={{ y: 0 }}
             exit={{ y: -100 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-              isScrolled 
-                ? 'bg-black/80 backdrop-blur-2xl' 
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled 
+                ? 'bg-black/80 backdrop-blur-2xl border-b border-white/10'
                 : 'bg-transparent'
             }`}
           >
@@ -84,7 +82,8 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="flex items-center space-x-3"
+                  className="flex items-center space-x-3 cursor-pointer"
+                  onClick={() => navigate('/')}
                 >
                   <div className="relative">
                     <div className="w-10 h-10 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.5)]">
@@ -98,23 +97,30 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
                 </motion.div>
 
                 {/* Desktop Navigation */}
-                <nav className="hidden md:flex space-x-8">
-                {navigationItems.map((item, index) => (
+                <nav 
+                  onMouseLeave={() => setHoveredItem(null)}
+                  className="hidden md:flex items-center space-x-2"
+                >
+                  {navigationItems.map((item) => (
                     <motion.a
                       key={item.name}
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
                       href={item.href}
+                      onMouseEnter={() => setHoveredItem(item.name)}
                       onClick={(e) => {
                         e.preventDefault();
                         navigate(item.href);
                       }}
-                      className="relative text-gray-300 hover:text-white transition-all duration-300 font-medium px-4 py-2 group cursor-pointer"
+                      className="relative px-4 py-2 text-gray-300 hover:text-white transition-colors duration-300 rounded-full"
                     >
-                      {item.name}
-                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
-                      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-400 to-purple-400 group-hover:w-full transition-all duration-500" />
+                      {hoveredItem === item.name && (
+                        <motion.div
+                          layoutId="active-nav-pill"
+                          className="absolute inset-0 bg-white/10"
+                          style={{ borderRadius: 9999 }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        />
+                      )}
+                      <span className="relative z-10 font-medium">{item.name}</span>
                     </motion.a>
                   ))}
                 </nav>
@@ -130,7 +136,7 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
                   <div className="relative group">
                     <Button
                       onClick={() => navigate('/register')}
-                      className="hidden md:inline-flex bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white font-semibold px-6 py-2.5 rounded-xl shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_50px_rgba(59,130,246,0.5)] transition-all duration-300 transform hover:scale-105"
+                      className="hidden md:inline-flex bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white font-semibold px-6 py-2.5 rounded-xl shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_50px_rgba(59,130,246,0.8)] transition-all duration-300 transform hover:scale-105"
                     >
                       Get Started
                     </Button>

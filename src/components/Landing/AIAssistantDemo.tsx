@@ -139,11 +139,12 @@ const AIAssistantDemo = () => {
                       size="lg" 
                       onClick={() => handleExampleClick('improve')}
                       disabled={aiProcessing}
-                      className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:scale-105 transition-all justify-start text-left h-auto p-4 text-white font-medium"
+                      className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:scale-105 transition-all justify-start text-left h-auto p-4 relative overflow-hidden"
                     >
+                      <div className="absolute inset-0 bg-black/40" />
                       <Sparkles className="w-5 h-5 mr-3 flex-shrink-0" />
                       <div className="text-left">
-                        <div className="font-semibold text-base">Improve Writing</div>
+                        <div className="font-semibold text-base drop-shadow-md text-white">Improve Writing</div>
                         <div className="text-sm opacity-90 leading-relaxed">Make text clearer and more engaging</div>
                       </div>
                     </Button>
@@ -151,11 +152,12 @@ const AIAssistantDemo = () => {
                       size="lg" 
                       onClick={() => handleExampleClick('translate')}
                       disabled={aiProcessing}
-                      className="bg-gradient-to-r from-green-500 to-teal-600 hover:scale-105 transition-all justify-start text-left h-auto p-4 text-white font-medium"
+                      className="bg-gradient-to-r from-green-500 to-teal-600 hover:scale-105 transition-all justify-start text-left h-auto p-4 relative overflow-hidden"
                     >
+                      <div className="absolute inset-0 bg-black/40" />
                       <Languages className="w-5 h-5 mr-3 flex-shrink-0" />
                       <div className="text-left">
-                        <div className="font-semibold text-base">Translate Text</div>
+                        <div className="font-semibold text-base drop-shadow-md text-white">Translate Text</div>
                         <div className="text-sm opacity-90 leading-relaxed">Convert to different languages</div>
                       </div>
                     </Button>
@@ -163,11 +165,12 @@ const AIAssistantDemo = () => {
                       size="lg" 
                       onClick={() => handleExampleClick('summarize')}
                       disabled={aiProcessing}
-                      className="bg-gradient-to-r from-purple-500 to-pink-600 hover:scale-105 transition-all justify-start text-left h-auto p-4 text-white font-medium"
+                      className="bg-gradient-to-r from-purple-500 to-pink-600 hover:scale-105 transition-all justify-start text-left h-auto p-4 relative overflow-hidden"
                     >
+                      <div className="absolute inset-0 bg-black/40" />
                       <Lightbulb className="w-5 h-5 mr-3 flex-shrink-0" />
                       <div className="text-left">
-                        <div className="font-semibold text-base">Summarize Content</div>
+                        <div className="font-semibold text-base drop-shadow-md text-white">Summarize Content</div>
                         <div className="text-sm opacity-90 leading-relaxed">Extract key points and insights</div>
                       </div>
                     </Button>
