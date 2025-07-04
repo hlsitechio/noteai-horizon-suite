@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { FileText, Clock, Tag, Star } from 'lucide-react';
+import { FileText, Clock, Tag, Star, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +15,7 @@ interface NotesGridProps {
 }
 
 const NotesGrid: React.FC<NotesGridProps> = ({ notes, hasFilters }) => {
-  const { setCurrentNote, toggleFavorite } = useNotes();
+  const { setCurrentNote, toggleFavorite, deleteNote } = useNotes();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedNoteId = searchParams.get('note');
@@ -34,6 +34,13 @@ const NotesGrid: React.FC<NotesGridProps> = ({ notes, hasFilters }) => {
   const handleToggleFavorite = async (noteId: string, event: React.MouseEvent) => {
     event.stopPropagation();
     await toggleFavorite(noteId);
+  };
+
+  const handleDeleteNote = async (noteId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (window.confirm('Are you sure you want to delete this note?')) {
+      await deleteNote(noteId);
+    }
   };
 
   const formatDate = (date: string) => {
@@ -124,14 +131,25 @@ const NotesGrid: React.FC<NotesGridProps> = ({ notes, hasFilters }) => {
                 )}
               </div>
               
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-2 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={(e) => handleEditNote(note, e)}
-              >
-                Edit
-              </Button>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => handleEditNote(note, e)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => handleDeleteNote(note.id, e)}
+                  title="Delete note"
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

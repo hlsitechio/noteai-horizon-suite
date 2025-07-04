@@ -16,7 +16,8 @@ import {
   ChevronDown,
   FolderPlus,
   Star,
-  Edit
+  Edit,
+  Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -39,7 +40,7 @@ export function NotesListSection({
   onCreateNote, 
   onCreateFolder 
 }: NotesListSectionProps) {
-  const { setCurrentNote } = useNotes();
+  const { setCurrentNote, deleteNote } = useNotes();
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -61,6 +62,14 @@ export function NotesListSection({
     event.stopPropagation();
     setCurrentNote(note);
     navigate('/app/editor');
+  };
+
+  const handleDeleteNote = async (noteId: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (window.confirm('Are you sure you want to delete this note?')) {
+      await deleteNote(noteId);
+    }
   };
 
   const isNoteActive = (noteId: string) => {
@@ -99,6 +108,15 @@ export function NotesListSection({
               title="Edit note"
             >
               <Edit className="h-3 w-3" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+              onClick={(e) => handleDeleteNote(note.id, e)}
+              title="Delete note"
+            >
+              <Trash2 className="h-3 w-3" />
             </Button>
             <DesktopPopOutButton 
               note={note} 
