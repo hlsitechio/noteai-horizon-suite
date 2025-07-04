@@ -17,10 +17,13 @@ export class AnalyticsService {
     if (this.isInitialized || typeof window === 'undefined') return;
 
     try {
-      // Initialize Google Analytics
-      this.loadGoogleAnalytics();
+      // Skip GA loading in development or with placeholder ID
+      if (import.meta.env.DEV || this.GA_MEASUREMENT_ID === 'G-XXXXXXXXXX') {
+        logger.info('Analytics service initialized (GA disabled - placeholder ID)');
+      } else {
+        this.loadGoogleAnalytics();
+      }
       this.isInitialized = true;
-      logger.info('Analytics service initialized successfully');
     } catch (error) {
       logger.error('Failed to initialize analytics:', error);
     }
