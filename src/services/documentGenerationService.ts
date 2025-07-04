@@ -1,14 +1,55 @@
 
 import { Note } from '../types/note';
+import { logger } from '../utils/logger';
 
 export class DocumentGenerationService {
   static async generateWordDocument(note: Note): Promise<Blob> {
-    // For now, we'll create a rich text format that can be opened by Word
-    // Later we can integrate with docx library if needed
-    const rtfContent = this.createRTFContent(note);
-    return new Blob([rtfContent], { 
-      type: 'application/rtf' 
-    });
+    try {
+      // Use proper DOCX generation with the docx library
+      const { Document, Packer, Paragraph, HeadingLevel, TextRun } = await import('docx');
+      
+      const doc = new Document({
+        sections: [{
+          children: [
+            new Paragraph({
+              text: note.title,
+              heading: HeadingLevel.HEADING_1,
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: '' })], // Empty line
+            }),
+            new Paragraph({
+              text: this.extractPlainText(note.content),
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: '' })], // Empty line
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: 'Tags: ', bold: true }),
+                new TextRun({ text: note.tags.join(', ') }),
+              ],
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: 'Created: ', bold: true }),
+                new TextRun({ text: new Date(note.createdAt).toLocaleDateString() }),
+              ],
+            }),
+          ],
+        }],
+      });
+
+      const blob = await Packer.toBlob(doc);
+      return blob;
+    } catch (error) {
+      logger.error('Failed to generate Word document:', error);
+      // Fallback to RTF format
+      const rtfContent = this.createRTFContent(note);
+      return new Blob([rtfContent], { 
+        type: 'application/rtf' 
+      });
+    }
   }
 
   private static createRTFContent(note: Note): string {
@@ -30,10 +71,58 @@ ${content}\\par
   }
 
   static async generatePDF(note: Note): Promise<Blob> {
-    // Simple PDF generation using canvas and basic PDF structure
-    // For a full implementation, we'd use jsPDF library
-    const pdfContent = this.createSimplePDFContent(note);
-    return new Blob([pdfContent], { type: 'application/pdf' });
+    try {
+      // Use proper PDF generation with jsPDF
+      const jsPDF = await import('jspdf');
+      const doc = new jsPDF.default();
+      
+      // Title
+      doc.setFontSize(18);
+      doc.text(note.title, 20, 30);
+      
+      // Content
+      doc.setFontSize(12);
+      const plainContent = this.extractPlainText(note.content);
+      const splitText = doc.splitTextToSize(plainContent, 170);
+      doc.text(splitText, 20, 50);
+      
+      // Tags and metadata
+      const yPosition = 50 + (splitText.length * 5) + 20;
+      doc.setFontSize(10);
+      doc.text(`Tags: ${note.tags.join(', ')}`, 20, yPosition);
+      doc.text(`Created: ${new Date(note.createdAt).toLocaleDateString()}`, 20, yPosition + 10);
+      
+      return doc.output('blob');
+    } catch (error) {
+      logger.error('Failed to generate PDF:', error);
+      // Fallback to basic PDF structure
+      const pdfContent = this.createSimplePDFContent(note);
+      return new Blob([pdfContent], { type: 'application/pdf' });
+    }
+  }
+
+  private static extractPlainText(content: string): string {
+    try {
+      // Try to parse as JSON (Slate format)
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed)) {
+        return parsed
+          .map((node: any) => {
+            if (node.children && Array.isArray(node.children)) {
+              return node.children
+                .map((child: any) => child.text || '')
+                .join('');
+            }
+            return '';
+          })
+          .join('\n')
+          .trim();
+      }
+    } catch {
+      // If not JSON, return as plain text
+      return content;
+    }
+    return content;
   }
 
   private static createSimplePDFContent(note: Note): string {

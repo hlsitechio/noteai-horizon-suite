@@ -2,6 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { BannerRetrievalService } from './retrievalService';
 import { extractFilePathFromUrl } from './utils';
+import { logger } from '@/utils/logger';
 
 export class BannerDeletionService {
   static async deleteBanner(
@@ -20,25 +21,25 @@ export class BannerDeletionService {
       const filePath = extractFilePathFromUrl(banner.file_url);
       const fileName = `${user.id}/${filePath}`;
 
-      console.log('BannerDeletionService: Deleting banner:', fileName);
+      logger.info('BANNER', 'Deleting banner:', fileName);
 
       // Delete from storage (non-blocking - if this fails, we still want to clean up the database)
       const storageResult = await this.deleteFromStorage(fileName);
       if (!storageResult) {
-        console.warn('BannerDeletionService: Storage deletion failed, but continuing with database cleanup');
+        logger.warn('BANNER', 'Storage deletion failed, but continuing with database cleanup');
       }
 
       // Delete from database
       const dbResult = await this.deleteFromDatabase(user.id, bannerType, projectId);
       if (!dbResult) {
-        console.error('BannerDeletionService: Failed to delete from database');
+        logger.error('BANNER', 'Failed to delete from database');
         return false;
       }
 
-      console.log('BannerDeletionService: Banner deleted successfully');
+      logger.info('BANNER', 'Banner deleted successfully');
       return true;
     } catch (error) {
-      console.error('BannerDeletionService: Delete banner exception:', error);
+      logger.error('BANNER', 'Delete banner exception:', error);
       return false;
     }
   }
@@ -50,13 +51,13 @@ export class BannerDeletionService {
         .remove([fileName]);
 
       if (storageError) {
-        console.error('BannerDeletionService: Storage delete error:', storageError);
+        logger.error('BANNER', 'Storage delete error:', storageError);
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error('BannerDeletionService: Storage delete exception:', error);
+      logger.error('BANNER', 'Storage delete exception:', error);
       return false;
     }
   }
@@ -82,13 +83,13 @@ export class BannerDeletionService {
       const { error: dbError } = await query;
 
       if (dbError) {
-        console.error('BannerDeletionService: Database delete error:', dbError);
+        logger.error('BANNER', 'Database delete error:', dbError);
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error('BannerDeletionService: Database delete exception:', error);
+      logger.error('BANNER', 'Database delete exception:', error);
       return false;
     }
   }
