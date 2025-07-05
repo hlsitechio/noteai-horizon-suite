@@ -56,27 +56,8 @@ export class AppInitializationService {
   }
 
   private static setupPerformanceMonitoring() {
-    // Reduced performance monitoring to prevent violations
-    setTimeout(() => {
-      try {
-        const metrics = PerformanceService.getMetrics();
-        // Only send critical metrics to reduce noise
-        const criticalMetrics = Object.entries(metrics).filter(
-          ([metric, value]) => typeof value === 'number' && value > 0
-        );
-        
-        if (criticalMetrics.length > 0) {
-          criticalMetrics.forEach(([metric, value]) => {
-            AnalyticsService.trackEvent('performance_metric', {
-              metric_name: metric,
-              metric_value: value,
-            });
-          });
-        }
-      } catch (error) {
-        // Silent failure to prevent console noise
-      }
-    }, 10000); // Increased delay to reduce violations
+    // Completely disable performance monitoring to eliminate violations
+    return;
   }
 
   static cleanup() {
