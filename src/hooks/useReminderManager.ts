@@ -8,41 +8,6 @@ export const useReminderManager = () => {
   const [isChecking, setIsChecking] = useState(false);
   const [pendingReminders, setPendingReminders] = useState<any[]>([]);
 
-  const checkForReminders = useCallback(async () => {
-    if (isChecking) return;
-    
-    setIsChecking(true);
-    try {
-      const reminders = await ReminderService.getPendingReminders();
-      setPendingReminders(reminders);
-
-      // Show notifications for new reminders
-      for (const reminder of reminders) {
-        const notification = NotificationService.showReminderNotification(
-          reminder.note_title,
-          reminder.note_id,
-          reminder.reminder_id
-        );
-
-        if (notification) {
-          // Handle notification click
-          notification.onclick = () => {
-            window.focus();
-            window.location.href = `/app/editor?noteId=${reminder.note_id}`;
-            notification.close();
-          };
-
-          // Mark as sent
-          await ReminderService.markReminderSent(reminder.reminder_id);
-        }
-      }
-    } catch (error) {
-      console.error('Error checking reminders:', error);
-    } finally {
-      setIsChecking(false);
-    }
-  }, [isChecking]);
-
   const snoozeReminder = useCallback(async (reminderId: string, minutes: number = 15) => {
     const success = await ReminderService.snoozeReminder(reminderId, minutes);
     if (success) {
@@ -67,13 +32,63 @@ export const useReminderManager = () => {
   useEffect(() => {
     let mounted = true;
     let interval: NodeJS.Timeout;
+    let currentlyChecking = false;
+
+    // Create the check function inside useEffect to avoid stale closures
+    const performReminderCheck = async () => {
+      if (currentlyChecking) return;
+      
+      currentlyChecking = true;
+      if (mounted) {
+        setIsChecking(true);
+      }
+      
+      try {
+        const reminders = await ReminderService.getPendingReminders();
+        if (mounted) {
+          setPendingReminders(reminders);
+        }
+
+        // Show notifications for new reminders
+        for (const reminder of reminders) {
+          const notification = NotificationService.showReminderNotification(
+            reminder.note_title,
+            reminder.note_id,
+            reminder.reminder_id
+          );
+
+          if (notification) {
+            // Handle notification click
+            notification.onclick = () => {
+              window.focus();
+              window.location.href = `/app/editor?noteId=${reminder.note_id}`;
+              notification.close();
+            };
+
+            // Mark as sent
+            await ReminderService.markReminderSent(reminder.reminder_id);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking reminders:', error);
+        // Reset state on error to prevent infinite loops
+        if (mounted) {
+          setPendingReminders([]);
+        }
+      } finally {
+        currentlyChecking = false;
+        if (mounted) {
+          setIsChecking(false);
+        }
+      }
+    };
 
     // Initial check with delay to avoid immediate database calls
     const initialCheck = () => {
       if (mounted) {
         setTimeout(() => {
           if (mounted) {
-            checkForReminders();
+            performReminderCheck();
           }
         }, 2000); // Wait 2 seconds before first check
       }
@@ -84,7 +99,7 @@ export const useReminderManager = () => {
     // Set up interval - check every 5 minutes instead of 1 minute
     interval = setInterval(() => {
       if (mounted) {
-        checkForReminders();
+        performReminderCheck();
       }
     }, 300000); // Check every 5 minutes
 
@@ -94,7 +109,7 @@ export const useReminderManager = () => {
         clearInterval(interval);
       }
     };
-  }, []); // Remove checkForReminders from dependency to prevent recreation
+  }, []); // Empty dependencies to run only once
 
   // Request notification permission on mount
   useEffect(() => {
@@ -108,7 +123,6 @@ export const useReminderManager = () => {
   return {
     pendingReminders,
     isChecking,
-    checkForReminders,
     snoozeReminder,
     dismissReminder
   };
