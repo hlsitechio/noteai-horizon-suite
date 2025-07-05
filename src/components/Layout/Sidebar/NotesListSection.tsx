@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Note } from '../../../types/note';
 import { useNotes } from '../../../contexts/NotesContext';
+import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 import DesktopPopOutButton from '../../FloatingNotes/DesktopPopOutButton';
 
 interface NotesListSectionProps {
@@ -41,6 +42,7 @@ export function NotesListSection({
   onCreateFolder 
 }: NotesListSectionProps) {
   const { setCurrentNote, deleteNote } = useNotes();
+  const { confirmDelete, ConfirmDialog } = useConfirmDialog();
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -67,7 +69,11 @@ export function NotesListSection({
   const handleDeleteNote = async (noteId: string, event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this note?')) {
+    
+    const note = notes.find(n => n.id === noteId);
+    const confirmed = await confirmDelete(note?.title || 'this note');
+    
+    if (confirmed) {
       await deleteNote(noteId);
     }
   };
@@ -197,6 +203,8 @@ export function NotesListSection({
           </motion.div>
         )}
       </AnimatePresence>
+      
+      <ConfirmDialog />
     </SidebarGroup>
   );
 }

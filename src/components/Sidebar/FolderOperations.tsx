@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Folder as FolderType } from '../../types/folder';
 import { Note } from '../../types/note';
@@ -11,6 +10,7 @@ interface FolderOperationsProps {
   createFolder: (folder: Omit<FolderType, 'id' | 'createdAt' | 'updatedAt'>) => Promise<FolderType>;
   deleteFolder: (id: string) => Promise<boolean>;
   updateNote: (id: string, updates: Partial<Omit<Note, 'id' | 'createdAt'>>) => Promise<Note | null>;
+  confirmDelete?: (name: string) => Promise<boolean>;
 }
 
 export const useFolderOperations = ({
@@ -20,6 +20,7 @@ export const useFolderOperations = ({
   createFolder,
   deleteFolder,
   updateNote,
+  confirmDelete,
 }: FolderOperationsProps) => {
   const [editingFolder, setEditingFolder] = useState<FolderType | null>(null);
   const [newFolderName, setNewFolderName] = useState('');
@@ -45,7 +46,16 @@ export const useFolderOperations = ({
   };
 
   const handleDeleteFolder = async (folderId: string) => {
-    if (window.confirm('Are you sure you want to delete this folder? Notes inside will be moved to unorganized.')) {
+    const folder = folders.find(f => f.id === folderId);
+    let confirmed = false;
+    
+    if (confirmDelete) {
+      confirmed = await confirmDelete(folder?.name || 'this folder');
+    } else {
+      confirmed = window.confirm('Are you sure you want to delete this folder? Notes inside will be moved to unorganized.');
+    }
+    
+    if (confirmed) {
       // Move notes from folder to unorganized
       const folderNotes = notes.filter(n => n.folder_id === folderId);
       for (const note of folderNotes) {

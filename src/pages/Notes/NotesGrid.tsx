@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNotes } from '../../contexts/NotesContext';
+import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Note } from '../../types/note';
 import { formatDistanceToNow } from 'date-fns';
@@ -16,6 +17,7 @@ interface NotesGridProps {
 
 const NotesGrid: React.FC<NotesGridProps> = ({ notes, hasFilters }) => {
   const { setCurrentNote, toggleFavorite, deleteNote } = useNotes();
+  const { confirmDelete, ConfirmDialog } = useConfirmDialog();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedNoteId = searchParams.get('note');
@@ -38,7 +40,9 @@ const NotesGrid: React.FC<NotesGridProps> = ({ notes, hasFilters }) => {
 
   const handleDeleteNote = async (noteId: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this note?')) {
+    const note = notes.find(n => n.id === noteId);
+    const confirmed = await confirmDelete(note?.title || 'this note');
+    if (confirmed) {
       await deleteNote(noteId);
     }
   };
@@ -154,6 +158,8 @@ const NotesGrid: React.FC<NotesGridProps> = ({ notes, hasFilters }) => {
           </CardContent>
         </Card>
       ))}
+      
+      <ConfirmDialog />
     </div>
   );
 };

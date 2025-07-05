@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../../contexts/NotesContext';
+import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 import { Note, CategoryOption } from '../../types/note';
 import NoteShareButton from '../../components/Sharing/NoteShareButton';
 
@@ -24,6 +25,7 @@ interface NoteCardProps {
 
 const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
   const { setCurrentNote, deleteNote } = useNotes();
+  const { confirmDelete, ConfirmDialog } = useConfirmDialog();
   const navigate = useNavigate();
 
   const handleEditNote = (note: Note) => {
@@ -33,7 +35,8 @@ const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
 
   const handleDeleteNote = async (noteId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this note?')) {
+    const confirmed = await confirmDelete(note.title);
+    if (confirmed) {
       await deleteNote(noteId);
     }
   };
@@ -99,6 +102,8 @@ const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
           </div>
         )}
       </CardContent>
+      
+      <ConfirmDialog />
     </Card>
   );
 };
