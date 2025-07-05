@@ -17,16 +17,6 @@ const BannerContent: React.FC<BannerContentProps> = ({
   showControls,
   onBannerClick
 }) => {
-  const overlayVariants = {
-    hover: {
-      background: 'linear-gradient(to right, rgba(var(--background) / 0.8), rgba(var(--background) / 0.5), rgba(var(--background) / 0.2))',
-      transition: { duration: 0.3 }
-    },
-    initial: {
-      background: 'linear-gradient(to right, rgba(var(--background) / 0.9), rgba(var(--background) / 0.6), rgba(var(--background) / 0.3))',
-      transition: { duration: 0.3 }
-    }
-  };
 
   return (
     <div className="absolute inset-0 w-full h-full">
@@ -37,13 +27,8 @@ const BannerContent: React.FC<BannerContentProps> = ({
         onBannerClick={onBannerClick}
       />
       
-      {/* Dynamic Overlay */}
-      <motion.div
-        className="absolute inset-0"
-        variants={overlayVariants}
-        initial="initial"
-        whileHover="hover"
-      />
+      {/* Subtle Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-transparent pointer-events-none" />
       
       {/* Banner Placeholder Content */}
       <AnimatePresence>
@@ -54,7 +39,7 @@ const BannerContent: React.FC<BannerContentProps> = ({
 
       {/* Fullscreen Hint */}
       <AnimatePresence>
-        {!isLoading && bannerData && (
+        {!isLoading && bannerData && showControls && (
           <FullscreenHint
             showControls={showControls}
             isVisible={true}

@@ -70,6 +70,7 @@ const AIBannerGenerator: React.FC<AIBannerGeneratorProps> = ({ onBannerGenerated
         <Button
           variant="outline"
           size="sm"
+          className="bg-background/80 hover:bg-background/90 backdrop-blur-sm border-border/50"
         >
           <Wand2 className="w-4 h-4 mr-2" />
           Generate AI Banner

@@ -32,22 +32,20 @@ const BannerControls: React.FC<BannerControlsProps> = ({
     <AnimatePresence>
       {showControls && (
         <motion.div
-          className="absolute top-4 right-4 z-50"
+          className="absolute top-2 right-2 z-50"
           variants={controlsVariants}
           initial="hidden"
           animate="visible"
           exit="hidden"
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.2 }}
         >
-          <div className="backdrop-blur-md bg-background/80 border border-border/50 rounded-lg shadow-lg">
-            <BannerControlsComponent
-              showControls={true}
-              currentBannerUrl={currentBannerUrl}
-              onBannerUpdate={onBannerUpdate}
-              onBannerDelete={onBannerDelete}
-              onAIBannerGenerated={onAIBannerGenerated}
-            />
-          </div>
+          <BannerControlsComponent
+            showControls={true}  
+            currentBannerUrl={currentBannerUrl}
+            onBannerUpdate={onBannerUpdate}
+            onBannerDelete={onBannerDelete}
+            onAIBannerGenerated={onAIBannerGenerated}
+          />
         </motion.div>
       )}
     </AnimatePresence>

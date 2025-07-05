@@ -165,9 +165,9 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
     <Dialog open={state.isOpen} onOpenChange={(open) => updateState({ isOpen: open })}>
       <DialogTrigger asChild>
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
-          className="text-white hover:bg-white/20 border border-white/30 bg-black/20 backdrop-blur-sm"
+          className="bg-background/80 hover:bg-background/90 backdrop-blur-sm border-border/50"
         >
           <Upload className="w-4 h-4 mr-2" />
           {currentBannerUrl ? 'Update Banner' : 'Upload Banner'}
