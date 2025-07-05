@@ -54,11 +54,15 @@ export const useSpeechToText = () => {
       console.error('Error starting recording:', error);
       
       if (error.name === 'NotAllowedError') {
-        toast.error('Microphone access denied. Please allow microphone access in your browser settings.');
+        toast.error('Microphone access denied. Please check your browser settings and allow microphone access for this site.');
       } else if (error.name === 'NotFoundError') {
-        toast.error('No microphone found. Please check your device.');
+        toast.error('No microphone found. Please check your device has a microphone.');
+      } else if (error.name === 'NotSupportedError') {
+        toast.error('Your browser does not support audio recording. Please use a modern browser like Chrome, Firefox, or Safari.');
+      } else if (error.name === 'AbortError') {
+        toast.error('Microphone access was interrupted. Please try again and ensure no other applications are using the microphone.');
       } else {
-        toast.error(`Failed to start recording: ${error.message}`);
+        toast.error(`Microphone error: ${error.message}. Try refreshing the page or check browser permissions.`);
       }
       
       return false;
