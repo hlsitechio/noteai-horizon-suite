@@ -1,14 +1,20 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 
 const HomeRedirect: React.FC = () => {
   const { user, isLoading } = useAuth();
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  // Show loading state while auth is being determined
-  if (isLoading) {
+  // Ensure hydration is complete before rendering navigation
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  // Always show loading during initial hydration or auth loading
+  if (!isHydrated || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
@@ -19,7 +25,7 @@ const HomeRedirect: React.FC = () => {
     );
   }
 
-  // Redirect based on authentication status
+  // Redirect based on authentication status after hydration
   if (user) {
     return <Navigate to="/app/dashboard" replace />;
   } else {
