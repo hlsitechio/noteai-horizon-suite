@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import Layout from './Layout/Layout';
 import HomeRedirect from './HomeRedirect';
@@ -72,7 +72,7 @@ export const LazyRoutes: React.FC = () => {
             <Layout />
           </ProtectedRoute>
         }>
-          <Route index element={<HomeRedirect />} />
+          <Route index element={<Navigate to="/app/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="editor" element={<Editor />} />
           <Route path="notes" element={<Notes />} />
