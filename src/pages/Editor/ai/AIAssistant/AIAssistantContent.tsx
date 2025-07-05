@@ -2,9 +2,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import AIQuickActions from '../components/AIQuickActions';
+import OptimizedAIQuickActions from '../components/OptimizedAIQuickActions';
 import AIInterface from './AIInterface';
-import AIResponse from '../components/AIResponse';
+import OptimizedAIResponse from '../components/OptimizedAIResponse';
 import AIModelSelector from '../components/AIModelSelector';
 import { AIAssistantMode, AIAction, AIResponse as AIResponseType } from '../types/ai';
 
@@ -69,7 +69,7 @@ const AIAssistantContent: React.FC<AIAssistantContentProps> = ({
       )}
 
       {/* Quick Actions */}
-      <AIQuickActions
+      <OptimizedAIQuickActions
         selectedText={selectedText}
         onAction={onQuickAction}
         isLoading={isLoading}
@@ -86,7 +86,7 @@ const AIAssistantContent: React.FC<AIAssistantContentProps> = ({
 
       {/* AI Response */}
       {currentResponse && (
-        <AIResponse
+        <OptimizedAIResponse
           response={currentResponse}
           onInsert={() => onTextInsert(currentResponse.result)}
           onReplace={() => onTextReplace(currentResponse.result)}
