@@ -74,7 +74,7 @@ export const LazyRoutes: React.FC = () => {
         }>
           <Route index element={<Navigate to="/app/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="editor" element={<Editor />} />
+          <Route path="editor/:noteId?" element={<Editor />} />
           <Route path="notes" element={<Notes />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="settings" element={<Settings />} />
