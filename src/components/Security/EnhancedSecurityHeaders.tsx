@@ -1,8 +1,9 @@
+
 import { useEffect } from 'react';
 
 const EnhancedSecurityHeaders = () => {
   useEffect(() => {
-    // Enhanced Content Security Policy
+    // Enhanced Content Security Policy - removed problematic directives
     const csp = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://browser.sentry-cdn.com",
@@ -20,16 +21,18 @@ const EnhancedSecurityHeaders = () => {
       "block-all-mixed-content",
     ].join('; ');
 
-    // Development-friendly security headers (stricter in production)
+    // Development-friendly security headers with relaxed Cross-Origin-Opener-Policy
     const securityHeaders = [
       { name: 'X-Content-Type-Options', content: 'nosniff' },
       { name: 'X-XSS-Protection', content: '1; mode=block' },
       { name: 'Referrer-Policy', content: 'strict-origin-when-cross-origin' },
-      // Only apply strict headers in production
+      // Only apply strict headers in production, with relaxed COOP policy
       ...(import.meta.env.PROD ? [
         { name: 'Content-Security-Policy', content: csp },
         { name: 'Permissions-Policy', content: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()' },
-        { name: 'X-Frame-Options', content: 'SAMEORIGIN' }, // Less restrictive than DENY
+        { name: 'X-Frame-Options', content: 'SAMEORIGIN' },
+        { name: 'Cross-Origin-Opener-Policy', content: 'same-origin-allow-popups' }, // More permissive
+        { name: 'Cross-Origin-Embedder-Policy', content: 'require-corp' },
       ] : [])
     ];
 
@@ -47,17 +50,17 @@ const EnhancedSecurityHeaders = () => {
     // Set security-related HTML attributes
     document.documentElement.setAttribute('data-security-enhanced', 'true');
     
-    // Disable right-click context menu in production
+    // Disable right-click context menu in production only
     const handleContextMenu = (e: Event) => {
-      if (!import.meta.env.DEV) {
+      if (import.meta.env.PROD) {
         e.preventDefault();
         return false;
       }
     };
 
-    // Disable common developer shortcuts in production
+    // Disable common developer shortcuts in production only
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!import.meta.env.DEV) {
+      if (import.meta.env.PROD) {
         // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
         if (
           e.key === 'F12' ||

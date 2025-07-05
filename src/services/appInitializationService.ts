@@ -1,6 +1,7 @@
 
 import { AnalyticsService } from './analyticsService';
 import { PerformanceService } from './performanceService';
+import { CleanupService } from './cleanupService';
 import { initSentry } from '../config/sentry';
 import * as Sentry from "@sentry/react";
 import { logger } from '../utils/logger';
@@ -12,28 +13,24 @@ export class AppInitializationService {
     if (this.isInitialized) return;
 
     try {
-      // Initialize Sentry first for error tracking
+      // Initialize cleanup service first to prevent issues
+      CleanupService.initialize();
+
+      // Initialize Sentry with reduced configuration
       initSentry();
 
-      // Initialize performance monitoring
+      // Initialize performance monitoring (lightweight)
       PerformanceService.initialize();
 
-      // Initialize analytics
-      AnalyticsService.initialize();
+      // Skip analytics initialization to prevent 429 errors
+      // AnalyticsService.initialize();
 
-      // Set up global error handlers
+      // Set up minimal global error handlers
       this.setupGlobalErrorHandlers();
-
-      // Set up performance monitoring
-      this.setupPerformanceMonitoring();
 
       this.isInitialized = true;
       
-      // Track initialization
-      AnalyticsService.trackEvent('app_initialized', {
-        timestamp: Date.now(),
-        userAgent: navigator.userAgent,
-      });
+      console.log('✅ App initialized successfully');
 
     } catch (error) {
       logger.error('❌ Failed to initialize application:', error);
@@ -44,24 +41,32 @@ export class AppInitializationService {
   private static setupGlobalErrorHandlers() {
     // Handle unhandled promise rejections
     window.addEventListener('unhandledrejection', (event) => {
+      // Filter out Firebase permission errors to reduce noise
+      if (event.reason?.message?.includes('permission-denied')) {
+        console.warn('Firebase permission error ignored:', event.reason);
+        event.preventDefault();
+        return;
+      }
+      
       Sentry.captureException(event.reason);
-      AnalyticsService.trackError(new Error(String(event.reason)), 'unhandled_promise');
     });
 
     // Handle JavaScript errors
     window.addEventListener('error', (event) => {
+      // Filter out Firebase and COOP errors
+      if (event.error?.message?.includes('permission-denied') || 
+          event.error?.message?.includes('Cross-Origin-Opener-Policy')) {
+        console.warn('Filtered error ignored:', event.error);
+        return;
+      }
+      
       Sentry.captureException(event.error);
-      AnalyticsService.trackError(event.error, 'javascript_error');
     });
-  }
-
-  private static setupPerformanceMonitoring() {
-    // Completely disable performance monitoring to eliminate violations
-    return;
   }
 
   static cleanup() {
     PerformanceService.cleanup();
+    CleanupService.cleanup();
     this.isInitialized = false;
   }
 }

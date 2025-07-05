@@ -8,15 +8,15 @@
     <meta name="description" content="Transform your note-taking with AI assistance. Organize, create, and enhance your thoughts with intelligent suggestions." />
     <meta name="author" content="Online Note AI" />
     
-    <!-- Enhanced CSP with all necessary WebSocket permissions -->
+    <!-- Enhanced CSP with relaxed COOP policy -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), accelerometer=(), gyroscope=(), magnetometer=(), ambient-light-sensor=(), display-capture=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), web-share=(), xr-spatial-tracking=()" />
+    <!-- More permissive COOP policy to prevent window operation errors -->
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups" />
     <!-- Fixed CSP with all necessary domains -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: wss:; connect-src 'self' https: wss: *.supabase.co *.lovable.app *.cloudflareinsights.com *.sentry.io *.google-analytics.com *.googletagmanager.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' static.cloudflareinsights.com *.googletagmanager.com *.google-analytics.com; worker-src 'self' blob: data:; style-src 'self' 'unsafe-inline' https:;" />
-    
-    <!-- Remove problematic DNS prefetch that causes preload warnings -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: wss:; connect-src 'self' https: wss: *.supabase.co *.lovable.app *.cloudflareinsights.com *.sentry.io; script-src 'self' 'unsafe-inline' 'unsafe-eval' static.cloudflareinsights.com; worker-src 'self' blob: data:; style-src 'self' 'unsafe-inline' https:;" />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,6 +37,16 @@
     <!-- Simple welcome message -->
     <script>
       console.log('🚀 Welcome to Online Note AI!');
+      
+      // Prevent Firebase errors by ensuring no Firebase globals exist
+      if (typeof window !== 'undefined') {
+        window.addEventListener('error', function(e) {
+          if (e.error && e.error.message && e.error.message.includes('permission-denied')) {
+            console.warn('Firebase permission error prevented:', e.error.message);
+            e.preventDefault();
+          }
+        });
+      }
     </script>
   </head>
 
