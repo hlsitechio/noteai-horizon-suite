@@ -69,26 +69,26 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="w-full min-h-screen bg-background">
-      {/* Sidebar Toggle - Always visible */}
-      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border/40">
+      {/* Clean Header */}
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="flex items-center justify-between p-4">
           <SidebarTrigger className="h-8 w-8 p-0" />
-          <div className="text-sm text-muted-foreground">Dashboard</div>
+          <div className="text-sm text-muted-foreground font-medium">Dashboard</div>
         </div>
       </div>
       
       {/* Fullscreen Toggle Button */}
       <FullscreenToggle />
       
-      {/* Main Dashboard Container - Fully Responsive */}
-      <div className="container mx-auto p-2 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
+      {/* Clean Dashboard Container */}
+      <div className="container mx-auto p-4 lg:p-6 space-y-6 max-w-7xl">
         
-        {/* Welcome Header - Responsive height */}
+        {/* Welcome Section */}
         <div className="w-full">
           <WelcomeHeader />
         </div>
 
-        {/* KPI Stats - Responsive */}
+        {/* KPI Overview */}
         <div className="w-full">
           <KPIStats 
             totalNotes={totalNotes}
@@ -99,10 +99,10 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Responsive Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
-          {/* Analytics Overview - Responsive columns */}
-          <div className="lg:col-span-4 space-y-4">
+        {/* Main Content Grid - Clean Organization */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Analytics Column */}
+          <div className="space-y-6">
             <AnalyticsOverview
               totalNotes={totalNotes}
               favoriteNotes={favoriteNotes}
@@ -112,34 +112,26 @@ const Dashboard: React.FC = () => {
             />
           </div>
 
-          {/* AI Features Column - Responsive columns */}
-          <div className="lg:col-span-4 space-y-4">
-            <div>
-              <AIUsageAnalytics />
-            </div>
-            <div>
-              <SmartNoteRecommendations 
-                notes={notes}
-                onEditNote={handleEditNote}
-              />
-            </div>
+          {/* AI & Smart Features Column */}
+          <div className="space-y-6">
+            <AIUsageAnalytics />
+            <SmartNoteRecommendations 
+              notes={notes}
+              onEditNote={handleEditNote}
+            />
           </div>
 
-          {/* Activity & Reminders Column - Responsive columns */}
-          <div className="lg:col-span-4 space-y-4">
-            <div>
-              <SecureRecentActivity 
-                recentNotes={recentNotes}
-                onCreateNote={handleCreateNote}
-                onEditNote={handleEditNote}
-              />
-            </div>
-            <div>
-              <ReminderManagement 
-                notes={notes}
-                onEditNote={handleEditNote}
-              />
-            </div>
+          {/* Activity & Management Column */}
+          <div className="space-y-6">
+            <SecureRecentActivity 
+              recentNotes={recentNotes}
+              onCreateNote={handleCreateNote}
+              onEditNote={handleEditNote}
+            />
+            <ReminderManagement 
+              notes={notes}
+              onEditNote={handleEditNote}
+            />
           </div>
         </div>
       </div>

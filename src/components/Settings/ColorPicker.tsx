@@ -4,16 +4,16 @@ import { Check } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const accentColors = [
-  { name: 'Electric Cyan', value: '#00CFDE', hsl: '187 100% 42%' },
-  { name: 'Ocean Blue', value: '#0ea5e9', hsl: '199 89% 48%' },
-  { name: 'Emerald Green', value: '#10b981', hsl: '160 84% 39%' },
-  { name: 'Purple', value: '#8b5cf6', hsl: '258 90% 66%' },
-  { name: 'Pink', value: '#ec4899', hsl: '329 86% 65%' },
-  { name: 'Orange', value: '#f97316', hsl: '25 95% 53%' },
-  { name: 'Red', value: '#ef4444', hsl: '0 84% 60%' },
-  { name: 'Yellow', value: '#eab308', hsl: '45 93% 47%' },
-  { name: 'Indigo', value: '#6366f1', hsl: '239 84% 67%' },
-  { name: 'Teal', value: '#14b8a6', hsl: '173 80% 40%' },
+  { name: 'Professional Blue', value: '#3b82f6', hsl: '217 91% 60%' },
+  { name: 'Navy Blue', value: '#1e40af', hsl: '225 83% 41%' },
+  { name: 'Slate Blue', value: '#475569', hsl: '215 25% 27%' },
+  { name: 'Forest Green', value: '#059669', hsl: '160 84% 39%' },
+  { name: 'Emerald', value: '#10b981', hsl: '160 84% 39%' },
+  { name: 'Warm Gray', value: '#6b7280', hsl: '220 9% 46%' },
+  { name: 'Cool Gray', value: '#64748b', hsl: '215 25% 27%' },
+  { name: 'Deep Purple', value: '#7c3aed', hsl: '258 90% 66%' },
+  { name: 'Dark Teal', value: '#0f766e', hsl: '173 80% 40%' },
+  { name: 'Charcoal', value: '#374151', hsl: '220 26% 14%' },
 ];
 
 interface ColorPickerProps {

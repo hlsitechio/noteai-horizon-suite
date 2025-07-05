@@ -105,36 +105,36 @@
   }
 
   .dark {
-    /* Pure Black with Silver Touch Background */
-    --background: 0 0% 0%; /* Pure Black */
-    --foreground: 0 0% 88%; /* #E1E1E1 - Primary Text & Icons */
-    --card: 0 0% 5%; /* #0D0D0D - Very dark cards with silver touch */
-    --card-foreground: 0 0% 88%; /* #E1E1E1 - Primary Text & Icons */
-    --popover: 0 0% 5%; /* #0D0D0D - Very dark popover with silver touch */
-    --popover-foreground: 0 0% 88%; /* #E1E1E1 - Primary Text & Icons */
-    --primary: 187 100% 42%; /* #00CFDE - Accent Color */
-    --primary-foreground: 0 0% 0%; /* Pure black on accent */
-    --secondary: 0 0% 8%; /* Dark grey with silver touch */
-    --secondary-foreground: 0 0% 88%; /* #E1E1E1 - Primary Text & Icons */
-    --muted: 0 0% 10%; /* Muted backgrounds with silver touch */
-    --muted-foreground: 0 0% 60%; /* Muted text */
-    --accent: 187 100% 42%; /* #00CFDE - Accent Color */
-    --accent-foreground: 0 0% 0%; /* Pure black on accent */
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 88%;
-    --border: 0 0% 12%; /* Subtle silver borders */
-    --input: 0 0% 8%; /* Input backgrounds with silver touch */
-    --ring: 187 100% 42%; /* #00CFDE - Focus rings */
+    /* Professional Minimalist Dark Theme */
+    --background: 220 13% 9%; /* Deep professional navy */
+    --foreground: 220 9% 94%; /* Clean white text */
+    --card: 220 13% 11%; /* Slightly lighter cards */
+    --card-foreground: 220 9% 94%; /* Clean white text */
+    --popover: 220 13% 11%; /* Consistent with cards */
+    --popover-foreground: 220 9% 94%; /* Clean white text */
+    --primary: 217 91% 60%; /* Professional blue accent */
+    --primary-foreground: 220 13% 9%; /* Dark text on accent */
+    --secondary: 220 13% 15%; /* Subtle secondary backgrounds */
+    --secondary-foreground: 220 9% 94%; /* Clean white text */
+    --muted: 220 13% 15%; /* Muted backgrounds */
+    --muted-foreground: 220 9% 60%; /* Muted text - readable but subtle */
+    --accent: 217 91% 60%; /* Professional blue accent */
+    --accent-foreground: 220 13% 9%; /* Dark text on accent */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 220 9% 94%;
+    --border: 220 13% 18%; /* Subtle borders */
+    --input: 220 13% 15%; /* Input backgrounds */
+    --ring: 217 91% 60%; /* Focus rings */
     
-    /* Sidebar specific colors for pure black theme */
-    --sidebar-background: 0 0% 0%; /* Pure Black */
-    --sidebar-foreground: 0 0% 88%; /* #E1E1E1 - Primary Text & Icons */
-    --sidebar-primary: 187 100% 42%; /* #00CFDE - Accent Color */
-    --sidebar-primary-foreground: 0 0% 0%; /* Pure black on accent */
-    --sidebar-accent: 0 0% 5%; /* Hover states with silver touch */
-    --sidebar-accent-foreground: 0 0% 88%; /* #E1E1E1 - Primary Text & Icons */
-    --sidebar-border: 0 0% 12%; /* Subtle silver borders */
-    --sidebar-ring: 187 100% 42%; /* #00CFDE - Focus rings */
+    /* Sidebar specific colors for professional theme */
+    --sidebar-background: 220 13% 9%; /* Match background */
+    --sidebar-foreground: 220 9% 94%; /* Clean white text */
+    --sidebar-primary: 217 91% 60%; /* Professional blue accent */
+    --sidebar-primary-foreground: 220 13% 9%; /* Dark text on accent */
+    --sidebar-accent: 220 13% 15%; /* Subtle hover states */
+    --sidebar-accent-foreground: 220 9% 94%; /* Clean white text */
+    --sidebar-border: 220 13% 18%; /* Subtle borders */
+    --sidebar-ring: 217 91% 60%; /* Focus rings */
     
     /* Enhanced dark mode semantic colors */
     --success: 142.1 76.2% 36.3%;
@@ -186,86 +186,47 @@
   }
 }
 
-/* Professional utility classes for pure black theme */
+/* Professional utility classes for minimalist design */
 @layer utilities {
-  /* Simple gradients without glow effects */
+  /* Clean gradients */
   .bg-gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--card)) 50%, hsl(var(--accent)) 100%);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
   }
   
   .bg-gradient-secondary {
-    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--background)) 50%, hsl(var(--card)) 100%);
-  }
-  
-  .bg-gradient-success {
-    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--success)) 50%, hsl(var(--accent)) 100%);
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
   }
 
-  .bg-gradient-premium {
-    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--card)) 25%, hsl(var(--accent)) 50%, hsl(var(--background)) 75%, hsl(var(--accent)) 100%);
-  }
-
-  /* Simple glassmorphism without glow */
-  .glass {
-    @apply backdrop-blur-xl bg-card/20 border border-border/10;
-  }
-
-  /* Simple shadow utilities without glow effects */
+  /* Subtle shadows */
   .shadow-soft {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.15);
   }
   
   .shadow-medium {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.2);
   }
   
   .shadow-large {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.25);
   }
 
-  .shadow-premium {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Simple text gradients with accent color */
-  .text-gradient-primary {
-    @apply bg-gradient-to-r from-accent via-foreground to-accent bg-clip-text text-transparent;
-  }
-  
-  .text-gradient-secondary {
-    @apply bg-gradient-to-r from-foreground via-muted-foreground to-foreground bg-clip-text text-transparent;
-  }
-
-  .text-gradient-premium {
-    @apply bg-gradient-to-r from-accent via-foreground to-foreground bg-clip-text text-transparent;
-  }
-
-  /* Simple transitions without glow effects */
-  .transition-all-smooth {
-    @apply transition-all duration-300 ease-out;
+  /* Clean transitions */
+  .transition-smooth {
+    @apply transition-all duration-200 ease-out;
   }
   
   .hover-lift {
-    @apply transform transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.02];
+    @apply transition-smooth hover:-translate-y-1;
   }
 
-  /* Simple button styles with colored borders */
-  .btn-primary {
-    @apply bg-transparent text-accent font-semibold px-8 py-4 rounded-xl border-2 border-accent hover:bg-accent/10 transform transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2;
-  }
-  
-  .btn-secondary {
-    @apply bg-transparent text-card-foreground font-semibold px-8 py-4 rounded-xl border-2 border-border hover:bg-border/10 transform transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2;
+  /* Professional cards */
+  .card-professional {
+    @apply bg-card rounded-lg border border-border/50 shadow-soft hover:shadow-medium transition-smooth;
   }
 
-  /* Simple card styles without glow */
-  .card-enhanced {
-    @apply bg-card rounded-2xl transition-all duration-300 p-8 hover:-translate-y-0.5 hover:scale-[1.02] border border-border/20;
-  }
-
-  /* Simple input styles */
-  .input-enhanced {
-    @apply w-full px-6 py-4 bg-input rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all duration-200 border border-border/20;
+  /* Clean inputs */
+  .input-professional {
+    @apply w-full px-4 py-3 bg-input rounded-md text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent border border-border transition-smooth;
   }
 }
 

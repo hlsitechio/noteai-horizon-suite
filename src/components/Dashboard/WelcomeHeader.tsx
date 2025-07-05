@@ -24,10 +24,10 @@ const WelcomeHeader: React.FC = () => {
   } = useWelcomeHeader();
 
   return (
-    <div className="space-y-2">
-      {/* Responsive Banner Section */}
+    <div className="space-y-4">
+      {/* Professional Banner Section */}
       <div 
-        className="relative h-32 sm:h-40 md:h-48 lg:h-56 xl:h-64 overflow-hidden rounded-lg border border-blue-100 dark:border-slate-600 group"
+        className="relative h-40 md:h-48 lg:h-56 overflow-hidden rounded-lg border border-border bg-card group shadow-soft"
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => setShowControls(false)}
       >
@@ -38,8 +38,8 @@ const WelcomeHeader: React.FC = () => {
           onBannerClick={handleBannerClick}
         />
         
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors duration-300"></div>
+        {/* Clean Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-background/30 group-hover:from-background/80 group-hover:via-background/50 group-hover:to-background/20 transition-all duration-300"></div>
         
         {/* Welcome Content Overlay */}
         <WelcomeContent currentTime={currentTime} />
@@ -47,7 +47,7 @@ const WelcomeHeader: React.FC = () => {
         {/* Banner Placeholder Content */}
         <BannerPlaceholder isVisible={!isLoading && !bannerData} />
 
-        {/* Unified Banner Controls */}
+        {/* Clean Banner Controls */}
         <BannerControls
           showControls={showControls}
           currentBannerUrl={bannerData?.url}
@@ -56,7 +56,7 @@ const WelcomeHeader: React.FC = () => {
           onAIBannerGenerated={handleAIBannerGenerated}
         />
 
-        {/* Click to fullscreen hint */}
+        {/* Fullscreen Hint */}
         <FullscreenHint
           showControls={showControls}
           isVisible={!isLoading && !!bannerData}
