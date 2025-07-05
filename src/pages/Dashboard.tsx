@@ -66,20 +66,20 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-screen max-h-screen flex flex-col bg-background overflow-hidden">
+    <div className="w-full min-h-screen bg-background">
       {/* Fullscreen Toggle Button */}
       <FullscreenToggle />
       
-      {/* Main Dashboard Container - Exact 1920x1080 fit */}
-      <div className="flex-1 flex flex-col p-4 gap-4 w-full max-w-[1920px] max-h-[1080px] mx-auto">
+      {/* Main Dashboard Container - Fully Responsive */}
+      <div className="container mx-auto p-2 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
         
-        {/* Welcome Header - Fixed height for 1080p */}
-        <div className="flex-shrink-0 w-full h-[180px]">
+        {/* Welcome Header - Responsive height */}
+        <div className="w-full">
           <WelcomeHeader />
         </div>
 
-        {/* KPI Stats - Optimized height for 1080p */}
-        <div className="flex-shrink-0 w-full h-[90px]">
+        {/* KPI Stats - Responsive */}
+        <div className="w-full">
           <KPIStats 
             totalNotes={totalNotes}
             favoriteNotes={favoriteNotes}
@@ -89,10 +89,10 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Area - Calculated height to fill remaining space */}
-        <div className="grid grid-cols-12 gap-4 flex-1 min-h-0 w-full h-[770px]">
-          {/* Analytics Overview - 4/12 columns */}
-          <div className="col-span-4 h-full min-h-0">
+        {/* Main Content Area - Responsive Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+          {/* Analytics Overview - Responsive columns */}
+          <div className="lg:col-span-4 space-y-4">
             <AnalyticsOverview
               totalNotes={totalNotes}
               favoriteNotes={favoriteNotes}
@@ -102,30 +102,29 @@ const Dashboard: React.FC = () => {
             />
           </div>
 
-          {/* AI Features Column - 4/12 columns */}
-          <div className="col-span-4 h-full min-h-0 space-y-4">
-            <div className="h-1/2">
-              <AIUsageAnalytics className="h-full" />
+          {/* AI Features Column - Responsive columns */}
+          <div className="lg:col-span-4 space-y-4">
+            <div>
+              <AIUsageAnalytics />
             </div>
-            <div className="h-1/2">
+            <div>
               <SmartNoteRecommendations 
                 notes={notes}
                 onEditNote={handleEditNote}
-                className="h-full"
               />
             </div>
           </div>
 
-          {/* Activity & Reminders Column - 4/12 columns */}
-          <div className="col-span-4 h-full min-h-0 space-y-4">
-            <div className="h-2/3">
+          {/* Activity & Reminders Column - Responsive columns */}
+          <div className="lg:col-span-4 space-y-4">
+            <div>
               <SecureRecentActivity 
                 recentNotes={recentNotes}
                 onCreateNote={handleCreateNote}
                 onEditNote={handleEditNote}
               />
             </div>
-            <div className="h-1/3">
+            <div>
               <ReminderManagement 
                 notes={notes}
                 onEditNote={handleEditNote}
