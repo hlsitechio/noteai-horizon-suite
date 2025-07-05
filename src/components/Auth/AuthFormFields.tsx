@@ -35,10 +35,12 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
     <div className="space-y-4">
       {isSignUp && (
         <div>
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+          <label htmlFor="fullName" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
             Full Name
           </label>
           <Input
+            id="fullName"
+            name="fullName"
             type="text"
             value={name}
             onChange={(e) => onNameChange(e.target.value)}
@@ -47,15 +49,18 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
             required
             minLength={2}
             maxLength={50}
+            autoComplete="name"
           />
         </div>
       )}
 
       <div>
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+        <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
           Email Address
         </label>
         <Input
+          id="email"
+          name="email"
           type="email"
           value={email}
           onChange={(e) => onEmailChange(e.target.value)}
@@ -67,11 +72,13 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
       </div>
 
       <div>
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+        <label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
           Password
         </label>
         <div className="relative">
           <Input
+            id="password"
+            name="password"
             type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(e) => onPasswordChange(e.target.value)}
@@ -88,6 +95,7 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
             className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             onClick={onTogglePassword}
             tabIndex={-1}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </Button>
@@ -101,10 +109,12 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
 
       {isSignUp && (
         <div>
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+          <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
             Confirm Password
           </label>
           <Input
+            id="confirmPassword"
+            name="confirmPassword"
             type="password"
             value={confirmPassword}
             onChange={(e) => onConfirmPasswordChange(e.target.value)}

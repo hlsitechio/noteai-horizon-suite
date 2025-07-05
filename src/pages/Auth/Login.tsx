@@ -97,10 +97,12 @@ const Login: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm text-muted-foreground mb-2 block">
+                  <label htmlFor="email" className="text-sm text-muted-foreground mb-2 block">
                     Email
                   </label>
                   <Input
+                    id="email"
+                    name="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -108,15 +110,18 @@ const Login: React.FC = () => {
                     className="rounded-xl bg-input border-border focus:bg-background focus:border-ring focus:ring-2 focus:ring-ring"
                     required
                     disabled={isSubmitting}
+                    autoComplete="email"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-muted-foreground mb-2 block">
+                  <label htmlFor="password" className="text-sm text-muted-foreground mb-2 block">
                     Password
                   </label>
                   <div className="relative">
                     <Input
+                      id="password"
+                      name="password"
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -124,6 +129,7 @@ const Login: React.FC = () => {
                       className="rounded-xl bg-input border-border focus:bg-background focus:border-ring focus:ring-2 focus:ring-ring pr-10 text-foreground"
                       required
                       disabled={isSubmitting}
+                      autoComplete="current-password"
                     />
                     <Button
                       type="button"
@@ -132,6 +138,7 @@ const Login: React.FC = () => {
                       className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                       onClick={() => setShowPassword(!showPassword)}
                       disabled={isSubmitting}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </Button>
