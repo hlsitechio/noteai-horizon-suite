@@ -20,74 +20,47 @@ import { CollapsedSummary } from './CollapsedSummary';
 import { SidebarFooter as CustomSidebarFooter } from './SidebarFooter';
 import { NotesSection } from './NotesSection';
 
-const sidebarVariants = {
-  expanded: {
-    width: "var(--sidebar-width)",
-    transition: {
-      type: "spring" as const,
-      stiffness: 400,
-      damping: 30,
-      duration: 0.3
-    }
-  },
-  collapsed: {
-    width: "7rem",
-    transition: {
-      type: "spring" as const,
-      stiffness: 400,
-      damping: 30,
-      duration: 0.3
-    }
-  }
-};
-
 export function SidebarMain() {
-  const { state } = useSidebar();
+  const { state, isMobile } = useSidebar();
   const isCollapsed = state === 'collapsed';
 
   return (
     <TooltipProvider>
-      <motion.div
-        variants={sidebarVariants}
-        animate={isCollapsed ? 'collapsed' : 'expanded'}
-        className="bg-sidebar border-r border-sidebar-border h-screen overflow-hidden shadow-lg z-40"
-      >
-        <Sidebar collapsible="icon" className="bg-transparent border-0 h-full flex flex-col">
-          {/* Header */}
-          <SidebarHeader className="p-3 pb-2 flex-shrink-0">
-            <CustomSidebarHeader />
-          </SidebarHeader>
+      <Sidebar collapsible="offcanvas" className="h-full flex flex-col">
+        {/* Header */}
+        <SidebarHeader className="p-3 pb-2 flex-shrink-0">
+          <CustomSidebarHeader />
+        </SidebarHeader>
 
-          <SidebarContent className="px-0 flex-1 min-h-0 overflow-y-auto">
-            {/* Navigation Menu */}
-            <SidebarGroup className="py-2">
-              <SidebarGroupContent>
-                <NavigationMenu isCollapsed={isCollapsed} />
-              </SidebarGroupContent>
-            </SidebarGroup>
+        <SidebarContent className="px-0 flex-1 min-h-0 overflow-y-auto">
+          {/* Navigation Menu */}
+          <SidebarGroup className="py-2">
+            <SidebarGroupContent>
+              <NavigationMenu isCollapsed={!isMobile && isCollapsed} />
+            </SidebarGroupContent>
+          </SidebarGroup>
 
-            {/* First Separator */}
-            <SidebarSeparator className="mx-4 my-2" />
+          {/* First Separator */}
+          <SidebarSeparator className="mx-4 my-2" />
 
-            {/* Collapsed Summary */}
-            {isCollapsed && <CollapsedSummary />}
+          {/* Collapsed Summary - only show when collapsed on desktop */}
+          {!isMobile && isCollapsed && <CollapsedSummary />}
 
-            {/* Second Separator - only show when collapsed */}
-            {isCollapsed && <SidebarSeparator className="mx-4 my-2" />}
+          {/* Second Separator - only show when collapsed on desktop */}
+          {!isMobile && isCollapsed && <SidebarSeparator className="mx-4 my-2" />}
 
-            {/* Notes Section - This is the main content area */}
-            <NotesSection />
-          </SidebarContent>
+          {/* Notes Section - This is the main content area */}
+          <NotesSection />
+        </SidebarContent>
 
-          {/* Footer Separator */}
-          <SidebarSeparator className="mx-4 my-1" />
+        {/* Footer Separator */}
+        <SidebarSeparator className="mx-4 my-1" />
 
-          {/* Footer with Notifications */}
-          <SidebarFooter className="p-2 pt-1 z-30 flex-shrink-0">
-            <CustomSidebarFooter />
-          </SidebarFooter>
-        </Sidebar>
-      </motion.div>
+        {/* Footer with Notifications */}
+        <SidebarFooter className="p-2 pt-1 z-30 flex-shrink-0">
+          <CustomSidebarFooter />
+        </SidebarFooter>
+      </Sidebar>
     </TooltipProvider>
   );
 }
