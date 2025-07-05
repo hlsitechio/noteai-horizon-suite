@@ -77,7 +77,8 @@ const KPIStats: React.FC<KPIStatsProps> = ({
       value: totalNotes.toLocaleString(),
       change: weeklyNotes > 0 ? `+${weeklyNotes} this week` : 'No new notes this week',
       changeType: weeklyNotes > 0 ? 'positive' : 'neutral',
-      color: 'blue'
+      color: 'from-blue-500/10 to-blue-600/10',
+      iconColor: 'text-blue-600 dark:text-blue-400'
     },
     {
       icon: 'bx bx-trending-up',
@@ -85,7 +86,8 @@ const KPIStats: React.FC<KPIStatsProps> = ({
       value: totalWords.toLocaleString(),
       change: averageWordsPerNote > 0 ? `${averageWordsPerNote} avg per note` : 'Start writing',
       changeType: averageWordsPerNote > 100 ? 'positive' : 'neutral',
-      color: 'green'
+      color: 'from-green-500/10 to-green-600/10',
+      iconColor: 'text-green-600 dark:text-green-400'
     },
     {
       icon: 'bx bx-star',
@@ -93,7 +95,8 @@ const KPIStats: React.FC<KPIStatsProps> = ({
       value: favoriteNotes.toString(),
       change: totalNotes > 0 ? `${Math.round((favoriteNotes / totalNotes) * 100)}% of all notes` : '0% of notes',
       changeType: favoriteNotes > 0 ? 'positive' : 'neutral',
-      color: 'yellow'
+      color: 'from-yellow-500/10 to-orange-500/10',
+      iconColor: 'text-yellow-600 dark:text-yellow-400'
     },
     {
       icon: 'bx bx-target-lock',
@@ -101,7 +104,8 @@ const KPIStats: React.FC<KPIStatsProps> = ({
       value: `${writingStreak} days`,
       change: writingStreak >= 7 ? 'Great consistency!' : writingStreak > 0 ? 'Keep it up!' : 'Start your streak',
       changeType: writingStreak >= 3 ? 'positive' : 'neutral',
-      color: 'purple'
+      color: 'from-purple-500/10 to-purple-600/10',
+      iconColor: 'text-purple-600 dark:text-purple-400'
     },
     {
       icon: 'bx bx-calendar',
@@ -109,7 +113,8 @@ const KPIStats: React.FC<KPIStatsProps> = ({
       value: weeklyNotes.toString(),
       change: weeklyNotes >= 5 ? 'Very productive!' : weeklyNotes >= 2 ? 'Good progress' : 'Room to grow',
       changeType: weeklyNotes >= 3 ? 'positive' : 'neutral',
-      color: 'indigo'
+      color: 'from-indigo-500/10 to-indigo-600/10',
+      iconColor: 'text-indigo-600 dark:text-indigo-400'
     },
     {
       icon: 'bx bx-time',
@@ -117,7 +122,8 @@ const KPIStats: React.FC<KPIStatsProps> = ({
       value: Object.keys(categoryCounts).length.toString(),
       change: Object.keys(categoryCounts).length > 3 ? 'Well organized' : 'Add more variety',
       changeType: Object.keys(categoryCounts).length > 2 ? 'positive' : 'neutral',
-      color: 'pink'
+      color: 'from-pink-500/10 to-rose-500/10',
+      iconColor: 'text-pink-600 dark:text-pink-400'
     }
   ];
 
@@ -132,17 +138,19 @@ const KPIStats: React.FC<KPIStatsProps> = ({
             transition={{ delay: index * 0.1 }}
             className="w-full"
           >
-            <Card className="border border-border/10 shadow-sm bg-card/50 backdrop-blur-xl hover:shadow-md transition-all duration-200 h-full">
-              <CardContent className="p-3">
-                <div className="flex items-start justify-between mb-2">
-                  <div className={`p-1.5 bg-${stat.color}-100 dark:bg-${stat.color}-900/20 rounded-lg`}>
-                    <i className={`${stat.icon} text-sm text-${stat.color}-600 dark:text-${stat.color}-400`}></i>
+            <Card className="border border-border/10 shadow-premium bg-card/80 backdrop-blur-xl hover:shadow-large transition-all duration-300 h-full group hover:border-accent/20">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className={`p-2 bg-gradient-to-br ${stat.color} rounded-lg border border-white/10`}>
+                    <i className={`${stat.icon} text-base ${stat.iconColor}`}></i>
                   </div>
                 </div>
                 
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground font-medium">{stat.label}</p>
-                  <p className="text-lg font-bold text-foreground leading-none">{stat.value}</p>
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">{stat.label}</p>
+                  <p className="text-xl font-bold text-foreground leading-none group-hover:text-accent transition-colors">
+                    {stat.value}
+                  </p>
                   <p className={`text-xs leading-tight ${
                     stat.changeType === 'positive' 
                       ? 'text-green-600 dark:text-green-400' 
