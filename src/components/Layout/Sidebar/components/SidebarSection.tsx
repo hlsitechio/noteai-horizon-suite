@@ -35,7 +35,7 @@ export function SidebarSection({
   };
 
   return (
-    <SidebarGroup>
+    <SidebarGroup className="group">
       <div className="flex items-center justify-between px-2">
         <SidebarGroupLabel 
           className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors flex-1"
