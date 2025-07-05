@@ -217,6 +217,80 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          embedding: string | null
+          id: string
+          metadata: Json | null
+          model_used: string | null
+          role: string
+          session_id: string
+          tokens_used: number | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          metadata?: Json | null
+          model_used?: string | null
+          role: string
+          session_id: string
+          tokens_used?: number | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          metadata?: Json | null
+          model_used?: string | null
+          role?: string
+          session_id?: string
+          tokens_used?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       cities: {
         Row: {
           country_id: number
@@ -1027,6 +1101,51 @@ export type Database = {
         }
         Relationships: []
       }
+      semantic_memory: {
+        Row: {
+          access_count: number | null
+          content: string
+          created_at: string
+          embedding: string | null
+          id: string
+          importance_score: number | null
+          last_accessed_at: string | null
+          metadata: Json | null
+          summary: string | null
+          tags: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_count?: number | null
+          content: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          importance_score?: number | null
+          last_accessed_at?: string | null
+          metadata?: Json | null
+          summary?: string | null
+          tags?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_count?: number | null
+          content?: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          importance_score?: number | null
+          last_accessed_at?: string | null
+          metadata?: Json | null
+          summary?: string | null
+          tags?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       shared_notes: {
         Row: {
           content: string
@@ -1253,6 +1372,10 @@ export type Database = {
       }
     }
     Functions: {
+      binary_quantize: {
+        Args: { "": string } | { "": unknown }
+        Returns: unknown
+      }
       can_make_ai_request: {
         Args: { user_uuid: string }
         Returns: boolean
@@ -1406,6 +1529,22 @@ export type Database = {
           email_address: string
         }[]
       }
+      halfvec_avg: {
+        Args: { "": number[] }
+        Returns: unknown
+      }
+      halfvec_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      halfvec_send: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      halfvec_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
       has_role: {
         Args: {
           _user_id: string
@@ -1413,9 +1552,45 @@ export type Database = {
         }
         Returns: boolean
       }
+      hnsw_bit_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnsw_halfvec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnsw_sparsevec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnswhandler: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
       hook_password_verification_attempt: {
         Args: { event: Json }
         Returns: Json
+      }
+      ivfflat_bit_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflat_halfvec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflathandler: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      l2_norm: {
+        Args: { "": unknown } | { "": unknown }
+        Returns: number
+      }
+      l2_normalize: {
+        Args: { "": string } | { "": unknown } | { "": unknown }
+        Returns: string
       }
       mark_reminder_sent: {
         Args: { reminder_uuid: string }
@@ -1447,6 +1622,18 @@ export type Database = {
         Args: { reminder_uuid: string; snooze_minutes?: number }
         Returns: boolean
       }
+      sparsevec_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      sparsevec_send: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      sparsevec_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
       track_ai_usage_enhanced: {
         Args: {
           user_uuid: string
@@ -1473,6 +1660,30 @@ export type Database = {
       validate_note_content: {
         Args: { content: string }
         Returns: boolean
+      }
+      vector_avg: {
+        Args: { "": number[] }
+        Returns: string
+      }
+      vector_dims: {
+        Args: { "": string } | { "": unknown }
+        Returns: number
+      }
+      vector_norm: {
+        Args: { "": string }
+        Returns: number
+      }
+      vector_out: {
+        Args: { "": string }
+        Returns: unknown
+      }
+      vector_send: {
+        Args: { "": string }
+        Returns: string
+      }
+      vector_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
       }
     }
     Enums: {
