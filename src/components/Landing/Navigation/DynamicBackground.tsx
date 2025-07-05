@@ -16,7 +16,7 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({ mousePosition }) 
       />
       
       {/* Animated Grid Background */}
-      <div className="fixed inset-0 z-0 opacity-30">
+      <div className="fixed inset-0 z-0 opacity-30 pointer-events-none">
         <div className="absolute inset-0" style={{
           backgroundImage: `
             linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),

@@ -16,10 +16,7 @@ const NavigationActions: React.FC = () => {
       </Button>
       <div className="relative group">
         <Button
-          onClick={() => {
-            console.log('Navigation: Get Started clicked');
-            navigate('/register');
-          }}
+          onClick={() => navigate('/register')}
           className="hidden md:inline-flex bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white font-semibold px-6 py-2.5 rounded-xl shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_50px_rgba(59,130,246,0.8)] transition-all duration-300 transform hover:scale-105"
         >
           Get Started
