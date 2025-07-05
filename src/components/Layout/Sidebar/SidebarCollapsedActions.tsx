@@ -3,7 +3,6 @@ import React from 'react';
 import { Bell, LogOut, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Tooltip,
   TooltipContent,
@@ -22,15 +21,16 @@ export function SidebarCollapsedActions({ onNotificationsClick }: SidebarCollaps
 
   return (
     <div className="flex flex-col items-center gap-3">
-      {/* User Avatar */}
+      {/* User Info Button */}
       <Tooltip>
         <TooltipTrigger asChild>
-          <Avatar className="w-10 h-10 border-2 border-deep-carbon-600 cursor-pointer">
-            <AvatarImage src={user?.avatar} />
-            <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">
-              {user?.name?.[0] || <User className="w-5 h-5" />}
-            </AvatarFallback>
-          </Avatar>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-10 h-10 text-deep-carbon-200 hover:text-white hover:bg-deep-carbon-800/50"
+          >
+            <User className="w-5 h-5" />
+          </Button>
         </TooltipTrigger>
         <TooltipContent side="right">
           <div className="text-sm">

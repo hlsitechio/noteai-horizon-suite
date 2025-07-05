@@ -3,7 +3,6 @@ import React from 'react';
 import { Bell, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNotifications } from '../../../contexts/NotificationsContext';
 
@@ -24,13 +23,6 @@ export function SidebarMenuButton({ isCollapsed, onNotificationsClick }: Sidebar
     <div className="space-y-2">
       {/* User Profile Section */}
       <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors">
-        <Avatar className="w-10 h-10 border-2 border-border">
-          <AvatarImage src={user?.avatar} />
-          <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">
-            {user?.name?.[0] || <User className="w-5 h-5" />}
-          </AvatarFallback>
-        </Avatar>
-        
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-sm text-foreground truncate">
             {user?.name || 'User'}
