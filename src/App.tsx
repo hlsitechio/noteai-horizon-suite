@@ -18,7 +18,6 @@ import { QuantumAIProvider } from './contexts/QuantumAIContext';
 import { usePerformanceMonitoring } from './hooks/usePerformanceMonitoring';
 import { AppProviders } from './components/AppProviders';
 import { LazyRoutes } from './components/LazyRoutes';
-import ModernErrorBoundary from './components/ErrorBoundary/ModernErrorBoundary';
 
 import './App.css';
 
@@ -28,15 +27,13 @@ function App() {
   const { trackOperation } = usePerformanceMonitoring();
 
   return (
-    <ModernErrorBoundary>
-      <AppProviders>
-        <SentryRouter>
-          <LazyRoutes />
-          <Toaster />
-          <Sonner />
-        </SentryRouter>
-      </AppProviders>
-    </ModernErrorBoundary>
+    <AppProviders>
+      <SentryRouter>
+        <LazyRoutes />
+        <Toaster />
+        <Sonner />
+      </SentryRouter>
+    </AppProviders>
   );
 }
 
