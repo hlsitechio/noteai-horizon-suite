@@ -1,13 +1,13 @@
-
 import React from 'react';
-import { Plus, BookOpen } from 'lucide-react';
+import { Plus, BookOpen, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNotes } from '../../contexts/NotesContext';
+import { Badge } from '@/components/ui/badge';
+import { useOptimizedNotes } from '../../contexts/OptimizedNotesContext';
 import { useNavigate } from 'react-router-dom';
 import SyncStatusIndicator from '@/components/SyncStatusIndicator';
 
 const NotesHeader: React.FC = () => {
-  const { createNote, setCurrentNote, syncStatus } = useNotes();
+  const { createNote, setCurrentNote, syncStatus, notes, filteredNotes } = useOptimizedNotes();
   const navigate = useNavigate();
 
   const handleCreateNote = async () => {
@@ -28,22 +28,30 @@ const NotesHeader: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-between py-1">
-      <div className="flex items-center gap-2">
-        <BookOpen className="w-6 h-6 text-primary" />
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-4 border-b border-border">
+      <div className="flex items-center gap-3">
+        <div className="p-2 bg-primary/10 rounded-lg">
+          <BookOpen className="w-6 h-6 text-primary" />
+        </div>
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-2xl font-bold text-foreground">
             Your Notes
           </h1>
-          <p className="text-xs text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-muted-foreground">
             Create, organize, and sync your notes
           </p>
         </div>
       </div>
       
       <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <Filter className="w-4 h-4 text-muted-foreground" />
+          <Badge variant="secondary" className="text-sm">
+            {filteredNotes.length} notes found
+          </Badge>
+        </div>
         <SyncStatusIndicator status={syncStatus} />
-        <Button onClick={handleCreateNote} className="flex items-center gap-2" size="sm">
+        <Button onClick={handleCreateNote} className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
           New Note
         </Button>

@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '../../contexts/OptimizedNotesContext';
 import { CategoryOption } from '../../types/note';
+import { Badge } from '@/components/ui/badge';
 
 const categories: CategoryOption[] = [
   { value: 'all', label: 'All Categories', color: 'gray' },
@@ -18,8 +19,9 @@ const categories: CategoryOption[] = [
 ];
 
 const NotesFilters: React.FC = () => {
-  const { filteredNotes, filters, setFilters } = useNotes();
+  const { filteredNotes, filters, setFilters, notes } = useOptimizedNotes();
   const [searchTerm, setSearchTerm] = useState(filters.searchTerm || '');
+  const favoriteCount = notes.filter(note => note.isFavorite).length;
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
@@ -29,60 +31,82 @@ const NotesFilters: React.FC = () => {
   const handleCategoryFilter = (category: string) => {
     setFilters({ 
       ...filters, 
-      category: category === 'all' ? undefined : category 
+      category: category === 'all' ? '' : category 
     });
   };
 
   const handleFavoriteFilter = () => {
     setFilters({ 
       ...filters, 
-      isFavorite: filters.isFavorite ? undefined : true 
+      isFavorite: !filters.isFavorite 
     });
   };
 
+  const clearFilters = () => {
+    setSearchTerm('');
+    setFilters({
+      searchTerm: '',
+      category: '',
+      isFavorite: false
+    });
+  };
+
+  const hasActiveFilters = !!(filters.searchTerm || filters.category || filters.isFavorite);
+
   return (
-    <Card>
-      <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="Search notes..."
-              value={searchTerm}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="pl-10 rounded-xl"
-            />
-          </div>
-          
-          <Select value={filters.category || 'all'} onValueChange={handleCategoryFilter}>
-            <SelectTrigger className="rounded-xl">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((cat) => (
-                <SelectItem key={cat.value} value={cat.value}>
-                  {cat.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div className="flex flex-col sm:flex-row gap-4 py-4">
+      {/* Search */}
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          placeholder="Search notes..."
+          value={searchTerm}
+          onChange={(e) => handleSearch(e.target.value)}
+          className="pl-10"
+        />
+      </div>
 
-          <Button
-            variant={filters.isFavorite ? "default" : "outline"}
-            onClick={handleFavoriteFilter}
-            className="rounded-xl"
-          >
-            <Heart className={`w-4 h-4 mr-2 ${filters.isFavorite ? 'fill-current' : ''}`} />
-            Favorites
-          </Button>
+      {/* Category Filter */}
+      <Select value={filters.category || 'all'} onValueChange={handleCategoryFilter}>
+        <SelectTrigger className="w-full sm:w-48">
+          <SelectValue placeholder="All Categories" />
+        </SelectTrigger>
+        <SelectContent>
+          {categories.map((cat) => (
+            <SelectItem key={cat.value} value={cat.value}>
+              {cat.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
-          <div className="text-sm text-gray-500 flex items-center">
-            <Filter className="w-4 h-4 mr-2" />
-            {filteredNotes.length} notes found
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+      {/* Favorites Toggle */}
+      <Button
+        variant={filters.isFavorite ? "default" : "outline"}
+        onClick={handleFavoriteFilter}
+        className="flex items-center gap-2"
+      >
+        <Heart className={`w-4 h-4 ${filters.isFavorite ? 'fill-current' : ''}`} />
+        Favorites
+        {favoriteCount > 0 && (
+          <Badge variant="secondary" className="ml-1">
+            {favoriteCount}
+          </Badge>
+        )}
+      </Button>
+
+      {/* Clear Filters */}
+      {hasActiveFilters && (
+        <Button
+          variant="ghost"
+          onClick={clearFilters}
+          className="flex items-center gap-2"
+        >
+          <Filter className="w-4 h-4" />
+          Clear
+        </Button>
+      )}
+    </div>
   );
 };
 

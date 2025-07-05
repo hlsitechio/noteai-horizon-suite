@@ -7,6 +7,7 @@ import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import NotesHeader from './Notes/NotesHeader';
 import NotesFilters from './Notes/NotesFilters';
 import NotesGrid from './Notes/NotesGrid';
+import EmptyNotesState from './Notes/EmptyNotesState';
 
 const Notes: React.FC = () => {
   const { filteredNotes, filters, isLoading, notes, selectedNote } = useOptimizedNotes();
@@ -39,10 +40,14 @@ const Notes: React.FC = () => {
   const hasFilters = !!(filters.searchTerm || filters.category || filters.isFavorite);
 
   return (
-    <div className="space-y-3 h-full">
+    <div className="space-y-6 h-full p-6">
       <NotesHeader />
       <NotesFilters />
-      <NotesGrid notes={filteredNotes} hasFilters={hasFilters} />
+      {filteredNotes.length === 0 ? (
+        <EmptyNotesState hasFilters={hasFilters} />
+      ) : (
+        <NotesGrid notes={filteredNotes} hasFilters={hasFilters} />
+      )}
     </div>
   );
 };
