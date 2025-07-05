@@ -99,8 +99,11 @@ const Hero = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center pt-8 px-4">
             <div className="relative group w-full sm:w-auto">
-              <Button
-                onClick={() => navigate('/register')}
+        <Button
+          onClick={() => {
+            console.log('Hero: Start Free Trial clicked');
+            navigate('/register');
+          }}
                 size="lg"
                 className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white px-8 sm:px-10 py-4 sm:py-6 text-lg sm:text-xl font-bold rounded-2xl shadow-[0_0_50px_rgba(59,130,246,0.4)] hover:shadow-[0_0_80px_rgba(59,130,246,0.6)] transition-all duration-500 transform hover:scale-105"
               >
