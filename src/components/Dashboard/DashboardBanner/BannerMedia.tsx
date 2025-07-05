@@ -18,7 +18,7 @@ const BannerMedia: React.FC<BannerMediaProps> = ({
 
   if (isLoading || !bannerData) {
     return (
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 animate-pulse">
+      <div className="relative w-full h-full bg-gradient-to-r from-blue-600 to-purple-600 animate-pulse">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-white/60 flex flex-col items-center gap-2">
             <Image className="w-8 h-8" />
@@ -31,7 +31,7 @@ const BannerMedia: React.FC<BannerMediaProps> = ({
 
   if (mediaError) {
     return (
-      <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-orange-500/20 border-2 border-dashed border-red-300">
+      <div className="relative w-full h-full bg-gradient-to-r from-red-500/20 to-orange-500/20 border-2 border-dashed border-red-300">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-red-600 flex flex-col items-center gap-2">
             <AlertCircle className="w-8 h-8" />
@@ -55,7 +55,7 @@ const BannerMedia: React.FC<BannerMediaProps> = ({
 
   return (
     <motion.div 
-      className="absolute inset-0 cursor-pointer"
+      className="relative w-full h-full cursor-pointer"
       onClick={onBannerClick}
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}

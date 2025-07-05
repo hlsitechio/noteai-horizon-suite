@@ -18,7 +18,7 @@ const BannerContent: React.FC<BannerContentProps> = ({
 }) => {
 
   return (
-    <div className="absolute inset-0 w-full h-full">
+    <div className="relative w-full h-full">
       {/* Banner Media */}
       <BannerMedia
         bannerData={bannerData}

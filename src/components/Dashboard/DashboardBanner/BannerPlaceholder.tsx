@@ -21,7 +21,7 @@ const BannerPlaceholder: React.FC = () => {
 
   return (
     <motion.div
-      className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/5 via-primary/10 to-secondary/5"
+      className="flex items-center justify-center bg-gradient-to-br from-primary/5 via-primary/10 to-secondary/5 w-full h-full"
       variants={containerVariants}
       initial="initial"
       animate="animate"
