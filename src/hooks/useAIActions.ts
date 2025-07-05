@@ -5,7 +5,9 @@ import { ReminderService } from '@/services/reminderService';
 import { Note } from '@/types/note';
 
 export interface AIAction {
-  type: 'create_note' | 'set_reminder' | 'search_notes' | 'update_note' | 'delete_note';
+  type: 'create_note' | 'set_reminder' | 'search_notes' | 'update_note' | 'delete_note' | 
+        'improve_text' | 'summarize_text' | 'translate_text' | 'check_grammar' | 
+        'adjust_tone' | 'expand_content' | 'extract_keywords';
   data: any;
   message?: string;
 }
@@ -41,6 +43,15 @@ export const useAIActions = () => {
         
         case 'delete_note':
           return await deleteNote(action.data);
+        
+        case 'improve_text':
+        case 'summarize_text':
+        case 'translate_text':
+        case 'check_grammar':
+        case 'adjust_tone':
+        case 'expand_content':
+        case 'extract_keywords':
+          return await processWritingAction(action.type, action.data);
         
         default:
           return {
@@ -253,6 +264,46 @@ export const useAIActions = () => {
       return {
         success: false,
         message: `Failed to delete note: ${error.message}`
+      };
+    }
+  };
+
+  const processWritingAction = async (
+    actionType: string, 
+    data: { text: string; targetLanguage?: string; tone?: string; length?: string }
+  ): Promise<AIActionResponse> => {
+    try {
+      const { data: result, error } = await supabase.functions.invoke('ai-writing-assistant', {
+        body: {
+          action: actionType,
+          text: data.text,
+          targetLanguage: data.targetLanguage,
+          tone: data.tone,
+          length: data.length
+        }
+      });
+
+      if (error) throw error;
+
+      const actionLabels = {
+        'improve_text': 'Text improved',
+        'summarize_text': 'Text summarized',
+        'translate_text': 'Text translated',
+        'check_grammar': 'Grammar checked',
+        'adjust_tone': 'Tone adjusted',
+        'expand_content': 'Content expanded',
+        'extract_keywords': 'Keywords extracted'
+      };
+
+      return {
+        success: true,
+        message: actionLabels[actionType as keyof typeof actionLabels] || 'Writing task completed',
+        data: result
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: `Failed to process writing task: ${error.message}`
       };
     }
   };

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Send, Bot, User, Sparkles, Clock, FileText, Search, Trash2, Mic, MicOff } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Clock, FileText, Search, Trash2, Mic, MicOff, PenTool, Languages, Zap, BookOpen, Filter, Type } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -55,6 +55,13 @@ const MobileChat: React.FC = () => {
       case 'set_reminder': return <Clock className="w-3 h-3" />;
       case 'search_notes': return <Search className="w-3 h-3" />;
       case 'delete_note': return <Trash2 className="w-3 h-3" />;
+      case 'improve_text': return <PenTool className="w-3 h-3" />;
+      case 'summarize_text': return <BookOpen className="w-3 h-3" />;
+      case 'translate_text': return <Languages className="w-3 h-3" />;
+      case 'check_grammar': return <Zap className="w-3 h-3" />;
+      case 'adjust_tone': return <Type className="w-3 h-3" />;
+      case 'expand_content': return <Filter className="w-3 h-3" />;
+      case 'extract_keywords': return <Search className="w-3 h-3" />;
       default: return <Sparkles className="w-3 h-3" />;
     }
   };
@@ -63,7 +70,11 @@ const MobileChat: React.FC = () => {
     'Create a note about today\'s meeting',
     'Remind me to call John tomorrow at 2pm',
     'Find my notes about project planning',
-    'Set a reminder for my dentist appointment'
+    'Set a reminder for my dentist appointment',
+    'Improve this text: Writing can be hard sometimes',
+    'Summarize this paragraph for me',
+    'Translate this to Spanish: Hello, how are you?',
+    'Check grammar: Their going to the store tomorrow'
   ];
 
   return (
@@ -76,7 +87,7 @@ const MobileChat: React.FC = () => {
           {messages.length === 0 ? (
             <div className="text-center text-muted-foreground py-8">
               <Sparkles className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p className="mb-4">I can help you create notes, set reminders, and organize your thoughts!</p>
+              <p className="mb-4">I can help you create notes, set reminders, organize your thoughts, and assist with writing tasks!</p>
             </div>
           ) : (
             messages.map((message: EnhancedChatMessage) => (
@@ -185,7 +196,7 @@ const MobileChat: React.FC = () => {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={isRecording ? "Listening..." : "Ask me to create notes, set reminders..."}
+            placeholder={isRecording ? "Listening..." : "Ask me to create notes, set reminders, improve text, summarize content..."}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             className="flex-1"
             disabled={isLoading || isRecording}

@@ -25,7 +25,11 @@ const ACTION_SCHEMA = {
           properties: {
             type: {
               type: "string",
-              enum: ["create_note", "set_reminder", "search_notes", "update_note", "delete_note"]
+              enum: [
+                "create_note", "set_reminder", "search_notes", "update_note", "delete_note",
+                "improve_text", "summarize_text", "translate_text", "check_grammar", 
+                "adjust_tone", "expand_content", "extract_keywords"
+              ]
             },
             data: {
               type: "object",
@@ -74,18 +78,29 @@ export const useEnhancedAIChatWithActions = () => {
       setMessages(prev => [...prev, newUserMessage]);
 
       // Build context for AI with conversation history and system prompt
-      const systemPrompt = `You are an intelligent note-taking and productivity assistant. You can help users:
+      const systemPrompt = `You are an intelligent note-taking, productivity, and writing assistant. You can help users:
 
-1. CREATE NOTES: When users want to save information, create notes, or write something down
-2. SET REMINDERS: When users mention future events, deadlines, or want to be reminded of something
-3. SEARCH NOTES: When users ask about finding existing information or notes
-4. UPDATE NOTES: When users want to modify existing notes
-5. DELETE NOTES: When users want to remove notes
+1. PRODUCTIVITY ACTIONS:
+   - CREATE NOTES: When users want to save information, create notes, or write something down
+   - SET REMINDERS: When users mention future events, deadlines, or want to be reminded of something
+   - SEARCH NOTES: When users ask about finding existing information or notes
+   - UPDATE NOTES: When users want to modify existing notes
+   - DELETE NOTES: When users want to remove notes
+
+2. WRITING ASSISTANT ACTIONS:
+   - IMPROVE TEXT: Make text clearer, more engaging, and better structured
+   - SUMMARIZE TEXT: Create concise summaries of long content
+   - TRANSLATE TEXT: Translate text to different languages
+   - CHECK GRAMMAR: Fix grammar, spelling, and punctuation errors
+   - ADJUST TONE: Change the tone to be more professional, casual, formal, etc.
+   - EXPAND CONTENT: Add more detail, examples, and context to brief text
+   - EXTRACT KEYWORDS: Identify key terms and phrases from content
 
 IMPORTANT INSTRUCTIONS:
 - Parse user intent carefully and suggest appropriate actions
 - For reminders, always include a specific date/time in ISO format
 - For note creation, extract a meaningful title and content
+- For writing tasks, identify the text to process and the desired outcome
 - If you need more information, set needs_clarification: true
 - Always provide a helpful conversational response
 - Be proactive in suggesting actions based on context
@@ -94,9 +109,11 @@ Examples:
 - "Remind me to call John tomorrow at 2pm" → set_reminder with parsed date
 - "Create a note about today's meeting" → create_note
 - "Find my notes about project planning" → search_notes
-- "I need to remember to buy groceries this weekend" → create_note + set_reminder
+- "Improve this paragraph: [text]" → improve_text
+- "Summarize this article: [text]" → summarize_text
+- "Translate this to Spanish: [text]" → translate_text
 
-Current conversation context: The user is chatting with an AI assistant that can take actions.`;
+Current conversation context: The user is chatting with an AI assistant that can take actions and help with writing tasks.`;
 
       const contextMessages: ChatMessage[] = [
         {

@@ -64,3 +64,6 @@ verify_jwt = false
 
 [functions.speech-to-text]
 verify_jwt = false
+
+[functions.ai-writing-assistant]
+verify_jwt = false
