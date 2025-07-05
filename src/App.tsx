@@ -17,7 +17,7 @@ import { FloatingNotesProvider } from './contexts/FloatingNotesContext';
 import { QuantumAIProvider } from './contexts/QuantumAIContext';
 import { usePerformanceMonitoring } from './hooks/usePerformanceMonitoring';
 import { AppProviders } from './components/AppProviders';
-import { LazyRoutes } from './components/LazyRoutes';
+import { OptimizedLazyRoutes } from './components/OptimizedLazyRoutes';
 
 import './App.css';
 
@@ -29,7 +29,7 @@ function App() {
   return (
     <AppProviders>
       <SentryRouter>
-        <LazyRoutes />
+        <OptimizedLazyRoutes />
         <Toaster />
         <Sonner />
       </SentryRouter>
