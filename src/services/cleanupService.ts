@@ -54,11 +54,13 @@ export class CleanupService {
 
   private static setupRateLimitCleanup() {
     // Clear any existing intervals that might be causing 429 errors
-    let highestId = 0;
     const intervalId = setInterval(() => {}, 9999);
     clearInterval(intervalId);
     
-    for (let i = 1; i < intervalId; i++) {
+    // Cast to number for browser compatibility
+    const maxId = Number(intervalId);
+    
+    for (let i = 1; i < maxId; i++) {
       clearInterval(i);
       clearTimeout(i);
     }
