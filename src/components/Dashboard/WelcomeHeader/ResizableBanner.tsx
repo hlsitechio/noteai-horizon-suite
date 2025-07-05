@@ -74,11 +74,17 @@ const ResizableBanner: React.FC<ResizableBannerProps> = ({
   // Touch events for mobile
   const handleTouchStart = (e: React.TouchEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsResizing(true);
     startY.current = e.touches[0].clientY;
     startHeight.current = height;
     
-    document.addEventListener('touchmove', handleTouchMove);
+    const handleTouchMoveWrapper = (e: TouchEvent) => {
+      e.preventDefault();
+      handleTouchMove(e);
+    };
+    
+    document.addEventListener('touchmove', handleTouchMoveWrapper, { passive: false });
     document.addEventListener('touchend', handleTouchEnd);
   };
 
@@ -111,13 +117,14 @@ const ResizableBanner: React.FC<ResizableBannerProps> = ({
         
         {/* Resize Handle */}
         <div 
-          className={`absolute bottom-0 left-0 right-0 h-3 cursor-ns-resize bg-primary/5 hover:bg-primary/15 transition-colors flex items-center justify-center border-t border-border/50 ${
-            isResizing ? 'bg-primary/20' : ''
+          className={`absolute bottom-0 left-0 right-0 h-4 cursor-ns-resize bg-primary/10 hover:bg-primary/20 transition-colors flex items-center justify-center border-t border-border/50 z-50 ${
+            isResizing ? 'bg-primary/30' : ''
           }`}
           onMouseDown={handleMouseDown}
           onTouchStart={handleTouchStart}
+          style={{ pointerEvents: 'auto' }}
         >
-          <div className="opacity-60 hover:opacity-100 transition-opacity duration-200">
+          <div className="opacity-70 hover:opacity-100 transition-opacity duration-200 bg-background/20 rounded px-2 py-1">
             <GripHorizontal className="w-5 h-5 text-muted-foreground" />
           </div>
         </div>
