@@ -63,16 +63,38 @@ export const useReminderManager = () => {
     }
   }, []);
 
-  // Check for reminders every minute
+  // Check for reminders every 5 minutes instead of every minute to reduce load
   useEffect(() => {
-    // Initial check
-    checkForReminders();
+    let mounted = true;
+    let interval: NodeJS.Timeout;
 
-    // Set up interval
-    const interval = setInterval(checkForReminders, 60000); // Check every minute
+    // Initial check with delay to avoid immediate database calls
+    const initialCheck = () => {
+      if (mounted) {
+        setTimeout(() => {
+          if (mounted) {
+            checkForReminders();
+          }
+        }, 2000); // Wait 2 seconds before first check
+      }
+    };
 
-    return () => clearInterval(interval);
-  }, [checkForReminders]);
+    initialCheck();
+
+    // Set up interval - check every 5 minutes instead of 1 minute
+    interval = setInterval(() => {
+      if (mounted) {
+        checkForReminders();
+      }
+    }, 300000); // Check every 5 minutes
+
+    return () => {
+      mounted = false;
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, []); // Remove checkForReminders from dependency to prevent recreation
 
   // Request notification permission on mount
   useEffect(() => {

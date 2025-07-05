@@ -32,8 +32,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     logger.auth.debug('Setting up auth state listener');
     
     let mounted = true;
+    let authListenerActive = false;
     
     const initializeAuth = async () => {
+      if (authListenerActive) return; // Prevent duplicate initialization
+      authListenerActive = true;
+      
       const { session, error } = await initializeAuthSession();
       
       if (!mounted) return;
@@ -50,7 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       async (event, session) => {
         logger.auth.debug('Auth state changed:', event, session?.user?.email);
         
-        if (!mounted) return;
+        if (!mounted || !authListenerActive) return;
         
         try {
           // Handle different auth events
@@ -88,6 +92,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       logger.auth.debug('Cleaning up auth listener');
       mounted = false;
+      authListenerActive = false;
       subscription.unsubscribe();
     };
   }, []); // Empty dependency array since functions are now stable
