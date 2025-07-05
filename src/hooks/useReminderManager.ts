@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { ReminderService } from '../services/reminderService';
 import { NotificationService } from '../services/notificationService';
@@ -28,50 +27,47 @@ export const useReminderManager = () => {
     }
   }, []);
 
-  // Check for reminders every 5 minutes instead of every minute to reduce load
+  // Check for reminders periodically
   useEffect(() => {
     let mounted = true;
     let interval: NodeJS.Timeout;
     let currentlyChecking = false;
 
-    // Create the check function inside useEffect to avoid stale closures
     const performReminderCheck = async () => {
-      if (currentlyChecking) return;
+      if (currentlyChecking || !mounted) return;
       
       currentlyChecking = true;
-      if (mounted) {
-        setIsChecking(true);
-      }
+      setIsChecking(true);
       
       try {
         const reminders = await ReminderService.getPendingReminders();
         if (mounted) {
           setPendingReminders(reminders);
-        }
 
-        // Show notifications for new reminders
-        for (const reminder of reminders) {
-          const notification = NotificationService.showReminderNotification(
-            reminder.note_title,
-            reminder.note_id,
-            reminder.reminder_id
-          );
+          // Show notifications for new reminders
+          for (const reminder of reminders) {
+            if (reminder && reminder.note_title && reminder.note_id && reminder.reminder_id) {
+              const notification = NotificationService.showReminderNotification(
+                reminder.note_title,
+                reminder.note_id,
+                reminder.reminder_id
+              );
 
-          if (notification) {
-            // Handle notification click
-            notification.onclick = () => {
-              window.focus();
-              window.location.href = `/app/editor?noteId=${reminder.note_id}`;
-              notification.close();
-            };
+              if (notification) {
+                notification.onclick = () => {
+                  window.focus();
+                  window.location.href = `/app/editor?noteId=${reminder.note_id}`;
+                  notification.close();
+                };
 
-            // Mark as sent
-            await ReminderService.markReminderSent(reminder.reminder_id);
+                // Mark as sent
+                await ReminderService.markReminderSent(reminder.reminder_id);
+              }
+            }
           }
         }
       } catch (error) {
         console.error('Error checking reminders:', error);
-        // Reset state on error to prevent infinite loops
         if (mounted) {
           setPendingReminders([]);
         }
@@ -83,20 +79,14 @@ export const useReminderManager = () => {
       }
     };
 
-    // Initial check with delay to avoid immediate database calls
-    const initialCheck = () => {
+    // Initial check after a short delay
+    const initialTimeout = setTimeout(() => {
       if (mounted) {
-        setTimeout(() => {
-          if (mounted) {
-            performReminderCheck();
-          }
-        }, 2000); // Wait 2 seconds before first check
+        performReminderCheck();
       }
-    };
+    }, 3000);
 
-    initialCheck();
-
-    // Set up interval - check every 5 minutes instead of 1 minute
+    // Set up interval for periodic checks
     interval = setInterval(() => {
       if (mounted) {
         performReminderCheck();
@@ -105,18 +95,21 @@ export const useReminderManager = () => {
 
     return () => {
       mounted = false;
+      clearTimeout(initialTimeout);
       if (interval) {
         clearInterval(interval);
       }
     };
-  }, []); // Empty dependencies to run only once
+  }, []);
 
   // Request notification permission on mount
   useEffect(() => {
     NotificationService.requestPermission().then(granted => {
       if (!granted) {
-        toast.error('Please enable notifications to receive reminders');
+        console.warn('Notifications not enabled for reminders');
       }
+    }).catch(error => {
+      console.error('Error requesting notification permission:', error);
     });
   }, []);
 
