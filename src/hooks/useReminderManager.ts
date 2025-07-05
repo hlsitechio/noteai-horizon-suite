@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ReminderService } from '../services/reminderService';
 import { NotificationService } from '../services/notificationService';
 import { toast } from 'sonner';
 
 export const useReminderManager = () => {
+  const navigate = useNavigate();
   const [isChecking, setIsChecking] = useState(false);
   const [pendingReminders, setPendingReminders] = useState<any[]>([]);
 
@@ -56,7 +58,7 @@ export const useReminderManager = () => {
               if (notification) {
                 notification.onclick = () => {
                   window.focus();
-                  window.location.href = `/app/editor?noteId=${reminder.note_id}`;
+                  navigate(`/app/editor?noteId=${reminder.note_id}`);
                   notification.close();
                 };
 
@@ -100,7 +102,7 @@ export const useReminderManager = () => {
         clearInterval(interval);
       }
     };
-  }, []);
+  }, [navigate]);
 
   // Request notification permission on mount
   useEffect(() => {
