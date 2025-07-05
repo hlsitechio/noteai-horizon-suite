@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Send, Bot, User, Sparkles, Clock, FileText, Search, Trash2 } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Clock, FileText, Search, Trash2, Mic, MicOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import DynamicMobileHeader from '../components/DynamicMobileHeader';
 import { useEnhancedAIChatWithActions, EnhancedChatMessage } from '../../hooks/useEnhancedAIChatWithActions';
+import { useSpeechToText } from '../../hooks/useSpeechToText';
 
 const MobileChat: React.FC = () => {
   const [input, setInput] = useState('');
@@ -16,12 +17,36 @@ const MobileChat: React.FC = () => {
     sendMessageWithActions, 
     isLoading 
   } = useEnhancedAIChatWithActions();
+  
+  const {
+    isRecording,
+    isProcessing,
+    startRecording,
+    stopRecording,
+    cancelRecording,
+  } = useSpeechToText();
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
     
     await sendMessageWithActions(input);
     setInput('');
+  };
+
+  const handleVoiceInput = async () => {
+    if (isRecording) {
+      // Stop recording and get transcription
+      const transcription = await stopRecording();
+      if (transcription) {
+        setInput(transcription);
+      }
+    } else {
+      // Start recording
+      const success = await startRecording();
+      if (!success) {
+        console.error('Failed to start recording');
+      }
+    }
   };
 
   const getActionIcon = (actionType: string) => {
@@ -160,14 +185,33 @@ const MobileChat: React.FC = () => {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask me to create notes, set reminders..."
+            placeholder={isRecording ? "Listening..." : "Ask me to create notes, set reminders..."}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             className="flex-1"
-            disabled={isLoading}
+            disabled={isLoading || isRecording}
           />
+          
+          {/* Voice Input Button */}
+          <Button 
+            variant={isRecording ? "destructive" : "outline"}
+            size="sm"
+            onClick={handleVoiceInput}
+            disabled={isLoading || isProcessing}
+            className={`${isRecording ? 'animate-pulse' : ''}`}
+          >
+            {isProcessing ? (
+              <Sparkles className="w-4 h-4 animate-spin" />
+            ) : isRecording ? (
+              <MicOff className="w-4 h-4" />
+            ) : (
+              <Mic className="w-4 h-4" />
+            )}
+          </Button>
+          
+          {/* Send Button */}
           <Button 
             onClick={handleSend} 
-            disabled={!input.trim() || isLoading}
+            disabled={!input.trim() || isLoading || isRecording}
           >
             {isLoading ? (
               <Sparkles className="w-4 h-4 animate-spin" />
@@ -176,6 +220,25 @@ const MobileChat: React.FC = () => {
             )}
           </Button>
         </div>
+        
+        {/* Recording Status */}
+        {isRecording && (
+          <div className="mt-2 text-center">
+            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+              Recording... Tap mic to stop
+            </div>
+          </div>
+        )}
+        
+        {isProcessing && (
+          <div className="mt-2 text-center">
+            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <Sparkles className="w-4 h-4 animate-spin" />
+              Converting speech to text...
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

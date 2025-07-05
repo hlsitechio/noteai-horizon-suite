@@ -61,3 +61,6 @@ ip_version = "ipv4"
 
 [functions.generate-note-tags]
 verify_jwt = false
+
+[functions.speech-to-text]
+verify_jwt = false
