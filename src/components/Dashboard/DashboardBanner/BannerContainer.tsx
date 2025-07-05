@@ -113,8 +113,11 @@ const BannerContainer: React.FC<BannerContainerProps> = ({
   return (
     <div 
       ref={containerRef}
-      className="relative overflow-hidden rounded-lg border border-border bg-card group shadow-soft transition-all duration-200 hover:shadow-md"
-      style={{ height: `${height}px` }}
+      className="relative overflow-hidden rounded-lg border border-border bg-card group shadow-soft transition-all duration-300 hover:shadow-md"
+      style={{ 
+        height: `${height}px`,
+        transition: 'height 0.1s ease-out'
+      }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
