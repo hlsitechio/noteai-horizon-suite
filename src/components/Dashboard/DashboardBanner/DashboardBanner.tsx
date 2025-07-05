@@ -26,15 +26,6 @@ const DashboardBanner: React.FC<DashboardBannerProps> = ({
     isFullscreenOpen,
     showControls,
     setShowControls,
-    setIsFullscreenOpen
-  } = useBannerState();
-
-  const {
-    bannerData: stateBannerData,
-    isLoading,
-    isFullscreenOpen,
-    showControls,
-    setShowControls,
     setIsFullscreenOpen,
     updateBannerData
   } = useBannerState();
@@ -48,11 +39,7 @@ const DashboardBanner: React.FC<DashboardBannerProps> = ({
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
-    }
+    visible: { opacity: 1, y: 0 }
   };
 
   return (

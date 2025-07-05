@@ -12,7 +12,6 @@ const WelcomeHeader: React.FC = () => {
       y: 0,
       transition: {
         duration: 0.4,
-        ease: [0.4, 0, 0.2, 1],
         staggerChildren: 0.1
       }
     }

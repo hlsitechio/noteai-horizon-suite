@@ -20,16 +20,11 @@ const BannerControls: React.FC<BannerControlsProps> = ({
   const controlsVariants = {
     hidden: { 
       opacity: 0, 
-      y: -10,
-      transition: { duration: 0.2 }
+      y: -10
     },
     visible: { 
       opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 0.3,
-        ease: "easeOut"
-      }
+      y: 0
     }
   };
 
@@ -42,6 +37,7 @@ const BannerControls: React.FC<BannerControlsProps> = ({
           initial="hidden"
           animate="visible"
           exit="hidden"
+          transition={{ duration: 0.3 }}
         >
           <div className="backdrop-blur-md bg-background/80 border border-border/50 rounded-lg shadow-lg">
             <BannerControlsComponent
