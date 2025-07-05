@@ -3,10 +3,10 @@ import { useEffect } from 'react';
 
 const EnhancedSecurityHeaders = () => {
   useEffect(() => {
-    // Enhanced Content Security Policy - removed problematic directives
+    // Enhanced Content Security Policy - allow Lovable scripts
     const csp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://browser.sentry-cdn.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://browser.sentry-cdn.com https://cdn.gpteng.co",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https: blob:",
