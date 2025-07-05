@@ -175,7 +175,7 @@ const Chat: React.FC = () => {
             </ScrollArea>
 
             <div className="space-y-2">
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
                 <Input
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
@@ -191,7 +191,8 @@ const Chat: React.FC = () => {
                   size="sm"
                   onClick={handleVoiceInput}
                   disabled={isLoading || isProcessing}
-                  className={`${isRecording ? 'animate-pulse' : ''}`}
+                  className={`shrink-0 ${isRecording ? 'animate-pulse' : ''}`}
+                  type="button"
                 >
                   {isProcessing ? (
                     <Sparkles className="w-4 h-4 animate-spin" />
@@ -206,6 +207,8 @@ const Chat: React.FC = () => {
                   onClick={handleSend}
                   disabled={isLoading || !message.trim() || isRecording}
                   size="sm"
+                  className="shrink-0"
+                  type="button"
                 >
                   {isLoading ? (
                     <Sparkles className="w-4 h-4 animate-spin" />
