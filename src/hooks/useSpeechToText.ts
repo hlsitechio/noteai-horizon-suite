@@ -13,15 +13,25 @@ export const useSpeechToText = () => {
     try {
       console.log('Requesting microphone access...');
       
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          sampleRate: 16000,
-          channelCount: 1,
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-        }
-      });
+      // Try with flexible constraints first, fallback to basic audio if needed
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            sampleRate: 16000,
+            channelCount: 1,
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+          }
+        });
+      } catch (constraintsError) {
+        console.log('Trying with basic audio constraints...', constraintsError);
+        // Fallback to basic audio constraints
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: true
+        });
+      }
 
       console.log('Microphone access granted');
 
