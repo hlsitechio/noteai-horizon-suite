@@ -4,17 +4,22 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertTriangle, Shield, Activity, Lock, RefreshCw } from 'lucide-react';
-import { rateLimiter } from '@/utils/securityUtils';
-import { securityMiddleware } from '@/utils/securityMiddleware';
+import { unifiedSecurityService } from '@/services/security';
 import { useSecurityMonitoring } from '@/hooks/useSecurityMonitoring';
 
 interface SecurityStats {
-  rateLimiter: {
+  rateLimiting: {
     activeLimits: number;
     blockedIPs: number;
     suspiciousPatterns: number;
+    limits: { key: string; count: number; violations: number; }[];
+  };
+  userAgent: {
+    patternsCount: number;
+    browserPatternsCount: number;
   };
   timestamp: string;
+  service: string;
 }
 
 interface SecurityMetrics {
@@ -40,7 +45,7 @@ const SecurityDashboard: React.FC = () => {
     
     try {
       // Get current security statistics
-      const currentStats = securityMiddleware.getStats();
+      const currentStats = unifiedSecurityService.getStats();
       setStats(currentStats);
       
       // Update metrics (in a real app, this would come from a backend API)
@@ -77,7 +82,7 @@ const SecurityDashboard: React.FC = () => {
   const getSecurityScore = (): { score: number; status: string; color: string } => {
     if (!stats) return { score: 0, status: 'Unknown', color: 'text-muted-foreground' };
     
-    const { blockedIPs, suspiciousPatterns } = stats.rateLimiter;
+    const { blockedIPs, suspiciousPatterns } = stats.rateLimiting;
     const totalThreats = blockedIPs + suspiciousPatterns + metrics.blockedRequests;
     
     if (totalThreats === 0) {
@@ -134,7 +139,7 @@ const SecurityDashboard: React.FC = () => {
             <Lock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats?.rateLimiter.activeLimits || 0}</div>
+            <div className="text-2xl font-bold">{stats?.rateLimiting.activeLimits || 0}</div>
             <p className="text-xs text-muted-foreground">
               Rate limit instances
             </p>
@@ -147,7 +152,7 @@ const SecurityDashboard: React.FC = () => {
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats?.rateLimiter.blockedIPs || 0}</div>
+            <div className="text-2xl font-bold">{stats?.rateLimiting.blockedIPs || 0}</div>
             <p className="text-xs text-muted-foreground">
               Currently blocked
             </p>
@@ -160,7 +165,7 @@ const SecurityDashboard: React.FC = () => {
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats?.rateLimiter.suspiciousPatterns || 0}</div>
+            <div className="text-2xl font-bold">{stats?.rateLimiting.suspiciousPatterns || 0}</div>
             <p className="text-xs text-muted-foreground">
               Detected today
             </p>
@@ -240,7 +245,7 @@ const SecurityDashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {stats?.rateLimiter.suspiciousPatterns === 0 ? (
+                {stats?.rateLimiting.suspiciousPatterns === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
                     <Shield className="h-12 w-12 mx-auto mb-4 text-green-600" />
                     <p>No threats detected in the last 24 hours</p>
