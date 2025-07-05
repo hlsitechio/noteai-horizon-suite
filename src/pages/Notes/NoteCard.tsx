@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '../../contexts/OptimizedNotesContext';
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 import { Note, CategoryOption } from '../../types/note';
 import NoteShareButton from '../../components/Sharing/NoteShareButton';
@@ -24,7 +24,7 @@ interface NoteCardProps {
 }
 
 const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
-  const { setCurrentNote, deleteNote } = useNotes();
+  const { setCurrentNote, deleteNote } = useOptimizedNotes();
   const { confirmDelete, ConfirmDialog } = useConfirmDialog();
   const navigate = useNavigate();
 

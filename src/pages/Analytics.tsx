@@ -1,14 +1,14 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useNotes } from '../contexts/NotesContext';
+import { useOptimizedNotes } from '../contexts/OptimizedNotesContext';
 import AnalyticsHeader from '../components/Analytics/AnalyticsHeader';
 import OverviewStats from '../components/Analytics/OverviewStats';
 import CategoryDistribution from '../components/Analytics/CategoryDistribution';
 import WritingInsights from '../components/Analytics/WritingInsights';
 
 const Analytics: React.FC = () => {
-  const { notes } = useNotes();
+  const { notes } = useOptimizedNotes();
 
   // Calculate stats
   const totalNotes = notes.length;

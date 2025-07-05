@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useNotes } from '../contexts/NotesContext';
+import { useOptimizedNotes } from '../contexts/OptimizedNotesContext';
 import { useFolders } from '../contexts/FoldersContext';
 import EditorContent from '../components/Editor/EditorContent';
 import { CategoryOption } from '../types/note';
@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 const Editor: React.FC = () => {
   const { noteId } = useParams();
   const navigate = useNavigate();
-  const { notes, currentNote, setCurrentNote, createNote, updateNote, toggleFavorite } = useNotes();
+  const { notes, currentNote, setCurrentNote, createNote, updateNote, toggleFavorite } = useOptimizedNotes();
   const { folders } = useFolders();
 
   // Form state

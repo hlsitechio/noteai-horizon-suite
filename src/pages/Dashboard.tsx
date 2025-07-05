@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useNotes } from '../contexts/NotesContext';
+import { useOptimizedNotes } from '../contexts/OptimizedNotesContext';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
@@ -14,7 +14,7 @@ import AIUsageAnalytics from '../components/Dashboard/AIUsageAnalytics';
 import SmartNoteRecommendations from '../components/Dashboard/SmartNoteRecommendations';
 
 const Dashboard: React.FC = () => {
-  const { notes, setCurrentNote } = useNotes();
+  const { notes, setCurrentNote } = useOptimizedNotes();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 

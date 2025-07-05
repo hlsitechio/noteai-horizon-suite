@@ -4,7 +4,7 @@ import { FileText, Clock, Tag, Star, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '../../contexts/OptimizedNotesContext';
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Note } from '../../types/note';
@@ -16,7 +16,7 @@ interface NotesGridProps {
 }
 
 const NotesGrid: React.FC<NotesGridProps> = ({ notes, hasFilters }) => {
-  const { setCurrentNote, toggleFavorite, deleteNote } = useNotes();
+  const { setCurrentNote, toggleFavorite, deleteNote } = useOptimizedNotes();
   const { confirmDelete, ConfirmDialog } = useConfirmDialog();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

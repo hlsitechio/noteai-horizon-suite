@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { BookOpen } from 'lucide-react';
-import { useNotes } from '../contexts/NotesContext';
+import { useOptimizedNotes } from '../contexts/OptimizedNotesContext';
 import { useFolders } from '../contexts/FoldersContext';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import NotesHeader from './Notes/NotesHeader';
@@ -9,7 +9,7 @@ import NotesFilters from './Notes/NotesFilters';
 import NotesGrid from './Notes/NotesGrid';
 
 const Notes: React.FC = () => {
-  const { filteredNotes, filters, isLoading, notes, selectedNote } = useNotes();
+  const { filteredNotes, filters, isLoading, notes, selectedNote } = useOptimizedNotes();
   const { folders } = useFolders();
 
   useQuantumAIIntegration({
