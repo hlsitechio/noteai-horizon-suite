@@ -28,35 +28,30 @@ const WelcomeHeader: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      {/* Fixed Welcome Text Section */}
-      <div className="flex flex-col sm:flex-row items-start justify-between px-6 py-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border">
-        <div>
-          <h1 className="text-xl md:text-2xl font-semibold mb-1 leading-tight text-foreground">
+      {/* Compact Welcome Text Section */}
+      <div className="flex items-center justify-between px-4 py-2.5 bg-card/30 backdrop-blur-sm rounded-lg border border-border/50">
+        <div className="flex items-center gap-4">
+          <h1 className="text-lg font-semibold text-foreground">
             Welcome back, {user?.name?.split(' ')[0] || 'User'}
           </h1>
-          <p className="text-sm sm:text-base text-muted-foreground">
+          <p className="text-sm text-muted-foreground hidden sm:block">
             {currentTime.toLocaleDateString([], {
               weekday: 'long',
-              year: 'numeric',
-              month: 'long',
+              month: 'short',
               day: 'numeric'
             })}
           </p>
         </div>
         
-        <div className="flex items-center gap-2 text-right self-end sm:self-center mt-3 sm:mt-0">
-          <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
-          <div>
-            <div className="text-base sm:text-lg font-medium text-foreground">
+        <div className="flex items-center gap-2">
+          <Clock className="w-4 h-4 text-muted-foreground" />
+          <div className="text-right">
+            <div className="text-sm font-medium text-foreground">
               {currentTime.toLocaleTimeString([], { 
                 hour: '2-digit', 
                 minute: '2-digit',
-                second: '2-digit',
                 hour12: true
               })}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Local Time
             </div>
           </div>
         </div>
