@@ -2,13 +2,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Folder, Star } from 'lucide-react';
-import { useNotes } from '../../../contexts/NotesContext';
+import { useOptimizedNotes } from '../../../contexts/OptimizedNotesContext';
 import { useFolders } from '../../../contexts/FoldersContext';
 import { useSidebar } from '@/components/ui/sidebar';
 
 export function CollapsedSummary() {
   const { state } = useSidebar();
-  const { notes } = useNotes();
+  const { notes } = useOptimizedNotes();
   const { folders } = useFolders();
   const isCollapsed = state === 'collapsed';
 

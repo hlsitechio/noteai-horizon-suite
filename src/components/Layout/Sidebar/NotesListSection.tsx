@@ -22,7 +22,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Note } from '../../../types/note';
-import { useNotes } from '../../../contexts/NotesContext';
+import { useOptimizedNotes } from '../../../contexts/OptimizedNotesContext';
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 import DesktopPopOutButton from '../../FloatingNotes/DesktopPopOutButton';
 
@@ -41,7 +41,7 @@ export function NotesListSection({
   onCreateNote, 
   onCreateFolder 
 }: NotesListSectionProps) {
-  const { setCurrentNote, deleteNote } = useNotes();
+  const { setCurrentNote, deleteNote } = useOptimizedNotes();
   const { confirmDelete, ConfirmDialog } = useConfirmDialog();
   const navigate = useNavigate();
   const location = useLocation();

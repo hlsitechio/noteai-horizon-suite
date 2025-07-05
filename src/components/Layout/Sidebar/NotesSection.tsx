@@ -6,7 +6,7 @@ import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel } from '@/componen
 import { NotesListSection } from './NotesListSection';
 import { FoldersListSection } from './FoldersListSection';
 import { FavoritesListSection } from './FavoritesListSection';
-import { useNotes } from '../../../contexts/NotesContext';
+import { useOptimizedNotes } from '../../../contexts/OptimizedNotesContext';
 import { useFolders } from '../../../contexts/FoldersContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,7 +30,7 @@ const contentVariants = {
 
 export function NotesSection() {
   const { state } = useSidebar();
-  const { notes, createNote, setCurrentNote } = useNotes();
+  const { notes, createNote, setCurrentNote } = useOptimizedNotes();
   const { folders, createFolder } = useFolders();
   const navigate = useNavigate();
   const isCollapsed = state === 'collapsed';
