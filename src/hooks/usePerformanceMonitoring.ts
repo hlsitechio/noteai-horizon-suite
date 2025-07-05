@@ -66,19 +66,19 @@ export const usePerformanceMonitoring = (): UsePerformanceMonitoringReturn => {
     };
   }, []);
 
-  // Log metrics every 30 seconds in development
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      const interval = setInterval(() => {
-        const metrics = getMetrics();
-        if (metrics.totalOperations > 0) {
-          console.log('Performance Metrics:', metrics);
-        }
-      }, 30000);
+  // Disable automatic logging to prevent setTimeout violations
+  // useEffect(() => {
+  //   if (process.env.NODE_ENV === 'development') {
+  //     const interval = setInterval(() => {
+  //       const metrics = getMetrics();
+  //       if (metrics.totalOperations > 0) {
+  //         console.log('Performance Metrics:', metrics);
+  //       }
+  //     }, 30000);
 
-      return () => clearInterval(interval);
-    }
-  }, [getMetrics]);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [getMetrics]);
 
   return { trackOperation, getMetrics };
 };

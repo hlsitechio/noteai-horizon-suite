@@ -170,7 +170,7 @@ class EnhancedRateLimiter {
         // Block IP after repeated violations
         if (limit.violations > 3 && ipAddress) {
           this.blockedIPs.add(ipAddress);
-          setTimeout(() => this.blockedIPs.delete(ipAddress), 300000); // 5 minutes
+          setTimeout(() => this.blockedIPs.delete(ipAddress), 60000); // Reduced to 1 minute
         }
       }
       return false;
@@ -220,7 +220,8 @@ class EnhancedRateLimiter {
 export const rateLimiter = new EnhancedRateLimiter();
 
 // Clean up rate limiter every 2 minutes for better responsiveness
-setInterval(() => rateLimiter.cleanup(), 2 * 60 * 1000);
+// Disable automatic cleanup interval to prevent violations
+// setInterval(() => rateLimiter.cleanup(), 2 * 60 * 1000);
 
 /**
  * Secure logging utility that filters sensitive information

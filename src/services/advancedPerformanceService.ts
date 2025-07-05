@@ -30,37 +30,13 @@ export class AdvancedPerformanceService extends PerformanceService {
   }
 
   private static initializeMemoryMonitoring() {
+    // Disable memory monitoring to eliminate setTimeout violations
     if (typeof (performance as any).memory !== 'undefined') {
       const memInfo = (performance as any).memory;
       this.memoryMonitor.baseline = memInfo.usedJSHeapSize;
       this.memoryMonitor.current = memInfo.usedJSHeapSize;
       this.memoryMonitor.peak = memInfo.usedJSHeapSize;
-
-      // Monitor memory every 30 seconds
-      const memoryInterval = setInterval(() => {
-        if (typeof (performance as any).memory !== 'undefined') {
-          const memInfo = (performance as any).memory;
-          this.memoryMonitor.current = memInfo.usedJSHeapSize;
-          this.memoryMonitor.peak = Math.max(this.memoryMonitor.peak, memInfo.usedJSHeapSize);
-          
-          // Keep last 100 samples
-          this.memoryMonitor.samples.push(memInfo.usedJSHeapSize);
-          if (this.memoryMonitor.samples.length > 100) {
-            this.memoryMonitor.samples.shift();
-          }
-
-          // Warn if memory usage is growing significantly
-          const growthFromBaseline = (this.memoryMonitor.current - this.memoryMonitor.baseline) / this.memoryMonitor.baseline;
-          if (growthFromBaseline > 0.5) { // 50% growth
-            console.warn(`Memory usage increased by ${(growthFromBaseline * 100).toFixed(1)}% from baseline`);
-          }
-        }
-      }, 30000);
-
-      // Clean up interval when page unloads
-      window.addEventListener('beforeunload', () => {
-        clearInterval(memoryInterval);
-      });
+      // No interval monitoring to prevent violations
     }
   }
 

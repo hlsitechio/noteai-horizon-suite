@@ -54,13 +54,13 @@ const Editor: React.FC = () => {
     }
   }, [noteId, notes, setCurrentNote]);
 
-  // Auto-save functionality
+  // Auto-save functionality with reduced timeout to minimize violations
   useEffect(() => {
     if (!title.trim() && !content.trim()) return;
 
     const autoSaveTimer = setTimeout(() => {
       handleSave();
-    }, 2000);
+    }, 1000); // Reduced from 2000ms to 1000ms
 
     return () => clearTimeout(autoSaveTimer);
   }, [title, content, category, tags]);

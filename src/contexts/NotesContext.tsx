@@ -204,8 +204,8 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     };
 
-    // Debounce the setup function to prevent rapid calls
-    const debouncedSetup = debounce(setupRealtimeSubscription, 1000);
+    // Reduced debounce to minimize violations
+    const debouncedSetup = debounce(setupRealtimeSubscription, 100);
     debouncedSetup();
 
     // Cleanup subscription on unmount or when user changes
