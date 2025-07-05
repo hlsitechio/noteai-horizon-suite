@@ -30,7 +30,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
 
   const handleEditNote = (note: Note) => {
     setCurrentNote(note);
-    navigate('/app/editor');
+    navigate(`/app/editor/${note.id}`);
   };
 
   const handleDeleteNote = async (noteId: string, e: React.MouseEvent) => {

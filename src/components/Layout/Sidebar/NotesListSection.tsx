@@ -63,7 +63,7 @@ export function NotesListSection({
     event.preventDefault();
     event.stopPropagation();
     setCurrentNote(note);
-    navigate('/app/editor');
+    navigate(`/app/editor/${note.id}`);
   };
 
   const handleDeleteNote = async (noteId: string, event: React.MouseEvent) => {

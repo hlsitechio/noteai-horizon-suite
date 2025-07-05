@@ -52,7 +52,7 @@ export function NotesSection() {
         folder_id: null,
       });
       setCurrentNote(newNote);
-      navigate('/app/editor');
+      navigate(`/app/editor/${newNote.id}`);
     } catch (error) {
       console.error('Failed to create note:', error);
     }

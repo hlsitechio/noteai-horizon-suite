@@ -30,7 +30,7 @@ const NotesGrid: React.FC<NotesGridProps> = ({ notes, hasFilters }) => {
   const handleEditNote = (note: Note, event: React.MouseEvent) => {
     event.stopPropagation();
     setCurrentNote(note);
-    navigate('/app/editor');
+    navigate(`/app/editor/${note.id}`);
   };
 
   const handleToggleFavorite = async (noteId: string, event: React.MouseEvent) => {
