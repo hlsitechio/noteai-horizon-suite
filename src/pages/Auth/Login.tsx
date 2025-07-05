@@ -54,10 +54,10 @@ const Login: React.FC = () => {
   // Show loading while checking authentication
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-background via-muted to-accent/10 flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
@@ -68,19 +68,19 @@ const Login: React.FC = () => {
       className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${loginBg})` }}
     >
-      <Card className="max-w-md w-full shadow-2xl bg-black border border-neutral-800 backdrop-blur-sm">
+      <Card className="max-w-md w-full shadow-2xl bg-card border border-border backdrop-blur-sm">
         <CardContent className="p-8">
           <div className="space-y-8">
             {/* Logo */}
             <div className="space-y-4 text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto">
-                <Github className="text-white w-8 h-8" />
+              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-2xl flex items-center justify-center mx-auto">
+                <Github className="text-primary-foreground w-8 h-8" />
               </div>
               <div className="space-y-2">
-                <h1 className="text-2xl font-bold text-gray-800">
+                <h1 className="text-2xl font-bold text-foreground">
                   Online Note AI
                 </h1>
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                   Sign in to access your AI-powered notes
                 </p>
               </div>
@@ -97,7 +97,7 @@ const Login: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm text-gray-600 mb-2 block">
+                  <label className="text-sm text-muted-foreground mb-2 block">
                     Email
                   </label>
                   <Input
@@ -105,14 +105,14 @@ const Login: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
-                    className="rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+                    className="rounded-xl bg-input border-border focus:bg-background focus:border-ring focus:ring-2 focus:ring-ring"
                     required
                     disabled={isSubmitting}
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray-600 mb-2 block">
+                  <label className="text-sm text-muted-foreground mb-2 block">
                     Password
                   </label>
                   <div className="relative">
@@ -121,7 +121,7 @@ const Login: React.FC = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
-                      className="rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100 pr-10 text-black"
+                      className="rounded-xl bg-input border-border focus:bg-background focus:border-ring focus:ring-2 focus:ring-ring pr-10 text-foreground"
                       required
                       disabled={isSubmitting}
                     />
@@ -129,7 +129,7 @@ const Login: React.FC = () => {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                       onClick={() => setShowPassword(!showPassword)}
                       disabled={isSubmitting}
                     >
@@ -151,10 +151,10 @@ const Login: React.FC = () => {
 
             {/* Footer */}
             <div className="text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Don't have an account?{' '}
                 <button
-                  className="text-blue-500 font-medium hover:underline"
+                  className="text-primary font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded"
                   onClick={() => navigate('/register')}
                   disabled={isSubmitting}
                 >
