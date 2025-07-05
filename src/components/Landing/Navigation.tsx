@@ -1,9 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
+import { useNavigationScroll } from './Navigation/hooks/useNavigationScroll';
+import DynamicBackground from './Navigation/DynamicBackground';
+import NavigationLogo from './Navigation/NavigationLogo';
+import NavigationItems from './Navigation/NavigationItems';
+import NavigationActions from './Navigation/NavigationActions';
+import MobileMenu from './Navigation/MobileMenu';
 
 interface NavigationProps {
   isScrolled: boolean;
@@ -12,58 +16,11 @@ interface NavigationProps {
 
 const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const navigate = useNavigate();
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-
-  const navigationItems = [
-    { name: 'Features', href: '/features' },
-    { name: 'Pricing', href: '/pricing' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
-  ];
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY < 10) {
-        setIsVisible(true);
-      } 
-      else if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false);
-      } else if (currentScrollY < lastScrollY) {
-        setIsVisible(true);
-      }
-      
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  const { isVisible } = useNavigationScroll();
 
   return (
     <>
-      {/* Dynamic Background with Mouse Following Effect */}
-      <div 
-        className="fixed inset-0 pointer-events-none z-0"
-        style={{
-          background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(29, 78, 216, 0.15), transparent 40%)`
-        }}
-      />
-      
-      {/* Animated Grid Background */}
-      <div className="fixed inset-0 z-0 opacity-30">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
-          `,
-          backgroundSize: '100px 100px'
-        }} />
-      </div>
+      <DynamicBackground mousePosition={mousePosition} />
 
       <AnimatePresence>
         {isVisible && (
@@ -79,130 +36,24 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
           >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-20">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="flex items-center space-x-3 cursor-pointer"
-                  onClick={() => navigate('/')}
+                <NavigationLogo />
+                <NavigationItems />
+                <NavigationActions />
+
+                {/* Mobile menu button */}
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
                 >
-                  <div className="relative">
-                    <div className="w-10 h-10 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.5)]">
-                      <Sparkles className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-xl blur-xl opacity-30 animate-pulse" />
-                  </div>
-                  <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                    OnlineNote AI
-                  </span>
-                </motion.div>
-
-                {/* Desktop Navigation */}
-                <nav 
-                  onMouseLeave={() => setHoveredItem(null)}
-                  className="hidden md:flex items-center space-x-2"
-                >
-                  {navigationItems.map((item) => (
-                    <motion.a
-                      key={item.name}
-                      href={item.href}
-                      onMouseEnter={() => setHoveredItem(item.name)}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigate(item.href);
-                      }}
-                      className="relative px-4 py-2 text-gray-300 hover:text-white transition-colors duration-300 rounded-full"
-                    >
-                      {hoveredItem === item.name && (
-                        <motion.div
-                          layoutId="active-nav-pill"
-                          className="absolute inset-0 bg-white/10"
-                          style={{ borderRadius: 9999 }}
-                          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                        />
-                      )}
-                      <span className="relative z-10 font-medium">{item.name}</span>
-                    </motion.a>
-                  ))}
-                </nav>
-
-                <div className="flex items-center space-x-4">
-                  <Button
-                    onClick={() => navigate('/login')}
-                    variant="ghost"
-                    className="hidden md:inline-flex text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-300"
-                  >
-                    Sign In
-                  </Button>
-                  <div className="relative group">
-                    <Button
-                      onClick={() => navigate('/register')}
-                      className="hidden md:inline-flex bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white font-semibold px-6 py-2.5 rounded-xl shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_50px_rgba(59,130,246,0.8)] transition-all duration-300 transform hover:scale-105"
-                    >
-                      Get Started
-                    </Button>
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-xl blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-300" />
-                  </div>
-
-                  {/* Mobile menu button */}
-                  <button
-                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
-                  >
-                    {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                  </button>
-                </div>
+                  {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                </button>
               </div>
             </div>
 
-            {/* Mobile Menu */}
-            <AnimatePresence>
-              {mobileMenuOpen && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="md:hidden bg-black/95 backdrop-blur-2xl"
-                >
-                  <div className="px-4 py-6 space-y-4">
-                    {navigationItems.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          navigate(item.href);
-                          setMobileMenuOpen(false);
-                        }}
-                        className="block text-gray-300 hover:text-white transition-colors py-2 cursor-pointer"
-                      >
-                        {item.name}
-                      </a>
-                    ))}
-                    <div className="flex flex-col space-y-3 pt-4">
-                      <Button
-                        onClick={() => {
-                          navigate('/login');
-                          setMobileMenuOpen(false);
-                        }}
-                        variant="ghost"
-                        className="justify-start text-gray-300 hover:text-white"
-                      >
-                        Sign In
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          navigate('/register');
-                          setMobileMenuOpen(false);
-                        }}
-                        className="justify-start bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white"
-                      >
-                        Get Started
-                      </Button>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <MobileMenu 
+              isOpen={mobileMenuOpen} 
+              onClose={() => setMobileMenuOpen(false)} 
+            />
           </motion.header>
         )}
       </AnimatePresence>
