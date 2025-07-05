@@ -1,112 +1,119 @@
 
 import React, { useState } from 'react';
-import { Send, Bot, User, Sparkles } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Clock, FileText, Search, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import DynamicMobileHeader from '../components/DynamicMobileHeader';
-
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-}
+import { useEnhancedAIChatWithActions, EnhancedChatMessage } from '../../hooks/useEnhancedAIChatWithActions';
 
 const MobileChat: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: 'Hello! I\'m your AI writing assistant. How can I help you with your notes today?',
-      timestamp: new Date()
-    }
-  ]);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const { 
+    messages, 
+    sendMessageWithActions, 
+    isLoading 
+  } = useEnhancedAIChatWithActions();
 
   const handleSend = async () => {
-    if (!input.trim()) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: input,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage]);
+    if (!input.trim() || isLoading) return;
+    
+    await sendMessageWithActions(input);
     setInput('');
-    setIsLoading(true);
+  };
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: 'I understand you\'re looking for help with that. Let me assist you with your writing and note-taking needs.',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, aiMessage]);
-      setIsLoading(false);
-    }, 1000);
+  const getActionIcon = (actionType: string) => {
+    switch (actionType) {
+      case 'create_note': return <FileText className="w-3 h-3" />;
+      case 'set_reminder': return <Clock className="w-3 h-3" />;
+      case 'search_notes': return <Search className="w-3 h-3" />;
+      case 'delete_note': return <Trash2 className="w-3 h-3" />;
+      default: return <Sparkles className="w-3 h-3" />;
+    }
   };
 
   const quickPrompts = [
-    'Help me organize my thoughts',
-    'Summarize my recent notes',
-    'Improve my writing style',
-    'Generate ideas for my project'
+    'Create a note about today\'s meeting',
+    'Remind me to call John tomorrow at 2pm',
+    'Find my notes about project planning',
+    'Set a reminder for my dentist appointment'
   ];
 
   return (
     <div className="h-full flex flex-col bg-background">
-      <DynamicMobileHeader title="AI Assistant" />
+      <DynamicMobileHeader title="Enhanced AI Assistant" />
       
       {/* Messages */}
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex gap-3 ${
-                message.role === 'user' ? 'justify-end' : 'justify-start'
-              }`}
-            >
-              {message.role === 'assistant' && (
-                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                  <Bot className="w-4 h-4 text-primary-foreground" />
-                </div>
-              )}
-              
-              <Card className={`max-w-[80%] ${
-                message.role === 'user' 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-muted'
-              }`}>
-                <CardContent className="p-3">
-                  <p className="text-sm">{message.content}</p>
-                  <p className={`text-xs mt-1 ${
-                    message.role === 'user' 
-                      ? 'text-primary-foreground/70' 
-                      : 'text-muted-foreground'
-                  }`}>
-                    {message.timestamp.toLocaleTimeString([], { 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
-                    })}
-                  </p>
-                </CardContent>
-              </Card>
-              
-              {message.role === 'user' && (
-                <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                  <User className="w-4 h-4 text-accent-foreground" />
-                </div>
-              )}
+          {messages.length === 0 ? (
+            <div className="text-center text-muted-foreground py-8">
+              <Sparkles className="w-12 h-12 mx-auto mb-4 opacity-50" />
+              <p className="mb-4">I can help you create notes, set reminders, and organize your thoughts!</p>
             </div>
-          ))}
+          ) : (
+            messages.map((message: EnhancedChatMessage) => (
+              <div
+                key={message.id}
+                className={`flex gap-3 ${
+                  message.isUser ? 'justify-end' : 'justify-start'
+                }`}
+              >
+                {!message.isUser && (
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-4 h-4 text-primary-foreground" />
+                  </div>
+                )}
+                
+                <div className={`max-w-[80%] ${message.isUser ? 'order-1' : ''}`}>
+                  <Card className={`${
+                    message.isUser 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted'
+                  }`}>
+                    <CardContent className="p-3">
+                      <p className="text-sm">{message.content}</p>
+                      
+                      {/* Show actions that were executed */}
+                      {message.actions && message.actions.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {message.actions.map((action, actionIndex) => (
+                            <Badge 
+                              key={actionIndex}
+                              variant="secondary" 
+                              className="text-xs flex items-center gap-1"
+                            >
+                              {getActionIcon(action.type)}
+                              {action.type.replace('_', ' ')}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                      
+                      <p className={`text-xs mt-1 ${
+                        message.isUser 
+                          ? 'text-primary-foreground/70' 
+                          : 'text-muted-foreground'
+                      }`}>
+                        {message.timestamp.toLocaleTimeString([], { 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                {message.isUser && (
+                  <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
+                    <User className="w-4 h-4 text-accent-foreground" />
+                  </div>
+                )}
+              </div>
+            ))
+          )}
           
           {isLoading && (
             <div className="flex gap-3 justify-start">
@@ -115,10 +122,9 @@ const MobileChat: React.FC = () => {
               </div>
               <Card className="bg-muted">
                 <CardContent className="p-3">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                    <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                  <div className="flex items-center space-x-2">
+                    <Sparkles className="w-4 h-4 animate-spin text-primary" />
+                    <span className="text-sm text-muted-foreground">AI is thinking and taking actions...</span>
                   </div>
                 </CardContent>
               </Card>
@@ -128,7 +134,7 @@ const MobileChat: React.FC = () => {
       </ScrollArea>
 
       {/* Quick Prompts */}
-      {messages.length === 1 && (
+      {messages.length === 0 && (
         <div className="p-4 border-t">
           <p className="text-sm text-muted-foreground mb-3">Try these prompts:</p>
           <div className="grid grid-cols-1 gap-2">
@@ -154,15 +160,20 @@ const MobileChat: React.FC = () => {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask me anything..."
+            placeholder="Ask me to create notes, set reminders..."
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             className="flex-1"
+            disabled={isLoading}
           />
           <Button 
             onClick={handleSend} 
             disabled={!input.trim() || isLoading}
           >
-            <Send className="w-4 h-4" />
+            {isLoading ? (
+              <Sparkles className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </Button>
         </div>
       </div>
