@@ -7,6 +7,8 @@ import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Menu } from 'lucide-react';
 import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
+import BannerControls from '../components/Dashboard/WelcomeHeader/BannerControls';
+import { useWelcomeHeader } from '../components/Dashboard/WelcomeHeader/hooks/useWelcomeHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
 import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
 import AnalyticsOverview from '../components/Dashboard/AnalyticsOverview';
@@ -19,6 +21,14 @@ const Dashboard: React.FC = () => {
   const { notes, setCurrentNote } = useOptimizedNotes();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+
+  // Get banner control functions
+  const {
+    bannerData,
+    handleBannerUpdate,
+    handleBannerDelete,
+    handleAIBannerGenerated
+  } = useWelcomeHeader();
 
   // Calculate stats from real user data
   const totalNotes = notes.length;
@@ -72,8 +82,19 @@ const Dashboard: React.FC = () => {
       {/* Clean Header */}
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="flex items-center justify-between p-4">
-          <SidebarTrigger className="h-8 w-8 p-0" />
-          <div className="text-sm text-muted-foreground font-medium">Dashboard</div>
+          <div className="flex items-center gap-4">
+            <SidebarTrigger className="h-8 w-8 p-0" />
+            <div className="text-sm text-muted-foreground font-medium">Dashboard</div>
+          </div>
+          
+          {/* Banner Controls */}
+          <BannerControls
+            showControls={true}
+            currentBannerUrl={bannerData?.url}
+            onBannerUpdate={handleBannerUpdate}
+            onBannerDelete={handleBannerDelete}
+            onAIBannerGenerated={handleAIBannerGenerated}
+          />
         </div>
       </div>
       

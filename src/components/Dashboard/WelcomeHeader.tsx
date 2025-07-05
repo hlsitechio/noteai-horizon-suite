@@ -3,7 +3,7 @@ import React from 'react';
 import { Clock } from 'lucide-react';
 import FullscreenBanner from './FullscreenBanner';
 import BannerBackground from './WelcomeHeader/BannerBackground';
-import BannerControls from './WelcomeHeader/BannerControls';
+
 import BannerPlaceholder from './WelcomeHeader/BannerPlaceholder';
 import FullscreenHint from './WelcomeHeader/FullscreenHint';
 import ResizableBanner from './WelcomeHeader/ResizableBanner';
@@ -87,14 +87,6 @@ const WelcomeHeader: React.FC = () => {
           {/* Banner Placeholder Content */}
           <BannerPlaceholder isVisible={!isLoading && !bannerData} />
 
-          {/* Clean Banner Controls */}
-          <BannerControls
-            showControls={showControls}
-            currentBannerUrl={bannerData?.url}
-            onBannerUpdate={handleBannerUpdate}
-            onBannerDelete={handleBannerDelete}
-            onAIBannerGenerated={handleAIBannerGenerated}
-          />
 
           {/* Fullscreen Hint */}
           <FullscreenHint
