@@ -45,7 +45,7 @@ export function initPerfMonitor(): void {
               },
             });
             
-            console.warn(`Long task detected: ${longTask.duration}ms`);
+            // Long task detected and reported to Sentry
           }
         });
       });

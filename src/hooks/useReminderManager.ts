@@ -108,7 +108,7 @@ export const useReminderManager = () => {
   useEffect(() => {
     NotificationService.requestPermission().then(granted => {
       if (!granted) {
-        console.warn('Notifications not enabled for reminders');
+        // Notifications not enabled for reminders
       }
     }).catch(error => {
       console.error('Error requesting notification permission:', error);

@@ -34,7 +34,7 @@ export class BannerRetrievalService {
         return null;
       }
 
-      console.log('BannerRetrievalService: Retrieved banner:', data);
+      // BannerRetrievalService: Retrieved banner
       
       return data ? {
         ...data,

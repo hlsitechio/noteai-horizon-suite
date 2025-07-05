@@ -34,7 +34,7 @@ export class NotificationService {
     actions?: Array<{ action: string; title: string; icon?: string }>;
   }): Notification | null {
     if (!this.canShowNotifications()) {
-      console.warn('Notifications not permitted');
+      // Notifications not permitted
       return null;
     }
 

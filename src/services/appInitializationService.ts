@@ -30,7 +30,7 @@ export class AppInitializationService {
 
       this.isInitialized = true;
       
-      console.log('✅ App initialized successfully');
+      // App initialized successfully
 
     } catch (error) {
       logger.error('❌ Failed to initialize application:', error);

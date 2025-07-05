@@ -65,7 +65,7 @@ export class CleanupService {
       clearTimeout(i);
     }
     
-    console.log('Cleared existing intervals and timeouts to prevent rate limiting');
+    // Cleared existing intervals and timeouts to prevent rate limiting
   }
 
   static cleanup() {

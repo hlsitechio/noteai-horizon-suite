@@ -30,14 +30,14 @@ export const useBannerState = () => {
 
       try {
         setError(null);
-        console.log('Loading dashboard banner from Supabase');
+        // Loading dashboard banner from Supabase
         
         const banner = await BannerStorageService.getBanner('dashboard');
         
         if (!isMounted) return;
 
         if (banner) {
-          console.log('Banner loaded successfully:', banner.file_name);
+          // Banner loaded successfully
           const bannerData: BannerData = {
             url: banner.file_url,
             type: banner.file_type as 'image' | 'video'
@@ -54,7 +54,7 @@ export const useBannerState = () => {
             }
           }
         } else {
-          console.log('No banner found, using placeholder');
+          // No banner found, using placeholder
           setBannerData(null);
         }
       } catch (error) {
