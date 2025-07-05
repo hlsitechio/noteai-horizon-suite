@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useOptimizedNotes } from '../contexts/OptimizedNotesContext';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Menu } from 'lucide-react';
 import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
 import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
@@ -67,6 +69,14 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="w-full min-h-screen bg-background">
+      {/* Sidebar Toggle - Always visible */}
+      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border/40">
+        <div className="flex items-center justify-between p-4">
+          <SidebarTrigger className="h-8 w-8 p-0" />
+          <div className="text-sm text-muted-foreground">Dashboard</div>
+        </div>
+      </div>
+      
       {/* Fullscreen Toggle Button */}
       <FullscreenToggle />
       
