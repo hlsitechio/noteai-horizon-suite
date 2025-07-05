@@ -2,7 +2,6 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BannerMedia from './BannerMedia';
 import BannerPlaceholder from './BannerPlaceholder';
-import FullscreenHint from '../WelcomeHeader/FullscreenHint';
 
 interface BannerContentProps {
   bannerData: {url: string, type: 'image' | 'video'} | null;
@@ -34,16 +33,6 @@ const BannerContent: React.FC<BannerContentProps> = ({
       <AnimatePresence>
         {!isLoading && !bannerData && (
           <BannerPlaceholder />
-        )}
-      </AnimatePresence>
-
-      {/* Fullscreen Hint */}
-      <AnimatePresence>
-        {!isLoading && bannerData && showControls && (
-          <FullscreenHint
-            showControls={showControls}
-            isVisible={true}
-          />
         )}
       </AnimatePresence>
     </div>

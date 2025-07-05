@@ -6,8 +6,6 @@ import { useIsMobile } from '../hooks/use-mobile';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
-import BannerControls from '../components/Dashboard/WelcomeHeader/BannerControls';
-import { useWelcomeHeader } from '../components/Dashboard/WelcomeHeader/hooks/useWelcomeHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
 import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
 import ReminderManagement from '../components/Dashboard/ReminderManagement';
@@ -19,14 +17,6 @@ const Dashboard: React.FC = () => {
   const { notes, setCurrentNote } = useOptimizedNotes();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-
-  // Get banner control functions
-  const {
-    bannerData,
-    handleBannerUpdate,
-    handleBannerDelete,
-    handleAIBannerGenerated
-  } = useWelcomeHeader();
 
   // Calculate stats from real user data
   const totalNotes = notes.length;
@@ -84,15 +74,6 @@ const Dashboard: React.FC = () => {
             <SidebarTrigger className="h-8 w-8 p-0" />
             <div className="text-sm text-muted-foreground font-medium">Dashboard</div>
           </div>
-          
-          {/* Banner Controls */}
-          <BannerControls
-            showControls={true}
-            currentBannerUrl={bannerData?.url}
-            onBannerUpdate={handleBannerUpdate}
-            onBannerDelete={handleBannerDelete}
-            onAIBannerGenerated={handleAIBannerGenerated}
-          />
         </div>
       </div>
       
