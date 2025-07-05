@@ -10,6 +10,7 @@ import { useEnhancedAIChatWithSessions, EnhancedChatMessage } from '../hooks/use
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import FormattedMessage from '../components/Chat/FormattedMessage';
 import ChatHistoryPanel from '../components/Chat/ChatHistoryPanel';
+import InteractiveNoteCard from '../components/Chat/InteractiveNoteCard';
 
 const Chat: React.FC = () => {
   const [message, setMessage] = useState('');
@@ -187,6 +188,22 @@ const Chat: React.FC = () => {
                             </div>
                           )}
                         </div>
+                        
+                        {/* Show Interactive Note Cards for created notes */}
+                        {msg.actionResults && msg.actionResults.map((result, resultIndex) => {
+                          if (result.success && result.data && msg.actions?.[resultIndex]?.type === 'create_note') {
+                            return (
+                              <InteractiveNoteCard
+                                key={`note-${result.data.id}`}
+                                noteId={result.data.id}
+                                title={result.data.title}
+                                content={result.data.content}
+                                tags={result.data.tags || []}
+                              />
+                            );
+                          }
+                          return null;
+                        })}
                         
                         {/* Show timestamp */}
                         <div className="text-xs text-muted-foreground mt-1 px-1">
