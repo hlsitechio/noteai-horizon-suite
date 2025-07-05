@@ -12,13 +12,11 @@ export function safeSendAnalyticsEvent(eventName: string, eventParams?: Record<s
         value: eventParams?.value || 0,
         ...eventParams,
       });
-      console.log('Analytics event sent:', eventName, eventParams);
-    } else {
-      console.warn('Google Analytics not available');
+      // Reduced logging to prevent console noise
     }
+    // Silent failure when GA not available
   } catch (error) {
-    console.warn('Analytics tracking failed:', error);
-    // Don't throw error, just log it
+    // Silent failure to prevent console noise
   }
 }
 
@@ -28,10 +26,9 @@ export function safeSetAnalyticsUserId(userId: string) {
       window.gtag('config', 'GA_MEASUREMENT_ID', {
         user_id: userId,
       });
-      console.log('Analytics user ID set:', userId);
     }
   } catch (error) {
-    console.warn('Failed to set analytics user ID:', error);
+    // Silent failure
   }
 }
 
@@ -42,10 +39,9 @@ export function safeTrackPageView(pagePath: string, pageTitle?: string) {
         page_path: pagePath,
         page_title: pageTitle || document.title,
       });
-      console.log('Page view tracked:', pagePath, pageTitle);
     }
   } catch (error) {
-    console.warn('Failed to track page view:', error);
+    // Silent failure
   }
 }
 
@@ -55,10 +51,9 @@ export function enableAnalyticsDebugMode() {
       window.gtag('config', 'GA_MEASUREMENT_ID', {
         debug_mode: true,
       });
-      console.log('Analytics debug mode enabled');
     }
   } catch (error) {
-    console.warn('Failed to enable analytics debug mode:', error);
+    // Silent failure
   }
 }
 

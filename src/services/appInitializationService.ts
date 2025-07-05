@@ -56,16 +56,27 @@ export class AppInitializationService {
   }
 
   private static setupPerformanceMonitoring() {
-    // Monitor Core Web Vitals and send to analytics
+    // Reduced performance monitoring to prevent violations
     setTimeout(() => {
-      const metrics = PerformanceService.getMetrics();
-      Object.entries(metrics).forEach(([metric, value]) => {
-        AnalyticsService.trackEvent('performance_metric', {
-          metric_name: metric,
-          metric_value: value,
-        });
-      });
-    }, 5000); // Wait 5 seconds to collect metrics
+      try {
+        const metrics = PerformanceService.getMetrics();
+        // Only send critical metrics to reduce noise
+        const criticalMetrics = Object.entries(metrics).filter(
+          ([metric, value]) => typeof value === 'number' && value > 0
+        );
+        
+        if (criticalMetrics.length > 0) {
+          criticalMetrics.forEach(([metric, value]) => {
+            AnalyticsService.trackEvent('performance_metric', {
+              metric_name: metric,
+              metric_value: value,
+            });
+          });
+        }
+      } catch (error) {
+        // Silent failure to prevent console noise
+      }
+    }, 10000); // Increased delay to reduce violations
   }
 
   static cleanup() {
