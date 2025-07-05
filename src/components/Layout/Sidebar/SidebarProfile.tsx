@@ -7,10 +7,10 @@ export function SidebarProfile() {
   const { user } = useAuth();
 
   return (
-    <div className="flex items-center gap-3 p-3 bg-accent/20 rounded-lg mx-1 mb-2">
-      <Avatar className="w-8 h-8 flex-shrink-0 ring-2 ring-primary/20">
-        <AvatarImage src={user?.avatar} />
-        <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-xs">
+    <div className="flex items-center gap-3 p-3 bg-accent/20 rounded-lg mx-1 mb-2 hover:bg-accent/30 transition-colors duration-200">
+      <Avatar className="w-10 h-10 flex-shrink-0 ring-2 ring-primary/30 hover:ring-primary/50 transition-all duration-200">
+        <AvatarImage src={user?.avatar} className="object-cover" />
+        <AvatarFallback className="bg-gradient-to-br from-primary/30 to-primary/15 text-sm font-medium">
           {user?.name?.[0]}
         </AvatarFallback>
       </Avatar>

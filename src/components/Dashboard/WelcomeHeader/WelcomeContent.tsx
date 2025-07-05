@@ -36,9 +36,9 @@ const WelcomeContent: React.FC<WelcomeContentProps> = ({ currentTime }) => {
   return (
     <div className="absolute inset-0 flex items-center justify-between p-4 text-white">
       <div className="flex items-center gap-4">
-        <Avatar className="w-12 h-12 ring-2 ring-white/20">
-          <AvatarImage src={user?.avatar} />
-          <AvatarFallback className="bg-white/20 text-white">
+        <Avatar className="w-16 h-16 ring-2 ring-white/30 shadow-lg hover:ring-white/50 transition-all duration-300">
+          <AvatarImage src={user?.avatar} className="object-cover" />
+          <AvatarFallback className="bg-gradient-to-br from-white/30 to-white/10 text-white text-lg font-semibold">
             {user?.name?.[0]}
           </AvatarFallback>
         </Avatar>
