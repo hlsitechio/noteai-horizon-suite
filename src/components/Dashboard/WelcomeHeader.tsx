@@ -26,13 +26,19 @@ const WelcomeHeader: React.FC = () => {
     setIsFullscreenOpen
   } = useWelcomeHeader();
 
+  // Get user name safely
+  const getUserFirstName = () => {
+    if (!user?.name) return 'User';
+    return user.name.split(' ')[0] || 'User';
+  };
+
   return (
     <div className="space-y-4">
       {/* Compact Welcome Text Section */}
       <div className="flex items-center justify-between px-4 py-2.5 bg-card/30 backdrop-blur-sm rounded-lg border border-border/50">
         <div className="flex items-center gap-4">
           <h1 className="text-lg font-semibold text-foreground">
-            Welcome back, {user?.name?.split(' ')[0] || 'User'}
+            Welcome back, {getUserFirstName()}
           </h1>
           <p className="text-sm text-muted-foreground hidden sm:block">
             {currentTime.toLocaleDateString([], {
