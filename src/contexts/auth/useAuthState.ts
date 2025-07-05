@@ -17,8 +17,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
     case 'SET_SESSION':
       return { 
         ...state, 
-        session: action.payload,
-        isLoading: false
+        session: action.payload
       };
     case 'SET_USER':
       return { ...state, user: action.payload };
@@ -37,6 +36,7 @@ export const useAuthState = () => {
   };
 
   const setSession = async (session: Session | null) => {
+    // Keep loading true until user transformation is complete
     dispatch({ type: 'SET_SESSION', payload: session });
     
     // Transform and set user when session changes
@@ -58,6 +58,9 @@ export const useAuthState = () => {
     } else {
       dispatch({ type: 'SET_USER', payload: null });
     }
+    
+    // Only set loading to false after user is set
+    dispatch({ type: 'SET_LOADING', payload: false });
   };
 
   const setUser = (user: User | null) => {
