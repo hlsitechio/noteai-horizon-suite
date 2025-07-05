@@ -6,6 +6,8 @@ import AnalyticsHeader from '../components/Analytics/AnalyticsHeader';
 import OverviewStats from '../components/Analytics/OverviewStats';
 import CategoryDistribution from '../components/Analytics/CategoryDistribution';
 import WritingInsights from '../components/Analytics/WritingInsights';
+import AnalyticsOverview from '../components/Dashboard/AnalyticsOverview';
+import AIUsageAnalytics from '../components/Dashboard/AIUsageAnalytics';
 
 const Analytics: React.FC = () => {
   const { notes } = useOptimizedNotes();
@@ -77,6 +79,19 @@ const Analytics: React.FC = () => {
               totalCharacters={totalCharacters}
               favoriteNotes={favoriteNotes}
             />
+          </div>
+
+          {/* Advanced Analytics */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <AnalyticsOverview
+              totalNotes={totalNotes}
+              favoriteNotes={favoriteNotes}
+              categoryCounts={categoryCounts}
+              weeklyNotes={weeklyNotes}
+              notes={notes}
+            />
+            
+            <AIUsageAnalytics />
           </div>
         </motion.div>
       </div>

@@ -11,10 +11,8 @@ import BannerControls from '../components/Dashboard/WelcomeHeader/BannerControls
 import { useWelcomeHeader } from '../components/Dashboard/WelcomeHeader/hooks/useWelcomeHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
 import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
-import AnalyticsOverview from '../components/Dashboard/AnalyticsOverview';
 import ReminderManagement from '../components/Dashboard/ReminderManagement';
 import FullscreenToggle from '../components/Dashboard/FullscreenToggle';
-import AIUsageAnalytics from '../components/Dashboard/AIUsageAnalytics';
 import SmartNoteRecommendations from '../components/Dashboard/SmartNoteRecommendations';
 
 const Dashboard: React.FC = () => {
@@ -120,22 +118,10 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Main Content Grid - Clean Organization */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Analytics Column */}
+        {/* Simplified Content - More Minimalist */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Smart Features Column */}
           <div className="space-y-6">
-            <AnalyticsOverview
-              totalNotes={totalNotes}
-              favoriteNotes={favoriteNotes}
-              categoryCounts={categoryCounts}
-              weeklyNotes={weeklyNotes}
-              notes={notes}
-            />
-          </div>
-
-          {/* AI & Smart Features Column */}
-          <div className="space-y-6">
-            <AIUsageAnalytics />
             <SmartNoteRecommendations 
               notes={notes}
               onEditNote={handleEditNote}
