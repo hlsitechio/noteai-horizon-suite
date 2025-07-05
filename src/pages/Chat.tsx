@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Send, MessageCircle, Sparkles, Clock, FileText, Search, Trash2 } from 'lucide-react';
+import { Send, MessageCircle, Sparkles, Clock, FileText, Search, Trash2, Mic, MicOff } from 'lucide-react';
 import { useEnhancedAIChatWithActions, EnhancedChatMessage } from '../hooks/useEnhancedAIChatWithActions';
+import { useSpeechToText } from '../hooks/useSpeechToText';
 import FormattedMessage from '../components/Chat/FormattedMessage';
 
 const Chat: React.FC = () => {
@@ -18,10 +19,34 @@ const Chat: React.FC = () => {
     isLoading 
   } = useEnhancedAIChatWithActions();
 
+  const {
+    isRecording,
+    isProcessing,
+    startRecording,
+    stopRecording,
+    cancelRecording,
+  } = useSpeechToText();
+
   const handleSend = async () => {
     if (message.trim() && !isLoading) {
       await sendMessageWithActions(message);
       setMessage('');
+    }
+  };
+
+  const handleVoiceInput = async () => {
+    if (isRecording) {
+      // Stop recording and get transcription
+      const transcription = await stopRecording();
+      if (transcription) {
+        setMessage(transcription);
+      }
+    } else {
+      // Start recording
+      const success = await startRecording();
+      if (!success) {
+        console.error('Failed to start recording');
+      }
     }
   };
 
@@ -149,26 +174,65 @@ const Chat: React.FC = () => {
               </div>
             </ScrollArea>
 
-            <div className="flex gap-2">
-              <Input
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Ask me to create notes, set reminders, search your content..."
-                disabled={isLoading}
-                className="flex-1"
-              />
-              <Button
-                onClick={handleSend}
-                disabled={isLoading || !message.trim()}
-                size="sm"
-              >
-                {isLoading ? (
-                  <Sparkles className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Send className="w-4 h-4" />
-                )}
-              </Button>
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <Input
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder={isRecording ? "Listening..." : "Ask me to create notes, set reminders, search your content..."}
+                  disabled={isLoading || isRecording}
+                  className="flex-1"
+                />
+                
+                {/* Voice Input Button */}
+                <Button 
+                  variant={isRecording ? "destructive" : "outline"}
+                  size="sm"
+                  onClick={handleVoiceInput}
+                  disabled={isLoading || isProcessing}
+                  className={`${isRecording ? 'animate-pulse' : ''}`}
+                >
+                  {isProcessing ? (
+                    <Sparkles className="w-4 h-4 animate-spin" />
+                  ) : isRecording ? (
+                    <MicOff className="w-4 h-4" />
+                  ) : (
+                    <Mic className="w-4 h-4" />
+                  )}
+                </Button>
+                
+                <Button
+                  onClick={handleSend}
+                  disabled={isLoading || !message.trim() || isRecording}
+                  size="sm"
+                >
+                  {isLoading ? (
+                    <Sparkles className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+              
+              {/* Recording Status */}
+              {isRecording && (
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                    Recording... Click mic to stop
+                  </div>
+                </div>
+              )}
+              
+              {isProcessing && (
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                    <Sparkles className="w-4 h-4 animate-spin" />
+                    Converting speech to text...
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
