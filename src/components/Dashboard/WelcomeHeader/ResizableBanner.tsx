@@ -111,14 +111,14 @@ const ResizableBanner: React.FC<ResizableBannerProps> = ({
         
         {/* Resize Handle */}
         <div 
-          className={`absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize group-hover:bg-primary/10 transition-colors flex items-center justify-center ${
+          className={`absolute bottom-0 left-0 right-0 h-3 cursor-ns-resize bg-primary/5 hover:bg-primary/15 transition-colors flex items-center justify-center border-t border-border/50 ${
             isResizing ? 'bg-primary/20' : ''
           }`}
           onMouseDown={handleMouseDown}
           onTouchStart={handleTouchStart}
         >
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <GripHorizontal className="w-4 h-4 text-muted-foreground" />
+          <div className="opacity-60 hover:opacity-100 transition-opacity duration-200">
+            <GripHorizontal className="w-5 h-5 text-muted-foreground" />
           </div>
         </div>
         
