@@ -18,6 +18,7 @@ const Notes = lazy(() => import('../pages/Notes'));
 const Analytics = lazy(() => import('../pages/Analytics'));
 const Settings = lazy(() => import('../pages/Settings'));
 const Chat = lazy(() => import('../pages/Chat'));
+const SemanticChat = lazy(() => import('../pages/SemanticChat'));
 const Calendar = lazy(() => import('../pages/Calendar'));
 const ProjectRealms = lazy(() => import('../pages/ProjectRealms'));
 const ProjectDetail = lazy(() => import('../pages/ProjectDetail'));
@@ -128,6 +129,12 @@ export const OptimizedLazyRoutes: React.FC = () => {
           <Route path="chat" element={
             <Suspense fallback={<DashboardLoadingFallback />}>
               <Chat />
+            </Suspense>
+          } />
+          
+          <Route path="semantic-chat" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <SemanticChat />
             </Suspense>
           } />
           

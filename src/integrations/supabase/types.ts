@@ -1436,6 +1436,19 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      get_chat_context: {
+        Args: {
+          session_uuid: string
+          user_uuid: string
+          message_limit?: number
+        }
+        Returns: {
+          id: string
+          role: string
+          content: string
+          created_at: string
+        }[]
+      }
       get_current_user_data: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1603,6 +1616,38 @@ export type Database = {
       sanitize_input: {
         Args: { input_text: string }
         Returns: string
+      }
+      search_semantic_memory: {
+        Args: {
+          query_embedding: string
+          user_uuid: string
+          similarity_threshold?: number
+          match_count?: number
+        }
+        Returns: {
+          id: string
+          content: string
+          summary: string
+          importance_score: number
+          similarity: number
+          tags: string[]
+        }[]
+      }
+      search_similar_messages: {
+        Args: {
+          query_embedding: string
+          user_uuid: string
+          similarity_threshold?: number
+          match_count?: number
+        }
+        Returns: {
+          id: string
+          session_id: string
+          content: string
+          role: string
+          created_at: string
+          similarity: number
+        }[]
       }
       search_user_notes_for_rag: {
         Args: { user_uuid: string; search_query?: string; limit_count?: number }
