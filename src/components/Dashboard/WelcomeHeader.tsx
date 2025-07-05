@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Clock } from 'lucide-react';
 import FullscreenBanner from './FullscreenBanner';
 import BannerBackground from './WelcomeHeader/BannerBackground';
 
@@ -9,6 +8,7 @@ import FullscreenHint from './WelcomeHeader/FullscreenHint';
 import ResizableBanner from './WelcomeHeader/ResizableBanner';
 import { useWelcomeHeader } from './WelcomeHeader/hooks/useWelcomeHeader';
 import { useAuth } from '../../contexts/AuthContext';
+import 'boxicons/css/boxicons.min.css';
 
 const WelcomeHeader: React.FC = () => {
   const { user } = useAuth();
@@ -50,7 +50,7 @@ const WelcomeHeader: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-muted-foreground" />
+          <i className="bx bx-time text-sm text-muted-foreground"></i>
           <div className="text-right">
             <div className="text-sm font-medium text-foreground">
               {currentTime.toLocaleTimeString([], { 

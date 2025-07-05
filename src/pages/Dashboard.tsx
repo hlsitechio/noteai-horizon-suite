@@ -5,7 +5,6 @@ import { useOptimizedNotes } from '../contexts/OptimizedNotesContext';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Menu } from 'lucide-react';
 import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
 import BannerControls from '../components/Dashboard/WelcomeHeader/BannerControls';
 import { useWelcomeHeader } from '../components/Dashboard/WelcomeHeader/hooks/useWelcomeHeader';
@@ -14,6 +13,7 @@ import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
 import ReminderManagement from '../components/Dashboard/ReminderManagement';
 import FullscreenToggle from '../components/Dashboard/FullscreenToggle';
 import SmartNoteRecommendations from '../components/Dashboard/SmartNoteRecommendations';
+import 'boxicons/css/boxicons.min.css';
 
 const Dashboard: React.FC = () => {
   const { notes, setCurrentNote } = useOptimizedNotes();

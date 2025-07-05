@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, TrendingUp, Calendar, Clock } from 'lucide-react';
+import 'boxicons/css/boxicons.min.css';
 
 interface OverviewStatsProps {
   totalNotes: number;
@@ -33,25 +33,25 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
 
   const stats = [
     {
-      icon: BarChart3,
+      icon: 'bx bx-bar-chart',
       label: 'Total Notes',
       value: totalNotes,
       color: 'blue',
     },
     {
-      icon: TrendingUp,
+      icon: 'bx bx-trending-up',
       label: 'Total Words',
       value: totalWords.toLocaleString(),
       color: 'green',
     },
     {
-      icon: Calendar,
+      icon: 'bx bx-calendar',
       label: 'This Week',
       value: weeklyNotes,
       color: 'purple',
     },
     {
-      icon: Clock,
+      icon: 'bx bx-time',
       label: 'Favorites',
       value: favoriteNotes,
       color: 'orange',
@@ -66,7 +66,6 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
     >
       {stats.map((stat, index) => {
-        const Icon = stat.icon;
         return (
           <motion.div 
             key={stat.label}
@@ -75,7 +74,7 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
           >
             <div className="flex items-center gap-3">
               <div className={`p-2 bg-${stat.color}-100 dark:bg-${stat.color}-900/20 rounded-lg`}>
-                <Icon className={`w-5 h-5 text-${stat.color}-600 dark:text-${stat.color}-400`} />
+                <i className={`${stat.icon} text-lg text-${stat.color}-600 dark:text-${stat.color}-400`}></i>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">{stat.label}</p>

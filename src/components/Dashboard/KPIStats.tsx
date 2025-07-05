@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { FileText, Star, Calendar, TrendingUp, Clock, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
+import 'boxicons/css/boxicons.min.css';
 
 interface KPIStatsProps {
   totalNotes: number;
@@ -72,7 +72,7 @@ const KPIStats: React.FC<KPIStatsProps> = ({
 
   const stats = [
     {
-      icon: FileText,
+      icon: 'bx bx-file',
       label: 'Total Notes',
       value: totalNotes.toLocaleString(),
       change: weeklyNotes > 0 ? `+${weeklyNotes} this week` : 'No new notes this week',
@@ -80,7 +80,7 @@ const KPIStats: React.FC<KPIStatsProps> = ({
       color: 'blue'
     },
     {
-      icon: TrendingUp,
+      icon: 'bx bx-trending-up',
       label: 'Total Words',
       value: totalWords.toLocaleString(),
       change: averageWordsPerNote > 0 ? `${averageWordsPerNote} avg per note` : 'Start writing',
@@ -88,7 +88,7 @@ const KPIStats: React.FC<KPIStatsProps> = ({
       color: 'green'
     },
     {
-      icon: Star,
+      icon: 'bx bx-star',
       label: 'Favorites',
       value: favoriteNotes.toString(),
       change: totalNotes > 0 ? `${Math.round((favoriteNotes / totalNotes) * 100)}% of all notes` : '0% of notes',
@@ -96,7 +96,7 @@ const KPIStats: React.FC<KPIStatsProps> = ({
       color: 'yellow'
     },
     {
-      icon: Target,
+      icon: 'bx bx-target-lock',
       label: 'Writing Streak',
       value: `${writingStreak} days`,
       change: writingStreak >= 7 ? 'Great consistency!' : writingStreak > 0 ? 'Keep it up!' : 'Start your streak',
@@ -104,7 +104,7 @@ const KPIStats: React.FC<KPIStatsProps> = ({
       color: 'purple'
     },
     {
-      icon: Calendar,
+      icon: 'bx bx-calendar',
       label: 'This Week',
       value: weeklyNotes.toString(),
       change: weeklyNotes >= 5 ? 'Very productive!' : weeklyNotes >= 2 ? 'Good progress' : 'Room to grow',
@@ -112,7 +112,7 @@ const KPIStats: React.FC<KPIStatsProps> = ({
       color: 'indigo'
     },
     {
-      icon: Clock,
+      icon: 'bx bx-time',
       label: 'Categories',
       value: Object.keys(categoryCounts).length.toString(),
       change: Object.keys(categoryCounts).length > 3 ? 'Well organized' : 'Add more variety',
@@ -124,7 +124,6 @@ const KPIStats: React.FC<KPIStatsProps> = ({
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 w-full">
       {stats.map((stat, index) => {
-        const Icon = stat.icon;
         return (
           <motion.div
             key={stat.label}
@@ -137,7 +136,7 @@ const KPIStats: React.FC<KPIStatsProps> = ({
               <CardContent className="p-3">
                 <div className="flex items-start justify-between mb-2">
                   <div className={`p-1.5 bg-${stat.color}-100 dark:bg-${stat.color}-900/20 rounded-lg`}>
-                    <Icon className={`w-3 h-3 text-${stat.color}-600 dark:text-${stat.color}-400`} />
+                    <i className={`${stat.icon} text-sm text-${stat.color}-600 dark:text-${stat.color}-400`}></i>
                   </div>
                 </div>
                 

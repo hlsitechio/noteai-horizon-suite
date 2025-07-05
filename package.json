@@ -52,6 +52,7 @@
     "@types/lodash.throttle": "^4.1.9",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/uuid": "^10.0.0",
+    "boxicons": "^2.1.4",
     "caniuse-lite": "^1.0.30001726",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
