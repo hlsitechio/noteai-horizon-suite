@@ -85,7 +85,7 @@ const OptimizedDashboard: React.FC = () => {
   }, [setCurrentNote, navigate]);
 
   return (
-    <div className="w-full min-h-screen bg-background">
+    <div className="w-full min-h-screen bg-background overflow-y-auto">
       {/* Clean Header */}
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="flex items-center justify-between p-4">
