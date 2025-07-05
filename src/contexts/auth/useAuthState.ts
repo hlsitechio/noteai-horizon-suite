@@ -46,7 +46,14 @@ export const useAuthState = () => {
         dispatch({ type: 'SET_USER', payload: transformedUser });
       } catch (error) {
         console.error('Error transforming user during session set:', error);
-        dispatch({ type: 'SET_USER', payload: null });
+        // Fallback to basic user data if profile fetch fails
+        const fallbackUser = {
+          id: session.user.id,
+          email: session.user.email || '',
+          name: session.user.email?.split('@')[0] || 'User',
+          avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(session.user.email?.split('@')[0] || 'User')}&background=6366f1&color=fff`
+        };
+        dispatch({ type: 'SET_USER', payload: fallbackUser });
       }
     } else {
       dispatch({ type: 'SET_USER', payload: null });
@@ -68,6 +75,14 @@ export const useAuthState = () => {
         setUser(transformedUser);
       } catch (error) {
         console.error('Error refreshing user:', error);
+        // Fallback to basic user data if profile fetch fails
+        const fallbackUser = {
+          id: state.session.user.id,
+          email: state.session.user.email || '',
+          name: state.session.user.email?.split('@')[0] || 'User',
+          avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(state.session.user.email?.split('@')[0] || 'User')}&background=6366f1&color=fff`
+        };
+        setUser(fallbackUser);
       }
     }
   };
