@@ -1,13 +1,11 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import SmartToolbar from './SmartToolbar';
-import EnhancedAIAssistant from './EnhancedAIAssistant';
 import TextSelectionContextMenu from './TextSelectionContextMenu';
 import EditorContent from './components/EditorContent';
 import ResizableImage from './ResizableImage';
-import { useRichTextEditor } from './hooks/useRichTextEditor';
-import { useTextSelection } from './hooks/useTextSelection';
-import { useEditorFormatting } from './hooks/useEditorFormatting';
+import AIAssistant from '../../pages/Editor/ai/AIAssistant';
+import { useOptimizedRichTextEditor } from './hooks/useOptimizedRichTextEditor';
 
 interface RichTextEditorProps {
   value: string;
@@ -28,91 +26,42 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   canSave = true,
   isSaving = false
 }) => {
-  const [showAIAssistant, setShowAIAssistant] = useState(false);
-  const [editorFontFamily, setEditorFontFamily] = useState('inter');
-  const [editorFontSize, setEditorFontSize] = useState(16);
-  const [images, setImages] = useState<Array<{
-    id: string;
-    src: string;
-    width: number;
-    height: number;
-  }>>([]);
-
-  // Custom hooks for editor functionality
+  // Use the optimized hook for all editor functionality
   const {
+    showAIAssistant,
+    images,
     editor,
     slateValue,
+    selectedText,
+    assistantPosition,
+    contextMenuPosition,
+    editorStyle,
     handleChange,
     handleTextInsert,
     handleAIInsert,
     handleAIReplace,
-  } = useRichTextEditor({ value, onChange });
-
-  const {
-    selectedText,
-    assistantPosition,
-    contextMenuPosition,
     handleTextSelection,
     handleContextMenuReplace,
     closeContextMenu,
-  } = useTextSelection(editor);
-
-  const {
     handleFormatClick,
     getActiveFormats,
     handleKeyboardShortcuts,
-  } = useEditorFormatting(editor);
-
-  const handleFontChange = (fontFamily: string, fontSize: number) => {
-    setEditorFontFamily(fontFamily);
-    setEditorFontSize(fontSize);
-  };
-
-  const handleImageInsert = (imageData: string, width = 300, height = 200) => {
-    const newImage = {
-      id: Date.now().toString(),
-      src: imageData,
-      width,
-      height
-    };
-    setImages(prev => [...prev, newImage]);
-  };
-
-  const handleImageRemove = (imageId: string) => {
-    setImages(prev => prev.filter(img => img.id !== imageId));
-  };
-
-  const handleImageSizeChange = (imageId: string, width: number, height: number) => {
-    setImages(prev => prev.map(img => 
-      img.id === imageId ? { ...img, width, height } : img
-    ));
-  };
-
-  const getFontFamilyStyle = (family: string) => {
-    const fontMap: Record<string, string> = {
-      'inter': 'Inter, system-ui, sans-serif',
-      'arial': 'Arial, sans-serif',
-      'helvetica': 'Helvetica, Arial, sans-serif',
-      'georgia': 'Georgia, serif',
-      'times': '"Times New Roman", serif',
-      'courier': '"Courier New", monospace',
-      'verdana': 'Verdana, sans-serif',
-    };
-    return fontMap[family] || fontMap['inter'];
-  };
-
-  const editorStyle = {
-    fontFamily: getFontFamilyStyle(editorFontFamily),
-    fontSize: `${editorFontSize}px`,
-  };
+    handleFontChange,
+    handleImageInsert,
+    handleImageRemove,
+    handleImageSizeChange,
+    handleAIToggle,
+    handleAIClose,
+    handleOptimizedSave,
+  } = useOptimizedRichTextEditor({ value, onChange, onSave });
 
   return (
     <>
       <div className="rounded-2xl shadow-large overflow-hidden bg-black border border-silver/20">
         <SmartToolbar
           onFormatClick={handleFormatClick}
-          onAIClick={() => setShowAIAssistant(true)}
-          onSave={onSave || (() => {})}
+          onAIClick={handleAIToggle}
+          onSave={handleOptimizedSave}
           onTextInsert={handleTextInsert}
           onImageInsert={handleImageInsert}
           onFontChange={handleFontChange}
@@ -131,7 +80,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             placeholder={placeholder}
             onSelect={handleTextSelection}
             onKeyDown={handleKeyboardShortcuts}
-            onAIToggle={() => setShowAIAssistant(true)}
+            onAIToggle={handleAIToggle}
           />
           
           {/* Render images */}
@@ -161,13 +110,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         onClose={closeContextMenu}
       />
 
-      <EnhancedAIAssistant
+      <AIAssistant
         selectedText={selectedText}
         onTextInsert={handleAIInsert}
         onTextReplace={handleAIReplace}
         isVisible={showAIAssistant}
-        onClose={() => setShowAIAssistant(false)}
+        onClose={handleAIClose}
         position={assistantPosition}
+        mode="inline"
       />
     </>
   );

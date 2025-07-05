@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import RichTextEditor from './RichTextEditor';
+import RichTextEditor from '@/components/Editor/RichTextEditor';
 import PlainTextEditor from './PlainTextEditor';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -71,7 +71,6 @@ const EditorContent: React.FC<EditorContentProps> = ({
             onSave={onSave}
             canSave={canSave}
             isSaving={isSaving}
-            isMobile={isMobile}
           />
         ) : (
           <PlainTextEditor
