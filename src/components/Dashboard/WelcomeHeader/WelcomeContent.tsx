@@ -34,7 +34,7 @@ const WelcomeContent: React.FC<WelcomeContentProps> = ({ currentTime }) => {
   };
 
   return (
-    <div className="absolute inset-0 flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-6 text-white">
+    <div className="absolute top-0 left-0 right-0 flex flex-col sm:flex-row items-start justify-between p-4 sm:p-6 text-white z-10">
       <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-0">
         <Avatar className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 ring-2 ring-white/20 shadow-medium">
           <AvatarImage src={user?.avatar} className="object-cover" />
