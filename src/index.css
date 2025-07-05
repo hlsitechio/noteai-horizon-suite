@@ -107,42 +107,42 @@
   .dark {
     /* Professional Minimalist Dark Theme */
     --background: 220 13% 9%; /* Deep professional navy */
-    --foreground: 220 9% 94%; /* Clean white text */
+    --foreground: 220 9% 88%; /* Softer white text */
     --card: 220 13% 11%; /* Slightly lighter cards */
-    --card-foreground: 220 9% 94%; /* Clean white text */
+    --card-foreground: 220 9% 85%; /* Softer card text */
     --popover: 220 13% 11%; /* Consistent with cards */
-    --popover-foreground: 220 9% 94%; /* Clean white text */
+    --popover-foreground: 220 9% 85%; /* Softer popover text */
     --primary: 217 91% 60%; /* Professional blue accent */
     --primary-foreground: 220 13% 9%; /* Dark text on accent */
     --secondary: 220 13% 15%; /* Subtle secondary backgrounds */
-    --secondary-foreground: 220 9% 94%; /* Clean white text */
+    --secondary-foreground: 220 9% 80%; /* Softer secondary text */
     --muted: 220 13% 15%; /* Muted backgrounds */
-    --muted-foreground: 220 9% 60%; /* Muted text - readable but subtle */
+    --muted-foreground: 220 9% 65%; /* More readable muted text */
     --accent: 217 91% 60%; /* Professional blue accent */
     --accent-foreground: 220 13% 9%; /* Dark text on accent */
     --destructive: 0 84% 60%;
     --destructive-foreground: 220 9% 94%;
-    --border: 220 13% 18%; /* Subtle borders */
+    --border: 220 13% 20%; /* More visible but subtle borders */
     --input: 220 13% 15%; /* Input backgrounds */
     --ring: 217 91% 60%; /* Focus rings */
     
     /* Sidebar specific colors for professional theme */
     --sidebar-background: 220 13% 9%; /* Match background */
-    --sidebar-foreground: 220 9% 94%; /* Clean white text */
+    --sidebar-foreground: 220 9% 82%; /* Softer sidebar text */
     --sidebar-primary: 217 91% 60%; /* Professional blue accent */
     --sidebar-primary-foreground: 220 13% 9%; /* Dark text on accent */
     --sidebar-accent: 220 13% 15%; /* Subtle hover states */
-    --sidebar-accent-foreground: 220 9% 94%; /* Clean white text */
-    --sidebar-border: 220 13% 18%; /* Subtle borders */
+    --sidebar-accent-foreground: 220 9% 88%; /* Clean hover text */
+    --sidebar-border: 220 13% 18%; /* Very subtle borders */
     --sidebar-ring: 217 91% 60%; /* Focus rings */
     
     /* Enhanced dark mode semantic colors */
     --success: 142.1 76.2% 36.3%;
-    --success-foreground: 0 0% 88%;
+    --success-foreground: 220 9% 94%;
     --warning: 38.2 92% 50%;
-    --warning-foreground: 0 0% 0%;
-    --info: 187 100% 42%; /* Using accent color for info */
-    --info-foreground: 0 0% 0%;
+    --warning-foreground: 220 13% 9%;
+    --info: 217 91% 60%; /* Using accent color for info */
+    --info-foreground: 220 13% 9%;
   }
 
   * {

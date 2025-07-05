@@ -40,21 +40,12 @@ export function SidebarMain() {
             </SidebarGroupContent>
           </SidebarGroup>
 
-          {/* First Separator */}
-          <SidebarSeparator className="mx-4 my-2" />
-
           {/* Collapsed Summary - only show when collapsed on desktop */}
           {!isMobile && isCollapsed && <CollapsedSummary />}
-
-          {/* Second Separator - only show when collapsed on desktop */}
-          {!isMobile && isCollapsed && <SidebarSeparator className="mx-4 my-2" />}
 
           {/* Notes Section - This is the main content area */}
           <NotesSection />
         </SidebarContent>
-
-        {/* Footer Separator */}
-        <SidebarSeparator className="mx-4 my-1" />
 
         {/* Footer with Notifications */}
         <SidebarFooter className="p-2 pt-1 z-30 flex-shrink-0">
