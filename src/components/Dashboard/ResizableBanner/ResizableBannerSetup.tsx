@@ -124,30 +124,32 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
         animate="visible"
       >
         <div className="w-full max-w-4xl mx-auto">
-          {/* Header Section */}
-          <motion.div className="text-center mb-8" variants={itemVariants}>
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="p-3 bg-primary/10 rounded-full">
-                <Maximize2 className="w-6 h-6 text-primary" />
+          {/* Header Section - Only show when no image is selected */}
+          {!selectedImageUrl && (
+            <motion.div className="text-center mb-8" variants={itemVariants}>
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="p-3 bg-primary/10 rounded-full">
+                  <Maximize2 className="w-6 h-6 text-primary" />
+                </div>
+                <h1 className="text-2xl font-bold text-foreground">
+                  Customize Your Banner
+                </h1>
               </div>
-              <h1 className="text-2xl font-bold text-foreground">
-                Customize Your Banner
-              </h1>
-            </div>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Transform your dashboard with a personalized banner. Upload your own media, 
-              generate with AI, or choose from your gallery.
-            </p>
-          </motion.div>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Transform your dashboard with a personalized banner. Upload your own media, 
+                generate with AI, or choose from your gallery.
+              </p>
+            </motion.div>
+          )}
 
           {/* Conditional Content - Show Image if Selected, Otherwise Show Setup */}
           {selectedImageUrl ? (
-            // Show Selected Banner Image
+            // Show Selected Banner Image - Full Size
             <motion.div 
-              className="relative w-full h-full flex items-center justify-center"
+              className="absolute inset-0 w-full h-full"
               variants={itemVariants}
             >
-              <div className="relative w-full h-full max-h-[60vh] rounded-lg overflow-hidden group">
+              <div className="relative w-full h-full group">
                 <img
                   src={selectedImageUrl}
                   alt="Selected banner"
