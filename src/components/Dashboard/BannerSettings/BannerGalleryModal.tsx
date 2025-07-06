@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -33,6 +33,7 @@ const BannerGalleryModal: React.FC<BannerGalleryModalProps> = ({
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load user's gallery images
   const loadGalleryImages = async () => {
@@ -48,6 +49,11 @@ const BannerGalleryModal: React.FC<BannerGalleryModalProps> = ({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Trigger file input
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
   };
 
   // Handle file upload
@@ -123,16 +129,21 @@ const BannerGalleryModal: React.FC<BannerGalleryModalProps> = ({
           {/* Upload Section & Search */}
           <div className="flex gap-4 items-center">
             <div className="relative">
-              <input
+            <input
+                ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept="image/*,video/*"
                 onChange={handleFileUpload}
                 className="hidden"
-                id="image-upload"
                 disabled={isUploading}
               />
-              <label htmlFor="image-upload">
-                <Button variant="outline" size="sm" className="gap-2 cursor-pointer" disabled={isUploading}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2" 
+                disabled={isUploading}
+                onClick={triggerFileInput}
+              >
                   {isUploading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -144,8 +155,7 @@ const BannerGalleryModal: React.FC<BannerGalleryModalProps> = ({
                       Upload Image
                     </>
                   )}
-                </Button>
-              </label>
+                 </Button>
             </div>
             
             <div className="relative flex-1">
@@ -171,12 +181,14 @@ const BannerGalleryModal: React.FC<BannerGalleryModalProps> = ({
               <p className="text-muted-foreground mb-4">
                 Upload your first image to get started with custom banners.
               </p>
-              <label htmlFor="image-upload">
-                <Button className="gap-2 cursor-pointer">
-                  <Plus className="h-4 w-4" />
-                  Upload Your First Image
-                </Button>
-              </label>
+              <Button 
+                className="gap-2" 
+                onClick={triggerFileInput}
+                disabled={isUploading}
+              >
+                <Plus className="h-4 w-4" />
+                Upload Your First Image
+              </Button>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
