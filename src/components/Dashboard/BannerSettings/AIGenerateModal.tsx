@@ -86,16 +86,10 @@ const AIGenerateModal: React.FC<AIGenerateModalProps> = ({
       // Mock delay for generation
       await new Promise(resolve => setTimeout(resolve, 3000));
       
-      // Mock generated images
-      const mockImages = [
-        `https://picsum.photos/800/400?random=${Date.now()}`,
-        `https://picsum.photos/800/400?random=${Date.now() + 1}`,
-        `https://picsum.photos/800/400?random=${Date.now() + 2}`,
-        `https://picsum.photos/800/400?random=${Date.now() + 3}`
-      ];
-      
-      setGeneratedImages(mockImages);
-      toast.success('Images generated successfully!');
+      // For now, show placeholder message instead of external images
+      // In production, this would generate actual AI images
+      setGeneratedImages([]);
+      toast.success('AI generation will be available soon. Please use image upload for now.');
     } catch (error) {
       toast.error('Failed to generate images');
       console.error('AI generation error:', error);
