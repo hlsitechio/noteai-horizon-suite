@@ -6,7 +6,7 @@ export const useDashboardPanelSizes = () => {
   const savedPanelSizes = getPanelSizes();
   
   const panelSizes = {
-    banner: savedPanelSizes.banner || 40,
+    banner: savedPanelSizes.banner || 25, // Reduced from 40 to 25
     analytics: savedPanelSizes.analytics || 30,
     topSection: savedPanelSizes.topSection || 35,
     bottomSection: savedPanelSizes.bottomSection || 35,
