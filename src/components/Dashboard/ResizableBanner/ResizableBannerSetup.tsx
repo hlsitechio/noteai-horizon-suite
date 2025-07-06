@@ -4,6 +4,11 @@ import { Upload, Sparkles, Image, Play, Maximize2, Settings, Palette } from 'luc
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import BannerSettingsModal from '../BannerSettings/BannerSettingsModal';
+import ColorThemesModal from '../BannerSettings/ColorThemesModal';
+import BannerGalleryModal from '../BannerSettings/BannerGalleryModal';
+import AIGenerateModal from '../BannerSettings/AIGenerateModal';
+import PreviewModeModal from '../BannerSettings/PreviewModeModal';
 
 interface ResizableBannerSetupProps {
   onImageUpload?: (file: File) => void;
