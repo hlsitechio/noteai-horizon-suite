@@ -1,218 +1,40 @@
 import React from 'react';
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import { ResizableDashboardContainer } from '@/components/Dashboard/ResizableDashboard';
-import { ResizableBannerSetup } from '@/components/Dashboard/ResizableBanner';
-import KPIStats from '@/components/Dashboard/KPIStats';
+import { 
+  ResizableDashboardContainer, 
+  ResizableBannerSetup, 
+  DashboardControls, 
+  MainDashboardContent,
+  EditLayoutModal 
+} from '@/components/Dashboard';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
-import { PanelGroup, Panel } from 'react-resizable-panels';
-import { ResizableHandle } from '@/components/Dashboard/ResizableDashboard';
-import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/resizable';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Edit3, Lock, Unlock, Settings, Save, CheckCircle } from 'lucide-react';
-import DashboardSettings from '@/components/Dashboard/DashboardSettings';
-import { DashboardComponentRenderer } from '@/components/Dashboard/ComponentRegistry';
-import { useDashboardLayout } from '@/hooks/useDashboardLayout';
-import EditLayoutModal from '@/components/Dashboard/BannerSettings/EditLayoutModal';
 import { useEditMode } from '@/contexts/EditModeContext';
-import { useDashboardSettings } from '@/hooks/useDashboardSettings';
-import { useToast } from '@/hooks/use-toast';
+import { useDashboardPanelSizes, useDashboardBanner } from '@/hooks';
 
 const OptimizedDashboard: React.FC = () => {
   const { notes } = useOptimizedNotes();
-  const { getPanelConfiguration, getPanelSizes, updatePanelSizes } = useDashboardLayout();
-  const { 
-    isDashboardEditMode, 
-    isSidebarEditMode, 
-    setIsDashboardEditMode, 
-    setIsSidebarEditMode 
-  } = useEditMode();
-  const { settings, updateBannerSelection } = useDashboardSettings();
-  const { toast } = useToast();
+  const { isDashboardEditMode } = useEditMode();
   const [showEditLayoutModal, setShowEditLayoutModal] = React.useState(false);
 
-  // Get saved panel sizes or use defaults
-  const savedPanelSizes = getPanelSizes();
-  const bannerSize = savedPanelSizes.banner || 40;
-  const analyticsSize = savedPanelSizes.analytics || 30;
-  const topSectionSize = savedPanelSizes.topSection || 35;
-  const bottomSectionSize = savedPanelSizes.bottomSection || 35;
-  const leftPanelsSize = savedPanelSizes.leftPanels || 50;
-  const rightPanelsSize = savedPanelSizes.rightPanels || 50;
-
-  // Use the saved banner from settings
-  const selectedBannerUrl = settings?.selected_banner_url || null;
-  const selectedBannerType = settings?.selected_banner_type || null;
-
-  // Calculate stats for KPIStats
-  const totalNotes = notes.length;
-  const favoriteNotes = notes.filter(note => note.tags?.includes('favorite')).length;
-  
-  // Calculate category counts from tags
-  const categoryCounts = React.useMemo(() => {
-    const counts: Record<string, number> = {};
-    notes.forEach(note => {
-      if (note.tags) {
-        note.tags.forEach(tag => {
-          if (tag !== 'favorite') { // Exclude 'favorite' from categories
-            counts[tag] = (counts[tag] || 0) + 1;
-          }
-        });
-      }
-    });
-    return counts;
-  }, [notes]);
-
-  // Calculate weekly notes (last 7 days)
-  const weeklyNotes = React.useMemo(() => {
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    
-    return notes.filter(note => {
-      const noteDate = new Date(note.createdAt);
-      return noteDate > oneWeekAgo;
-    }).length;
-  }, [notes]);
-
-  // Handle banner resize
-  const handleBannerResize = (sizes: number[]) => {
-    if (sizes.length >= 2) {
-      const newSizes = {
-        ...savedPanelSizes,
-        banner: sizes[0]
-      };
-      updatePanelSizes(newSizes);
-    }
-  };
-
-  // Handle main content panel resize (vertical)
-  const handleMainContentResize = (sizes: number[]) => {
-    if (sizes.length >= 3) {
-      const newSizes = {
-        ...savedPanelSizes,
-        analytics: sizes[0],
-        topSection: sizes[1],
-        bottomSection: sizes[2]
-      };
-      updatePanelSizes(newSizes);
-    }
-  };
-
-  // Handle horizontal panel resize (top section)
-  const handleTopSectionResize = (sizes: number[]) => {
-    if (sizes.length >= 2) {
-      const newSizes = {
-        ...savedPanelSizes,
-        leftPanels: sizes[0],
-        rightPanels: sizes[1]
-      };
-      updatePanelSizes(newSizes);
-    }
-  };
-
-  // Handle horizontal panel resize (bottom section) 
-  const handleBottomSectionResize = (sizes: number[]) => {
-    if (sizes.length >= 2) {
-      const newSizes = {
-        ...savedPanelSizes,
-        leftPanels: sizes[0], // These share the same proportions
-        rightPanels: sizes[1]
-      };
-      updatePanelSizes(newSizes);
-    }
-  };
-
-  const handleImageUpload = (file: File) => {
-    // This would be handled by the banner service to upload and return URL
-    console.log('Image uploaded:', file.name);
-  };
-
-  const handleVideoUpload = (file: File) => {
-    // This would be handled by the banner service to upload and return URL
-    console.log('Video uploaded:', file.name);
-  };
-
-  const handleAIGenerate = (prompt: string) => {
-    // This would be handled by the AI service to generate and return URL
-    console.log('AI Generate with prompt:', prompt);
-  };
-
-  const handleImageSelect = (imageUrl: string) => {
-    updateBannerSelection(imageUrl, 'image');
-    toast({
-      title: "Banner Updated",
-      description: "Your dashboard banner has been updated successfully.",
-    });
-  };
-
-  const handleSaveLayout = () => {
-    // Disable both edit modes to lock the layout
-    setIsDashboardEditMode(false);
-    setIsSidebarEditMode(false);
-    
-    toast({
-      title: "Layout Saved",
-      description: "Your layout changes have been saved successfully.",
-    });
-  };
-
-  // Track if any edit modes are active
-  const hasActiveEditMode = isDashboardEditMode || isSidebarEditMode;
+  // Custom hooks for clean separation of concerns
+  const { panelSizes, handleBannerResize, handleMainContentResize, handleHorizontalResize } = useDashboardPanelSizes();
+  const { 
+    selectedBannerUrl, 
+    handleImageUpload, 
+    handleVideoUpload, 
+    handleAIGenerate, 
+    handleImageSelect 
+  } = useDashboardBanner();
 
   return (
     <div className="w-full h-screen bg-background">
-      {/* Edit Mode Toggle Button */}
-      <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
-        <DashboardSettings>
-          <Button variant="ghost" size="sm" className="gap-2">
-            <Settings className="h-4 w-4" />
-            Components
-          </Button>
-        </DashboardSettings>
-        
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowEditLayoutModal(true)}
-          className="gap-2 transition-all duration-200 hover:bg-accent"
-        >
-          <Edit3 className="h-4 w-4" />
-          Edit Layout
-        </Button>
-      </div>
-
-      {/* Edit Mode Indicator & Save Button */}
-      {hasActiveEditMode && (
-        <div className="absolute top-16 right-4 z-40 animate-fade-in">
-          <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 space-y-3">
-            <div className="flex items-center gap-2 text-sm text-primary">
-              <CheckCircle className="h-4 w-4" />
-              <span className="font-medium">
-                {isDashboardEditMode && isSidebarEditMode ? 'Dashboard & Sidebar editing active' :
-                 isDashboardEditMode ? 'Dashboard editing active' : 'Sidebar editing active'}
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Resize your panels as needed, then save your layout
-            </p>
-            <Button 
-              onClick={handleSaveLayout}
-              className="w-full gap-2"
-              size="sm"
-            >
-              <Save className="h-4 w-4" />
-              Save Layout
-            </Button>
-          </div>
-        </div>
-      )}
+      <DashboardControls onEditLayoutClick={() => setShowEditLayoutModal(true)} />
       
-      {/* Resizable Dashboard Container - Full Height */}
+      {/* Resizable Dashboard Container */}
       <div className={`h-full w-full transition-all duration-200 ${
         isDashboardEditMode ? 'ring-2 ring-primary/20 ring-inset' : ''
       }`}>
         <ResizableDashboardContainer
-          bannerDefaultSize={bannerSize}
+          bannerDefaultSize={panelSizes.banner}
           bannerMinSize={25}
           bannerMaxSize={80}
           isEditMode={isDashboardEditMode}
@@ -228,152 +50,17 @@ const OptimizedDashboard: React.FC = () => {
             />
           }
           mainContent={
-            <div className="h-full">
-              <PanelGroup direction="vertical" className="h-full" onLayout={handleMainContentResize}>
-                {/* Top Panel - KPI Stats */}
-                <Panel defaultSize={analyticsSize} minSize={20} maxSize={50}>
-                  <div className="p-6 h-full overflow-y-auto">
-                    <KPIStats
-                      totalNotes={totalNotes}
-                      favoriteNotes={favoriteNotes}
-                      categoryCounts={categoryCounts}
-                      weeklyNotes={weeklyNotes}
-                      notes={notes}
-                    />
-                  </div>
-                </Panel>
-                
-                {/* Horizontal Resize Handle */}
-                <HorizontalResizableHandle className={isDashboardEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
-                
-                {/* Middle Panel - Two Boxes */}
-                <Panel defaultSize={topSectionSize} minSize={25}>
-                  <div className="h-full">
-                    <PanelGroup direction="horizontal" className="h-full" onLayout={handleTopSectionResize}>
-                      {/* Left Box */}
-                      <Panel defaultSize={leftPanelsSize} minSize={30}>
-                        <div className="p-6 h-full">
-                          {(() => {
-                            const config = getPanelConfiguration('topLeft');
-                            return config?.enabled ? (
-                              <DashboardComponentRenderer 
-                                componentKey={config.component_key}
-                                props={config.props}
-                              />
-                            ) : (
-                              <Card className="h-full">
-                                <CardHeader>
-                                  <CardTitle>Empty Panel</CardTitle>
-                                </CardHeader>
-                                <CardContent className="h-full">
-                                  <div className="flex items-center justify-center h-full text-muted-foreground">
-                                    <p>Configure this panel in settings</p>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            );
-                          })()}
-                        </div>
-                      </Panel>
-                      
-                      {/* Horizontal Resize Handle */}
-                      <HorizontalResizableHandle className={isDashboardEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
-                      
-                      {/* Right Box */}
-                      <Panel defaultSize={rightPanelsSize} minSize={30}>
-                        <div className="p-6 h-full">
-                          {(() => {
-                            const config = getPanelConfiguration('topRight');
-                            return config?.enabled ? (
-                              <DashboardComponentRenderer 
-                                componentKey={config.component_key}
-                                props={config.props}
-                              />
-                            ) : (
-                              <Card className="h-full">
-                                <CardHeader>
-                                  <CardTitle>Empty Panel</CardTitle>
-                                </CardHeader>
-                                <CardContent className="h-full">
-                                  <div className="flex items-center justify-center h-full text-muted-foreground">
-                                    <p>Configure this panel in settings</p>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            );
-                          })()}
-                        </div>
-                      </Panel>
-                    </PanelGroup>
-                  </div>
-                </Panel>
-                
-                {/* Horizontal Resize Handle */}
-                <HorizontalResizableHandle className={isDashboardEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
-                
-                {/* Bottom Panel - Two More Boxes */}
-                <Panel defaultSize={bottomSectionSize} minSize={25}>
-                  <div className="h-full">
-                    <PanelGroup direction="horizontal" className="h-full" onLayout={handleBottomSectionResize}>
-                      {/* Left Box */}
-                      <Panel defaultSize={leftPanelsSize} minSize={30}>
-                        <div className="p-6 h-full">
-                          {(() => {
-                            const config = getPanelConfiguration('bottomLeft');
-                            return config?.enabled ? (
-                              <DashboardComponentRenderer 
-                                componentKey={config.component_key}
-                                props={config.props}
-                              />
-                            ) : (
-                              <Card className="h-full">
-                                <CardHeader>
-                                  <CardTitle>Empty Panel</CardTitle>
-                                </CardHeader>
-                                <CardContent className="h-full">
-                                  <div className="flex items-center justify-center h-full text-muted-foreground">
-                                    <p>Configure this panel in settings</p>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            );
-                          })()}
-                        </div>
-                      </Panel>
-                      
-                      {/* Horizontal Resize Handle */}
-                      <HorizontalResizableHandle className={isDashboardEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
-                      
-                      {/* Right Box */}
-                      <Panel defaultSize={rightPanelsSize} minSize={30}>
-                        <div className="p-6 h-full">
-                          {(() => {
-                            const config = getPanelConfiguration('bottomRight');
-                            return config?.enabled ? (
-                              <DashboardComponentRenderer 
-                                componentKey={config.component_key}
-                                props={config.props}
-                              />
-                            ) : (
-                              <Card className="h-full">
-                                <CardHeader>
-                                  <CardTitle>Empty Panel</CardTitle>
-                                </CardHeader>
-                                <CardContent className="h-full">
-                                  <div className="flex items-center justify-center h-full text-muted-foreground">
-                                    <p>Configure this panel in settings</p>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            );
-                          })()}
-                        </div>
-                      </Panel>
-                    </PanelGroup>
-                  </div>
-                </Panel>
-              </PanelGroup>
-            </div>
+            <MainDashboardContent
+              notes={notes}
+              analyticsSize={panelSizes.analytics}
+              topSectionSize={panelSizes.topSection}
+              bottomSectionSize={panelSizes.bottomSection}
+              leftPanelsSize={panelSizes.leftPanels}
+              rightPanelsSize={panelSizes.rightPanels}
+              isDashboardEditMode={isDashboardEditMode}
+              onMainContentResize={handleMainContentResize}
+              onHorizontalResize={handleHorizontalResize}
+            />
           }
         />
       </div>
