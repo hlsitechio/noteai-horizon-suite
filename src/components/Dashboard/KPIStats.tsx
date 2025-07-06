@@ -128,7 +128,7 @@ const KPIStats: React.FC<KPIStatsProps> = ({
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 w-full">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 w-full">
       {stats.map((stat, index) => {
         return (
           <motion.div
@@ -139,7 +139,7 @@ const KPIStats: React.FC<KPIStatsProps> = ({
             className="w-full"
           >
             <Card className="border border-border/10 shadow-premium bg-card/80 backdrop-blur-xl hover:shadow-large transition-all duration-300 h-full group hover:border-accent/20">
-              <CardContent className="p-4">
+              <CardContent className="p-3">
                 <div className="flex items-start justify-between mb-3">
                   <div className={`p-2 bg-gradient-to-br ${stat.color} rounded-lg border border-white/10`}>
                     <i className={`${stat.icon} text-base ${stat.iconColor}`}></i>

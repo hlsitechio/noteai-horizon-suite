@@ -44,7 +44,7 @@ const WelcomeSection: React.FC = () => {
 
   return (
     <motion.div
-      className="flex items-center justify-between px-4 py-3 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 shadow-sm"
+      className="flex items-center justify-between px-4 py-2 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 shadow-sm"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

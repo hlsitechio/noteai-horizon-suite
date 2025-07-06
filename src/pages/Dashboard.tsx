@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
       <FullscreenToggle />
       
       {/* Clean Dashboard Container */}
-      <div className="container mx-auto p-4 lg:p-6 space-y-6 max-w-7xl">
+      <div className="container mx-auto p-3 lg:p-4 space-y-4 max-w-7xl">
         
         {/* Welcome Section */}
         <div className="w-full">
@@ -100,9 +100,9 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Simplified Content - More Minimalist */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Smart Features Column */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             <SmartNoteRecommendations 
               notes={notes}
               onEditNote={handleEditNote}
@@ -110,7 +110,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Activity & Management Column */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             <SecureRecentActivity 
               recentNotes={recentNotes}
               onCreateNote={handleCreateNote}
