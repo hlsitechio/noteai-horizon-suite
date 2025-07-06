@@ -30,13 +30,26 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
   sidebarBottomContent,
   enableVerticalResize = false
 }) => {
+  const handleLayout = React.useCallback((sizes: number[]) => {
+    // Only emit layout changes when in edit mode
+    console.log('Sidebar layout change:', sizes, 'Edit mode:', isEditMode);
+  }, [isEditMode]);
+
   return (
-    <PanelGroup direction="horizontal" className="w-full h-full">
+    <PanelGroup 
+      direction="horizontal" 
+      className="w-full h-full"
+      onLayout={handleLayout}
+      storage={isEditMode ? undefined : {
+        getItem: () => "",
+        setItem: () => {}
+      }}
+    >
       {/* Sidebar Panel */}
       <ResizableSidebarPanel
         defaultSize={sidebarDefaultSize}
-        minSize={sidebarMinSize}
-        maxSize={sidebarMaxSize}
+        minSize={isEditMode ? sidebarMinSize : undefined}
+        maxSize={isEditMode ? sidebarMaxSize : undefined}
         topPanelContent={enableVerticalResize ? sidebarTopContent : undefined}
         middlePanelContent={enableVerticalResize ? sidebarMiddleContent : undefined}
         bottomPanelContent={enableVerticalResize ? sidebarBottomContent : undefined}
@@ -52,11 +65,10 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
         ))}
       </ResizableSidebarPanel>
       
-      {/* Vertical Resize Handle */}
-      <ResizableSidebarHandle 
-        className={isEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} 
-        isEditMode={isEditMode}
-      />
+      {/* Vertical Resize Handle - Conditionally rendered */}
+      {isEditMode && (
+        <ResizableSidebarHandle isEditMode={isEditMode} />
+      )}
       
       {/* Main Content Panel */}
       <ResizableSidebarContent>

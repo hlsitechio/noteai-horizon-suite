@@ -85,14 +85,18 @@ export function SidebarMain() {
           className="h-full"
           onLayout={handleLayoutChange}
           id="sidebar-main"
+          storage={isSidebarEditMode ? undefined : {
+            getItem: () => "",
+            setItem: () => {}
+          }}
         >
           {/* Navigation Panel */}
           <Panel 
             id="navigation-panel"
             order={0}
             defaultSize={navigationSize} 
-            minSize={isSidebarEditMode ? 25 : navigationSize} 
-            maxSize={isSidebarEditMode ? 50 : navigationSize}
+            minSize={isSidebarEditMode ? 25 : undefined} 
+            maxSize={isSidebarEditMode ? 50 : undefined}
           >
             <div className="px-0 h-full overflow-y-auto">
               <div className="py-2">
@@ -101,40 +105,42 @@ export function SidebarMain() {
             </div>
           </Panel>
 
-          {/* Vertical Resize Handle - Always present */}
-          <ResizableHandle 
-            className={isSidebarEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"}
-            onMouseDown={handlePanelResizeStart}
-            onTouchStart={handlePanelResizeStart}
-          />
+          {/* Vertical Resize Handle - Conditionally rendered */}
+          {isSidebarEditMode && (
+            <ResizableHandle 
+              onMouseDown={handlePanelResizeStart}
+              onTouchStart={handlePanelResizeStart}
+            />
+          )}
 
           {/* Content Panel - Notes Section */}
           <Panel 
             id="content-panel"
             order={1}
             defaultSize={contentSize} 
-            minSize={isSidebarEditMode ? 20 : contentSize} 
-            maxSize={isSidebarEditMode ? 60 : contentSize}
+            minSize={isSidebarEditMode ? 20 : undefined} 
+            maxSize={isSidebarEditMode ? 60 : undefined}
           >
             <div className="px-0 h-full overflow-y-auto">
               <NotesSection />
             </div>
           </Panel>
 
-          {/* Vertical Resize Handle - Always present */}
-          <ResizableHandle 
-            className={isSidebarEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"}
-            onMouseDown={handlePanelResizeStart}
-            onTouchStart={handlePanelResizeStart}
-          />
+          {/* Vertical Resize Handle - Conditionally rendered */}
+          {isSidebarEditMode && (
+            <ResizableHandle 
+              onMouseDown={handlePanelResizeStart}
+              onTouchStart={handlePanelResizeStart}
+            />
+          )}
 
           {/* Footer Panel */}
           <Panel 
             id="footer-panel"
             order={2}
             defaultSize={footerSize} 
-            minSize={isSidebarEditMode ? 10 : footerSize} 
-            maxSize={isSidebarEditMode ? 25 : footerSize}
+            minSize={isSidebarEditMode ? 10 : undefined} 
+            maxSize={isSidebarEditMode ? 25 : undefined}
           >
             <div className="h-full flex flex-col">
               <div className="p-2 pt-1 flex-1 border-t border-sidebar-border flex items-center">
