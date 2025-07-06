@@ -5,9 +5,10 @@ import { useToast } from '@/hooks/use-toast';
 
 interface LayoutEditToggleProps {
   type: 'dashboard' | 'sidebar';
+  onEditModeEnabled?: () => void;
 }
 
-const LayoutEditToggle: React.FC<LayoutEditToggleProps> = ({ type }) => {
+const LayoutEditToggle: React.FC<LayoutEditToggleProps> = ({ type, onEditModeEnabled }) => {
   const { 
     isDashboardEditMode, 
     setIsDashboardEditMode, 
@@ -20,10 +21,17 @@ const LayoutEditToggle: React.FC<LayoutEditToggleProps> = ({ type }) => {
   const setActive = type === 'dashboard' ? setIsDashboardEditMode : setIsSidebarEditMode;
 
   const handleToggle = () => {
-    setActive(!isActive);
+    const newActiveState = !isActive;
+    setActive(newActiveState);
+    
+    // Close modal when edit mode is enabled
+    if (newActiveState && onEditModeEnabled) {
+      onEditModeEnabled();
+    }
+    
     toast({
-      title: `${type === 'dashboard' ? 'Dashboard' : 'Sidebar'} Edit Mode ${!isActive ? 'Enabled' : 'Disabled'}`,
-      description: !isActive 
+      title: `${type === 'dashboard' ? 'Dashboard' : 'Sidebar'} Edit Mode ${newActiveState ? 'Enabled' : 'Disabled'}`,
+      description: newActiveState 
         ? `You can now resize ${type} panels` 
         : `${type} panels are now locked`,
     });

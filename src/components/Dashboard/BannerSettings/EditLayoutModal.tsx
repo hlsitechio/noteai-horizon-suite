@@ -18,7 +18,9 @@ import {
   Palette, 
   Play,
   Maximize2,
-  Plus
+  Plus,
+  Save,
+  CheckCircle
 } from 'lucide-react';
 import BannerSettingsModal from './BannerSettingsModal';
 import ColorThemesModal from './ColorThemesModal';
@@ -26,6 +28,8 @@ import BannerGalleryModal from './BannerGalleryModal';
 import AIGenerateModal from './AIGenerateModal';
 import PreviewModeModal from './PreviewModeModal';
 import LayoutEditToggle from './LayoutEditToggle';
+import { useEditMode } from '@/contexts/EditModeContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface EditLayoutModalProps {
   open: boolean;
@@ -45,6 +49,8 @@ const EditLayoutModal: React.FC<EditLayoutModalProps> = ({
   onImageSelect
 }) => {
   const [isGenerating, setIsGenerating] = useState(false);
+  const { isDashboardEditMode, isSidebarEditMode } = useEditMode();
+  const { toast } = useToast();
   
   // Modal states for nested modals
   const [showBannerSettings, setShowBannerSettings] = useState(false);
@@ -52,6 +58,22 @@ const EditLayoutModal: React.FC<EditLayoutModalProps> = ({
   const [showGallery, setShowGallery] = useState(false);
   const [showAIGenerate, setShowAIGenerate] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  
+  // Track if any edit modes are active
+  const hasActiveEditMode = isDashboardEditMode || isSidebarEditMode;
+
+  const handleEditModeEnabled = () => {
+    // Close modal when edit mode is enabled
+    onOpenChange(false);
+  };
+
+  const handleConfirmLayout = () => {
+    toast({
+      title: "Layout Saved",
+      description: "Your layout changes have been saved successfully.",
+    });
+    onOpenChange(false);
+  };
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -243,16 +265,44 @@ const EditLayoutModal: React.FC<EditLayoutModalProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Card className="group hover:shadow-lg transition-all duration-300 border hover:border-primary/50">
                     <CardContent className="p-6 text-center">
-                      <LayoutEditToggle type="dashboard" />
+                      <LayoutEditToggle 
+                        type="dashboard" 
+                        onEditModeEnabled={handleEditModeEnabled}
+                      />
                     </CardContent>
                   </Card>
 
                   <Card className="group hover:shadow-lg transition-all duration-300 border hover:border-primary/50">
                     <CardContent className="p-6 text-center">
-                      <LayoutEditToggle type="sidebar" />
+                      <LayoutEditToggle 
+                        type="sidebar" 
+                        onEditModeEnabled={handleEditModeEnabled}
+                      />
                     </CardContent>
                   </Card>
                 </div>
+
+                {/* Confirmation Button - Show when any edit mode is active */}
+                {hasActiveEditMode && (
+                  <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                    <div className="text-center space-y-3">
+                      <div className="flex items-center justify-center gap-2 text-primary">
+                        <CheckCircle className="h-5 w-5" />
+                        <span className="font-medium">Layout editing is active</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Resize your panels as needed, then save your layout
+                      </p>
+                      <Button 
+                        onClick={handleConfirmLayout}
+                        className="gap-2"
+                      >
+                        <Save className="h-4 w-4" />
+                        Save Layout
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </TabsContent>
 
               {/* Advanced Tab */}
