@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext } from 'react';
+import { useEditModeState } from '@/hooks/useEditModeState';
 
 interface EditModeContextType {
   isEditMode: boolean;
@@ -7,14 +8,28 @@ interface EditModeContextType {
   setIsDashboardEditMode: (editMode: boolean) => void;
   isSidebarEditMode: boolean;
   setIsSidebarEditMode: (editMode: boolean) => void;
+  isLoading: boolean;
+  handlePanelSizeSave: () => Promise<void>;
 }
 
 const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
 
 export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [isDashboardEditMode, setIsDashboardEditMode] = useState(false);
-  const [isSidebarEditMode, setIsSidebarEditMode] = useState(false);
+  const {
+    isDashboardEditMode,
+    isSidebarEditMode,
+    isLoading,
+    setIsDashboardEditMode,
+    setIsSidebarEditMode,
+    handlePanelSizeSave
+  } = useEditModeState();
+
+  // Legacy support for general edit mode (combines both)
+  const isEditMode = isDashboardEditMode || isSidebarEditMode;
+  const setIsEditMode = (editMode: boolean) => {
+    setIsDashboardEditMode(editMode);
+    setIsSidebarEditMode(editMode);
+  };
 
   return (
     <EditModeContext.Provider 
@@ -25,6 +40,8 @@ export const EditModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setIsDashboardEditMode,
         isSidebarEditMode,
         setIsSidebarEditMode,
+        isLoading,
+        handlePanelSizeSave,
       }}
     >
       {children}

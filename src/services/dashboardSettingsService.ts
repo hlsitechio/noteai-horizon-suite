@@ -6,6 +6,9 @@ export interface DashboardSettings {
   selected_banner_url: string | null;
   selected_banner_type: 'image' | 'video' | null;
   sidebar_panel_sizes: Record<string, number>;
+  dashboard_edit_mode: boolean;
+  sidebar_edit_mode: boolean;
+  edit_mode_expires_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -26,7 +29,10 @@ export class DashboardSettingsService {
     return data ? {
       ...data,
       selected_banner_type: data.selected_banner_type as 'image' | 'video' | null,
-      sidebar_panel_sizes: data.sidebar_panel_sizes as Record<string, number>
+      sidebar_panel_sizes: data.sidebar_panel_sizes as Record<string, number>,
+      dashboard_edit_mode: data.dashboard_edit_mode || false,
+      sidebar_edit_mode: data.sidebar_edit_mode || false,
+      edit_mode_expires_at: data.edit_mode_expires_at
     } : null;
   }
 
@@ -125,9 +131,40 @@ export class DashboardSettingsService {
     return true;
   }
 
+  static async updateEditModes(
+    userId: string,
+    dashboardEditMode: boolean,
+    sidebarEditMode: boolean
+  ): Promise<boolean> {
+    const expiresAt = (dashboardEditMode || sidebarEditMode) 
+      ? new Date(Date.now() + 30 * 60 * 1000).toISOString() // 30 minutes from now
+      : null;
+
+    return this.updateSettings(userId, {
+      dashboard_edit_mode: dashboardEditMode,
+      sidebar_edit_mode: sidebarEditMode,
+      edit_mode_expires_at: expiresAt
+    });
+  }
+
+  static async checkAndClearExpiredEditModes(userId: string): Promise<boolean> {
+    const settings = await this.getUserSettings(userId);
+    
+    if (!settings?.edit_mode_expires_at) return false;
+    
+    const isExpired = new Date(settings.edit_mode_expires_at) <= new Date();
+    
+    if (isExpired && (settings.dashboard_edit_mode || settings.sidebar_edit_mode)) {
+      await this.updateEditModes(userId, false, false);
+      return true; // Indicates modes were cleared
+    }
+    
+    return false;
+  }
+
   static async updateSettings(
     userId: string,
-    updates: Partial<Pick<DashboardSettings, 'selected_banner_url' | 'selected_banner_type' | 'sidebar_panel_sizes'>>
+    updates: Partial<Pick<DashboardSettings, 'selected_banner_url' | 'selected_banner_type' | 'sidebar_panel_sizes' | 'dashboard_edit_mode' | 'sidebar_edit_mode' | 'edit_mode_expires_at'>>
   ): Promise<boolean> {
     try {
       const { error } = await supabase

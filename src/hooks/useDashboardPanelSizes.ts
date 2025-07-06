@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 export const useDashboardPanelSizes = () => {
   const { settings, updateSidebarPanelSizes } = useDashboardSettings();
-  const { isSidebarEditMode, setIsSidebarEditMode } = useEditMode();
+  const { handlePanelSizeSave } = useEditMode();
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
   const hasUserInteractedRef = useRef(false);
   
@@ -26,7 +26,7 @@ export const useDashboardPanelSizes = () => {
     hasUserInteractedRef.current = true;
   }, []);
 
-  // Debounced save function
+  // Debounced save function with unified edit mode handling
   const debouncedSave = useCallback((newSizes: Record<string, number>) => {
     // Clear existing timeout
     if (saveTimeoutRef.current) {
@@ -37,20 +37,20 @@ export const useDashboardPanelSizes = () => {
     saveTimeoutRef.current = setTimeout(async () => {
       console.log('Saving panel sizes:', newSizes);
       const success = await updateSidebarPanelSizes(newSizes);
+      
       if (success) {
         console.log('Panel sizes saved successfully:', newSizes);
         
-        // Auto-exit sidebar edit mode after successful save (only if user interacted)
-        if (isSidebarEditMode && hasUserInteractedRef.current) {
-          setIsSidebarEditMode(false);
-          toast.success('Sidebar layout saved and locked');
+        // Auto-lock edit modes after successful save (only if user interacted)
+        if (hasUserInteractedRef.current) {
+          await handlePanelSizeSave();
         }
       } else {
         console.error('Failed to save panel sizes');
-        toast.error('Failed to save sidebar layout');
+        toast.error('Failed to save layout');
       }
     }, 500); // 500ms debounce
-  }, [updateSidebarPanelSizes, isSidebarEditMode, setIsSidebarEditMode]);
+  }, [updateSidebarPanelSizes, handlePanelSizeSave]);
 
   const createSizeHandler = (sizeKey: string) => (sizes: number[]) => {
     const newSizes = { ...settingsPanelSizes };
