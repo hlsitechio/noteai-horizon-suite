@@ -1,25 +1,20 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import {
-  useSidebar,
-} from '@/components/ui/sidebar';
 import {
   TooltipProvider,
 } from '@/components/ui/tooltip';
 import { PanelGroup, Panel } from 'react-resizable-panels';
 import { ResizableHandle } from '@/components/ui/resizable';
 import NavigationMenu from './NavigationMenu';
-import { CollapsedSummary } from './CollapsedSummary';
 import { SidebarFooter as CustomSidebarFooter } from './SidebarFooter';
 import { NotesSection } from './NotesSection';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { useDashboardSettings } from '@/hooks/useDashboardSettings';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export function SidebarMain() {
-  const { state, isMobile } = useSidebar();
+  const isMobile = useIsMobile();
   const { isSidebarEditMode } = useEditMode();
   const { settings, updateSidebarPanelSizes } = useDashboardSettings();
-  const isCollapsed = state === 'collapsed';
 
   // Get saved panel sizes or use defaults
   const savedSizes = settings?.sidebar_panel_sizes || {};
@@ -50,11 +45,8 @@ export function SidebarMain() {
           <Panel defaultSize={navigationSize} minSize={25} maxSize={50}>
             <div className="px-0 h-full overflow-y-auto">
               <div className="py-2">
-                <NavigationMenu isCollapsed={!isMobile && isCollapsed} />
+                <NavigationMenu />
               </div>
-              
-              {/* Collapsed Summary - only show when collapsed on desktop */}
-              {!isMobile && isCollapsed && <CollapsedSummary />}
             </div>
           </Panel>
 

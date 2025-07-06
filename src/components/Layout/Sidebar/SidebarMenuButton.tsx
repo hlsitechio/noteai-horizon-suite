@@ -7,17 +7,12 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { useNotifications } from '../../../contexts/NotificationsContext';
 
 interface SidebarMenuButtonProps {
-  isCollapsed: boolean;
   onNotificationsClick: () => void;
 }
 
-export function SidebarMenuButton({ isCollapsed, onNotificationsClick }: SidebarMenuButtonProps) {
+export function SidebarMenuButton({ onNotificationsClick }: SidebarMenuButtonProps) {
   const { user } = useAuth();
   const { unreadCount } = useNotifications();
-
-  if (isCollapsed) {
-    return null;
-  }
 
   return (
     <div className="space-y-2">
