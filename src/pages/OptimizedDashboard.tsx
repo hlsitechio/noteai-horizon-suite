@@ -90,8 +90,8 @@ const OptimizedDashboard: React.FC = () => {
                 {/* Horizontal Resize Handle */}
                 <HorizontalResizableHandle />
                 
-                {/* Bottom Panel - Two Boxes */}
-                <Panel defaultSize={70} minSize={50}>
+                {/* Middle Panel - Two Boxes */}
+                <Panel defaultSize={35} minSize={25}>
                   <div className="h-full">
                     <PanelGroup direction="horizontal" className="h-full">
                       {/* Left Box */}
@@ -123,6 +123,51 @@ const OptimizedDashboard: React.FC = () => {
                             <CardContent className="h-full">
                               <div className="flex items-center justify-center h-full text-muted-foreground">
                                 <p>Quick actions component goes here</p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </Panel>
+                    </PanelGroup>
+                  </div>
+                </Panel>
+                
+                {/* Horizontal Resize Handle */}
+                <HorizontalResizableHandle />
+                
+                {/* Bottom Panel - Two More Boxes */}
+                <Panel defaultSize={35} minSize={25}>
+                  <div className="h-full">
+                    <PanelGroup direction="horizontal" className="h-full">
+                      {/* Left Box */}
+                      <Panel defaultSize={50} minSize={30}>
+                        <div className="p-6 h-full">
+                          <Card className="h-full">
+                            <CardHeader>
+                              <CardTitle>Analytics Overview</CardTitle>
+                            </CardHeader>
+                            <CardContent className="h-full">
+                              <div className="flex items-center justify-center h-full text-muted-foreground">
+                                <p>Analytics overview component goes here</p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </Panel>
+                      
+                      {/* Horizontal Resize Handle */}
+                      <HorizontalResizableHandle />
+                      
+                      {/* Right Box */}
+                      <Panel defaultSize={50} minSize={30}>
+                        <div className="p-6 h-full">
+                          <Card className="h-full">
+                            <CardHeader>
+                              <CardTitle>System Status</CardTitle>
+                            </CardHeader>
+                            <CardContent className="h-full">
+                              <div className="flex items-center justify-center h-full text-muted-foreground">
+                                <p>System status component goes here</p>
                               </div>
                             </CardContent>
                           </Card>
