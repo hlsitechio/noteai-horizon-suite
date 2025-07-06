@@ -401,6 +401,72 @@ export type Database = {
         }
         Relationships: []
       }
+      dashboard_components: {
+        Row: {
+          category: string
+          component_description: string | null
+          component_key: string
+          component_name: string
+          created_at: string
+          default_props: Json | null
+          id: string
+          is_active: boolean
+        }
+        Insert: {
+          category?: string
+          component_description?: string | null
+          component_key: string
+          component_name: string
+          created_at?: string
+          default_props?: Json | null
+          id?: string
+          is_active?: boolean
+        }
+        Update: {
+          category?: string
+          component_description?: string | null
+          component_key?: string
+          component_name?: string
+          created_at?: string
+          default_props?: Json | null
+          id?: string
+          is_active?: boolean
+        }
+        Relationships: []
+      }
+      dashboard_layouts: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          layout_name: string
+          panel_configurations: Json
+          panel_sizes: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          layout_name?: string
+          panel_configurations?: Json
+          panel_sizes?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          layout_name?: string
+          panel_configurations?: Json
+          panel_sizes?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       data: {
         Row: {
           created_at: string

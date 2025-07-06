@@ -9,10 +9,14 @@ import { ResizableHandle } from '@/components/Dashboard/ResizableDashboard';
 import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/resizable';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Edit3, Lock, Unlock } from 'lucide-react';
+import { Edit3, Lock, Unlock, Settings } from 'lucide-react';
+import DashboardSettings from '@/components/Dashboard/DashboardSettings';
+import { DashboardComponentRenderer } from '@/components/Dashboard/ComponentRegistry';
+import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 
 const OptimizedDashboard: React.FC = () => {
   const { notes } = useOptimizedNotes();
+  const { getPanelConfiguration, getPanelSizes } = useDashboardLayout();
   const [isEditMode, setIsEditMode] = React.useState(false);
 
   // Calculate stats for KPIStats
@@ -62,7 +66,14 @@ const OptimizedDashboard: React.FC = () => {
   return (
     <div className="w-full h-screen bg-background">
       {/* Edit Mode Toggle Button */}
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
+        <DashboardSettings>
+          <Button variant="outline" size="sm" className="gap-2">
+            <Settings className="h-4 w-4" />
+            Components
+          </Button>
+        </DashboardSettings>
+        
         <Button
           variant={isEditMode ? "default" : "outline"}
           size="sm"
@@ -141,16 +152,26 @@ const OptimizedDashboard: React.FC = () => {
                       {/* Left Box */}
                       <Panel defaultSize={50} minSize={30}>
                         <div className="p-6 h-full">
-                          <Card className="h-full">
-                            <CardHeader>
-                              <CardTitle>Recent Activity</CardTitle>
-                            </CardHeader>
-                            <CardContent className="h-full">
-                              <div className="flex items-center justify-center h-full text-muted-foreground">
-                                <p>Recent activity component goes here</p>
-                              </div>
-                            </CardContent>
-                          </Card>
+                          {(() => {
+                            const config = getPanelConfiguration('topLeft');
+                            return config?.enabled ? (
+                              <DashboardComponentRenderer 
+                                componentKey={config.component_key}
+                                props={config.props}
+                              />
+                            ) : (
+                              <Card className="h-full">
+                                <CardHeader>
+                                  <CardTitle>Empty Panel</CardTitle>
+                                </CardHeader>
+                                <CardContent className="h-full">
+                                  <div className="flex items-center justify-center h-full text-muted-foreground">
+                                    <p>Configure this panel in settings</p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            );
+                          })()}
                         </div>
                       </Panel>
                       
@@ -160,16 +181,26 @@ const OptimizedDashboard: React.FC = () => {
                       {/* Right Box */}
                       <Panel defaultSize={50} minSize={30}>
                         <div className="p-6 h-full">
-                          <Card className="h-full">
-                            <CardHeader>
-                              <CardTitle>Quick Actions</CardTitle>
-                            </CardHeader>
-                            <CardContent className="h-full">
-                              <div className="flex items-center justify-center h-full text-muted-foreground">
-                                <p>Quick actions component goes here</p>
-                              </div>
-                            </CardContent>
-                          </Card>
+                          {(() => {
+                            const config = getPanelConfiguration('topRight');
+                            return config?.enabled ? (
+                              <DashboardComponentRenderer 
+                                componentKey={config.component_key}
+                                props={config.props}
+                              />
+                            ) : (
+                              <Card className="h-full">
+                                <CardHeader>
+                                  <CardTitle>Empty Panel</CardTitle>
+                                </CardHeader>
+                                <CardContent className="h-full">
+                                  <div className="flex items-center justify-center h-full text-muted-foreground">
+                                    <p>Configure this panel in settings</p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            );
+                          })()}
                         </div>
                       </Panel>
                     </PanelGroup>
@@ -186,16 +217,26 @@ const OptimizedDashboard: React.FC = () => {
                       {/* Left Box */}
                       <Panel defaultSize={50} minSize={30}>
                         <div className="p-6 h-full">
-                          <Card className="h-full">
-                            <CardHeader>
-                              <CardTitle>Analytics Overview</CardTitle>
-                            </CardHeader>
-                            <CardContent className="h-full">
-                              <div className="flex items-center justify-center h-full text-muted-foreground">
-                                <p>Analytics overview component goes here</p>
-                              </div>
-                            </CardContent>
-                          </Card>
+                          {(() => {
+                            const config = getPanelConfiguration('bottomLeft');
+                            return config?.enabled ? (
+                              <DashboardComponentRenderer 
+                                componentKey={config.component_key}
+                                props={config.props}
+                              />
+                            ) : (
+                              <Card className="h-full">
+                                <CardHeader>
+                                  <CardTitle>Empty Panel</CardTitle>
+                                </CardHeader>
+                                <CardContent className="h-full">
+                                  <div className="flex items-center justify-center h-full text-muted-foreground">
+                                    <p>Configure this panel in settings</p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            );
+                          })()}
                         </div>
                       </Panel>
                       
@@ -205,16 +246,26 @@ const OptimizedDashboard: React.FC = () => {
                       {/* Right Box */}
                       <Panel defaultSize={50} minSize={30}>
                         <div className="p-6 h-full">
-                          <Card className="h-full">
-                            <CardHeader>
-                              <CardTitle>System Status</CardTitle>
-                            </CardHeader>
-                            <CardContent className="h-full">
-                              <div className="flex items-center justify-center h-full text-muted-foreground">
-                                <p>System status component goes here</p>
-                              </div>
-                            </CardContent>
-                          </Card>
+                          {(() => {
+                            const config = getPanelConfiguration('bottomRight');
+                            return config?.enabled ? (
+                              <DashboardComponentRenderer 
+                                componentKey={config.component_key}
+                                props={config.props}
+                              />
+                            ) : (
+                              <Card className="h-full">
+                                <CardHeader>
+                                  <CardTitle>Empty Panel</CardTitle>
+                                </CardHeader>
+                                <CardContent className="h-full">
+                                  <div className="flex items-center justify-center h-full text-muted-foreground">
+                                    <p>Configure this panel in settings</p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            );
+                          })()}
                         </div>
                       </Panel>
                     </PanelGroup>
