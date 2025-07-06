@@ -1,14 +1,7 @@
 
 import React, { useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  SidebarGroup, 
-  SidebarGroupContent, 
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton
-} from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
 import { 
   FileText, 
   Plus, 
@@ -19,7 +12,6 @@ import {
   Edit,
   Trash2
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Note } from '../../../types/note';
 import { useOptimizedNotes } from '../../../contexts/OptimizedNotesContext';
@@ -87,59 +79,56 @@ export function NotesListSection({
     const isActive = isNoteActive(note.id);
     
     return (
-      <SidebarMenuItem key={note.id}>
-        <div className="flex items-center w-full group">
-          <SidebarMenuButton 
-            asChild 
-            className={`flex-1 ${isActive ? 'bg-accent text-accent-foreground' : ''}`}
+      <div key={note.id} className="flex items-center w-full group">
+        <Button 
+          variant="ghost"
+          size="sm"
+          className={`flex-1 justify-start h-auto p-1 ${isActive ? 'bg-accent text-accent-foreground' : ''}`}
+          onClick={() => handleNoteClick(note)}
+        >
+          <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
+          <span className="truncate text-xs flex-1">{note.title}</span>
+          {note.isFavorite && (
+            <Star className="h-3 w-3 ml-1 text-accent fill-current flex-shrink-0" />
+          )}
+        </Button>
+        
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground"
+            onClick={(e) => handleEditNote(note, e)}
+            title="Edit note"
           >
-            <button
-              onClick={() => handleNoteClick(note)}
-              className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full text-left"
-            >
-              <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
-              <span className="truncate text-xs flex-1">{note.title}</span>
-              {note.isFavorite && (
-                <Star className="h-3 w-3 ml-1 text-accent fill-current flex-shrink-0" />
-              )}
-            </button>
-          </SidebarMenuButton>
-          
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground"
-              onClick={(e) => handleEditNote(note, e)}
-              title="Edit note"
-            >
-              <Edit className="h-3 w-3" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
-              onClick={(e) => handleDeleteNote(note.id, e)}
-              title="Delete note"
-            >
-              <Trash2 className="h-3 w-3" />
-            </Button>
-            <DesktopPopOutButton 
-              note={note} 
-              size="sm" 
-              className="h-6 w-6 p-0 flex-shrink-0" 
-            />
-          </div>
+            <Edit className="h-3 w-3" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 w-6 p-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+            onClick={(e) => handleDeleteNote(note.id, e)}
+            title="Delete note"
+          >
+            <Trash2 className="h-3 w-3" />
+          </Button>
+          <DesktopPopOutButton 
+            note={note} 
+            size="sm" 
+            className="h-6 w-6 p-0 flex-shrink-0" 
+          />
         </div>
-      </SidebarMenuItem>
+      </div>
     );
   };
 
   return (
-    <SidebarGroup>
+    <div className="space-y-2">
       <div className="flex items-center justify-between px-2">
-        <SidebarGroupLabel 
-          className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors"
+        <Button
+          variant="ghost"
+          size="sm"
+          className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto"
           onClick={onToggle}
         >
           {isExpanded ? (
@@ -148,7 +137,7 @@ export function NotesListSection({
             <ChevronRight className="h-3 w-3 mr-1" />
           )}
           Notes ({notes.length})
-        </SidebarGroupLabel>
+        </Button>
         <div className="flex gap-1">
           <Button
             variant="ghost"
@@ -179,32 +168,26 @@ export function NotesListSection({
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {displayNotes.map((note, index) => renderNoteItem(note, index))}
-                {displayNotes.length === 0 && (
-                  <SidebarMenuItem>
-                    <SidebarMenuButton disabled>
-                      <span className="text-xs text-sidebar-foreground/40">No notes yet</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )}
-                {allNotes.length > displayNotes.length && (
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/app/notes" className="text-xs text-sidebar-foreground/60 hover:bg-accent hover:text-accent-foreground transition-colors">
-                        View all {allNotes.length} notes →
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )}
-              </SidebarMenu>
-            </SidebarGroupContent>
+            <div className="space-y-1 px-2">
+              {displayNotes.map((note, index) => renderNoteItem(note, index))}
+              {displayNotes.length === 0 && (
+                <Button variant="ghost" size="sm" disabled className="w-full justify-start h-auto p-1">
+                  <span className="text-xs text-sidebar-foreground/40">No notes yet</span>
+                </Button>
+              )}
+              {allNotes.length > displayNotes.length && (
+                <Button variant="ghost" size="sm" asChild className="w-full justify-start h-auto p-1">
+                  <Link to="/app/notes" className="text-xs text-sidebar-foreground/60 hover:bg-accent hover:text-accent-foreground transition-colors">
+                    View all {allNotes.length} notes →
+                  </Link>
+                </Button>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
       
       <ConfirmDialog />
-    </SidebarGroup>
+    </div>
   );
 }

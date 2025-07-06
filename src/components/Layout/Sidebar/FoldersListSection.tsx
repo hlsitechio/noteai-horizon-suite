@@ -1,14 +1,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  SidebarGroup, 
-  SidebarGroupContent, 
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton
-} from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
 import { 
   ChevronRight, 
   ChevronDown,
@@ -54,36 +47,36 @@ export function FoldersListSection({
 
     return (
       <div key={folder.id} className="space-y-1">
-        <SidebarMenuItem>
-          <div className="flex items-center w-full">
-            <SidebarMenuButton 
-              onClick={() => toggleFolder(folder.id)}
-              className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors p-1 min-w-0 h-6 w-6 flex-shrink-0"
+        <div className="flex items-center w-full">
+          <Button 
+            variant="ghost"
+            size="sm"
+            onClick={() => toggleFolder(folder.id)}
+            className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors p-1 min-w-0 h-6 w-6 flex-shrink-0"
+          >
+            {isFolderExpanded ? (
+              <ChevronDown className="h-3 w-3" />
+            ) : (
+              <ChevronRight className="h-3 w-3" />
+            )}
+          </Button>
+          <Button variant="ghost" size="sm" asChild className="flex-1 h-auto p-1">
+            <Link 
+              to={`/app/folders/${folder.id}`}
+              className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full"
             >
-              {isFolderExpanded ? (
-                <ChevronDown className="h-3 w-3" />
-              ) : (
-                <ChevronRight className="h-3 w-3" />
-              )}
-            </SidebarMenuButton>
-            <SidebarMenuButton asChild className="flex-1">
-              <Link 
-                to={`/app/folders/${folder.id}`}
-                className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full"
-              >
-                <div 
-                  className="w-2 h-2 rounded-full mr-2 flex-shrink-0" 
-                  style={{ backgroundColor: folder.color }}
-                />
-                <Folder className="h-3 w-3 mr-2 flex-shrink-0" />
-                <span className="truncate text-xs flex-1">{folder.name}</span>
-                <span className="text-xs text-sidebar-foreground/40 ml-2">
-                  {folderNotes.length}
-                </span>
-              </Link>
-            </SidebarMenuButton>
-          </div>
-        </SidebarMenuItem>
+              <div 
+                className="w-2 h-2 rounded-full mr-2 flex-shrink-0" 
+                style={{ backgroundColor: folder.color }}
+              />
+              <Folder className="h-3 w-3 mr-2 flex-shrink-0" />
+              <span className="truncate text-xs flex-1">{folder.name}</span>
+              <span className="text-xs text-sidebar-foreground/40 ml-2">
+                {folderNotes.length}
+              </span>
+            </Link>
+          </Button>
+        </div>
         
         {/* Folder Notes */}
         {isFolderExpanded && folderNotes.length > 0 && (
@@ -95,27 +88,25 @@ export function FoldersListSection({
             className="ml-4 space-y-1"
           >
             {folderNotes.slice(0, 5).map((note) => (
-              <SidebarMenuItem key={note.id}>
-                <div className="flex items-center w-full">
-                  <SidebarMenuButton asChild className="flex-1">
-                    <Link 
-                      to={`/app/notes?note=${note.id}`} 
-                      className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full"
-                    >
-                      <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
-                      <span className="truncate text-xs flex-1">{note.title}</span>
-                      {note.isFavorite && (
-                        <Star className="h-3 w-3 ml-auto text-accent fill-current" />
-                      )}
-                    </Link>
-                  </SidebarMenuButton>
-                  <DesktopPopOutButton 
-                    note={note} 
-                    size="sm" 
-                    className="ml-1 h-6 w-6 p-0 flex-shrink-0" 
-                  />
-                </div>
-              </SidebarMenuItem>
+              <div key={note.id} className="flex items-center w-full">
+                <Button variant="ghost" size="sm" asChild className="flex-1 h-auto p-1">
+                  <Link 
+                    to={`/app/notes?note=${note.id}`} 
+                    className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full"
+                  >
+                    <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
+                    <span className="truncate text-xs flex-1">{note.title}</span>
+                    {note.isFavorite && (
+                      <Star className="h-3 w-3 ml-auto text-accent fill-current" />
+                    )}
+                  </Link>
+                </Button>
+                <DesktopPopOutButton 
+                  note={note} 
+                  size="sm" 
+                  className="ml-1 h-6 w-6 p-0 flex-shrink-0" 
+                />
+              </div>
             ))}
             {folderNotes.length > 5 && (
               <div className="text-xs text-sidebar-foreground/40 px-2 ml-4">
@@ -129,10 +120,12 @@ export function FoldersListSection({
   };
 
   return (
-    <SidebarGroup>
+    <div className="space-y-2">
       <div className="flex items-center justify-between px-2">
-        <SidebarGroupLabel 
-          className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors"
+        <Button
+          variant="ghost"
+          size="sm"
+          className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto"
           onClick={onToggle}
         >
           {isExpanded ? (
@@ -141,7 +134,7 @@ export function FoldersListSection({
             <ChevronRight className="h-3 w-3 mr-1" />
           )}
           Folders
-        </SidebarGroupLabel>
+        </Button>
       </div>
       
       <AnimatePresence>
@@ -152,22 +145,18 @@ export function FoldersListSection({
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {folders.length > 0 ? (
-                  folders.map(renderFolder)
-                ) : (
-                  <SidebarMenuItem>
-                    <SidebarMenuButton disabled>
-                      <span className="text-xs text-sidebar-foreground/40">No folders yet</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )}
-              </SidebarMenu>
-            </SidebarGroupContent>
+            <div className="space-y-1 px-2">
+              {folders.length > 0 ? (
+                folders.map(renderFolder)
+              ) : (
+                <Button variant="ghost" size="sm" disabled className="w-full justify-start h-auto p-1">
+                  <span className="text-xs text-sidebar-foreground/40">No folders yet</span>
+                </Button>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </SidebarGroup>
+    </div>
   );
 }
