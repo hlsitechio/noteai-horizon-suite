@@ -13,12 +13,14 @@ import { Edit3, Lock, Unlock, Settings } from 'lucide-react';
 import DashboardSettings from '@/components/Dashboard/DashboardSettings';
 import { DashboardComponentRenderer } from '@/components/Dashboard/ComponentRegistry';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
+import EditLayoutModal from '@/components/Dashboard/BannerSettings/EditLayoutModal';
 
 const OptimizedDashboard: React.FC = () => {
   const { notes } = useOptimizedNotes();
   const { getPanelConfiguration, getPanelSizes } = useDashboardLayout();
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [selectedBannerUrl, setSelectedBannerUrl] = React.useState<string | null>(null);
+  const [showEditLayoutModal, setShowEditLayoutModal] = React.useState(false);
 
   // Calculate stats for KPIStats
   const totalNotes = notes.length;
@@ -76,26 +78,13 @@ const OptimizedDashboard: React.FC = () => {
         </DashboardSettings>
         
         <Button
-          variant={isEditMode ? "default" : "outline"}
+          variant="outline"
           size="sm"
-          onClick={() => setIsEditMode(!isEditMode)}
-          className={`gap-2 transition-all duration-200 ${
-            isEditMode 
-              ? 'bg-primary text-primary-foreground shadow-lg' 
-              : 'hover:bg-accent'
-          }`}
+          onClick={() => setShowEditLayoutModal(true)}
+          className="gap-2 transition-all duration-200 hover:bg-accent"
         >
-          {isEditMode ? (
-            <>
-              <Lock className="h-4 w-4" />
-              Lock Layout
-            </>
-          ) : (
-            <>
-              <Edit3 className="h-4 w-4" />
-              Edit Layout
-            </>
-          )}
+          <Edit3 className="h-4 w-4" />
+          Edit Layout
         </Button>
       </div>
 
@@ -282,6 +271,18 @@ const OptimizedDashboard: React.FC = () => {
           }
         />
       </div>
+
+      {/* Edit Layout Modal */}
+      <EditLayoutModal
+        open={showEditLayoutModal}
+        onOpenChange={setShowEditLayoutModal}
+        onImageUpload={handleImageUpload}
+        onAIGenerate={handleAIGenerate}
+        onVideoUpload={handleVideoUpload}
+        onImageSelect={(imageUrl) => {
+          setSelectedBannerUrl(imageUrl);
+        }}
+      />
     </div>
   );
 };
