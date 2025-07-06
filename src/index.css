@@ -453,6 +453,7 @@
    GLOBAL STYLES & UTILITIES
    ======================================== */
 
+@layer base {
   * {
     @apply border-0;
   }
