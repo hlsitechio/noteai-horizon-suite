@@ -3,15 +3,18 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { ResizableSidebarContainer } from './ResizableSidebar';
 import { Toaster } from '@/components/ui/sonner';
+import { useEditMode } from '@/contexts/EditModeContext';
 
 const Layout: React.FC = () => {
+  const { isSidebarEditMode } = useEditMode();
+  
   return (
     <div className="min-h-screen w-full bg-background">
       <ResizableSidebarContainer
         sidebarDefaultSize={25}
         sidebarMinSize={15}
         sidebarMaxSize={50}
-        isEditMode={false}
+        isEditMode={isSidebarEditMode}
         enableVerticalResize={true}
         sidebarTopContent={
           <div className="h-full w-full bg-muted/5 p-4">

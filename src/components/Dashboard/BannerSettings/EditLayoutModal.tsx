@@ -25,6 +25,7 @@ import ColorThemesModal from './ColorThemesModal';
 import BannerGalleryModal from './BannerGalleryModal';
 import AIGenerateModal from './AIGenerateModal';
 import PreviewModeModal from './PreviewModeModal';
+import LayoutEditToggle from './LayoutEditToggle';
 
 interface EditLayoutModalProps {
   open: boolean;
@@ -98,9 +99,10 @@ const EditLayoutModal: React.FC<EditLayoutModalProps> = ({
 
           <div className="overflow-y-auto max-h-[75vh]">
             <Tabs defaultValue="banner" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="banner">Banner Setup</TabsTrigger>
                 <TabsTrigger value="settings">Settings</TabsTrigger>
+                <TabsTrigger value="layout">Layout</TabsTrigger>
                 <TabsTrigger value="advanced">Advanced</TabsTrigger>
               </TabsList>
 
@@ -224,6 +226,30 @@ const EditLayoutModal: React.FC<EditLayoutModalProps> = ({
                       <p className="text-sm text-muted-foreground">
                         Customize colors and visual themes
                       </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              {/* Layout Tab */}
+              <TabsContent value="layout" className="space-y-6">
+                <div className="text-center mb-6">
+                  <h3 className="text-lg font-semibold mb-2">Layout Settings</h3>
+                  <p className="text-muted-foreground">
+                    Enable editing for dashboard and sidebar layouts
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Card className="group hover:shadow-lg transition-all duration-300 border hover:border-primary/50">
+                    <CardContent className="p-6 text-center">
+                      <LayoutEditToggle type="dashboard" />
+                    </CardContent>
+                  </Card>
+
+                  <Card className="group hover:shadow-lg transition-all duration-300 border hover:border-primary/50">
+                    <CardContent className="p-6 text-center">
+                      <LayoutEditToggle type="sidebar" />
                     </CardContent>
                   </Card>
                 </div>

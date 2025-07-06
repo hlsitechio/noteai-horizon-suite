@@ -3,6 +3,7 @@ import { AuthProvider } from '../contexts/AuthContext';
 import { ThemeAccentProviders } from '../contexts/ThemeAccentProviders';
 import { NotesDataProviders } from '../contexts/NotesDataProviders';
 import { ProjectAIProviders } from '../contexts/ProjectAIProviders';
+import { EditModeProvider } from '../contexts/EditModeContext';
 import { composeProviders } from '../utils/composeProviders';
 
 // Compose all main providers in a flattened tree structure
@@ -10,7 +11,8 @@ const RootProviders = composeProviders(
   ThemeAccentProviders,
   AuthProvider,
   NotesDataProviders,
-  ProjectAIProviders
+  ProjectAIProviders,
+  EditModeProvider
 );
 
 interface AppProvidersProps {

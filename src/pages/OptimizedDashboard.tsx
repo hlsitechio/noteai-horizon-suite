@@ -14,11 +14,12 @@ import DashboardSettings from '@/components/Dashboard/DashboardSettings';
 import { DashboardComponentRenderer } from '@/components/Dashboard/ComponentRegistry';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 import EditLayoutModal from '@/components/Dashboard/BannerSettings/EditLayoutModal';
+import { useEditMode } from '@/contexts/EditModeContext';
 
 const OptimizedDashboard: React.FC = () => {
   const { notes } = useOptimizedNotes();
   const { getPanelConfiguration, getPanelSizes } = useDashboardLayout();
-  const [isEditMode, setIsEditMode] = React.useState(false);
+  const { isDashboardEditMode } = useEditMode();
   const [selectedBannerUrl, setSelectedBannerUrl] = React.useState<string | null>(null);
   const [showEditLayoutModal, setShowEditLayoutModal] = React.useState(false);
 
@@ -89,7 +90,7 @@ const OptimizedDashboard: React.FC = () => {
       </div>
 
       {/* Edit Mode Indicator */}
-      {isEditMode && (
+      {isDashboardEditMode && (
         <div className="absolute top-16 right-4 z-40 animate-fade-in">
           <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-2 text-sm text-primary">
             <div className="flex items-center gap-2">
@@ -102,13 +103,13 @@ const OptimizedDashboard: React.FC = () => {
       
       {/* Resizable Dashboard Container - Full Height */}
       <div className={`h-full w-full transition-all duration-200 ${
-        isEditMode ? 'ring-2 ring-primary/20 ring-inset' : ''
+        isDashboardEditMode ? 'ring-2 ring-primary/20 ring-inset' : ''
       }`}>
         <ResizableDashboardContainer
           bannerDefaultSize={40}
           bannerMinSize={25}
           bannerMaxSize={80}
-          isEditMode={isEditMode}
+          isEditMode={isDashboardEditMode}
           bannerContent={
             <ResizableBannerSetup
               onImageUpload={handleImageUpload}
@@ -118,7 +119,7 @@ const OptimizedDashboard: React.FC = () => {
                 setSelectedBannerUrl(imageUrl);
               }}
               selectedImageUrl={selectedBannerUrl}
-              isEditMode={isEditMode}
+              isEditMode={isDashboardEditMode}
             />
           }
           mainContent={
@@ -138,7 +139,7 @@ const OptimizedDashboard: React.FC = () => {
                 </Panel>
                 
                 {/* Horizontal Resize Handle */}
-                {isEditMode && <HorizontalResizableHandle />}
+                {isDashboardEditMode && <HorizontalResizableHandle />}
                 
                 {/* Middle Panel - Two Boxes */}
                 <Panel defaultSize={35} minSize={25}>
@@ -171,7 +172,7 @@ const OptimizedDashboard: React.FC = () => {
                       </Panel>
                       
                       {/* Horizontal Resize Handle */}
-                      {isEditMode && <HorizontalResizableHandle />}
+                      {isDashboardEditMode && <HorizontalResizableHandle />}
                       
                       {/* Right Box */}
                       <Panel defaultSize={50} minSize={30}>
@@ -203,7 +204,7 @@ const OptimizedDashboard: React.FC = () => {
                 </Panel>
                 
                 {/* Horizontal Resize Handle */}
-                {isEditMode && <HorizontalResizableHandle />}
+                {isDashboardEditMode && <HorizontalResizableHandle />}
                 
                 {/* Bottom Panel - Two More Boxes */}
                 <Panel defaultSize={35} minSize={25}>
@@ -236,7 +237,7 @@ const OptimizedDashboard: React.FC = () => {
                       </Panel>
                       
                       {/* Horizontal Resize Handle */}
-                      {isEditMode && <HorizontalResizableHandle />}
+                      {isDashboardEditMode && <HorizontalResizableHandle />}
                       
                       {/* Right Box */}
                       <Panel defaultSize={50} minSize={30}>
