@@ -12,7 +12,7 @@ import { useDashboardPanelSizes, useDashboardBanner } from '@/hooks';
 
 const OptimizedDashboard: React.FC = () => {
   const { notes } = useOptimizedNotes();
-  const { isDashboardEditMode } = useEditMode();
+  const { isDashboardEditMode, isLoading } = useEditMode();
   const [showEditLayoutModal, setShowEditLayoutModal] = React.useState(false);
 
   // Custom hooks for clean separation of concerns
@@ -24,6 +24,8 @@ const OptimizedDashboard: React.FC = () => {
     handleAIGenerate, 
     handleImageSelect 
   } = useDashboardBanner();
+
+  console.log('Dashboard render - isDashboardEditMode:', isDashboardEditMode, 'isLoading:', isLoading);
 
   return (
     <div className="w-full h-screen bg-background">

@@ -18,16 +18,22 @@ export const useEditModeState = () => {
     }
 
     try {
+      console.log('Loading edit modes for user:', user.id);
+      
       // Check and clear expired edit modes first
       const wasCleared = await DashboardSettingsService.checkAndClearExpiredEditModes(user.id);
       
       if (wasCleared) {
+        console.log('Edit modes were cleared due to expiration');
         toast.info('Edit mode automatically disabled due to inactivity');
       }
 
       const settings = await DashboardSettingsService.getUserSettings(user.id);
+      console.log('Retrieved settings:', settings);
       
       if (settings) {
+        console.log('Setting dashboard edit mode to:', settings.dashboard_edit_mode);
+        console.log('Setting sidebar edit mode to:', settings.sidebar_edit_mode);
         setIsDashboardEditMode(settings.dashboard_edit_mode);
         setIsSidebarEditMode(settings.sidebar_edit_mode);
         
@@ -35,11 +41,19 @@ export const useEditModeState = () => {
         if (settings.dashboard_edit_mode || settings.sidebar_edit_mode) {
           setupAutoDisableTimer();
         }
+      } else {
+        console.log('No settings found, defaulting to false');
+        setIsDashboardEditMode(false);
+        setIsSidebarEditMode(false);
       }
     } catch (error) {
       console.error('Failed to load edit modes:', error);
+      // Ensure edit modes are disabled on error
+      setIsDashboardEditMode(false);
+      setIsSidebarEditMode(false);
     } finally {
       setIsLoading(false);
+      console.log('Edit mode loading completed');
     }
   }, [user]);
 
