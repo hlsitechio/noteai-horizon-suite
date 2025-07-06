@@ -24,18 +24,8 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
 
   const hasActiveEditMode = isDashboardEditMode || isSidebarEditMode;
 
-  const handleSaveLayout = () => {
-    setIsDashboardEditMode(false);
-    setIsSidebarEditMode(false);
-    
-    toast({
-      title: "Layout Saved",
-      description: "Your layout changes have been saved successfully.",
-    });
-  };
-
-  const handleLockDashboard = async () => {
-    console.log('Starting dashboard lock process...');
+  const handleSaveAndLockDashboard = async () => {
+    console.log('Starting dashboard save and lock process...');
     setIsLocking(true);
     
     try {
@@ -50,10 +40,10 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
       console.log('Function response:', { data, error });
 
       if (error) {
-        console.error('Dashboard lock error:', error);
+        console.error('Dashboard save and lock error:', error);
         toast({
-          title: "Lock Failed",
-          description: `Failed to lock dashboard layout: ${error.message}`,
+          title: "Save & Lock Failed",
+          description: `Failed to save and lock dashboard layout: ${error.message}`,
           variant: "destructive",
         });
         return;
@@ -65,15 +55,15 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
       setIsSidebarEditMode(false);
 
       toast({
-        title: "Dashboard Locked",
-        description: "Dashboard and sidebar are now permanently locked and cannot be resized.",
+        title: "Dashboard Saved & Locked",
+        description: "Dashboard and sidebar layouts have been saved and permanently locked.",
         variant: "default",
       });
 
     } catch (err) {
-      console.error('Dashboard lock error:', err);
+      console.error('Dashboard save and lock error:', err);
       toast({
-        title: "Lock Failed",
+        title: "Save & Lock Failed",
         description: `An unexpected error occurred: ${err.message}`,
         variant: "destructive",
       });
@@ -120,22 +110,13 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
             </p>
             <div className="flex gap-2">
               <Button 
-                onClick={handleSaveLayout}
-                className="flex-1 gap-2"
+                onClick={handleSaveAndLockDashboard}
+                disabled={isLocking}
+                className="w-full gap-2 bg-primary hover:bg-primary/90"
                 size="sm"
-                variant="outline"
               >
                 <Save className="h-4 w-4" />
-                Save Layout
-              </Button>
-              <Button 
-                onClick={handleLockDashboard}
-                disabled={isLocking}
-                className="flex-1 gap-2 bg-destructive hover:bg-destructive/90"
-                size="sm"
-              >
-                <Lock className="h-4 w-4" />
-                {isLocking ? 'Locking...' : 'Lock Dashboard'}
+                {isLocking ? 'Saving & Locking...' : 'Save & Lock Layout'}
               </Button>
             </div>
           </div>

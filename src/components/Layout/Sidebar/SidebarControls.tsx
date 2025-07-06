@@ -13,17 +13,8 @@ export const SidebarControls: React.FC = () => {
   const { toast } = useToast();
   const [isLocking, setIsLocking] = useState(false);
 
-  const handleSaveLayout = () => {
-    setIsSidebarEditMode(false);
-    
-    toast({
-      title: "Sidebar Layout Saved",
-      description: "Your sidebar layout changes have been saved successfully.",
-    });
-  };
-
-  const handleLockSidebar = async () => {
-    console.log('Starting sidebar lock process...');
+  const handleSaveAndLockLayout = async () => {
+    console.log('Starting save and lock process...');
     setIsLocking(true);
     
     try {
@@ -38,10 +29,10 @@ export const SidebarControls: React.FC = () => {
       console.log('Function response:', { data, error });
 
       if (error) {
-        console.error('Sidebar lock error:', error);
+        console.error('Save and lock error:', error);
         toast({
-          title: "Lock Failed",
-          description: `Failed to lock sidebar layout: ${error.message}`,
+          title: "Save & Lock Failed",
+          description: `Failed to save and lock sidebar layout: ${error.message}`,
           variant: "destructive",
         });
         return;
@@ -51,15 +42,15 @@ export const SidebarControls: React.FC = () => {
       setIsSidebarEditMode(false);
 
       toast({
-        title: "Sidebar Locked",
-        description: "Sidebar is now permanently locked and cannot be resized.",
+        title: "Layout Saved & Locked",
+        description: "Sidebar layout has been saved and permanently locked.",
         variant: "default",
       });
 
     } catch (err) {
-      console.error('Sidebar lock error:', err);
+      console.error('Save and lock error:', err);
       toast({
-        title: "Lock Failed",
+        title: "Save & Lock Failed", 
         description: `An unexpected error occurred: ${err.message}`,
         variant: "destructive",
       });
@@ -84,22 +75,13 @@ export const SidebarControls: React.FC = () => {
         </p>
         <div className="flex gap-2">
           <Button 
-            onClick={handleSaveLayout}
-            className="flex-1 gap-2 h-8 text-xs"
+            onClick={handleSaveAndLockLayout}
+            disabled={isLocking}
+            className="w-full gap-2 h-8 text-xs bg-primary hover:bg-primary/90"
             size="sm"
-            variant="outline"
           >
             <Save className="h-3 w-3" />
-            Save Layout
-          </Button>
-          <Button 
-            onClick={handleLockSidebar}
-            disabled={isLocking}
-            className="flex-1 gap-2 h-8 text-xs bg-destructive hover:bg-destructive/90"
-            size="sm"
-          >
-            <Lock className="h-3 w-3" />
-            {isLocking ? 'Locking...' : 'Lock Sidebar'}
+            {isLocking ? 'Saving & Locking...' : 'Save & Lock Layout'}
           </Button>
         </div>
       </div>
