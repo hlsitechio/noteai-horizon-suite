@@ -1,28 +1,43 @@
-import { useDashboardLayout } from './useDashboardLayout';
+import { useCallback, useRef, useEffect } from 'react';
 import { useDashboardSettings } from './useDashboardSettings';
 
 export const useDashboardPanelSizes = () => {
-  const { getPanelSizes, updatePanelSizes } = useDashboardLayout();
-  const { settings } = useDashboardSettings();
+  const { settings, updateSidebarPanelSizes } = useDashboardSettings();
+  const saveTimeoutRef = useRef<NodeJS.Timeout>();
   
-  // Get saved panel sizes from both dashboard settings and layout
-  const savedPanelSizes = getPanelSizes();
+  // Get saved panel sizes from settings
   const settingsPanelSizes = settings?.sidebar_panel_sizes || {};
   
-  // Merge both sources, with dashboard settings taking precedence
-  const mergedPanelSizes = { ...savedPanelSizes, ...settingsPanelSizes };
-  
   const panelSizes = {
-    banner: mergedPanelSizes.banner || 25,
-    analytics: mergedPanelSizes.analytics || 30,
-    topSection: mergedPanelSizes.topSection || 35,
-    bottomSection: mergedPanelSizes.bottomSection || 35,
-    leftPanels: mergedPanelSizes.leftPanels || 50,
-    rightPanels: mergedPanelSizes.rightPanels || 50,
+    banner: settingsPanelSizes.banner || 25,
+    analytics: settingsPanelSizes.analytics || 30,
+    topSection: settingsPanelSizes.topSection || 35,
+    bottomSection: settingsPanelSizes.bottomSection || 35,
+    leftPanels: settingsPanelSizes.leftPanels || 50,
+    rightPanels: settingsPanelSizes.rightPanels || 50,
   };
 
+  // Debounced save function
+  const debouncedSave = useCallback((newSizes: Record<string, number>) => {
+    // Clear existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    
+    // Set new timeout
+    saveTimeoutRef.current = setTimeout(async () => {
+      console.log('Saving panel sizes:', newSizes);
+      const success = await updateSidebarPanelSizes(newSizes);
+      if (success) {
+        console.log('Panel sizes saved successfully:', newSizes);
+      } else {
+        console.error('Failed to save panel sizes');
+      }
+    }, 500); // 500ms debounce
+  }, [updateSidebarPanelSizes]);
+
   const createSizeHandler = (sizeKey: string) => (sizes: number[]) => {
-    const newSizes = { ...mergedPanelSizes };
+    const newSizes = { ...settingsPanelSizes };
     
     switch (sizeKey) {
       case 'banner':
@@ -43,9 +58,17 @@ export const useDashboardPanelSizes = () => {
         break;
     }
     
-    console.log('Saving panel sizes:', newSizes);
-    updatePanelSizes(newSizes);
+    debouncedSave(newSizes);
   };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return {
     panelSizes,
