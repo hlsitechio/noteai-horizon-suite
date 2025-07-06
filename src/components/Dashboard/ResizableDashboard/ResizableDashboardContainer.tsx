@@ -12,6 +12,7 @@ interface ResizableDashboardContainerProps {
   bannerMinSize?: number;
   bannerMaxSize?: number;
   isEditMode?: boolean;
+  onLayout?: (sizes: number[]) => void;
 }
 
 const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = ({
@@ -20,10 +21,11 @@ const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = 
   bannerDefaultSize = 30,
   bannerMinSize = 15,
   bannerMaxSize = 70,
-  isEditMode = false
+  isEditMode = false,
+  onLayout
 }) => {
   return (
-    <PanelGroup direction="vertical" className="w-full h-full">
+    <PanelGroup direction="vertical" className="w-full h-full" onLayout={onLayout}>
       {/* Banner Panel */}
       <ResizableBannerPanel
         defaultSize={bannerDefaultSize}

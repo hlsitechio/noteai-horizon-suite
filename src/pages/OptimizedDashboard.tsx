@@ -20,7 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const OptimizedDashboard: React.FC = () => {
   const { notes } = useOptimizedNotes();
-  const { getPanelConfiguration, getPanelSizes } = useDashboardLayout();
+  const { getPanelConfiguration, getPanelSizes, updatePanelSizes } = useDashboardLayout();
   const { 
     isDashboardEditMode, 
     isSidebarEditMode, 
@@ -30,6 +30,15 @@ const OptimizedDashboard: React.FC = () => {
   const { settings, updateBannerSelection } = useDashboardSettings();
   const { toast } = useToast();
   const [showEditLayoutModal, setShowEditLayoutModal] = React.useState(false);
+
+  // Get saved panel sizes or use defaults
+  const savedPanelSizes = getPanelSizes();
+  const bannerSize = savedPanelSizes.banner || 40;
+  const analyticsSize = savedPanelSizes.analytics || 30;
+  const topSectionSize = savedPanelSizes.topSection || 35;
+  const bottomSectionSize = savedPanelSizes.bottomSection || 35;
+  const leftPanelsSize = savedPanelSizes.leftPanels || 50;
+  const rightPanelsSize = savedPanelSizes.rightPanels || 50;
 
   // Use the saved banner from settings
   const selectedBannerUrl = settings?.selected_banner_url || null;
@@ -64,6 +73,54 @@ const OptimizedDashboard: React.FC = () => {
       return noteDate > oneWeekAgo;
     }).length;
   }, [notes]);
+
+  // Handle banner resize
+  const handleBannerResize = (sizes: number[]) => {
+    if (sizes.length >= 2) {
+      const newSizes = {
+        ...savedPanelSizes,
+        banner: sizes[0]
+      };
+      updatePanelSizes(newSizes);
+    }
+  };
+
+  // Handle main content panel resize (vertical)
+  const handleMainContentResize = (sizes: number[]) => {
+    if (sizes.length >= 3) {
+      const newSizes = {
+        ...savedPanelSizes,
+        analytics: sizes[0],
+        topSection: sizes[1],
+        bottomSection: sizes[2]
+      };
+      updatePanelSizes(newSizes);
+    }
+  };
+
+  // Handle horizontal panel resize (top section)
+  const handleTopSectionResize = (sizes: number[]) => {
+    if (sizes.length >= 2) {
+      const newSizes = {
+        ...savedPanelSizes,
+        leftPanels: sizes[0],
+        rightPanels: sizes[1]
+      };
+      updatePanelSizes(newSizes);
+    }
+  };
+
+  // Handle horizontal panel resize (bottom section) 
+  const handleBottomSectionResize = (sizes: number[]) => {
+    if (sizes.length >= 2) {
+      const newSizes = {
+        ...savedPanelSizes,
+        leftPanels: sizes[0], // These share the same proportions
+        rightPanels: sizes[1]
+      };
+      updatePanelSizes(newSizes);
+    }
+  };
 
   const handleImageUpload = (file: File) => {
     // This would be handled by the banner service to upload and return URL
@@ -155,10 +212,11 @@ const OptimizedDashboard: React.FC = () => {
         isDashboardEditMode ? 'ring-2 ring-primary/20 ring-inset' : ''
       }`}>
         <ResizableDashboardContainer
-          bannerDefaultSize={40}
+          bannerDefaultSize={bannerSize}
           bannerMinSize={25}
           bannerMaxSize={80}
           isEditMode={isDashboardEditMode}
+          onLayout={handleBannerResize}
           bannerContent={
             <ResizableBannerSetup
               onImageUpload={handleImageUpload}
@@ -171,9 +229,9 @@ const OptimizedDashboard: React.FC = () => {
           }
           mainContent={
             <div className="h-full">
-              <PanelGroup direction="vertical" className="h-full">
+              <PanelGroup direction="vertical" className="h-full" onLayout={handleMainContentResize}>
                 {/* Top Panel - KPI Stats */}
-                <Panel defaultSize={30} minSize={20} maxSize={50}>
+                <Panel defaultSize={analyticsSize} minSize={20} maxSize={50}>
                   <div className="p-6 h-full overflow-y-auto">
                     <KPIStats
                       totalNotes={totalNotes}
@@ -189,11 +247,11 @@ const OptimizedDashboard: React.FC = () => {
                 <HorizontalResizableHandle className={isDashboardEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
                 
                 {/* Middle Panel - Two Boxes */}
-                <Panel defaultSize={35} minSize={25}>
+                <Panel defaultSize={topSectionSize} minSize={25}>
                   <div className="h-full">
-                    <PanelGroup direction="horizontal" className="h-full">
+                    <PanelGroup direction="horizontal" className="h-full" onLayout={handleTopSectionResize}>
                       {/* Left Box */}
-                      <Panel defaultSize={50} minSize={30}>
+                      <Panel defaultSize={leftPanelsSize} minSize={30}>
                         <div className="p-6 h-full">
                           {(() => {
                             const config = getPanelConfiguration('topLeft');
@@ -222,7 +280,7 @@ const OptimizedDashboard: React.FC = () => {
                       <HorizontalResizableHandle className={isDashboardEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
                       
                       {/* Right Box */}
-                      <Panel defaultSize={50} minSize={30}>
+                      <Panel defaultSize={rightPanelsSize} minSize={30}>
                         <div className="p-6 h-full">
                           {(() => {
                             const config = getPanelConfiguration('topRight');
@@ -254,11 +312,11 @@ const OptimizedDashboard: React.FC = () => {
                 <HorizontalResizableHandle className={isDashboardEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
                 
                 {/* Bottom Panel - Two More Boxes */}
-                <Panel defaultSize={35} minSize={25}>
+                <Panel defaultSize={bottomSectionSize} minSize={25}>
                   <div className="h-full">
-                    <PanelGroup direction="horizontal" className="h-full">
+                    <PanelGroup direction="horizontal" className="h-full" onLayout={handleBottomSectionResize}>
                       {/* Left Box */}
-                      <Panel defaultSize={50} minSize={30}>
+                      <Panel defaultSize={leftPanelsSize} minSize={30}>
                         <div className="p-6 h-full">
                           {(() => {
                             const config = getPanelConfiguration('bottomLeft');
@@ -287,7 +345,7 @@ const OptimizedDashboard: React.FC = () => {
                       <HorizontalResizableHandle className={isDashboardEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
                       
                       {/* Right Box */}
-                      <Panel defaultSize={50} minSize={30}>
+                      <Panel defaultSize={rightPanelsSize} minSize={30}>
                         <div className="p-6 h-full">
                           {(() => {
                             const config = getPanelConfiguration('bottomRight');
