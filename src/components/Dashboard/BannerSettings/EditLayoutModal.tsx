@@ -281,28 +281,6 @@ const EditLayoutModal: React.FC<EditLayoutModalProps> = ({
                     </CardContent>
                   </Card>
                 </div>
-
-                {/* Confirmation Button - Show when any edit mode is active */}
-                {hasActiveEditMode && (
-                  <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                    <div className="text-center space-y-3">
-                      <div className="flex items-center justify-center gap-2 text-primary">
-                        <CheckCircle className="h-5 w-5" />
-                        <span className="font-medium">Layout editing is active</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        Resize your panels as needed, then save your layout
-                      </p>
-                      <Button 
-                        onClick={handleConfirmLayout}
-                        className="gap-2"
-                      >
-                        <Save className="h-4 w-4" />
-                        Save Layout
-                      </Button>
-                    </div>
-                  </div>
-                )}
               </TabsContent>
 
               {/* Advanced Tab */}

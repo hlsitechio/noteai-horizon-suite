@@ -9,17 +9,19 @@ import { ResizableHandle } from '@/components/Dashboard/ResizableDashboard';
 import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/resizable';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Edit3, Lock, Unlock, Settings } from 'lucide-react';
+import { Edit3, Lock, Unlock, Settings, Save, CheckCircle } from 'lucide-react';
 import DashboardSettings from '@/components/Dashboard/DashboardSettings';
 import { DashboardComponentRenderer } from '@/components/Dashboard/ComponentRegistry';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 import EditLayoutModal from '@/components/Dashboard/BannerSettings/EditLayoutModal';
 import { useEditMode } from '@/contexts/EditModeContext';
+import { useToast } from '@/hooks/use-toast';
 
 const OptimizedDashboard: React.FC = () => {
   const { notes } = useOptimizedNotes();
   const { getPanelConfiguration, getPanelSizes } = useDashboardLayout();
-  const { isDashboardEditMode } = useEditMode();
+  const { isDashboardEditMode, isSidebarEditMode } = useEditMode();
+  const { toast } = useToast();
   const [selectedBannerUrl, setSelectedBannerUrl] = React.useState<string | null>(null);
   const [showEditLayoutModal, setShowEditLayoutModal] = React.useState(false);
 
@@ -67,6 +69,16 @@ const OptimizedDashboard: React.FC = () => {
     // Handle video upload logic here
   };
 
+  const handleSaveLayout = () => {
+    toast({
+      title: "Layout Saved",
+      description: "Your layout changes have been saved successfully.",
+    });
+  };
+
+  // Track if any edit modes are active
+  const hasActiveEditMode = isDashboardEditMode || isSidebarEditMode;
+
   return (
     <div className="w-full h-screen bg-background">
       {/* Edit Mode Toggle Button */}
@@ -89,14 +101,28 @@ const OptimizedDashboard: React.FC = () => {
         </Button>
       </div>
 
-      {/* Edit Mode Indicator */}
-      {isDashboardEditMode && (
+      {/* Edit Mode Indicator & Save Button */}
+      {hasActiveEditMode && (
         <div className="absolute top-16 right-4 z-40 animate-fade-in">
-          <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-2 text-sm text-primary">
-            <div className="flex items-center gap-2">
-              <Unlock className="h-3 w-3" />
-              Edit mode active - Resize panels as needed
+          <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 space-y-3">
+            <div className="flex items-center gap-2 text-sm text-primary">
+              <CheckCircle className="h-4 w-4" />
+              <span className="font-medium">
+                {isDashboardEditMode && isSidebarEditMode ? 'Dashboard & Sidebar editing active' :
+                 isDashboardEditMode ? 'Dashboard editing active' : 'Sidebar editing active'}
+              </span>
             </div>
+            <p className="text-xs text-muted-foreground">
+              Resize your panels as needed, then save your layout
+            </p>
+            <Button 
+              onClick={handleSaveLayout}
+              className="w-full gap-2"
+              size="sm"
+            >
+              <Save className="h-4 w-4" />
+              Save Layout
+            </Button>
           </div>
         </div>
       )}
