@@ -6,6 +6,7 @@ import KPIStats from '@/components/Dashboard/KPIStats';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { PanelGroup, Panel } from 'react-resizable-panels';
 import { ResizableHandle } from '@/components/Dashboard/ResizableDashboard';
+import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/resizable';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const OptimizedDashboard: React.FC = () => {
@@ -109,8 +110,8 @@ const OptimizedDashboard: React.FC = () => {
                         </div>
                       </Panel>
                       
-                      {/* Vertical Resize Handle */}
-                      <ResizableHandle />
+                      {/* Horizontal Resize Handle */}
+                      <HorizontalResizableHandle />
                       
                       {/* Right Box */}
                       <Panel defaultSize={50} minSize={30}>
