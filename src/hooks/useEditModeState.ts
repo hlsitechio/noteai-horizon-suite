@@ -55,7 +55,7 @@ export const useEditModeState = () => {
       setIsLoading(false);
       console.log('Edit mode loading completed');
     }
-  }, [user]);
+  }, [user?.id]); // Only depend on user.id to prevent unnecessary re-creation
 
   // Setup auto-disable timer (30 minutes)
   const setupAutoDisableTimer = useCallback(() => {
@@ -149,10 +149,12 @@ export const useEditModeState = () => {
     toast.success('Layout saved and locked');
   }, [user, isDashboardEditMode, isSidebarEditMode]);
 
-  // Load edit modes on mount and user change
+  // Load edit modes on mount and user change - prevent race condition
   useEffect(() => {
+    if (!user) return;
+    
     loadEditModes();
-  }, [loadEditModes]);
+  }, [user?.id, loadEditModes]); // Only trigger when user ID changes
 
   // Cleanup timeout on unmount
   useEffect(() => {

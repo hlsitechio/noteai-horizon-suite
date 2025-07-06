@@ -1,8 +1,5 @@
 import React from 'react';
-import { PanelGroup } from 'react-resizable-panels';
-import ResizableBannerPanel from './ResizableBannerPanel';
-import ResizableContentPanel from './ResizableContentPanel';
-import ResizableHandle from './ResizableHandle';
+import { PanelGroup, Panel } from 'react-resizable-panels';
 import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/resizable';
 
 interface ResizableDashboardContainerProps {
@@ -36,40 +33,51 @@ const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = 
       direction="vertical" 
       className="w-full h-full" 
       onLayout={handleLayout}
-      key={`dashboard-${isEditMode}`} // Force re-render when edit mode changes
+      id="dashboard-main"
     >
       {/* Banner Panel */}
-      <ResizableBannerPanel
+      <Panel
+        id="banner-panel"
+        order={0}
         defaultSize={bannerDefaultSize}
         minSize={isEditMode ? bannerMinSize : bannerDefaultSize}
         maxSize={isEditMode ? bannerMaxSize : bannerDefaultSize}
+        className="flex flex-col"
       >
-        {bannerContent || (
-          <div className="w-full h-full bg-primary/10 border-2 border-dashed border-primary/30 flex items-center justify-center">
-            <div className="text-center">
-              <h2 className="text-xl font-bold mb-2">Banner Area</h2>
-              <p className="text-muted-foreground">Add your banner component here</p>
+        <div className="h-full w-full">
+          {bannerContent || (
+            <div className="w-full h-full bg-primary/10 border-2 border-dashed border-primary/30 flex items-center justify-center">
+              <div className="text-center">
+                <h2 className="text-xl font-bold mb-2">Banner Area</h2>
+                <p className="text-muted-foreground">Add your banner component here</p>
+              </div>
             </div>
-          </div>
-        )}
-      </ResizableBannerPanel>
+          )}
+        </div>
+      </Panel>
       
-      {/* Horizontal Resize Handle - Always present but disabled when not in edit mode */}
+      {/* Horizontal Resize Handle - Always present */}
       <HorizontalResizableHandle 
         className={isEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"} 
       />
       
       {/* Main Content Panel */}
-      <ResizableContentPanel>
-        {mainContent || (
-          <div className="w-full h-full bg-muted/10 border-2 border-dashed border-muted/30 flex items-center justify-center">
-            <div className="text-center">
-              <h2 className="text-xl font-bold mb-2">Main Content Area</h2>
-              <p className="text-muted-foreground">Add your dashboard components here</p>
+      <Panel
+        id="main-content-panel"
+        order={1}
+        className="flex flex-col min-h-0"
+      >
+        <div className="h-full w-full overflow-y-auto">
+          {mainContent || (
+            <div className="w-full h-full bg-muted/10 border-2 border-dashed border-muted/30 flex items-center justify-center">
+              <div className="text-center">
+                <h2 className="text-xl font-bold mb-2">Main Content Area</h2>
+                <p className="text-muted-foreground">Add your dashboard components here</p>
+              </div>
             </div>
-          </div>
-        )}
-      </ResizableContentPanel>
+          )}
+        </div>
+      </Panel>
     </PanelGroup>
   );
 };

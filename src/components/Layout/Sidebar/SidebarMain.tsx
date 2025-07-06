@@ -83,10 +83,12 @@ export function SidebarMain() {
           direction="vertical" 
           className="h-full"
           onLayout={handleLayoutChange}
-          key={`sidebar-${isSidebarEditMode}`} // Force re-render when edit mode changes
+          id="sidebar-main"
         >
           {/* Navigation Panel */}
           <Panel 
+            id="navigation-panel"
+            order={0}
             defaultSize={navigationSize} 
             minSize={isSidebarEditMode ? 25 : navigationSize} 
             maxSize={isSidebarEditMode ? 50 : navigationSize}
@@ -98,18 +100,17 @@ export function SidebarMain() {
             </div>
           </Panel>
 
-          {/* Vertical Resize Handle - Always present but disabled when not in edit mode */}
-          {isSidebarEditMode && (
-            <ResizableHandle 
-              className="opacity-100" 
-              onMouseDown={handlePanelResizeStart}
-              onTouchStart={handlePanelResizeStart}
-            />
-          )}
-          {!isSidebarEditMode && <ResizableHandle className="opacity-0 pointer-events-none h-1" />}
+          {/* Vertical Resize Handle - Always present */}
+          <ResizableHandle 
+            className={isSidebarEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"}
+            onMouseDown={handlePanelResizeStart}
+            onTouchStart={handlePanelResizeStart}
+          />
 
           {/* Content Panel - Notes Section */}
           <Panel 
+            id="content-panel"
+            order={1}
             defaultSize={contentSize} 
             minSize={isSidebarEditMode ? 20 : contentSize} 
             maxSize={isSidebarEditMode ? 60 : contentSize}
@@ -119,18 +120,17 @@ export function SidebarMain() {
             </div>
           </Panel>
 
-          {/* Vertical Resize Handle - Always present but disabled when not in edit mode */}
-          {isSidebarEditMode && (
-            <ResizableHandle 
-              className="opacity-100" 
-              onMouseDown={handlePanelResizeStart}
-              onTouchStart={handlePanelResizeStart}
-            />
-          )}
-          {!isSidebarEditMode && <ResizableHandle className="opacity-0 pointer-events-none h-1" />}
+          {/* Vertical Resize Handle - Always present */}
+          <ResizableHandle 
+            className={isSidebarEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"}
+            onMouseDown={handlePanelResizeStart}
+            onTouchStart={handlePanelResizeStart}
+          />
 
           {/* Footer Panel */}
           <Panel 
+            id="footer-panel"
+            order={2}
             defaultSize={footerSize} 
             minSize={isSidebarEditMode ? 10 : footerSize} 
             maxSize={isSidebarEditMode ? 25 : footerSize}
