@@ -1,14 +1,6 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarHeader,
-  SidebarSeparator,
   useSidebar,
 } from '@/components/ui/sidebar';
 import {
@@ -26,32 +18,32 @@ export function SidebarMain() {
 
   return (
     <TooltipProvider>
-      <Sidebar collapsible="offcanvas" className="h-full flex flex-col">
+      <div className="h-full flex flex-col bg-sidebar">
         {/* Header */}
-        <SidebarHeader className="p-3 pb-2 flex-shrink-0">
+        <div className="p-3 pb-2 flex-shrink-0">
           <CustomSidebarHeader />
-        </SidebarHeader>
+        </div>
 
-        <SidebarContent className="px-0 flex-1 min-h-0 overflow-y-auto">
+        <div className="px-0 flex-1 min-h-0 overflow-y-auto">
           {/* Navigation Menu */}
-          <SidebarGroup className="py-2">
-            <SidebarGroupContent>
+          <div className="py-2">
+            <div>
               <NavigationMenu isCollapsed={!isMobile && isCollapsed} />
-            </SidebarGroupContent>
-          </SidebarGroup>
+            </div>
+          </div>
 
           {/* Collapsed Summary - only show when collapsed on desktop */}
           {!isMobile && isCollapsed && <CollapsedSummary />}
 
           {/* Notes Section - This is the main content area */}
           <NotesSection />
-        </SidebarContent>
+        </div>
 
         {/* Footer with Notifications */}
-        <SidebarFooter className="p-2 pt-1 z-30 flex-shrink-0">
+        <div className="p-2 pt-1 z-30 flex-shrink-0 border-t border-sidebar-border">
           <CustomSidebarFooter />
-        </SidebarFooter>
-      </Sidebar>
+        </div>
+      </div>
     </TooltipProvider>
   );
 }

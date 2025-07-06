@@ -5,7 +5,7 @@ import { ResizableSidebarContainer } from './ResizableSidebar';
 import { Toaster } from '@/components/ui/sonner';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { SidebarMain } from './Sidebar/SidebarMain';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider, Sidebar, SidebarContent } from '@/components/ui/sidebar';
 
 const Layout: React.FC = () => {
   const { isSidebarEditMode } = useEditMode();
