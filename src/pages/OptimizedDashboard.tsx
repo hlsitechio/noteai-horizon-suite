@@ -18,6 +18,7 @@ const OptimizedDashboard: React.FC = () => {
   const { notes } = useOptimizedNotes();
   const { getPanelConfiguration, getPanelSizes } = useDashboardLayout();
   const [isEditMode, setIsEditMode] = React.useState(false);
+  const [selectedBannerUrl, setSelectedBannerUrl] = React.useState<string | null>(null);
 
   // Calculate stats for KPIStats
   const totalNotes = notes.length;
@@ -125,9 +126,9 @@ const OptimizedDashboard: React.FC = () => {
               onAIGenerate={handleAIGenerate}
               onVideoUpload={handleVideoUpload}
               onImageSelect={(imageUrl) => {
-                console.log('Banner image selected:', imageUrl);
-                // Handle setting the banner image here
+                setSelectedBannerUrl(imageUrl);
               }}
+              selectedImageUrl={selectedBannerUrl}
               isEditMode={isEditMode}
             />
           }
