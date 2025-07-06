@@ -22,7 +22,9 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
   const { toast } = useToast();
   const [isLocking, setIsLocking] = useState(false);
 
-  const hasActiveEditMode = isDashboardEditMode || isSidebarEditMode;
+  // Only show dashboard controls when dashboard edit mode is active
+  // Sidebar has its own controls in SidebarControls component
+  const hasActiveEditMode = isDashboardEditMode;
 
   const handleSaveAndLockDashboard = async () => {
     console.log('Starting dashboard save and lock process...');
