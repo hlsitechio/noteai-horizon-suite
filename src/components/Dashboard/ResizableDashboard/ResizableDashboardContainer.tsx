@@ -11,6 +11,7 @@ interface ResizableDashboardContainerProps {
   bannerDefaultSize?: number;
   bannerMinSize?: number;
   bannerMaxSize?: number;
+  isEditMode?: boolean;
 }
 
 const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = ({
@@ -18,7 +19,8 @@ const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = 
   mainContent,
   bannerDefaultSize = 30,
   bannerMinSize = 15,
-  bannerMaxSize = 70
+  bannerMaxSize = 70,
+  isEditMode = false
 }) => {
   return (
     <PanelGroup direction="vertical" className="w-full h-full">
@@ -39,7 +41,7 @@ const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = 
       </ResizableBannerPanel>
       
       {/* Horizontal Resize Handle */}
-      <HorizontalResizableHandle />
+      {isEditMode && <HorizontalResizableHandle />}
       
       {/* Main Content Panel */}
       <ResizableContentPanel>

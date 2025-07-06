@@ -8,9 +8,12 @@ import { PanelGroup, Panel } from 'react-resizable-panels';
 import { ResizableHandle } from '@/components/Dashboard/ResizableDashboard';
 import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/resizable';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Edit3, Lock, Unlock } from 'lucide-react';
 
 const OptimizedDashboard: React.FC = () => {
   const { notes } = useOptimizedNotes();
+  const [isEditMode, setIsEditMode] = React.useState(false);
 
   // Calculate stats for KPIStats
   const totalNotes = notes.length;
@@ -58,12 +61,53 @@ const OptimizedDashboard: React.FC = () => {
 
   return (
     <div className="w-full h-screen bg-background">
+      {/* Edit Mode Toggle Button */}
+      <div className="absolute top-4 right-4 z-50">
+        <Button
+          variant={isEditMode ? "default" : "outline"}
+          size="sm"
+          onClick={() => setIsEditMode(!isEditMode)}
+          className={`gap-2 transition-all duration-200 ${
+            isEditMode 
+              ? 'bg-primary text-primary-foreground shadow-lg' 
+              : 'hover:bg-accent'
+          }`}
+        >
+          {isEditMode ? (
+            <>
+              <Lock className="h-4 w-4" />
+              Lock Layout
+            </>
+          ) : (
+            <>
+              <Edit3 className="h-4 w-4" />
+              Edit Layout
+            </>
+          )}
+        </Button>
+      </div>
+
+      {/* Edit Mode Indicator */}
+      {isEditMode && (
+        <div className="absolute top-16 right-4 z-40 animate-fade-in">
+          <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-2 text-sm text-primary">
+            <div className="flex items-center gap-2">
+              <Unlock className="h-3 w-3" />
+              Edit mode active - Resize panels as needed
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Resizable Dashboard Container - Full Height */}
-      <div className="h-full w-full">
+      <div className={`h-full w-full transition-all duration-200 ${
+        isEditMode ? 'ring-2 ring-primary/20 ring-inset' : ''
+      }`}>
         <ResizableDashboardContainer
           bannerDefaultSize={40}
           bannerMinSize={25}
           bannerMaxSize={80}
+          isEditMode={isEditMode}
           bannerContent={
             <ResizableBannerSetup
               onImageUpload={handleImageUpload}
@@ -88,7 +132,7 @@ const OptimizedDashboard: React.FC = () => {
                 </Panel>
                 
                 {/* Horizontal Resize Handle */}
-                <HorizontalResizableHandle />
+                {isEditMode && <HorizontalResizableHandle />}
                 
                 {/* Middle Panel - Two Boxes */}
                 <Panel defaultSize={35} minSize={25}>
@@ -111,7 +155,7 @@ const OptimizedDashboard: React.FC = () => {
                       </Panel>
                       
                       {/* Horizontal Resize Handle */}
-                      <HorizontalResizableHandle />
+                      {isEditMode && <HorizontalResizableHandle />}
                       
                       {/* Right Box */}
                       <Panel defaultSize={50} minSize={30}>
@@ -133,7 +177,7 @@ const OptimizedDashboard: React.FC = () => {
                 </Panel>
                 
                 {/* Horizontal Resize Handle */}
-                <HorizontalResizableHandle />
+                {isEditMode && <HorizontalResizableHandle />}
                 
                 {/* Bottom Panel - Two More Boxes */}
                 <Panel defaultSize={35} minSize={25}>
@@ -156,7 +200,7 @@ const OptimizedDashboard: React.FC = () => {
                       </Panel>
                       
                       {/* Horizontal Resize Handle */}
-                      <HorizontalResizableHandle />
+                      {isEditMode && <HorizontalResizableHandle />}
                       
                       {/* Right Box */}
                       <Panel defaultSize={50} minSize={30}>
