@@ -1,8 +1,24 @@
 import React from 'react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { ResizableDashboardContainer } from '@/components/Dashboard/ResizableDashboard';
+import { ResizableBannerSetup } from '@/components/Dashboard/ResizableBanner';
 
 const OptimizedDashboard: React.FC = () => {
+  const handleImageUpload = (file: File) => {
+    console.log('Image uploaded:', file.name);
+    // Handle image upload logic here
+  };
+
+  const handleAIGenerate = (prompt: string) => {
+    console.log('AI Generate with prompt:', prompt);
+    // Handle AI generation logic here
+  };
+
+  const handleVideoUpload = (file: File) => {
+    console.log('Video uploaded:', file.name);
+    // Handle video upload logic here
+  };
+
   return (
     <div className="w-full min-h-screen bg-background overflow-y-auto">
       {/* Clean Header */}
@@ -17,15 +33,16 @@ const OptimizedDashboard: React.FC = () => {
       
       {/* Resizable Dashboard Container */}
       <ResizableDashboardContainer
-        bannerDefaultSize={30}
-        bannerMinSize={15}
-        bannerMaxSize={70}
+        bannerDefaultSize={40}
+        bannerMinSize={25}
+        bannerMaxSize={80}
         bannerContent={
-          <div className="w-full h-full bg-background/50 flex items-center justify-center">
-            <div className="text-center">
-              <h2 className="text-lg font-medium text-muted-foreground">Banner Area</h2>
-            </div>
-          </div>
+          <ResizableBannerSetup
+            onImageUpload={handleImageUpload}
+            onAIGenerate={handleAIGenerate}
+            onVideoUpload={handleVideoUpload}
+            className="rounded-lg border"
+          />
         }
         mainContent={
           <div className="p-6">
