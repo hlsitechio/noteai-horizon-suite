@@ -15,6 +15,7 @@ import { DashboardComponentRenderer } from '@/components/Dashboard/ComponentRegi
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 import EditLayoutModal from '@/components/Dashboard/BannerSettings/EditLayoutModal';
 import { useEditMode } from '@/contexts/EditModeContext';
+import { useDashboardSettings } from '@/hooks/useDashboardSettings';
 import { useToast } from '@/hooks/use-toast';
 
 const OptimizedDashboard: React.FC = () => {
@@ -26,9 +27,13 @@ const OptimizedDashboard: React.FC = () => {
     setIsDashboardEditMode, 
     setIsSidebarEditMode 
   } = useEditMode();
+  const { settings, updateBannerSelection } = useDashboardSettings();
   const { toast } = useToast();
-  const [selectedBannerUrl, setSelectedBannerUrl] = React.useState<string | null>(null);
   const [showEditLayoutModal, setShowEditLayoutModal] = React.useState(false);
+
+  // Use the saved banner from settings
+  const selectedBannerUrl = settings?.selected_banner_url || null;
+  const selectedBannerType = settings?.selected_banner_type || null;
 
   // Calculate stats for KPIStats
   const totalNotes = notes.length;
@@ -59,19 +64,28 @@ const OptimizedDashboard: React.FC = () => {
       return noteDate > oneWeekAgo;
     }).length;
   }, [notes]);
-  const handleImageUpload = (file: File) => {
-    console.log('Image uploaded:', file.name);
-    // Handle image upload logic here
-  };
 
-  const handleAIGenerate = (prompt: string) => {
-    console.log('AI Generate with prompt:', prompt);
-    // Handle AI generation logic here
+  const handleImageUpload = (file: File) => {
+    // This would be handled by the banner service to upload and return URL
+    console.log('Image uploaded:', file.name);
   };
 
   const handleVideoUpload = (file: File) => {
+    // This would be handled by the banner service to upload and return URL
     console.log('Video uploaded:', file.name);
-    // Handle video upload logic here
+  };
+
+  const handleAIGenerate = (prompt: string) => {
+    // This would be handled by the AI service to generate and return URL
+    console.log('AI Generate with prompt:', prompt);
+  };
+
+  const handleImageSelect = (imageUrl: string) => {
+    updateBannerSelection(imageUrl, 'image');
+    toast({
+      title: "Banner Updated",
+      description: "Your dashboard banner has been updated successfully.",
+    });
   };
 
   const handleSaveLayout = () => {
@@ -150,9 +164,7 @@ const OptimizedDashboard: React.FC = () => {
               onImageUpload={handleImageUpload}
               onAIGenerate={handleAIGenerate}
               onVideoUpload={handleVideoUpload}
-              onImageSelect={(imageUrl) => {
-                setSelectedBannerUrl(imageUrl);
-              }}
+              onImageSelect={handleImageSelect}
               selectedImageUrl={selectedBannerUrl}
               isEditMode={isDashboardEditMode}
             />
@@ -315,9 +327,7 @@ const OptimizedDashboard: React.FC = () => {
         onImageUpload={handleImageUpload}
         onAIGenerate={handleAIGenerate}
         onVideoUpload={handleVideoUpload}
-        onImageSelect={(imageUrl) => {
-          setSelectedBannerUrl(imageUrl);
-        }}
+        onImageSelect={handleImageSelect}
       />
     </div>
   );

@@ -467,6 +467,36 @@ export type Database = {
         }
         Relationships: []
       }
+      dashboard_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          selected_banner_type: string | null
+          selected_banner_url: string | null
+          sidebar_panel_sizes: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          selected_banner_type?: string | null
+          selected_banner_url?: string | null
+          sidebar_panel_sizes?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          selected_banner_type?: string | null
+          selected_banner_url?: string | null
+          sidebar_panel_sizes?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       data: {
         Row: {
           created_at: string
