@@ -11,7 +11,7 @@ const Layout: React.FC = () => {
         sidebarDefaultSize={25}
         sidebarMinSize={15}
         sidebarMaxSize={50}
-        isEditMode={true}
+        isEditMode={false}
         enableVerticalResize={true}
         sidebarTopContent={
           <div className="h-full w-full bg-muted/5 p-4">
