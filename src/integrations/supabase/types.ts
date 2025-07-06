@@ -1617,6 +1617,10 @@ export type Database = {
         Args: { input_text: string }
         Returns: string
       }
+      search_path_mutable_example: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       search_semantic_memory: {
         Args: {
           query_embedding: string
