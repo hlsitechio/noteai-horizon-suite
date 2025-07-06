@@ -101,23 +101,23 @@ const Dashboard: React.FC = () => {
 
         {/* Simplified Content - More Minimalist */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Smart Features Column */}
+          {/* Left Column - Reminders & Smart Features */}
           <div className="space-y-4">
+            <ReminderManagement 
+              notes={notes}
+              onEditNote={handleEditNote}
+            />
             <SmartNoteRecommendations 
               notes={notes}
               onEditNote={handleEditNote}
             />
           </div>
 
-          {/* Activity & Management Column */}
+          {/* Right Column - Recent Activity */}
           <div className="space-y-4">
             <SecureRecentActivity 
               recentNotes={recentNotes}
               onCreateNote={handleCreateNote}
-              onEditNote={handleEditNote}
-            />
-            <ReminderManagement 
-              notes={notes}
               onEditNote={handleEditNote}
             />
           </div>
