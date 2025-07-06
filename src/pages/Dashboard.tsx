@@ -91,8 +91,9 @@ const Dashboard: React.FC = () => {
         </Panel>
         
         {/* Resize Handle */}
-        <PanelResizeHandle className="h-2 bg-border/50 hover:bg-border transition-colors duration-200 flex items-center justify-center group">
+        <PanelResizeHandle className="h-2 bg-border/50 hover:bg-border transition-colors duration-200 flex items-center justify-center group cursor-row-resize relative">
           <div className="w-12 h-1 bg-muted-foreground/30 group-hover:bg-muted-foreground/60 rounded-full transition-colors duration-200" />
+          <div className="absolute inset-0 hover:bg-primary/10 transition-colors duration-200" />
         </PanelResizeHandle>
         
         {/* Bottom Panel - Rest of Dashboard Content */}
