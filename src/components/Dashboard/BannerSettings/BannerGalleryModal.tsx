@@ -55,6 +55,9 @@ const BannerGalleryModal: React.FC<BannerGalleryModalProps> = ({
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
+    // Reset the input value to allow same file upload again
+    event.target.value = '';
+
     setIsUploading(true);
     try {
       const uploadedImage = await ImageStorageService.uploadImage(file);
@@ -64,7 +67,7 @@ const BannerGalleryModal: React.FC<BannerGalleryModalProps> = ({
       }
     } catch (error) {
       console.error('Upload failed:', error);
-      toast.error('Failed to upload image');
+      toast.error(`Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsUploading(false);
     }
