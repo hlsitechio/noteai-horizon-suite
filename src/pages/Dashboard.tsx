@@ -1,71 +1,9 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useOptimizedNotes } from '../contexts/OptimizedNotesContext';
-import { useIsMobile } from '../hooks/use-mobile';
-import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
-import KPIStats from '../components/Dashboard/KPIStats';
-import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
-import ReminderManagement from '../components/Dashboard/ReminderManagement';
-import FullscreenToggle from '../components/Dashboard/FullscreenToggle';
-import SmartNoteRecommendations from '../components/Dashboard/SmartNoteRecommendations';
-import 'boxicons/css/boxicons.min.css';
 
 const Dashboard: React.FC = () => {
-  const { notes, setCurrentNote } = useOptimizedNotes();
-  const navigate = useNavigate();
-  const isMobile = useIsMobile();
-
-  // Calculate stats from real user data
-  const totalNotes = notes.length;
-  const favoriteNotes = notes.filter(note => note.isFavorite).length;
-  const recentNotes = notes
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-    .slice(0, 5);
-
-  const categoryCounts = notes.reduce((acc, note) => {
-    const category = note.category || 'general';
-    acc[category] = (acc[category] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  const weeklyNotes = notes.filter(note => {
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    return new Date(note.createdAt) > weekAgo;
-  }).length;
-
-  // Enhanced AI context integration with real user data
-  useQuantumAIIntegration({
-    page: '/app/dashboard',
-    content: `Dashboard overview: ${totalNotes} total notes, ${favoriteNotes} favorites, ${weeklyNotes} notes this week. Categories: ${Object.keys(categoryCounts).join(', ')}`,
-    metadata: {
-      totalNotes,
-      favoriteNotes,
-      weeklyNotes,
-      categoryCounts,
-      recentNotesCount: recentNotes.length,
-      hasRecentActivity: recentNotes.length > 0,
-      totalWords: notes.reduce((acc, note) => {
-        const wordCount = note.content ? note.content.split(/\s+/).filter(word => word.length > 0).length : 0;
-        return acc + wordCount;
-      }, 0)
-    }
-  });
-
-  const handleCreateNote = () => {
-    setCurrentNote(null);
-    navigate('/app/editor');
-  };
-
-  const handleEditNote = (note: any) => {
-    setCurrentNote(note);
-    navigate('/app/editor');
-  };
-
   return (
     <div className="w-full min-h-screen bg-background">
       {/* Clean Header */}
@@ -78,60 +16,29 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
       
-      {/* Fullscreen Toggle Button */}
-      <FullscreenToggle />
-      
-      {/* Resizable Dashboard Container */}
-      <PanelGroup direction="vertical" autoSaveId="dashboard-panels" className="w-full h-[calc(100vh-4rem)]">
-        {/* Top Panel - Banner/Welcome Section */}
-        <Panel defaultSize={30} minSize={15} maxSize={60}>
-          <div className="w-full p-3 lg:p-4">
-            <WelcomeHeader />
+      {/* Test Resizable Panels */}
+      <PanelGroup direction="vertical" className="w-full h-[calc(100vh-4rem)]">
+        {/* Top Panel - Test Banner Area */}
+        <Panel defaultSize={30} minSize={20} maxSize={60}>
+          <div className="w-full h-full bg-primary/10 border-2 border-dashed border-primary/30 flex items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-xl font-bold mb-2">Resizable Banner Area</h2>
+              <p className="text-muted-foreground">Drag the handle below to resize this section</p>
+            </div>
           </div>
         </Panel>
         
         {/* Resize Handle */}
-        <PanelResizeHandle className="h-2 bg-border/50 hover:bg-border transition-colors duration-200 flex items-center justify-center group cursor-row-resize relative">
-          <div className="w-12 h-1 bg-muted-foreground/30 group-hover:bg-muted-foreground/60 rounded-full transition-colors duration-200" />
-          <div className="absolute inset-0 hover:bg-primary/10 transition-colors duration-200" />
+        <PanelResizeHandle className="h-3 bg-border hover:bg-primary/20 transition-colors duration-200 flex items-center justify-center group cursor-row-resize relative">
+          <div className="w-16 h-1 bg-muted-foreground/50 group-hover:bg-primary rounded-full transition-all duration-200" />
         </PanelResizeHandle>
         
-        {/* Bottom Panel - Rest of Dashboard Content */}
+        {/* Bottom Panel - Test Content Area */}
         <Panel>
-          <div className="w-full p-3 lg:p-4 space-y-4 overflow-auto">
-            {/* KPI Overview */}
-            <div className="w-full">
-              <KPIStats 
-                totalNotes={totalNotes}
-                favoriteNotes={favoriteNotes}
-                categoryCounts={categoryCounts}
-                weeklyNotes={weeklyNotes}
-                notes={notes}
-              />
-            </div>
-
-            {/* Simplified Content - More Minimalist */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {/* Left Column - Reminders & Smart Features */}
-              <div className="space-y-4">
-                <ReminderManagement 
-                  notes={notes}
-                  onEditNote={handleEditNote}
-                />
-                <SmartNoteRecommendations 
-                  notes={notes}
-                  onEditNote={handleEditNote}
-                />
-              </div>
-
-              {/* Right Column - Recent Activity */}
-              <div className="space-y-4">
-                <SecureRecentActivity 
-                  recentNotes={recentNotes}
-                  onCreateNote={handleCreateNote}
-                  onEditNote={handleEditNote}
-                />
-              </div>
+          <div className="w-full h-full bg-muted/10 border-2 border-dashed border-muted/30 flex items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-xl font-bold mb-2">Main Content Area</h2>
+              <p className="text-muted-foreground">This area will contain KPI stats and other content</p>
             </div>
           </div>
         </Panel>
