@@ -124,6 +124,11 @@ const OptimizedDashboard: React.FC = () => {
               onImageUpload={handleImageUpload}
               onAIGenerate={handleAIGenerate}
               onVideoUpload={handleVideoUpload}
+              onImageSelect={(imageUrl) => {
+                console.log('Banner image selected:', imageUrl);
+                // Handle setting the banner image here
+              }}
+              isEditMode={isEditMode}
             />
           }
           mainContent={

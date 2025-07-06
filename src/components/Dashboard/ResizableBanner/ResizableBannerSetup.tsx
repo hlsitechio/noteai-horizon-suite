@@ -14,17 +14,28 @@ interface ResizableBannerSetupProps {
   onImageUpload?: (file: File) => void;
   onAIGenerate?: (prompt: string) => void;
   onVideoUpload?: (file: File) => void;
+  onImageSelect?: (imageUrl: string) => void;
   className?: string;
+  isEditMode?: boolean;
 }
 
 const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
   onImageUpload,
   onAIGenerate,
   onVideoUpload,
-  className = ''
+  onImageSelect,
+  className = '',
+  isEditMode = false
 }) => {
   const [dragOver, setDragOver] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  // Modal states
+  const [showBannerSettings, setShowBannerSettings] = useState(false);
+  const [showColorThemes, setShowColorThemes] = useState(false);
+  const [showGallery, setShowGallery] = useState(false);
+  const [showAIGenerate, setShowAIGenerate] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -123,104 +134,128 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
             </div>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
               Transform your dashboard with a personalized banner. Upload your own media, 
-              generate with AI, or choose from our curated collection.
+              generate with AI, or choose from your gallery.
             </p>
           </motion.div>
 
-          {/* Action Cards Grid - Full Width */}
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
-            variants={itemVariants}
-          >
-            {/* Upload Card */}
-            <Card className="relative group hover:shadow-lg transition-all duration-300 cursor-pointer border-2 border-dashed border-border hover:border-primary/50">
-              <CardContent className="p-6 text-center">
-                <input
-                  type="file"
-                  accept="image/*,video/*"
-                  onChange={handleFileInput}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                />
-                <div className="p-4 bg-blue-500/10 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <Upload className="w-8 h-8 text-blue-500" />
-                </div>
-                <h3 className="font-semibold mb-2">Upload Media</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Drag & drop or click to upload images or videos
-                </p>
-                <div className="flex gap-2 justify-center">
-                  <Badge variant="secondary" className="text-xs">JPG</Badge>
-                  <Badge variant="secondary" className="text-xs">PNG</Badge>
-                  <Badge variant="secondary" className="text-xs">MP4</Badge>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* AI Generate Card */}
-            <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border hover:border-primary/50">
-              <CardContent className="p-6 text-center">
-                <Button
-                  onClick={handleAIGenerate}
-                  disabled={isGenerating}
-                  className="w-full h-full p-0 bg-transparent hover:bg-transparent text-inherit"
-                  variant="ghost"
-                >
-                  <div className="w-full">
-                    <div className="p-4 bg-purple-500/10 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
-                      <Sparkles className={`w-8 h-8 text-purple-500 ${isGenerating ? 'animate-spin' : ''}`} />
+          {/* Conditional Content Based on Edit Mode */}
+          {!isEditMode ? (
+            // Normal Mode - Show Upload/Gallery/AI Options
+            <>
+              {/* Action Cards Grid - Full Width */}
+              <motion.div 
+                className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+                variants={itemVariants}
+              >
+                {/* Upload Card */}
+                <Card className="relative group hover:shadow-lg transition-all duration-300 cursor-pointer border-2 border-dashed border-border hover:border-primary/50">
+                  <CardContent className="p-6 text-center">
+                    <input
+                      type="file"
+                      accept="image/*,video/*"
+                      onChange={handleFileInput}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="p-4 bg-blue-500/10 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
+                      <Upload className="w-8 h-8 text-blue-500" />
                     </div>
-                    <h3 className="font-semibold mb-2">AI Generate</h3>
+                    <h3 className="font-semibold mb-2">Upload Media</h3>
                     <p className="text-sm text-muted-foreground mb-3">
-                      {isGenerating ? 'Creating your banner...' : 'Let AI create a unique banner for you'}
+                      Drag & drop or click to upload images or videos
                     </p>
                     <div className="flex gap-2 justify-center">
-                      <Badge variant="secondary" className="text-xs">Landscapes</Badge>
-                      <Badge variant="secondary" className="text-xs">Abstract</Badge>
+                      <Badge variant="secondary" className="text-xs">JPG</Badge>
+                      <Badge variant="secondary" className="text-xs">PNG</Badge>
+                      <Badge variant="secondary" className="text-xs">MP4</Badge>
                     </div>
-                  </div>
-                </Button>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
 
-            {/* Gallery Card */}
-            <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border hover:border-primary/50">
-              <CardContent className="p-6 text-center">
-                <div className="p-4 bg-green-500/10 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <Image className="w-8 h-8 text-green-500" />
-                </div>
-                <h3 className="font-semibold mb-2">Browse Gallery</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Choose from our curated collection of banners
-                </p>
-                <div className="flex gap-2 justify-center">
-                  <Badge variant="secondary" className="text-xs">Curated</Badge>
-                  <Badge variant="secondary" className="text-xs">HD</Badge>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+                {/* AI Generate Card */}
+                <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border hover:border-primary/50">
+                  <CardContent className="p-6 text-center">
+                    <Button
+                      onClick={() => setShowAIGenerate(true)}
+                      disabled={isGenerating}
+                      className="w-full h-full p-0 bg-transparent hover:bg-transparent text-inherit"
+                      variant="ghost"
+                    >
+                      <div className="w-full">
+                        <div className="p-4 bg-purple-500/10 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
+                          <Sparkles className={`w-8 h-8 text-purple-500 ${isGenerating ? 'animate-spin' : ''}`} />
+                        </div>
+                        <h3 className="font-semibold mb-2">AI Generate</h3>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          {isGenerating ? 'Creating your banner...' : 'Let AI create a unique banner for you'}
+                        </p>
+                        <div className="flex gap-2 justify-center">
+                          <Badge variant="secondary" className="text-xs">Landscapes</Badge>
+                          <Badge variant="secondary" className="text-xs">Abstract</Badge>
+                        </div>
+                      </div>
+                    </Button>
+                  </CardContent>
+                </Card>
 
-          {/* Quick Settings Row - Full Width */}
-          <motion.div 
-            className="flex flex-wrap gap-3 justify-center"
-            variants={itemVariants}
-          >
-            <Button variant="outline" size="sm" className="gap-2">
-              <Settings className="w-4 h-4" />
-              Banner Settings
-            </Button>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Palette className="w-4 h-4" />
-              Color Themes
-            </Button>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Play className="w-4 h-4" />
-              Preview Mode
-            </Button>
-          </motion.div>
+                {/* Gallery Card */}
+                <Card 
+                  className="group hover:shadow-lg transition-all duration-300 cursor-pointer border hover:border-primary/50"
+                  onClick={() => setShowGallery(true)}
+                >
+                  <CardContent className="p-6 text-center">
+                    <div className="p-4 bg-green-500/10 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
+                      <Image className="w-8 h-8 text-green-500" />
+                    </div>
+                    <h3 className="font-semibold mb-2">Browse Gallery</h3>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Choose from your uploaded images
+                    </p>
+                    <div className="flex gap-2 justify-center">
+                      <Badge variant="secondary" className="text-xs">Your Images</Badge>
+                      <Badge variant="secondary" className="text-xs">HD</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </>
+          ) : (
+            // Edit Mode - Show Settings Options
+            <motion.div 
+              className="flex flex-wrap gap-3 justify-center"
+              variants={itemVariants}
+            >
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2"
+                onClick={() => setShowBannerSettings(true)}
+              >
+                <Settings className="w-4 h-4" />
+                Banner Settings
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2"
+                onClick={() => setShowColorThemes(true)}
+              >
+                <Palette className="w-4 h-4" />
+                Color Themes
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2"
+                onClick={() => setShowPreview(true)}
+              >
+                <Play className="w-4 h-4" />
+                Preview Mode
+              </Button>
+            </motion.div>
+          )}
 
           {/* Drop Zone Indicator */}
-          {dragOver && (
+          {dragOver && !isEditMode && (
             <motion.div
               className="absolute inset-4 border-2 border-dashed border-primary bg-primary/5 rounded-lg flex items-center justify-center backdrop-blur-sm"
               initial={{ opacity: 0, scale: 0.9 }}
@@ -240,6 +275,34 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
       <div className="absolute bottom-2 right-2 opacity-50 hover:opacity-100 transition-opacity">
         <div className="w-6 h-6 border-r-2 border-b-2 border-muted-foreground/30" />
       </div>
+
+      {/* Modals */}
+      <BannerSettingsModal 
+        open={showBannerSettings} 
+        onOpenChange={setShowBannerSettings} 
+      />
+      
+      <ColorThemesModal 
+        open={showColorThemes} 
+        onOpenChange={setShowColorThemes} 
+      />
+      
+      <BannerGalleryModal 
+        open={showGallery} 
+        onOpenChange={setShowGallery} 
+        onSelectImage={onImageSelect}
+      />
+      
+      <AIGenerateModal 
+        open={showAIGenerate} 
+        onOpenChange={setShowAIGenerate}
+        onImageGenerated={onImageSelect}
+      />
+      
+      <PreviewModeModal 
+        open={showPreview} 
+        onOpenChange={setShowPreview} 
+      />
     </div>
   );
 };
