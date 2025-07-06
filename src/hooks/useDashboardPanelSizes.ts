@@ -1,8 +1,11 @@
 import { useCallback, useRef, useEffect } from 'react';
 import { useDashboardSettings } from './useDashboardSettings';
+import { useEditMode } from '@/contexts/EditModeContext';
+import { toast } from 'sonner';
 
 export const useDashboardPanelSizes = () => {
   const { settings, updateSidebarPanelSizes } = useDashboardSettings();
+  const { isSidebarEditMode, setIsSidebarEditMode } = useEditMode();
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
   
   // Get saved panel sizes from settings
@@ -30,11 +33,18 @@ export const useDashboardPanelSizes = () => {
       const success = await updateSidebarPanelSizes(newSizes);
       if (success) {
         console.log('Panel sizes saved successfully:', newSizes);
+        
+        // Auto-exit sidebar edit mode after successful save
+        if (isSidebarEditMode) {
+          setIsSidebarEditMode(false);
+          toast.success('Sidebar layout saved and locked');
+        }
       } else {
         console.error('Failed to save panel sizes');
+        toast.error('Failed to save sidebar layout');
       }
     }, 500); // 500ms debounce
-  }, [updateSidebarPanelSizes]);
+  }, [updateSidebarPanelSizes, isSidebarEditMode, setIsSidebarEditMode]);
 
   const createSizeHandler = (sizeKey: string) => (sizes: number[]) => {
     const newSizes = { ...settingsPanelSizes };
