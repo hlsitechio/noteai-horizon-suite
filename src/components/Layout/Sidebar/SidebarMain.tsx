@@ -17,12 +17,22 @@ export function SidebarMain() {
   const { isSidebarEditMode, setIsSidebarEditMode } = useEditMode();
   const { settings, updateSidebarPanelSizes } = useDashboardSettings();
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const initializedRef = useRef(false);
 
   // Get saved panel sizes or use defaults
   const savedSizes = settings?.sidebar_panel_sizes || {};
   const navigationSize = savedSizes.navigation || 40;
   const contentSize = savedSizes.content || 40;
   const footerSize = savedSizes.footer || 20;
+
+  // Mark as initialized after a short delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      initializedRef.current = true;
+    }, 1000); // Wait 1 second for initialization to complete
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleLayoutChange = (sizes: number[]) => {
     if (sizes.length >= 3) {
@@ -37,7 +47,7 @@ export function SidebarMain() {
         clearTimeout(saveTimeoutRef.current);
       }
       
-      // Debounced save with auto-lock
+      // Debounced save with auto-lock (only after initialization)
       saveTimeoutRef.current = setTimeout(async () => {
         console.log('Saving sidebar panel sizes:', newSizes);
         const success = await updateSidebarPanelSizes(newSizes);
@@ -45,8 +55,8 @@ export function SidebarMain() {
         if (success) {
           console.log('Sidebar panel sizes saved successfully:', newSizes);
           
-          // Auto-exit sidebar edit mode after successful save
-          if (isSidebarEditMode) {
+          // Auto-exit sidebar edit mode after successful save (only if initialized)
+          if (isSidebarEditMode && initializedRef.current) {
             setIsSidebarEditMode(false);
             toast.success('Sidebar layout saved and locked');
           }
