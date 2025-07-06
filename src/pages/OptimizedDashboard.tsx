@@ -27,43 +27,52 @@ const OptimizedDashboard: React.FC = () => {
 
   console.log('Dashboard render - isDashboardEditMode:', isDashboardEditMode, 'isLoading:', isLoading);
 
+  // Memoize computed values to prevent unnecessary re-renders
+  const dashboardClassName = React.useMemo(() => 
+    `h-full w-full transition-all duration-200 ${
+      isDashboardEditMode ? 'ring-2 ring-primary/20 ring-inset' : ''
+    }`, [isDashboardEditMode]
+  );
+
+  const memoizedBannerContent = React.useMemo(() => (
+    <ResizableBannerSetup
+      onImageUpload={handleImageUpload}
+      onAIGenerate={handleAIGenerate}
+      onVideoUpload={handleVideoUpload}
+      onImageSelect={handleImageSelect}
+      selectedImageUrl={selectedBannerUrl}
+      isEditMode={isDashboardEditMode}
+    />
+  ), [handleImageUpload, handleAIGenerate, handleVideoUpload, handleImageSelect, selectedBannerUrl, isDashboardEditMode]);
+
+  const memoizedMainContent = React.useMemo(() => (
+    <MainDashboardContent
+      notes={notes}
+      analyticsSize={panelSizes.analytics}
+      topSectionSize={panelSizes.topSection}
+      bottomSectionSize={panelSizes.bottomSection}
+      leftPanelsSize={panelSizes.leftPanels}
+      rightPanelsSize={panelSizes.rightPanels}
+      isDashboardEditMode={isDashboardEditMode}
+      onMainContentResize={handleMainContentResize}
+      onHorizontalResize={handleHorizontalResize}
+    />
+  ), [notes, panelSizes.analytics, panelSizes.topSection, panelSizes.bottomSection, panelSizes.leftPanels, panelSizes.rightPanels, isDashboardEditMode, handleMainContentResize, handleHorizontalResize]);
+
   return (
     <div className="w-full h-screen bg-background">
       <DashboardControls onEditLayoutClick={() => setShowEditLayoutModal(true)} />
       
       {/* Resizable Dashboard Container */}
-      <div className={`h-full w-full transition-all duration-200 ${
-        isDashboardEditMode ? 'ring-2 ring-primary/20 ring-inset' : ''
-      }`}>
+      <div className={dashboardClassName}>
         <ResizableDashboardContainer
           bannerDefaultSize={panelSizes.banner}
           bannerMinSize={25}
           bannerMaxSize={80}
           isEditMode={isDashboardEditMode}
           onLayout={handleBannerResize}
-          bannerContent={
-            <ResizableBannerSetup
-              onImageUpload={handleImageUpload}
-              onAIGenerate={handleAIGenerate}
-              onVideoUpload={handleVideoUpload}
-              onImageSelect={handleImageSelect}
-              selectedImageUrl={selectedBannerUrl}
-              isEditMode={isDashboardEditMode}
-            />
-          }
-          mainContent={
-            <MainDashboardContent
-              notes={notes}
-              analyticsSize={panelSizes.analytics}
-              topSectionSize={panelSizes.topSection}
-              bottomSectionSize={panelSizes.bottomSection}
-              leftPanelsSize={panelSizes.leftPanels}
-              rightPanelsSize={panelSizes.rightPanels}
-              isDashboardEditMode={isDashboardEditMode}
-              onMainContentResize={handleMainContentResize}
-              onHorizontalResize={handleHorizontalResize}
-            />
-          }
+          bannerContent={memoizedBannerContent}
+          mainContent={memoizedMainContent}
         />
       </div>
 

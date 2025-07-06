@@ -36,13 +36,19 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
     borderRadius: [8],
   });
 
-  const handleSettingChange = (key: string, value: any) => {
+  const handleSettingChange = React.useCallback((key: string, value: any) => {
     setSettings(prev => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent 
+        className="max-w-2xl max-h-[80vh] overflow-y-auto"
+        onOpenAutoFocus={(e) => {
+          // Prevent auto-focus to avoid aria-hidden conflicts
+          e.preventDefault();
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />

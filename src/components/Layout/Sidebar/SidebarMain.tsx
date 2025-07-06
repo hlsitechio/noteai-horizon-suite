@@ -98,7 +98,7 @@ export function SidebarMain() {
             </div>
           </Panel>
 
-          {/* Vertical Resize Handle - Only show when in edit mode */}
+          {/* Vertical Resize Handle - Always present but disabled when not in edit mode */}
           {isSidebarEditMode && (
             <ResizableHandle 
               className="opacity-100" 
@@ -106,7 +106,7 @@ export function SidebarMain() {
               onTouchStart={handlePanelResizeStart}
             />
           )}
-          {!isSidebarEditMode && <div className="h-0" />}
+          {!isSidebarEditMode && <ResizableHandle className="opacity-0 pointer-events-none h-1" />}
 
           {/* Content Panel - Notes Section */}
           <Panel 
@@ -119,7 +119,7 @@ export function SidebarMain() {
             </div>
           </Panel>
 
-          {/* Vertical Resize Handle - Only show when in edit mode */}
+          {/* Vertical Resize Handle - Always present but disabled when not in edit mode */}
           {isSidebarEditMode && (
             <ResizableHandle 
               className="opacity-100" 
@@ -127,7 +127,7 @@ export function SidebarMain() {
               onTouchStart={handlePanelResizeStart}
             />
           )}
-          {!isSidebarEditMode && <div className="h-0" />}
+          {!isSidebarEditMode && <ResizableHandle className="opacity-0 pointer-events-none h-1" />}
 
           {/* Footer Panel */}
           <Panel 

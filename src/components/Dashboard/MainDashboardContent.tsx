@@ -94,9 +94,9 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           </div>
         </Panel>
         
-        {/* Only show resize handle when in edit mode */}
+        {/* Only show resize handle when in edit mode - Always present but disabled when not in edit mode */}
         {isDashboardEditMode && <HorizontalResizableHandle className="opacity-100" />}
-        {!isDashboardEditMode && <div className="h-0" />}
+        {!isDashboardEditMode && <HorizontalResizableHandle className="opacity-0 pointer-events-none h-1" />}
         
         {/* Middle Panel - Two Boxes */}
         <Panel 
@@ -119,9 +119,9 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
                 <DashboardPanel panelKey="topLeft" />
               </Panel>
               
-              {/* Only show resize handle when in edit mode */}
+              {/* Only show resize handle when in edit mode - Always present but disabled when not in edit mode */}
               {isDashboardEditMode && <HorizontalResizableHandle className="opacity-100" />}
-              {!isDashboardEditMode && <div className="w-0" />}
+              {!isDashboardEditMode && <HorizontalResizableHandle className="opacity-0 pointer-events-none w-1" />}
               
               <Panel 
                 defaultSize={rightPanelsSize} 
@@ -134,9 +134,9 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           </div>
         </Panel>
         
-        {/* Only show resize handle when in edit mode */}
+        {/* Only show resize handle when in edit mode - Always present but disabled when not in edit mode */}
         {isDashboardEditMode && <HorizontalResizableHandle className="opacity-100" />}
-        {!isDashboardEditMode && <div className="h-0" />}
+        {!isDashboardEditMode && <HorizontalResizableHandle className="opacity-0 pointer-events-none h-1" />}
         
         {/* Bottom Panel - Two More Boxes */}
         <Panel 
@@ -159,9 +159,9 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
                 <DashboardPanel panelKey="bottomLeft" />
               </Panel>
               
-              {/* Only show resize handle when in edit mode */}
+              {/* Only show resize handle when in edit mode - Always present but disabled when not in edit mode */}
               {isDashboardEditMode && <HorizontalResizableHandle className="opacity-100" />}
-              {!isDashboardEditMode && <div className="w-0" />}
+              {!isDashboardEditMode && <HorizontalResizableHandle className="opacity-0 pointer-events-none w-1" />}
               
               <Panel 
                 defaultSize={rightPanelsSize} 

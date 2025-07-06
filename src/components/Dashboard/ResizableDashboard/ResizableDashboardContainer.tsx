@@ -54,9 +54,10 @@ const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = 
         )}
       </ResizableBannerPanel>
       
-      {/* Horizontal Resize Handle - Only visible and functional in edit mode */}
-      {isEditMode && <HorizontalResizableHandle className="opacity-100" />}
-      {!isEditMode && <div className="h-0" />} {/* Invisible spacer when not in edit mode */}
+      {/* Horizontal Resize Handle - Always present but disabled when not in edit mode */}
+      <HorizontalResizableHandle 
+        className={isEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"} 
+      />
       
       {/* Main Content Panel */}
       <ResizableContentPanel>
