@@ -21,13 +21,7 @@ export const useDashboardLayout = () => {
       await DashboardLayoutService.cleanupDuplicateLayouts(user.id);
 
       // Load user's layout
-      let userLayout = await DashboardLayoutService.getUserLayout(user.id);
-      
-      // If no layout exists, create default
-      if (!userLayout) {
-        userLayout = await DashboardLayoutService.createDefaultLayout(user.id);
-        toast.success('Default dashboard layout created');
-      }
+      const userLayout = await DashboardLayoutService.getUserLayout(user.id);
 
       setLayout(userLayout);
     } catch (err) {

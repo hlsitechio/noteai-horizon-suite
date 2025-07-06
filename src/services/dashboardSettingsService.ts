@@ -30,30 +30,9 @@ export class DashboardSettingsService {
     } : null;
   }
 
-  static async createDefaultSettings(userId: string): Promise<DashboardSettings | null> {
-    const defaultSettings = {
-      user_id: userId,
-      selected_banner_url: null,
-      selected_banner_type: null,
-      sidebar_panel_sizes: {}
-    };
-
-    const { data, error } = await supabase
-      .from('dashboard_settings')
-      .insert(defaultSettings)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error creating dashboard settings:', error);
-      return null;
-    }
-
-    return data ? {
-      ...data,
-      selected_banner_type: data.selected_banner_type as 'image' | 'video' | null,
-      sidebar_panel_sizes: data.sidebar_panel_sizes as Record<string, number>
-    } : null;
+  static async createDefaultSettings(): Promise<DashboardSettings | null> {
+    // No longer create default settings automatically
+    return null;
   }
 
   static async updateSelectedBanner(

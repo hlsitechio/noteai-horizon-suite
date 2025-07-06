@@ -14,11 +14,7 @@ export const useDashboardSettings = () => {
 
     try {
       setIsLoading(true);
-      let userSettings = await DashboardSettingsService.getUserSettings(user.id);
-      
-      if (!userSettings) {
-        userSettings = await DashboardSettingsService.createDefaultSettings(user.id);
-      }
+      const userSettings = await DashboardSettingsService.getUserSettings(user.id);
       
       setSettings(userSettings);
     } catch (error) {

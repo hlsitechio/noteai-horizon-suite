@@ -56,37 +56,6 @@ export class DashboardLayoutService {
     return data;
   }
 
-  static async createDefaultLayout(userId: string): Promise<DashboardLayout> {
-    const defaultLayout = {
-      user_id: userId,
-      layout_name: 'default',
-      panel_configurations: {
-        analytics: { component_key: 'kpi-stats', enabled: true },
-        topLeft: { component_key: 'recent-activity', enabled: true },
-        topRight: { component_key: 'quick-actions', enabled: true },
-        bottomLeft: { component_key: 'analytics-overview', enabled: true },
-        bottomRight: { component_key: 'system-status', enabled: true }
-      } as Json,
-      panel_sizes: {
-        banner: 40,
-        analytics: 30,
-        topSection: 35,
-        bottomSection: 35,
-        leftPanels: 50,
-        rightPanels: 50
-      } as Json,
-      is_active: true
-    };
-
-    const { data, error } = await supabase
-      .from('dashboard_layouts')
-      .insert(defaultLayout)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
 
   static async updateLayout(layoutId: string, updates: Partial<DashboardLayout>): Promise<DashboardLayout> {
     const { data, error } = await supabase
