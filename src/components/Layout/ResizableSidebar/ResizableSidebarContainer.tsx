@@ -53,7 +53,7 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
       </ResizableSidebarPanel>
       
       {/* Vertical Resize Handle */}
-      {isEditMode && <ResizableSidebarHandle />}
+      <ResizableSidebarHandle className={isEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
       
       {/* Main Content Panel */}
       <ResizableSidebarContent>

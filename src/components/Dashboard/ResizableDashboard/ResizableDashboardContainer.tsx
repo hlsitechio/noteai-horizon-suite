@@ -43,7 +43,7 @@ const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = 
       </ResizableBannerPanel>
       
       {/* Horizontal Resize Handle */}
-      {isEditMode && <HorizontalResizableHandle />}
+      <HorizontalResizableHandle className={isEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
       
       {/* Main Content Panel */}
       <ResizableContentPanel>
