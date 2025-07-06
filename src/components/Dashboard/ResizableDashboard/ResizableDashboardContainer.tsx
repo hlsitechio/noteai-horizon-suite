@@ -3,6 +3,7 @@ import { PanelGroup } from 'react-resizable-panels';
 import ResizableBannerPanel from './ResizableBannerPanel';
 import ResizableContentPanel from './ResizableContentPanel';
 import ResizableHandle from './ResizableHandle';
+import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/resizable';
 
 interface ResizableDashboardContainerProps {
   bannerContent?: React.ReactNode;
@@ -37,8 +38,8 @@ const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = 
         )}
       </ResizableBannerPanel>
       
-      {/* Resize Handle */}
-      <ResizableHandle />
+      {/* Horizontal Resize Handle */}
+      <HorizontalResizableHandle />
       
       {/* Main Content Panel */}
       <ResizableContentPanel>
