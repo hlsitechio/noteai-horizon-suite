@@ -52,11 +52,26 @@ export function SidebarMain() {
     }
   };
 
-  // Get saved panel sizes or use defaults
-  const savedSizes = settings?.sidebar_panel_sizes || {};
-  const navigationSize = savedSizes.navigation || 40;
-  const contentSize = savedSizes.content || 40;
-  const footerSize = savedSizes.footer || 20;
+  // State for default panel sizes - updates when saved
+  const [defaultSizes, setDefaultSizes] = useState(() => {
+    const savedSizes = settings?.sidebar_panel_sizes || {};
+    return {
+      navigation: savedSizes.navigation || 40,
+      content: savedSizes.content || 40,
+      footer: savedSizes.footer || 20
+    };
+  });
+
+  // Update default sizes when settings change
+  useEffect(() => {
+    if (settings?.sidebar_panel_sizes) {
+      setDefaultSizes({
+        navigation: settings.sidebar_panel_sizes.navigation || 40,
+        content: settings.sidebar_panel_sizes.content || 40,
+        footer: settings.sidebar_panel_sizes.footer || 20
+      });
+    }
+  }, [settings?.sidebar_panel_sizes]);
 
   // Track when user actually interacts with panels
   const handlePanelResizeStart = () => {
@@ -123,7 +138,7 @@ export function SidebarMain() {
           <Panel 
             id="navigation-panel"
             order={0}
-            defaultSize={navigationSize} 
+            defaultSize={defaultSizes.navigation} 
             minSize={isSidebarEditMode ? 25 : undefined} 
             maxSize={isSidebarEditMode ? 50 : undefined}
           >
@@ -146,7 +161,7 @@ export function SidebarMain() {
           <Panel 
             id="content-panel"
             order={1}
-            defaultSize={contentSize} 
+            defaultSize={defaultSizes.content} 
             minSize={isSidebarEditMode ? 20 : undefined} 
             maxSize={isSidebarEditMode ? 60 : undefined}
           >
@@ -167,7 +182,7 @@ export function SidebarMain() {
           <Panel 
             id="footer-panel"
             order={2}
-            defaultSize={footerSize} 
+            defaultSize={defaultSizes.footer} 
             minSize={isSidebarEditMode ? 10 : undefined} 
             maxSize={isSidebarEditMode ? 25 : undefined}
           >
