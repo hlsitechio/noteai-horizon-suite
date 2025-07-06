@@ -5,6 +5,7 @@ import { useOptimizedNotes } from '../contexts/OptimizedNotesContext';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import WelcomeHeader from '../components/Dashboard/WelcomeHeader';
 import KPIStats from '../components/Dashboard/KPIStats';
 import SecureRecentActivity from '../components/Dashboard/SecureRecentActivity';
@@ -80,49 +81,60 @@ const Dashboard: React.FC = () => {
       {/* Fullscreen Toggle Button */}
       <FullscreenToggle />
       
-      {/* Clean Dashboard Container */}
-      <div className="w-full p-3 lg:p-4 space-y-4">
+      {/* Resizable Dashboard Container */}
+      <PanelGroup direction="vertical" autoSaveId="dashboard-panels" className="w-full h-[calc(100vh-4rem)]">
+        {/* Top Panel - Banner/Welcome Section */}
+        <Panel defaultSize={30} minSize={15} maxSize={60}>
+          <div className="w-full p-3 lg:p-4">
+            <WelcomeHeader />
+          </div>
+        </Panel>
         
-        {/* Welcome Section */}
-        <div className="w-full">
-          <WelcomeHeader />
-        </div>
+        {/* Resize Handle */}
+        <PanelResizeHandle className="h-2 bg-border/50 hover:bg-border transition-colors duration-200 flex items-center justify-center group">
+          <div className="w-12 h-1 bg-muted-foreground/30 group-hover:bg-muted-foreground/60 rounded-full transition-colors duration-200" />
+        </PanelResizeHandle>
+        
+        {/* Bottom Panel - Rest of Dashboard Content */}
+        <Panel>
+          <div className="w-full p-3 lg:p-4 space-y-4 overflow-auto">
+            {/* KPI Overview */}
+            <div className="w-full">
+              <KPIStats 
+                totalNotes={totalNotes}
+                favoriteNotes={favoriteNotes}
+                categoryCounts={categoryCounts}
+                weeklyNotes={weeklyNotes}
+                notes={notes}
+              />
+            </div>
 
-        {/* KPI Overview */}
-        <div className="w-full">
-          <KPIStats 
-            totalNotes={totalNotes}
-            favoriteNotes={favoriteNotes}
-            categoryCounts={categoryCounts}
-            weeklyNotes={weeklyNotes}
-            notes={notes}
-          />
-        </div>
+            {/* Simplified Content - More Minimalist */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Left Column - Reminders & Smart Features */}
+              <div className="space-y-4">
+                <ReminderManagement 
+                  notes={notes}
+                  onEditNote={handleEditNote}
+                />
+                <SmartNoteRecommendations 
+                  notes={notes}
+                  onEditNote={handleEditNote}
+                />
+              </div>
 
-        {/* Simplified Content - More Minimalist */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Left Column - Reminders & Smart Features */}
-          <div className="space-y-4">
-            <ReminderManagement 
-              notes={notes}
-              onEditNote={handleEditNote}
-            />
-            <SmartNoteRecommendations 
-              notes={notes}
-              onEditNote={handleEditNote}
-            />
+              {/* Right Column - Recent Activity */}
+              <div className="space-y-4">
+                <SecureRecentActivity 
+                  recentNotes={recentNotes}
+                  onCreateNote={handleCreateNote}
+                  onEditNote={handleEditNote}
+                />
+              </div>
+            </div>
           </div>
-
-          {/* Right Column - Recent Activity */}
-          <div className="space-y-4">
-            <SecureRecentActivity 
-              recentNotes={recentNotes}
-              onCreateNote={handleCreateNote}
-              onEditNote={handleEditNote}
-            />
-          </div>
-        </div>
-      </div>
+        </Panel>
+      </PanelGroup>
     </div>
   );
 };
