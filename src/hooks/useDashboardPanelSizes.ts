@@ -7,7 +7,7 @@ export const useDashboardPanelSizes = () => {
   const { settings, updateSidebarPanelSizes } = useDashboardSettings();
   const { isSidebarEditMode, setIsSidebarEditMode } = useEditMode();
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
-  const initializedRef = useRef(false);
+  const hasUserInteractedRef = useRef(false);
   
   // Get saved panel sizes from settings
   const settingsPanelSizes = settings?.sidebar_panel_sizes || {};
@@ -21,14 +21,10 @@ export const useDashboardPanelSizes = () => {
     rightPanels: settingsPanelSizes.rightPanels || 50,
   };
 
-  // Mark as initialized after a short delay
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      initializedRef.current = true;
-    }, 1000); // Wait 1 second for initialization to complete
-    
-    return () => clearTimeout(timer);
-  }, []);
+  // Track when user actually interacts with panels
+  const trackUserInteraction = () => {
+    hasUserInteractedRef.current = true;
+  };
 
   // Debounced save function
   const debouncedSave = useCallback((newSizes: Record<string, number>) => {
@@ -44,8 +40,8 @@ export const useDashboardPanelSizes = () => {
       if (success) {
         console.log('Panel sizes saved successfully:', newSizes);
         
-        // Auto-exit sidebar edit mode after successful save (only if initialized)
-        if (isSidebarEditMode && initializedRef.current) {
+        // Auto-exit sidebar edit mode after successful save (only if user interacted)
+        if (isSidebarEditMode && hasUserInteractedRef.current) {
           setIsSidebarEditMode(false);
           toast.success('Sidebar layout saved and locked');
         }
@@ -95,5 +91,6 @@ export const useDashboardPanelSizes = () => {
     handleBannerResize: createSizeHandler('banner'),
     handleMainContentResize: createSizeHandler('mainContent'),
     handleHorizontalResize: createSizeHandler('horizontal'),
+    trackUserInteraction,
   };
 };

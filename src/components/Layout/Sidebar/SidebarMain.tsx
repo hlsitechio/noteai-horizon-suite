@@ -15,9 +15,9 @@ import { toast } from 'sonner';
 export function SidebarMain() {
   const isMobile = useIsMobile();
   const { isSidebarEditMode, setIsSidebarEditMode } = useEditMode();
-  const { settings, updateSidebarPanelSizes } = useDashboardSettings();
+  const { settings, updateSidebarPanelSizes, isLoading } = useDashboardSettings();
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
-  const initializedRef = useRef(false);
+  const hasUserInteractedRef = useRef(false);
 
   // Get saved panel sizes or use defaults
   const savedSizes = settings?.sidebar_panel_sizes || {};
@@ -25,14 +25,10 @@ export function SidebarMain() {
   const contentSize = savedSizes.content || 40;
   const footerSize = savedSizes.footer || 20;
 
-  // Mark as initialized after a short delay
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      initializedRef.current = true;
-    }, 1000); // Wait 1 second for initialization to complete
-    
-    return () => clearTimeout(timer);
-  }, []);
+  // Track when user actually interacts with panels
+  const handlePanelResizeStart = () => {
+    hasUserInteractedRef.current = true;
+  };
 
   const handleLayoutChange = (sizes: number[]) => {
     if (sizes.length >= 3) {
@@ -55,8 +51,8 @@ export function SidebarMain() {
         if (success) {
           console.log('Sidebar panel sizes saved successfully:', newSizes);
           
-          // Auto-exit sidebar edit mode after successful save (only if initialized)
-          if (isSidebarEditMode && initializedRef.current) {
+          // Auto-exit sidebar edit mode after successful save (only if user interacted)
+          if (isSidebarEditMode && hasUserInteractedRef.current) {
             setIsSidebarEditMode(false);
             toast.success('Sidebar layout saved and locked');
           }
@@ -95,7 +91,11 @@ export function SidebarMain() {
           </Panel>
 
           {/* Vertical Resize Handle */}
-          <ResizableHandle className={isSidebarEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
+          <ResizableHandle 
+            className={isSidebarEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} 
+            onMouseDown={handlePanelResizeStart}
+            onTouchStart={handlePanelResizeStart}
+          />
 
           {/* Content Panel - Notes Section */}
           <Panel defaultSize={contentSize} minSize={20} maxSize={60}>
@@ -105,7 +105,11 @@ export function SidebarMain() {
           </Panel>
 
           {/* Vertical Resize Handle */}
-          <ResizableHandle className={isSidebarEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
+          <ResizableHandle 
+            className={isSidebarEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} 
+            onMouseDown={handlePanelResizeStart}
+            onTouchStart={handlePanelResizeStart}
+          />
 
           {/* Footer Panel */}
           <Panel defaultSize={footerSize} minSize={10} maxSize={25}>
