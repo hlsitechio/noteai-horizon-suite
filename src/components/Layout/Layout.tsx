@@ -11,12 +11,21 @@ const Layout: React.FC = () => {
         sidebarDefaultSize={25}
         sidebarMinSize={15}
         sidebarMaxSize={50}
-        isEditMode={false}
-        sidebarContent={
+        isEditMode={true}
+        enableVerticalResize={true}
+        sidebarTopContent={
           <div className="h-full w-full bg-muted/5 p-4">
             <div className="text-center">
-              <h3 className="font-semibold text-lg mb-2">New Sidebar</h3>
-              <p className="text-muted-foreground text-sm">Ready for your components</p>
+              <h3 className="font-semibold text-lg mb-2">Top Panel</h3>
+              <p className="text-muted-foreground text-sm">Navigation & Controls</p>
+            </div>
+          </div>
+        }
+        sidebarBottomContent={
+          <div className="h-full w-full bg-muted/10 p-4">
+            <div className="text-center">
+              <h3 className="font-semibold text-lg mb-2">Bottom Panel</h3>
+              <p className="text-muted-foreground text-sm">Secondary content</p>
             </div>
           </div>
         }

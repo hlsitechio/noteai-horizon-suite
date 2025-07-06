@@ -3,6 +3,7 @@ import { PanelGroup } from 'react-resizable-panels';
 import ResizableSidebarPanel from './ResizableSidebarPanel';
 import ResizableSidebarContent from './ResizableSidebarContent';
 import ResizableSidebarHandle from './ResizableSidebarHandle';
+import { ResizableHandle as VerticalResizableHandle } from '@/components/ui/resizable';
 
 interface ResizableSidebarContainerProps {
   sidebarContent?: React.ReactNode;
@@ -11,6 +12,9 @@ interface ResizableSidebarContainerProps {
   sidebarMinSize?: number;
   sidebarMaxSize?: number;
   isEditMode?: boolean;
+  sidebarTopContent?: React.ReactNode;
+  sidebarBottomContent?: React.ReactNode;
+  enableVerticalResize?: boolean;
 }
 
 const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
@@ -19,7 +23,10 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
   sidebarDefaultSize = 25,
   sidebarMinSize = 15,
   sidebarMaxSize = 50,
-  isEditMode = false
+  isEditMode = false,
+  sidebarTopContent,
+  sidebarBottomContent,
+  enableVerticalResize = false
 }) => {
   return (
     <PanelGroup direction="horizontal" className="w-full h-full">
@@ -28,15 +35,18 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
         defaultSize={sidebarDefaultSize}
         minSize={sidebarMinSize}
         maxSize={sidebarMaxSize}
+        topPanelContent={enableVerticalResize ? sidebarTopContent : undefined}
+        bottomPanelContent={enableVerticalResize ? sidebarBottomContent : undefined}
+        isEditMode={isEditMode}
       >
-        {sidebarContent || (
+        {!enableVerticalResize && (sidebarContent || (
           <div className="w-full h-full bg-muted/10 border-2 border-dashed border-muted/30 flex items-center justify-center">
             <div className="text-center">
               <h2 className="text-lg font-bold mb-2">Sidebar Area</h2>
               <p className="text-muted-foreground text-sm">Add your sidebar components here</p>
             </div>
           </div>
-        )}
+        ))}
       </ResizableSidebarPanel>
       
       {/* Vertical Resize Handle */}
