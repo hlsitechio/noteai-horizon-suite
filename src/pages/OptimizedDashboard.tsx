@@ -4,6 +4,9 @@ import { ResizableDashboardContainer } from '@/components/Dashboard/ResizableDas
 import { ResizableBannerSetup } from '@/components/Dashboard/ResizableBanner';
 import KPIStats from '@/components/Dashboard/KPIStats';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
+import { PanelGroup, Panel } from 'react-resizable-panels';
+import { ResizableHandle } from '@/components/Dashboard/ResizableDashboard';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const OptimizedDashboard: React.FC = () => {
   const { notes } = useOptimizedNotes();
@@ -68,14 +71,66 @@ const OptimizedDashboard: React.FC = () => {
             />
           }
           mainContent={
-            <div className="p-6 h-full overflow-y-auto">
-              <KPIStats
-                totalNotes={totalNotes}
-                favoriteNotes={favoriteNotes}
-                categoryCounts={categoryCounts}
-                weeklyNotes={weeklyNotes}
-                notes={notes}
-              />
+            <div className="h-full">
+              <PanelGroup direction="vertical" className="h-full">
+                {/* Top Panel - KPI Stats */}
+                <Panel defaultSize={30} minSize={20} maxSize={50}>
+                  <div className="p-6 h-full overflow-y-auto">
+                    <KPIStats
+                      totalNotes={totalNotes}
+                      favoriteNotes={favoriteNotes}
+                      categoryCounts={categoryCounts}
+                      weeklyNotes={weeklyNotes}
+                      notes={notes}
+                    />
+                  </div>
+                </Panel>
+                
+                {/* Resize Handle */}
+                <ResizableHandle />
+                
+                {/* Bottom Panel - Two Boxes */}
+                <Panel defaultSize={70} minSize={50}>
+                  <div className="h-full">
+                    <PanelGroup direction="horizontal" className="h-full">
+                      {/* Left Box */}
+                      <Panel defaultSize={50} minSize={30}>
+                        <div className="p-6 h-full">
+                          <Card className="h-full">
+                            <CardHeader>
+                              <CardTitle>Recent Activity</CardTitle>
+                            </CardHeader>
+                            <CardContent className="h-full">
+                              <div className="flex items-center justify-center h-full text-muted-foreground">
+                                <p>Recent activity component goes here</p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </Panel>
+                      
+                      {/* Vertical Resize Handle */}
+                      <ResizableHandle />
+                      
+                      {/* Right Box */}
+                      <Panel defaultSize={50} minSize={30}>
+                        <div className="p-6 h-full">
+                          <Card className="h-full">
+                            <CardHeader>
+                              <CardTitle>Quick Actions</CardTitle>
+                            </CardHeader>
+                            <CardContent className="h-full">
+                              <div className="flex items-center justify-center h-full text-muted-foreground">
+                                <p>Quick actions component goes here</p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </Panel>
+                    </PanelGroup>
+                  </div>
+                </Panel>
+              </PanelGroup>
             </div>
           }
         />

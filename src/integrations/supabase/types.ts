@@ -1436,6 +1436,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      function_name: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_chat_context: {
         Args: {
           session_uuid: string
@@ -1618,6 +1622,10 @@ export type Database = {
         Returns: string
       }
       search_path_mutable_example: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      search_path_secure_example: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
