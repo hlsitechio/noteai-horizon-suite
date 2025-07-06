@@ -1,9 +1,8 @@
 
 import React from 'react';
-import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { Button } from '@/components/ui/button';
-import { Bell } from 'lucide-react';
+import { Bell, Menu } from 'lucide-react';
 
 const Header: React.FC = () => {
   const isMobile = useIsMobile();
@@ -11,7 +10,11 @@ const Header: React.FC = () => {
   return (
     <header className="flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex items-center gap-4">
-        {isMobile && <SidebarTrigger />}
+        {isMobile && (
+          <Button variant="ghost" size="sm">
+            <Menu className="w-4 h-4" />
+          </Button>
+        )}
         <h1 className="text-lg font-semibold">Online Note AI</h1>
       </div>
       
