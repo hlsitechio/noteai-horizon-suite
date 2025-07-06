@@ -20,19 +20,9 @@ const OptimizedDashboard: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-background">
-      {/* Clean Header */}
-      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border h-16">
-        <div className="flex items-center justify-between p-4 h-full">
-          <div className="flex items-center gap-4">
-            <SidebarTrigger className="h-8 w-8 p-0" />
-            <div className="text-sm text-muted-foreground font-medium">Dashboard</div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Resizable Dashboard Container - Fixed Height */}
-      <div className="h-[calc(100vh-4rem)] w-full">
+    <div className="w-full h-screen bg-background">
+      {/* Resizable Dashboard Container - Full Height */}
+      <div className="h-full w-full">
         <ResizableDashboardContainer
           bannerDefaultSize={40}
           bannerMinSize={25}
