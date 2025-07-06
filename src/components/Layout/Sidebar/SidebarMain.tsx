@@ -8,7 +8,6 @@ import {
 } from '@/components/ui/tooltip';
 import { PanelGroup, Panel } from 'react-resizable-panels';
 import { ResizableHandle } from '@/components/ui/resizable';
-import { SidebarHeader as CustomSidebarHeader } from './SidebarHeader';
 import NavigationMenu from './NavigationMenu';
 import { CollapsedSummary } from './CollapsedSummary';
 import { SidebarFooter as CustomSidebarFooter } from './SidebarFooter';
@@ -24,18 +23,16 @@ export function SidebarMain() {
 
   // Get saved panel sizes or use defaults
   const savedSizes = settings?.sidebar_panel_sizes || {};
-  const headerSize = savedSizes.header || 15;
-  const navigationSize = savedSizes.navigation || 35;
-  const contentSize = savedSizes.content || 35;
-  const footerSize = savedSizes.footer || 15;
+  const navigationSize = savedSizes.navigation || 40;
+  const contentSize = savedSizes.content || 40;
+  const footerSize = savedSizes.footer || 20;
 
   const handleLayoutChange = (sizes: number[]) => {
-    if (sizes.length >= 4) {
+    if (sizes.length >= 3) {
       const newSizes = {
-        header: sizes[0],
-        navigation: sizes[1], 
-        content: sizes[2],
-        footer: sizes[3]
+        navigation: sizes[0], 
+        content: sizes[1],
+        footer: sizes[2]
       };
       updateSidebarPanelSizes(newSizes);
     }
@@ -49,16 +46,6 @@ export function SidebarMain() {
           className="h-full"
           onLayout={handleLayoutChange}
         >
-          {/* Header Panel - Fixed */}
-          <Panel defaultSize={headerSize} minSize={10} maxSize={25}>
-            <div className="p-3 pb-2 h-full flex items-center">
-              <CustomSidebarHeader />
-            </div>
-          </Panel>
-
-          {/* Vertical Resize Handle */}
-          <ResizableHandle className={isSidebarEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
-
           {/* Navigation Panel */}
           <Panel defaultSize={navigationSize} minSize={25} maxSize={50}>
             <div className="px-0 h-full overflow-y-auto">
