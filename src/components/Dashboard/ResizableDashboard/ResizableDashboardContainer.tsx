@@ -20,7 +20,7 @@ const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = 
   bannerMaxSize = 70
 }) => {
   return (
-    <PanelGroup direction="vertical" className="w-full h-[calc(100vh-4rem)]">
+    <PanelGroup direction="vertical" className="w-full h-full">
       {/* Banner Panel */}
       <ResizableBannerPanel
         defaultSize={bannerDefaultSize}
