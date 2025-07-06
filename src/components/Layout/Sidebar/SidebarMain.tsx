@@ -31,6 +31,9 @@ export function SidebarMain() {
   };
 
   const handleLayoutChange = (sizes: number[]) => {
+    // Only allow changes when in sidebar edit mode
+    if (!isSidebarEditMode) return;
+    
     if (sizes.length >= 3) {
       const newSizes = {
         navigation: sizes[0], 
@@ -80,9 +83,14 @@ export function SidebarMain() {
           direction="vertical" 
           className="h-full"
           onLayout={handleLayoutChange}
+          key={`sidebar-${isSidebarEditMode}`} // Force re-render when edit mode changes
         >
           {/* Navigation Panel */}
-          <Panel defaultSize={navigationSize} minSize={25} maxSize={50}>
+          <Panel 
+            defaultSize={navigationSize} 
+            minSize={isSidebarEditMode ? 25 : navigationSize} 
+            maxSize={isSidebarEditMode ? 50 : navigationSize}
+          >
             <div className="px-0 h-full overflow-y-auto">
               <div className="py-2">
                 <NavigationMenu />
@@ -90,29 +98,43 @@ export function SidebarMain() {
             </div>
           </Panel>
 
-          {/* Vertical Resize Handle */}
-          <ResizableHandle 
-            className={isSidebarEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} 
-            onMouseDown={handlePanelResizeStart}
-            onTouchStart={handlePanelResizeStart}
-          />
+          {/* Vertical Resize Handle - Only show when in edit mode */}
+          {isSidebarEditMode && (
+            <ResizableHandle 
+              className="opacity-100" 
+              onMouseDown={handlePanelResizeStart}
+              onTouchStart={handlePanelResizeStart}
+            />
+          )}
+          {!isSidebarEditMode && <div className="h-0" />}
 
           {/* Content Panel - Notes Section */}
-          <Panel defaultSize={contentSize} minSize={20} maxSize={60}>
+          <Panel 
+            defaultSize={contentSize} 
+            minSize={isSidebarEditMode ? 20 : contentSize} 
+            maxSize={isSidebarEditMode ? 60 : contentSize}
+          >
             <div className="px-0 h-full overflow-y-auto">
               <NotesSection />
             </div>
           </Panel>
 
-          {/* Vertical Resize Handle */}
-          <ResizableHandle 
-            className={isSidebarEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} 
-            onMouseDown={handlePanelResizeStart}
-            onTouchStart={handlePanelResizeStart}
-          />
+          {/* Vertical Resize Handle - Only show when in edit mode */}
+          {isSidebarEditMode && (
+            <ResizableHandle 
+              className="opacity-100" 
+              onMouseDown={handlePanelResizeStart}
+              onTouchStart={handlePanelResizeStart}
+            />
+          )}
+          {!isSidebarEditMode && <div className="h-0" />}
 
           {/* Footer Panel */}
-          <Panel defaultSize={footerSize} minSize={10} maxSize={25}>
+          <Panel 
+            defaultSize={footerSize} 
+            minSize={isSidebarEditMode ? 10 : footerSize} 
+            maxSize={isSidebarEditMode ? 25 : footerSize}
+          >
             <div className="p-2 pt-1 h-full border-t border-sidebar-border flex items-center">
               <CustomSidebarFooter />
             </div>

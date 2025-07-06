@@ -24,13 +24,25 @@ const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = 
   isEditMode = false,
   onLayout
 }) => {
+  // Only allow layout changes when in edit mode
+  const handleLayout = React.useCallback((sizes: number[]) => {
+    if (isEditMode && onLayout) {
+      onLayout(sizes);
+    }
+  }, [isEditMode, onLayout]);
+
   return (
-    <PanelGroup direction="vertical" className="w-full h-full" onLayout={onLayout}>
+    <PanelGroup 
+      direction="vertical" 
+      className="w-full h-full" 
+      onLayout={handleLayout}
+      key={`dashboard-${isEditMode}`} // Force re-render when edit mode changes
+    >
       {/* Banner Panel */}
       <ResizableBannerPanel
         defaultSize={bannerDefaultSize}
-        minSize={bannerMinSize}
-        maxSize={bannerMaxSize}
+        minSize={isEditMode ? bannerMinSize : bannerDefaultSize}
+        maxSize={isEditMode ? bannerMaxSize : bannerDefaultSize}
       >
         {bannerContent || (
           <div className="w-full h-full bg-primary/10 border-2 border-dashed border-primary/30 flex items-center justify-center">
@@ -42,8 +54,9 @@ const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = 
         )}
       </ResizableBannerPanel>
       
-      {/* Horizontal Resize Handle */}
-      <HorizontalResizableHandle className={isEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
+      {/* Horizontal Resize Handle - Only visible and functional in edit mode */}
+      {isEditMode && <HorizontalResizableHandle className="opacity-100" />}
+      {!isEditMode && <div className="h-0" />} {/* Invisible spacer when not in edit mode */}
       
       {/* Main Content Panel */}
       <ResizableContentPanel>
