@@ -149,53 +149,12 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
               className="absolute inset-0 w-full h-full"
               variants={itemVariants}
             >
-              <div className="relative w-full h-full group">
+              <div className="relative w-full h-full">
                 <img
                   src={selectedImageUrl}
                   alt="Selected banner"
                   className="w-full h-full object-cover"
                 />
-                {/* Overlay with controls */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                  {isEditMode ? (
-                    // Edit Mode - Show Change Image and Generate New buttons
-                    <>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => setShowGallery(true)}
-                        className="gap-2"
-                      >
-                        <Image className="w-4 h-4" />
-                        Change Image
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => setShowAIGenerate(true)}
-                        className="gap-2"
-                      >
-                        <Sparkles className="w-4 h-4" />
-                        Generate New
-                      </Button>
-                    </>
-                  ) : (
-                    // Normal Mode - Show only Edit Layout button
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => {
-                        // This would trigger edit mode or show edit options
-                        // You can connect this to your edit mode toggle
-                        console.log('Edit Layout clicked');
-                      }}
-                      className="gap-2"
-                    >
-                      <Edit3 className="w-4 h-4" />
-                      Edit Layout
-                    </Button>
-                  )}
-                </div>
               </div>
             </motion.div>
           ) : (
