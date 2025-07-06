@@ -7,7 +7,7 @@ import { ResizableHandle } from '@/components/ui/resizable';
 import NavigationMenu from './NavigationMenu';
 import { SidebarFooter as CustomSidebarFooter } from './SidebarFooter';
 import { NotesSection } from './NotesSection';
-import { SidebarControls } from './SidebarControls';
+
 import { useEditMode } from '@/contexts/EditModeContext';
 import { useDashboardSettings } from '@/hooks/useDashboardSettings';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -214,7 +214,6 @@ export function SidebarMain() {
               <div className="p-2 pt-1 flex-1 border-t border-sidebar-border flex items-center">
                 <CustomSidebarFooter />
               </div>
-              <SidebarControls />
             </div>
           </Panel>
         </PanelGroup>

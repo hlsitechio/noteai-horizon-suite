@@ -12,9 +12,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Settings, Layout, Component, Info } from 'lucide-react';
+import { Settings, Layout, Component, Info, Save, CheckCircle, Unlock } from 'lucide-react';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 import { DashboardComponent } from '@/services/dashboardLayoutService';
+import { useEditMode } from '@/contexts/EditModeContext';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface DashboardSettingsProps {
   children?: React.ReactNode;
@@ -28,8 +31,11 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = ({ children }) => {
     getPanelConfiguration,
     isLoading 
   } = useDashboardLayout();
+  const { isSidebarEditMode, setIsSidebarEditMode } = useEditMode();
+  const { toast } = useToast();
   
   const [open, setOpen] = useState(false);
+  const [isLocking, setIsLocking] = useState(false);
 
   const panelOptions = [
     { key: 'topLeft', label: 'Top Left Panel', description: 'Upper left dashboard section' },
@@ -54,6 +60,56 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = ({ children }) => {
   const isComponentSelected = (panelKey: string, componentKey: string): boolean => {
     const selectedComponent = getSelectedComponent(panelKey);
     return selectedComponent === componentKey;
+  };
+
+  const handleSidebarEditToggle = () => {
+    const newActiveState = !isSidebarEditMode;
+    setIsSidebarEditMode(newActiveState);
+    
+    toast({
+      title: `Sidebar Edit Mode ${newActiveState ? 'Enabled' : 'Disabled'}`,
+      description: newActiveState 
+        ? 'You can now resize sidebar panels' 
+        : 'Sidebar panels are now locked',
+    });
+  };
+
+  const handleSaveAndLockSidebar = async () => {
+    setIsLocking(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('dashboard-lock', {
+        body: {
+          lockDashboard: false,
+          lockSidebar: true
+        }
+      });
+
+      if (error) {
+        toast({
+          title: "Save & Lock Failed",
+          description: `Failed to save and lock sidebar layout: ${error.message}`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setIsSidebarEditMode(false);
+      toast({
+        title: "Sidebar Layout Saved & Locked",
+        description: "Sidebar layout has been saved and permanently locked.",
+        variant: "default",
+      });
+
+    } catch (err) {
+      toast({
+        title: "Save & Lock Failed", 
+        description: `An unexpected error occurred: ${err.message}`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLocking(false);
+    }
   };
 
   const groupedComponents = availableComponents.reduce((groups, component) => {
@@ -93,6 +149,82 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = ({ children }) => {
         ) : (
           <div className="overflow-y-auto max-h-[60vh] pr-2">
             <div className="space-y-6">
+              {/* Sidebar Layout Controls */}
+              <Card className="border-border/50">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Settings className="h-4 w-4" />
+                    Sidebar Layout Controls
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground">Manage your sidebar panel layout and sizing</p>
+                </CardHeader>
+                
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between p-3 rounded-lg border border-border">
+                    <div className="flex items-center gap-3">
+                      {isSidebarEditMode ? (
+                        <Unlock className="h-4 w-4 text-primary" />
+                      ) : (
+                        <Settings className="h-4 w-4" />
+                      )}
+                      <div>
+                        <Label className="text-sm font-medium">
+                          {isSidebarEditMode ? 'Sidebar Edit Mode Active' : 'Enable Sidebar Editing'}
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          {isSidebarEditMode 
+                            ? 'You can now resize sidebar panels by dragging the handles' 
+                            : 'Click to enable sidebar panel resizing'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant={isSidebarEditMode ? "secondary" : "outline"}
+                        size="sm"
+                        onClick={handleSidebarEditToggle}
+                        className="gap-2"
+                      >
+                        {isSidebarEditMode ? (
+                          <>
+                            <CheckCircle className="h-4 w-4" />
+                            Exit Edit
+                          </>
+                        ) : (
+                          <>
+                            <Unlock className="h-4 w-4" />
+                            Enable Edit
+                          </>
+                        )}
+                      </Button>
+                      
+                      {isSidebarEditMode && (
+                        <Button
+                          onClick={handleSaveAndLockSidebar}
+                          disabled={isLocking}
+                          className="gap-2 bg-primary hover:bg-primary/90"
+                          size="sm"
+                        >
+                          <Save className="h-4 w-4" />
+                          {isLocking ? 'Saving...' : 'Save & Lock'}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {isSidebarEditMode && (
+                    <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
+                      <div className="flex items-center gap-2 text-sm text-primary mb-1">
+                        <Info className="h-4 w-4" />
+                        <span className="font-medium">Sidebar editing is now active</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Go to the sidebar and drag the resize handles to adjust panel sizes, then come back here to save your changes.
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
               {panelOptions.map((panel) => (
                 <Card key={panel.key} className="border-border/50">
                   <CardHeader className="pb-3">
