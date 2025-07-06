@@ -24,25 +24,23 @@ export function SidebarMain() {
     <TooltipProvider>
       <div className="h-full bg-sidebar">
         <PanelGroup direction="vertical" className="h-full">
-          {/* Header Panel - Fixed */}
-          <Panel defaultSize={15} minSize={10} maxSize={25}>
-            <div className="p-3 pb-2 h-full flex items-center">
-              <CustomSidebarHeader />
-            </div>
-          </Panel>
-
-          {/* Vertical Resize Handle */}
-          <ResizableHandle className={isSidebarEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
-
-          {/* Navigation Panel */}
-          <Panel defaultSize={35} minSize={25} maxSize={50}>
-            <div className="px-0 h-full overflow-y-auto">
-              <div className="py-2">
-                <NavigationMenu isCollapsed={!isMobile && isCollapsed} />
+          {/* Navigation Panel - Includes Header + Menu */}
+          <Panel defaultSize={50} minSize={35} maxSize={65}>
+            <div className="h-full flex flex-col">
+              {/* Header */}
+              <div className="p-3 pb-2 flex-shrink-0">
+                <CustomSidebarHeader />
               </div>
               
-              {/* Collapsed Summary - only show when collapsed on desktop */}
-              {!isMobile && isCollapsed && <CollapsedSummary />}
+              {/* Navigation Menu */}
+              <div className="px-0 flex-1 overflow-y-auto">
+                <div className="py-2">
+                  <NavigationMenu isCollapsed={!isMobile && isCollapsed} />
+                </div>
+                
+                {/* Collapsed Summary - only show when collapsed on desktop */}
+                {!isMobile && isCollapsed && <CollapsedSummary />}
+              </div>
             </div>
           </Panel>
 
@@ -50,7 +48,7 @@ export function SidebarMain() {
           <ResizableHandle className={isSidebarEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
 
           {/* Content Panel - Notes Section */}
-          <Panel defaultSize={35} minSize={20} maxSize={60}>
+          <Panel defaultSize={35} minSize={20} maxSize={50}>
             <div className="px-0 h-full overflow-y-auto">
               <NotesSection />
             </div>
