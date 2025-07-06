@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   TooltipProvider,
 } from '@/components/ui/tooltip';
@@ -19,6 +19,12 @@ export function SidebarMain() {
   const { settings, updateSidebarPanelSizes, isLoading } = useDashboardSettings();
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
   const hasUserInteractedRef = useRef(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Fix hydration mismatch - only enable storage after mount
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Get saved panel sizes or use defaults
   const savedSizes = settings?.sidebar_panel_sizes || {};
@@ -85,10 +91,10 @@ export function SidebarMain() {
           className="h-full"
           onLayout={handleLayoutChange}
           id="sidebar-main"
-          storage={isSidebarEditMode ? undefined : {
+          storage={!isMounted || isSidebarEditMode ? {
             getItem: () => "",
             setItem: () => {}
-          }}
+          } : undefined}
         >
           {/* Navigation Panel */}
           <Panel 

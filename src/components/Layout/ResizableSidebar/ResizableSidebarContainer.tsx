@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PanelGroup } from 'react-resizable-panels';
 import ResizableSidebarPanel from './ResizableSidebarPanel';
 import ResizableSidebarContent from './ResizableSidebarContent';
@@ -30,6 +30,13 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
   sidebarBottomContent,
   enableVerticalResize = false
 }) => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Fix hydration mismatch - only enable storage after mount
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const handleLayout = React.useCallback((sizes: number[]) => {
     // Only emit layout changes when in edit mode
     console.log('Sidebar layout change:', sizes, 'Edit mode:', isEditMode);
@@ -40,10 +47,10 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
       direction="horizontal" 
       className="w-full h-full"
       onLayout={handleLayout}
-      storage={isEditMode ? undefined : {
+      storage={!isMounted || isEditMode ? {
         getItem: () => "",
         setItem: () => {}
-      }}
+      } : undefined}
     >
       {/* Sidebar Panel */}
       <ResizableSidebarPanel
