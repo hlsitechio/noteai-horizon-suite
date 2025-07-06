@@ -120,7 +120,7 @@ const EditLayoutModal: React.FC<EditLayoutModalProps> = ({
           </DialogHeader>
 
           <div className="overflow-y-auto max-h-[75vh]">
-            <Tabs defaultValue="banner" className="space-y-6">
+            <Tabs defaultValue="layout" className="space-y-6">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="banner">Banner Setup</TabsTrigger>
                 <TabsTrigger value="settings">Settings</TabsTrigger>
