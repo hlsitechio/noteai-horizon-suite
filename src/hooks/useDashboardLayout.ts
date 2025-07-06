@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayoutService, DashboardLayout, DashboardComponent } from '@/services/dashboardLayoutService';
+import { DashboardSettingsService } from '@/services/dashboardSettingsService';
 import { toast } from 'sonner';
 
 export const useDashboardLayout = () => {
@@ -71,17 +72,30 @@ export const useDashboardLayout = () => {
   };
 
   const updatePanelSizes = async (sizes: Record<string, number>) => {
-    if (!layout) return;
+    if (!user) return;
 
+    // Store panel sizes in dashboard settings instead of layout
     try {
-      await DashboardLayoutService.updatePanelSizes(layout.id, sizes);
+      const success = await DashboardSettingsService.updateSettings(user.id, {
+        sidebar_panel_sizes: sizes
+      });
       
-      // Update local state
-      const updatedLayout = { ...layout };
-      updatedLayout.panel_sizes = sizes as any;
-      setLayout(updatedLayout);
+      if (success) {
+        // Update local layout state if it exists
+        if (layout) {
+          const updatedLayout = { ...layout };
+          updatedLayout.panel_sizes = sizes as any;
+          setLayout(updatedLayout);
+        }
+        
+        console.log('Panel sizes saved successfully:', sizes);
+      } else {
+        console.error('Failed to save panel sizes');
+        toast.error('Failed to save panel layout');
+      }
     } catch (err) {
       console.error('Failed to update panel sizes:', err);
+      toast.error('Failed to save panel layout');
     }
   };
 
@@ -92,8 +106,11 @@ export const useDashboardLayout = () => {
   };
 
   const getPanelSizes = () => {
-    if (!layout) return {};
-    return layout.panel_sizes as Record<string, number> || {};
+    if (layout && layout.panel_sizes) {
+      return layout.panel_sizes as Record<string, number>;
+    }
+    // Fallback to empty object - panel sizes will use defaults
+    return {};
   };
 
   useEffect(() => {

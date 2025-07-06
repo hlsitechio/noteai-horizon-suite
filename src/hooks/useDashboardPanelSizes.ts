@@ -1,21 +1,28 @@
 import { useDashboardLayout } from './useDashboardLayout';
+import { useDashboardSettings } from './useDashboardSettings';
 
 export const useDashboardPanelSizes = () => {
   const { getPanelSizes, updatePanelSizes } = useDashboardLayout();
+  const { settings } = useDashboardSettings();
   
+  // Get saved panel sizes from both dashboard settings and layout
   const savedPanelSizes = getPanelSizes();
+  const settingsPanelSizes = settings?.sidebar_panel_sizes || {};
+  
+  // Merge both sources, with dashboard settings taking precedence
+  const mergedPanelSizes = { ...savedPanelSizes, ...settingsPanelSizes };
   
   const panelSizes = {
-    banner: savedPanelSizes.banner || 25, // Reduced from 40 to 25
-    analytics: savedPanelSizes.analytics || 30,
-    topSection: savedPanelSizes.topSection || 35,
-    bottomSection: savedPanelSizes.bottomSection || 35,
-    leftPanels: savedPanelSizes.leftPanels || 50,
-    rightPanels: savedPanelSizes.rightPanels || 50,
+    banner: mergedPanelSizes.banner || 25,
+    analytics: mergedPanelSizes.analytics || 30,
+    topSection: mergedPanelSizes.topSection || 35,
+    bottomSection: mergedPanelSizes.bottomSection || 35,
+    leftPanels: mergedPanelSizes.leftPanels || 50,
+    rightPanels: mergedPanelSizes.rightPanels || 50,
   };
 
   const createSizeHandler = (sizeKey: string) => (sizes: number[]) => {
-    const newSizes = { ...savedPanelSizes };
+    const newSizes = { ...mergedPanelSizes };
     
     switch (sizeKey) {
       case 'banner':
@@ -36,6 +43,7 @@ export const useDashboardPanelSizes = () => {
         break;
     }
     
+    console.log('Saving panel sizes:', newSizes);
     updatePanelSizes(newSizes);
   };
 

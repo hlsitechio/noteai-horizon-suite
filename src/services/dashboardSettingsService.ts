@@ -129,21 +129,26 @@ export class DashboardSettingsService {
     userId: string,
     updates: Partial<Pick<DashboardSettings, 'selected_banner_url' | 'selected_banner_type' | 'sidebar_panel_sizes'>>
   ): Promise<boolean> {
-    const { error } = await supabase
-      .from('dashboard_settings')
-      .upsert({
-        user_id: userId,
-        ...updates,
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'user_id'
-      });
+    try {
+      const { error } = await supabase
+        .from('dashboard_settings')
+        .upsert({
+          user_id: userId,
+          ...updates,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id'
+        });
 
-    if (error) {
-      console.error('Error updating dashboard settings:', error);
+      if (error) {
+        console.error('Error updating dashboard settings:', error);
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error('Error updating dashboard settings:', err);
       return false;
     }
-
-    return true;
   }
 }
