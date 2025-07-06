@@ -8,6 +8,7 @@ interface ResizableSidebarPanelProps {
   minSize?: number;
   maxSize?: number;
   topPanelContent?: React.ReactNode;
+  middlePanelContent?: React.ReactNode;
   bottomPanelContent?: React.ReactNode;
   isEditMode?: boolean;
 }
@@ -18,6 +19,7 @@ const ResizableSidebarPanel: React.FC<ResizableSidebarPanelProps> = ({
   minSize = 15,
   maxSize = 50,
   topPanelContent,
+  middlePanelContent,
   bottomPanelContent,
   isEditMode = false
 }) => {
@@ -29,10 +31,10 @@ const ResizableSidebarPanel: React.FC<ResizableSidebarPanelProps> = ({
       className="flex flex-col border-r border-border"
     >
       <div className="h-full w-full">
-        {(topPanelContent || bottomPanelContent) ? (
+        {(topPanelContent || middlePanelContent || bottomPanelContent) ? (
           <PanelGroup direction="vertical" className="h-full">
             {/* Top Panel */}
-            <Panel defaultSize={60} minSize={30} maxSize={80}>
+            <Panel defaultSize={40} minSize={25} maxSize={60}>
               <div className="h-full overflow-y-auto">
                 {topPanelContent || children}
               </div>
@@ -41,8 +43,24 @@ const ResizableSidebarPanel: React.FC<ResizableSidebarPanelProps> = ({
             {/* Vertical Resize Handle */}
             {isEditMode && <VerticalResizableHandle />}
             
+            {/* Middle Panel */}
+            <Panel defaultSize={35} minSize={20} maxSize={50}>
+              <div className="h-full overflow-y-auto">
+                {middlePanelContent || (
+                  <div className="p-4 h-full flex items-center justify-center">
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Middle panel</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Panel>
+            
+            {/* Vertical Resize Handle */}
+            {isEditMode && <VerticalResizableHandle />}
+            
             {/* Bottom Panel */}
-            <Panel defaultSize={40} minSize={20} maxSize={70}>
+            <Panel defaultSize={25} minSize={15} maxSize={40}>
               <div className="h-full overflow-y-auto">
                 {bottomPanelContent || (
                   <div className="p-4 h-full flex items-center justify-center">

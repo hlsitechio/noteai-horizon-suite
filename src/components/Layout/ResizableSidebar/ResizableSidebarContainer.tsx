@@ -13,6 +13,7 @@ interface ResizableSidebarContainerProps {
   sidebarMaxSize?: number;
   isEditMode?: boolean;
   sidebarTopContent?: React.ReactNode;
+  sidebarMiddleContent?: React.ReactNode;
   sidebarBottomContent?: React.ReactNode;
   enableVerticalResize?: boolean;
 }
@@ -25,6 +26,7 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
   sidebarMaxSize = 50,
   isEditMode = false,
   sidebarTopContent,
+  sidebarMiddleContent,
   sidebarBottomContent,
   enableVerticalResize = false
 }) => {
@@ -36,6 +38,7 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
         minSize={sidebarMinSize}
         maxSize={sidebarMaxSize}
         topPanelContent={enableVerticalResize ? sidebarTopContent : undefined}
+        middlePanelContent={enableVerticalResize ? sidebarMiddleContent : undefined}
         bottomPanelContent={enableVerticalResize ? sidebarBottomContent : undefined}
         isEditMode={isEditMode}
       >
