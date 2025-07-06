@@ -87,8 +87,8 @@ const OptimizedDashboard: React.FC = () => {
                   </div>
                 </Panel>
                 
-                {/* Resize Handle */}
-                <ResizableHandle />
+                {/* Horizontal Resize Handle */}
+                <HorizontalResizableHandle />
                 
                 {/* Bottom Panel - Two Boxes */}
                 <Panel defaultSize={70} minSize={50}>
