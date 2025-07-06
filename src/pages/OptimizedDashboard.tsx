@@ -93,14 +93,14 @@ const OptimizedDashboard: React.FC = () => {
       {/* Edit Mode Toggle Button */}
       <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
         <DashboardSettings>
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button variant="ghost" size="sm" className="gap-2">
             <Settings className="h-4 w-4" />
             Components
           </Button>
         </DashboardSettings>
         
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
           onClick={() => setShowEditLayoutModal(true)}
           className="gap-2 transition-all duration-200 hover:bg-accent"
