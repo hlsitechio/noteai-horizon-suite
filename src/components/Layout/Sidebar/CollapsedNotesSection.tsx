@@ -1,8 +1,6 @@
 
 import React from 'react';
-import { 
-  SidebarMenuButton
-} from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
 import { 
   FileText, 
   FolderOpen,
@@ -13,21 +11,19 @@ import { Link } from 'react-router-dom';
 export function CollapsedNotesSection() {
   return (
     <div className="px-2 space-y-1">
-      <SidebarMenuButton asChild tooltip="Notes">
+      <Button variant="ghost" size="sm" asChild className="w-full justify-center">
         <Link to="/app/notes" className="hover:bg-accent hover:text-accent-foreground">
           <FileText className="h-4 w-4" />
         </Link>
-      </SidebarMenuButton>
-      <SidebarMenuButton asChild tooltip="Projects">
+      </Button>
+      <Button variant="ghost" size="sm" asChild className="w-full justify-center">
         <Link to="/app/projects" className="hover:bg-accent hover:text-accent-foreground">
           <FolderOpen className="h-4 w-4" />
         </Link>
-      </SidebarMenuButton>
-      <SidebarMenuButton asChild tooltip="Favorites">
-        <button onClick={() => {}} className="hover:bg-accent hover:text-accent-foreground">
-          <Star className="h-4 w-4" />
-        </button>
-      </SidebarMenuButton>
+      </Button>
+      <Button variant="ghost" size="sm" className="w-full justify-center hover:bg-accent hover:text-accent-foreground">
+        <Star className="h-4 w-4" />
+      </Button>
     </div>
   );
 }

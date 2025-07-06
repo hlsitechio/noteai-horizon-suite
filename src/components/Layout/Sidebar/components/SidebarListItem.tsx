@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
-import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
 import { SidebarListItem as SidebarListItemType } from '../types';
 import { sidebarAnimations } from '../animations';
 
@@ -108,12 +108,12 @@ export function SidebarListItem({
   );
 
   return (
-    <SidebarMenuItem className={className}>
-      <SidebarMenuButton
+    <div className={className}>
+      <Button
+        variant="ghost"
         asChild={!!href}
-        isActive={isActive}
         className={`
-          w-full hover:bg-sidebar-accent hover:text-accent-foreground transition-colors
+          w-full justify-start hover:bg-sidebar-accent hover:text-accent-foreground transition-colors
           ${isActive ? 'bg-sidebar-accent text-accent-foreground' : ''}
         `}
         onClick={!href ? handleClick : undefined}
@@ -127,7 +127,7 @@ export function SidebarListItem({
             {content}
           </div>
         )}
-      </SidebarMenuButton>
-    </SidebarMenuItem>
+      </Button>
+    </div>
   );
 }

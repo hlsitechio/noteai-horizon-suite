@@ -1,18 +1,17 @@
 // Shared sidebar state management hook
 import { useState, useCallback, useEffect } from 'react';
-import { useSidebar } from '@/components/ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export interface SidebarStateConfig {
   defaultExpandedSections?: string[];
   persistState?: boolean;
   storageKey?: string;
+  isCollapsed?: boolean;
 }
 
 export function useSidebarState(config: SidebarStateConfig = {}) {
-  const { state } = useSidebar();
   const isMobile = useIsMobile();
-  const isCollapsed = state === 'collapsed';
+  const isCollapsed = config.isCollapsed || false;
 
   const {
     defaultExpandedSections = [],
