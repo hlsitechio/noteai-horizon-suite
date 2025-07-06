@@ -1,4 +1,3 @@
-
 /* Import Inter font - must be at the top */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -6,74 +5,13 @@
 @tailwind components;
 @tailwind utilities;
  
+/* ========================================
+   THEME PRESET 1: PROFESSIONAL DARK (Default)
+   ======================================== */
+ 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
- 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
- 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
- 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
- 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
- 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
- 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
- 
-    --radius: 0.5rem;
-  }
- 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
- 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
- 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
- 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
- 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
- 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
- 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
- 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
- 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
-}
-
-/* Deep Intelligence Theme - Ultra Professional Dark UI */
-@layer base {
-  :root {
-    /* Original light theme colors kept for fallback */
+    /* Light mode fallback */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -95,7 +33,17 @@
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.75rem;
     
-    /* Premium semantic colors */
+    /* Light mode sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 222.2 84% 4.9%;
+    --sidebar-primary: 221.2 83.2% 53.3%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 210 40% 94%;
+    --sidebar-accent-foreground: 222.2 84% 4.9%;
+    --sidebar-border: 214.3 31.8% 88%;
+    --sidebar-ring: 221.2 83.2% 53.3%;
+    
+    /* Semantic colors */
     --success: 142.1 76.2% 36.3%;
     --success-foreground: 210 40% 98%;
     --warning: 38.2 92% 50%;
@@ -105,45 +53,405 @@
   }
 
   .dark {
-    /* Professional Minimalist Dark Theme */
-    --background: 220 13% 9%; /* Deep professional navy */
-    --foreground: 220 9% 88%; /* Softer white text */
-    --card: 220 13% 11%; /* Slightly lighter cards */
-    --card-foreground: 220 9% 85%; /* Softer card text */
-    --popover: 220 13% 11%; /* Consistent with cards */
-    --popover-foreground: 220 9% 85%; /* Softer popover text */
-    --primary: 217 91% 60%; /* Professional blue accent */
-    --primary-foreground: 220 13% 9%; /* Dark text on accent */
-    --secondary: 220 13% 15%; /* Subtle secondary backgrounds */
-    --secondary-foreground: 220 9% 80%; /* Softer secondary text */
-    --muted: 220 13% 15%; /* Muted backgrounds */
-    --muted-foreground: 220 9% 65%; /* More readable muted text */
-    --accent: 217 91% 60%; /* Professional blue accent */
-    --accent-foreground: 220 13% 9%; /* Dark text on accent */
+    /* Professional Dark Theme */
+    --background: 220 13% 9%;
+    --foreground: 220 9% 88%;
+    --card: 220 13% 11%;
+    --card-foreground: 220 9% 85%;
+    --popover: 220 13% 11%;
+    --popover-foreground: 220 9% 85%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 220 13% 9%;
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 220 9% 80%;
+    --muted: 220 13% 15%;
+    --muted-foreground: 220 9% 65%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 220 13% 9%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 220 9% 94%;
-    --border: 220 13% 20%; /* More visible but subtle borders */
-    --input: 220 13% 15%; /* Input backgrounds */
-    --ring: 217 91% 60%; /* Focus rings */
+    --border: 220 13% 20%;
+    --input: 220 13% 15%;
+    --ring: 217 91% 60%;
     
-    /* Sidebar specific colors for professional theme */
-    --sidebar-background: 220 13% 9%; /* Match background */
-    --sidebar-foreground: 220 9% 82%; /* Softer sidebar text */
-    --sidebar-primary: 217 91% 60%; /* Professional blue accent */
-    --sidebar-primary-foreground: 220 13% 9%; /* Dark text on accent */
-    --sidebar-accent: 220 13% 15%; /* Subtle hover states */
-    --sidebar-accent-foreground: 220 9% 88%; /* Clean hover text */
-    --sidebar-border: 220 13% 18%; /* Very subtle borders */
-    --sidebar-ring: 217 91% 60%; /* Focus rings */
+    /* Professional Dark Sidebar */
+    --sidebar-background: 220 13% 7%;
+    --sidebar-foreground: 220 9% 82%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 220 13% 9%;
+    --sidebar-accent: 220 13% 13%;
+    --sidebar-accent-foreground: 220 9% 88%;
+    --sidebar-border: 220 13% 18%;
+    --sidebar-ring: 217 91% 60%;
     
     /* Enhanced dark mode semantic colors */
     --success: 142.1 76.2% 36.3%;
     --success-foreground: 220 9% 94%;
     --warning: 38.2 92% 50%;
     --warning-foreground: 220 13% 9%;
-    --info: 217 91% 60%; /* Using accent color for info */
+    --info: 217 91% 60%;
     --info-foreground: 220 13% 9%;
   }
+}
+
+/* ========================================
+   THEME PRESET 2: MIDNIGHT BLUE
+   ======================================== */
+
+@layer base {
+  .theme-midnight {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    
+    /* Light sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 222.2 84% 4.9%;
+    --sidebar-primary: 221.2 83.2% 53.3%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 210 40% 94%;
+    --sidebar-accent-foreground: 222.2 84% 4.9%;
+    --sidebar-border: 214.3 31.8% 88%;
+    --sidebar-ring: 221.2 83.2% 53.3%;
+  }
+
+  .theme-midnight.dark {
+    /* Midnight Blue Dark Theme */
+    --background: 220 100% 4%;
+    --foreground: 220 15% 90%;
+    --card: 220 100% 6%;
+    --card-foreground: 220 15% 88%;
+    --popover: 220 100% 6%;
+    --popover-foreground: 220 15% 88%;
+    --primary: 200 100% 60%;
+    --primary-foreground: 220 100% 4%;
+    --secondary: 220 50% 12%;
+    --secondary-foreground: 220 15% 85%;
+    --muted: 220 50% 12%;
+    --muted-foreground: 220 15% 70%;
+    --accent: 200 100% 60%;
+    --accent-foreground: 220 100% 4%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 220 15% 94%;
+    --border: 220 50% 16%;
+    --input: 220 50% 12%;
+    --ring: 200 100% 60%;
+    
+    /* Midnight Blue Sidebar */
+    --sidebar-background: 220 100% 3%;
+    --sidebar-foreground: 220 15% 85%;
+    --sidebar-primary: 200 100% 60%;
+    --sidebar-primary-foreground: 220 100% 4%;
+    --sidebar-accent: 220 50% 10%;
+    --sidebar-accent-foreground: 220 15% 90%;
+    --sidebar-border: 220 50% 14%;
+    --sidebar-ring: 200 100% 60%;
+  }
+}
+
+/* ========================================
+   THEME PRESET 3: EMERALD FOREST
+   ======================================== */
+
+@layer base {
+  .theme-emerald {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 160 60% 95%;
+    --accent-foreground: 160 84% 15%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 160 84% 39%;
+    
+    /* Emerald Light Sidebar */
+    --sidebar-background: 160 30% 98%;
+    --sidebar-foreground: 160 84% 15%;
+    --sidebar-primary: 160 84% 39%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 160 40% 94%;
+    --sidebar-accent-foreground: 160 84% 15%;
+    --sidebar-border: 160 20% 88%;
+    --sidebar-ring: 160 84% 39%;
+  }
+
+  .theme-emerald.dark {
+    /* Emerald Forest Dark Theme */
+    --background: 160 20% 8%;
+    --foreground: 160 10% 88%;
+    --card: 160 20% 10%;
+    --card-foreground: 160 10% 85%;
+    --popover: 160 20% 10%;
+    --popover-foreground: 160 10% 85%;
+    --primary: 160 84% 50%;
+    --primary-foreground: 160 20% 8%;
+    --secondary: 160 20% 14%;
+    --secondary-foreground: 160 10% 80%;
+    --muted: 160 20% 14%;
+    --muted-foreground: 160 10% 65%;
+    --accent: 160 84% 50%;
+    --accent-foreground: 160 20% 8%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 160 10% 94%;
+    --border: 160 20% 18%;
+    --input: 160 20% 14%;
+    --ring: 160 84% 50%;
+    
+    /* Emerald Dark Sidebar */
+    --sidebar-background: 160 20% 6%;
+    --sidebar-foreground: 160 10% 82%;
+    --sidebar-primary: 160 84% 50%;
+    --sidebar-primary-foreground: 160 20% 8%;
+    --sidebar-accent: 160 20% 12%;
+    --sidebar-accent-foreground: 160 10% 88%;
+    --sidebar-border: 160 20% 16%;
+    --sidebar-ring: 160 84% 50%;
+  }
+}
+
+/* ========================================
+   THEME PRESET 4: VIOLET STORM
+   ======================================== */
+
+@layer base {
+  .theme-violet {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 258 90% 66%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 258 60% 95%;
+    --accent-foreground: 258 90% 20%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 258 90% 66%;
+    
+    /* Violet Light Sidebar */
+    --sidebar-background: 258 30% 98%;
+    --sidebar-foreground: 258 90% 20%;
+    --sidebar-primary: 258 90% 66%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 258 40% 94%;
+    --sidebar-accent-foreground: 258 90% 20%;
+    --sidebar-border: 258 20% 88%;
+    --sidebar-ring: 258 90% 66%;
+  }
+
+  .theme-violet.dark {
+    /* Violet Storm Dark Theme */
+    --background: 258 30% 7%;
+    --foreground: 258 15% 88%;
+    --card: 258 30% 9%;
+    --card-foreground: 258 15% 85%;
+    --popover: 258 30% 9%;
+    --popover-foreground: 258 15% 85%;
+    --primary: 258 90% 70%;
+    --primary-foreground: 258 30% 7%;
+    --secondary: 258 30% 13%;
+    --secondary-foreground: 258 15% 80%;
+    --muted: 258 30% 13%;
+    --muted-foreground: 258 15% 65%;
+    --accent: 258 90% 70%;
+    --accent-foreground: 258 30% 7%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 258 15% 94%;
+    --border: 258 30% 17%;
+    --input: 258 30% 13%;
+    --ring: 258 90% 70%;
+    
+    /* Violet Dark Sidebar */
+    --sidebar-background: 258 30% 5%;
+    --sidebar-foreground: 258 15% 82%;
+    --sidebar-primary: 258 90% 70%;
+    --sidebar-primary-foreground: 258 30% 7%;
+    --sidebar-accent: 258 30% 11%;
+    --sidebar-accent-foreground: 258 15% 88%;
+    --sidebar-border: 258 30% 15%;
+    --sidebar-ring: 258 90% 70%;
+  }
+}
+
+/* ========================================
+   THEME PRESET 5: ORANGE SUNSET
+   ======================================== */
+
+@layer base {
+  .theme-sunset {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 25 95% 53%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 25 60% 95%;
+    --accent-foreground: 25 95% 25%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 25 95% 53%;
+    
+    /* Orange Light Sidebar */
+    --sidebar-background: 25 30% 98%;
+    --sidebar-foreground: 25 95% 25%;
+    --sidebar-primary: 25 95% 53%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 25 40% 94%;
+    --sidebar-accent-foreground: 25 95% 25%;
+    --sidebar-border: 25 20% 88%;
+    --sidebar-ring: 25 95% 53%;
+  }
+
+  .theme-sunset.dark {
+    /* Orange Sunset Dark Theme */
+    --background: 25 20% 8%;
+    --foreground: 25 10% 88%;
+    --card: 25 20% 10%;
+    --card-foreground: 25 10% 85%;
+    --popover: 25 20% 10%;
+    --popover-foreground: 25 10% 85%;
+    --primary: 25 95% 60%;
+    --primary-foreground: 25 20% 8%;
+    --secondary: 25 20% 14%;
+    --secondary-foreground: 25 10% 80%;
+    --muted: 25 20% 14%;
+    --muted-foreground: 25 10% 65%;
+    --accent: 25 95% 60%;
+    --accent-foreground: 25 20% 8%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 25 10% 94%;
+    --border: 25 20% 18%;
+    --input: 25 20% 14%;
+    --ring: 25 95% 60%;
+    
+    /* Orange Dark Sidebar */
+    --sidebar-background: 25 20% 6%;
+    --sidebar-foreground: 25 10% 82%;
+    --sidebar-primary: 25 95% 60%;
+    --sidebar-primary-foreground: 25 20% 8%;
+    --sidebar-accent: 25 20% 12%;
+    --sidebar-accent-foreground: 25 10% 88%;
+    --sidebar-border: 25 20% 16%;
+    --sidebar-ring: 25 95% 60%;
+  }
+}
+
+/* ========================================
+   THEME PRESET 6: PURE BLACK (Ultra Dark)
+   ======================================== */
+
+@layer base {
+  .theme-pure-black {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 187 100% 42%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 187 60% 95%;
+    --accent-foreground: 187 100% 15%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 187 100% 42%;
+    
+    /* Cyan Light Sidebar */
+    --sidebar-background: 187 30% 98%;
+    --sidebar-foreground: 187 100% 15%;
+    --sidebar-primary: 187 100% 42%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 187 40% 94%;
+    --sidebar-accent-foreground: 187 100% 15%;
+    --sidebar-border: 187 20% 88%;
+    --sidebar-ring: 187 100% 42%;
+  }
+
+  .theme-pure-black.dark {
+    /* Pure Black Ultra Dark Theme */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 88%;
+    --card: 0 0% 3%;
+    --card-foreground: 0 0% 85%;
+    --popover: 0 0% 3%;
+    --popover-foreground: 0 0% 85%;
+    --primary: 187 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 0 0% 80%;
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 187 100% 50%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 94%;
+    --border: 0 0% 12%;
+    --input: 0 0% 8%;
+    --ring: 187 100% 50%;
+    
+    /* Pure Black Sidebar */
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 0 0% 82%;
+    --sidebar-primary: 187 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 6%;
+    --sidebar-accent-foreground: 0 0% 88%;
+    --sidebar-border: 0 0% 10%;
+    --sidebar-ring: 187 100% 50%;
+  }
+}
+
+/* ========================================
+   GLOBAL STYLES & UTILITIES
+   ======================================== */
 
   * {
     @apply border-0;
@@ -157,7 +465,7 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  /* Professional scrollbar for pure black theme */
+  /* Professional scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -180,13 +488,13 @@
     @apply bg-accent/30;
   }
 
-  /* Professional focus styles with accent color - no glow */
+  /* Professional focus styles */
   :focus-visible {
     @apply outline-none ring-2 ring-accent/50 ring-offset-2 ring-offset-background;
   }
 }
 
-/* Professional utility classes for minimalist design */
+/* Professional utility classes */
 @layer utilities {
   /* Clean gradients */
   .bg-gradient-primary {
@@ -230,9 +538,9 @@
   }
 }
 
-/* Simple component styles for pure black theme */
+/* Component styles */
 @layer components {
-  /* Simple navigation with accent highlights */
+  /* Navigation with accent highlights */
   .nav-link {
     @apply relative text-muted-foreground hover:text-foreground transition-all duration-200 font-semibold px-4 py-2 rounded-lg hover:bg-accent/10;
   }
@@ -247,7 +555,7 @@
     @apply w-full;
   }
 
-  /* Simple form styles */
+  /* Form styles */
   .form-group {
     @apply space-y-3;
   }
@@ -260,13 +568,13 @@
     @apply text-sm text-destructive font-medium;
   }
 
-  /* Simple loading states with accent color */
+  /* Loading states */
   .loading-shimmer {
     @apply animate-pulse bg-gradient-to-r from-card via-accent/10 to-card bg-[length:200%_100%] rounded-lg;
     animation: shimmer 2s infinite;
   }
 
-  /* Simple rich text editor toolbar */
+  /* Rich text editor toolbar */
   .editor-toolbar {
     @apply flex items-center gap-2 p-4 bg-card rounded-t-2xl border border-border/10;
   }
@@ -284,7 +592,7 @@
   }
 }
 
-/* Simple animations without glow effects */
+/* Animations */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -325,7 +633,7 @@
   }
 }
 
-/* Simple animation utilities */
+/* Animation utilities */
 .animate-slide-in-up {
   animation: slideInUp 0.3s ease-out;
 }
