@@ -20,7 +20,12 @@ import { useToast } from '@/hooks/use-toast';
 const OptimizedDashboard: React.FC = () => {
   const { notes } = useOptimizedNotes();
   const { getPanelConfiguration, getPanelSizes } = useDashboardLayout();
-  const { isDashboardEditMode, isSidebarEditMode } = useEditMode();
+  const { 
+    isDashboardEditMode, 
+    isSidebarEditMode, 
+    setIsDashboardEditMode, 
+    setIsSidebarEditMode 
+  } = useEditMode();
   const { toast } = useToast();
   const [selectedBannerUrl, setSelectedBannerUrl] = React.useState<string | null>(null);
   const [showEditLayoutModal, setShowEditLayoutModal] = React.useState(false);
@@ -70,6 +75,10 @@ const OptimizedDashboard: React.FC = () => {
   };
 
   const handleSaveLayout = () => {
+    // Disable both edit modes to lock the layout
+    setIsDashboardEditMode(false);
+    setIsSidebarEditMode(false);
+    
     toast({
       title: "Layout Saved",
       description: "Your layout changes have been saved successfully.",
