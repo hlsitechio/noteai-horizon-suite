@@ -25,6 +25,12 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ isCollapsed }) => {
       description: 'Browse and manage notes'
     },
     { 
+      icon: 'bx bx-folder', 
+      label: 'Projects', 
+      path: '/app/projects',
+      description: 'Project workspaces'
+    },
+    { 
       icon: 'bx bx-edit', 
       label: 'Editor', 
       path: '/app/editor',
