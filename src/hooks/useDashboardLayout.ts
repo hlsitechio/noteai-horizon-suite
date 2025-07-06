@@ -17,6 +17,9 @@ export const useDashboardLayout = () => {
       setIsLoading(true);
       setError(null);
 
+      // First cleanup any duplicate active layouts
+      await DashboardLayoutService.cleanupDuplicateLayouts(user.id);
+
       // Load user's layout
       let userLayout = await DashboardLayoutService.getUserLayout(user.id);
       

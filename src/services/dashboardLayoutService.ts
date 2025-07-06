@@ -42,14 +42,17 @@ export class DashboardLayoutService {
   }
 
   static async getUserLayout(userId: string): Promise<DashboardLayout | null> {
+    // Get the most recent active layout for the user
     const { data, error } = await supabase
       .from('dashboard_layouts')
       .select('*')
       .eq('user_id', userId)
       .eq('is_active', true)
-      .single();
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error) throw error;
     return data;
   }
 
@@ -133,5 +136,29 @@ export class DashboardLayoutService {
       .eq('id', layoutId);
 
     if (error) throw error;
+  }
+
+  static async cleanupDuplicateLayouts(userId: string): Promise<void> {
+    // Get all active layouts for user, ordered by most recent first
+    const { data: layouts, error: fetchError } = await supabase
+      .from('dashboard_layouts')
+      .select('id, updated_at')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .order('updated_at', { ascending: false });
+
+    if (fetchError) throw fetchError;
+
+    // If there are multiple active layouts, deactivate all but the most recent
+    if (layouts && layouts.length > 1) {
+      const layoutsToDeactivate = layouts.slice(1).map(layout => layout.id);
+      
+      const { error: updateError } = await supabase
+        .from('dashboard_layouts')
+        .update({ is_active: false })
+        .in('id', layoutsToDeactivate);
+
+      if (updateError) throw updateError;
+    }
   }
 }
