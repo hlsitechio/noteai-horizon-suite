@@ -64,14 +64,37 @@ export function SidebarMain() {
 
   // Update default sizes when settings change
   useEffect(() => {
-    if (settings?.sidebar_panel_sizes) {
-      setDefaultSizes({
+    console.log('Settings changed:', settings?.sidebar_panel_sizes);
+    if (settings?.sidebar_panel_sizes && isMounted) {
+      const newDefaultSizes = {
         navigation: settings.sidebar_panel_sizes.navigation || 40,
         content: settings.sidebar_panel_sizes.content || 40,
         footer: settings.sidebar_panel_sizes.footer || 20
-      });
+      };
+      console.log('Updating default sizes:', newDefaultSizes);
+      setDefaultSizes(newDefaultSizes);
+      
+      // Clear localStorage to force panels to use new default sizes
+      if (!isSidebarEditMode) {
+        try {
+          localStorage.removeItem('react-resizable-panels:sidebar-main');
+          console.log('Cleared localStorage to use new default sizes');
+        } catch (error) {
+          console.warn('Failed to clear localStorage:', error);
+        }
+      }
     }
-  }, [settings?.sidebar_panel_sizes]);
+  }, [settings?.sidebar_panel_sizes, isMounted, isSidebarEditMode]);
+
+  // Debug current state
+  useEffect(() => {
+    console.log('Current state:', { 
+      defaultSizes, 
+      isSidebarEditMode, 
+      settingsSizes: settings?.sidebar_panel_sizes,
+      isMounted 
+    });
+  }, [defaultSizes, isSidebarEditMode, settings?.sidebar_panel_sizes, isMounted]);
 
   // Track when user actually interacts with panels
   const handlePanelResizeStart = () => {
@@ -79,6 +102,7 @@ export function SidebarMain() {
   };
 
   const handleLayoutChange = (sizes: number[]) => {
+    console.log('Layout change detected:', { sizes, editMode: isSidebarEditMode, defaultSizes });
     // Only allow changes when in sidebar edit mode
     if (!isSidebarEditMode) return;
     
