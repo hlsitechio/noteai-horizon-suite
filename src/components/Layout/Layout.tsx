@@ -1,24 +1,33 @@
 
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { SidebarMain } from './Sidebar/SidebarMain';
+import { ResizableSidebarContainer } from './ResizableSidebar';
 import { Toaster } from '@/components/ui/sonner';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 const Layout: React.FC = () => {
-  const isMobile = useIsMobile();
-
   return (
-    <SidebarProvider defaultOpen={!isMobile}>
-      <div className="min-h-screen flex w-full bg-background">
-        <SidebarMain />
-        <main className="flex-1 overflow-hidden">
-          <Outlet />
-        </main>
-        <Toaster />
-      </div>
-    </SidebarProvider>
+    <div className="min-h-screen w-full bg-background">
+      <ResizableSidebarContainer
+        sidebarDefaultSize={25}
+        sidebarMinSize={15}
+        sidebarMaxSize={50}
+        isEditMode={false}
+        sidebarContent={
+          <div className="h-full w-full bg-muted/5 p-4">
+            <div className="text-center">
+              <h3 className="font-semibold text-lg mb-2">New Sidebar</h3>
+              <p className="text-muted-foreground text-sm">Ready for your components</p>
+            </div>
+          </div>
+        }
+        mainContent={
+          <div className="h-full w-full">
+            <Outlet />
+          </div>
+        }
+      />
+      <Toaster />
+    </div>
   );
 };
 
