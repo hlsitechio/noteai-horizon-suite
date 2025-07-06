@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
       <FullscreenToggle />
       
       {/* Clean Dashboard Container */}
-      <div className="container mx-auto p-3 lg:p-4 space-y-4 max-w-7xl">
+      <div className="w-full p-3 lg:p-4 space-y-4">
         
         {/* Welcome Section */}
         <div className="w-full">
