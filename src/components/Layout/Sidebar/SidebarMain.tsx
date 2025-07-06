@@ -25,6 +25,32 @@ export function SidebarMain() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+  const createStorageHandler = () => {
+    if (!isMounted) {
+      // Prevent hydration mismatch
+      return {
+        getItem: () => "",
+        setItem: () => {}
+      };
+    }
+    
+    if (isSidebarEditMode) {
+      // In edit mode: allow full storage functionality
+      return undefined; // Use default localStorage
+    } else {
+      // Not in edit mode: read-only storage (restore saved sizes but don't save new ones)
+      return {
+        getItem: (name: string) => {
+          try {
+            return localStorage.getItem(name) || "";
+          } catch {
+            return "";
+          }
+        },
+        setItem: () => {} // Prevent writes when not in edit mode
+      };
+    }
+  };
 
   // Get saved panel sizes or use defaults
   const savedSizes = settings?.sidebar_panel_sizes || {};
@@ -91,10 +117,7 @@ export function SidebarMain() {
           className="h-full"
           onLayout={handleLayoutChange}
           id="sidebar-main"
-          storage={!isMounted || isSidebarEditMode ? {
-            getItem: () => "",
-            setItem: () => {}
-          } : undefined}
+          storage={createStorageHandler()}
         >
           {/* Navigation Panel */}
           <Panel 

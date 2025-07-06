@@ -37,6 +37,34 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
     setIsMounted(true);
   }, []);
 
+  // Create storage handler that respects edit mode
+  const createStorageHandler = () => {
+    if (!isMounted) {
+      // Prevent hydration mismatch
+      return {
+        getItem: () => "",
+        setItem: () => {}
+      };
+    }
+    
+    if (isEditMode) {
+      // In edit mode: allow full storage functionality
+      return undefined; // Use default localStorage
+    } else {
+      // Not in edit mode: read-only storage (restore saved sizes but don't save new ones)
+      return {
+        getItem: (name: string) => {
+          try {
+            return localStorage.getItem(name) || "";
+          } catch {
+            return "";
+          }
+        },
+        setItem: () => {} // Prevent writes when not in edit mode
+      };
+    }
+  };
+
   const handleLayout = React.useCallback((sizes: number[]) => {
     // Only emit layout changes when in edit mode
     console.log('Sidebar layout change:', sizes, 'Edit mode:', isEditMode);
@@ -47,10 +75,7 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
       direction="horizontal" 
       className="w-full h-full"
       onLayout={handleLayout}
-      storage={!isMounted || isEditMode ? {
-        getItem: () => "",
-        setItem: () => {}
-      } : undefined}
+      storage={createStorageHandler()}
     >
       {/* Sidebar Panel */}
       <ResizableSidebarPanel
