@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Edit3, Settings, Save, CheckCircle } from 'lucide-react';
+import { Edit3, Settings, Save, CheckCircle, Lock } from 'lucide-react';
 import DashboardSettings from './DashboardSettings';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface DashboardControlsProps {
   onEditLayoutClick: () => void;
@@ -19,6 +20,7 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
     setIsSidebarEditMode 
   } = useEditMode();
   const { toast } = useToast();
+  const [isLocking, setIsLocking] = useState(false);
 
   const hasActiveEditMode = isDashboardEditMode || isSidebarEditMode;
 
@@ -30,6 +32,49 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
       title: "Layout Saved",
       description: "Your layout changes have been saved successfully.",
     });
+  };
+
+  const handleLockDashboard = async () => {
+    setIsLocking(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('dashboard-lock', {
+        body: {
+          lockDashboard: true,
+          lockSidebar: true
+        }
+      });
+
+      if (error) {
+        console.error('Dashboard lock error:', error);
+        toast({
+          title: "Lock Failed",
+          description: "Failed to lock dashboard layout. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Update local state immediately
+      setIsDashboardEditMode(false);
+      setIsSidebarEditMode(false);
+
+      toast({
+        title: "Dashboard Locked",
+        description: "Dashboard and sidebar are now permanently locked and cannot be resized.",
+        variant: "default",
+      });
+
+    } catch (err) {
+      console.error('Dashboard lock error:', err);
+      toast({
+        title: "Lock Failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLocking(false);
+    }
   };
 
   return (
@@ -68,14 +113,26 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
             <p className="text-xs text-muted-foreground">
               Resize your panels as needed, then save your layout
             </p>
-            <Button 
-              onClick={handleSaveLayout}
-              className="w-full gap-2"
-              size="sm"
-            >
-              <Save className="h-4 w-4" />
-              Save Layout
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleSaveLayout}
+                className="flex-1 gap-2"
+                size="sm"
+                variant="outline"
+              >
+                <Save className="h-4 w-4" />
+                Save Layout
+              </Button>
+              <Button 
+                onClick={handleLockDashboard}
+                disabled={isLocking}
+                className="flex-1 gap-2 bg-destructive hover:bg-destructive/90"
+                size="sm"
+              >
+                <Lock className="h-4 w-4" />
+                {isLocking ? 'Locking...' : 'Lock Dashboard'}
+              </Button>
+            </div>
           </div>
         </div>
       )}
