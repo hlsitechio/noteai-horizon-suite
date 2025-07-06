@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   TooltipProvider,
 } from '@/components/ui/tooltip';
@@ -10,11 +10,13 @@ import { NotesSection } from './NotesSection';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { useDashboardSettings } from '@/hooks/useDashboardSettings';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { toast } from 'sonner';
 
 export function SidebarMain() {
   const isMobile = useIsMobile();
-  const { isSidebarEditMode } = useEditMode();
+  const { isSidebarEditMode, setIsSidebarEditMode } = useEditMode();
   const { settings, updateSidebarPanelSizes } = useDashboardSettings();
+  const saveTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Get saved panel sizes or use defaults
   const savedSizes = settings?.sidebar_panel_sizes || {};
@@ -29,9 +31,41 @@ export function SidebarMain() {
         content: sizes[1],
         footer: sizes[2]
       };
-      updateSidebarPanelSizes(newSizes);
+      
+      // Clear existing timeout
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      
+      // Debounced save with auto-lock
+      saveTimeoutRef.current = setTimeout(async () => {
+        console.log('Saving sidebar panel sizes:', newSizes);
+        const success = await updateSidebarPanelSizes(newSizes);
+        
+        if (success) {
+          console.log('Sidebar panel sizes saved successfully:', newSizes);
+          
+          // Auto-exit sidebar edit mode after successful save
+          if (isSidebarEditMode) {
+            setIsSidebarEditMode(false);
+            toast.success('Sidebar layout saved and locked');
+          }
+        } else {
+          console.error('Failed to save sidebar panel sizes');
+          toast.error('Failed to save sidebar layout');
+        }
+      }, 500); // 500ms debounce
     }
   };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <TooltipProvider>
