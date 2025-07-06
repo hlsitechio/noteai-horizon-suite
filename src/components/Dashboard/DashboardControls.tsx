@@ -35,9 +35,11 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
   };
 
   const handleLockDashboard = async () => {
+    console.log('Starting dashboard lock process...');
     setIsLocking(true);
     
     try {
+      console.log('Calling dashboard-lock function...');
       const { data, error } = await supabase.functions.invoke('dashboard-lock', {
         body: {
           lockDashboard: true,
@@ -45,16 +47,19 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
         }
       });
 
+      console.log('Function response:', { data, error });
+
       if (error) {
         console.error('Dashboard lock error:', error);
         toast({
           title: "Lock Failed",
-          description: "Failed to lock dashboard layout. Please try again.",
+          description: `Failed to lock dashboard layout: ${error.message}`,
           variant: "destructive",
         });
         return;
       }
 
+      console.log('Function call successful, updating local state...');
       // Update local state immediately
       setIsDashboardEditMode(false);
       setIsSidebarEditMode(false);
@@ -69,7 +74,7 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
       console.error('Dashboard lock error:', err);
       toast({
         title: "Lock Failed",
-        description: "An unexpected error occurred. Please try again.",
+        description: `An unexpected error occurred: ${err.message}`,
         variant: "destructive",
       });
     } finally {
