@@ -102,7 +102,7 @@ const OptimizedDashboard: React.FC = () => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setShowEditLayoutModal(true)}
+          onClick={() => window.location.href = '/app/settings?tab=layout'}
           className="gap-2 transition-all duration-200 hover:bg-accent"
         >
           <Edit3 className="h-4 w-4" />
@@ -174,7 +174,7 @@ const OptimizedDashboard: React.FC = () => {
                 </Panel>
                 
                 {/* Horizontal Resize Handle */}
-                {isDashboardEditMode && <HorizontalResizableHandle />}
+                <HorizontalResizableHandle className={isDashboardEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
                 
                 {/* Middle Panel - Two Boxes */}
                 <Panel defaultSize={35} minSize={25}>
@@ -207,7 +207,7 @@ const OptimizedDashboard: React.FC = () => {
                       </Panel>
                       
                       {/* Horizontal Resize Handle */}
-                      {isDashboardEditMode && <HorizontalResizableHandle />}
+                      <HorizontalResizableHandle className={isDashboardEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
                       
                       {/* Right Box */}
                       <Panel defaultSize={50} minSize={30}>
@@ -239,7 +239,7 @@ const OptimizedDashboard: React.FC = () => {
                 </Panel>
                 
                 {/* Horizontal Resize Handle */}
-                {isDashboardEditMode && <HorizontalResizableHandle />}
+                <HorizontalResizableHandle className={isDashboardEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
                 
                 {/* Bottom Panel - Two More Boxes */}
                 <Panel defaultSize={35} minSize={25}>
@@ -272,7 +272,7 @@ const OptimizedDashboard: React.FC = () => {
                       </Panel>
                       
                       {/* Horizontal Resize Handle */}
-                      {isDashboardEditMode && <HorizontalResizableHandle />}
+                      <HorizontalResizableHandle className={isDashboardEditMode ? 'opacity-100' : 'opacity-30 hover:opacity-100'} />
                       
                       {/* Right Box */}
                       <Panel defaultSize={50} minSize={30}>
