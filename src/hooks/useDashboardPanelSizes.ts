@@ -22,9 +22,9 @@ export const useDashboardPanelSizes = () => {
   };
 
   // Track when user actually interacts with panels
-  const trackUserInteraction = () => {
+  const trackUserInteraction = useCallback(() => {
     hasUserInteractedRef.current = true;
-  };
+  }, []);
 
   // Debounced save function
   const debouncedSave = useCallback((newSizes: Record<string, number>) => {
