@@ -2,7 +2,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link, useLocation } from 'react-router-dom';
-import { SidebarEditButton } from './SidebarEditButton';
 import 'boxicons/css/boxicons.min.css';
 
 const NavigationMenu: React.FC = () => {
@@ -55,10 +54,6 @@ const NavigationMenu: React.FC = () => {
 
   return (
     <div className="space-y-1">
-      {/* Sidebar Edit Button */}
-      <div className="px-3 py-2 border-b border-sidebar-border mb-2">
-        <SidebarEditButton />
-      </div>
       
       <nav className="space-y-1">
         {navigationItems.map((item) => {
