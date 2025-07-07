@@ -64,6 +64,10 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
     try {
       localStorage.setItem('weather-settings', JSON.stringify(settings));
       onSettingsChange?.(settings);
+      
+      // Dispatch a custom event for same-tab updates
+      window.dispatchEvent(new CustomEvent('weather-settings-changed'));
+      
       toast.success('Weather settings saved successfully');
     } catch (error) {
       console.error('Failed to save weather settings:', error);

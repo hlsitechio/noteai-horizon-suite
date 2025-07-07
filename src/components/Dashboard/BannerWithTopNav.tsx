@@ -57,8 +57,28 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
       }
     };
 
+    // Also listen for custom events (for same-tab updates)
+    const handleCustomStorageChange = () => {
+      const savedSettings = localStorage.getItem('weather-settings');
+      if (savedSettings) {
+        try {
+          const settings = JSON.parse(savedSettings);
+          if (settings.city) {
+            setWeatherCity(settings.city);
+          }
+        } catch (error) {
+          console.error('Failed to parse weather settings:', error);
+        }
+      }
+    };
+
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener('weather-settings-changed', handleCustomStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('weather-settings-changed', handleCustomStorageChange);
+    };
   }, []);
 
   const handleWeatherError = (error: string) => {
