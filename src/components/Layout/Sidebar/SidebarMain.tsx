@@ -168,36 +168,36 @@ export function SidebarMain() {
 
   return (
     <TooltipProvider>
-      <div className="h-full bg-sidebar relative">
-        {/* Collapse Button - Positioned at sidebar border, below top navigation */}
-        <div className="absolute top-32 -right-3 z-10">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={toggleCollapse}
-                className="h-6 w-6 p-0 rounded-full border bg-background shadow-md hover:bg-accent"
-              >
-                {isCollapsed ? (
-                  <PanelLeftOpen className="h-3 w-3" />
-                ) : (
-                  <PanelLeftClose className="h-3 w-3" />
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>{isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
+      <div className="h-full bg-sidebar">
         <PanelGroup 
           direction="vertical" 
-          className="h-full"
+          className="h-full relative"
           onLayout={handleLayoutChange}
           id="sidebar-main"
           storage={createStorageHandler()}
         >
+          {/* Collapse Button - Positioned within the panel group */}
+          <div className="absolute top-20 -right-3 z-50">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={toggleCollapse}
+                  className="h-6 w-6 p-0 rounded-full border bg-background shadow-lg hover:bg-accent"
+                >
+                  {isCollapsed ? (
+                    <PanelLeftOpen className="h-3 w-3" />
+                  ) : (
+                    <PanelLeftClose className="h-3 w-3" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>{isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
           {/* Navigation Panel */}
           <Panel 
             id="navigation-panel"
