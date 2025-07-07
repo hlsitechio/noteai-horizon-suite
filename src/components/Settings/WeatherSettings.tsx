@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MapPin, Cloud, Save, RefreshCw, Key, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,6 +22,16 @@ export interface WeatherSettings {
   updateInterval: number; // minutes
 }
 
+const PREDEFINED_CITIES = [
+  'Paris',
+  'London', 
+  'New York',
+  'Los Angeles',
+  'Montreal',
+  'Toronto',
+  'Ottawa'
+];
+
 const DEFAULT_SETTINGS: WeatherSettings = {
   enabled: true,
   city: 'New York',
@@ -32,6 +43,7 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
   const [settings, setSettings] = useState<WeatherSettings>(DEFAULT_SETTINGS);
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [isCustomCity, setIsCustomCity] = useState(false);
 
   // Load settings from localStorage on mount
   useEffect(() => {
@@ -40,6 +52,8 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
       try {
         const parsed = JSON.parse(savedSettings);
         setSettings({ ...DEFAULT_SETTINGS, ...parsed });
+        // Check if the loaded city is in predefined list
+        setIsCustomCity(!PREDEFINED_CITIES.includes(parsed.city || DEFAULT_SETTINGS.city));
       } catch (error) {
         console.error('Failed to parse saved weather settings:', error);
       }
@@ -156,15 +170,50 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
           
           <div className="space-y-2">
             <Label htmlFor="city">City</Label>
-            <Input
-              id="city"
-              placeholder="Enter city name (e.g., New York, London)"
-              value={settings.city}
-              onChange={(e) => updateSetting('city', e.target.value)}
+            
+            {/* City Selection Dropdown */}
+            <Select
+              value={isCustomCity ? 'custom' : settings.city}
+              onValueChange={(value) => {
+                if (value === 'custom') {
+                  setIsCustomCity(true);
+                  updateSetting('city', '');
+                } else {
+                  setIsCustomCity(false);
+                  updateSetting('city', value);
+                }
+              }}
               disabled={!settings.enabled}
-            />
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a city" />
+              </SelectTrigger>
+              <SelectContent>
+                {PREDEFINED_CITIES.map((city) => (
+                  <SelectItem key={city} value={city}>
+                    {city}
+                  </SelectItem>
+                ))}
+                <SelectItem value="custom">Custom city...</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Custom City Input - shown when "custom" is selected */}
+            {isCustomCity && (
+              <Input
+                placeholder="Enter custom city name"
+                value={settings.city}
+                onChange={(e) => updateSetting('city', e.target.value)}
+                disabled={!settings.enabled}
+                className="mt-2"
+              />
+            )}
+            
             <p className="text-xs text-muted-foreground">
-              Enter the city name for weather information
+              {isCustomCity 
+                ? 'Enter a custom city name for weather information'
+                : 'Select a city from the list or choose "Custom city" to enter your own'
+              }
             </p>
           </div>
 
