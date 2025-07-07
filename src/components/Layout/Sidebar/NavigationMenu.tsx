@@ -42,6 +42,12 @@ const NavigationMenu: React.FC = () => {
       description: 'AI-powered conversations'
     },
     { 
+      icon: 'bx bx-calendar', 
+      label: 'Calendar', 
+      path: '/app/calendar',
+      description: 'Schedule and manage events'
+    },
+    { 
       icon: 'bx bx-bar-chart', 
       label: 'Analytics', 
       path: '/app/analytics',
