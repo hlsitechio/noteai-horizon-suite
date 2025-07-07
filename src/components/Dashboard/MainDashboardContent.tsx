@@ -1,6 +1,7 @@
 import React from 'react';
 import { PanelGroup, Panel } from 'react-resizable-panels';
 import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/resizable';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import KPIStats from './KPIStats';
 import { DashboardPanel } from './DashboardPanel';
 import { Note } from '@/types/note';
@@ -113,14 +114,18 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           minSize={isDashboardEditMode ? 20 : analyticsSize} 
           maxSize={isDashboardEditMode ? 50 : analyticsSize}
         >
-          <div className="p-3 md:p-6 h-full overflow-hidden">
-            <KPIStats
-              totalNotes={totalNotes}
-              favoriteNotes={favoriteNotes}
-              categoryCounts={categoryCounts}
-              weeklyNotes={weeklyNotes}
-              notes={notes}
-            />
+          <div className="h-full">
+            <ScrollArea className="h-full">
+              <div className="p-3 md:p-6">
+                <KPIStats
+                  totalNotes={totalNotes}
+                  favoriteNotes={favoriteNotes}
+                  categoryCounts={categoryCounts}
+                  weeklyNotes={weeklyNotes}
+                  notes={notes}
+                />
+              </div>
+            </ScrollArea>
           </div>
         </Panel>
         
@@ -151,7 +156,11 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
                 minSize={isDashboardEditMode ? 30 : leftPanelsSize}
                 maxSize={isDashboardEditMode ? 70 : leftPanelsSize}
               >
-                <DashboardPanel panelKey="topLeft" />
+                <div className="h-full">
+                  <ScrollArea className="h-full">
+                    <DashboardPanel panelKey="topLeft" />
+                  </ScrollArea>
+                </div>
               </Panel>
               
               {/* Only show resize handle when in edit mode - Always present */}
@@ -166,7 +175,11 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
                 minSize={isDashboardEditMode ? 30 : rightPanelsSize}
                 maxSize={isDashboardEditMode ? 70 : rightPanelsSize}
               >
-                <DashboardPanel panelKey="topRight" />
+                <div className="h-full">
+                  <ScrollArea className="h-full">
+                    <DashboardPanel panelKey="topRight" />
+                  </ScrollArea>
+                </div>
               </Panel>
             </PanelGroup>
           </div>
@@ -199,7 +212,11 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
                 minSize={isDashboardEditMode ? 30 : leftPanelsSize}
                 maxSize={isDashboardEditMode ? 70 : leftPanelsSize}
               >
-                <DashboardPanel panelKey="bottomLeft" />
+                <div className="h-full">
+                  <ScrollArea className="h-full">
+                    <DashboardPanel panelKey="bottomLeft" />
+                  </ScrollArea>
+                </div>
               </Panel>
               
               {/* Only show resize handle when in edit mode - Always present */}
@@ -214,7 +231,11 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
                 minSize={isDashboardEditMode ? 30 : rightPanelsSize}
                 maxSize={isDashboardEditMode ? 70 : rightPanelsSize}
               >
-                <DashboardPanel panelKey="bottomRight" />
+                <div className="h-full">
+                  <ScrollArea className="h-full">
+                    <DashboardPanel panelKey="bottomRight" />
+                  </ScrollArea>
+                </div>
               </Panel>
             </PanelGroup>
           </div>
