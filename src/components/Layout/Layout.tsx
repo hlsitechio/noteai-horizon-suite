@@ -12,7 +12,7 @@ const Layout: React.FC = () => {
   return (
     <div className="h-screen w-full bg-background overflow-hidden">
       <ResizableSidebarContainer
-        sidebarDefaultSize={25}
+        sidebarDefaultSize={18}
         sidebarMinSize={15}
         sidebarMaxSize={50}
         isEditMode={isSidebarEditMode}
