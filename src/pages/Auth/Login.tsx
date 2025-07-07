@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import loginBg from '../../assets/login-gradient-bg.jpg';
-import onlineNoteAILogo from '../../assets/online-note-ai-logo.png';
+import onaiLogo from '../../assets/onai-logo.png';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -75,7 +75,7 @@ const Login: React.FC = () => {
             {/* Logo */}
             <div className="space-y-4 text-center">
               <div className="w-24 h-24 rounded-2xl flex items-center justify-center mx-auto overflow-hidden">
-                <img src={onlineNoteAILogo} alt="Online Note AI Logo" className="w-full h-full object-contain" />
+                <img src={onaiLogo} alt="ONAi Logo" className="w-full h-full object-contain" />
               </div>
               <div className="space-y-2">
                 <h1 className="text-2xl font-bold text-foreground">
