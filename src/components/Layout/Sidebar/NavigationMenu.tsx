@@ -11,7 +11,18 @@ import 'boxicons/css/boxicons.min.css';
 const NavigationMenu: React.FC = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
-  const { isCollapsed, toggleCollapse } = useSidebarCollapse();
+  
+  // Add error handling for the context
+  let isCollapsed = false;
+  let toggleCollapse = () => {};
+  
+  try {
+    const sidebarContext = useSidebarCollapse();
+    isCollapsed = sidebarContext.isCollapsed;
+    toggleCollapse = sidebarContext.toggleCollapse;
+  } catch (error) {
+    console.error('SidebarContext not available:', error);
+  }
 
   const navigationItems = [
     { 
