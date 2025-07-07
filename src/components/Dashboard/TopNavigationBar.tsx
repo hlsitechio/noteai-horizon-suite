@@ -111,7 +111,10 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   };
 
   useEffect(() => {
-    fetchWeather(weatherCity);
+    console.log(`Weather useEffect triggered - City: ${weatherCity}, Units: ${weatherUnits}`);
+    if (weatherCity && weatherCity.trim()) {
+      fetchWeather(weatherCity);
+    }
   }, [weatherCity, weatherUnits]); // Re-fetch when city or units change
 
   const formatTime = (date: Date) => {
