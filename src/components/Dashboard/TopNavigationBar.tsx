@@ -28,6 +28,7 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [isLoadingWeather, setIsLoadingWeather] = useState(false);
   const [weatherUnits, setWeatherUnits] = useState<'celsius' | 'fahrenheit'>('celsius');
+  const [savedWeatherCity, setSavedWeatherCity] = useState<string>(weatherCity);
 
   // Load weather settings from localStorage
   useEffect(() => {
@@ -37,6 +38,9 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
         const settings = JSON.parse(savedSettings);
         if (settings.units) {
           setWeatherUnits(settings.units);
+        }
+        if (settings.city) {
+          setSavedWeatherCity(settings.city);
         }
       } catch (error) {
         console.error('Failed to load weather settings:', error);
@@ -52,6 +56,9 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
           const settings = JSON.parse(e.newValue);
           if (settings.units) {
             setWeatherUnits(settings.units);
+          }
+          if (settings.city) {
+            setSavedWeatherCity(settings.city);
           }
         } catch (error) {
           console.error('Failed to parse weather settings:', error);
@@ -114,11 +121,11 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   };
 
   useEffect(() => {
-    console.log(`Weather useEffect triggered - City: ${weatherCity}, Units: ${weatherUnits}`);
-    if (weatherCity && weatherCity.trim()) {
-      fetchWeather(weatherCity);
+    console.log(`Weather useEffect triggered - City: ${savedWeatherCity}, Units: ${weatherUnits}`);
+    if (savedWeatherCity && savedWeatherCity.trim()) {
+      fetchWeather(savedWeatherCity);
     }
-  }, [weatherCity, weatherUnits]); // Re-fetch when city or units change
+  }, [savedWeatherCity, weatherUnits]); // Re-fetch when city or units change
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
