@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Github, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import loginBg from '../../assets/login-gradient-bg.jpg';
+import onlineNoteAILogo from '../../assets/online-note-ai-logo.png';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -73,8 +74,8 @@ const Login: React.FC = () => {
           <div className="space-y-8">
             {/* Logo */}
             <div className="space-y-4 text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-2xl flex items-center justify-center mx-auto">
-                <Github className="text-primary-foreground w-8 h-8" />
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto overflow-hidden">
+                <img src={onlineNoteAILogo} alt="Online Note AI Logo" className="w-full h-full object-contain" />
               </div>
               <div className="space-y-2">
                 <h1 className="text-2xl font-bold text-foreground">
