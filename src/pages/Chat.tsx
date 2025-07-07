@@ -52,23 +52,19 @@ const Chat: React.FC = () => {
 
   // Monitor messages for note creation to show in preview
   useEffect(() => {
-    console.log('Checking messages for note creation:', messages.length);
-    const lastMessage = messages[messages.length - 1];
-    console.log('Last message:', lastMessage);
+    // Find the most recent AI message with actionResults (not just the last message)
+    const aiMessagesWithResults = messages.filter(msg => 
+      !msg.isUser && msg.actionResults && msg.actionResults.length > 0
+    );
     
-    if (lastMessage && !lastMessage.isUser && lastMessage.actionResults) {
-      console.log('Found AI message with action results:', lastMessage.actionResults);
+    if (aiMessagesWithResults.length > 0) {
+      const latestAiMessage = aiMessagesWithResults[aiMessagesWithResults.length - 1];
+      
       // Look for created notes in action results
-      lastMessage.actionResults.forEach((result, index) => {
-        console.log(`Checking result ${index}:`, result);
-        console.log(`Action type for index ${index}:`, lastMessage.actions?.[index]?.type);
-        
-        if (result.success && result.data && lastMessage.actions?.[index]?.type === 'create_note') {
-          console.log('Found create_note action, extracting note...');
+      latestAiMessage.actionResults!.forEach((result, index) => {
+        if (result.success && result.data && latestAiMessage.actions?.[index]?.type === 'create_note') {
           const note = extractNoteFromActionResult(result);
-          console.log('Extracted note:', note);
           if (note) {
-            console.log('Showing note in canva...');
             showNote(note);
           }
         }
