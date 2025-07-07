@@ -5,6 +5,7 @@ import ResizableSidebarContent from './ResizableSidebarContent';
 import ResizableSidebarHandle from './ResizableSidebarHandle';
 import { ResizableHandle as VerticalResizableHandle } from '@/components/ui/resizable';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useSidebarCollapse } from '@/contexts/SidebarContext';
 
 interface ResizableSidebarContainerProps {
   sidebarContent?: React.ReactNode;
@@ -33,11 +34,26 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const isMobile = useIsMobile();
+  const { isCollapsed } = useSidebarCollapse();
   
-  // Adjust sizes for mobile
-  const mobileAdjustedDefaultSize = isMobile ? 12 : sidebarDefaultSize;
-  const mobileAdjustedMinSize = isMobile ? 8 : sidebarMinSize;
-  const mobileAdjustedMaxSize = isMobile ? 15 : sidebarMaxSize;
+  // Adjust sizes for mobile and collapsed state
+  const getAdjustedSizes = () => {
+    if (isCollapsed) {
+      return {
+        defaultSize: 4,
+        minSize: 4,
+        maxSize: 4
+      };
+    }
+    
+    return {
+      defaultSize: isMobile ? 12 : sidebarDefaultSize,
+      minSize: isMobile ? 8 : sidebarMinSize,
+      maxSize: isMobile ? 15 : sidebarMaxSize
+    };
+  };
+  
+  const adjustedSizes = getAdjustedSizes();
 
   // Fix hydration mismatch - only enable storage after mount
   useEffect(() => {
@@ -86,9 +102,9 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
     >
       {/* Sidebar Panel */}
       <ResizableSidebarPanel
-        defaultSize={mobileAdjustedDefaultSize}
-        minSize={isEditMode ? mobileAdjustedMinSize : undefined}
-        maxSize={isEditMode ? mobileAdjustedMaxSize : undefined}
+        defaultSize={adjustedSizes.defaultSize}
+        minSize={isEditMode && !isCollapsed ? adjustedSizes.minSize : adjustedSizes.defaultSize}
+        maxSize={isEditMode && !isCollapsed ? adjustedSizes.maxSize : adjustedSizes.defaultSize}
         topPanelContent={enableVerticalResize ? sidebarTopContent : undefined}
         middlePanelContent={enableVerticalResize ? sidebarMiddleContent : undefined}
         bottomPanelContent={enableVerticalResize ? sidebarBottomContent : undefined}
@@ -105,7 +121,7 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
       </ResizableSidebarPanel>
       
       {/* Vertical Resize Handle - Conditionally rendered */}
-      {isEditMode && (
+      {isEditMode && !isCollapsed && (
         <ResizableSidebarHandle isEditMode={isEditMode} />
       )}
       

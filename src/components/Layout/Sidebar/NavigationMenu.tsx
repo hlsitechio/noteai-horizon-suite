@@ -4,11 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Link, useLocation } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useSidebarCollapse } from '@/contexts/SidebarContext';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import 'boxicons/css/boxicons.min.css';
 
 const NavigationMenu: React.FC = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { isCollapsed, toggleCollapse } = useSidebarCollapse();
 
   const navigationItems = [
     { 
@@ -57,6 +60,31 @@ const NavigationMenu: React.FC = () => {
 
   return (
     <div className="space-y-1">
+      {/* Collapse Button */}
+      <div className="px-2 mb-2">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleCollapse}
+              className="w-full h-10 px-3 flex items-center justify-start hover:bg-sidebar-accent/50"
+            >
+              {isCollapsed ? (
+                <PanelLeftOpen className="h-4 w-4" />
+              ) : (
+                <PanelLeftClose className="h-4 w-4" />
+              )}
+              {!isCollapsed && !isMobile && (
+                <span className="ml-3 text-sm">Collapse</span>
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p>{isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}</p>
+          </TooltipContent>
+        </Tooltip>
+      </div>
       
       <nav className="space-y-1">
         {navigationItems.map((item) => {
@@ -74,11 +102,11 @@ const NavigationMenu: React.FC = () => {
             }`}
           >
             <i className={`${item.icon} text-sm ${
-              isMobile ? '' : 'mr-3'
+              isMobile || isCollapsed ? '' : 'mr-3'
             } ${
               isActive ? 'text-sidebar-accent-foreground' : ''
             }`}></i>
-            {!isMobile && (
+            {!isMobile && !isCollapsed && (
               <div className="flex flex-col items-start">
                 <span className="text-sm font-medium">{item.label}</span>
                 <span className="text-xs text-sidebar-foreground/60">
@@ -91,7 +119,7 @@ const NavigationMenu: React.FC = () => {
 
         return (
           <Link key={item.path} to={item.path}>
-            {isMobile ? (
+            {isMobile || isCollapsed ? (
               <Tooltip>
                 <TooltipTrigger asChild>
                   {buttonContent}
