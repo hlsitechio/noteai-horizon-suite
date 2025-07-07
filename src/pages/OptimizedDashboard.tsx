@@ -42,6 +42,7 @@ const OptimizedDashboard: React.FC = () => {
       onImageSelect={handleImageSelect}
       selectedImageUrl={selectedBannerUrl}
       isEditMode={isDashboardEditMode}
+      onEditLayoutClick={() => setShowEditLayoutModal(true)}
     />
   ), [handleImageUpload, handleAIGenerate, handleVideoUpload, handleImageSelect, selectedBannerUrl, isDashboardEditMode]);
 

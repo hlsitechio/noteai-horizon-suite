@@ -76,7 +76,7 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
 
   return (
     <>
-      {/* Main Controls */}
+      {/* Main Controls - Only Components button now */}
       <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
         <DashboardSettings>
           <Button variant="ghost" size="sm" className="gap-2">
@@ -84,16 +84,6 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
             Components
           </Button>
         </DashboardSettings>
-        
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onEditLayoutClick}
-          className="gap-2 transition-all duration-200 hover:bg-accent"
-        >
-          <Edit3 className="h-4 w-4" />
-          Edit Layout
-        </Button>
       </div>
 
       {/* Edit Mode Indicator & Save Button */}

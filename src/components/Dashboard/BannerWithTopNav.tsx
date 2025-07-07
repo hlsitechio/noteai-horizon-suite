@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { TopNavigationBar } from './TopNavigationBar';
 import ResizableBannerSetup from './ResizableBanner/ResizableBannerSetup';
 import { WeatherSettings } from '@/components/Settings/WeatherSettings';
+import { Button } from '@/components/ui/button';
+import { Edit3 } from 'lucide-react';
 
 interface BannerWithTopNavProps {
   onImageUpload?: (file: File) => void;
@@ -10,6 +12,7 @@ interface BannerWithTopNavProps {
   onImageSelect?: (imageUrl: string) => void;
   selectedImageUrl?: string | null;
   isEditMode?: boolean;
+  onEditLayoutClick?: () => void;
 }
 
 export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
@@ -18,7 +21,8 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
   onVideoUpload,
   onImageSelect,
   selectedImageUrl,
-  isEditMode = false
+  isEditMode = false,
+  onEditLayoutClick
 }) => {
   const [weatherCity, setWeatherCity] = useState('New York');
 
@@ -71,7 +75,20 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
       </div>
       
       {/* Banner Content */}
-      <div className="flex-1">
+      <div className="flex-1 relative">
+        {/* Edit Layout Button positioned in banner area */}
+        {onEditLayoutClick && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onEditLayoutClick}
+            className="absolute top-2 right-2 z-40 gap-2 transition-all duration-200 hover:bg-accent bg-background/80 backdrop-blur-sm"
+          >
+            <Edit3 className="h-4 w-4" />
+            Edit Layout
+          </Button>
+        )}
+        
         <ResizableBannerSetup
           onImageUpload={onImageUpload}
           onAIGenerate={onAIGenerate}
