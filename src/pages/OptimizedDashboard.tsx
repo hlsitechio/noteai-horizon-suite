@@ -6,6 +6,9 @@ import {
   EditLayoutModal 
 } from '@/components/Dashboard';
 import { BannerWithTopNav } from '@/components/Dashboard/BannerWithTopNav';
+import { ResizableSidebarContainer } from '@/components/Layout/ResizableSidebar';
+import { Button } from '@/components/ui/button';
+import { LayoutDashboard, BarChart3, Settings } from 'lucide-react';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { useDashboardPanelSizes, useDashboardBanner } from '@/hooks';
@@ -60,8 +63,8 @@ const OptimizedDashboard: React.FC = () => {
     />
   ), [notes, panelSizes.analytics, panelSizes.topSection, panelSizes.bottomSection, panelSizes.leftPanels, panelSizes.rightPanels, isDashboardEditMode, handleMainContentResize, handleHorizontalResize]);
 
-  return (
-    <div className="w-full h-screen bg-background">
+  const dashboardMainContent = React.useMemo(() => (
+    <div className="h-full">
       <DashboardControls onEditLayoutClick={() => setShowEditLayoutModal(true)} />
       
       {/* Resizable Dashboard Container */}
@@ -76,6 +79,37 @@ const OptimizedDashboard: React.FC = () => {
           mainContent={memoizedMainContent}
         />
       </div>
+    </div>
+  ), [dashboardClassName, panelSizes.banner, isDashboardEditMode, handleBannerResize, memoizedBannerContent, memoizedMainContent]);
+
+  return (
+    <div className="w-full h-screen bg-background">
+      <ResizableSidebarContainer
+        sidebarDefaultSize={20}
+        sidebarMinSize={15}
+        sidebarMaxSize={35}
+        isEditMode={isDashboardEditMode}
+        sidebarContent={
+          <div className="p-4">
+            <h2 className="text-lg font-semibold mb-4">Dashboard Controls</h2>
+            <div className="space-y-2">
+              <Button variant="outline" size="sm" className="w-full justify-start">
+                <LayoutDashboard className="w-4 h-4 mr-2" />
+                Overview
+              </Button>
+              <Button variant="ghost" size="sm" className="w-full justify-start">
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Analytics
+              </Button>
+              <Button variant="ghost" size="sm" className="w-full justify-start">
+                <Settings className="w-4 h-4 mr-2" />
+                Settings
+              </Button>
+            </div>
+          </div>
+        }
+        mainContent={dashboardMainContent}
+      />
 
       {/* Edit Layout Modal */}
       <EditLayoutModal
