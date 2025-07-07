@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Enhanced performance optimizations
+    // Vite 6 optimized build configuration
     target: 'esnext',
     minify: 'terser',
     terserOptions: {
@@ -53,12 +53,15 @@ export default defineConfig(({ mode }) => ({
     },
     chunkSizeWarningLimit: 1000,
     sourcemap: mode === 'development',
+    // Vite 6: Enhanced CSS handling
+    cssCodeSplit: true,
+    cssMinify: true,
   },
   define: {
     // Remove development code in production
     __DEV__: mode === 'development',
   },
-  // Enhanced dependency optimization
+  // Vite 6: Enhanced dependency optimization
   optimizeDeps: {
     include: [
       'react',
@@ -67,5 +70,12 @@ export default defineConfig(({ mode }) => ({
       '@supabase/supabase-js',
     ],
     exclude: ['@vite/client', '@vite/env'],
+    force: mode === 'development',
+  },
+  // Vite 6: Improved performance settings
+  esbuild: {
+    target: 'esnext',
+    platform: 'browser',
+    format: 'esm',
   },
 }));
