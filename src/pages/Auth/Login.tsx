@@ -74,7 +74,7 @@ const Login: React.FC = () => {
           <div className="space-y-8">
             {/* Logo */}
             <div className="space-y-4 text-center">
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto overflow-hidden">
+              <div className="w-24 h-24 rounded-2xl flex items-center justify-center mx-auto overflow-hidden">
                 <img src={onlineNoteAILogo} alt="Online Note AI Logo" className="w-full h-full object-contain" />
               </div>
               <div className="space-y-2">
