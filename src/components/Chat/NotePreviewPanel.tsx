@@ -179,7 +179,7 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
             className="flex items-center gap-2"
           >
             <Eye className="w-4 h-4" />
-            Show Preview
+            Show Canva
           </Button>
         </div>
       </div>
@@ -194,7 +194,7 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText className="w-5 h-5 text-primary" />
-              <h3 className="font-semibold">Note Preview</h3>
+              <h3 className="font-semibold">Note Canva</h3>
             </div>
             <div className="flex items-center gap-1">
               <Button
@@ -384,9 +384,9 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
                   <FileText className="w-8 h-8 text-primary" />
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">No Note Selected</h4>
+                  <h4 className="font-semibold mb-2">No Note in Canva</h4>
                   <p className="text-sm text-muted-foreground">
-                    Ask the AI to create a note and it will appear here for preview and editing.
+                    Ask the AI to create a note in the canva and it will appear here for editing.
                   </p>
                 </div>
               </div>

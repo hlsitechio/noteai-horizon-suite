@@ -387,7 +387,7 @@ const Chat: React.FC = () => {
           </div>
         </div>
 
-        {/* Note Preview Panel */}
+        {/* Note Canva Panel */}
         <NotePreviewPanel
           note={currentNote}
           isVisible={isPreviewVisible}
