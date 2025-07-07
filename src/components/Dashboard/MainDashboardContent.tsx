@@ -4,6 +4,7 @@ import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/re
 import KPIStats from './KPIStats';
 import { DashboardPanel } from './DashboardPanel';
 import { Note } from '@/types/note';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MainDashboardContentProps {
   notes: Note[];
@@ -28,6 +29,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
   onMainContentResize,
   onHorizontalResize,
 }) => {
+  const isMobile = useIsMobile();
   // Calculate stats for KPIStats
   const totalNotes = notes.length;
   const favoriteNotes = notes.filter(note => note.tags?.includes('favorite')).length;
@@ -69,6 +71,32 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
     }
   }, [isDashboardEditMode, onHorizontalResize]);
 
+  // On mobile, render a simpler stacked layout
+  if (isMobile) {
+    return (
+      <div className="h-full overflow-y-auto">
+        {/* KPI Stats */}
+        <div className="p-3">
+          <KPIStats
+            totalNotes={totalNotes}
+            favoriteNotes={favoriteNotes}
+            categoryCounts={categoryCounts}
+            weeklyNotes={weeklyNotes}
+            notes={notes}
+          />
+        </div>
+        
+        {/* Dashboard Panels - Stacked on mobile */}
+        <div className="grid grid-cols-1 gap-3 p-3">
+          <DashboardPanel panelKey="topLeft" className="p-4" />
+          <DashboardPanel panelKey="topRight" className="p-4" />
+          <DashboardPanel panelKey="bottomLeft" className="p-4" />
+          <DashboardPanel panelKey="bottomRight" className="p-4" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full">
       <PanelGroup 
@@ -85,7 +113,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           minSize={isDashboardEditMode ? 20 : analyticsSize} 
           maxSize={isDashboardEditMode ? 50 : analyticsSize}
         >
-          <div className="p-6 h-full overflow-y-auto">
+          <div className="p-3 md:p-6 h-full overflow-y-auto">
             <KPIStats
               totalNotes={totalNotes}
               favoriteNotes={favoriteNotes}

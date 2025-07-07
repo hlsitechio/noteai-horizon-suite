@@ -2,10 +2,13 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link, useLocation } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import 'boxicons/css/boxicons.min.css';
 
 const NavigationMenu: React.FC = () => {
   const location = useLocation();
+  const isMobile = useIsMobile();
 
   const navigationItems = [
     { 
@@ -59,24 +62,50 @@ const NavigationMenu: React.FC = () => {
         {navigationItems.map((item) => {
         const isActive = location.pathname === item.path;
         
-        return (
-          <Link key={item.path} to={item.path}>
-            <Button
-              variant={isActive ? "secondary" : "ghost"}
-              className={`w-full justify-start transition-all duration-200 px-3 h-12 ${
-                isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'hover:bg-sidebar-accent/50'
-              }`}
-            >
-              <i className={`${item.icon} text-sm mr-3 ${
-                isActive ? 'text-sidebar-accent-foreground' : ''
-              }`}></i>
+        const buttonContent = (
+          <Button
+            variant={isActive ? "secondary" : "ghost"}
+            className={`w-full transition-all duration-200 ${
+              isMobile 
+                ? 'justify-center px-2 h-10' 
+                : 'justify-start px-3 h-12'
+            } ${
+              isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'hover:bg-sidebar-accent/50'
+            }`}
+          >
+            <i className={`${item.icon} text-sm ${
+              isMobile ? '' : 'mr-3'
+            } ${
+              isActive ? 'text-sidebar-accent-foreground' : ''
+            }`}></i>
+            {!isMobile && (
               <div className="flex flex-col items-start">
                 <span className="text-sm font-medium">{item.label}</span>
                 <span className="text-xs text-sidebar-foreground/60">
                   {item.description}
                 </span>
               </div>
-            </Button>
+            )}
+          </Button>
+        );
+
+        return (
+          <Link key={item.path} to={item.path}>
+            {isMobile ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {buttonContent}
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <div>
+                    <p className="font-medium">{item.label}</p>
+                    <p className="text-xs text-muted-foreground">{item.description}</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              buttonContent
+            )}
           </Link>
         );
         })}

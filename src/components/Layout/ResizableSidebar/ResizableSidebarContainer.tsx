@@ -4,6 +4,7 @@ import ResizableSidebarPanel from './ResizableSidebarPanel';
 import ResizableSidebarContent from './ResizableSidebarContent';
 import ResizableSidebarHandle from './ResizableSidebarHandle';
 import { ResizableHandle as VerticalResizableHandle } from '@/components/ui/resizable';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ResizableSidebarContainerProps {
   sidebarContent?: React.ReactNode;
@@ -31,6 +32,12 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
   enableVerticalResize = false
 }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const isMobile = useIsMobile();
+  
+  // Adjust sizes for mobile
+  const mobileAdjustedDefaultSize = isMobile ? 12 : sidebarDefaultSize;
+  const mobileAdjustedMinSize = isMobile ? 8 : sidebarMinSize;
+  const mobileAdjustedMaxSize = isMobile ? 15 : sidebarMaxSize;
 
   // Fix hydration mismatch - only enable storage after mount
   useEffect(() => {
@@ -79,9 +86,9 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
     >
       {/* Sidebar Panel */}
       <ResizableSidebarPanel
-        defaultSize={sidebarDefaultSize}
-        minSize={isEditMode ? sidebarMinSize : undefined}
-        maxSize={isEditMode ? sidebarMaxSize : undefined}
+        defaultSize={mobileAdjustedDefaultSize}
+        minSize={isEditMode ? mobileAdjustedMinSize : undefined}
+        maxSize={isEditMode ? mobileAdjustedMaxSize : undefined}
         topPanelContent={enableVerticalResize ? sidebarTopContent : undefined}
         middlePanelContent={enableVerticalResize ? sidebarMiddleContent : undefined}
         bottomPanelContent={enableVerticalResize ? sidebarBottomContent : undefined}
