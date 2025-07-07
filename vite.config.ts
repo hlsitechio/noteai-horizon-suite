@@ -15,6 +15,10 @@ export default defineConfig(({ mode }) => ({
       'X-XSS-Protection': '1; mode=block',
       'Referrer-Policy': 'strict-origin-when-cross-origin',
     },
+    // Vite 6: Fix WebSocket token issue
+    hmr: {
+      port: 8080,
+    },
   },
   plugins: [
     react(),
