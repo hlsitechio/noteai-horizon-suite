@@ -16,7 +16,7 @@ export function useRAFThrottle<T extends (...args: any[]) => void>(
   callback: T,
   deps: React.DependencyList
 ): T {
-  const throttledRef = useRef<T>();
+  const throttledRef = useRef<T | null>(null);
   
   useLayoutEffect(() => {
     throttledRef.current = rafThrottle(callback);
@@ -36,7 +36,7 @@ export function useLodashDebounce<T extends (...args: any[]) => void>(
   delay: number,
   options?: { leading?: boolean; trailing?: boolean; maxWait?: number }
 ): T {
-  const debouncedRef = useRef<T>();
+  const debouncedRef = useRef<T | null>(null);
   
   useLayoutEffect(() => {
     debouncedRef.current = debounce(callback, delay, options) as any;
@@ -59,7 +59,7 @@ export function useLodashThrottle<T extends (...args: any[]) => void>(
   delay: number,
   options?: { leading?: boolean; trailing?: boolean }
 ): T {
-  const throttledRef = useRef<T>();
+  const throttledRef = useRef<T | null>(null);
   
   useLayoutEffect(() => {
     throttledRef.current = throttle(callback, delay, options) as any;

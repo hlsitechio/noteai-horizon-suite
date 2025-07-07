@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 export const useDashboardPanelSizes = () => {
   const { settings, updateSidebarPanelSizes } = useDashboardSettings();
   const { handlePanelSizeSave } = useEditMode();
-  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hasUserInteractedRef = useRef(false);
   
   // Get saved panel sizes from settings

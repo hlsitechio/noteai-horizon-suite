@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { Droppable } from 'react-beautiful-dnd';
+import { Droppable, DroppableProvided, DroppableStateSnapshot } from 'react-beautiful-dnd';
 import { useDragDropReady } from '../UnifiedDragDropProvider';
 
 interface SafeDroppableWrapperProps {
   droppableId: string;
-  children: (provided: any, snapshot: any) => React.ReactElement;
+  children: (provided: DroppableProvided, snapshot: DroppableStateSnapshot) => React.ReactElement<HTMLElement>;
   fallbackChildren: React.ReactNode;
 }
 

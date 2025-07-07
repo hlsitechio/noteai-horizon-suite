@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 export const useFocusModeTimer = (isOpen: boolean) => {
   const [timeSpent, setTimeSpent] = useState(0);
   const timeStartRef = useRef<number>(Date.now());
-  const timeIntervalRef = useRef<NodeJS.Timeout>();
+  const timeIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (isOpen) {

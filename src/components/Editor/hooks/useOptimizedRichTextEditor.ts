@@ -27,7 +27,7 @@ export const useOptimizedRichTextEditor = ({
 
   // Refs for performance
   const previousValueRef = useRef(value);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout>();
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Core editor hooks
   const {

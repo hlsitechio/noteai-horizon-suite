@@ -17,7 +17,7 @@ export function SidebarMain() {
   const isMobile = useIsMobile();
   const { isSidebarEditMode, setIsSidebarEditMode } = useEditMode();
   const { settings, updateSidebarPanelSizes, isLoading } = useDashboardSettings();
-  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hasUserInteractedRef = useRef(false);
   const [isMounted, setIsMounted] = useState(false);
 

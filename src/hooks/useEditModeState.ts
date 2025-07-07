@@ -8,7 +8,7 @@ export const useEditModeState = () => {
   const [isDashboardEditMode, setIsDashboardEditMode] = useState(false);
   const [isSidebarEditMode, setIsSidebarEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load edit mode states from Supabase
   const loadEditModes = useCallback(async () => {

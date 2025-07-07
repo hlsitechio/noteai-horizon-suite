@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 
 export const useFocusModeControls = (isZenMode: boolean) => {
   const [isControlsVisible, setIsControlsVisible] = useState(true);
-  const hideControlsTimeoutRef = useRef<NodeJS.Timeout>();
+  const hideControlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (isZenMode) {

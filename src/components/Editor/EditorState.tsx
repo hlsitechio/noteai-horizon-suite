@@ -21,8 +21,8 @@ export const useEditorState = () => {
   const [isAssistantCollapsed, setIsAssistantCollapsed] = useState(false);
   
   // References to trigger AI assistant collapse/expand
-  const collapseAssistantRef = useRef<() => void>();
-  const expandAssistantRef = useRef<() => void>();
+  const collapseAssistantRef = useRef<() => void>(() => {});
+  const expandAssistantRef = useRef<() => void>(() => {});
 
   // Load current note when it changes
   useEffect(() => {

@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { Draggable } from 'react-beautiful-dnd';
+import { Draggable, DraggableProvided, DraggableStateSnapshot, DraggableRubric } from 'react-beautiful-dnd';
 import { useDragDropReady } from '../UnifiedDragDropProvider';
 
 interface SafeDraggableWrapperProps {
   draggableId: string;
   index: number;
-  children: (provided: any, snapshot: any, rubric: any) => React.ReactElement;
+  children: (provided: DraggableProvided, snapshot: DraggableStateSnapshot, rubric: DraggableRubric) => React.ReactElement<HTMLElement>;
   fallbackChildren: React.ReactNode;
 }
 
