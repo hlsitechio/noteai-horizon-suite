@@ -85,14 +85,54 @@ const Chat: React.FC = () => {
   };
 
   const quickActions = [
-    "Create a note about today's meeting",
-    "Remind me to call John tomorrow at 2pm",
-    "Find my notes about project planning",
-    "Set a reminder for my dentist appointment next week",
-    "Improve this text: Writing can be hard sometimes",
-    "Summarize this paragraph: [paste your text here]",
-    "Translate this to Spanish: Hello, how are you?",
-    "Check grammar: Their going to the store tomorrow"
+    {
+      text: "Create a note about today's meeting",
+      icon: FileText,
+      category: "Notes",
+      color: "text-blue-500"
+    },
+    {
+      text: "Remind me to call John tomorrow at 2pm",
+      icon: Clock,
+      category: "Reminders",
+      color: "text-orange-500"
+    },
+    {
+      text: "Find my notes about project planning",
+      icon: Search,
+      category: "Search",
+      color: "text-green-500"
+    },
+    {
+      text: "Set a reminder for my dentist appointment next week",
+      icon: Clock,
+      category: "Reminders",
+      color: "text-orange-500"
+    },
+    {
+      text: "Improve this text: Writing can be hard sometimes",
+      icon: PenTool,
+      category: "Writing",
+      color: "text-purple-500"
+    },
+    {
+      text: "Summarize this paragraph: [paste your text here]",
+      icon: BookOpen,
+      category: "Writing",
+      color: "text-purple-500"
+    },
+    {
+      text: "Translate this to Spanish: Hello, how are you?",
+      icon: Languages,
+      category: "Language",
+      color: "text-pink-500"
+    },
+    {
+      text: "Check grammar: Their going to the store tomorrow",
+      icon: Zap,
+      category: "Writing",
+      color: "text-purple-500"
+    }
   ];
 
   return (
@@ -140,21 +180,44 @@ const Chat: React.FC = () => {
               <ScrollArea className="flex-1 mb-4">
                 <div className="space-y-4">
                   {messages.length === 0 ? (
-                    <div className="text-center text-muted-foreground py-8">
-                      <Sparkles className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                      <p className="mb-4">I can help you create notes, set reminders, organize your thoughts, and assist with writing tasks!</p>
-                      <div className="grid grid-cols-1 gap-2 max-w-md mx-auto">
-                        {quickActions.map((action, index) => (
-                          <Button 
-                            key={index}
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => setMessage(action)}
-                            className="text-left justify-start h-auto py-2 px-3 text-xs"
-                          >
-                            {action}
-                          </Button>
-                        ))}
+                    <div className="text-center py-8">
+                      <div className="max-w-16 mx-auto mb-6 p-4 rounded-full bg-gradient-to-br from-primary/10 to-primary/5">
+                        <Sparkles className="w-8 h-8 mx-auto text-primary" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-foreground mb-2">Welcome to AI Assistant</h3>
+                      <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                        I can help you create notes, set reminders, organize your thoughts, and assist with writing tasks!
+                      </p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl mx-auto">
+                        {quickActions.map((action, index) => {
+                          const IconComponent = action.icon;
+                          return (
+                            <Card
+                              key={index}
+                              className="group cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-[1.02] border-muted/40 hover:border-primary/20"
+                              onClick={() => setMessage(action.text)}
+                            >
+                              <CardContent className="p-4">
+                                <div className="flex items-start gap-3">
+                                  <div className={`p-2 rounded-lg bg-muted/50 group-hover:bg-primary/10 transition-colors ${action.color}`}>
+                                    <IconComponent className="w-4 h-4" />
+                                  </div>
+                                  <div className="flex-1 text-left">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <Badge variant="secondary" className="text-xs">
+                                        {action.category}
+                                      </Badge>
+                                    </div>
+                                    <p className="text-sm text-foreground leading-relaxed">
+                                      {action.text}
+                                    </p>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
                       </div>
                     </div>
                   ) : (
