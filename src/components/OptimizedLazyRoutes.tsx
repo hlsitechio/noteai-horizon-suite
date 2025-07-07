@@ -34,6 +34,7 @@ const Features = lazy(() => import('../pages/Features'));
 const Pricing = lazy(() => import('../pages/Pricing'));
 const About = lazy(() => import('../pages/About'));
 const EditorControlsTest = lazy(() => import('./Editor/EditorControlsTest'));
+const ComponentGallery = lazy(() => import('../pages/ComponentGallery'));
 const MobileApp = lazy(() => import('../mobile/MobileApp'));
 
 // Enhanced loading fallback with better UX
@@ -152,6 +153,7 @@ export const OptimizedLazyRoutes: React.FC = () => {
           
           <Route path="projects/:id" element={<ProjectDetail />} />
           <Route path="folders/:id" element={<FolderDetail />} />
+          <Route path="component-gallery" element={<ComponentGallery />} />
           <Route path="editor-test" element={<EditorControlsTest />} />
         </Route>
 
