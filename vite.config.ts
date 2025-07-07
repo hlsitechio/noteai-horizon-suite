@@ -27,8 +27,8 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Enhanced performance optimizations - Vite 6 compatible
-    target: 'baseline-widely-available', // Updated for Vite 6
+    // Enhanced performance optimizations
+    target: 'esnext',
     minify: 'terser',
     terserOptions: {
       compress: {
