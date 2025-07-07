@@ -1,12 +1,17 @@
 import React, { useRef, useEffect, useState } from 'react';
 import {
   TooltipProvider,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { Button } from '@/components/ui/button';
 import { PanelGroup, Panel } from 'react-resizable-panels';
 import { ResizableHandle } from '@/components/ui/resizable';
 import NavigationMenu from './NavigationMenu';
 import { SidebarFooter as CustomSidebarFooter } from './SidebarFooter';
 import { NotesSection } from './NotesSection';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 
 import { useEditMode } from '@/contexts/EditModeContext';
 import { useDashboardSettings } from '@/hooks/useDashboardSettings';
@@ -20,6 +25,19 @@ export function SidebarMain() {
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hasUserInteractedRef = useRef(false);
   const [isMounted, setIsMounted] = useState(false);
+  
+  // Add error handling for the context
+  let isCollapsed = false;
+  let toggleCollapse = () => {};
+  
+  try {
+    const { useSidebarCollapse } = require('@/contexts/SidebarContext');
+    const sidebarContext = useSidebarCollapse();
+    isCollapsed = sidebarContext.isCollapsed;
+    toggleCollapse = sidebarContext.toggleCollapse;
+  } catch (error) {
+    console.error('SidebarContext not available:', error);
+  }
 
   // Fix hydration mismatch - only enable storage after mount
   useEffect(() => {
@@ -150,7 +168,29 @@ export function SidebarMain() {
 
   return (
     <TooltipProvider>
-      <div className="h-full bg-sidebar">
+      <div className="h-full bg-sidebar relative">
+        {/* Collapse Button - Positioned at sidebar border */}
+        <div className="absolute top-4 -right-3 z-10">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleCollapse}
+                className="h-6 w-6 p-0 rounded-full border bg-background shadow-md hover:bg-accent"
+              >
+                {isCollapsed ? (
+                  <PanelLeftOpen className="h-3 w-3" />
+                ) : (
+                  <PanelLeftClose className="h-3 w-3" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>{isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
         <PanelGroup 
           direction="vertical" 
           className="h-full"
