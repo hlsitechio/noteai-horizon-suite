@@ -21,6 +21,17 @@ interface WeatherResponse {
   forecast?: any[];
 }
 
+// Predefined cities with exact coordinates
+const PREDEFINED_CITIES = {
+  'Paris': { lat: 48.856663, lng: 2.351556, displayName: 'Paris, France' },
+  'London': { lat: 51.509865, lng: -0.118092, displayName: 'London, United Kingdom' },
+  'New York': { lat: 40.7127281, lng: -74.0060152, displayName: 'New York, United States' },
+  'Los Angeles': { lat: 34.0536909, lng: -118.242766, displayName: 'Los Angeles, United States' },
+  'Montreal': { lat: 45.508888, lng: -73.561668, displayName: 'Montreal, Canada' },
+  'Toronto': { lat: 43.651070, lng: -79.347015, displayName: 'Toronto, Canada' },
+  'Ottawa': { lat: 45.424721, lng: -75.695000, displayName: 'Ottawa, Canada' }
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -54,11 +65,28 @@ serve(async (req) => {
 
     console.log(`Fetching weather for city: ${city}, units: ${units}, forecast: ${forecast}`);
 
+    // Check if it's a predefined city with coordinates
+    const predefinedCity = PREDEFINED_CITIES[city as keyof typeof PREDEFINED_CITIES];
+    let locationParam: string;
+    let cityDisplayName: string;
+
+    if (predefinedCity) {
+      // Use coordinates for predefined cities for more accuracy
+      locationParam = `${predefinedCity.lat},${predefinedCity.lng}`;
+      cityDisplayName = predefinedCity.displayName;
+      console.log(`Using coordinates for ${city}: ${locationParam}`);
+    } else {
+      // Use city name for custom cities
+      locationParam = encodeURIComponent(city);
+      cityDisplayName = city;
+      console.log(`Using city name for custom location: ${city}`);
+    }
+
     // Tomorrow.io API endpoints - Using the official documented endpoints
     const baseUrl = 'https://api.tomorrow.io/v4';
     
-    // Use the official realtime weather endpoint
-    const realtimeUrl = `${baseUrl}/weather/realtime?location=${encodeURIComponent(city)}&units=${units}&apikey=${apiKey}`;
+    // Use the official realtime weather endpoint with coordinates or city name
+    const realtimeUrl = `${baseUrl}/weather/realtime?location=${locationParam}&units=${units}&apikey=${apiKey}`;
     
     console.log('Fetching from Tomorrow.io Realtime API...');
     const realtimeResponse = await fetch(realtimeUrl, {
@@ -142,7 +170,7 @@ serve(async (req) => {
 
     const weatherResponse: WeatherResponse = {
       temperature,
-      city: location?.name || city,
+      city: cityDisplayName, // Use our display name for predefined cities
       condition: getWeatherCondition(values.weatherCode || 1000),
       humidity: values.humidity ? Math.round(values.humidity) : undefined,
       windSpeed: values.windSpeed ? Math.round(values.windSpeed * 10) / 10 : undefined,
@@ -152,7 +180,7 @@ serve(async (req) => {
     // Add forecast data if requested using the forecast endpoint
     if (forecast) {
       try {
-        const forecastUrl = `${baseUrl}/weather/forecast?location=${encodeURIComponent(city)}&timesteps=1d&units=${units}&apikey=${apiKey}`;
+        const forecastUrl = `${baseUrl}/weather/forecast?location=${locationParam}&timesteps=1d&units=${units}&apikey=${apiKey}`;
         const forecastResponse = await fetch(forecastUrl, {
           method: 'GET',
           headers: {
