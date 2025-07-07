@@ -76,15 +76,7 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
 
   return (
     <>
-      {/* Main Controls - Only Components button now */}
-      <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
-        <DashboardSettings>
-          <Button variant="ghost" size="sm" className="gap-2">
-            <Settings className="h-4 w-4" />
-            Components
-          </Button>
-        </DashboardSettings>
-      </div>
+      {/* No controls here anymore - moved to banner */}
 
       {/* Edit Mode Indicator & Save Button */}
       {hasActiveEditMode && (

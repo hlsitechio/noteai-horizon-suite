@@ -3,7 +3,8 @@ import { TopNavigationBar } from './TopNavigationBar';
 import ResizableBannerSetup from './ResizableBanner/ResizableBannerSetup';
 import { WeatherSettings } from '@/components/Settings/WeatherSettings';
 import { Button } from '@/components/ui/button';
-import { Edit3 } from 'lucide-react';
+import { Edit3, Settings } from 'lucide-react';
+import DashboardSettings from './DashboardSettings';
 
 interface BannerWithTopNavProps {
   onImageUpload?: (file: File) => void;
@@ -76,18 +77,31 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
       
       {/* Banner Content */}
       <div className="flex-1 relative">
-        {/* Edit Layout Button positioned in banner area */}
-        {onEditLayoutClick && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onEditLayoutClick}
-            className="absolute top-2 right-2 z-40 gap-2 transition-all duration-200 hover:bg-accent bg-background/80 backdrop-blur-sm"
-          >
-            <Edit3 className="h-4 w-4" />
-            Edit Layout
-          </Button>
-        )}
+        {/* Control buttons positioned in banner area */}
+        <div className="absolute top-2 right-2 z-40 flex items-center gap-2">
+          <DashboardSettings>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="gap-2 transition-all duration-200 hover:bg-accent bg-background/80 backdrop-blur-sm"
+            >
+              <Settings className="h-4 w-4" />
+              Components
+            </Button>
+          </DashboardSettings>
+          
+          {onEditLayoutClick && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onEditLayoutClick}
+              className="gap-2 transition-all duration-200 hover:bg-accent bg-background/80 backdrop-blur-sm"
+            >
+              <Edit3 className="h-4 w-4" />
+              Edit Layout
+            </Button>
+          )}
+        </div>
         
         <ResizableBannerSetup
           onImageUpload={onImageUpload}
