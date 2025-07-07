@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Cloud, Save, RefreshCw, Key, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface WeatherSettingsProps {
   onSettingsChange?: (settings: WeatherSettings) => void;
@@ -16,7 +17,6 @@ interface WeatherSettingsProps {
 export interface WeatherSettings {
   enabled: boolean;
   city: string;
-  apiKey: string;
   units: 'celsius' | 'fahrenheit';
   updateInterval: number; // minutes
 }
@@ -24,7 +24,6 @@ export interface WeatherSettings {
 const DEFAULT_SETTINGS: WeatherSettings = {
   enabled: true,
   city: 'New York',
-  apiKey: '',
   units: 'celsius',
   updateInterval: 30
 };
@@ -59,11 +58,6 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
   };
 
   const testConnection = async () => {
-    if (!settings.apiKey.trim()) {
-      toast.error('Please enter your Tomorrow.io API key first');
-      return;
-    }
-
     if (!settings.city.trim()) {
       toast.error('Please enter a city name');
       return;
@@ -73,19 +67,31 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
     setConnectionStatus('idle');
 
     try {
-      // This will be implemented with actual Tomorrow.io API call
-      // For now, simulating the test
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log(`Testing weather connection for: ${settings.city}`);
       
-      // Simulate success/failure based on API key format
-      if (settings.apiKey.length > 10) {
+      const { data, error } = await supabase.functions.invoke('weather-api', {
+        body: { 
+          city: settings.city.trim(),
+          units: settings.units === 'celsius' ? 'metric' : 'imperial'
+        }
+      });
+
+      if (error) {
+        console.error('Weather API test error:', error);
+        setConnectionStatus('error');
+        toast.error(`Connection test failed: ${error.message}`);
+        return;
+      }
+
+      if (data && data.temperature !== undefined) {
         setConnectionStatus('success');
-        toast.success(`Weather connection test successful for ${settings.city}`);
+        toast.success(`Weather connection successful! Current temperature in ${data.city}: ${data.temperature}°${settings.units === 'celsius' ? 'C' : 'F'}`);
       } else {
         setConnectionStatus('error');
-        toast.error('Invalid API key format');
+        toast.error('Invalid response from weather service');
       }
     } catch (error) {
+      console.error('Weather test connection error:', error);
       setConnectionStatus('error');
       toast.error('Failed to connect to weather service');
     } finally {
@@ -125,33 +131,16 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
 
         <Separator />
 
-        {/* API Configuration */}
+        {/* API Information */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Key className="h-4 w-4" />
-            <h4 className="font-medium">Tomorrow.io API Configuration</h4>
+            <h4 className="font-medium">API Configuration</h4>
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="api-key">API Key</Label>
-            <Input
-              id="api-key"
-              type="password"
-              placeholder="Enter your Tomorrow.io API key"
-              value={settings.apiKey}
-              onChange={(e) => updateSetting('apiKey', e.target.value)}
-              disabled={!settings.enabled}
-            />
-            <p className="text-xs text-muted-foreground">
-              Get your API key from{' '}
-              <a 
-                href="https://app.tomorrow.io/development/keys" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                Tomorrow.io Dashboard
-              </a>
+          <div className="p-3 rounded-lg bg-muted/50 border">
+            <p className="text-sm text-muted-foreground">
+              Weather data is powered by Tomorrow.io API. The API key is securely configured on the server.
             </p>
           </div>
         </div>
@@ -241,7 +230,7 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
           <Button
             variant="outline"
             onClick={testConnection}
-            disabled={!settings.enabled || isTestingConnection || !settings.apiKey.trim()}
+            disabled={!settings.enabled || isTestingConnection || !settings.city.trim()}
             className="w-full"
           >
             {isTestingConnection ? (
@@ -263,7 +252,7 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
               <div className="text-sm">
                 <p className="font-medium text-destructive">Connection Failed</p>
                 <p className="text-muted-foreground">
-                  Please check your API key and city name, then try again.
+                  Please check your city name and try again. Make sure the city name is spelled correctly.
                 </p>
               </div>
             </div>
