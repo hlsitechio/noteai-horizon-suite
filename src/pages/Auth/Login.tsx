@@ -1,71 +1,82 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+
 import loginBg from '../../assets/login-gradient-bg.jpg';
 import onaiLogo from '../../assets/onai-logo.png';
 
+const loginSchema = z.object({
+  email: z.string().email({ message: 'Invalid email address' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+});
+
+type LoginFormInputs = z.infer<typeof loginSchema>;
+
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { login, isLoading, isAuthenticated } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { login, isAuthenticated, isLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormInputs>({
+    resolver: zodResolver(loginSchema),
+  });
 
   // Redirect if already authenticated
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAuthenticated && !isLoading) {
-      console.log('User already authenticated, redirecting...');
       navigate('/app/dashboard', { replace: true });
     }
   }, [isAuthenticated, isLoading, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (isSubmitting || !email.trim() || !password.trim()) {
-      return;
-    }
+  const onSubmit = async (data: LoginFormInputs) => {
+    setIsSubmitting(true);
+    setFormError(null);
 
     try {
-      setIsSubmitting(true);
-      console.log('Attempting login for:', email);
-      
-      const success = await login(email.trim(), password);
-      
+      const success = await login(data.email.trim(), data.password);
+
       if (success) {
-        console.log('Login successful, navigating to dashboard');
         navigate('/app/dashboard', { replace: true });
       } else {
-        console.log('Login failed');
+        setFormError('Invalid email or password. Please try again.');
       }
-    } catch (error) {
-      console.error('Login error:', error);
+    } catch (err) {
+      console.error('Login failed:', err);
+      setFormError('An unexpected error occurred. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Show loading while checking authentication
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-muted to-accent/10 flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-muted to-accent/10">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
+          <div className="animate-spin h-12 w-12 border-b-2 border-primary rounded-full mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Checking authentication...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div 
+    <div
       className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${loginBg})` }}
     >
@@ -73,77 +84,81 @@ const Login: React.FC = () => {
         <CardContent className="p-8">
           <div className="space-y-8">
             {/* Logo */}
-            <div className="space-y-4 text-center">
-              <div className="w-24 h-24 rounded-2xl flex items-center justify-center mx-auto overflow-hidden">
+            <div className="text-center space-y-4">
+              <div className="w-24 h-24 mx-auto overflow-hidden rounded-2xl flex items-center justify-center">
                 <img src={onaiLogo} alt="ONAi Logo" className="w-full h-full object-contain" />
               </div>
-              <div className="space-y-2">
-                <h1 className="text-2xl font-bold text-foreground">
-                  Online Note AI
-                </h1>
-                <p className="text-muted-foreground">
-                  Sign in to access your AI-powered notes
-                </p>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Online Note AI</h1>
+                <p className="text-muted-foreground">Sign in to access your AI-powered notes</p>
               </div>
             </div>
 
             {/* Info Alert */}
             <Alert>
               <AlertDescription>
-                Create an account or sign in with your existing credentials. Email verification may be required for new accounts.
+                Create an account or sign in with your existing credentials. Email verification may be required.
               </AlertDescription>
             </Alert>
 
+            {/* Error Alert */}
+            {formError && (
+              <Alert variant="destructive">
+                <AlertTitle>Login Failed</AlertTitle>
+                <AlertDescription>{formError}</AlertDescription>
+              </Alert>
+            )}
+
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="email" className="text-sm text-muted-foreground mb-2 block">
+                  <label htmlFor="email" className="block text-sm text-muted-foreground mb-1">
                     Email
                   </label>
                   <Input
                     id="email"
-                    name="email"
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    className="rounded-xl bg-input border-border focus:bg-background focus:border-ring focus:ring-2 focus:ring-ring"
-                    required
-                    disabled={isSubmitting}
                     autoComplete="email"
+                    disabled={isSubmitting}
+                    placeholder="you@example.com"
+                    {...register('email')}
+                    className={`rounded-xl ${errors.email ? 'border-destructive' : ''}`}
                   />
+                  {errors.email && (
+                    <p className="text-xs text-destructive mt-1">{errors.email.message}</p>
+                  )}
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="text-sm text-muted-foreground mb-2 block">
+                  <label htmlFor="password" className="block text-sm text-muted-foreground mb-1">
                     Password
                   </label>
                   <div className="relative">
                     <Input
                       id="password"
-                      name="password"
                       type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your password"
-                      className="rounded-xl bg-input border-border focus:bg-background focus:border-ring focus:ring-2 focus:ring-ring pr-10 text-foreground"
-                      required
-                      disabled={isSubmitting}
                       autoComplete="current-password"
+                      disabled={isSubmitting}
+                      placeholder="••••••••"
+                      {...register('password')}
+                      className={`rounded-xl pr-10 ${errors.password ? 'border-destructive' : ''}`}
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                      onClick={() => setShowPassword(!showPassword)}
-                      disabled={isSubmitting}
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2"
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      disabled={isSubmitting}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </Button>
                   </div>
+                  {errors.password && (
+                    <p className="text-xs text-destructive mt-1">{errors.password.message}</p>
+                  )}
                 </div>
               </div>
 
@@ -151,24 +166,22 @@ const Login: React.FC = () => {
                 type="submit"
                 size="lg"
                 className="w-full rounded-xl"
-                disabled={isSubmitting || isLoading || !email.trim() || !password.trim()}
+                disabled={isSubmitting}
               >
                 {isSubmitting ? 'Signing in...' : 'Sign In'}
               </Button>
             </form>
 
             {/* Footer */}
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground">
-                Don't have an account?{' '}
-                <button
-                  className="text-primary font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded"
-                  onClick={() => navigate('/register')}
-                  disabled={isSubmitting}
-                >
-                  Sign up
-                </button>
-              </p>
+            <div className="text-center text-sm text-muted-foreground">
+              Don't have an account?{' '}
+              <button
+                onClick={() => navigate('/register')}
+                className="text-primary font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded"
+                disabled={isSubmitting}
+              >
+                Sign up
+              </button>
             </div>
           </div>
         </CardContent>
