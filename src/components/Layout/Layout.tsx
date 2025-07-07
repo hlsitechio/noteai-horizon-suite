@@ -10,7 +10,7 @@ const Layout: React.FC = () => {
   const { isSidebarEditMode } = useEditMode();
   
   return (
-    <div className="min-h-screen w-full bg-background">
+    <div className="h-screen w-full bg-background overflow-hidden">
       <ResizableSidebarContainer
         sidebarDefaultSize={25}
         sidebarMinSize={15}
@@ -18,7 +18,7 @@ const Layout: React.FC = () => {
         isEditMode={isSidebarEditMode}
         sidebarContent={<SidebarMain />}
         mainContent={
-          <div className="h-full w-full">
+          <div className="h-full w-full overflow-auto">
             <Outlet />
           </div>
         }
