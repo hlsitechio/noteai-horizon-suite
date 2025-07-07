@@ -72,7 +72,8 @@ serve(async (req) => {
 
     if (predefinedCity) {
       // Use coordinates for predefined cities for more accuracy
-      locationParam = `${predefinedCity.lat},${predefinedCity.lng}`;
+      // Format: "lat, lng" (with space after comma as per Tomorrow.io docs)
+      locationParam = `${predefinedCity.lat}, ${predefinedCity.lng}`;
       cityDisplayName = predefinedCity.displayName;
       console.log(`Using coordinates for ${city}: ${locationParam}`);
     } else {
