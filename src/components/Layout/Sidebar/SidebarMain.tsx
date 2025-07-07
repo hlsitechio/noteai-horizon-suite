@@ -169,8 +169,8 @@ export function SidebarMain() {
   return (
     <TooltipProvider>
       <div className="h-full bg-sidebar relative">
-        {/* Collapse Button - Positioned at sidebar border */}
-        <div className="absolute top-4 -right-3 z-10">
+        {/* Collapse Button - Positioned at sidebar border, below top navigation */}
+        <div className="absolute top-32 -right-3 z-10">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
