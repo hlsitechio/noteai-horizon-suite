@@ -2,6 +2,9 @@ import { useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import * as Sentry from '@sentry/react';
+import { auditLogService } from '@/services/security/auditLogService';
+import { sessionSecurityService } from '@/services/security/sessionSecurityService';
+import { rateLimitingService } from '@/services/security/rateLimitingService';
 
 interface SecurityEvent {
   eventType: string;
@@ -16,35 +19,34 @@ export const useSecurityMonitoring = () => {
 
   const logSecurityEvent = useCallback(async (event: SecurityEvent) => {
     try {
-      // Log to Supabase audit log
-      const { error } = await supabase
-        .from('security_audit_log')
-        .insert({
-          user_id: user?.id || null,
-          action: event.eventType,
-          table_name: 'security_monitoring',
-          new_values: {
-            ...event.details,
-            severity: event.severity,
-            user_agent: event.userAgent || navigator.userAgent,
-            timestamp: new Date().toISOString(),
-          },
+      // Enhanced audit logging with pattern analysis
+      await auditLogService.logEvent({
+        eventType: event.eventType,
+        userId: user?.id,
+        ipAddress: event.ipAddress,
+        userAgent: event.userAgent || navigator.userAgent,
+        riskLevel: event.severity,
+        metadata: event.details,
+        result: event.details?.result || 'unknown',
+      });
+
+      // Session security validation
+      if (user?.id && event.severity !== 'low') {
+        const sessionValidation = sessionSecurityService.validateSession(user.id, {
+          ipAddress: event.ipAddress,
+          userAgent: event.userAgent || navigator.userAgent,
         });
 
-      if (error) {
-        console.error('Failed to log security event:', error);
-      }
+        if (!sessionValidation.valid || sessionValidation.action === 'force_logout') {
+          await sessionSecurityService.invalidateSession(user.id);
+          window.location.href = '/auth';
+          return;
+        }
 
-      // Log to Sentry based on severity
-      if (event.severity === 'high' || event.severity === 'critical') {
-        Sentry.captureMessage(`Security Event: ${event.eventType}`, {
-          level: event.severity === 'critical' ? 'error' : 'warning',
-          tags: {
-            eventType: event.eventType,
-            severity: event.severity,
-          },
-          extra: event.details,
-        });
+        if (sessionValidation.action === 'require_2fa') {
+          // Could trigger 2FA requirement in the future
+          console.warn('Session anomaly detected - consider implementing 2FA');
+        }
       }
 
       // Console logging for development
@@ -62,6 +64,7 @@ export const useSecurityMonitoring = () => {
       unusual_time: new Date().getHours() < 5 || new Date().getHours() > 23,
       multiple_failures: details.failureCount > 5,
       invalid_input: details.invalidInputAttempts > 3,
+      rate_limit_exceeded: !rateLimitingService.checkGlobalLimits(user?.id, details.ipAddress),
     };
 
     const detectedPatterns = Object.entries(suspiciousPatterns)
@@ -69,6 +72,15 @@ export const useSecurityMonitoring = () => {
       .map(([pattern]) => pattern);
 
     if (detectedPatterns.length > 0) {
+      // Report to session security service
+      if (user?.id) {
+        sessionSecurityService.reportSuspiciousActivity(
+          user.id,
+          activityType,
+          { patterns: detectedPatterns, ...details }
+        );
+      }
+
       logSecurityEvent({
         eventType: 'suspicious_activity_detected',
         severity: detectedPatterns.length > 2 ? 'high' : 'medium',
@@ -79,7 +91,7 @@ export const useSecurityMonitoring = () => {
         },
       });
     }
-  }, [logSecurityEvent]);
+  }, [logSecurityEvent, user]);
 
   const monitorFormValidation = useCallback((formType: string, errors: string[]) => {
     if (errors.length > 0) {

@@ -1,10 +1,14 @@
 /**
- * Security services index - refactored from monolithic SecurityService
+ * Security services index - Enhanced security infrastructure
  */
 export { rateLimitingService } from './rateLimitingService';
 export { payloadValidationService } from './payloadValidationService';
 export { userAgentAnalysisService } from './userAgentAnalysisService';
+export { sessionSecurityService } from './sessionSecurityService';
+export { auditLogService } from './auditLogService';
+export { apiKeySecurityService } from './apiKeySecurityService';
 export type { SecurityContext, SecurityResult } from './payloadValidationService';
+export type { AuditEvent } from './auditLogService';
 
 import { rateLimitingService } from './rateLimitingService';
 import { payloadValidationService } from './payloadValidationService';
