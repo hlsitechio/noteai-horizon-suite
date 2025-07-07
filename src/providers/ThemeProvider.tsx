@@ -6,7 +6,7 @@ type ThemeProviderProps = {
   children: React.ReactNode;
   defaultTheme?: Theme;
   storageKey?: string;
-};
+} & React.HTMLAttributes<HTMLDivElement>;
 
 type ThemeProviderState = {
   theme: Theme;
@@ -47,7 +47,7 @@ export function ThemeProvider({
   };
 
   return (
-    <ThemeProviderContext.Provider {...props} value={value}>
+    <ThemeProviderContext.Provider value={value}>
       {children}
     </ThemeProviderContext.Provider>
   );
