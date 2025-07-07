@@ -8,13 +8,14 @@ import DataExportSection from '../components/Settings/DataExportSection';
 import AboutSection from '../components/Settings/AboutSection';
 import { AdvancedColorPicker } from '../components/Settings/AdvancedColorPicker';
 import DynamicAccentSection from '../components/Settings/DynamicAccentSection';
+import { WeatherSettings } from '../components/Settings/WeatherSettings';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Layout, Settings as SettingsIcon, Palette, User, Sliders, Download, Info } from 'lucide-react';
+import { Layout, Settings as SettingsIcon, Palette, User, Sliders, Download, Info, Cloud } from 'lucide-react';
 import { useAccentColor } from '../contexts/AccentColorContext';
 import { useEditMode } from '../contexts/EditModeContext';
 
@@ -27,7 +28,7 @@ const Settings: React.FC = () => {
   // Check for tab parameter in URL
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab && ['profile', 'layout', 'themes', 'preferences', 'ai', 'data', 'about'].includes(tab)) {
+    if (tab && ['profile', 'layout', 'themes', 'preferences', 'weather', 'ai', 'data', 'about'].includes(tab)) {
       setActiveTab(tab);
     }
   }, [searchParams]);
@@ -59,7 +60,7 @@ const Settings: React.FC = () => {
 
       {/* Tabbed Interface */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="profile" className="flex items-center gap-2">
             <User className="h-4 w-4" />
             Profile
@@ -75,6 +76,10 @@ const Settings: React.FC = () => {
           <TabsTrigger value="preferences" className="flex items-center gap-2">
             <SettingsIcon className="h-4 w-4" />
             Preferences
+          </TabsTrigger>
+          <TabsTrigger value="weather" className="flex items-center gap-2">
+            <Cloud className="h-4 w-4" />
+            Weather
           </TabsTrigger>
           <TabsTrigger value="ai" className="flex items-center gap-2">
             <Sliders className="h-4 w-4" />
@@ -150,6 +155,10 @@ const Settings: React.FC = () => {
 
           <TabsContent value="preferences" className="space-y-6">
             <PreferencesSection />
+          </TabsContent>
+
+          <TabsContent value="weather" className="space-y-6">
+            <WeatherSettings />
           </TabsContent>
 
           <TabsContent value="ai" className="space-y-6">

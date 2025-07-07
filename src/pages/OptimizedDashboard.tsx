@@ -1,11 +1,11 @@
 import React from 'react';
 import { 
   ResizableDashboardContainer, 
-  ResizableBannerSetup, 
   DashboardControls, 
   MainDashboardContent,
   EditLayoutModal 
 } from '@/components/Dashboard';
+import { BannerWithTopNav } from '@/components/Dashboard/BannerWithTopNav';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { useDashboardPanelSizes, useDashboardBanner } from '@/hooks';
@@ -35,7 +35,7 @@ const OptimizedDashboard: React.FC = () => {
   );
 
   const memoizedBannerContent = React.useMemo(() => (
-    <ResizableBannerSetup
+    <BannerWithTopNav
       onImageUpload={handleImageUpload}
       onAIGenerate={handleAIGenerate}
       onVideoUpload={handleVideoUpload}
