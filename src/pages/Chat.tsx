@@ -115,16 +115,16 @@ const Chat: React.FC = () => {
 
   const quickActions = [
     {
-      text: "Create a note about today's meeting",
+      text: "Create a note about today's meeting in the canva",
       icon: FileText,
-      category: "Notes",
+      category: "Canva",
       color: "text-blue-500"
     },
     {
-      text: "Remind me to call John tomorrow at 2pm",
-      icon: Clock,
-      category: "Reminders",
-      color: "text-orange-500"
+      text: "Create a note in the canva for my project ideas",
+      icon: FileText,
+      category: "Canva", 
+      color: "text-blue-500"
     },
     {
       text: "Find my notes about project planning",
@@ -217,7 +217,7 @@ const Chat: React.FC = () => {
                         </div>
                         <h3 className="text-lg font-semibold text-foreground mb-2">Welcome to AI Assistant</h3>
                         <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                          I can help you create notes, set reminders, organize your thoughts, and assist with writing tasks!
+                          I can help you create notes in the canva, set reminders, organize your thoughts, and assist with writing tasks! Ask me to create notes in the canva for real-time editing.
                         </p>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl mx-auto">
@@ -325,7 +325,7 @@ const Chat: React.FC = () => {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      placeholder={isRecording ? "Listening..." : "Ask me to create notes, set reminders, improve text, summarize content..."}
+                      placeholder={isRecording ? "Listening..." : "Ask me to create notes in the canva, set reminders, improve text..."}
                       disabled={isLoading || isRecording}
                       className="flex-1"
                     />
