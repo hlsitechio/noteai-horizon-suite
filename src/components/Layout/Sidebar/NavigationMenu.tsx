@@ -71,6 +71,32 @@ const NavigationMenu: React.FC = () => {
 
   return (
     <div className="space-y-1">
+      {/* Collapse Button */}
+      <div className="px-2 mb-2">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleCollapse}
+              className="w-full h-10 px-3 flex items-center justify-start hover:bg-sidebar-accent/50"
+            >
+              {isCollapsed ? (
+                <PanelLeftOpen className="h-4 w-4" />
+              ) : (
+                <PanelLeftClose className="h-4 w-4" />
+              )}
+              {!isCollapsed && !isMobile && (
+                <span className="ml-3 text-sm">Collapse</span>
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p>{isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}</p>
+          </TooltipContent>
+        </Tooltip>
+      </div>
+      
       <nav className="space-y-1">
         {navigationItems.map((item) => {
         const isActive = location.pathname === item.path;
