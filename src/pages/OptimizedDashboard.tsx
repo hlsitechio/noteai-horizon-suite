@@ -63,25 +63,6 @@ const OptimizedDashboard: React.FC = () => {
     />
   ), [notes, panelSizes.analytics, panelSizes.topSection, panelSizes.bottomSection, panelSizes.leftPanels, panelSizes.rightPanels, isDashboardEditMode, handleMainContentResize, handleHorizontalResize]);
 
-  const dashboardMainContent = React.useMemo(() => (
-    <div className="h-full">
-      <DashboardControls onEditLayoutClick={() => setShowEditLayoutModal(true)} />
-      
-      {/* Resizable Dashboard Container */}
-      <div className={dashboardClassName}>
-        <ResizableDashboardContainer
-          bannerDefaultSize={panelSizes.banner}
-          bannerMinSize={25}
-          bannerMaxSize={80}
-          isEditMode={isDashboardEditMode}
-          onLayout={handleBannerResize}
-          bannerContent={memoizedBannerContent}
-          mainContent={memoizedMainContent}
-        />
-      </div>
-    </div>
-  ), [dashboardClassName, panelSizes.banner, isDashboardEditMode, handleBannerResize, memoizedBannerContent, memoizedMainContent]);
-
   return (
     <div className="w-full h-screen bg-background">
       <ResizableSidebarContainer
@@ -90,25 +71,29 @@ const OptimizedDashboard: React.FC = () => {
         sidebarMaxSize={35}
         isEditMode={isDashboardEditMode}
         sidebarContent={
-          <div className="p-4">
-            <h2 className="text-lg font-semibold mb-4">Dashboard Controls</h2>
-            <div className="space-y-2">
-              <Button variant="outline" size="sm" className="w-full justify-start">
-                <LayoutDashboard className="w-4 h-4 mr-2" />
-                Overview
-              </Button>
-              <Button variant="ghost" size="sm" className="w-full justify-start">
-                <BarChart3 className="w-4 h-4 mr-2" />
-                Analytics
-              </Button>
-              <Button variant="ghost" size="sm" className="w-full justify-start">
-                <Settings className="w-4 h-4 mr-2" />
-                Settings
-              </Button>
+          <div className="h-full p-4 bg-card">
+            <h3 className="text-sm font-medium mb-4">Dashboard Sidebar</h3>
+            <p className="text-sm text-muted-foreground">Sidebar content goes here</p>
+          </div>
+        }
+        mainContent={
+          <div className="h-full">
+            <DashboardControls onEditLayoutClick={() => setShowEditLayoutModal(true)} />
+            
+            {/* Resizable Dashboard Container */}
+            <div className={dashboardClassName}>
+              <ResizableDashboardContainer
+                bannerDefaultSize={panelSizes.banner}
+                bannerMinSize={25}
+                bannerMaxSize={80}
+                isEditMode={isDashboardEditMode}
+                onLayout={handleBannerResize}
+                bannerContent={memoizedBannerContent}
+                mainContent={memoizedMainContent}
+              />
             </div>
           </div>
         }
-        mainContent={dashboardMainContent}
       />
 
       {/* Edit Layout Modal */}
