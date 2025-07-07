@@ -113,7 +113,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           minSize={isDashboardEditMode ? 20 : analyticsSize} 
           maxSize={isDashboardEditMode ? 50 : analyticsSize}
         >
-          <div className="p-3 md:p-6 h-full">
+          <div className="p-3 md:p-6 h-full overflow-hidden">
             <KPIStats
               totalNotes={totalNotes}
               favoriteNotes={favoriteNotes}
