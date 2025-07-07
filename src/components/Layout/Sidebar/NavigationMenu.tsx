@@ -53,12 +53,6 @@ const NavigationMenu: React.FC = () => {
       path: '/app/analytics',
       description: 'Writing insights and stats'
     },
-    { 
-      icon: 'bx bx-cog', 
-      label: 'Settings', 
-      path: '/app/settings',
-      description: 'App preferences'
-    },
   ];
 
   return (
