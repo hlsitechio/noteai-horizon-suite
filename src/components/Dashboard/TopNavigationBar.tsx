@@ -4,11 +4,13 @@ import { Clock, MapPin, Thermometer } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
+import { WeatherIcon } from '@/components/Weather/WeatherIcon';
 
 interface WeatherData {
   temperature: number;
   city: string;
   condition: string;
+  icon?: string; // Weather code from Tomorrow.io API
 }
 
 interface TopNavigationBarProps {
@@ -95,7 +97,8 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
         setWeather({
           temperature: data.temperature,
           city: data.city,
-          condition: data.condition || 'Unknown'
+          condition: data.condition || 'Unknown',
+          icon: data.icon // Weather code from API
         });
         console.log('Weather data updated:', data);
       } else {
@@ -173,9 +176,15 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
             </div>
           ) : weather ? (
             <div className="flex items-center gap-2">
-              <MapPin className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-muted-foreground`} />
+              {/* Weather icon based on weather code */}
+              {weather.icon && (
+                <WeatherIcon 
+                  weatherCode={weather.icon} 
+                  className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`}
+                />
+              )}
               <div className="text-center">
-                <div className={`font-semibold text-foreground ${isMobile ? 'text-sm' : 'text-base'}`}>
+                <div className={`font-semibold text-foreground ${isMobile ? 'text-sm' : 'text-base'} flex items-center gap-1`}>
                   {weather.temperature}°{weatherUnits === 'celsius' ? 'C' : 'F'}
                 </div>
                 <div className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>
