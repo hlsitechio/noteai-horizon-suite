@@ -52,13 +52,23 @@ const Chat: React.FC = () => {
 
   // Monitor messages for note creation to show in preview
   useEffect(() => {
+    console.log('Checking messages for note creation:', messages.length);
     const lastMessage = messages[messages.length - 1];
+    console.log('Last message:', lastMessage);
+    
     if (lastMessage && !lastMessage.isUser && lastMessage.actionResults) {
+      console.log('Found AI message with action results:', lastMessage.actionResults);
       // Look for created notes in action results
       lastMessage.actionResults.forEach((result, index) => {
+        console.log(`Checking result ${index}:`, result);
+        console.log(`Action type for index ${index}:`, lastMessage.actions?.[index]?.type);
+        
         if (result.success && result.data && lastMessage.actions?.[index]?.type === 'create_note') {
+          console.log('Found create_note action, extracting note...');
           const note = extractNoteFromActionResult(result);
+          console.log('Extracted note:', note);
           if (note) {
+            console.log('Showing note in canva...');
             showNote(note);
           }
         }
