@@ -54,36 +54,42 @@ serve(async (req) => {
 
     console.log(`Fetching weather for city: ${city}, units: ${units}, forecast: ${forecast}`);
 
-    // Tomorrow.io API endpoints
+    // Tomorrow.io API endpoints - Using the official documented endpoints
     const baseUrl = 'https://api.tomorrow.io/v4';
     
-    // First, get location coordinates
-    const locationUrl = `${baseUrl}/timelines?location=${encodeURIComponent(city)}&fields=temperature&timesteps=current&units=${units}&apikey=${apiKey}`;
+    // Use the official realtime weather endpoint
+    const realtimeUrl = `${baseUrl}/weather/realtime?location=${encodeURIComponent(city)}&units=${units}&apikey=${apiKey}`;
     
-    console.log('Fetching from Tomorrow.io API...');
-    const locationResponse = await fetch(locationUrl);
+    console.log('Fetching from Tomorrow.io Realtime API...');
+    const realtimeResponse = await fetch(realtimeUrl, {
+      method: 'GET',
+      headers: {
+        'accept': 'application/json',
+        'accept-encoding': 'deflate, gzip, br'
+      }
+    });
     
-    if (!locationResponse.ok) {
-      console.error('Tomorrow.io API error:', locationResponse.status, locationResponse.statusText);
-      const errorText = await locationResponse.text();
+    if (!realtimeResponse.ok) {
+      console.error('Tomorrow.io API error:', realtimeResponse.status, realtimeResponse.statusText);
+      const errorText = await realtimeResponse.text();
       console.error('Error details:', errorText);
       
       return new Response(
         JSON.stringify({ 
-          error: `Weather service error: ${locationResponse.status}`,
+          error: `Weather service error: ${realtimeResponse.status}`,
           details: errorText
         }),
         { 
-          status: locationResponse.status, 
+          status: realtimeResponse.status, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       );
     }
 
-    const locationData = await locationResponse.json();
-    console.log('Tomorrow.io response received:', JSON.stringify(locationData, null, 2));
+    const realtimeData = await realtimeResponse.json();
+    console.log('Tomorrow.io realtime response received:', JSON.stringify(realtimeData, null, 2));
 
-    if (!locationData.data || !locationData.data.timelines || locationData.data.timelines.length === 0) {
+    if (!realtimeData.data || !realtimeData.data.values) {
       console.error('No weather data found for city:', city);
       return new Response(
         JSON.stringify({ error: 'No weather data found for the specified city' }),
@@ -94,25 +100,10 @@ serve(async (req) => {
       );
     }
 
-    const currentData = locationData.data.timelines[0].intervals[0];
-    const values = currentData.values;
+    const values = realtimeData.data.values;
+    const location = realtimeData.location;
 
-    // Get additional weather data if available
-    const detailedUrl = `${baseUrl}/timelines?location=${encodeURIComponent(city)}&fields=temperature,temperatureApparent,humidity,windSpeed,weatherCode&timesteps=current&units=${units}&apikey=${apiKey}`;
-    
-    let detailedData = null;
-    try {
-      const detailedResponse = await fetch(detailedUrl);
-      if (detailedResponse.ok) {
-        detailedData = await detailedResponse.json();
-      }
-    } catch (error) {
-      console.log('Could not fetch detailed weather data:', error);
-    }
-
-    const detailedValues = detailedData?.data?.timelines?.[0]?.intervals?.[0]?.values || {};
-
-    // Weather code to condition mapping
+    // Weather code to condition mapping (same as before)
     const getWeatherCondition = (code: number): string => {
       const weatherCodes: { [key: number]: string } = {
         0: 'Unknown',
@@ -146,33 +137,42 @@ serve(async (req) => {
       return weatherCodes[code] || 'Unknown';
     };
 
-    const temperature = units === 'metric' ? 
-      Math.round(values.temperature || detailedValues.temperature || 0) :
-      Math.round(((values.temperature || detailedValues.temperature || 0) * 9/5) + 32);
+    // Temperature is already in the correct unit from the API
+    const temperature = Math.round(values.temperature || 0);
 
     const weatherResponse: WeatherResponse = {
       temperature,
-      city: city,
-      condition: getWeatherCondition(detailedValues.weatherCode || 1000),
-      humidity: detailedValues.humidity ? Math.round(detailedValues.humidity) : undefined,
-      windSpeed: detailedValues.windSpeed ? Math.round(detailedValues.windSpeed * 10) / 10 : undefined,
-      icon: detailedValues.weatherCode ? String(detailedValues.weatherCode) : undefined
+      city: location?.name || city,
+      condition: getWeatherCondition(values.weatherCode || 1000),
+      humidity: values.humidity ? Math.round(values.humidity) : undefined,
+      windSpeed: values.windSpeed ? Math.round(values.windSpeed * 10) / 10 : undefined,
+      icon: values.weatherCode ? String(values.weatherCode) : undefined
     };
 
-    // Add forecast data if requested
+    // Add forecast data if requested using the forecast endpoint
     if (forecast) {
       try {
-        const forecastUrl = `${baseUrl}/timelines?location=${encodeURIComponent(city)}&fields=temperature,weatherCode&timesteps=1d&startTime=now&endTime=nowPlus5d&units=${units}&apikey=${apiKey}`;
-        const forecastResponse = await fetch(forecastUrl);
+        const forecastUrl = `${baseUrl}/weather/forecast?location=${encodeURIComponent(city)}&timesteps=1d&units=${units}&apikey=${apiKey}`;
+        const forecastResponse = await fetch(forecastUrl, {
+          method: 'GET',
+          headers: {
+            'accept': 'application/json',
+            'accept-encoding': 'deflate, gzip, br'
+          }
+        });
         
         if (forecastResponse.ok) {
           const forecastData = await forecastResponse.json();
-          weatherResponse.forecast = forecastData.data?.timelines?.[0]?.intervals?.slice(1, 6).map((interval: any) => ({
-            date: interval.startTime,
-            temperature: Math.round(interval.values.temperature),
-            condition: getWeatherCondition(interval.values.weatherCode),
-            weatherCode: interval.values.weatherCode
-          })) || [];
+          
+          // Extract daily forecast data
+          if (forecastData.timelines && forecastData.timelines.daily) {
+            weatherResponse.forecast = forecastData.timelines.daily.slice(1, 6).map((interval: any) => ({
+              date: interval.time,
+              temperature: Math.round(interval.values.temperature),
+              condition: getWeatherCondition(interval.values.weatherCode),
+              weatherCode: interval.values.weatherCode
+            }));
+          }
         }
       } catch (error) {
         console.log('Could not fetch forecast data:', error);
