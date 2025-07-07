@@ -1,16 +1,18 @@
 
 import React from 'react';
-import { Bell, User } from 'lucide-react';
+import { Bell, User, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNotifications } from '../../../contexts/NotificationsContext';
 
 interface SidebarMenuButtonProps {
   onNotificationsClick: () => void;
+  isMobile: boolean;
 }
 
-export function SidebarMenuButton({ onNotificationsClick }: SidebarMenuButtonProps) {
+export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMenuButtonProps) {
   const { user } = useAuth();
   const { unreadCount } = useNotifications();
 

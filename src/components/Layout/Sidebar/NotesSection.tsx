@@ -7,6 +7,7 @@ import { FavoritesListSection } from './FavoritesListSection';
 import { useOptimizedNotes } from '../../../contexts/OptimizedNotesContext';
 import { useFolders } from '../../../contexts/FoldersContext';
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const contentVariants = {
   expanded: {
@@ -30,6 +31,7 @@ export function NotesSection() {
   const { notes, createNote, setCurrentNote } = useOptimizedNotes();
   const { folders, createFolder } = useFolders();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const [expandedSections, setExpandedSections] = useState({
     favorites: true,
@@ -76,9 +78,11 @@ export function NotesSection() {
 
   return (
     <div className="flex-1 min-h-0">
-      <div className="p-2">
-        <h3 className="text-sm font-medium text-sidebar-foreground mb-3">Content</h3>
-      </div>
+      {!isMobile && (
+        <div className="p-2">
+          <h3 className="text-sm font-medium text-sidebar-foreground mb-3">Content</h3>
+        </div>
+      )}
       <div className="h-full">
         <AnimatePresence>
           <motion.div
@@ -95,6 +99,7 @@ export function NotesSection() {
                   notes={favoriteNotes}
                   isExpanded={expandedSections.favorites}
                   onToggle={() => toggleSection('favorites')}
+                  isMobile={isMobile}
                 />
               )}
 
@@ -105,6 +110,7 @@ export function NotesSection() {
                 isExpanded={expandedSections.folders}
                 onToggle={() => toggleSection('folders')}
                 onCreateFolder={handleCreateFolder}
+                isMobile={isMobile}
               />
 
               {/* Notes Section */}
@@ -114,6 +120,7 @@ export function NotesSection() {
                 onToggle={() => toggleSection('notes')}
                 onCreateNote={handleCreateNote}
                 onCreateFolder={handleCreateFolder}
+                isMobile={isMobile}
               />
             </div>
           </motion.div>

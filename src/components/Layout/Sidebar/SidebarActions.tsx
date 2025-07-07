@@ -70,7 +70,7 @@ export function SidebarActions({ onNotificationsClick, isExpanded = true }: Side
   );
 }
 
-export function SidebarSignOutButton({ isExpanded = true }: { isExpanded?: boolean }) {
+export function SidebarSignOutButton({ isExpanded = true, isMobile = false }: { isExpanded?: boolean; isMobile?: boolean }) {
   const { logout } = useAuth();
 
   if (!isExpanded) {

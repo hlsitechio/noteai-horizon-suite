@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   ChevronRight, 
   ChevronDown,
@@ -20,6 +21,7 @@ interface FoldersListSectionProps {
   isExpanded: boolean;
   onToggle: () => void;
   onCreateFolder: () => Promise<void>;
+  isMobile: boolean;
 }
 
 export function FoldersListSection({ 
@@ -27,7 +29,8 @@ export function FoldersListSection({
   notes,
   isExpanded, 
   onToggle,
-  onCreateFolder
+  onCreateFolder,
+  isMobile
 }: FoldersListSectionProps) {
   const [expandedFolders, setExpandedFolders] = React.useState<Set<string>>(new Set());
 
@@ -122,23 +125,42 @@ export function FoldersListSection({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between px-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto"
-          onClick={onToggle}
-        >
-          {isExpanded ? (
-            <ChevronDown className="h-3 w-3 mr-1" />
-          ) : (
-            <ChevronRight className="h-3 w-3 mr-1" />
-          )}
-          Folders
-        </Button>
+        {isMobile ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto justify-center w-8"
+                onClick={onToggle}
+              >
+                <Folder className="h-3 w-3" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p className="font-medium">Folders</p>
+              <p className="text-xs text-muted-foreground">{folders.length} folders</p>
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto"
+            onClick={onToggle}
+          >
+            {isExpanded ? (
+              <ChevronDown className="h-3 w-3 mr-1" />
+            ) : (
+              <ChevronRight className="h-3 w-3 mr-1" />
+            )}
+            Folders
+          </Button>
+        )}
       </div>
       
       <AnimatePresence>
-        {isExpanded && (
+        {isExpanded && !isMobile && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}

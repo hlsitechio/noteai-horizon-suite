@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import NotificationsPanel from '../NotificationsPanel';
 import { SidebarMenuButton } from './SidebarMenuButton';
 import { SidebarSignOutButton } from './SidebarActions';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const contentVariants = {
   expanded: {
@@ -25,6 +26,7 @@ const contentVariants = {
 
 export function SidebarFooter() {
   const [isNotificationsPanelOpen, setIsNotificationsPanelOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleNotificationsClick = () => {
     setIsNotificationsPanelOpen(true);
@@ -42,8 +44,11 @@ export function SidebarFooter() {
             className="space-y-3"
           >
             <div className="space-y-2">
-              <SidebarMenuButton onNotificationsClick={handleNotificationsClick} />
-              <SidebarSignOutButton />
+              <SidebarMenuButton 
+                onNotificationsClick={handleNotificationsClick}
+                isMobile={isMobile}
+              />
+              <SidebarSignOutButton isMobile={isMobile} />
             </div>
           </motion.div>
         </AnimatePresence>

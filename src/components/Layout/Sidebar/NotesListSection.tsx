@@ -2,6 +2,7 @@
 import React, { useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   FileText, 
   Plus, 
@@ -24,6 +25,7 @@ interface NotesListSectionProps {
   onToggle: () => void;
   onCreateNote: () => void;
   onCreateFolder: () => void;
+  isMobile: boolean;
 }
 
 export function NotesListSection({ 
@@ -31,7 +33,8 @@ export function NotesListSection({
   isExpanded, 
   onToggle, 
   onCreateNote, 
-  onCreateFolder 
+  onCreateFolder,
+  isMobile
 }: NotesListSectionProps) {
   const { setCurrentNote, deleteNote } = useOptimizedNotes();
   const { confirmDelete, ConfirmDialog } = useConfirmDialog();
@@ -125,43 +128,64 @@ export function NotesListSection({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between px-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto"
-          onClick={onToggle}
-        >
-          {isExpanded ? (
-            <ChevronDown className="h-3 w-3 mr-1" />
-          ) : (
-            <ChevronRight className="h-3 w-3 mr-1" />
-          )}
-          Notes ({notes.length})
-        </Button>
-        <div className="flex gap-1">
+        {isMobile ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto justify-center w-8"
+                onClick={onToggle}
+              >
+                <FileText className="h-3 w-3" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p className="font-medium">Notes</p>
+              <p className="text-xs text-muted-foreground">{notes.length} notes</p>
+            </TooltipContent>
+          </Tooltip>
+        ) : (
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
-            onClick={onCreateFolder}
-            title="Create Folder"
+            className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto"
+            onClick={onToggle}
           >
-            <FolderPlus className="h-3 w-3" />
+            {isExpanded ? (
+              <ChevronDown className="h-3 w-3 mr-1" />
+            ) : (
+              <ChevronRight className="h-3 w-3 mr-1" />
+            )}
+            Notes ({notes.length})
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
-            onClick={onCreateNote}
-            title="Create Note"
-          >
-            <Plus className="h-3 w-3" />
-          </Button>
-        </div>
+        )}
+        {!isMobile && (
+          <div className="flex gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
+              onClick={onCreateFolder}
+              title="Create Folder"
+            >
+              <FolderPlus className="h-3 w-3" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
+              onClick={onCreateNote}
+              title="Create Note"
+            >
+              <Plus className="h-3 w-3" />
+            </Button>
+          </div>
+        )}
       </div>
       
       <AnimatePresence>
-        {isExpanded && (
+        {isExpanded && !isMobile && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}

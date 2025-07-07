@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   ChevronRight, 
   ChevronDown,
@@ -14,33 +15,54 @@ interface FavoritesListSectionProps {
   notes: Note[];
   isExpanded: boolean;
   onToggle: () => void;
+  isMobile: boolean;
 }
 
 export function FavoritesListSection({ 
   notes, 
   isExpanded, 
-  onToggle 
+  onToggle,
+  isMobile
 }: FavoritesListSectionProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between px-2">
-        <Button
-          variant="ghost"
-          size="sm" 
-          className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto"
-          onClick={onToggle}
-        >
-          {isExpanded ? (
-            <ChevronDown className="h-3 w-3 mr-1" />
-          ) : (
-            <ChevronRight className="h-3 w-3 mr-1" />
-          )}
-          Favorites
-        </Button>
+        {isMobile ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto justify-center w-8"
+                onClick={onToggle}
+              >
+                <Star className="h-3 w-3" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p className="font-medium">Favorites</p>
+              <p className="text-xs text-muted-foreground">{notes.length} favorites</p>
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm" 
+            className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto"
+            onClick={onToggle}
+          >
+            {isExpanded ? (
+              <ChevronDown className="h-3 w-3 mr-1" />
+            ) : (
+              <ChevronRight className="h-3 w-3 mr-1" />
+            )}
+            Favorites
+          </Button>
+        )}
       </div>
       
       <AnimatePresence>
-        {isExpanded && (
+        {isExpanded && !isMobile && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
