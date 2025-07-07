@@ -65,36 +65,20 @@ const OptimizedDashboard: React.FC = () => {
 
   return (
     <div className="w-full h-screen bg-background">
-      <ResizableSidebarContainer
-        sidebarDefaultSize={20}
-        sidebarMinSize={15}
-        sidebarMaxSize={35}
-        isEditMode={isDashboardEditMode}
-        sidebarContent={
-          <div className="h-full p-4 bg-card">
-            <h3 className="text-sm font-medium mb-4">Dashboard Sidebar</h3>
-            <p className="text-sm text-muted-foreground">Sidebar content goes here</p>
-          </div>
-        }
-        mainContent={
-          <div className="h-full">
-            <DashboardControls onEditLayoutClick={() => setShowEditLayoutModal(true)} />
-            
-            {/* Resizable Dashboard Container */}
-            <div className={dashboardClassName}>
-              <ResizableDashboardContainer
-                bannerDefaultSize={panelSizes.banner}
-                bannerMinSize={25}
-                bannerMaxSize={80}
-                isEditMode={isDashboardEditMode}
-                onLayout={handleBannerResize}
-                bannerContent={memoizedBannerContent}
-                mainContent={memoizedMainContent}
-              />
-            </div>
-          </div>
-        }
-      />
+      <DashboardControls onEditLayoutClick={() => setShowEditLayoutModal(true)} />
+      
+      {/* Resizable Dashboard Container */}
+      <div className={dashboardClassName}>
+        <ResizableDashboardContainer
+          bannerDefaultSize={panelSizes.banner}
+          bannerMinSize={25}
+          bannerMaxSize={80}
+          isEditMode={isDashboardEditMode}
+          onLayout={handleBannerResize}
+          bannerContent={memoizedBannerContent}
+          mainContent={memoizedMainContent}
+        />
+      </div>
 
       {/* Edit Layout Modal */}
       <EditLayoutModal
