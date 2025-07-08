@@ -16,11 +16,7 @@ interface EditorContentLayoutProps extends EditorFormState, EditorFormHandlers {
 }
 
 const EditorContentLayout: React.FC<EditorContentLayoutProps> = (props) => {
-  console.log('EditorContentLayout rendering with props:', {
-    title: props.title,
-    isMobile: props.isMobile,
-    isAssistantCollapsed: props.isAssistantCollapsed
-  });
+  // Removed debug logs to prevent PostHog rate limiting
 
   // Get available categories - using CategoryOption interface
   const categories: CategoryOption[] = [

@@ -51,29 +51,29 @@ const FloatingNoteWindow: React.FC<FloatingNoteWindowProps> = ({
 
   const windowRef = useRef<HTMLDivElement>(null);
 
-  console.log('FloatingNoteWindow rendering:', { noteId, title, position, size, minimized });
+  // Removed debug logs to prevent PostHog rate limiting
 
   const handlePositionChange = (newPosition: FloatingWindowPosition) => {
-    console.log('FloatingNoteWindow: Position changed', newPosition);
+    // Position change handled
     setPosition(newPosition);
     onPositionChange(noteId, newPosition);
   };
 
   const handleSizeChange = (newSize: FloatingWindowSize) => {
-    console.log('FloatingNoteWindow: Size changed', newSize);
+    // Size change handled
     setSize(newSize);
     onSizeChange(noteId, newSize);
   };
 
   const handleMinimize = () => {
     const newMinimized = !minimized;
-    console.log('FloatingNoteWindow: Minimize toggled', newMinimized);
+    // Minimize state toggled
     setMinimized(newMinimized);
     onMinimize(noteId, newMinimized);
   };
 
   const handleClose = () => {
-    console.log('FloatingNoteWindow: Closing', noteId);
+    // Window closing
     onClose(noteId);
   };
 

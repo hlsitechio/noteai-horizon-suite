@@ -28,7 +28,7 @@ const OptimizedDashboard: React.FC = () => {
     handleImageSelect 
   } = useDashboardBanner();
 
-  console.log('Dashboard render - isDashboardEditMode:', isDashboardEditMode, 'isLoading:', isLoading);
+  // Removed excessive console logging to prevent PostHog rate limiting
 
   // Memoize computed values to prevent unnecessary re-renders
   const dashboardClassName = React.useMemo(() => 

@@ -17,7 +17,7 @@ const MobileApp: React.FC = () => {
   const noteId = searchParams.get('note');
   const { notes, setCurrentNote } = useNotes();
 
-  console.log('Enhanced MobileApp rendering', { noteId, notesCount: notes.length });
+  // Removed debug logs to prevent PostHog rate limiting
 
   // Handle note routing - if a note ID is provided, set it as current and navigate to editor
   React.useEffect(() => {

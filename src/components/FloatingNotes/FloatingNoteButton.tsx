@@ -24,14 +24,13 @@ const FloatingNoteButton: React.FC<FloatingNoteButtonProps> = ({
   const handleOpenFloating = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('FloatingNoteButton: handleOpenFloating called', note.id, note.title);
-    console.log('FloatingNoteButton: Event details:', e.type, e.currentTarget);
+  // Removed debug logs to prevent PostHog rate limiting
     openFloatingNote(note);
   };
 
   const isFloating = isNoteFloating(note.id);
 
-  console.log('FloatingNoteButton rendering:', { noteId: note.id, title: note.title, isFloating });
+  // Removed debug logs to prevent PostHog rate limiting
 
   if (variant === 'text') {
     return (

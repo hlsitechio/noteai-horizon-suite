@@ -14,10 +14,7 @@ const FloatingNotesContainer: React.FC = () => {
     updateFloatingNoteContent,
   } = useFloatingNotes();
 
-  console.log('FloatingNotesContainer: Rendering', { 
-    floatingNotesCount: floatingNotes.length,
-    floatingNotes: floatingNotes.map(fn => ({ id: fn.id, noteId: fn.noteId, title: fn.note.title }))
-  });
+  // Removed debug logs to prevent PostHog rate limiting
 
   return (
     <div 
@@ -34,7 +31,7 @@ const FloatingNotesContainer: React.FC = () => {
     >
       <AnimatePresence>
         {floatingNotes.map((floatingNote) => {
-          console.log('Rendering floating note:', floatingNote.id, floatingNote.note.title);
+          // Rendering floating note
           return (
             <FloatingNoteWindow
               key={floatingNote.id}
