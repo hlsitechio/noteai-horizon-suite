@@ -59,7 +59,7 @@ const ProjectBanner: React.FC<ProjectBannerProps> = ({
   };
 
   return (
-    <div className="relative h-64 overflow-hidden">
+    <div className="relative h-96 overflow-hidden">
       {bannerImage ? (
         <>
           <img 

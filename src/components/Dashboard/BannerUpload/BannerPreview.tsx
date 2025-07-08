@@ -21,12 +21,12 @@ const BannerPreview: React.FC<BannerPreviewProps> = ({
           <img
             src={selectedBanner}
             alt="Banner preview"
-            className="max-w-full h-64 object-cover border rounded"
+            className="max-w-full h-96 object-cover border rounded"
           />
         ) : (
           <video
             src={selectedBanner}
-            className="max-w-full h-64 object-cover border rounded"
+            className="max-w-full h-96 object-cover border rounded"
             controls
             muted
             preload="metadata"

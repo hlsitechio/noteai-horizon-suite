@@ -124,7 +124,7 @@ const ProjectImageUpload: React.FC<ProjectImageUploadProps> = ({
                   <img
                     src={selectedImage}
                     alt="Banner preview"
-                    className="max-w-full h-48 object-cover border rounded"
+                    className="max-w-full h-64 object-cover border rounded"
                   />
                 </div>
                 
