@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 export function SidebarMain() {
   const isMobile = useIsMobile();
   const { isSidebarEditMode, setIsSidebarEditMode } = useEditMode();
-  const { settings, updateSidebarPanelSizes, isLoading } = useDashboardSettings();
+  const { settings, updateSidebarPanelSizes } = useDashboardSettings();
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hasUserInteractedRef = useRef(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -25,72 +25,30 @@ export function SidebarMain() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+  
+  // Disable PanelGroup storage to prevent infinite loops
   const createStorageHandler = () => {
-    if (!isMounted) {
-      // Prevent hydration mismatch
+    return null; // Always return null to disable localStorage integration
+  };
+
+  // Static default panel sizes that don't change during render
+  const getDefaultSizes = () => {
+    if (!isMounted || !settings?.sidebar_panel_sizes) {
       return {
-        getItem: () => "",
-        setItem: () => {}
+        navigation: 40,
+        content: 40,
+        footer: 20
       };
     }
     
-    if (isSidebarEditMode) {
-      // In edit mode: allow full storage functionality
-      return undefined; // Use default localStorage
-    } else {
-      // Not in edit mode: read-only storage (restore saved sizes but don't save new ones)
-      return {
-        getItem: (name: string) => {
-          try {
-            return localStorage.getItem(name) || "";
-          } catch {
-            return "";
-          }
-        },
-        setItem: () => {} // Prevent writes when not in edit mode
-      };
-    }
+    return {
+      navigation: settings.sidebar_panel_sizes.navigation || 40,
+      content: settings.sidebar_panel_sizes.content || 40,
+      footer: settings.sidebar_panel_sizes.footer || 20
+    };
   };
 
-  // State for default panel sizes - updates when saved
-  const [defaultSizes, setDefaultSizes] = useState(() => {
-    const savedSizes = settings?.sidebar_panel_sizes || {};
-    return {
-      navigation: savedSizes.navigation || 40,
-      content: savedSizes.content || 40,
-      footer: savedSizes.footer || 20
-    };
-  });
-
-  // Update default sizes when settings change (only when not in edit mode)
-  useEffect(() => {
-    if (settings?.sidebar_panel_sizes && isMounted && !isSidebarEditMode) {
-      const newDefaultSizes = {
-        navigation: settings.sidebar_panel_sizes.navigation || 40,
-        content: settings.sidebar_panel_sizes.content || 40,
-        footer: settings.sidebar_panel_sizes.footer || 20
-      };
-      
-      // Only update if there's a meaningful difference
-      const hasChanged = 
-        Math.abs(defaultSizes.navigation - newDefaultSizes.navigation) > 1 ||
-        Math.abs(defaultSizes.content - newDefaultSizes.content) > 1 ||
-        Math.abs(defaultSizes.footer - newDefaultSizes.footer) > 1;
-      
-      if (hasChanged) {
-        setDefaultSizes(newDefaultSizes);
-        
-        // Clear localStorage to force panels to use new default sizes
-        try {
-          localStorage.removeItem('react-resizable-panels:sidebar-main');
-        } catch (error) {
-          console.warn('Failed to clear localStorage:', error);
-        }
-      }
-    }
-  }, [settings?.sidebar_panel_sizes, isMounted, isSidebarEditMode]); // Removed defaultSizes from dependencies to prevent infinite loop
-
-  // Debug current state - removed console.log to prevent infinite loops
+  const defaultSizes = getDefaultSizes();
 
   // Track when user actually interacts with panels
   const handlePanelResizeStart = () => {
@@ -133,7 +91,7 @@ export function SidebarMain() {
         } else {
           toast.error('Failed to save sidebar layout');
         }
-      }, 1000); // Increased debounce to 1 second
+      }, 1000);
     }
   };
 
