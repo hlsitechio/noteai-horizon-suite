@@ -206,11 +206,19 @@ async function staleWhileRevalidateStrategy(request) {
     
     // For navigation requests, try to return the main app
     if (request.destination === 'document') {
-      return caches.match('/') || fetch('/');
+      const mainApp = await caches.match('/');
+      if (mainApp) {
+        return mainApp;
+      }
     }
     
-    // For other requests, just pass through the error
-    throw error;
+    // For other requests, return a simple response instead of throwing
+    console.log('[SW] Resource not available, returning 404:', request.url);
+    return new Response('Resource not found', { 
+      status: 404, 
+      statusText: 'Not Found',
+      headers: { 'Content-Type': 'text/plain' }
+    });
   }
 }
 
