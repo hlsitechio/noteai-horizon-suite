@@ -191,23 +191,26 @@ async function staleWhileRevalidateStrategy(request) {
       return cachedResponse;
     }
     
-    // Return a proper Response object for failed requests
-    return new Response(JSON.stringify({ error: 'Resource not available' }), { 
-      status: 503,
-      statusText: 'Service Unavailable',
-      headers: { 'Content-Type': 'application/json' }
-    });
+    // For navigation requests, try to return the main app
+    if (request.destination === 'document') {
+      return caches.match('/') || fetch('/');
+    }
+    
+    // For other requests, just pass through the error
+    throw new Error('Resource not available');
   } catch (error) {
-    // Return cached response if available, otherwise return error response
+    // Return cached response if available
     if (cachedResponse) {
       return cachedResponse;
     }
     
-    return new Response(JSON.stringify({ error: 'Network error' }), { 
-      status: 503,
-      statusText: 'Service Unavailable',
-      headers: { 'Content-Type': 'application/json' }
-    });
+    // For navigation requests, try to return the main app
+    if (request.destination === 'document') {
+      return caches.match('/') || fetch('/');
+    }
+    
+    // For other requests, just pass through the error
+    throw error;
   }
 }
 
