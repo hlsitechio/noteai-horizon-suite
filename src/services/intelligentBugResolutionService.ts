@@ -353,21 +353,13 @@ export class IntelligentBugResolutionService {
 
   private async storeAnalysis(context: BugResolutionContext, suggestions: ResolutionSuggestion[]) {
     try {
-      // Store in Supabase for analysis
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      await supabase
-        .from('security_audit_log')
-        .insert({
-          user_id: user?.id || null,
-          action: 'bug_analysis',
-          table_name: 'intelligent_bug_resolution',
-          new_values: JSON.parse(JSON.stringify({
-            error_context: context,
-            suggestions: suggestions,
-            timestamp: Date.now()
-          }))
-        });
+      // Bug resolution analysis storage disabled - security_audit_log table missing
+      console.warn('Bug resolution analysis storage disabled - security_audit_log table missing from database schema');
+      console.log('Bug analysis would be stored:', {
+        error_context: context,
+        suggestions: suggestions,
+        timestamp: Date.now()
+      });
     } catch (error) {
       logger.error('BUG_RESOLUTION', 'Failed to store analysis:', error);
     }

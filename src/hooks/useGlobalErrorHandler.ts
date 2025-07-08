@@ -64,7 +64,7 @@ export const useGlobalErrorHandler = () => {
         component: 'GlobalErrorHandler',
         operation: 'unhandledPromiseRejection',
         error,
-        context: {
+        additionalData: {
           type: 'unhandledPromiseRejection',
         },
       });
@@ -103,7 +103,7 @@ export const useGlobalErrorHandler = () => {
         component: 'GlobalErrorHandler',
         operation: 'javascriptError',
         error,
-        context: {
+        additionalData: {
           type: 'javascriptError',
           filename: event.filename,
           lineno: event.lineno,
@@ -125,7 +125,7 @@ export const useGlobalErrorHandler = () => {
         component: 'GlobalErrorHandler',
         operation: 'resourceError',
         error: new Error(errorMessage),
-        context: {
+        additionalData: {
           type: 'resourceError',
           tagName: target.tagName,
           src: (target as any).src || (target as any).href,
@@ -166,7 +166,7 @@ export const useGlobalErrorHandler = () => {
             component: 'GlobalErrorHandler',
             operation: 'queryError',
             error: query.state.error,
-            context: {
+            additionalData: {
               type: 'tanstackQueryError',
               queryKey: query.queryKey,
             },
@@ -201,7 +201,7 @@ export const useGlobalErrorHandler = () => {
             component: 'GlobalErrorHandler',
             operation: 'mutationError',
             error: mutation.state.error,
-            context: {
+            additionalData: {
               type: 'tanstackMutationError',
               mutationKey: mutation.options.mutationKey,
             },

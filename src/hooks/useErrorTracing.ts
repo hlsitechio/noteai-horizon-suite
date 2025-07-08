@@ -18,7 +18,8 @@ export const useErrorTracing = () => {
 
   const traceError = useCallback(async (payload: {
     component: string;
-    error: string;
+    operation?: string;
+    error: Error | string;
     stack?: string;
     sessionId?: string;
     additionalData?: Record<string, any>;
@@ -29,8 +30,8 @@ export const useErrorTracing = () => {
       const errorTrace: ErrorTrace = {
         id: traceId,
         component: payload.component,
-        error: payload.error,
-        stack: payload.stack || '',
+        error: payload.error instanceof Error ? payload.error.message : payload.error,
+        stack: payload.stack || (payload.error instanceof Error ? payload.error.stack : '') || '',
         timestamp: new Date().toISOString(),
         url: window.location.href,
         userAgent: navigator.userAgent,

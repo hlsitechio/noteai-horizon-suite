@@ -120,7 +120,7 @@ const SemanticChatInterface: React.FC = () => {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  onClick={createNewSession}
+                  onClick={() => createNewSession("New Chat")}
                   disabled={isLoading}
                 >
                   <Plus className="w-4 h-4" />

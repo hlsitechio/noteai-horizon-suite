@@ -46,7 +46,7 @@ export const useNotesWithTracing = (filters?: NoteFilters) => {
           component: 'useNotesWithTracing',
           operation: 'fetchNotes',
           error: error as Error,
-          context: { filters, userId: user?.id },
+          additionalData: { filters, userId: user?.id },
         });
         throw error;
       }
@@ -76,7 +76,7 @@ export const useNotesWithTracing = (filters?: NoteFilters) => {
           component: 'useNotesWithTracing',
           operation: 'createNote',
           error: error as Error,
-          context: { noteData: { title: noteData.title, category: noteData.category } },
+          additionalData: { noteData: { title: noteData.title, category: noteData.category } },
         });
         throw error;
       }
@@ -107,7 +107,7 @@ export const useNotesWithTracing = (filters?: NoteFilters) => {
           component: 'useNotesWithTracing',
           operation: 'updateNote',
           error: error as Error,
-          context: { noteId: id, updates },
+          additionalData: { noteId: id, updates },
         });
         throw error;
       }
@@ -144,7 +144,7 @@ export const useNotesWithTracing = (filters?: NoteFilters) => {
           component: 'useNotesWithTracing',
           operation: 'deleteNote',
           error: error as Error,
-          context: { noteId },
+          additionalData: { noteId },
         });
         throw error;
       }
@@ -175,7 +175,7 @@ export const useNotesWithTracing = (filters?: NoteFilters) => {
           component: 'useNotesWithTracing',
           operation: 'toggleFavorite',
           error: error as Error,
-          context: { noteId },
+          additionalData: { noteId },
         });
         throw error;
       }
