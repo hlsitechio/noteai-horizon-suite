@@ -44,11 +44,19 @@ export class ImageStorageService {
         throw new Error(validation.error);
       }
 
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error('User not authenticated');
+      // Get current user with better error handling
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        console.error('Auth error:', userError);
+        throw new Error('Authentication error: ' + userError.message);
       }
+      
+      if (!user || !user.id) {
+        throw new Error('User not authenticated - please log in first');
+      }
+
+      console.log('Uploading image for user:', user.id);
 
       // Create unique file path
       const fileExt = file.name.split('.').pop();
@@ -60,6 +68,7 @@ export class ImageStorageService {
         .upload(fileName, file);
 
       if (uploadError) {
+        console.error('Storage upload error:', uploadError);
         throw new Error(`Upload failed: ${uploadError.message}`);
       }
 
@@ -68,30 +77,38 @@ export class ImageStorageService {
         .from(this.BUCKET_NAME)
         .getPublicUrl(fileName);
 
-      // Save to user_gallery table
+      console.log('File uploaded successfully, inserting into database...');
+
+      // Save to user_gallery table with explicit user_id
+      const insertData = {
+        user_id: user.id, // Explicitly set the user_id
+        file_name: file.name,
+        file_url: publicUrl,
+        storage_path: fileName,
+        file_size: file.size,
+        file_type: file.type,
+        title: title || file.name,
+        description: description || '',
+        tags: tags || [],
+        is_public: false
+      };
+
+      console.log('Inserting gallery record:', insertData);
+
       const { data: galleryData, error: dbError } = await supabase
         .from('user_gallery')
-        .insert({
-          user_id: user.id,
-          file_name: file.name,
-          file_url: publicUrl,
-          storage_path: fileName,
-          file_size: file.size,
-          file_type: file.type,
-          title: title || file.name,
-          description: description || '',
-          tags: tags,
-          is_public: false
-        })
+        .insert(insertData)
         .select()
         .single();
 
       if (dbError) {
+        console.error('Database insertion error:', dbError);
         // Clean up uploaded file if database insert fails
         await supabase.storage.from(this.BUCKET_NAME).remove([fileName]);
-        throw new Error(`Database error: ${dbError.message}`);
+        throw new Error(`Database error: ${dbError.message}. Details: ${dbError.details || 'No additional details'}`);
       }
 
+      console.log('Image uploaded and saved successfully:', galleryData);
       return galleryData;
     } catch (error) {
       console.error('Upload error:', error);
