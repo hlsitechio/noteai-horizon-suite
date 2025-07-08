@@ -176,10 +176,14 @@ async function staleWhileRevalidateStrategy(request) {
   }
   
   // Wait for network response
-  return fetchPromise || new Response('Service Unavailable', { 
-    status: 503,
-    statusText: 'Service Unavailable' 
-  });
+  try {
+    return await fetchPromise;
+  } catch (error) {
+    return new Response('Service Unavailable', { 
+      status: 503,
+      statusText: 'Service Unavailable' 
+    });
+  }
 }
 
 // Helper functions to determine caching strategy
