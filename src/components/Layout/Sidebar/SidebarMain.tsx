@@ -88,17 +88,9 @@ export function SidebarMain() {
         }
       }
     }
-  }, [settings?.sidebar_panel_sizes, isMounted, isSidebarEditMode, defaultSizes]);
+  }, [settings?.sidebar_panel_sizes, isMounted, isSidebarEditMode]); // Removed defaultSizes from dependencies to prevent infinite loop
 
-  // Debug current state
-  useEffect(() => {
-    console.log('Current state:', { 
-      defaultSizes, 
-      isSidebarEditMode, 
-      settingsSizes: settings?.sidebar_panel_sizes,
-      isMounted 
-    });
-  }, [defaultSizes, isSidebarEditMode, settings?.sidebar_panel_sizes, isMounted]);
+  // Debug current state - removed console.log to prevent infinite loops
 
   // Track when user actually interacts with panels
   const handlePanelResizeStart = () => {

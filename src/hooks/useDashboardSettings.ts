@@ -69,8 +69,10 @@ export const useDashboardSettings = () => {
   }, [user, settings]);
 
   useEffect(() => {
-    loadSettings();
-  }, [loadSettings]);
+    if (user) {
+      loadSettings();
+    }
+  }, [user]); // Remove loadSettings dependency to prevent infinite loop
 
   return {
     settings,
