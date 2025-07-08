@@ -8,6 +8,9 @@ import { useOptimizedNotes } from '../../../contexts/OptimizedNotesContext';
 import { useFolders } from '../../../contexts/FoldersContext';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useSidebar } from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
+import { Star, Folder, FileText, Plus } from 'lucide-react';
 
 const contentVariants = {
   expanded: {
@@ -32,6 +35,7 @@ export function NotesSection() {
   const { folders, createFolder } = useFolders();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { open: sidebarOpen } = useSidebar();
 
   const [expandedSections, setExpandedSections] = useState({
     favorites: true,
@@ -75,6 +79,55 @@ export function NotesSection() {
   };
 
   const favoriteNotes = notes.filter(note => note.isFavorite);
+
+  // Collapsed icon-only view
+  if (!sidebarOpen && !isMobile) {
+    return (
+      <div className="flex-1 min-h-0 flex flex-col items-center py-4 space-y-3">
+        {/* Favorites icon */}
+        {favoriteNotes.length > 0 && (
+          <Button
+            variant="ghost" 
+            size="sm"
+            className="h-10 w-10 p-0 rounded-xl hover:bg-sidebar-accent transition-all duration-200"
+            onClick={() => {/* Navigate to favorites */}}
+          >
+            <Star className="w-5 h-5 text-sidebar-foreground" />
+          </Button>
+        )}
+        
+        {/* Folders icon */}
+        <Button
+          variant="ghost"
+          size="sm" 
+          className="h-10 w-10 p-0 rounded-xl hover:bg-sidebar-accent transition-all duration-200"
+          onClick={handleCreateFolder}
+        >
+          <Folder className="w-5 h-5 text-sidebar-foreground" />
+        </Button>
+        
+        {/* Notes icon */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-10 w-10 p-0 rounded-xl hover:bg-sidebar-accent transition-all duration-200" 
+          onClick={handleCreateNote}
+        >
+          <FileText className="w-5 h-5 text-sidebar-foreground" />
+        </Button>
+        
+        {/* Add icon */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-10 w-10 p-0 rounded-xl hover:bg-sidebar-accent transition-all duration-200"
+          onClick={handleCreateNote}
+        >
+          <Plus className="w-5 h-5 text-sidebar-foreground" />
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 min-h-0">
