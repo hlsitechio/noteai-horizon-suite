@@ -200,21 +200,23 @@ const Chat: React.FC = () => {
   return (
     <div className="h-full flex gap-6 p-6 bg-gradient-to-br from-background via-background to-muted/30">
       {/* Chat History Panel */}
-      <ChatHistoryPanel
-        sessions={sessions}
-        currentSessionId={currentSessionId}
-        onSessionSelect={loadSession}
-        onNewSession={createNewSession}
-        onDeleteSession={deleteSession}
-        onRenameSession={renameSession}
-        isCollapsed={isHistoryCollapsed}
-        onToggleCollapse={() => setIsHistoryCollapsed(!isHistoryCollapsed)}
-      />
+      <div className="flex-shrink-0">
+        <ChatHistoryPanel
+          sessions={sessions}
+          currentSessionId={currentSessionId}
+          onSessionSelect={loadSession}
+          onNewSession={createNewSession}
+          onDeleteSession={deleteSession}
+          onRenameSession={renameSession}
+          isCollapsed={isHistoryCollapsed}
+          onToggleCollapse={() => setIsHistoryCollapsed(!isHistoryCollapsed)}
+        />
+      </div>
 
       {/* Main Content Area with Chat and Preview */}
-      <div className="flex-1 flex gap-6">
+      <div className="flex-1 flex gap-6 min-w-0">
         {/* Chat Messages Area */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           {/* Enhanced Header */}
           <div className="flex-shrink-0 mb-6">
             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 backdrop-blur-sm border border-border/50">
@@ -466,15 +468,17 @@ const Chat: React.FC = () => {
         </div>
 
         {/* Note Canva Panel */}
-        <NotePreviewPanel
-          note={currentNote}
-          isVisible={isPreviewVisible}
-          onToggleVisibility={toggleVisibility}
-          onNoteUpdate={updateNote}
-          onRequestModification={requestModification}
-          isModifying={isModifying}
-          className="w-96"
-        />
+        <div className="flex-shrink-0">
+          <NotePreviewPanel
+            note={currentNote}
+            isVisible={isPreviewVisible}
+            onToggleVisibility={toggleVisibility}
+            onNoteUpdate={updateNote}
+            onRequestModification={requestModification}
+            isModifying={isModifying}
+            className="w-96"
+          />
+        </div>
       </div>
     </div>
   );
