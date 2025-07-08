@@ -15,8 +15,8 @@ export class SupabaseFoldersService {
       return data.map(folder => ({
         id: folder.id,
         name: folder.name,
-        color: folder.color || '#64748b',
-        parentId: folder.parent_id,
+        color: '#64748b', // Default color since not in database
+        parentId: folder.parent_folder_id,
         createdAt: new Date(folder.created_at),
         updatedAt: new Date(folder.updated_at),
       }));
@@ -35,8 +35,7 @@ export class SupabaseFoldersService {
         .from('folders')
         .insert({
           name: folderData.name,
-          color: folderData.color || '#64748b',
-          parent_id: folderData.parentId,
+          parent_folder_id: folderData.parentId,
           user_id: user.user.id,
         })
         .select()
@@ -47,8 +46,8 @@ export class SupabaseFoldersService {
       return {
         id: data.id,
         name: data.name,
-        color: data.color || '#64748b',
-        parentId: data.parent_id,
+        color: '#64748b', // Default color since not in database
+        parentId: data.parent_folder_id,
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
       };
@@ -63,8 +62,7 @@ export class SupabaseFoldersService {
       const updateData: any = {};
       
       if (updates.name !== undefined) updateData.name = updates.name;
-      if (updates.color !== undefined) updateData.color = updates.color;
-      if (updates.parentId !== undefined) updateData.parent_id = updates.parentId;
+      if (updates.parentId !== undefined) updateData.parent_folder_id = updates.parentId;
 
       const { data, error } = await supabase
         .from('folders')
@@ -78,8 +76,8 @@ export class SupabaseFoldersService {
       return {
         id: data.id,
         name: data.name,
-        color: data.color || '#64748b',
-        parentId: data.parent_id,
+        color: '#64748b', // Default color since not in database
+        parentId: data.parent_folder_id,
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
       };

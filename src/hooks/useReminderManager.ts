@@ -10,10 +10,11 @@ export const useReminderManager = () => {
   const [pendingReminders, setPendingReminders] = useState<any[]>([]);
 
   const snoozeReminder = useCallback(async (reminderId: string, minutes: number = 15) => {
-    const success = await ReminderService.snoozeReminder(reminderId, minutes);
+    const snoozeUntil = new Date(Date.now() + minutes * 60 * 1000);
+    const success = await ReminderService.snoozeReminder(reminderId, snoozeUntil);
     if (success) {
       toast.success(`Reminder snoozed for ${minutes} minutes`);
-      setPendingReminders(prev => prev.filter(r => r.reminder_id !== reminderId));
+      setPendingReminders(prev => prev.filter(r => r.id !== reminderId));
     } else {
       toast.error('Failed to snooze reminder');
     }
@@ -23,7 +24,7 @@ export const useReminderManager = () => {
     const success = await ReminderService.markReminderSent(reminderId);
     if (success) {
       toast.success('Reminder dismissed');
-      setPendingReminders(prev => prev.filter(r => r.reminder_id !== reminderId));
+      setPendingReminders(prev => prev.filter(r => r.id !== reminderId));
     } else {
       toast.error('Failed to dismiss reminder');
     }
@@ -46,27 +47,8 @@ export const useReminderManager = () => {
         if (mounted) {
           setPendingReminders(reminders);
 
-          // Show notifications for new reminders
-          for (const reminder of reminders) {
-            if (reminder && reminder.note_title && reminder.note_id && reminder.reminder_id) {
-              const notification = NotificationService.showReminderNotification(
-                reminder.note_title,
-                reminder.note_id,
-                reminder.reminder_id
-              );
-
-              if (notification) {
-                notification.onclick = () => {
-                  window.focus();
-                  navigate(`/app/editor?noteId=${reminder.note_id}`);
-                  notification.close();
-                };
-
-                // Mark as sent
-                await ReminderService.markReminderSent(reminder.reminder_id);
-              }
-            }
-          }
+          // Show notifications for new reminders (disabled since reminder service is disabled)
+          console.warn('Reminder notifications disabled - reminder service not available');
         }
       } catch (error) {
         console.error('Error checking reminders:', error);

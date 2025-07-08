@@ -19,12 +19,12 @@ export class SupabaseNotesService {
         tags: note.tags || [],
         createdAt: note.created_at,
         updatedAt: note.updated_at,
-        isFavorite: note.is_public || false,
+        isFavorite: note.is_favorite || false,
         folder_id: note.folder_id,
-        reminder_date: note.reminder_date,
-        reminder_status: (note.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
-        reminder_frequency: (note.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
-        reminder_enabled: note.reminder_enabled || false,
+        reminder_date: null, // Not available in current schema
+        reminder_status: 'none' as const,
+        reminder_frequency: 'once' as const,
+        reminder_enabled: false,
       }));
     } catch (error) {
       console.error('Error loading notes:', error);
@@ -44,12 +44,8 @@ export class SupabaseNotesService {
           content: noteData.content,
           content_type: noteData.category,
           tags: noteData.tags,
-          is_public: noteData.isFavorite,
+          is_favorite: noteData.isFavorite,
           folder_id: noteData.folder_id,
-          reminder_date: noteData.reminder_date,
-          reminder_status: noteData.reminder_status || 'none',
-          reminder_frequency: noteData.reminder_frequency || 'once',
-          reminder_enabled: noteData.reminder_enabled || false,
           user_id: user.user.id,
         })
         .select()
@@ -65,12 +61,12 @@ export class SupabaseNotesService {
         tags: data.tags || [],
         createdAt: data.created_at,
         updatedAt: data.updated_at,
-        isFavorite: data.is_public || false,
+        isFavorite: data.is_favorite || false,
         folder_id: data.folder_id,
-        reminder_date: data.reminder_date,
-        reminder_status: (data.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
-        reminder_frequency: (data.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
-        reminder_enabled: data.reminder_enabled || false,
+        reminder_date: null, // Not available in current schema
+        reminder_status: 'none' as const,
+        reminder_frequency: 'once' as const,
+        reminder_enabled: false,
       };
     } catch (error) {
       console.error('Error saving note:', error);
@@ -86,12 +82,8 @@ export class SupabaseNotesService {
       if (updates.content !== undefined) updateData.content = updates.content;
       if (updates.category !== undefined) updateData.content_type = updates.category;
       if (updates.tags !== undefined) updateData.tags = updates.tags;
-      if (updates.isFavorite !== undefined) updateData.is_public = updates.isFavorite;
+      if (updates.isFavorite !== undefined) updateData.is_favorite = updates.isFavorite;
       if (updates.folder_id !== undefined) updateData.folder_id = updates.folder_id;
-      if (updates.reminder_date !== undefined) updateData.reminder_date = updates.reminder_date;
-      if (updates.reminder_status !== undefined) updateData.reminder_status = updates.reminder_status;
-      if (updates.reminder_frequency !== undefined) updateData.reminder_frequency = updates.reminder_frequency;
-      if (updates.reminder_enabled !== undefined) updateData.reminder_enabled = updates.reminder_enabled;
 
       const { data, error } = await supabase
         .from('notes_v2')
@@ -110,12 +102,12 @@ export class SupabaseNotesService {
         tags: data.tags || [],
         createdAt: data.created_at,
         updatedAt: data.updated_at,
-        isFavorite: data.is_public || false,
+        isFavorite: data.is_favorite || false,
         folder_id: data.folder_id,
-        reminder_date: data.reminder_date,
-        reminder_status: (data.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
-        reminder_frequency: (data.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
-        reminder_enabled: data.reminder_enabled || false,
+        reminder_date: null, // Not available in current schema
+        reminder_status: 'none' as const,
+        reminder_frequency: 'once' as const,
+        reminder_enabled: false,
       };
     } catch (error) {
       console.error('Error updating note:', error);
@@ -156,12 +148,12 @@ export class SupabaseNotesService {
         tags: data.tags || [],
         createdAt: data.created_at,
         updatedAt: data.updated_at,
-        isFavorite: data.is_public || false,
+        isFavorite: data.is_favorite || false,
         folder_id: data.folder_id,
-        reminder_date: data.reminder_date,
-        reminder_status: (data.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
-        reminder_frequency: (data.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
-        reminder_enabled: data.reminder_enabled || false,
+        reminder_date: null, // Not available in current schema
+        reminder_status: 'none' as const,
+        reminder_frequency: 'once' as const,
+        reminder_enabled: false,
       };
     } catch (error) {
       console.error('Error getting note:', error);
@@ -273,12 +265,12 @@ export class SupabaseNotesService {
       tags: payload.tags || [],
       createdAt: payload.created_at,
       updatedAt: payload.updated_at,
-      isFavorite: payload.is_public || false,
+      isFavorite: payload.is_favorite || false,
       folder_id: payload.folder_id,
-      reminder_date: payload.reminder_date,
-      reminder_status: (payload.reminder_status || 'none') as 'none' | 'pending' | 'sent' | 'dismissed',
-      reminder_frequency: (payload.reminder_frequency || 'once') as 'once' | 'daily' | 'weekly' | 'monthly',
-      reminder_enabled: payload.reminder_enabled || false,
+      reminder_date: null, // Not available in current schema
+      reminder_status: 'none' as const,
+      reminder_frequency: 'once' as const,
+      reminder_enabled: false,
     };
   }
 }
