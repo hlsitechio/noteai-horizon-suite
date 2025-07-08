@@ -8,7 +8,7 @@ import { useOptimizedNotes } from '../../../contexts/OptimizedNotesContext';
 import { useFolders } from '../../../contexts/FoldersContext';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useSidebar } from '@/components/ui/sidebar';
+import { useSidebarCollapse } from '@/contexts/SidebarContext';
 import { Button } from '@/components/ui/button';
 import { Star, Folder, FileText, Plus } from 'lucide-react';
 
@@ -35,7 +35,8 @@ export function NotesSection() {
   const { folders, createFolder } = useFolders();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const { open: sidebarOpen } = useSidebar();
+  const { isCollapsed } = useSidebarCollapse();
+  const sidebarOpen = !isCollapsed;
 
   const [expandedSections, setExpandedSections] = useState({
     favorites: true,
