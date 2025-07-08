@@ -159,16 +159,18 @@ async function staleWhileRevalidateStrategy(request) {
   const cachedResponse = await cache.match(request);
   
   const fetchPromise = fetch(request).then((response) => {
-    if (response.ok) {
+    // Ensure we only cache successful responses
+    if (response && response.ok && response.status === 200) {
       cache.put(request, response.clone());
     }
     return response;
   }).catch((error) => {
     console.log('[SW] Fetch failed for:', request.url, error);
+    // Return cached response if available
     return cachedResponse;
   });
   
-  // Always return a valid response
+  // Return cached response immediately if available
   if (cachedResponse) {
     // Background update
     fetchPromise.catch(() => {}); // Silent fail
@@ -177,11 +179,34 @@ async function staleWhileRevalidateStrategy(request) {
   
   // Wait for network response
   try {
-    return await fetchPromise;
-  } catch (error) {
-    return new Response('Service Unavailable', { 
+    const networkResponse = await fetchPromise;
+    
+    // If network response is valid, return it
+    if (networkResponse && networkResponse.ok) {
+      return networkResponse;
+    }
+    
+    // If network response failed but we have cache, return cache
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
+    // Return a proper Response object for failed requests
+    return new Response(JSON.stringify({ error: 'Resource not available' }), { 
       status: 503,
-      statusText: 'Service Unavailable' 
+      statusText: 'Service Unavailable',
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    // Return cached response if available, otherwise return error response
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
+    return new Response(JSON.stringify({ error: 'Network error' }), { 
+      status: 503,
+      statusText: 'Service Unavailable',
+      headers: { 'Content-Type': 'application/json' }
     });
   }
 }

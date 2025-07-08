@@ -5,37 +5,69 @@ import Layout from './Layout/Layout';
 import HomeRedirect from './HomeRedirect';
 import { Card } from './ui/card';
 
-// Lazy load components with prefetching for dashboard pages
-const Landing = lazy(() => import('../pages/Landing'));
-const Login = lazy(() => import('../pages/Auth/Login'));
-const Register = lazy(() => import('../pages/Auth/Register'));
-const ResetPassword = lazy(() => import('../pages/Auth/ResetPassword'));
+// Lazy load components with error handling for missing chunks
+const lazyWithRetry = (importFn: () => Promise<any>) => {
+  return lazy(() => 
+    importFn().catch((error) => {
+      console.warn('Lazy loading failed, retrying...', error);
+      // Retry once after a short delay
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(importFn().catch(() => {
+            // If retry fails, return a fallback component
+            return { 
+              default: () => (
+                <div className="min-h-screen flex items-center justify-center">
+                  <div className="text-center">
+                    <h2 className="text-lg font-semibold mb-2">Loading Error</h2>
+                    <p className="text-muted-foreground mb-4">Failed to load page. Please refresh to try again.</p>
+                    <button 
+                      onClick={() => window.location.reload()} 
+                      className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
+                    >
+                      Refresh Page
+                    </button>
+                  </div>
+                </div>
+              )
+            };
+          }));
+        }, 1000);
+      });
+    })
+  );
+};
+
+const Landing = lazyWithRetry(() => import('../pages/Landing'));
+const Login = lazyWithRetry(() => import('../pages/Auth/Login'));
+const Register = lazyWithRetry(() => import('../pages/Auth/Register'));
+const ResetPassword = lazyWithRetry(() => import('../pages/Auth/ResetPassword'));
 
 // Dashboard pages - optimized for performance
-const OptimizedDashboard = lazy(() => import('../pages/OptimizedDashboard'));
-const Editor = lazy(() => import('../pages/Editor'));
-const Notes = lazy(() => import('../pages/Notes'));
-const Analytics = lazy(() => import('../pages/Analytics'));
-const Settings = lazy(() => import('../pages/Settings'));
-const Chat = lazy(() => import('../pages/Chat'));
-const SemanticChat = lazy(() => import('../pages/SemanticChat'));
-const Calendar = lazy(() => import('../pages/Calendar'));
-const ProjectRealms = lazy(() => import('../pages/ProjectRealms'));
-const ProjectDetail = lazy(() => import('../pages/ProjectDetail'));
-const FolderDetail = lazy(() => import('../pages/FolderDetail'));
+const OptimizedDashboard = lazyWithRetry(() => import('../pages/OptimizedDashboard'));
+const Editor = lazyWithRetry(() => import('../pages/Editor'));
+const Notes = lazyWithRetry(() => import('../pages/Notes'));
+const Analytics = lazyWithRetry(() => import('../pages/Analytics'));
+const Settings = lazyWithRetry(() => import('../pages/Settings'));
+const Chat = lazyWithRetry(() => import('../pages/Chat'));
+const SemanticChat = lazyWithRetry(() => import('../pages/SemanticChat'));
+const Calendar = lazyWithRetry(() => import('../pages/Calendar'));
+const ProjectRealms = lazyWithRetry(() => import('../pages/ProjectRealms'));
+const ProjectDetail = lazyWithRetry(() => import('../pages/ProjectDetail'));
+const FolderDetail = lazyWithRetry(() => import('../pages/FolderDetail'));
 
 // Static pages
-const NotFound = lazy(() => import('../pages/NotFound'));
-const Privacy = lazy(() => import('../pages/Privacy'));
-const Terms = lazy(() => import('../pages/Terms'));
-const Contact = lazy(() => import('../pages/Contact'));
-const Sitemap = lazy(() => import('../pages/Sitemap'));
-const Features = lazy(() => import('../pages/Features'));
-const Pricing = lazy(() => import('../pages/Pricing'));
-const About = lazy(() => import('../pages/About'));
-const EditorControlsTest = lazy(() => import('./Editor/EditorControlsTest'));
-const ComponentGallery = lazy(() => import('../pages/ComponentGallery'));
-const MobileApp = lazy(() => import('../mobile/MobileApp'));
+const NotFound = lazyWithRetry(() => import('../pages/NotFound'));
+const Privacy = lazyWithRetry(() => import('../pages/Privacy'));
+const Terms = lazyWithRetry(() => import('../pages/Terms'));
+const Contact = lazyWithRetry(() => import('../pages/Contact'));
+const Sitemap = lazyWithRetry(() => import('../pages/Sitemap'));
+const Features = lazyWithRetry(() => import('../pages/Features'));
+const Pricing = lazyWithRetry(() => import('../pages/Pricing'));
+const About = lazyWithRetry(() => import('../pages/About'));
+const EditorControlsTest = lazyWithRetry(() => import('./Editor/EditorControlsTest'));
+const ComponentGallery = lazyWithRetry(() => import('../pages/ComponentGallery'));
+const MobileApp = lazyWithRetry(() => import('../mobile/MobileApp'));
 
 // Enhanced loading fallback with better UX
 const LoadingFallback = () => (
