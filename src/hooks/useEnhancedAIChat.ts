@@ -49,7 +49,7 @@ export const useEnhancedAIChat = () => {
         requestBody.response_format = responseFormat;
       }
 
-      const { data, error } = await supabase.functions.invoke('chat-openrouter', {
+      const { data, error } = await supabase.functions.invoke('ai-chat-with-context', {
         body: requestBody
       });
 

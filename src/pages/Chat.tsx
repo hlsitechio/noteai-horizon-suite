@@ -9,6 +9,7 @@ import { Send, MessageCircle, Sparkles, Clock, FileText, Search, Trash2, Mic, Mi
 import { useEnhancedAIChatWithSessions, EnhancedChatMessage } from '../hooks/useEnhancedAIChatWithSessions';
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import { useNotePreview } from '../hooks/useNotePreview';
+import { useUserProfile } from '../hooks/useUserProfile';
 import FormattedMessage from '../components/Chat/FormattedMessage';
 import ChatHistoryPanel from '../components/Chat/ChatHistoryPanel';
 import InteractiveNoteCard from '../components/Chat/InteractiveNoteCard';
@@ -17,6 +18,8 @@ import { NotePreviewPanel } from '../components/Chat/NotePreviewPanel';
 const Chat: React.FC = () => {
   const [message, setMessage] = useState('');
   const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(false);
+  
+  const { profile, isLoading: profileLoading } = useUserProfile();
   
   const { 
     messages, 
@@ -227,10 +230,13 @@ const Chat: React.FC = () => {
                     </div>
                     <div>
                       <h1 className="text-xl font-semibold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                        AI Assistant
+                        AI Assistant {profile && !profileLoading ? `for ${profile.display_name}` : ''}
                       </h1>
                       <p className="text-sm text-muted-foreground font-normal">
-                        Create notes in the canva, get help, and more
+                        {profile && !profileLoading 
+                          ? `Hi ${profile.display_name}! I can create notes in the canva, get help, and more` 
+                          : 'Create notes in the canva, get help, and more'
+                        }
                       </p>
                     </div>
                   </div>
@@ -263,10 +269,16 @@ const Chat: React.FC = () => {
                           <div className="absolute inset-0 w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/10 to-accent/10 animate-pulse"></div>
                         </div>
                         <h3 className="text-2xl font-bold text-foreground mb-3 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                          Welcome to AI Assistant
+                          {profile && !profileLoading 
+                            ? `Welcome back, ${profile.display_name}!` 
+                            : 'Welcome to AI Assistant'
+                          }
                         </h3>
                         <p className="text-muted-foreground mb-12 max-w-lg mx-auto leading-relaxed">
-                          I can help you create notes in the canva, set reminders, organize your thoughts, and assist with writing tasks! Ask me to create notes in the canva for real-time editing.
+                          {profile && !profileLoading 
+                            ? `Hi ${profile.display_name}! I can help you create notes in the canva, set reminders, organize your thoughts, and assist with writing tasks! Ask me to create notes in the canva for real-time editing.`
+                            : 'I can help you create notes in the canva, set reminders, organize your thoughts, and assist with writing tasks! Ask me to create notes in the canva for real-time editing.'
+                          }
                         </p>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
