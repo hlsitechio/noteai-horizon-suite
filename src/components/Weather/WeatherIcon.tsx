@@ -5,15 +5,68 @@ interface WeatherIconProps {
   className?: string;
 }
 
-// Get weather icon URL from Tomorrow.io - use reliable CDN
+// Map Tomorrow.io weather codes to OpenWeatherMap icons
 const getWeatherIconUrl = (code: string | number): string => {
-  // Convert to string and pad with zeros if needed
-  const codeStr = String(code).padStart(4, '0');
+  const numCode = typeof code === 'string' ? parseInt(code) : code;
   
-  // Use alternate CDN that's more reliable
-  const baseUrl = 'https://www.tomorrow.io/img/weather/icons';
+  // Map Tomorrow.io codes to OpenWeatherMap icon codes
+  let iconCode = '01d'; // default sunny
   
-  return `${baseUrl}/${codeStr}.svg`;
+  switch (numCode) {
+    // Clear/Sunny
+    case 1000:
+    case 1100:
+      iconCode = '01d'; // clear sky
+      break;
+    
+    // Partly/Mostly Cloudy
+    case 1101:
+      iconCode = '02d'; // few clouds
+      break;
+    case 1102:
+    case 1001:
+      iconCode = '04d'; // broken clouds
+      break;
+    
+    // Fog
+    case 2000:
+    case 2100:
+      iconCode = '50d'; // mist
+      break;
+    
+    // Drizzle & Rain
+    case 4000:
+      iconCode = '09d'; // shower rain
+      break;
+    case 4001:
+    case 4200:
+      iconCode = '10d'; // rain
+      break;
+    case 4201:
+      iconCode = '09d'; // shower rain (heavy)
+      break;
+    
+    // Snow
+    case 5000:
+    case 5001:
+    case 5100:
+    case 5101:
+      iconCode = '13d'; // snow
+      break;
+    
+    // Thunderstorm
+    case 8000:
+      iconCode = '11d'; // thunderstorm
+      break;
+    
+    // Default
+    default:
+      iconCode = '01d';
+      break;
+  }
+  
+  // Use OpenWeatherMap reliable CDN
+  return `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
 };
 
 // Fallback icon mapping in case the PNG doesn't load
