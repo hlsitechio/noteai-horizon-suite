@@ -9,7 +9,6 @@ const STATIC_ASSETS = [
   '/app/dashboard',
   '/app/notes',
   '/app/chat',
-  '/src/index.css',
   '/manifest.json'
 ];
 
