@@ -11,7 +11,7 @@ interface PWAWrapperProps {
 
 export function PWAWrapper({ 
   children, 
-  showTitleBar = true,
+  showTitleBar = false,
   className = ""
 }: PWAWrapperProps) {
   const [isPWA, setIsPWA] = useState(false);
