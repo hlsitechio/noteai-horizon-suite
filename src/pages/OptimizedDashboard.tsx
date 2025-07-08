@@ -93,4 +93,4 @@ const OptimizedDashboard: React.FC = () => {
   );
 };
 
-export default React.memo(OptimizedDashboard);
+export default OptimizedDashboard;
