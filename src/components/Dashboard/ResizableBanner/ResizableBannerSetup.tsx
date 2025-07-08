@@ -128,18 +128,68 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
           {/* Conditional Content - Show Image if Selected, Otherwise Show Compact Placeholder */}
           {selectedImageUrl ? (
             // Show Selected Banner Image - Full Size
-            <motion.div 
-              className="absolute inset-0 w-full h-full"
-              variants={itemVariants}
-            >
-              <div className="relative w-full h-full">
+            <>
+              <motion.div 
+                className="absolute inset-0 w-full h-full"
+                variants={itemVariants}
+              >
                 <img
                   src={selectedImageUrl}
                   alt="Selected banner"
                   className="w-full h-full object-cover"
                 />
-              </div>
-            </motion.div>
+                
+                {/* Image overlay controls */}
+                <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute top-4 right-4 flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => setShowBannerSettings(true)}
+                      className="bg-background/80 backdrop-blur-sm"
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => setShowGallery(true)}
+                      className="bg-background/80 backdrop-blur-sm"
+                    >
+                      <Image className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  {/* Upload new image button */}
+                  <div className="absolute bottom-4 left-4">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*,video/*';
+                        input.onchange = (e) => {
+                          const file = (e.target as HTMLInputElement).files?.[0];
+                          if (file) {
+                            if (file.type.startsWith('image/')) {
+                              onImageUpload?.(file);
+                            } else if (file.type.startsWith('video/')) {
+                              onVideoUpload?.(file);
+                            }
+                          }
+                        };
+                        input.click();
+                      }}
+                      className="bg-background/80 backdrop-blur-sm"
+                    >
+                      <Upload className="h-4 w-4 mr-1" />
+                      Change
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            </>
           ) : (
             // Show Compact Placeholder
             <CompactBannerPlaceholder
@@ -165,10 +215,10 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
             />
           )}
 
-          {/* Drop Zone Indicator */}
+          {/* Drop Zone Indicator - Only show when no image is selected */}
           {dragOver && !isEditMode && !selectedImageUrl && (
             <motion.div
-              className="absolute inset-4 border-2 border-dashed border-primary bg-primary/5 rounded-lg flex items-center justify-center backdrop-blur-sm"
+              className="absolute inset-4 border-2 border-dashed border-primary bg-primary/5 rounded-lg flex items-center justify-center backdrop-blur-sm z-10"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
