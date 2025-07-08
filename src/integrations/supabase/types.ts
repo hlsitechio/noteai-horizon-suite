@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      calendar_events: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          is_all_day: boolean | null
+          location: string | null
+          reminder_minutes: number | null
+          start_date: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_all_day?: boolean | null
+          location?: string | null
+          reminder_minutes?: number | null
+          start_date: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_all_day?: boolean | null
+          location?: string | null
+          reminder_minutes?: number | null
+          start_date?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       dashboard_components: {
         Row: {
           component_config: Json

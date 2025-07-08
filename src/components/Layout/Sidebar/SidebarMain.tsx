@@ -62,29 +62,33 @@ export function SidebarMain() {
     };
   });
 
-  // Update default sizes when settings change
+  // Update default sizes when settings change (only when not in edit mode)
   useEffect(() => {
-    console.log('Settings changed:', settings?.sidebar_panel_sizes);
-    if (settings?.sidebar_panel_sizes && isMounted) {
+    if (settings?.sidebar_panel_sizes && isMounted && !isSidebarEditMode) {
       const newDefaultSizes = {
         navigation: settings.sidebar_panel_sizes.navigation || 40,
         content: settings.sidebar_panel_sizes.content || 40,
         footer: settings.sidebar_panel_sizes.footer || 20
       };
-      console.log('Updating default sizes:', newDefaultSizes);
-      setDefaultSizes(newDefaultSizes);
       
-      // Clear localStorage to force panels to use new default sizes
-      if (!isSidebarEditMode) {
+      // Only update if there's a meaningful difference
+      const hasChanged = 
+        Math.abs(defaultSizes.navigation - newDefaultSizes.navigation) > 1 ||
+        Math.abs(defaultSizes.content - newDefaultSizes.content) > 1 ||
+        Math.abs(defaultSizes.footer - newDefaultSizes.footer) > 1;
+      
+      if (hasChanged) {
+        setDefaultSizes(newDefaultSizes);
+        
+        // Clear localStorage to force panels to use new default sizes
         try {
           localStorage.removeItem('react-resizable-panels:sidebar-main');
-          console.log('Cleared localStorage to use new default sizes');
         } catch (error) {
           console.warn('Failed to clear localStorage:', error);
         }
       }
     }
-  }, [settings?.sidebar_panel_sizes, isMounted, isSidebarEditMode]);
+  }, [settings?.sidebar_panel_sizes, isMounted, isSidebarEditMode, defaultSizes]);
 
   // Debug current state
   useEffect(() => {
@@ -102,40 +106,42 @@ export function SidebarMain() {
   };
 
   const handleLayoutChange = (sizes: number[]) => {
-    console.log('Layout change detected:', { sizes, editMode: isSidebarEditMode, defaultSizes });
-    // Only allow changes when in sidebar edit mode
-    if (!isSidebarEditMode) return;
+    // Only allow changes when in sidebar edit mode and user has interacted
+    if (!isSidebarEditMode || !hasUserInteractedRef.current) return;
     
     if (sizes.length >= 3) {
       const newSizes = {
-        navigation: sizes[0], 
-        content: sizes[1],
-        footer: sizes[2]
+        navigation: Math.round(sizes[0]), 
+        content: Math.round(sizes[1]),
+        footer: Math.round(sizes[2])
       };
+      
+      // Check if sizes actually changed significantly (avoid micro-adjustments)
+      const currentSizes = settings?.sidebar_panel_sizes || {};
+      const hasSignificantChange = 
+        Math.abs((currentSizes.navigation || 40) - newSizes.navigation) > 1 ||
+        Math.abs((currentSizes.content || 40) - newSizes.content) > 1 ||
+        Math.abs((currentSizes.footer || 20) - newSizes.footer) > 1;
+      
+      if (!hasSignificantChange) return;
       
       // Clear existing timeout
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
       
-      // Debounced save with auto-lock (only after initialization)
+      // Debounced save with auto-lock
       saveTimeoutRef.current = setTimeout(async () => {
-        console.log('Saving sidebar panel sizes:', newSizes);
         const success = await updateSidebarPanelSizes(newSizes);
         
         if (success) {
-          console.log('Sidebar panel sizes saved successfully:', newSizes);
-          
-          // Auto-exit sidebar edit mode after successful save (only if user interacted)
-          if (isSidebarEditMode && hasUserInteractedRef.current) {
-            setIsSidebarEditMode(false);
-            toast.success('Sidebar layout saved and locked');
-          }
+          setIsSidebarEditMode(false);
+          hasUserInteractedRef.current = false;
+          toast.success('Sidebar layout saved and locked');
         } else {
-          console.error('Failed to save sidebar panel sizes');
           toast.error('Failed to save sidebar layout');
         }
-      }, 500); // 500ms debounce
+      }, 1000); // Increased debounce to 1 second
     }
   };
 

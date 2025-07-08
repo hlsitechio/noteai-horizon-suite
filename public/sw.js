@@ -31,6 +31,12 @@ const CACHE_FIRST_ROUTES = [
   '.woff'
 ];
 
+// Skip these URLs entirely
+const SKIP_ROUTES = [
+  'fonts.googleapis.com',
+  'fonts.gstatic.com'
+];
+
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing service worker...');
@@ -89,6 +95,11 @@ self.addEventListener('fetch', (event) => {
 
   // Skip chrome-extension and other non-http(s) requests
   if (!url.protocol.startsWith('http')) {
+    return;
+  }
+
+  // Skip external font services entirely
+  if (isSkippedRoute(url.href)) {
     return;
   }
 
@@ -229,6 +240,10 @@ function isNetworkFirst(url) {
 
 function isCacheFirst(url) {
   return CACHE_FIRST_ROUTES.some(route => url.includes(route));
+}
+
+function isSkippedRoute(url) {
+  return SKIP_ROUTES.some(route => url.includes(route));
 }
 
 // Background sync for offline actions
