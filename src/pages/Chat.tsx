@@ -121,15 +121,39 @@ const Chat: React.FC = () => {
 
   const quickActions = [
     {
-      text: "Create a note about today's meeting in the canva",
+      text: "Create a meeting notes template in the canva with agenda sections",
       icon: FileText,
-      category: "Canva",
+      category: "Canva Templates",
       color: "text-blue-500"
     },
     {
-      text: "Create a note in the canva for my project ideas",
+      text: "Design a project planning note in the canva with task breakdowns",
       icon: FileText,
-      category: "Canva", 
+      category: "Canva Templates", 
+      color: "text-blue-500"
+    },
+    {
+      text: "Create a daily journal template in the canva with reflection prompts",
+      icon: FileText,
+      category: "Canva Templates",
+      color: "text-blue-500"
+    },
+    {
+      text: "Build a study notes template in the canva with summary sections",
+      icon: FileText,
+      category: "Canva Templates",
+      color: "text-blue-500"
+    },
+    {
+      text: "Create a recipe note in the canva with ingredients and steps",
+      icon: FileText,
+      category: "Canva Templates",
+      color: "text-blue-500"
+    },
+    {
+      text: "Design a travel itinerary note in the canva with day-by-day planning",
+      icon: FileText,
+      category: "Canva Templates",
       color: "text-blue-500"
     },
     {
