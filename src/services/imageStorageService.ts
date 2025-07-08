@@ -44,18 +44,19 @@ export class ImageStorageService {
         throw new Error(validation.error);
       }
 
-      // Get current user with better error handling
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      // Get current session to ensure we have a valid auth context
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      if (userError) {
-        console.error('Auth error:', userError);
-        throw new Error('Authentication error: ' + userError.message);
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        throw new Error('Session error: ' + sessionError.message);
       }
       
-      if (!user || !user.id) {
-        throw new Error('User not authenticated - please log in first');
+      if (!session || !session.user) {
+        throw new Error('No active session - please log in first');
       }
 
+      const user = session.user;
       console.log('Uploading image for user:', user.id);
 
       // Create unique file path
