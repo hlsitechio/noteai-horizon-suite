@@ -6,6 +6,7 @@ export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: string;
+  created_at: string;
   session_id: string;
 }
 
@@ -21,7 +22,7 @@ export interface ChatSession {
 export const useSemanticChat = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [currentSession, setCurrentSession] = useState<string | null>(null);
+  const [currentSession, setCurrentSession] = useState<ChatSession | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,19 +49,40 @@ export const useSemanticChat = () => {
     }
   }, []);
 
-  const createSession = useCallback(async (title: string): Promise<string | null> => {
+  const createSession = useCallback(async (title: string): Promise<ChatSession | null> => {
     try {
-      // Since chat_sessions table doesn't exist, return mock session ID
+      // Since chat_sessions table doesn't exist, return mock session
       console.warn('Cannot create chat session - table missing');
-      const mockSessionId = `mock-session-${Date.now()}`;
-      return mockSessionId;
+      const mockSession: ChatSession = {
+        id: `mock-session-${Date.now()}`,
+        title,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        user_id: 'mock-user',
+        metadata: {}
+      };
+      
+      return mockSession;
     } catch (err) {
       console.error('Error creating session:', err);
       return null;
     }
   }, []);
 
-  const sendMessage = useCallback(async (content: string, sessionId: string): Promise<ChatMessage | null> => {
+  const createNewSession = createSession; // Alias for interface compatibility
+  
+  const loadSession = useCallback(async (sessionId: string) => {
+    // Since table doesn't exist, just set mock session
+    setCurrentSession({
+      id: sessionId,
+      title: 'Mock Session',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      user_id: 'mock-user'
+    });
+  }, []);
+
+  const sendMessage = useCallback(async (content: string, sessionId?: string): Promise<ChatMessage | null> => {
     try {
       setIsLoading(true);
       console.warn('Cannot send chat message - chat functionality disabled');
@@ -71,7 +93,8 @@ export const useSemanticChat = () => {
         role: 'user',
         content,
         timestamp: new Date().toISOString(),
-        session_id: sessionId
+        created_at: new Date().toISOString(),
+        session_id: sessionId || currentSession?.id || 'mock-session'
       };
       
       return mockMessage;
@@ -82,7 +105,7 @@ export const useSemanticChat = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [currentSession]);
 
   const deleteSession = useCallback(async (sessionId: string): Promise<boolean> => {
     try {
@@ -112,7 +135,7 @@ export const useSemanticChat = () => {
 
   useEffect(() => {
     if (currentSession) {
-      loadMessages(currentSession);
+      loadMessages(currentSession.id);
     }
   }, [currentSession, loadMessages]);
 
@@ -126,6 +149,8 @@ export const useSemanticChat = () => {
     loadSessions,
     loadMessages,
     createSession,
+    createNewSession,
+    loadSession,
     sendMessage,
     deleteSession,
     clearHistory,

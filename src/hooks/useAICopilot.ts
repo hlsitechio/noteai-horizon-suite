@@ -148,10 +148,13 @@ export const useAICopilot = () => {
 
   return {
     processWithAI: processText,
+    processText, // Keep this for compatibility
     getUserSessions,
     rateFeedback,
     getSessionAnalytics,
     isProcessing: isLoading,
-    error: null
+    isLoading, // Keep this for compatibility  
+    error: null,
+    currentSession: null // Add this for compatibility
   };
 };
