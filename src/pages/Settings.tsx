@@ -7,6 +7,7 @@ import AISettingsSection from '../components/Settings/AISettingsSection';
 import DataExportSection from '../components/Settings/DataExportSection';
 import AboutSection from '../components/Settings/AboutSection';
 import { AdvancedColorPicker } from '../components/Settings/AdvancedColorPicker';
+import { PWADownloadSection } from '../components/Settings/PWADownloadSection';
 import DynamicAccentSection from '../components/Settings/DynamicAccentSection';
 import { WeatherSettings } from '../components/Settings/WeatherSettings';
 import { Separator } from '@/components/ui/separator';
@@ -15,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Layout, Settings as SettingsIcon, Palette, User, Sliders, Download, Info, Cloud } from 'lucide-react';
+import { Layout, Settings as SettingsIcon, Palette, User, Sliders, Download, Info, Cloud, Monitor } from 'lucide-react';
 import { useAccentColor } from '../contexts/AccentColorContext';
 import { useEditMode } from '../contexts/EditModeContext';
 
@@ -28,7 +29,7 @@ const Settings: React.FC = () => {
   // Check for tab parameter in URL
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab && ['profile', 'layout', 'themes', 'preferences', 'weather', 'ai', 'data', 'about'].includes(tab)) {
+    if (tab && ['profile', 'layout', 'themes', 'preferences', 'weather', 'ai', 'data', 'download', 'about'].includes(tab)) {
       setActiveTab(tab);
     }
   }, [searchParams]);
@@ -60,7 +61,7 @@ const Settings: React.FC = () => {
 
       {/* Tabbed Interface */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-8">
+        <TabsList className="grid w-full grid-cols-9">
           <TabsTrigger value="profile" className="flex items-center gap-2">
             <User className="h-4 w-4" />
             Profile
@@ -88,6 +89,10 @@ const Settings: React.FC = () => {
           <TabsTrigger value="data" className="flex items-center gap-2">
             <Download className="h-4 w-4" />
             Data Export
+          </TabsTrigger>
+          <TabsTrigger value="download" className="flex items-center gap-2">
+            <Monitor className="h-4 w-4" />
+            Desktop App
           </TabsTrigger>
           <TabsTrigger value="about" className="flex items-center gap-2">
             <Info className="h-4 w-4" />
@@ -167,6 +172,10 @@ const Settings: React.FC = () => {
 
           <TabsContent value="data" className="space-y-6">
             <DataExportSection />
+          </TabsContent>
+
+          <TabsContent value="download" className="space-y-6">
+            <PWADownloadSection />
           </TabsContent>
 
           <TabsContent value="about" className="space-y-6">
