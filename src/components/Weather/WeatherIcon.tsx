@@ -5,15 +5,15 @@ interface WeatherIconProps {
   className?: string;
 }
 
-// Get weather icon URL from Tomorrow.io GitHub repository
+// Get weather icon URL from Tomorrow.io - use reliable CDN
 const getWeatherIconUrl = (code: string | number): string => {
   // Convert to string and pad with zeros if needed
   const codeStr = String(code).padStart(4, '0');
   
-  // Base URL for Tomorrow.io weather icons
-  const baseUrl = 'https://raw.githubusercontent.com/Tomorrow-IO-API/tomorrow-weather-codes/master/V2_icons/small/png';
+  // Use alternate CDN that's more reliable
+  const baseUrl = 'https://www.tomorrow.io/img/weather/icons';
   
-  return `${baseUrl}/${codeStr}.png`;
+  return `${baseUrl}/${codeStr}.svg`;
 };
 
 // Fallback icon mapping in case the PNG doesn't load

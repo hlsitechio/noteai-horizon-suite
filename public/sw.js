@@ -39,7 +39,13 @@ self.addEventListener('install', (event) => {
     Promise.all([
       caches.open(STATIC_CACHE_NAME).then((cache) => {
         console.log('[SW] Caching static assets');
-        return cache.addAll(STATIC_ASSETS);
+        return cache.addAll(STATIC_ASSETS).catch((error) => {
+          console.warn('[SW] Failed to cache some assets:', error);
+          // Cache individual assets that work
+          return Promise.allSettled(
+            STATIC_ASSETS.map(url => cache.add(url).catch(err => console.warn(`Failed to cache ${url}:`, err)))
+          );
+        });
       }),
       self.skipWaiting()
     ])
