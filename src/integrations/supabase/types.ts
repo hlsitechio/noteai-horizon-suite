@@ -14,6 +14,113 @@ export type Database = {
   }
   public: {
     Tables: {
+      dashboard_components: {
+        Row: {
+          component_config: Json
+          component_type: string
+          created_at: string
+          height: number | null
+          id: string
+          is_enabled: boolean | null
+          layout_id: string | null
+          position_x: number | null
+          position_y: number | null
+          updated_at: string
+          user_id: string
+          width: number | null
+        }
+        Insert: {
+          component_config?: Json
+          component_type: string
+          created_at?: string
+          height?: number | null
+          id?: string
+          is_enabled?: boolean | null
+          layout_id?: string | null
+          position_x?: number | null
+          position_y?: number | null
+          updated_at?: string
+          user_id: string
+          width?: number | null
+        }
+        Update: {
+          component_config?: Json
+          component_type?: string
+          created_at?: string
+          height?: number | null
+          id?: string
+          is_enabled?: boolean | null
+          layout_id?: string | null
+          position_x?: number | null
+          position_y?: number | null
+          updated_at?: string
+          user_id?: string
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dashboard_components_layout_id_fkey"
+            columns: ["layout_id"]
+            isOneToOne: false
+            referencedRelation: "dashboard_layouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dashboard_layouts: {
+        Row: {
+          created_at: string
+          id: string
+          is_default: boolean | null
+          layout_config: Json
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_default?: boolean | null
+          layout_config?: Json
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_default?: boolean | null
+          layout_config?: Json
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      dashboard_settings: {
+        Row: {
+          created_at: string
+          id: string
+          settings: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          settings?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          settings?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       folders: {
         Row: {
           created_at: string
