@@ -154,7 +154,7 @@ export const useEditModeState = () => {
     if (!user) return;
     
     loadEditModes();
-  }, [user?.id, loadEditModes]); // Only trigger when user ID changes
+  }, [user?.id]); // Only trigger when user ID changes, not when loadEditModes changes
 
   // Cleanup timeout on unmount
   useEffect(() => {
