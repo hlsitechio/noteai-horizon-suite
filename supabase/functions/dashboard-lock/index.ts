@@ -58,9 +58,12 @@ Deno.serve(async (req) => {
       const { error: updateError } = await supabaseClient
         .from('dashboard_settings')
         .update({
-          dashboard_edit_mode: lockDashboard ? false : existingSettings.dashboard_edit_mode,
-          sidebar_edit_mode: lockSidebar ? false : existingSettings.sidebar_edit_mode,
-          edit_mode_expires_at: null, // Clear expiration since we're explicitly locking
+          settings: {
+            ...existingSettings.settings,
+            dashboard_edit_mode: lockDashboard ? false : existingSettings.settings?.dashboard_edit_mode,
+            sidebar_edit_mode: lockSidebar ? false : existingSettings.settings?.sidebar_edit_mode,
+            edit_mode_expires_at: null
+          },
           updated_at: new Date().toISOString()
         })
         .eq('user_id', user.id)
@@ -81,12 +84,14 @@ Deno.serve(async (req) => {
         .from('dashboard_settings')
         .insert({
           user_id: user.id,
-          dashboard_edit_mode: !lockDashboard,
-          sidebar_edit_mode: !lockSidebar,
-          edit_mode_expires_at: null,
-          sidebar_panel_sizes: {},
-          selected_banner_url: null,
-          selected_banner_type: null
+          settings: {
+            dashboard_edit_mode: !lockDashboard,
+            sidebar_edit_mode: !lockSidebar,
+            edit_mode_expires_at: null,
+            sidebar_panel_sizes: {},
+            selected_banner_url: null,
+            selected_banner_type: null
+          }
         })
 
       if (insertError) {

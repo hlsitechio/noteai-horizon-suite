@@ -23,14 +23,23 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
   const { getPanelConfiguration } = useDashboardLayout();
   const config = getPanelConfiguration(panelKey);
 
-  const isEnabled = config?.enabled && config?.component_key;
+  // Default components for each panel if not configured
+  const defaultComponents: Record<string, string> = {
+    'topLeft': 'quick-actions',
+    'topRight': 'recent-activity', 
+    'bottomLeft': 'notes-summary',
+    'bottomRight': 'analytics-overview'
+  };
+
+  const componentKey = config?.component_key || defaultComponents[panelKey];
+  const isEnabled = componentKey && (config?.enabled !== false);
 
   return (
     <div className={cn('relative', className)} aria-live="polite" role="region">
       {isEnabled ? (
         <DashboardComponentRenderer
-          componentKey={config.component_key}
-          props={config.props}
+          componentKey={componentKey}
+          props={config?.props || {}}
         />
       ) : (
         <Card className="h-full border-dashed border-muted border-2">
