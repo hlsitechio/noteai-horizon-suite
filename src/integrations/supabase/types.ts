@@ -206,6 +206,10 @@ export type Database = {
           folder_id: string | null
           id: string
           is_favorite: boolean | null
+          reminder_date: string | null
+          reminder_enabled: boolean | null
+          reminder_frequency: string | null
+          reminder_status: string | null
           tags: string[] | null
           title: string
           updated_at: string
@@ -218,6 +222,10 @@ export type Database = {
           folder_id?: string | null
           id?: string
           is_favorite?: boolean | null
+          reminder_date?: string | null
+          reminder_enabled?: boolean | null
+          reminder_frequency?: string | null
+          reminder_status?: string | null
           tags?: string[] | null
           title: string
           updated_at?: string
@@ -230,6 +238,10 @@ export type Database = {
           folder_id?: string | null
           id?: string
           is_favorite?: boolean | null
+          reminder_date?: string | null
+          reminder_enabled?: boolean | null
+          reminder_frequency?: string | null
+          reminder_status?: string | null
           tags?: string[] | null
           title?: string
           updated_at?: string
@@ -241,6 +253,53 @@ export type Database = {
             columns: ["folder_id"]
             isOneToOne: false
             referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reminders: {
+        Row: {
+          created_at: string
+          frequency: string
+          id: string
+          note_id: string
+          notification_sent: boolean | null
+          reminder_date: string
+          snooze_until: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          frequency?: string
+          id?: string
+          note_id: string
+          notification_sent?: boolean | null
+          reminder_date: string
+          snooze_until?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          frequency?: string
+          id?: string
+          note_id?: string
+          notification_sent?: boolean | null
+          reminder_date?: string
+          snooze_until?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminders_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes_v2"
             referencedColumns: ["id"]
           },
         ]

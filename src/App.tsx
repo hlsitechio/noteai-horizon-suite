@@ -18,6 +18,7 @@ import { QuantumAIProvider } from './contexts/QuantumAIContext';
 import { usePerformanceMonitoring } from './hooks/usePerformanceMonitoring';
 import { AppProviders } from './components/AppProviders';
 import { OptimizedLazyRoutes } from './components/OptimizedLazyRoutes';
+import { ReminderManager } from './components/ReminderManager';
 
 import './App.css';
 
@@ -30,6 +31,7 @@ function App() {
     <AppProviders>
       <SentryRouter>
         <OptimizedLazyRoutes />
+        <ReminderManager />
         <Toaster />
         <Sonner />
       </SentryRouter>

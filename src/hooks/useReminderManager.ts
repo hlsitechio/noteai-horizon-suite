@@ -47,8 +47,30 @@ export const useReminderManager = () => {
         if (mounted) {
           setPendingReminders(reminders);
 
-          // Show notifications for new reminders (disabled since reminder service is disabled)
-          console.warn('Reminder notifications disabled - reminder service not available');
+          // Show notifications for new reminders
+          for (const reminder of reminders) {
+            const noteTitle = (reminder as any).notes_v2?.title || 'Note reminder';
+            
+            // Use the NotificationService to show reminder notification
+            const notification = NotificationService.showReminderNotification(
+              noteTitle,
+              reminder.note_id,
+              reminder.id
+            );
+            
+            if (!notification) {
+              // Fallback to toast if notifications aren't available
+              toast.info(`⏰ Reminder: ${noteTitle}`, {
+                action: {
+                  label: 'View',
+                  onClick: () => {
+                    // Navigate to the note or editor if needed
+                    window.location.href = `/editor/${reminder.note_id}`;
+                  }
+                }
+              });
+            }
+          }
         }
       } catch (error) {
         console.error('Error checking reminders:', error);
