@@ -171,15 +171,15 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
 
   if (!isVisible) {
     return (
-      <div className={`${className} border-l bg-muted/20`}>
-        <div className="p-4 h-full flex items-center justify-center">
+      <div className={`${className} border-l border-border/50 bg-gradient-to-b from-muted/10 to-muted/30`}>
+        <div className="p-6 h-full flex items-center justify-center">
           <Button
             variant="outline"
             onClick={onToggleVisibility}
-            className="flex items-center gap-2"
+            className="flex items-center gap-3 h-12 px-6 rounded-xl border-2 border-primary/20 bg-gradient-to-r from-background to-muted/20 hover:from-primary/5 hover:to-primary/10 transition-all duration-300 shadow-lg hover:shadow-xl"
           >
-            <Eye className="w-4 h-4" />
-            Show Canva
+            <Eye className="w-5 h-5 text-primary" />
+            <span className="font-medium">Show Canva</span>
           </Button>
         </div>
       </div>
@@ -187,21 +187,31 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
   }
 
   return (
-    <div className={`${className} border-l bg-background`}>
+    <div className={`${className} border-l border-border/50 bg-gradient-to-b from-background via-background to-muted/20`}>
       <div className="h-full flex flex-col">
-        {/* Header */}
-        <div className="p-4 border-b bg-muted/30">
+        {/* Enhanced Header */}
+        <div className="p-6 border-b border-border/50 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 backdrop-blur-sm">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-primary" />
-              <h3 className="font-semibold">Note Canva</h3>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <FileText className="w-6 h-6 text-primary" />
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-accent to-primary rounded-full animate-pulse"></div>
+              </div>
+              <div>
+                <h3 className="font-bold text-lg bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  Note Canva
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  Live editing workspace
+                </p>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={onToggleVisibility}
-                className="h-8 w-8 p-0"
+                className="h-9 w-9 p-0 rounded-xl hover:bg-muted/50 transition-all duration-200"
               >
                 <EyeOff className="w-4 h-4" />
               </Button>
@@ -213,57 +223,66 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
         <div className="flex-1 flex flex-col min-h-0">
           {note ? (
             <>
-              {/* Note Content */}
-              <ScrollArea className="flex-1 p-4">
-                <div className="space-y-4">
-                  {/* Title */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Title</label>
+              {/* Enhanced Note Content */}
+              <ScrollArea className="flex-1 p-6">
+                <div className="space-y-6">
+                  {/* Title Section */}
+                  <div className="space-y-3">
+                    <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-primary"></div>
+                      Title
+                    </label>
                     {isEditing ? (
                       <Input
                         value={editedTitle}
                         onChange={(e) => setEditedTitle(e.target.value)}
                         placeholder="Note title..."
-                        className="font-semibold"
+                        className="font-semibold text-lg h-12 rounded-xl border-2 border-muted/50 focus:border-primary/50 bg-gradient-to-r from-background to-muted/10"
                       />
                     ) : (
-                      <div className="p-3 bg-muted/50 rounded-md">
-                        <h4 className="font-semibold">{note.title}</h4>
+                      <div className="p-4 bg-gradient-to-r from-muted/30 to-muted/20 rounded-xl border border-muted/50 backdrop-blur-sm">
+                        <h4 className="font-bold text-lg text-foreground">{note.title}</h4>
                       </div>
                     )}
                   </div>
 
-                  {/* Content */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Content</label>
+                  {/* Content Section */}
+                  <div className="space-y-3">
+                    <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-accent"></div>
+                      Content
+                    </label>
                     {isEditing ? (
                       <Textarea
                         value={editedContent}
                         onChange={(e) => setEditedContent(e.target.value)}
                         placeholder="Note content..."
-                        className="min-h-[200px] resize-none"
+                        className="min-h-[240px] resize-none rounded-xl border-2 border-muted/50 focus:border-primary/50 bg-gradient-to-br from-background to-muted/10 text-base leading-relaxed"
                       />
                     ) : (
-                      <div className="p-3 bg-muted/50 rounded-md min-h-[200px] whitespace-pre-wrap">
+                      <div className="p-4 bg-gradient-to-br from-muted/30 to-muted/20 rounded-xl border border-muted/50 min-h-[240px] whitespace-pre-wrap text-base leading-relaxed backdrop-blur-sm">
                         {note.content}
                       </div>
                     )}
                   </div>
 
-                  {/* Tags */}
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Tags</label>
+                  {/* Tags Section */}
+                  <div className="space-y-3">
+                    <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-success"></div>
+                      Tags
+                    </label>
                     <div className="flex flex-wrap gap-2">
                       {editedTags.map((tag, index) => (
-                        <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                        <Badge key={index} variant="secondary" className="flex items-center gap-2 px-3 py-1 rounded-lg bg-gradient-to-r from-secondary/80 to-secondary/60 hover:from-secondary to-secondary/80 transition-all duration-200">
                           <Tag className="w-3 h-3" />
-                          {tag}
+                          <span className="font-medium">{tag}</span>
                           {isEditing && (
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => handleRemoveTag(tag)}
-                              className="h-4 w-4 p-0 ml-1 hover:bg-destructive hover:text-destructive-foreground"
+                              className="h-5 w-5 p-0 ml-1 hover:bg-destructive hover:text-destructive-foreground rounded-full transition-all duration-200"
                             >
                               <X className="w-3 h-3" />
                             </Button>
@@ -273,18 +292,19 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
                     </div>
                     
                     {isEditing && (
-                      <div className="flex gap-2">
+                      <div className="flex gap-3 mt-3">
                         <Input
                           value={newTag}
                           onChange={(e) => setNewTag(e.target.value)}
                           onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
                           placeholder="Add tag..."
-                          className="flex-1"
+                          className="flex-1 h-10 rounded-lg border-2 border-muted/50 focus:border-primary/50 bg-gradient-to-r from-background to-muted/10"
                         />
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={handleAddTag}
+                          className="h-10 w-10 rounded-lg border-2 border-muted/50 hover:border-primary/50 transition-all duration-200"
                         >
                           <Plus className="w-4 h-4" />
                         </Button>
@@ -296,97 +316,116 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
 
               <Separator />
 
-              {/* AI Modification Request */}
-              <div className="p-4 space-y-3 bg-muted/20">
-                <label className="text-sm font-medium">Request AI Modification</label>
-                <div className="flex gap-2">
+              {/* Enhanced AI Modification Request */}
+              <div className="p-6 space-y-4 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 backdrop-blur-sm border-t border-border/50">
+                <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  Request AI Modification
+                </label>
+                <div className="flex gap-3">
                   <Input
                     value={modificationInstruction}
                     onChange={(e) => setModificationInstruction(e.target.value)}
                     placeholder="e.g., Make it more concise, add examples, change tone..."
                     onKeyPress={(e) => e.key === 'Enter' && handleRequestModification()}
                     disabled={isModifying}
+                    className="h-11 rounded-xl border-2 border-muted/50 focus:border-primary/50 bg-gradient-to-r from-background to-muted/10"
                   />
                   <Button
                     onClick={handleRequestModification}
                     disabled={!modificationInstruction.trim() || isModifying}
-                    size="sm"
+                    size="lg"
+                    className="h-11 px-6 rounded-xl bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     {isModifying ? (
-                      <Sparkles className="w-4 h-4 animate-spin" />
+                      <Sparkles className="w-5 h-5 animate-spin" />
                     ) : (
-                      <Send className="w-4 h-4" />
+                      <div className="flex items-center gap-2">
+                        <Send className="w-4 h-4" />
+                        <span className="font-medium">Modify</span>
+                      </div>
                     )}
                   </Button>
                 </div>
                 {isModifying && (
-                  <div className="text-sm text-muted-foreground flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 animate-spin" />
-                    AI is modifying the note...
+                  <div className="flex items-center justify-center gap-3 p-3 rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 animate-fade-in">
+                    <div className="relative">
+                      <Sparkles className="w-5 h-5 animate-spin text-primary" />
+                      <div className="absolute inset-0 w-5 h-5 text-primary/30 animate-ping">
+                        <Sparkles className="w-5 h-5" />
+                      </div>
+                    </div>
+                    <span className="text-sm text-primary font-medium">AI is modifying the note...</span>
                   </div>
                 )}
               </div>
 
               <Separator />
 
-              {/* Actions */}
-              <div className="p-4 space-y-3">
+              {/* Enhanced Actions */}
+              <div className="p-6 space-y-4 border-t border-border/50">
                 {!isEditing ? (
-                  <div className="flex gap-2">
+                  <div className="flex flex-col gap-3">
                     <Button
                       variant="outline"
                       onClick={() => setIsEditing(true)}
-                      className="flex-1"
+                      className="w-full h-12 rounded-xl border-2 border-primary/20 bg-gradient-to-r from-background to-primary/5 hover:from-primary/5 hover:to-primary/10 transition-all duration-300"
                     >
-                      <Edit3 className="w-4 h-4 mr-2" />
-                      Edit
+                      <Edit3 className="w-5 h-5 mr-3" />
+                      <span className="font-medium">Edit Note</span>
                     </Button>
                     {note.id && (
                       <Button
                         variant="outline"
                         onClick={handleOpenInEditor}
-                        className="flex-1"
+                        className="w-full h-12 rounded-xl border-2 border-accent/20 bg-gradient-to-r from-background to-accent/5 hover:from-accent/5 hover:to-accent/10 transition-all duration-300"
                       >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        Open in Editor
+                        <ExternalLink className="w-5 h-5 mr-3" />
+                        <span className="font-medium">Open in Editor</span>
                       </Button>
                     )}
                   </div>
                 ) : (
-                  <div className="flex gap-2">
+                  <div className="flex gap-3">
                     <Button
                       onClick={handleSaveNote}
                       disabled={isSaving}
-                      className="flex-1"
+                      className="flex-1 h-12 rounded-xl bg-gradient-to-r from-success to-success/90 hover:from-success/90 hover:to-success shadow-lg hover:shadow-xl transition-all duration-200"
                     >
                       {isSaving ? (
-                        <Sparkles className="w-4 h-4 mr-2 animate-spin" />
+                        <Sparkles className="w-5 h-5 mr-3 animate-spin" />
                       ) : (
-                        <Save className="w-4 h-4 mr-2" />
+                        <Save className="w-5 h-5 mr-3" />
                       )}
-                      Save
+                      <span className="font-medium">Save</span>
                     </Button>
                     <Button
                       variant="outline"
                       onClick={handleCancelEdit}
                       disabled={isSaving}
+                      className="h-12 w-12 rounded-xl border-2 border-muted/50 hover:border-destructive/50 hover:bg-destructive/10 transition-all duration-200"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-5 h-5" />
                     </Button>
                   </div>
                 )}
               </div>
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center p-8 text-center">
-              <div className="space-y-4">
-                <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                  <FileText className="w-8 h-8 text-primary" />
+            <div className="flex-1 flex items-center justify-center p-12 text-center">
+              <div className="space-y-6">
+                <div className="relative">
+                  <div className="w-24 h-24 mx-auto bg-gradient-to-br from-primary/20 via-accent/10 to-primary/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-primary/20">
+                    <FileText className="w-12 h-12 text-primary" />
+                  </div>
+                  <div className="absolute inset-0 w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-primary/10 to-accent/10 animate-pulse"></div>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">No Note in Canva</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Ask the AI to create a note in the canva and it will appear here for editing.
+                  <h4 className="font-bold text-xl mb-3 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    No Note in Canva
+                  </h4>
+                  <p className="text-muted-foreground leading-relaxed max-w-xs mx-auto">
+                    Ask the AI to create a note in the canva and it will appear here for real-time editing and collaboration.
                   </p>
                 </div>
               </div>
