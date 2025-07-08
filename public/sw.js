@@ -163,9 +163,23 @@ async function staleWhileRevalidateStrategy(request) {
       cache.put(request, response.clone());
     }
     return response;
-  }).catch(() => cachedResponse);
+  }).catch((error) => {
+    console.log('[SW] Fetch failed for:', request.url, error);
+    return cachedResponse;
+  });
   
-  return cachedResponse || fetchPromise;
+  // Always return a valid response
+  if (cachedResponse) {
+    // Background update
+    fetchPromise.catch(() => {}); // Silent fail
+    return cachedResponse;
+  }
+  
+  // Wait for network response
+  return fetchPromise || new Response('Service Unavailable', { 
+    status: 503,
+    statusText: 'Service Unavailable' 
+  });
 }
 
 // Helper functions to determine caching strategy
