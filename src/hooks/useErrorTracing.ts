@@ -1,86 +1,89 @@
+import { useCallback } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { v4 as uuidv4 } from 'uuid';
-import { supabase } from '@/integrations/supabase/client';
-
-interface ErrorTrace {
+export interface ErrorTrace {
   id: string;
+  component: string;
+  error: string;
+  stack: string;
   timestamp: string;
-  userId?: string;
-  component: string;
-  operation: string;
-  error: {
-    message: string;
-    stack?: string;
-    code?: string;
-  };
-  context: Record<string, any>;
-  userAgent: string;
   url: string;
-}
-
-interface ErrorTracePayload {
-  component: string;
-  operation: string;
-  error: Error;
-  context?: Record<string, any>;
+  userAgent: string;
+  sessionId?: string;
+  userId?: string;
 }
 
 export const useErrorTracing = () => {
-  const queryClient = useQueryClient();
+  const { user } = useAuth();
 
-  const logErrorMutation = useMutation({
-    mutationFn: async (payload: ErrorTracePayload) => {
-      const traceId = uuidv4();
-      const { data: { user } } = await supabase.auth.getUser();
+  const traceError = useCallback(async (payload: {
+    component: string;
+    error: string;
+    stack?: string;
+    sessionId?: string;
+    additionalData?: Record<string, any>;
+  }) => {
+    try {
+      const traceId = `trace-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
       const errorTrace: ErrorTrace = {
         id: traceId,
-        timestamp: new Date().toISOString(),
-        userId: user?.id,
         component: payload.component,
-        operation: payload.operation,
-        error: {
-          message: payload.error.message,
-          stack: payload.error.stack,
-          code: payload.error.name,
-        },
-        context: payload.context || {},
-        userAgent: navigator.userAgent,
+        error: payload.error,
+        stack: payload.stack || '',
+        timestamp: new Date().toISOString(),
         url: window.location.href,
+        userAgent: navigator.userAgent,
+        sessionId: payload.sessionId,
+        userId: user?.id,
       };
 
-      // Log to console for development
-      console.error('Error Trace:', errorTrace);
+      // Since security_audit_log table doesn't exist, just log locally for now
+      // TODO: Create security_audit_log table if error tracing functionality is needed
+      console.warn('Security audit log not available - table missing');
+      console.log('Error trace would be stored:', {
+        user_id: user?.id || null,
+        action: 'error_trace',
+        table_name: payload.component,
+        record_id: traceId,
+        new_values: errorTrace
+      });
 
-      // Store in security_audit_log table for monitoring
-      const { error } = await supabase
-        .from('security_audit_log')
-        .insert({
-          user_id: user?.id || null,
-          action: 'error_trace',
-          table_name: payload.component,
-          record_id: traceId,
-          new_values: errorTrace as any,
-        });
-
-      if (error) {
-        console.error('Failed to store error trace:', error);
+      // Store in localStorage as fallback
+      try {
+        const existingTraces = JSON.parse(localStorage.getItem('error_traces') || '[]');
+        existingTraces.push(errorTrace);
+        
+        // Keep only last 50 traces
+        if (existingTraces.length > 50) {
+          existingTraces.splice(0, existingTraces.length - 50);
+        }
+        
+        localStorage.setItem('error_traces', JSON.stringify(existingTraces));
+      } catch (storageError) {
+        console.warn('Failed to store error trace in localStorage:', storageError);
       }
 
       return traceId;
-    },
-    onError: (error) => {
-      console.error('Error tracing failed:', error);
-    },
-  });
+    } catch (error) {
+      console.error('Error in error tracing:', error);
+      return null;
+    }
+  }, [user]);
 
-  const traceError = (payload: ErrorTracePayload) => {
-    logErrorMutation.mutate(payload);
-  };
+  const getErrorTraces = useCallback(async (limit: number = 20): Promise<ErrorTrace[]> => {
+    try {
+      // Since table doesn't exist, return from localStorage
+      const traces = JSON.parse(localStorage.getItem('error_traces') || '[]');
+      return traces.slice(-limit).reverse(); // Most recent first
+    } catch (error) {
+      console.error('Error retrieving error traces:', error);
+      return [];
+    }
+  }, []);
 
   return {
     traceError,
-    isLogging: logErrorMutation.isPending,
+    getErrorTraces
   };
 };

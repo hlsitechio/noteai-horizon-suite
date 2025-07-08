@@ -1,109 +1,151 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 
-interface RateLimitConfig {
+export interface RateLimitConfig {
+  action: string;
   maxRequests: number;
   windowMs: number;
-  endpoint: string;
+  burstLimit?: number;
 }
 
-interface RateLimitState {
-  isAllowed: boolean;
-  remaining: number;
+export interface RateLimitResult {
+  allowed: boolean;
+  remainingRequests: number;
   resetTime: number;
-  blocked: boolean;
+  retryAfter: number;
 }
 
-export const useAdvancedRateLimit = (config: RateLimitConfig) => {
+const DEFAULT_CONFIGS: Record<string, RateLimitConfig> = {
+  'ai_request': { action: 'ai_request', maxRequests: 100, windowMs: 3600000 }, // 100/hour
+  'note_create': { action: 'note_create', maxRequests: 200, windowMs: 3600000 }, // 200/hour
+  'note_update': { action: 'note_update', maxRequests: 500, windowMs: 3600000 }, // 500/hour
+  'search': { action: 'search', maxRequests: 1000, windowMs: 3600000 }, // 1000/hour
+  'export': { action: 'export', maxRequests: 10, windowMs: 3600000 }, // 10/hour
+};
+
+export const useAdvancedRateLimit = () => {
   const { user } = useAuth();
-  const [rateLimitState, setRateLimitState] = useState<RateLimitState>({
-    isAllowed: true,
-    remaining: config.maxRequests,
-    resetTime: Date.now() + config.windowMs,
-    blocked: false,
-  });
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [blockExpiry, setBlockExpiry] = useState<number | null>(null);
 
-  const checkRateLimit = useCallback(async (action: string) => {
-    if (!user) return false;
-
+  const checkRateLimit = useCallback(async (
+    action: string,
+    context?: Record<string, any>
+  ): Promise<RateLimitResult> => {
     try {
-      // Check local rate limit first (client-side)
+      if (!user) {
+        return {
+          allowed: false,
+          remainingRequests: 0,
+          resetTime: Date.now() + 3600000,
+          retryAfter: 3600000
+        };
+      }
+
+      // Since check_enhanced_rate_limit_v2 function doesn't exist, use local rate limiting
+      console.warn('Advanced rate limiting not available - function missing');
+      
+      const config = DEFAULT_CONFIGS[action] || DEFAULT_CONFIGS['ai_request'];
+      const key = `rate_limit_${user.id}_${action}`;
       const now = Date.now();
-      if (now > rateLimitState.resetTime) {
-        setRateLimitState({
-          isAllowed: true,
-          remaining: config.maxRequests,
-          resetTime: now + config.windowMs,
-          blocked: false,
-        });
+      
+      try {
+        const stored = localStorage.getItem(key);
+        const data = stored ? JSON.parse(stored) : { count: 0, resetTime: now + config.windowMs };
+        
+        // Reset if window expired
+        if (now >= data.resetTime) {
+          data.count = 0;
+          data.resetTime = now + config.windowMs;
+        }
+        
+        // Check if limit exceeded
+        if (data.count >= config.maxRequests) {
+          const retryAfter = data.resetTime - now;
+          return {
+            allowed: false,
+            remainingRequests: 0,
+            resetTime: data.resetTime,
+            retryAfter
+          };
+        }
+        
+        // Increment count
+        data.count++;
+        localStorage.setItem(key, JSON.stringify(data));
+        
+        return {
+          allowed: true,
+          remainingRequests: config.maxRequests - data.count,
+          resetTime: data.resetTime,
+          retryAfter: 0
+        };
+      } catch (storageError) {
+        console.warn('LocalStorage error, allowing request:', storageError);
+        return {
+          allowed: true,
+          remainingRequests: 100,
+          resetTime: Date.now() + 3600000,
+          retryAfter: 0
+        };
       }
-
-      if (rateLimitState.remaining <= 0) {
-        setRateLimitState(prev => ({ ...prev, blocked: true }));
-        return false;
-      }
-
-      // Check server-side rate limit
-      const { data, error } = await supabase.rpc('check_enhanced_rate_limit_v2', {
-        user_uuid: user.id,
-        action_type: action,
-        max_requests: config.maxRequests,
-        time_window: `${config.windowMs / 1000} seconds`,
-      });
-
-      if (error) {
-        console.error('Rate limit check failed:', error);
-        return false;
-      }
-
-      if (!data) {
-        setRateLimitState(prev => ({
-          ...prev,
-          remaining: 0,
-          blocked: true,
-        }));
-        return false;
-      }
-
-      // Update local state
-      setRateLimitState(prev => ({
-        ...prev,
-        remaining: Math.max(0, prev.remaining - 1),
-        isAllowed: data,
-      }));
-
-      return data;
     } catch (error) {
-      console.error('Rate limit error:', error);
+      console.error('Rate limit check error:', error);
+      // Fail open - allow action if rate limit check fails
+      return {
+        allowed: true,
+        remainingRequests: 1,
+        resetTime: Date.now() + 3600000,
+        retryAfter: 0
+      };
+    }
+  }, [user]);
+
+  const getRateLimitStatus = useCallback(async (action: string) => {
+    const result = await checkRateLimit(action);
+    return {
+      isBlocked: !result.allowed,
+      remainingRequests: result.remainingRequests,
+      resetTime: result.resetTime,
+      retryAfter: result.retryAfter
+    };
+  }, [checkRateLimit]);
+
+  const clearRateLimit = useCallback(async (action: string): Promise<boolean> => {
+    try {
+      if (!user) return false;
+      
+      const key = `rate_limit_${user.id}_${action}`;
+      localStorage.removeItem(key);
+      return true;
+    } catch (error) {
+      console.error('Error clearing rate limit:', error);
       return false;
     }
-  }, [user, config, rateLimitState]);
+  }, [user]);
 
-  const reset = useCallback(() => {
-    setRateLimitState({
-      isAllowed: true,
-      remaining: config.maxRequests,
-      resetTime: Date.now() + config.windowMs,
-      blocked: false,
-    });
-  }, [config]);
-
-  // Auto-reset when window expires
+  // Check if currently blocked
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const now = Date.now();
-      if (now > rateLimitState.resetTime) {
-        reset();
+    const checkBlockStatus = async () => {
+      if (blockExpiry && Date.now() < blockExpiry) {
+        setIsBlocked(true);
+      } else {
+        setIsBlocked(false);
+        setBlockExpiry(null);
       }
-    }, rateLimitState.resetTime - Date.now());
+    };
 
-    return () => clearTimeout(timer);
-  }, [rateLimitState.resetTime, reset]);
+    checkBlockStatus();
+    const interval = setInterval(checkBlockStatus, 10000); // Check every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [blockExpiry]);
 
   return {
     checkRateLimit,
-    reset,
-    ...rateLimitState,
+    getRateLimitStatus,
+    clearRateLimit,
+    isBlocked,
+    blockExpiry
   };
 };
