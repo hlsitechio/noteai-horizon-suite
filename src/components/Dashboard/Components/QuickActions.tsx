@@ -132,7 +132,10 @@ export function QuickActions() {
             variant="ghost"
             size="sm"
             className="w-full text-xs text-muted-foreground hover:text-foreground"
-            onClick={() => window.location.reload()}
+            onClick={() => {
+              // Refresh by triggering a re-render instead of page reload
+              window.dispatchEvent(new Event('storage'));
+            }}
           >
             <RefreshCw className="h-3 w-3 mr-2" />
             Refresh Actions
