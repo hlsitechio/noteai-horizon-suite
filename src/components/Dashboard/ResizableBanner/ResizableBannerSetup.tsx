@@ -109,8 +109,9 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
   const handleBannerDrag = (e: React.MouseEvent) => {
     if (!isDragging) return;
     
+    // Only allow vertical movement for images
     setBannerPosition({
-      x: e.clientX - dragStart.x,
+      x: 0, // Keep horizontal position fixed
       y: e.clientY - dragStart.y
     });
   };
@@ -123,8 +124,9 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
   React.useEffect(() => {
     if (isDragging) {
       const handleMouseMove = (e: MouseEvent) => {
+        // Only allow vertical movement for images
         setBannerPosition({
-          x: e.clientX - dragStart.x,
+          x: 0, // Keep horizontal position fixed
           y: e.clientY - dragStart.y
         });
       };
