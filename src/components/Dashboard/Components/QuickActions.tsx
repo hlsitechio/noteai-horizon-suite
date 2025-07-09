@@ -19,6 +19,9 @@ import {
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ComponentLibraryButton } from './ComponentLibraryButton';
+import { useNavigate } from 'react-router-dom';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
+import { toast } from 'sonner';
 
 type QuickAction = {
   id: string;
@@ -29,52 +32,102 @@ type QuickAction = {
   onClick?: () => void;
 };
 
-const quickActions: QuickAction[] = [
-  {
-    id: 'new-note',
-    label: 'New Note',
-    icon: Plus,
-    variant: 'default',
-    description: 'Create a new note'
-  },
-  {
-    id: 'view-docs',
-    label: 'Documents',
-    icon: FileText,
-    variant: 'outline',
-    description: 'View all documents'
-  },
-  {
-    id: 'schedule',
-    label: 'Schedule',
-    icon: Calendar,
-    variant: 'outline',
-    description: 'Open calendar'
-  },
-  {
-    id: 'team',
-    label: 'Team',
-    icon: Users,
-    variant: 'outline',
-    description: 'Manage team'
-  },
-  {
-    id: 'settings',
-    label: 'Settings',
-    icon: Settings,
-    variant: 'ghost',
-    description: 'App settings'
-  },
-  {
-    id: 'export',
-    label: 'Export',
-    icon: Download,
-    variant: 'ghost',
-    description: 'Export your data'
-  }
-];
 
 export function QuickActions() {
+  const navigate = useNavigate();
+  const { createNote } = useOptimizedNotes();
+
+  // Action handlers
+  const handleNewNote = async () => {
+    try {
+      const newNote = await createNote({
+        title: 'New Note',
+        content: '',
+        tags: [],
+        category: 'general',
+        isFavorite: false
+      });
+      if (newNote) {
+        navigate(`/app/notes?note=${newNote.id}`);
+        toast.success('New note created!');
+      }
+    } catch (error) {
+      toast.error('Failed to create note');
+    }
+  };
+
+  const handleViewDocuments = () => {
+    navigate('/app/notes');
+  };
+
+  const handleSchedule = () => {
+    navigate('/app/calendar');
+  };
+
+  const handleTeam = () => {
+    // For now, show a message about upcoming feature
+    toast.info('Team collaboration features coming soon!');
+  };
+
+  const handleSettings = () => {
+    navigate('/app/settings');
+  };
+
+  const handleExport = () => {
+    toast.info('Export functionality coming soon!');
+  };
+
+  const quickActions: QuickAction[] = [
+    {
+      id: 'new-note',
+      label: 'New Note',
+      icon: Plus,
+      variant: 'default',
+      description: 'Create a new note',
+      onClick: handleNewNote
+    },
+    {
+      id: 'view-docs',
+      label: 'Documents',
+      icon: FileText,
+      variant: 'outline',
+      description: 'View all documents',
+      onClick: handleViewDocuments
+    },
+    {
+      id: 'schedule',
+      label: 'Schedule',
+      icon: Calendar,
+      variant: 'outline',
+      description: 'Open calendar',
+      onClick: handleSchedule
+    },
+    {
+      id: 'team',
+      label: 'Team',
+      icon: Users,
+      variant: 'outline',
+      description: 'Manage team',
+      onClick: handleTeam
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: Settings,
+      variant: 'ghost',
+      description: 'App settings',
+      onClick: handleSettings
+    },
+    {
+      id: 'export',
+      label: 'Export',
+      icon: Download,
+      variant: 'ghost',
+      description: 'Export your data',
+      onClick: handleExport
+    }
+  ];
+
   const renderActionButton = (action: QuickAction, isCompact = false) => {
     const IconComponent = action.icon;
     const buttonClasses = isCompact
