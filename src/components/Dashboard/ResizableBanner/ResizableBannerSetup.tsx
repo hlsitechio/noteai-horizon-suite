@@ -164,8 +164,6 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
 
   return (
     <div className={`w-full h-full relative overflow-hidden ${className}`}>
-      {/* Full Size Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/10 to-accent/5" />
       
       {/* Main Content Container - Full Size */}
       <motion.div
