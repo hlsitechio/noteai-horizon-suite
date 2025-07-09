@@ -240,65 +240,135 @@ const Calendar: React.FC = () => {
 
         {/* Selected Date Details */}
         <div className="space-y-4">
+          {/* Create New Event Form */}
+          {isEventFormOpen && (
+            <Card className="border-primary/20 bg-gradient-to-br from-background to-accent/5">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Plus className="w-4 h-4 text-primary" />
+                    New Event
+                  </CardTitle>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setIsEventFormOpen(false)}
+                    className="h-6 w-6 p-0"
+                  >
+                    ×
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <label htmlFor="event-title" className="text-xs font-medium text-muted-foreground">Title</label>
+                    <input
+                      id="event-title"
+                      type="text"
+                      className="w-full px-2 py-1.5 text-sm border rounded-md bg-background/50"
+                      placeholder="Event title"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label htmlFor="event-desc" className="text-xs font-medium text-muted-foreground">Description</label>
+                    <textarea
+                      id="event-desc"
+                      className="w-full px-2 py-1.5 text-sm border rounded-md bg-background/50 h-16 resize-none"
+                      placeholder="Event description"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-muted-foreground">Type</label>
+                      <select className="w-full px-2 py-1.5 text-sm border rounded-md bg-background/50">
+                        <option value="event">Event</option>
+                        <option value="meeting">Meeting</option>
+                        <option value="note">Important Note</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-muted-foreground">Time</label>
+                      <input
+                        type="time"
+                        className="w-full px-2 py-1.5 text-sm border rounded-md bg-background/50"
+                      />
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => {
+                      // Handle form submission here
+                      setIsEventFormOpen(false);
+                    }}
+                    className="w-full h-8 text-sm"
+                    size="sm"
+                  >
+                    Create Event
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CalendarIcon className="w-5 h-5" />
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <CalendarIcon className="w-4 h-4" />
                 {format(selectedDate, 'EEEE, MMM d')}
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               <Tabs defaultValue="events" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="events">Events</TabsTrigger>
-                  <TabsTrigger value="notes">Notes</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 h-8">
+                  <TabsTrigger value="events" className="text-xs">Events</TabsTrigger>
+                  <TabsTrigger value="notes" className="text-xs">Notes</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="events" className="space-y-3 mt-4">
+                <TabsContent value="events" className="space-y-2 mt-3">
                   {selectedDateEvents.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No events for this date</p>
+                    <p className="text-xs text-muted-foreground">No events for this date</p>
                   ) : (
                     selectedDateEvents.map((event) => (
-                      <div key={event.id} className="p-3 border rounded-lg space-y-2">
+                      <div key={event.id} className="p-2 border rounded-lg space-y-1.5 bg-accent/5">
                         <div className="flex items-center gap-2">
                           {getEventTypeIcon(event.type)}
-                          <span className="font-medium">{event.title}</span>
-                          <Badge variant="secondary" className="ml-auto">
+                          <span className="font-medium text-sm">{event.title}</span>
+                          <Badge variant="secondary" className="ml-auto text-xs">
                             {event.type}
                           </Badge>
                         </div>
                         {event.time && (
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <Clock className="w-3 h-3" />
                             {event.time}
                           </div>
                         )}
                         {event.description && (
-                          <p className="text-sm text-muted-foreground">{event.description}</p>
+                          <p className="text-xs text-muted-foreground">{event.description}</p>
                         )}
                       </div>
                     ))
                   )}
                 </TabsContent>
                 
-                <TabsContent value="notes" className="space-y-3 mt-4">
+                <TabsContent value="notes" className="space-y-2 mt-3">
                   {selectedDateNotes.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No notes for this date</p>
+                    <p className="text-xs text-muted-foreground">No notes for this date</p>
                   ) : (
                     selectedDateNotes.map((note) => (
                       <button
                         key={note.id}
                         onClick={() => handleNoteClick(note)}
-                        className="w-full p-3 border rounded-lg space-y-2 text-left hover:bg-accent transition-colors"
+                        className="w-full p-2 border rounded-lg space-y-1.5 text-left hover:bg-accent/10 transition-colors bg-accent/5"
                       >
                         <div className="flex items-center gap-2">
-                          <FileText className="w-4 h-4" />
-                          <span className="font-medium">{note.title}</span>
-                          <Badge variant="outline" className="ml-auto">
+                          <FileText className="w-3 h-3" />
+                          <span className="font-medium text-sm">{note.title}</span>
+                          <Badge variant="outline" className="ml-auto text-xs">
                             {note.category}
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground line-clamp-3">
+                        <p className="text-xs text-muted-foreground line-clamp-2">
                           {note.content}
                         </p>
                         <div className="flex gap-1">
@@ -317,27 +387,6 @@ const Calendar: React.FC = () => {
           </Card>
         </div>
       </div>
-
-      {/* Inline Event Creation Form */}
-      {isEventFormOpen && (
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>Create New Event</span>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setIsEventFormOpen(false)}
-              >
-                Cancel
-              </Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CalendarEventForm onSubmit={handleEventSubmit} />
-          </CardContent>
-        </Card>
-      )}
 
       {/* Inline Note Creation Form */}
       {isNoteFormOpen && (
