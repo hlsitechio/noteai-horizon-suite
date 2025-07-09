@@ -12,6 +12,10 @@ import { SystemStatus } from '@/components/Dashboard/Components/SystemStatus';
 import { NotesSummary } from '@/components/Dashboard/Components/NotesSummary';
 import { TaskList } from '@/components/Dashboard/Components/TaskList';
 import { WeatherWidget } from '@/components/Dashboard/Components/WeatherWidget';
+import { StatsCard } from '@/components/Dashboard/Components/StatsCard';
+import { SocialMediaCard } from '@/components/Dashboard/Components/SocialMediaCard';
+import { ProjectCard } from '@/components/Dashboard/Components/ProjectCard';
+import { PerformanceCard } from '@/components/Dashboard/Components/PerformanceCard';
 
 // Using our standalone components - no need for wrapper components
 
@@ -25,6 +29,21 @@ const componentRegistry: Record<string, React.ComponentType> = {
   'calendar-widget': CalendarWidget,
   'weather-widget': WeatherWidget,
   'task-list': TaskList,
+  // New component cards
+  'stats-revenue': () => <StatsCard variant="revenue" />,
+  'stats-users': () => <StatsCard variant="users" />,
+  'stats-views': () => <StatsCard variant="views" />,
+  'stats-growth': () => <StatsCard variant="growth" />,
+  'social-twitter': () => <SocialMediaCard variant="twitter" />,
+  'social-instagram': () => <SocialMediaCard variant="instagram" />,
+  'social-linkedin': () => <SocialMediaCard variant="linkedin" />,
+  'project-active': () => <ProjectCard variant="active" />,
+  'project-completed': () => <ProjectCard variant="completed" />,
+  'project-overdue': () => <ProjectCard variant="overdue" />,
+  'performance-cpu': () => <PerformanceCard variant="cpu" />,
+  'performance-memory': () => <PerformanceCard variant="memory" />,
+  'performance-network': () => <PerformanceCard variant="network" />,
+  'performance-storage': () => <PerformanceCard variant="storage" />,
 };
 
 // Default fallback component
