@@ -28,10 +28,17 @@ const queryClient = new QueryClient({
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
-root.render(
+// Remove StrictMode in production to prevent development-only double renders
+const AppWrapper = import.meta.env.DEV ? (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <App />
     </QueryClientProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
+) : (
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>
 );
+
+root.render(AppWrapper);

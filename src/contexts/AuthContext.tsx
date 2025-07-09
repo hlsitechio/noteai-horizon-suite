@@ -1,9 +1,8 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthContextType } from './auth/types';
-import { useAuthState } from './auth/useAuthState';
-import { loginUser, registerUser, logoutUser, initializeAuthSession } from './auth/authService';
-import { handleRefreshTokenError, clearCorruptedSession } from './auth/utils';
+import { useStableAuth } from '@/hooks/useStableAuth';
+import { loginUser, registerUser, logoutUser } from './auth/authService';
 import { logger } from '../utils/logger';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,96 +21,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     isLoading,
     isAuthenticated,
-    setLoading,
-    setSession,
-    clearAuth,
-    refreshUser,
-  } = useAuthState();
+    authError,
+    retryAuth,
+  } = useStableAuth();
 
-  useEffect(() => {
-    logger.auth.debug('Setting up auth state listener');
-    
-    let mounted = true;
-    let authListenerActive = false;
-    
-    const initializeAuth = async () => {
-      if (authListenerActive) return; // Prevent duplicate initialization
-      authListenerActive = true;
-      
-      const { session, error } = await initializeAuthSession();
-      
-      if (!mounted) return;
-      
-      if (error) {
-        clearAuth();
-        return;
-      }
-      
-      setSession(session);
-    };
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        logger.auth.debug('Auth state changed:', event, session?.user?.email);
-        
-        if (!mounted || !authListenerActive) return;
-        
-        try {
-          // Handle different auth events
-          switch (event) {
-            case 'TOKEN_REFRESHED':
-              if (!session) {
-                logger.auth.debug('Token refresh failed, clearing session');
-                await clearCorruptedSession();
-                clearAuth();
-                return;
-              }
-              break;
-              
-            case 'SIGNED_OUT':
-              clearAuth();
-              return;
-              
-            case 'SIGNED_IN':
-              logger.auth.debug(`User signed in: ${session?.user?.email}`);
-              break;
-          }
-          
-          setSession(session);
-        } catch (error) {
-          logger.auth.error('Error in auth state change:', error);
-          if (error instanceof Error && await handleRefreshTokenError(error)) {
-            clearAuth();
-          }
-        }
-      }
-    );
-
-    initializeAuth();
-
-    return () => {
-      logger.auth.debug('Cleaning up auth listener');
-      mounted = false;
-      authListenerActive = false;
-      subscription.unsubscribe();
-    };
-  }, []); // Empty dependency array since functions are now stable
+  // The stable auth hook handles all auth state management internally
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    setLoading(true);
     try {
       return await loginUser(email, password);
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      logger.auth.error('Login failed:', error);
+      return false;
     }
   };
 
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
-    setLoading(true);
     try {
       return await registerUser(name, email, password);
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      logger.auth.error('Registration failed:', error);
+      return false;
     }
   };
 
@@ -126,7 +56,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     register,
     logout,
-    refreshUser,
+    refreshUser: retryAuth, // Use retryAuth as refreshUser
+    authError,
   };
 
   return (

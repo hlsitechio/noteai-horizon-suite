@@ -19,6 +19,8 @@ import { usePerformanceMonitoring } from './hooks/usePerformanceMonitoring';
 import { AppProviders } from './components/AppProviders';
 import { OptimizedLazyRoutes } from './components/OptimizedLazyRoutes';
 import { ReminderManager } from './components/ReminderManager';
+import { SmartErrorBoundary } from './components/ErrorBoundary/SmartErrorBoundary';
+import { ReloadPreventionProvider } from './components/ReloadPrevention/ReloadPreventionProvider';
 
 import './App.css';
 
@@ -28,14 +30,18 @@ function App() {
   const { trackOperation } = usePerformanceMonitoring();
 
   return (
-    <AppProviders>
-      <SentryRouter>
-        <OptimizedLazyRoutes />
-        <ReminderManager />
-        <Toaster />
-        <Sonner />
-      </SentryRouter>
-    </AppProviders>
+    <SmartErrorBoundary preserveWork={true}>
+      <ReloadPreventionProvider>
+        <AppProviders>
+          <SentryRouter>
+            <OptimizedLazyRoutes />
+            <ReminderManager />
+            <Toaster />
+            <Sonner />
+          </SentryRouter>
+        </AppProviders>
+      </ReloadPreventionProvider>
+    </SmartErrorBoundary>
   );
 }
 
