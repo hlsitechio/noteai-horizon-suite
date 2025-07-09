@@ -56,10 +56,11 @@ serve(async (req) => {
 
     let ragContext = "";
     let relevantNotes = [];
+    let activityContext = "";
 
-    // Retrieve relevant notes using RAG if enabled
+    // Retrieve relevant data using RAG if enabled
     if (useRAG) {
-      console.log('Retrieving user notes for RAG...');
+      console.log('Retrieving user data for RAG...');
       
       // Get the last user message to use as search query if no specific query provided
       const lastUserMessage = messages.filter(m => m.role === 'user').pop();
@@ -85,13 +86,89 @@ serve(async (req) => {
           return `**${note.title}** (${dateStr})${tagsStr}\n${note.content.slice(0, 500)}${note.content.length > 500 ? '...' : ''}`;
         }).join('\n\n---\n\n');
       }
+
+      // Get user activities for comprehensive context
+      const { data: activities, error: activitiesError } = await supabase
+        .from('user_activities')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (activitiesError) {
+        console.error('Error retrieving activities:', activitiesError);
+      } else if (activities && activities.length > 0) {
+        console.log(`Found ${activities.length} recent activities for context`);
+        
+        // Format activities for context, especially deleted items
+        const activitySummary = activities.map(activity => {
+          const date = new Date(activity.created_at).toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          });
+          
+          let description = activity.activity_title;
+          if (activity.metadata && typeof activity.metadata === 'object') {
+            const metadata = activity.metadata as any;
+            if (activity.activity_type.includes('deleted') && metadata.title) {
+              description += ` (was titled: "${metadata.title}")`;
+            }
+          }
+          
+          return `• ${description} - ${date}`;
+        }).join('\n');
+        
+        activityContext = `Recent User Activities:\n${activitySummary}`;
+      }
+
+      // Get calendar events
+      const { data: events, error: eventsError } = await supabase
+        .from('calendar_events')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('start_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()) // Last 30 days
+        .order('start_date', { ascending: false })
+        .limit(10);
+
+      if (eventsError) {
+        console.error('Error retrieving events:', eventsError);
+      } else if (events && events.length > 0) {
+        console.log(`Found ${events.length} recent events`);
+        
+        const eventsSummary = events.map(event => {
+          const date = new Date(event.start_date).toLocaleDateString();
+          return `• ${event.title} - ${date}${event.location ? ` at ${event.location}` : ''}`;
+        }).join('\n');
+        
+        if (activityContext) {
+          activityContext += `\n\nRecent Calendar Events:\n${eventsSummary}`;
+        } else {
+          activityContext = `Recent Calendar Events:\n${eventsSummary}`;
+        }
+      }
     }
 
     // Prepare the enhanced system message with RAG context
-    let systemMessage = `You are a helpful AI assistant. You have access to the user's personal notes and can reference them to provide more personalized and contextual responses.`;
+    let systemMessage = `You are a helpful AI assistant with comprehensive access to the user's personal data including notes, calendar events, and activity history. You can provide detailed, contextual responses about their content and actions.
+
+Key capabilities:
+- Answer questions about existing notes, including content and metadata
+- Provide information about deleted items and when they were removed
+- Reference calendar events and scheduling information
+- Track user activities and provide historical context
+- Help locate content across the user's entire data collection`;
     
     if (ragContext) {
-      systemMessage += `\n\nRelevant notes from the user's collection:\n\n${ragContext}\n\nUse this information to provide more helpful and personalized responses. Reference specific notes when relevant, but don't feel obligated to use all the information if it's not pertinent to the user's question.`;
+      systemMessage += `\n\nRelevant notes from the user's collection:\n\n${ragContext}`;
+    }
+    
+    if (activityContext) {
+      systemMessage += `\n\n${activityContext}`;
+    }
+    
+    if (ragContext || activityContext) {
+      systemMessage += `\n\nUse this information to provide accurate, helpful responses. When users ask about missing content, check the activity history for deletion records and provide specific details including when items were deleted.`;
     }
 
     // Prepare messages for OpenRouter

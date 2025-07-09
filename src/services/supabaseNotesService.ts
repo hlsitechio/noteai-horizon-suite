@@ -53,6 +53,21 @@ export class SupabaseNotesService {
 
       if (error) throw error;
 
+      // Log activity
+      const { ActivityService } = await import('./activityService');
+      await ActivityService.logActivity({
+        activity_type: ActivityService.ActivityTypes.NOTE_CREATED,
+        activity_title: `Created note "${noteData.title}"`,
+        activity_description: `Note created with ${noteData.tags.length} tags`,
+        entity_type: 'note',
+        entity_id: data.id,
+        metadata: {
+          category: noteData.category,
+          tags: noteData.tags,
+          folder_id: noteData.folder_id
+        }
+      });
+
       return {
         id: data.id,
         title: data.title,
@@ -76,6 +91,10 @@ export class SupabaseNotesService {
 
   static async updateNote(id: string, updates: Partial<Omit<Note, 'id' | 'createdAt'>>): Promise<Note | null> {
     try {
+      // Get original note for comparison
+      const originalNote = await this.getNoteById(id);
+      if (!originalNote) return null;
+
       const updateData: any = {};
       
       if (updates.title !== undefined) updateData.title = updates.title;
@@ -93,6 +112,30 @@ export class SupabaseNotesService {
         .single();
 
       if (error) throw error;
+
+      // Log activity for significant changes
+      const { ActivityService } = await import('./activityService');
+      
+      if (updates.isFavorite !== undefined && updates.isFavorite !== originalNote.isFavorite) {
+        await ActivityService.logActivity({
+          activity_type: updates.isFavorite ? ActivityService.ActivityTypes.NOTE_FAVORITED : ActivityService.ActivityTypes.NOTE_UNFAVORITED,
+          activity_title: `${updates.isFavorite ? 'Added' : 'Removed'} "${originalNote.title}" ${updates.isFavorite ? 'to' : 'from'} favorites`,
+          entity_type: 'note',
+          entity_id: id,
+        });
+      } else if (updates.title || updates.content || updates.category || updates.tags) {
+        await ActivityService.logActivity({
+          activity_type: ActivityService.ActivityTypes.NOTE_UPDATED,
+          activity_title: `Updated note "${updates.title || originalNote.title}"`,
+          activity_description: `Modified note content and metadata`,
+          entity_type: 'note',
+          entity_id: id,
+          metadata: {
+            changes: Object.keys(updates).filter(key => key !== 'updatedAt'),
+            original_title: originalNote.title
+          }
+        });
+      }
 
       return {
         id: data.id,
@@ -117,12 +160,33 @@ export class SupabaseNotesService {
 
   static async deleteNote(id: string): Promise<boolean> {
     try {
+      // Get note details before deletion for activity logging
+      const note = await this.getNoteById(id);
+      if (!note) return false;
+
       const { error } = await supabase
         .from('notes_v2')
         .delete()
         .eq('id', id);
 
       if (error) throw error;
+
+      // Log deletion activity
+      const { ActivityService } = await import('./activityService');
+      await ActivityService.logActivity({
+        activity_type: ActivityService.ActivityTypes.NOTE_DELETED,
+        activity_title: `Deleted note "${note.title}"`,
+        activity_description: `Note deleted from ${note.category} category`,
+        entity_type: 'note',
+        entity_id: id,
+        metadata: {
+          title: note.title,
+          category: note.category,
+          tags: note.tags,
+          was_favorite: note.isFavorite
+        }
+      });
+
       return true;
     } catch (error) {
       console.error('Error deleting note:', error);
