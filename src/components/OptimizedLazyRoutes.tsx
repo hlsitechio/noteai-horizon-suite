@@ -50,6 +50,7 @@ const Notes = lazyWithRetry(() => import('../pages/Notes'));
 const Analytics = lazyWithRetry(() => import('../pages/Analytics'));
 const Settings = lazyWithRetry(() => import('../pages/Settings'));
 const Chat = lazyWithRetry(() => import('../pages/Chat'));
+const VoiceChat = lazyWithRetry(() => import('../pages/VoiceChat'));
 const Calendar = lazyWithRetry(() => import('../pages/Calendar'));
 const ProjectRealms = lazyWithRetry(() => import('../pages/ProjectRealms'));
 const ProjectDetail = lazyWithRetry(() => import('../pages/ProjectDetail'));
@@ -164,6 +165,11 @@ export const OptimizedLazyRoutes: React.FC = () => {
             </Suspense>
           } />
           
+          <Route path="voice-chat" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <VoiceChat />
+            </Suspense>
+          } />
           
           <Route path="calendar" element={
             <Suspense fallback={<DashboardLoadingFallback />}>
