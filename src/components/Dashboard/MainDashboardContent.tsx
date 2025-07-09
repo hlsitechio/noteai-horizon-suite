@@ -72,6 +72,12 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
     }
   }, [isDashboardEditMode, onHorizontalResize]);
 
+  // Create storage handler that returns null to disable localStorage persistence
+  // We handle persistence through our own system
+  const createStorageHandler = () => {
+    return null; // Always return null to disable localStorage integration
+  };
+
   // On mobile, render a simpler stacked layout
   if (isMobile) {
     return (
@@ -105,14 +111,15 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
         className="h-full" 
         onLayout={handleMainContentResize}
         id="main-dashboard-content"
+        storage={createStorageHandler()}
       >
         {/* Top Panel - KPI Stats */}
         <Panel 
           id="analytics-panel"
           order={0}
           defaultSize={analyticsSize} 
-          minSize={isDashboardEditMode ? 20 : analyticsSize} 
-          maxSize={isDashboardEditMode ? 50 : analyticsSize}
+          minSize={isDashboardEditMode ? 20 : undefined} 
+          maxSize={isDashboardEditMode ? 50 : undefined}
         >
           <div className="h-full">
             <ScrollArea className="h-full">
@@ -139,8 +146,8 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           id="top-section-panel"
           order={1}
           defaultSize={topSectionSize} 
-          minSize={isDashboardEditMode ? 25 : topSectionSize}
-          maxSize={isDashboardEditMode ? 75 : topSectionSize}
+          minSize={isDashboardEditMode ? 25 : undefined}
+          maxSize={isDashboardEditMode ? 75 : undefined}
         >
           <div className="h-full">
             <PanelGroup 
@@ -148,13 +155,14 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
               className="h-full" 
               onLayout={handleHorizontalResize}
               id="horizontal-top"
+              storage={createStorageHandler()}
             >
               <Panel 
                 id="top-left-panel"
                 order={0}
                 defaultSize={leftPanelsSize} 
-                minSize={isDashboardEditMode ? 30 : leftPanelsSize}
-                maxSize={isDashboardEditMode ? 70 : leftPanelsSize}
+                minSize={isDashboardEditMode ? 30 : undefined}
+                maxSize={isDashboardEditMode ? 70 : undefined}
               >
                 <div className="h-full">
                   <ScrollArea className="h-full">
@@ -172,8 +180,8 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
                 id="top-right-panel"
                 order={1}
                 defaultSize={rightPanelsSize} 
-                minSize={isDashboardEditMode ? 30 : rightPanelsSize}
-                maxSize={isDashboardEditMode ? 70 : rightPanelsSize}
+                minSize={isDashboardEditMode ? 30 : undefined}
+                maxSize={isDashboardEditMode ? 70 : undefined}
               >
                 <div className="h-full">
                   <ScrollArea className="h-full">
@@ -195,8 +203,8 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           id="bottom-section-panel"
           order={2}
           defaultSize={bottomSectionSize} 
-          minSize={isDashboardEditMode ? 25 : bottomSectionSize}
-          maxSize={isDashboardEditMode ? 75 : bottomSectionSize}
+          minSize={isDashboardEditMode ? 25 : undefined}
+          maxSize={isDashboardEditMode ? 75 : undefined}
         >
           <div className="h-full">
             <PanelGroup 
@@ -204,13 +212,14 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
               className="h-full" 
               onLayout={handleHorizontalResize}
               id="horizontal-bottom"
+              storage={createStorageHandler()}
             >
               <Panel 
                 id="bottom-left-panel"
                 order={0}
                 defaultSize={leftPanelsSize} 
-                minSize={isDashboardEditMode ? 30 : leftPanelsSize}
-                maxSize={isDashboardEditMode ? 70 : leftPanelsSize}
+                minSize={isDashboardEditMode ? 30 : undefined}
+                maxSize={isDashboardEditMode ? 70 : undefined}
               >
                 <div className="h-full">
                   <ScrollArea className="h-full">
@@ -228,8 +237,8 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
                 id="bottom-right-panel"
                 order={1}
                 defaultSize={rightPanelsSize} 
-                minSize={isDashboardEditMode ? 30 : rightPanelsSize}
-                maxSize={isDashboardEditMode ? 70 : rightPanelsSize}
+                minSize={isDashboardEditMode ? 30 : undefined}
+                maxSize={isDashboardEditMode ? 70 : undefined}
               >
                 <div className="h-full">
                   <ScrollArea className="h-full">

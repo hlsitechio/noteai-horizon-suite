@@ -15,7 +15,7 @@ export const useDashboardSettings = () => {
     try {
       setIsLoading(true);
       const userSettings = await DashboardSettingsService.getUserSettings(user.id);
-      
+      console.log('Dashboard settings loaded:', userSettings);
       setSettings(userSettings);
     } catch (error) {
       console.error('Failed to load dashboard settings:', error);
@@ -54,12 +54,15 @@ export const useDashboardSettings = () => {
     if (!user) return false;
 
     try {
+      console.log('Updating dashboard panel sizes in service:', panelSizes);
       const success = await DashboardSettingsService.updateSidebarPanelSizes(user.id, panelSizes);
       if (success && settings) {
-        setSettings({
+        const updatedSettings = {
           ...settings,
           sidebar_panel_sizes: panelSizes
-        });
+        };
+        setSettings(updatedSettings);
+        console.log('Dashboard settings updated locally:', updatedSettings);
       }
       return success;
     } catch (error) {

@@ -21,6 +21,12 @@ export const useDashboardPanelSizes = () => {
     rightPanels: settingsPanelSizes.rightPanels || 50,
   };
 
+  // Log panel sizes when they change
+  useEffect(() => {
+    console.log('Dashboard panel sizes updated:', panelSizes);
+    console.log('Settings loaded state:', !!settings);
+  }, [JSON.stringify(panelSizes), !!settings]);
+
   // Track when user actually interacts with panels
   const trackUserInteraction = useCallback(() => {
     hasUserInteractedRef.current = true;
@@ -35,45 +41,50 @@ export const useDashboardPanelSizes = () => {
     
     // Set new timeout
     saveTimeoutRef.current = setTimeout(async () => {
-      console.log('Saving panel sizes:', newSizes);
+      console.log('Saving dashboard panel sizes:', newSizes);
       const success = await updateSidebarPanelSizes(newSizes);
       
       if (success) {
-        console.log('Panel sizes saved successfully:', newSizes);
+        console.log('Dashboard panel sizes saved successfully:', newSizes);
+        toast.success('Dashboard layout saved');
         
         // Auto-lock edit modes after successful save (only if user interacted)
         if (hasUserInteractedRef.current) {
           await handlePanelSizeSave();
         }
       } else {
-        console.error('Failed to save panel sizes');
-        toast.error('Failed to save layout');
+        console.error('Failed to save dashboard panel sizes');
+        toast.error('Failed to save dashboard layout');
       }
     }, 500); // 500ms debounce
   }, [updateSidebarPanelSizes, handlePanelSizeSave]);
 
   const createSizeHandler = (sizeKey: string) => (sizes: number[]) => {
+    // Track user interaction
+    trackUserInteraction();
+    
     const newSizes = { ...settingsPanelSizes };
     
     switch (sizeKey) {
       case 'banner':
-        if (sizes.length >= 2) newSizes.banner = sizes[0];
+        if (sizes.length >= 2) newSizes.banner = Math.round(sizes[0]);
         break;
       case 'mainContent':
         if (sizes.length >= 3) {
-          newSizes.analytics = sizes[0];
-          newSizes.topSection = sizes[1];
-          newSizes.bottomSection = sizes[2];
+          newSizes.analytics = Math.round(sizes[0]);
+          newSizes.topSection = Math.round(sizes[1]);
+          newSizes.bottomSection = Math.round(sizes[2]);
         }
         break;
       case 'horizontal':
         if (sizes.length >= 2) {
-          newSizes.leftPanels = sizes[0];
-          newSizes.rightPanels = sizes[1];
+          newSizes.leftPanels = Math.round(sizes[0]);
+          newSizes.rightPanels = Math.round(sizes[1]);
         }
         break;
     }
     
+    console.log(`Panel sizes updated (${sizeKey}):`, newSizes);
     debouncedSave(newSizes);
   };
 

@@ -28,20 +28,27 @@ const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = 
     }
   }, [isEditMode, onLayout]);
 
+  // Create storage handler that returns null to disable localStorage persistence
+  // We handle persistence through our own system
+  const createStorageHandler = () => {
+    return null; // Always return null to disable localStorage integration
+  };
+
   return (
     <PanelGroup 
       direction="vertical" 
       className="w-full h-full" 
       onLayout={handleLayout}
       id="dashboard-main"
+      storage={createStorageHandler()}
     >
       {/* Banner Panel */}
       <Panel
         id="banner-panel"
         order={0}
         defaultSize={bannerDefaultSize}
-        minSize={isEditMode ? bannerMinSize : bannerDefaultSize}
-        maxSize={isEditMode ? bannerMaxSize : bannerDefaultSize}
+        minSize={isEditMode ? bannerMinSize : undefined}
+        maxSize={isEditMode ? bannerMaxSize : undefined}
         className="flex flex-col"
       >
         <div className="h-full w-full">
