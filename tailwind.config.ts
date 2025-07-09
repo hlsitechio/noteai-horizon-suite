@@ -77,6 +77,9 @@ const config = {
           foreground: "hsl(var(--info-foreground))",
         },
       },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
