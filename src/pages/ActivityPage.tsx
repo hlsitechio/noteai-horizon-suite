@@ -252,3 +252,5 @@ export function ActivityPage() {
     </div>
   );
 }
+
+export default ActivityPage;
