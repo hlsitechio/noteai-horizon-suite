@@ -13,6 +13,7 @@ import {
   MapPin,
   RefreshCw
 } from 'lucide-react';
+import { ComponentLibraryButton } from './ComponentLibraryButton';
 
 const currentWeather = {
   location: 'New York, NY',
@@ -77,7 +78,7 @@ const getWeatherIcon = (condition: string) => {
 
 export function WeatherWidget() {
   return (
-    <Card className="h-full">
+    <Card className="h-full group">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-medium">Weather</CardTitle>
@@ -85,6 +86,7 @@ export function WeatherWidget() {
             <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
               <RefreshCw className="h-3 w-3" />
             </Button>
+            <ComponentLibraryButton componentName="weather widget" />
           </div>
         </div>
       </CardHeader>

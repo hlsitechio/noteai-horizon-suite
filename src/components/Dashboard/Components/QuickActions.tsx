@@ -18,6 +18,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { ComponentLibraryButton } from './ComponentLibraryButton';
 
 type QuickAction = {
   id: string;
@@ -105,13 +106,16 @@ export function QuickActions() {
   };
 
   return (
-    <Card className="h-full">
+    <Card className="h-full group">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-medium">Quick Actions</CardTitle>
-          <Badge variant="secondary" className="text-xs">
-            {quickActions.length} actions
-          </Badge>
+          <div className="flex items-center gap-1">
+            <Badge variant="secondary" className="text-xs">
+              {quickActions.length} actions
+            </Badge>
+            <ComponentLibraryButton componentName="quick actions" />
+          </div>
         </div>
       </CardHeader>
 
