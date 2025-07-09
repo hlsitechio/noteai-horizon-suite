@@ -235,33 +235,6 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
                     </Button>
                   </div>
                   
-                  {/* Upload new image button */}
-                  <div className="absolute bottom-4 left-4">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => {
-                        const input = document.createElement('input');
-                        input.type = 'file';
-                        input.accept = 'image/*,video/*';
-                        input.onchange = (e) => {
-                          const file = (e.target as HTMLInputElement).files?.[0];
-                          if (file) {
-                            if (file.type.startsWith('image/')) {
-                              onImageUpload?.(file);
-                            } else if (file.type.startsWith('video/')) {
-                              onVideoUpload?.(file);
-                            }
-                          }
-                        };
-                        input.click();
-                      }}
-                      className="bg-background/80 backdrop-blur-sm"
-                    >
-                      <Upload className="h-4 w-4 mr-1" />
-                      Change
-                    </Button>
-                  </div>
                 </div>
               </motion.div>
             </>
