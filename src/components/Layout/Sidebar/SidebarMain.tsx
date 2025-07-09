@@ -56,43 +56,64 @@ export function SidebarMain() {
   };
 
   const handleLayoutChange = (sizes: number[]) => {
+    console.log('Sidebar layout change:', sizes, 'Edit mode:', isSidebarEditMode);
+    
     // Only allow changes when in sidebar edit mode and user has interacted
     if (!isSidebarEditMode || !hasUserInteractedRef.current) return;
     
-    if (sizes.length >= 3) {
-      const newSizes = {
+    // Handle different number of panels
+    let newSizes: Record<string, number>;
+    
+    if (sizes.length === 2) {
+      // Only navigation and content panels detected (footer might be missing)
+      newSizes = {
+        navigation: Math.round(sizes[0]), 
+        content: Math.round(sizes[1]),
+        footer: 20 // Keep default footer size
+      };
+    } else if (sizes.length >= 3) {
+      newSizes = {
         navigation: Math.round(sizes[0]), 
         content: Math.round(sizes[1]),
         footer: Math.round(sizes[2])
       };
-      
-      // Check if sizes actually changed significantly (avoid micro-adjustments)
-      const currentSizes = settings?.sidebar_panel_sizes || {};
-      const hasSignificantChange = 
-        Math.abs((currentSizes.navigation || 40) - newSizes.navigation) > 1 ||
-        Math.abs((currentSizes.content || 40) - newSizes.content) > 1 ||
-        Math.abs((currentSizes.footer || 20) - newSizes.footer) > 1;
-      
-      if (!hasSignificantChange) return;
-      
-      // Clear existing timeout
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-      
-      // Debounced save with auto-lock
-      saveTimeoutRef.current = setTimeout(async () => {
-        const success = await updateSidebarPanelSizes(newSizes);
-        
-        if (success) {
-          setIsSidebarEditMode(false);
-          hasUserInteractedRef.current = false;
-          toast.success('Sidebar layout saved and locked');
-        } else {
-          toast.error('Failed to save sidebar layout');
-        }
-      }, 1000);
+    } else {
+      console.warn('Unexpected number of panels in sidebar:', sizes.length);
+      return;
     }
+    
+    console.log('Calculated sidebar sizes:', newSizes);
+    
+    // Check if sizes actually changed significantly (avoid micro-adjustments)
+    const currentSizes = settings?.sidebar_panel_sizes || {};
+    const hasSignificantChange = 
+      Math.abs((currentSizes.navigation || 40) - newSizes.navigation) > 1 ||
+      Math.abs((currentSizes.content || 40) - newSizes.content) > 1 ||
+      Math.abs((currentSizes.footer || 20) - newSizes.footer) > 1;
+    
+    if (!hasSignificantChange) {
+      console.log('No significant change detected, skipping save');
+      return;
+    }
+    
+    // Clear existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    
+    // Debounced save with auto-lock
+    saveTimeoutRef.current = setTimeout(async () => {
+      console.log('Saving sidebar layout:', newSizes);
+      const success = await updateSidebarPanelSizes(newSizes);
+      
+      if (success) {
+        setIsSidebarEditMode(false);
+        hasUserInteractedRef.current = false;
+        toast.success('Sidebar layout saved and locked');
+      } else {
+        toast.error('Failed to save sidebar layout');
+      }
+    }, 1000);
   };
 
   // Cleanup timeout on unmount
@@ -129,13 +150,12 @@ export function SidebarMain() {
             </div>
           </Panel>
 
-          {/* Vertical Resize Handle - Conditionally rendered */}
-          {isSidebarEditMode && (
-            <ResizableHandle 
-              onMouseDown={handlePanelResizeStart}
-              onTouchStart={handlePanelResizeStart}
-            />
-          )}
+          {/* Vertical Resize Handle - Always present */}
+          <ResizableHandle 
+            onMouseDown={handlePanelResizeStart}
+            onTouchStart={handlePanelResizeStart}
+            className={isSidebarEditMode ? "opacity-100" : "opacity-0 pointer-events-none"}
+          />
 
           {/* Content Panel - Notes Section */}
           <Panel 
@@ -150,13 +170,12 @@ export function SidebarMain() {
             </div>
           </Panel>
 
-          {/* Vertical Resize Handle - Conditionally rendered */}
-          {isSidebarEditMode && (
-            <ResizableHandle 
-              onMouseDown={handlePanelResizeStart}
-              onTouchStart={handlePanelResizeStart}
-            />
-          )}
+          {/* Vertical Resize Handle - Always present */}
+          <ResizableHandle 
+            onMouseDown={handlePanelResizeStart}
+            onTouchStart={handlePanelResizeStart}
+            className={isSidebarEditMode ? "opacity-100" : "opacity-0 pointer-events-none"}
+          />
 
           {/* Footer Panel */}
           <Panel 
