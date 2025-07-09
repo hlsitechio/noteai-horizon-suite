@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Search, Filter } from 'lucide-react';
 import { useProjectRealms } from '../contexts/ProjectRealmsContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import ProjectCard from '../components/ProjectRealms/ProjectCard';
 import CreateProjectModal from '../components/ProjectRealms/CreateProjectModal';
 import { ProjectRealm } from '../types/project';
@@ -14,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ProjectRealms: React.FC = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const {
     filteredProjects,
     filters,
@@ -78,24 +80,24 @@ const ProjectRealms: React.FC = () => {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className={`max-w-7xl mx-auto ${isMobile ? 'p-3' : 'p-6'}`}>
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className={`flex ${isMobile ? 'flex-col gap-4' : 'items-center justify-between'} mb-6`}>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Project Realms</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className={`font-bold text-gray-900 ${isMobile ? 'text-2xl' : 'text-3xl'}`}>Project Realms</h1>
+            <p className={`text-gray-600 mt-2 ${isMobile ? 'text-sm' : ''}`}>
               Manage your AI-powered project environments and knowledge spaces
             </p>
           </div>
-          <Button onClick={() => setIsCreateModalOpen(true)}>
+          <Button onClick={() => setIsCreateModalOpen(true)} size={isMobile ? "sm" : "default"}>
             <Plus className="h-4 w-4 mr-2" />
             New Project
           </Button>
         </div>
 
         {/* Filters */}
-        <div className="flex items-center space-x-4">
-          <div className="relative flex-1 max-w-md">
+        <div className={`flex ${isMobile ? 'flex-col' : 'items-center'} space-x-4 ${isMobile ? 'space-x-0 space-y-3' : ''}`}>
+          <div className={`relative ${isMobile ? 'w-full' : 'flex-1 max-w-md'}`}>
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
               placeholder="Search projects..."
@@ -105,7 +107,7 @@ const ProjectRealms: React.FC = () => {
             />
           </div>
           <Select onValueChange={handleStatusFilter} defaultValue="all">
-            <SelectTrigger className="w-48">
+            <SelectTrigger className={isMobile ? 'w-full' : 'w-48'}>
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
@@ -145,7 +147,11 @@ const ProjectRealms: React.FC = () => {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className={`grid gap-6 ${
+          isMobile 
+            ? 'grid-cols-1' 
+            : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+        }`}>
           {filteredProjects.map((project) => (
             <ProjectCard
               key={project.id}

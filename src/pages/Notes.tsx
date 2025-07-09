@@ -4,6 +4,7 @@ import { BookOpen } from 'lucide-react';
 import { useOptimizedNotes } from '../contexts/OptimizedNotesContext';
 import { useFolders } from '../contexts/FoldersContext';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
+import { useIsMobile } from '@/hooks/use-mobile';
 import NotesHeader from './Notes/NotesHeader';
 import NotesFilters from './Notes/NotesFilters';
 import NotesGrid from './Notes/NotesGrid';
@@ -12,6 +13,7 @@ import EmptyNotesState from './Notes/EmptyNotesState';
 const Notes: React.FC = () => {
   const { filteredNotes, filters, isLoading, notes, selectedNote } = useOptimizedNotes();
   const { folders } = useFolders();
+  const isMobile = useIsMobile();
 
   useQuantumAIIntegration({
     page: '/app/notes',
@@ -40,7 +42,7 @@ const Notes: React.FC = () => {
   const hasFilters = !!(filters.searchTerm || filters.category || filters.isFavorite);
 
   return (
-    <div className="space-y-6 h-full p-6">
+    <div className={`space-y-6 h-full ${isMobile ? 'p-3' : 'p-6'}`}>
       <NotesHeader />
       <NotesFilters />
       {filteredNotes.length === 0 ? (

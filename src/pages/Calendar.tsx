@@ -3,6 +3,7 @@ import { isSameDay } from 'date-fns';
 import { Plus, Users, FileText, Calendar as CalendarIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { CalendarGrid } from '../components/Calendar/CalendarGrid';
 import { CalendarEventFormInline } from '../components/Calendar/CalendarEventFormInline';
 import { CalendarDateDetails } from '../components/Calendar/CalendarDateDetails';
@@ -19,6 +20,7 @@ const Calendar: React.FC = () => {
   const { events, addEvent } = useCalendarEvents();
   const { notes, createNote, setCurrentNote } = useNotes();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const getEventsForDate = (date: Date) => {
     return events.filter(event => isSameDay(new Date(event.date), date));
@@ -85,14 +87,15 @@ const Calendar: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className={`space-y-6 ${isMobile ? 'p-3' : 'p-6'}`}>
+      <div className={`flex ${isMobile ? 'flex-col gap-4' : 'items-center justify-between'}`}>
         <h1 className="text-3xl font-bold">Calendar</h1>
-        <div className="flex gap-2">
+        <div className={`flex gap-2 ${isMobile ? 'flex-col' : ''}`}>
           <Button 
             onClick={() => setIsEventFormOpen(!isEventFormOpen)}
             className="gap-2"
             variant={isEventFormOpen ? "secondary" : "default"}
+            size={isMobile ? "default" : "default"}
           >
             <Plus className="w-4 h-4" />
             Add Event
@@ -102,6 +105,7 @@ const Calendar: React.FC = () => {
             onClick={() => setIsNoteFormOpen(!isNoteFormOpen)}
             variant={isNoteFormOpen ? "secondary" : "outline"} 
             className="gap-2"
+            size={isMobile ? "default" : "default"}
           >
             <Plus className="w-4 h-4" />
             Add Note
@@ -109,9 +113,9 @@ const Calendar: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'}`}>
         {/* Calendar Grid */}
-        <div className="lg:col-span-2">
+        <div className={isMobile ? 'col-span-1' : 'lg:col-span-2'}>
           <CalendarGrid
             viewDate={viewDate}
             selectedDate={selectedDate}

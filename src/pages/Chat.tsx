@@ -5,6 +5,7 @@ import { useEnhancedAIChatWithSessions } from '../hooks/useEnhancedAIChatWithSes
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import { useNotePreview } from '../hooks/useNotePreview';
 import { useUserProfile } from '../hooks/useUserProfile';
+import { useIsMobile } from '@/hooks/use-mobile';
 import ChatHistoryPanel from '../components/Chat/ChatHistoryPanel';
 import { NotePreviewPanel } from '../components/Chat/NotePreviewPanel';
 import ChatHeader from '../components/Chat/ChatHeader';
@@ -14,6 +15,7 @@ import ChatInput from '../components/Chat/ChatInput';
 const Chat: React.FC = () => {
   const [message, setMessage] = useState('');
   const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(false);
+  const isMobile = useIsMobile();
   
   const { profile, isLoading: profileLoading } = useUserProfile();
   
@@ -101,23 +103,25 @@ const Chat: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex gap-6 p-6 bg-gradient-to-br from-background via-background to-muted/30">
-      {/* Chat History Panel */}
-      <div className="flex-shrink-0">
-        <ChatHistoryPanel
-          sessions={sessions}
-          currentSessionId={currentSessionId}
-          onSessionSelect={loadSession}
-          onNewSession={createNewSession}
-          onDeleteSession={deleteSession}
-          onRenameSession={renameSession}
-          isCollapsed={isHistoryCollapsed}
-          onToggleCollapse={() => setIsHistoryCollapsed(!isHistoryCollapsed)}
-        />
-      </div>
+    <div className={`h-full flex ${isMobile ? 'flex-col gap-3 p-3' : 'gap-6 p-6'} bg-gradient-to-br from-background via-background to-muted/30`}>
+      {/* Chat History Panel - Hidden on mobile */}
+      {!isMobile && (
+        <div className="flex-shrink-0">
+          <ChatHistoryPanel
+            sessions={sessions}
+            currentSessionId={currentSessionId}
+            onSessionSelect={loadSession}
+            onNewSession={createNewSession}
+            onDeleteSession={deleteSession}
+            onRenameSession={renameSession}
+            isCollapsed={isHistoryCollapsed}
+            onToggleCollapse={() => setIsHistoryCollapsed(!isHistoryCollapsed)}
+          />
+        </div>
+      )}
 
       {/* Main Content Area with Chat and Preview */}
-      <div className="flex-1 flex gap-6 min-w-0">
+      <div className={`flex-1 flex ${isMobile ? 'flex-col gap-3' : 'gap-6'} min-w-0`}>
         {/* Chat Messages Area */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Enhanced Header */}
@@ -130,7 +134,7 @@ const Chat: React.FC = () => {
 
           <div className="flex-1 flex flex-col min-h-0">
             <Card className="flex-1 flex flex-col border-0 shadow-xl bg-gradient-to-br from-card/50 to-card backdrop-blur-sm">
-              <CardContent className="flex-1 flex flex-col p-6">
+              <CardContent className={`flex-1 flex flex-col ${isMobile ? 'p-3' : 'p-6'}`}>
                 <ChatMessages
                   messages={messages}
                   isLoading={isLoading}
@@ -154,18 +158,20 @@ const Chat: React.FC = () => {
           </div>
         </div>
 
-        {/* Note Canva Panel */}
-        <div className="flex-shrink-0">
-          <NotePreviewPanel
-            note={currentNote}
-            isVisible={isPreviewVisible}
-            onToggleVisibility={toggleVisibility}
-            onNoteUpdate={updateNote}
-            onRequestModification={requestModification}
-            isModifying={isModifying}
-            className="w-96"
-          />
-        </div>
+        {/* Note Canva Panel - Hidden on mobile for better UX */}
+        {!isMobile && (
+          <div className="flex-shrink-0">
+            <NotePreviewPanel
+              note={currentNote}
+              isVisible={isPreviewVisible}
+              onToggleVisibility={toggleVisibility}
+              onNoteUpdate={updateNote}
+              onRequestModification={requestModification}
+              isModifying={isModifying}
+              className="w-96"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

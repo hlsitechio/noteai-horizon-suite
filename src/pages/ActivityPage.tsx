@@ -23,6 +23,7 @@ import {
 import { ActivityService, UserActivity } from '@/services/activityService';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 
 const getActivityIcon = (activityType: string) => {
@@ -63,6 +64,7 @@ const getActivityColor = (activityType: string) => {
 
 export function ActivityPage() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [activities, setActivities] = useState<UserActivity[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -100,11 +102,11 @@ export function ActivityPage() {
   const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div className={`min-h-screen bg-background ${isMobile ? 'p-3' : 'p-6'}`}>
+      <div className={`mx-auto space-y-6 ${isMobile ? 'max-w-full' : 'max-w-6xl'}`}>
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+        <div className={`flex ${isMobile ? 'flex-col gap-4' : 'items-center justify-between'}`}>
+          <div className={`flex ${isMobile ? 'flex-col' : 'items-center'} space-x-4 ${isMobile ? 'space-x-0 space-y-2' : ''}`}>
             <Button
               variant="ghost"
               size="sm"
@@ -115,8 +117,8 @@ export function ActivityPage() {
               Back to Dashboard
             </Button>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Activity Log</h1>
-              <p className="text-muted-foreground">Track all your actions and activities</p>
+              <h1 className={`font-bold text-foreground ${isMobile ? 'text-2xl' : 'text-3xl'}`}>Activity Log</h1>
+              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>Track all your actions and activities</p>
             </div>
           </div>
           <Badge variant="secondary" className="text-sm">
@@ -127,8 +129,8 @@ export function ActivityPage() {
         {/* Search and Filter */}
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center space-x-4">
-              <div className="relative flex-1">
+            <div className={`flex ${isMobile ? 'flex-col' : 'items-center'} space-x-4 ${isMobile ? 'space-x-0 space-y-3' : ''}`}>
+              <div className={`relative ${isMobile ? 'w-full' : 'flex-1'}`}>
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search activities..."
@@ -137,14 +139,16 @@ export function ActivityPage() {
                   className="pl-10"
                 />
               </div>
-              <Button variant="outline" size="sm">
-                <Filter className="h-4 w-4 mr-2" />
-                Filter
-              </Button>
-              <Button variant="outline" size="sm">
-                <Calendar className="h-4 w-4 mr-2" />
-                Date Range
-              </Button>
+              <div className={`flex gap-2 ${isMobile ? 'w-full' : ''}`}>
+                <Button variant="outline" size="sm" className={isMobile ? 'flex-1' : ''}>
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filter
+                </Button>
+                <Button variant="outline" size="sm" className={isMobile ? 'flex-1' : ''}>
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Date Range
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

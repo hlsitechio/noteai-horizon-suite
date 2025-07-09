@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useOptimizedNotes } from '../contexts/OptimizedNotesContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import AnalyticsHeader from '../components/Analytics/AnalyticsHeader';
 import OverviewStats from '../components/Analytics/OverviewStats';
 import CategoryDistribution from '../components/Analytics/CategoryDistribution';
@@ -11,6 +12,7 @@ import AIUsageAnalytics from '../components/Dashboard/AIUsageAnalytics';
 
 const Analytics: React.FC = () => {
   const { notes } = useOptimizedNotes();
+  const isMobile = useIsMobile();
 
   // Calculate stats
   const totalNotes = notes.length;
@@ -49,7 +51,7 @@ const Analytics: React.FC = () => {
 
   return (
     <div className="w-full h-full overflow-auto">
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <div className={`mx-auto space-y-6 ${isMobile ? 'max-w-full p-3' : 'max-w-7xl p-6'}`}>
         <AnalyticsHeader />
         
         <motion.div
@@ -67,7 +69,7 @@ const Analytics: React.FC = () => {
           />
 
           {/* Charts and Insights */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
             <CategoryDistribution
               categoryCounts={categoryCounts}
               totalNotes={totalNotes}
@@ -82,7 +84,7 @@ const Analytics: React.FC = () => {
           </div>
 
           {/* Advanced Analytics */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
             <AnalyticsOverview
               totalNotes={totalNotes}
               favoriteNotes={favoriteNotes}
