@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { CalendarEventForm } from '../components/Calendar/CalendarEventForm';
 import { CalendarEvent } from '../types/calendar';
 import { useCalendarEvents } from '../hooks/useCalendarEvents';
@@ -96,74 +95,23 @@ const Calendar: React.FC = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Calendar</h1>
         <div className="flex gap-2">
-          <Dialog open={isEventFormOpen} onOpenChange={setIsEventFormOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Add Event
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create New Event</DialogTitle>
-              </DialogHeader>
-              <CalendarEventForm onSubmit={handleEventSubmit} />
-            </DialogContent>
-          </Dialog>
+          <Button 
+            onClick={() => setIsEventFormOpen(!isEventFormOpen)}
+            className="gap-2"
+            variant={isEventFormOpen ? "secondary" : "default"}
+          >
+            <Plus className="w-4 h-4" />
+            Add Event
+          </Button>
           
-          <Dialog open={isNoteFormOpen} onOpenChange={setIsNoteFormOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <Plus className="w-4 h-4" />
-                Add Note
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create New Note</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label htmlFor="note-title" className="text-sm font-medium">Title</label>
-                  <input
-                    id="note-title"
-                    type="text"
-                    className="w-full px-3 py-2 border rounded-md"
-                    placeholder="Enter note title"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        const title = e.currentTarget.value;
-                        const content = document.getElementById('note-content') as HTMLTextAreaElement;
-                        if (title.trim()) {
-                          handleNoteSubmit({ title, content: content?.value || '' });
-                        }
-                      }
-                    }}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="note-content" className="text-sm font-medium">Content</label>
-                  <textarea
-                    id="note-content"
-                    className="w-full px-3 py-2 border rounded-md h-32"
-                    placeholder="Enter note content"
-                  />
-                </div>
-                <Button 
-                  onClick={() => {
-                    const title = (document.getElementById('note-title') as HTMLInputElement).value;
-                    const content = (document.getElementById('note-content') as HTMLTextAreaElement).value;
-                    if (title.trim()) {
-                      handleNoteSubmit({ title, content });
-                    }
-                  }}
-                  className="w-full"
-                >
-                  Create Note
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button 
+            onClick={() => setIsNoteFormOpen(!isNoteFormOpen)}
+            variant={isNoteFormOpen ? "secondary" : "outline"} 
+            className="gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Add Note
+          </Button>
         </div>
       </div>
 
@@ -369,6 +317,95 @@ const Calendar: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* Inline Event Creation Form */}
+      {isEventFormOpen && (
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span>Create New Event</span>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setIsEventFormOpen(false)}
+              >
+                Cancel
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CalendarEventForm onSubmit={handleEventSubmit} />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Inline Note Creation Form */}
+      {isNoteFormOpen && (
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span>Create New Note</span>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setIsNoteFormOpen(false)}
+              >
+                Cancel
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="note-title" className="text-sm font-medium">Title</label>
+                <input
+                  id="note-title"
+                  type="text"
+                  className="w-full px-3 py-2 border rounded-md"
+                  placeholder="Enter note title"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const title = e.currentTarget.value;
+                      const content = document.getElementById('note-content') as HTMLTextAreaElement;
+                      if (title.trim()) {
+                        handleNoteSubmit({ title, content: content?.value || '' });
+                      }
+                    }
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="note-content" className="text-sm font-medium">Content</label>
+                <textarea
+                  id="note-content"
+                  className="w-full px-3 py-2 border rounded-md h-32"
+                  placeholder="Enter note content"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => {
+                    const title = (document.getElementById('note-title') as HTMLInputElement).value;
+                    const content = (document.getElementById('note-content') as HTMLTextAreaElement).value;
+                    if (title.trim()) {
+                      handleNoteSubmit({ title, content });
+                    }
+                  }}
+                  className="flex-1"
+                >
+                  Create Note
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsNoteFormOpen(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
