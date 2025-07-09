@@ -35,10 +35,11 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const isMobile = useIsMobile();
   
-  // Banner positioning states
+  // Banner positioning and sizing states
   const [bannerPosition, setBannerPosition] = useState({ x: 0, y: 0 });
+  const [bannerHeight, setBannerHeight] = useState(100); // Height percentage
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0, initialHeight: 100 });
   const bannerRef = useRef<HTMLDivElement>(null);
   
   // Modal states
@@ -98,24 +99,32 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
     setTimeout(() => setIsGenerating(false), 2000);
   };
 
-  // Banner drag handlers
+  // Banner drag handlers - for vertical repositioning and height resizing
   const handleBannerDragStart = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsDragging(true);
     setDragStart({
       x: e.clientX - bannerPosition.x,
-      y: e.clientY - bannerPosition.y
+      y: e.clientY - bannerPosition.y,
+      initialHeight: bannerHeight
     });
   };
 
   const handleBannerDrag = (e: React.MouseEvent) => {
     if (!isDragging) return;
     
-    // Only allow vertical movement for images
+    const deltaY = e.clientY - dragStart.y;
+    
+    // Calculate new height based on vertical drag (drag down = taller, drag up = shorter)
+    const heightChange = (deltaY / window.innerHeight) * 100; // Convert to percentage
+    const newHeight = Math.max(20, Math.min(200, dragStart.initialHeight + heightChange)); // Clamp between 20% and 200%
+    
+    // Only allow vertical movement and height change
     setBannerPosition({
       x: 0, // Keep horizontal position fixed
-      y: e.clientY - dragStart.y
+      y: deltaY * 0.5 // Gentle vertical repositioning
     });
+    setBannerHeight(newHeight);
   };
 
   const handleBannerDragEnd = () => {
@@ -126,11 +135,18 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
   React.useEffect(() => {
     if (isDragging) {
       const handleMouseMove = (e: MouseEvent) => {
-        // Only allow vertical movement for images
+        const deltaY = e.clientY - dragStart.y;
+        
+        // Calculate new height based on vertical drag
+        const heightChange = (deltaY / window.innerHeight) * 100;
+        const newHeight = Math.max(20, Math.min(200, dragStart.initialHeight + heightChange));
+        
+        // Only allow vertical movement and height change
         setBannerPosition({
           x: 0, // Keep horizontal position fixed
-          y: e.clientY - dragStart.y
+          y: deltaY * 0.5 // Gentle vertical repositioning
         });
+        setBannerHeight(newHeight);
       };
 
       const handleMouseUp = () => {
@@ -190,8 +206,9 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
               >
                 <div
                   ref={bannerRef}
-                  className="w-full h-full relative"
+                  className="w-full relative transition-all duration-200 ease-out"
                   style={{
+                    height: `${bannerHeight}vh`, // Dynamic height based on drag
                     transform: `translate(${bannerPosition.x}px, ${bannerPosition.y}px)`,
                     cursor: isDragging ? 'grabbing' : 'grab'
                   }}
@@ -212,10 +229,10 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
                         size="sm"
                         variant="secondary"
                         onMouseDown={handleBannerDragStart}
-                        className="bg-background/90 backdrop-blur-sm cursor-grab active:cursor-grabbing gap-2"
+                        className="bg-background/90 backdrop-blur-sm cursor-grab active:cursor-grabbing gap-2 select-none"
                       >
                         <Move className="h-4 w-4" />
-                        Drag to Reposition
+                        Drag to Resize & Reposition
                       </Button>
                     </div>
                     
