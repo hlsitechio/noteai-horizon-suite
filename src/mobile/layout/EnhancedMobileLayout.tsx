@@ -3,16 +3,40 @@ import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import EnhancedMobileBottomNav from '../components/EnhancedMobileBottomNav';
 import MobileDesktopViewButton from '../components/MobileDesktopViewButton';
+import { BannerWithTopNav } from '@/components/Dashboard/BannerWithTopNav';
+import { useDashboardBanner } from '@/hooks/useDashboardBanner';
 
 const EnhancedMobileLayout: React.FC = () => {
   const location = useLocation();
   const isEditor = location.pathname === '/mobile/editor';
+  
+  const { 
+    selectedBannerUrl, 
+    handleImageUpload, 
+    handleVideoUpload, 
+    handleAIGenerate, 
+    handleImageSelect 
+  } = useDashboardBanner();
 
   return (
     <div className="h-full w-full flex flex-col bg-background overflow-hidden">
-      {/* Main Content - Full height within frame */}
-      <main className={`flex-1 min-h-0 w-full overflow-hidden relative h-full ${isEditor ? '' : 'pb-16'}`}>
-        <div className="h-full w-full overflow-hidden">
+      {/* Banner Section - Only show on non-editor pages */}
+      {!isEditor && (
+        <div className="flex-shrink-0 h-[30vh] min-h-[180px] max-h-[250px]">
+          <BannerWithTopNav
+            onImageUpload={handleImageUpload}
+            onAIGenerate={handleAIGenerate}
+            onVideoUpload={handleVideoUpload}
+            onImageSelect={handleImageSelect}
+            selectedImageUrl={selectedBannerUrl}
+            isEditMode={false}
+          />
+        </div>
+      )}
+      
+      {/* Main Content */}
+      <main className={`flex-1 min-h-0 w-full overflow-hidden relative ${isEditor ? 'h-full' : 'pb-16'}`}>
+        <div className="h-full w-full overflow-auto">
           <Outlet />
         </div>
       </main>

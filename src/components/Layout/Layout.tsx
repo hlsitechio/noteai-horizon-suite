@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { Outlet } from 'react-router-dom';
 import { ResizableSidebarContainer } from './ResizableSidebar';
 import { Toaster } from '@/components/ui/sonner';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { SidebarMain } from './Sidebar/SidebarMain';
 import { SidebarCollapseProvider } from '@/contexts/SidebarContext';
 import { PWAWrapper } from '../PWA/PWAWrapper';
+import BannerLayout from './BannerLayout';
 
 const Layout: React.FC = () => {
   const { isSidebarEditMode } = useEditMode();
@@ -22,8 +22,8 @@ const Layout: React.FC = () => {
             isEditMode={isSidebarEditMode}
             sidebarContent={<SidebarMain />}
             mainContent={
-              <div className="h-full w-full overflow-auto">
-                <Outlet />
+              <div className="h-full w-full overflow-hidden">
+                <BannerLayout />
               </div>
             }
           />

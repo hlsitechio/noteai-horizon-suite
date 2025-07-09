@@ -42,7 +42,7 @@ const Notes: React.FC = () => {
   const hasFilters = !!(filters.searchTerm || filters.category || filters.isFavorite);
 
   return (
-    <div className={`space-y-6 h-full ${isMobile ? 'p-3' : 'p-6'}`}>
+    <div className={`space-y-6 h-full overflow-auto ${isMobile ? 'p-3' : 'p-6'}`}>
       <NotesHeader />
       <NotesFilters />
       {filteredNotes.length === 0 ? (
