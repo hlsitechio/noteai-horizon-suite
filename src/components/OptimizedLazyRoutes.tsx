@@ -195,6 +195,10 @@ export const OptimizedLazyRoutes: React.FC = () => {
           <Route path="editor-test" element={<EditorControlsTest />} />
         </Route>
 
+        {/* Legacy route redirects for 404 prevention */}
+        <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
+        <Route path="/components" element={<Navigate to="/app/components" replace />} />
+
         {/* Catch all route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
