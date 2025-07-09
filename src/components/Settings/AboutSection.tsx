@@ -18,10 +18,24 @@ const AboutSection: React.FC = () => {
           
           <div className="flex justify-between items-center">
             <span className="text-gray-600 dark:text-gray-400">GitHub</span>
-            <Button size="sm" variant="ghost">
+            <Button 
+              size="sm" 
+              variant="ghost"
+              onClick={() => window.open('https://github.com/lovableai/lovable', '_blank')}
+            >
               <Github className="w-4 h-4 mr-2" />
               View Source
             </Button>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600 dark:text-gray-400">Built with</span>
+            <span className="font-medium">React + Supabase + Lovable</span>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600 dark:text-gray-400">License</span>
+            <span className="font-medium">MIT</span>
           </div>
         </div>
       </CardContent>

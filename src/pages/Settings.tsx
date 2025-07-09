@@ -19,12 +19,16 @@ import { Label } from '@/components/ui/label';
 import { Layout, Settings as SettingsIcon, Palette, User, Sliders, Download, Info, Cloud, Monitor } from 'lucide-react';
 import { useAccentColor } from '../contexts/AccentColorContext';
 import { useEditMode } from '../contexts/EditModeContext';
+import { UserPreferencesService } from '@/services/userPreferencesService';
+import { ActivityService } from '@/services/activityService';
+import { toast } from 'sonner';
 
 const Settings: React.FC = () => {
   const { accentColor, setAccentColor } = useAccentColor();
   const { isDashboardEditMode, setIsDashboardEditMode } = useEditMode();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('profile');
+  const [isSavingLayout, setIsSavingLayout] = useState(false);
 
   // Check for tab parameter in URL
   useEffect(() => {
@@ -43,8 +47,39 @@ const Settings: React.FC = () => {
     setSearchParams({ tab: value });
   };
 
-  const toggleDashboardEditMode = () => {
-    setIsDashboardEditMode(!isDashboardEditMode);
+  const toggleDashboardEditMode = async () => {
+    const newMode = !isDashboardEditMode;
+    setIsSavingLayout(true);
+    
+    try {
+      // Update local state immediately for responsive UI
+      setIsDashboardEditMode(newMode);
+      
+      // Save to database
+      const success = await UserPreferencesService.updateLayoutSettings(newMode);
+      
+      if (success) {
+        // Log activity
+        await ActivityService.logActivity({
+          activity_type: ActivityService.ActivityTypes.SETTINGS_UPDATED,
+          activity_title: 'Updated layout settings',
+          activity_description: `Dashboard edit mode ${newMode ? 'enabled' : 'disabled'}`,
+          metadata: { dashboard_edit_mode: newMode }
+        });
+        
+        toast.success(`Dashboard edit mode ${newMode ? 'enabled' : 'disabled'}`);
+      } else {
+        // Revert on failure
+        setIsDashboardEditMode(!newMode);
+        toast.error('Failed to save layout settings');
+      }
+    } catch (error) {
+      console.error('Failed to update layout settings:', error);
+      setIsDashboardEditMode(!newMode);
+      toast.error('Failed to save layout settings');
+    } finally {
+      setIsSavingLayout(false);
+    }
   };
 
   return (
@@ -126,7 +161,11 @@ const Settings: React.FC = () => {
                       id="dashboard-edit-mode"
                       checked={isDashboardEditMode}
                       onCheckedChange={toggleDashboardEditMode}
+                      disabled={isSavingLayout}
                     />
+                    {isSavingLayout && (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary ml-2"></div>
+                    )}
                   </div>
                   
                   <Separator />
