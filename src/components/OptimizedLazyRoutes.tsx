@@ -48,7 +48,7 @@ const OptimizedDashboard = lazyWithRetry(() => import('../pages/OptimizedDashboa
 const Editor = lazyWithRetry(() => import('../pages/Editor'));
 const Notes = lazyWithRetry(() => import('../pages/Notes'));
 const Analytics = lazyWithRetry(() => import('../pages/Analytics'));
-const Settings = lazyWithRetry(() => import('../pages/Settings'));
+const Settings = lazyWithRetry(() => import('../pages/settings'));
 const Chat = lazyWithRetry(() => import('../pages/Chat'));
 const VoiceChat = lazyWithRetry(() => import('../pages/VoiceChat'));
 const Calendar = lazyWithRetry(() => import('../pages/Calendar'));
