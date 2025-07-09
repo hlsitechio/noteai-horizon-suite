@@ -29,16 +29,15 @@ export class DashboardSettingsService {
         return await this.createDefaultSettings(userId);
       }
 
-      const settings = data.settings as any || {};
       return {
         id: data.id,
         user_id: data.user_id,
-        selected_banner_url: settings.selected_banner_url || null,
-        selected_banner_type: settings.selected_banner_type || null,
-        sidebar_panel_sizes: settings.sidebar_panel_sizes || {},
-        dashboard_edit_mode: settings.dashboard_edit_mode || false,
-        sidebar_edit_mode: settings.sidebar_edit_mode || false,
-        edit_mode_expires_at: settings.edit_mode_expires_at || null,
+        selected_banner_url: data.selected_banner_url || null,
+        selected_banner_type: (data.selected_banner_type as 'image' | 'video') || null,
+        sidebar_panel_sizes: (data.sidebar_panel_sizes as Record<string, number>) || {},
+        dashboard_edit_mode: data.dashboard_edit_mode || false,
+        sidebar_edit_mode: data.sidebar_edit_mode || false,
+        edit_mode_expires_at: data.edit_mode_expires_at || null,
         created_at: data.created_at,
         updated_at: data.updated_at
       };
@@ -50,20 +49,17 @@ export class DashboardSettingsService {
 
   static async createDefaultSettings(userId: string): Promise<DashboardSettings | null> {
     try {
-      const defaultSettings = {
-        selected_banner_url: null,
-        selected_banner_type: null,
-        sidebar_panel_sizes: {},
-        dashboard_edit_mode: false,
-        sidebar_edit_mode: false,
-        edit_mode_expires_at: null
-      };
-
       const { data, error } = await supabase
         .from('dashboard_settings')
         .insert({
           user_id: userId,
-          settings: defaultSettings
+          selected_banner_url: null,
+          selected_banner_type: null,
+          sidebar_panel_sizes: {},
+          dashboard_edit_mode: false,
+          sidebar_edit_mode: false,
+          edit_mode_expires_at: null,
+          settings: {}
         })
         .select()
         .single();
@@ -73,12 +69,12 @@ export class DashboardSettingsService {
       return {
         id: data.id,
         user_id: data.user_id,
-        selected_banner_url: null,
-        selected_banner_type: null,
-        sidebar_panel_sizes: {},
-        dashboard_edit_mode: false,
-        sidebar_edit_mode: false,
-        edit_mode_expires_at: null,
+        selected_banner_url: data.selected_banner_url,
+        selected_banner_type: data.selected_banner_type as 'image' | 'video',
+        sidebar_panel_sizes: (data.sidebar_panel_sizes as Record<string, number>) || {},
+        dashboard_edit_mode: data.dashboard_edit_mode,
+        sidebar_edit_mode: data.sidebar_edit_mode,
+        edit_mode_expires_at: data.edit_mode_expires_at,
         created_at: data.created_at,
         updated_at: data.updated_at
       };
@@ -94,10 +90,16 @@ export class DashboardSettingsService {
     bannerType: 'image' | 'video' | null
   ): Promise<boolean> {
     try {
-      return await this.updateSettings(userId, {
-        selected_banner_url: bannerUrl,
-        selected_banner_type: bannerType
-      });
+      const { error } = await supabase
+        .from('dashboard_settings')
+        .update({
+          selected_banner_url: bannerUrl,
+          selected_banner_type: bannerType
+        })
+        .eq('user_id', userId);
+
+      if (error) throw error;
+      return true;
     } catch (error) {
       console.error('Error updating selected banner:', error);
       return false;
@@ -109,9 +111,22 @@ export class DashboardSettingsService {
     panelSizes: Record<string, number>
   ): Promise<boolean> {
     try {
-      return await this.updateSettings(userId, {
-        sidebar_panel_sizes: panelSizes
-      });
+      console.log('Updating sidebar panel sizes in database:', panelSizes);
+      
+      const { error } = await supabase
+        .from('dashboard_settings')
+        .update({
+          sidebar_panel_sizes: panelSizes
+        })
+        .eq('user_id', userId);
+
+      if (error) {
+        console.error('Database error updating panel sizes:', error);
+        throw error;
+      }
+      
+      console.log('Panel sizes updated successfully in database');
+      return true;
     } catch (error) {
       console.error('Error updating sidebar panel sizes:', error);
       return false;
@@ -128,11 +143,17 @@ export class DashboardSettingsService {
         ? new Date(Date.now() + 60 * 60 * 1000).toISOString() // 1 hour from now
         : null;
 
-      return await this.updateSettings(userId, {
-        dashboard_edit_mode: dashboardEditMode,
-        sidebar_edit_mode: sidebarEditMode,
-        edit_mode_expires_at: expiresAt
-      });
+      const { error } = await supabase
+        .from('dashboard_settings')
+        .update({
+          dashboard_edit_mode: dashboardEditMode,
+          sidebar_edit_mode: sidebarEditMode,
+          edit_mode_expires_at: expiresAt
+        })
+        .eq('user_id', userId);
+
+      if (error) throw error;
+      return true;
     } catch (error) {
       console.error('Error updating edit modes:', error);
       return false;
@@ -148,11 +169,17 @@ export class DashboardSettingsService {
       const now = new Date();
 
       if (now > expiresAt) {
-        return await this.updateSettings(userId, {
-          dashboard_edit_mode: false,
-          sidebar_edit_mode: false,
-          edit_mode_expires_at: null
-        });
+        const { error } = await supabase
+          .from('dashboard_settings')
+          .update({
+            dashboard_edit_mode: false,
+            sidebar_edit_mode: false,
+            edit_mode_expires_at: null
+          })
+          .eq('user_id', userId);
+
+        if (error) throw error;
+        return true;
       }
 
       return false;
@@ -162,46 +189,37 @@ export class DashboardSettingsService {
     }
   }
 
-  static async updateSettings(
-    userId: string,
-    updates: Partial<Pick<DashboardSettings, 'selected_banner_url' | 'selected_banner_type' | 'sidebar_panel_sizes' | 'dashboard_edit_mode' | 'sidebar_edit_mode' | 'edit_mode_expires_at'>>
-  ): Promise<boolean> {
+  // Create default settings row if none exists
+  static async ensureSettingsExist(userId: string): Promise<boolean> {
     try {
-      // Get current settings
-      const { data: currentData, error: fetchError } = await supabase
+      const { data: existing, error: fetchError } = await supabase
         .from('dashboard_settings')
-        .select('settings')
+        .select('id')
         .eq('user_id', userId)
         .single();
 
       if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
 
-      const currentSettings = currentData?.settings as any || {};
-      const newSettings = { ...currentSettings, ...updates };
-
-      if (!currentData) {
-        // Insert new settings if none exist
+      if (!existing) {
         const { error: insertError } = await supabase
           .from('dashboard_settings')
           .insert({
             user_id: userId,
-            settings: newSettings
+            selected_banner_url: null,
+            selected_banner_type: null,
+            sidebar_panel_sizes: {},
+            dashboard_edit_mode: false,
+            sidebar_edit_mode: false,
+            edit_mode_expires_at: null,
+            settings: {}
           });
 
         if (insertError) throw insertError;
-      } else {
-        // Update existing settings
-        const { error: updateError } = await supabase
-          .from('dashboard_settings')
-          .update({ settings: newSettings })
-          .eq('user_id', userId);
-
-        if (updateError) throw updateError;
       }
 
       return true;
     } catch (error) {
-      console.error('Error updating settings:', error);
+      console.error('Error ensuring settings exist:', error);
       return false;
     }
   }

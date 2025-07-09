@@ -14,6 +14,10 @@ export const useDashboardSettings = () => {
 
     try {
       setIsLoading(true);
+      
+      // Ensure settings exist first
+      await DashboardSettingsService.ensureSettingsExist(user.id);
+      
       const userSettings = await DashboardSettingsService.getUserSettings(user.id);
       console.log('Dashboard settings loaded:', userSettings);
       setSettings(userSettings);

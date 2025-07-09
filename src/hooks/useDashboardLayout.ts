@@ -76,9 +76,7 @@ export const useDashboardLayout = () => {
 
     // Store panel sizes in dashboard settings instead of layout
     try {
-      const success = await DashboardSettingsService.updateSettings(user.id, {
-        sidebar_panel_sizes: sizes
-      });
+      const success = await DashboardSettingsService.updateSidebarPanelSizes(user.id, sizes);
       
       if (success) {
         // Update local layout state if it exists
