@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, Sparkles, Image, Play, Maximize2, Settings, Palette, Edit3 } from 'lucide-react';
+import { Upload, Sparkles, Image, Play, Maximize2, Settings, Palette, Edit3, Move } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -32,6 +32,12 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
 }) => {
   const [dragOver, setDragOver] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  // Banner positioning states
+  const [bannerPosition, setBannerPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const bannerRef = useRef<HTMLDivElement>(null);
   
   // Modal states
   const [showBannerSettings, setShowBannerSettings] = useState(false);
@@ -90,6 +96,53 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
     setTimeout(() => setIsGenerating(false), 2000);
   };
 
+  // Banner drag handlers
+  const handleBannerDragStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - bannerPosition.x,
+      y: e.clientY - bannerPosition.y
+    });
+  };
+
+  const handleBannerDrag = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    
+    setBannerPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    });
+  };
+
+  const handleBannerDragEnd = () => {
+    setIsDragging(false);
+  };
+
+  // Add global mouse events for drag
+  React.useEffect(() => {
+    if (isDragging) {
+      const handleMouseMove = (e: MouseEvent) => {
+        setBannerPosition({
+          x: e.clientX - dragStart.x,
+          y: e.clientY - dragStart.y
+        });
+      };
+
+      const handleMouseUp = () => {
+        setIsDragging(false);
+      };
+
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, dragStart]);
+
   const containerVariants = {
     hidden: { opacity: 0, scale: 0.95 },
     visible: { 
@@ -133,14 +186,36 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
                 className="absolute inset-0 w-full h-full"
                 variants={itemVariants}
               >
-                <img
-                  src={selectedImageUrl}
-                  alt="Selected banner"
-                  className="w-full h-full object-cover"
-                />
+                <div
+                  ref={bannerRef}
+                  className="w-full h-full relative"
+                  style={{
+                    transform: `translate(${bannerPosition.x}px, ${bannerPosition.y}px)`,
+                    cursor: isDragging ? 'grabbing' : 'grab'
+                  }}
+                >
+                  <img
+                    src={selectedImageUrl}
+                    alt="Selected banner"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 
                 {/* Image overlay controls */}
                 <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300">
+                  {/* Drag Handle - Center of banner */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onMouseDown={handleBannerDragStart}
+                      className="bg-background/90 backdrop-blur-sm cursor-grab active:cursor-grabbing gap-2"
+                    >
+                      <Move className="h-4 w-4" />
+                      Drag to Reposition
+                    </Button>
+                  </div>
+                  
                   <div className="absolute top-4 right-4 flex gap-2">
                     <Button
                       size="sm"
