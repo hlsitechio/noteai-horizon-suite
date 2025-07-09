@@ -1,12 +1,9 @@
 import React from 'react';
 import { 
-  ResizableDashboardContainer, 
   DashboardControls, 
   MainDashboardContent,
   EditLayoutModal 
 } from '@/components/Dashboard';
-import { BannerWithTopNav } from '@/components/Dashboard/BannerWithTopNav';
-import { ResizableSidebarContainer } from '@/components/Layout/ResizableSidebar';
 import { Button } from '@/components/ui/button';
 import { LayoutDashboard, BarChart3, Settings } from 'lucide-react';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
@@ -21,7 +18,7 @@ const OptimizedDashboard: React.FC = () => {
   const isMobile = useIsMobile();
 
   // Custom hooks for clean separation of concerns
-  const { panelSizes, handleBannerResize, handleMainContentResize, handleHorizontalResize } = useDashboardPanelSizes();
+  const { panelSizes, handleMainContentResize, handleHorizontalResize } = useDashboardPanelSizes();
   const { 
     selectedBannerUrl, 
     handleImageUpload, 
@@ -39,18 +36,6 @@ const OptimizedDashboard: React.FC = () => {
     }`, [isDashboardEditMode]
   );
 
-  const memoizedBannerContent = React.useMemo(() => (
-    <BannerWithTopNav
-      onImageUpload={handleImageUpload}
-      onAIGenerate={handleAIGenerate}
-      onVideoUpload={handleVideoUpload}
-      onImageSelect={handleImageSelect}
-      selectedImageUrl={selectedBannerUrl}
-      isEditMode={isDashboardEditMode}
-      onEditLayoutClick={() => setShowEditLayoutModal(true)}
-    />
-  ), [handleImageUpload, handleAIGenerate, handleVideoUpload, handleImageSelect, selectedBannerUrl, isDashboardEditMode]);
-
   const memoizedMainContent = React.useMemo(() => (
     <MainDashboardContent
       notes={notes}
@@ -66,20 +51,12 @@ const OptimizedDashboard: React.FC = () => {
   ), [notes, panelSizes.analytics, panelSizes.topSection, panelSizes.bottomSection, panelSizes.leftPanels, panelSizes.rightPanels, isDashboardEditMode, handleMainContentResize, handleHorizontalResize]);
 
   return (
-    <div className="w-full h-screen bg-background">
+    <div className="w-full h-full bg-background">
       {!isMobile && <DashboardControls onEditLayoutClick={() => setShowEditLayoutModal(true)} />}
       
-      {/* Resizable Dashboard Container */}
+      {/* Main Content - No banner needed since it's handled by BannerLayout */}
       <div className={dashboardClassName}>
-        <ResizableDashboardContainer
-          bannerDefaultSize={isMobile ? 35 : panelSizes.banner}
-          bannerMinSize={isMobile ? 30 : 25}
-          bannerMaxSize={isMobile ? 60 : 80}
-          isEditMode={isDashboardEditMode}
-          onLayout={handleBannerResize}
-          bannerContent={memoizedBannerContent}
-          mainContent={memoizedMainContent}
-        />
+        {memoizedMainContent}
       </div>
 
       {/* Edit Layout Modal */}
