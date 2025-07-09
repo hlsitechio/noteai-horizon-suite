@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TopNavigationBar } from './TopNavigationBar';
 import ResizableBannerSetup from './ResizableBanner/ResizableBannerSetup';
 import { WeatherSettings } from '@/components/Settings/WeatherSettings';
@@ -26,6 +27,7 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
   onEditLayoutClick
 }) => {
   const [weatherCity, setWeatherCity] = useState('New York');
+  const navigate = useNavigate();
 
   // Load weather settings from localStorage
   useEffect(() => {
@@ -99,16 +101,15 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
       <div className="flex-1 relative overflow-visible">
         {/* Control buttons positioned in banner area */}
         <div className="absolute top-4 right-4 z-50 flex items-center gap-2 p-2 bg-background/90 backdrop-blur-sm rounded-lg border border-border/50 shadow-sm">
-          <DashboardSettings>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="gap-2 transition-all duration-200 hover:bg-accent bg-transparent text-foreground hover:text-accent-foreground"
-            >
-              <Settings className="h-4 w-4" />
-              Components
-            </Button>
-          </DashboardSettings>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate('/app/components')}
+            className="gap-2 transition-all duration-200 hover:bg-accent bg-transparent text-foreground hover:text-accent-foreground"
+          >
+            <Settings className="h-4 w-4" />
+            Components
+          </Button>
           
           {onEditLayoutClick && (
             <Button
