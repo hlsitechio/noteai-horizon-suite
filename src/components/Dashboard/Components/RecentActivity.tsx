@@ -14,9 +14,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { format, formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 export function RecentActivity() {
   const { notes } = useOptimizedNotes();
+  const navigate = useNavigate();
 
   // Generate recent activities from actual notes data
   const recentActivities = React.useMemo(() => {
@@ -118,7 +120,12 @@ export function RecentActivity() {
         </div>
         
         <div className="pt-2 border-t">
-          <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="w-full text-xs text-muted-foreground"
+            onClick={() => navigate('/app/activity')}
+          >
             View All Activity
           </Button>
         </div>

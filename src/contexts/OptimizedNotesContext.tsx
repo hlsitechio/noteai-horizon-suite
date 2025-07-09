@@ -4,6 +4,7 @@ import { SupabaseNotesService } from '../services/supabaseNotesService';
 import { useAuth } from './AuthContext';
 import { useOptimizedNotesQuery } from '../hooks/useOptimizedNotesQuery';
 import { useOptimizedRealtime } from '../hooks/useOptimizedRealtime';
+import { ActivityService } from '../services/activityService';
 import { toast } from 'sonner';
 
 interface OptimizedNotesContextType {
@@ -122,6 +123,21 @@ export const OptimizedNotesProvider: React.FC<{ children: React.ReactNode }> = (
     setSyncStatus('syncing');
     try {
       const newNote = await SupabaseNotesService.saveNote(noteData);
+      
+      // Log activity
+      await ActivityService.logActivity({
+        activity_type: ActivityService.ActivityTypes.NOTE_CREATED,
+        activity_title: 'Created new note',
+        activity_description: newNote.title,
+        entity_type: 'note',
+        entity_id: newNote.id,
+        metadata: { 
+          category: newNote.category,
+          tags: newNote.tags,
+          content_length: newNote.content.length
+        }
+      });
+      
       // Optimistic update is handled by realtime
       setSyncStatus('connected');
       toast.success('Note created successfully');
@@ -140,6 +156,19 @@ export const OptimizedNotesProvider: React.FC<{ children: React.ReactNode }> = (
     try {
       const updatedNote = await SupabaseNotesService.updateNote(id, updates);
       if (updatedNote) {
+        // Log activity
+        await ActivityService.logActivity({
+          activity_type: ActivityService.ActivityTypes.NOTE_UPDATED,
+          activity_title: 'Updated note',
+          activity_description: updatedNote.title,
+          entity_type: 'note',
+          entity_id: updatedNote.id,
+          metadata: { 
+            updated_fields: Object.keys(updates),
+            content_length: updatedNote.content.length
+          }
+        });
+        
         // Optimistic update is handled by realtime
         setSyncStatus('connected');
         toast.success('Note updated successfully');
@@ -155,10 +184,26 @@ export const OptimizedNotesProvider: React.FC<{ children: React.ReactNode }> = (
   const deleteNote = useCallback(async (id: string): Promise<boolean> => {
     if (!user) throw new Error('User not authenticated');
     
+    // Get note details before deletion for activity log
+    const noteToDelete = notes.find(note => note.id === id);
+    
     setSyncStatus('syncing');
     try {
       const success = await SupabaseNotesService.deleteNote(id);
       if (success) {
+        // Log activity
+        await ActivityService.logActivity({
+          activity_type: ActivityService.ActivityTypes.NOTE_DELETED,
+          activity_title: 'Deleted note',
+          activity_description: noteToDelete?.title || 'Unknown note',
+          entity_type: 'note',
+          entity_id: id,
+          metadata: { 
+            category: noteToDelete?.category,
+            was_favorite: noteToDelete?.isFavorite
+          }
+        });
+        
         // Optimistic update is handled by realtime
         setSyncStatus('connected');
         toast.success('Note deleted successfully');
@@ -169,7 +214,7 @@ export const OptimizedNotesProvider: React.FC<{ children: React.ReactNode }> = (
       toast.error('Failed to delete note');
       throw error;
     }
-  }, [user]);
+  }, [user, notes]);
 
   const toggleFavorite = useCallback(async (id: string): Promise<Note | null> => {
     if (!user) throw new Error('User not authenticated');
@@ -178,6 +223,20 @@ export const OptimizedNotesProvider: React.FC<{ children: React.ReactNode }> = (
     try {
       const updatedNote = await SupabaseNotesService.toggleFavorite(id);
       if (updatedNote) {
+        // Log activity
+        await ActivityService.logActivity({
+          activity_type: updatedNote.isFavorite 
+            ? ActivityService.ActivityTypes.NOTE_FAVORITED 
+            : ActivityService.ActivityTypes.NOTE_UNFAVORITED,
+          activity_title: updatedNote.isFavorite ? 'Added note to favorites' : 'Removed note from favorites',
+          activity_description: updatedNote.title,
+          entity_type: 'note',
+          entity_id: updatedNote.id,
+          metadata: { 
+            is_favorite: updatedNote.isFavorite
+          }
+        });
+        
         // Optimistic update is handled by realtime
         setSyncStatus('connected');
         toast.success(updatedNote.isFavorite ? 'Added to favorites' : 'Removed from favorites');

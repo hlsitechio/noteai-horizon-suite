@@ -11,15 +11,22 @@ import {
   TrendingUp,
   Plus,
   Search,
-  Filter
+  Filter,
+  Download,
+  RefreshCw
 } from 'lucide-react';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useFolders } from '@/contexts/FoldersContext';
 import { format } from 'date-fns';
+import { NoteExportService } from '@/services/noteExportService';
+import { ActivityService } from '@/services/activityService';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 export function NotesSummary() {
-  const { notes } = useOptimizedNotes();
+  const { notes, refreshNotes } = useOptimizedNotes();
   const { folders } = useFolders();
+  const navigate = useNavigate();
 
   // Calculate real stats from data
   const favoriteNotes = notes.filter(note => note.isFavorite);
@@ -32,20 +39,97 @@ export function NotesSummary() {
   const wordGoal = 1500;
   const progressPercentage = (wordsToday / wordGoal) * 100;
 
+  const handleExport = async () => {
+    try {
+      if (notes.length === 0) {
+        toast.error('No notes to export');
+        return;
+      }
+
+      // Export all notes as a combined JSON file
+      const exportData = {
+        exported_at: new Date().toISOString(),
+        total_notes: notes.length,
+        notes: notes
+      };
+      
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
+        type: 'application/json' 
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `notes-export-${format(new Date(), 'yyyy-MM-dd')}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      // Log activity
+      await ActivityService.logActivity({
+        activity_type: ActivityService.ActivityTypes.EXPORT_NOTES,
+        activity_title: 'Exported notes',
+        activity_description: `Exported ${notes.length} notes as JSON file`,
+        metadata: { export_format: 'json', notes_count: notes.length }
+      });
+
+      toast.success(`Successfully exported ${notes.length} notes`);
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export notes');
+    }
+  };
+
+  const handleRefresh = async () => {
+    try {
+      await refreshNotes();
+      
+      // Log activity
+      await ActivityService.logActivity({
+        activity_type: 'notes_refreshed',
+        activity_title: 'Refreshed notes data',
+        activity_description: 'Manually refreshed the notes summary'
+      });
+      
+      toast.success('Notes data refreshed');
+    } catch (error) {
+      console.error('Refresh error:', error);
+      toast.error('Failed to refresh notes');
+    }
+  };
+
   return (
     <Card className="h-full">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-medium">Notes Summary</CardTitle>
           <div className="flex items-center space-x-1">
-            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-6 w-6 p-0"
+              onClick={handleExport}
+              title="Export Notes"
+            >
+              <Download className="h-3 w-3" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-6 w-6 p-0"
+              onClick={handleRefresh}
+              title="Refresh Data"
+            >
+              <RefreshCw className="h-3 w-3" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-6 w-6 p-0"
+              onClick={() => navigate('/app/notes')}
+              title="Search Notes"
+            >
               <Search className="h-3 w-3" />
-            </Button>
-            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-              <Filter className="h-3 w-3" />
-            </Button>
-            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-              <Plus className="h-3 w-3" />
             </Button>
           </div>
         </div>
@@ -144,7 +228,12 @@ export function NotesSummary() {
         </div>
 
         <div className="pt-2 border-t">
-          <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="w-full text-xs text-muted-foreground"
+            onClick={() => navigate('/app/notes')}
+          >
             View All Notes
           </Button>
         </div>
