@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { createWorker } from 'tesseract.js';
+import { useWorkerOCR } from '@/hooks/useWorkerOCR';
 
 interface OCRScreenCaptureProps {
   onTextReceived: (text: string) => void;
@@ -13,18 +13,16 @@ interface OCRScreenCaptureProps {
 }
 
 const OCRScreenCapture: React.FC<OCRScreenCaptureProps> = ({ onTextReceived, isVisible, onClose }) => {
-  const [isProcessing, setIsProcessing] = useState(false);
   const [extractedText, setExtractedText] = useState('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [progress, setProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  // Use worker-enhanced OCR hook
+  const { processImage, processScreenCapture, isProcessing, progress } = useWorkerOCR();
 
   const captureScreen = async () => {
     try {
-      setIsProcessing(true);
-      setProgress(0);
-      
       if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
         alert('Screen capture is not supported in this browser.');
         return;
@@ -38,7 +36,7 @@ const OCRScreenCapture: React.FC<OCRScreenCaptureProps> = ({ onTextReceived, isV
       video.srcObject = stream;
       video.play();
 
-      video.onloadedmetadata = () => {
+      video.onloadedmetadata = async () => {
         const canvas = canvasRef.current;
         if (canvas) {
           canvas.width = video.videoWidth;
@@ -46,11 +44,20 @@ const OCRScreenCapture: React.FC<OCRScreenCaptureProps> = ({ onTextReceived, isV
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(video, 0, 0);
           
-          canvas.toBlob((blob) => {
+          canvas.toBlob(async (blob) => {
             if (blob) {
               const url = URL.createObjectURL(blob);
               setPreviewUrl(url);
-              performOCR(blob);
+              
+              // Use worker thread for OCR processing
+              try {
+                const result = await processScreenCapture(blob);
+                setExtractedText(result.text);
+                console.log(`OCR completed: ${result.text.length} characters extracted with ${result.confidence}% confidence`);
+              } catch (error) {
+                console.error('OCR processing failed:', error);
+                alert('Failed to extract text from screen capture. Please try again.');
+              }
             }
           });
         }
@@ -60,50 +67,27 @@ const OCRScreenCapture: React.FC<OCRScreenCaptureProps> = ({ onTextReceived, isV
     } catch (error) {
       console.error('Error capturing screen:', error);
       alert('Failed to capture screen. Please try again.');
-      setIsProcessing(false);
     }
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
-      performOCR(file);
+      
+      // Use worker thread for OCR processing
+      try {
+        const result = await processImage(file);
+        setExtractedText(result.text);
+        console.log(`OCR completed: ${result.text.length} characters extracted with ${result.confidence}% confidence`);
+      } catch (error) {
+        console.error('OCR processing failed:', error);
+        alert('Failed to extract text from image. Please try again.');
+      }
     }
   };
 
-  const performOCR = async (imageSource: Blob | File) => {
-    setIsProcessing(true);
-    setProgress(0);
-    
-    try {
-      const worker = await createWorker('eng', 1, {
-        logger: m => {
-          if (m.status === 'recognizing text') {
-            setProgress(Math.round(m.progress * 100));
-          }
-        }
-      });
-      
-      await worker.setParameters({
-        tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz .,!?-:;()[]{}"\'/\\@#$%^&*+=<>|`~_',
-      });
-
-      const { data: { text } } = await worker.recognize(imageSource);
-
-      await worker.terminate();
-      
-      setExtractedText(text.trim());
-      console.log('OCR processing completed:', text);
-    } catch (error) {
-      console.error('OCR processing failed:', error);
-      alert('Failed to extract text from image. Please try again.');
-    } finally {
-      setIsProcessing(false);
-      setProgress(0);
-    }
-  };
 
   const insertText = () => {
     if (extractedText.trim()) {
@@ -117,7 +101,6 @@ const OCRScreenCapture: React.FC<OCRScreenCaptureProps> = ({ onTextReceived, isV
   const reset = () => {
     setExtractedText('');
     setPreviewUrl(null);
-    setProgress(0);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
