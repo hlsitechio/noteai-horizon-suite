@@ -96,14 +96,14 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
       </div>
       
       {/* Banner Content */}
-      <div className="flex-1 relative">
+      <div className="flex-1 relative overflow-visible">
         {/* Control buttons positioned in banner area */}
-        <div className="absolute top-2 right-2 z-40 flex items-center gap-2">
+        <div className="absolute top-4 right-4 z-50 flex items-center gap-2 p-2 bg-background/90 backdrop-blur-sm rounded-lg border border-border/50 shadow-sm">
           <DashboardSettings>
             <Button 
               variant="ghost" 
               size="sm" 
-              className="gap-2 transition-all duration-200 hover:bg-accent bg-background/80 backdrop-blur-sm"
+              className="gap-2 transition-all duration-200 hover:bg-accent bg-transparent text-foreground hover:text-accent-foreground"
             >
               <Settings className="h-4 w-4" />
               Components
@@ -115,7 +115,7 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
               variant="ghost"
               size="sm"
               onClick={onEditLayoutClick}
-              className="gap-2 transition-all duration-200 hover:bg-accent bg-background/80 backdrop-blur-sm"
+              className="gap-2 transition-all duration-200 hover:bg-accent bg-transparent text-foreground hover:text-accent-foreground"
             >
               <Edit3 className="h-4 w-4" />
               Edit Layout
