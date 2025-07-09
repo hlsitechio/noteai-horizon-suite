@@ -1,3 +1,5 @@
 export { ComponentLibrary } from './ComponentLibrary';
 export { ComponentPreview } from './ComponentPreview';
-export type { ComponentLibraryItem } from './ComponentLibrary';
+export { ComponentCard } from './ComponentCard';
+export type { ComponentLibraryItem } from './ComponentLibraryData';
+export { componentLibraryItems, categories } from './ComponentLibraryData';

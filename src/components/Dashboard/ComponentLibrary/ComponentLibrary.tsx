@@ -1,158 +1,9 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
-} from '@/components/ui/dialog';
-import { 
-  Search, 
-  Filter, 
-  Plus, 
-  Grid3X3,
-  BarChart3,
-  Users,
-  Activity,
-  Calendar,
-  FileText,
-  Zap,
-  Share2,
-  Folder,
-  TrendingUp
-} from 'lucide-react';
-import { ComponentPreview } from './ComponentPreview';
-import { DashboardComponentRenderer } from '../ComponentRegistry';
-import { useDashboardLayout } from '@/hooks/useDashboardLayout';
-import { toast } from 'sonner';
-
-export interface ComponentLibraryItem {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  icon: React.ElementType;
-  componentKey: string;
-  tags: string[];
-  preview?: React.ComponentType;
-}
-
-const componentLibraryItems: ComponentLibraryItem[] = [
-  {
-    id: 'quick-actions',
-    name: 'Quick Actions',
-    description: 'Common actions and shortcuts for quick access',
-    category: 'Actions',
-    icon: Grid3X3,
-    componentKey: 'quick-actions',
-    tags: ['actions', 'shortcuts', 'productivity']
-  },
-  {
-    id: 'analytics-overview',
-    name: 'Analytics Overview',
-    description: 'Key metrics and performance indicators',
-    category: 'Analytics',
-    icon: BarChart3,
-    componentKey: 'analytics-overview',
-    tags: ['analytics', 'metrics', 'kpi']
-  },
-  {
-    id: 'recent-activity',
-    name: 'Recent Activity',
-    description: 'Latest actions and user activity feed',
-    category: 'Activity',
-    icon: Activity,
-    componentKey: 'recent-activity',
-    tags: ['activity', 'feed', 'updates']
-  },
-  {
-    id: 'calendar-widget',
-    name: 'Calendar',
-    description: 'Calendar view with events and scheduling',
-    category: 'Time',
-    icon: Calendar,
-    componentKey: 'calendar-widget',
-    tags: ['calendar', 'events', 'schedule']
-  },
-  {
-    id: 'notes-summary',
-    name: 'Notes Summary',
-    description: 'Overview of notes and documents',
-    category: 'Content',
-    icon: FileText,
-    componentKey: 'notes-summary',
-    tags: ['notes', 'documents', 'content']
-  },
-  {
-    id: 'system-status',
-    name: 'System Status',
-    description: 'System health and performance monitoring',
-    category: 'System',
-    icon: Zap,
-    componentKey: 'system-status',
-    tags: ['system', 'status', 'monitoring']
-  },
-  {
-    id: 'task-list',
-    name: 'Task List',
-    description: 'Task management and to-do lists',
-    category: 'Productivity',
-    icon: Users,
-    componentKey: 'task-list',
-    tags: ['tasks', 'todo', 'productivity']
-  },
-  {
-    id: 'weather-widget',
-    name: 'Weather',
-    description: 'Current weather conditions and forecast',
-    category: 'Info',
-    icon: Share2,
-    componentKey: 'weather-widget',
-    tags: ['weather', 'forecast', 'location']
-  },
-  {
-    id: 'stats-revenue',
-    name: 'Revenue Stats',
-    description: 'Revenue tracking and financial metrics',
-    category: 'Analytics',
-    icon: TrendingUp,
-    componentKey: 'stats-revenue',
-    tags: ['revenue', 'finance', 'stats']
-  },
-  {
-    id: 'stats-users',
-    name: 'User Stats',
-    description: 'User analytics and engagement metrics',
-    category: 'Analytics',
-    icon: Users,
-    componentKey: 'stats-users',
-    tags: ['users', 'engagement', 'stats']
-  },
-  {
-    id: 'social-twitter',
-    name: 'Social Media',
-    description: 'Social media analytics and posts',
-    category: 'Social',
-    icon: Share2,
-    componentKey: 'social-twitter',
-    tags: ['social', 'twitter', 'engagement']
-  },
-  {
-    id: 'project-active',
-    name: 'Active Projects',
-    description: 'Current project status and progress',
-    category: 'Projects',
-    icon: Folder,
-    componentKey: 'project-active',
-    tags: ['projects', 'progress', 'team']
-  }
-];
-
-const categories = ['All', 'Analytics', 'Actions', 'Activity', 'Time', 'Content', 'System', 'Productivity', 'Info', 'Social', 'Projects'];
+import { Search } from 'lucide-react';
+import { ComponentCard } from './ComponentCard';
+import { useComponentLibrary } from './useComponentLibrary';
 
 interface ComponentLibraryProps {
   onAddComponent?: (componentKey: string, panelKey: string) => void;
@@ -163,32 +14,20 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
   onAddComponent,
   availablePanels = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight']
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedComponent, setSelectedComponent] = useState<ComponentLibraryItem | null>(null);
-  const { updatePanelConfiguration } = useDashboardLayout();
+  const {
+    searchTerm,
+    setSearchTerm,
+    selectedCategory,
+    setSelectedCategory,
+    filteredComponents,
+    handleAddToPanel,
+    categories
+  } = useComponentLibrary(availablePanels);
 
-  const filteredComponents = componentLibraryItems.filter(component => {
-    const matchesSearch = component.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         component.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         component.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesCategory = selectedCategory === 'All' || component.category === selectedCategory;
-    
-    return matchesSearch && matchesCategory;
-  });
-
-  const handleAddToPanel = async (componentKey: string, panelKey: string) => {
-    try {
-      await updatePanelConfiguration(panelKey, componentKey, true);
-      toast.success(`Component added to ${panelKey} panel`);
-      
-      if (onAddComponent) {
-        onAddComponent(componentKey, panelKey);
-      }
-    } catch (error) {
-      console.error('Failed to add component:', error);
-      toast.error('Failed to add component to panel');
+  const onAddToPanel = async (componentKey: string, panelKey: string) => {
+    await handleAddToPanel(componentKey, panelKey);
+    if (onAddComponent) {
+      onAddComponent(componentKey, panelKey);
     }
   };
 
@@ -232,81 +71,14 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
 
       {/* Components Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredComponents.map((component) => {
-          const Icon = component.icon;
-          
-          return (
-            <Card key={component.id} className="group hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 rounded-lg bg-primary/10">
-                      <Icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-base">{component.name}</CardTitle>
-                      <Badge variant="secondary" className="text-xs">
-                        {component.category}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  {component.description}
-                </p>
-                
-                <div className="flex flex-wrap gap-1">
-                  {component.tags.map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-
-                {/* Inline Component Preview */}
-                <div className="border-2 border-dashed border-muted rounded-lg p-4 bg-muted/10">
-                  <div className="max-w-full mx-auto">
-                    <DashboardComponentRenderer componentKey={component.componentKey} />
-                  </div>
-                </div>
-
-                {/* Add to Panel Button */}
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button size="sm" className="w-full flex items-center space-x-1">
-                      <Plus className="h-3 w-3" />
-                      <span>Add to Panel</span>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Add Component to Panel</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <p className="text-sm text-muted-foreground">
-                        Select a panel to add the "{component.name}" component:
-                      </p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {availablePanels.map((panelKey) => (
-                          <Button
-                            key={panelKey}
-                            variant="outline"
-                            onClick={() => handleAddToPanel(component.componentKey, panelKey)}
-                            className="justify-start"
-                          >
-                            {panelKey.replace(/([A-Z])/g, ' $1').trim()}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </CardContent>
-            </Card>
-          );
-        })}
+        {filteredComponents.map((component) => (
+          <ComponentCard
+            key={component.id}
+            component={component}
+            availablePanels={availablePanels}
+            onAddToPanel={onAddToPanel}
+          />
+        ))}
       </div>
 
       {filteredComponents.length === 0 && (
