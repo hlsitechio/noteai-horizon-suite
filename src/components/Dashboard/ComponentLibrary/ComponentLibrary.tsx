@@ -26,6 +26,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { ComponentPreview } from './ComponentPreview';
+import { DashboardComponentRenderer } from '../ComponentRegistry';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 import { toast } from 'sonner';
 
@@ -230,7 +231,7 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
       </div>
 
       {/* Components Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredComponents.map((component) => {
           const Icon = component.icon;
           
@@ -264,65 +265,44 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
                   ))}
                 </div>
 
-                <div className="flex gap-2">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="flex-1"
-                        onClick={() => setSelectedComponent(component)}
-                      >
-                        Preview
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle className="flex items-center space-x-2">
-                          <Icon className="h-5 w-5" />
-                          <span>{component.name}</span>
-                        </DialogTitle>
-                      </DialogHeader>
-                      <ComponentPreview 
-                        componentKey={component.componentKey}
-                        description={component.description}
-                        onAddToPanel={(panelKey) => handleAddToPanel(component.componentKey, panelKey)}
-                        availablePanels={availablePanels}
-                      />
-                    </DialogContent>
-                  </Dialog>
-                  
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button size="sm" className="flex items-center space-x-1">
-                        <Plus className="h-3 w-3" />
-                        <span>Add</span>
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Add Component to Panel</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <p className="text-sm text-muted-foreground">
-                          Select a panel to add the "{component.name}" component:
-                        </p>
-                        <div className="grid grid-cols-2 gap-2">
-                          {availablePanels.map((panelKey) => (
-                            <Button
-                              key={panelKey}
-                              variant="outline"
-                              onClick={() => handleAddToPanel(component.componentKey, panelKey)}
-                              className="justify-start"
-                            >
-                              {panelKey.replace(/([A-Z])/g, ' $1').trim()}
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                {/* Inline Component Preview */}
+                <div className="border-2 border-dashed border-muted rounded-lg p-4 bg-muted/10">
+                  <div className="max-w-full mx-auto">
+                    <DashboardComponentRenderer componentKey={component.componentKey} />
+                  </div>
                 </div>
+
+                {/* Add to Panel Button */}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="sm" className="w-full flex items-center space-x-1">
+                      <Plus className="h-3 w-3" />
+                      <span>Add to Panel</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add Component to Panel</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        Select a panel to add the "{component.name}" component:
+                      </p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {availablePanels.map((panelKey) => (
+                          <Button
+                            key={panelKey}
+                            variant="outline"
+                            onClick={() => handleAddToPanel(component.componentKey, panelKey)}
+                            className="justify-start"
+                          >
+                            {panelKey.replace(/([A-Z])/g, ' $1').trim()}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </CardContent>
             </Card>
           );
