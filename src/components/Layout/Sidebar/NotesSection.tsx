@@ -147,15 +147,13 @@ export function NotesSection() {
             className="h-full overflow-hidden space-y-2"
           >
             <div className="h-full overflow-y-auto space-y-1 px-2">
-              {/* Favorites Section */}
-              {favoriteNotes.length > 0 && (
-                <FavoritesListSection
-                  notes={favoriteNotes}
-                  isExpanded={expandedSections.favorites}
-                  onToggle={() => toggleSection('favorites')}
-                  isMobile={isMobile}
-                />
-              )}
+              {/* Favorites Section - Always show */}
+              <FavoritesListSection
+                notes={favoriteNotes}
+                isExpanded={expandedSections.favorites}
+                onToggle={() => toggleSection('favorites')}
+                isMobile={isMobile}
+              />
 
               {/* Folders Section */}
               <FoldersListSection

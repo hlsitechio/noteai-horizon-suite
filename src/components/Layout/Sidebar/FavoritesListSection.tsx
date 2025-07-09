@@ -56,7 +56,8 @@ export function FavoritesListSection({
             ) : (
               <ChevronRight className="h-3 w-3 mr-1" />
             )}
-            Favorites
+            <Star className="h-3 w-3 mr-1" />
+            Favorites ({notes.length})
           </Button>
         )}
       </div>
