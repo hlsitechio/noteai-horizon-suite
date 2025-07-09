@@ -10,6 +10,7 @@ import BannerGalleryModal from '../BannerSettings/BannerGalleryModal';
 import AIGenerateModal from '../BannerSettings/AIGenerateModal';
 import PreviewModeModal from '../BannerSettings/PreviewModeModal';
 import CompactBannerPlaceholder from '../BannerSettings/CompactBannerPlaceholder';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ResizableBannerSetupProps {
   onImageUpload?: (file: File) => void;
@@ -32,6 +33,7 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
 }) => {
   const [dragOver, setDragOver] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const isMobile = useIsMobile();
   
   // Banner positioning states
   const [bannerPosition, setBannerPosition] = useState({ x: 0, y: 0 });
@@ -197,45 +199,46 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
                   <img
                     src={selectedImageUrl}
                     alt="Selected banner"
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full ${isMobile ? 'object-cover object-center' : 'object-cover'}`}
                   />
                 </div>
                 
-                {/* Image overlay controls */}
-                <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300">
-                  {/* Drag Handle - Center of banner */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onMouseDown={handleBannerDragStart}
-                      className="bg-background/90 backdrop-blur-sm cursor-grab active:cursor-grabbing gap-2"
-                    >
-                      <Move className="h-4 w-4" />
-                      Drag to Reposition
-                    </Button>
+                {/* Image overlay controls - hidden on mobile */}
+                {!isMobile && (
+                  <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300">
+                    {/* Drag Handle - Center of banner */}
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onMouseDown={handleBannerDragStart}
+                        className="bg-background/90 backdrop-blur-sm cursor-grab active:cursor-grabbing gap-2"
+                      >
+                        <Move className="h-4 w-4" />
+                        Drag to Reposition
+                      </Button>
+                    </div>
+                    
+                    <div className="absolute top-4 right-4 flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => setShowBannerSettings(true)}
+                        className="bg-background/80 backdrop-blur-sm"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => setShowGallery(true)}
+                        className="bg-background/80 backdrop-blur-sm"
+                      >
+                        <Image className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                  
-                  <div className="absolute top-4 right-4 flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => setShowBannerSettings(true)}
-                      className="bg-background/80 backdrop-blur-sm"
-                    >
-                      <Settings className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => setShowGallery(true)}
-                      className="bg-background/80 backdrop-blur-sm"
-                    >
-                      <Image className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  
-                </div>
+                )}
               </motion.div>
             </>
           ) : (

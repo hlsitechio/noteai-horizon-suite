@@ -12,11 +12,13 @@ import { LayoutDashboard, BarChart3, Settings } from 'lucide-react';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { useDashboardPanelSizes, useDashboardBanner } from '@/hooks';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const OptimizedDashboard: React.FC = () => {
   const { notes } = useOptimizedNotes();
   const { isDashboardEditMode, isLoading } = useEditMode();
   const [showEditLayoutModal, setShowEditLayoutModal] = React.useState(false);
+  const isMobile = useIsMobile();
 
   // Custom hooks for clean separation of concerns
   const { panelSizes, handleBannerResize, handleMainContentResize, handleHorizontalResize } = useDashboardPanelSizes();
@@ -65,14 +67,14 @@ const OptimizedDashboard: React.FC = () => {
 
   return (
     <div className="w-full h-screen bg-background">
-      <DashboardControls onEditLayoutClick={() => setShowEditLayoutModal(true)} />
+      {!isMobile && <DashboardControls onEditLayoutClick={() => setShowEditLayoutModal(true)} />}
       
       {/* Resizable Dashboard Container */}
       <div className={dashboardClassName}>
         <ResizableDashboardContainer
-          bannerDefaultSize={panelSizes.banner}
-          bannerMinSize={25}
-          bannerMaxSize={80}
+          bannerDefaultSize={isMobile ? 35 : panelSizes.banner}
+          bannerMinSize={isMobile ? 30 : 25}
+          bannerMaxSize={isMobile ? 60 : 80}
           isEditMode={isDashboardEditMode}
           onLayout={handleBannerResize}
           bannerContent={memoizedBannerContent}

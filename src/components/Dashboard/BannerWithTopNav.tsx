@@ -6,6 +6,7 @@ import { WeatherSettings } from '@/components/Settings/WeatherSettings';
 import { Button } from '@/components/ui/button';
 import { Edit3, Settings } from 'lucide-react';
 import DashboardSettings from './DashboardSettings';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface BannerWithTopNavProps {
   onImageUpload?: (file: File) => void;
@@ -28,6 +29,7 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
 }) => {
   const [weatherCity, setWeatherCity] = useState('New York');
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   // Load weather settings from localStorage
   useEffect(() => {
@@ -99,30 +101,32 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
       
       {/* Banner Content */}
       <div className="flex-1 relative overflow-visible">
-        {/* Control buttons positioned in banner area */}
-        <div className="absolute top-4 right-4 z-50 flex items-center gap-2 p-2 bg-background/90 backdrop-blur-sm rounded-lg border border-border/50 shadow-sm">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => navigate('/app/components')}
-            className="gap-2 transition-all duration-200 hover:bg-accent bg-transparent text-foreground hover:text-accent-foreground"
-          >
-            <Settings className="h-4 w-4" />
-            Components
-          </Button>
-          
-          {onEditLayoutClick && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onEditLayoutClick}
+        {/* Control buttons positioned in banner area - hidden on mobile */}
+        {!isMobile && (
+          <div className="absolute top-4 right-4 z-50 flex items-center gap-2 p-2 bg-background/90 backdrop-blur-sm rounded-lg border border-border/50 shadow-sm">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate('/app/components')}
               className="gap-2 transition-all duration-200 hover:bg-accent bg-transparent text-foreground hover:text-accent-foreground"
             >
-              <Edit3 className="h-4 w-4" />
-              Edit Layout
+              <Settings className="h-4 w-4" />
+              Components
             </Button>
-          )}
-        </div>
+            
+            {onEditLayoutClick && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onEditLayoutClick}
+                className="gap-2 transition-all duration-200 hover:bg-accent bg-transparent text-foreground hover:text-accent-foreground"
+              >
+                <Edit3 className="h-4 w-4" />
+                Edit Layout
+              </Button>
+            )}
+          </div>
+        )}
         
         <ResizableBannerSetup
           onImageUpload={onImageUpload}
