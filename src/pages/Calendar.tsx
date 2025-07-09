@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, Clock, FileText, Users } from 'lucide-react';
+import { isSameDay } from 'date-fns';
+import { Plus, Users, FileText, Calendar as CalendarIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CalendarEventForm } from '../components/Calendar/CalendarEventForm';
+import { CalendarGrid } from '../components/Calendar/CalendarGrid';
+import { CalendarEventFormInline } from '../components/Calendar/CalendarEventFormInline';
+import { CalendarDateDetails } from '../components/Calendar/CalendarDateDetails';
+import { CalendarNoteFormInline } from '../components/Calendar/CalendarNoteFormInline';
 import { CalendarEvent } from '../types/calendar';
 import { useCalendarEvents } from '../hooks/useCalendarEvents';
 import { useNotes } from '../contexts/NotesContext';
@@ -16,13 +16,9 @@ const Calendar: React.FC = () => {
   const [viewDate, setViewDate] = useState(new Date());
   const [isEventFormOpen, setIsEventFormOpen] = useState(false);
   const [isNoteFormOpen, setIsNoteFormOpen] = useState(false);
-  const { events, addEvent, updateEvent, deleteEvent } = useCalendarEvents();
+  const { events, addEvent } = useCalendarEvents();
   const { notes, createNote, setCurrentNote } = useNotes();
   const navigate = useNavigate();
-
-  const monthStart = startOfMonth(viewDate);
-  const monthEnd = endOfMonth(viewDate);
-  const calendarDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
   const getEventsForDate = (date: Date) => {
     return events.filter(event => isSameDay(new Date(event.date), date));
@@ -63,9 +59,18 @@ const Calendar: React.FC = () => {
   };
 
   const handleNoteClick = (note: any) => {
-    console.log('Note clicked:', note);
     setCurrentNote(note);
     navigate('/app/editor');
+  };
+
+  const handleAddEvent = (date: Date) => {
+    setSelectedDate(date);
+    setIsEventFormOpen(true);
+  };
+
+  const handleAddNote = (date: Date) => {
+    setSelectedDate(date);
+    setIsNoteFormOpen(true);
   };
 
   const getEventTypeIcon = (type: CalendarEvent['type']) => {
@@ -76,17 +81,6 @@ const Calendar: React.FC = () => {
         return <FileText className="w-3 h-3" />;
       default:
         return <CalendarIcon className="w-3 h-3" />;
-    }
-  };
-
-  const getEventTypeColor = (type: CalendarEvent['type']) => {
-    switch (type) {
-      case 'meeting':
-        return 'bg-blue-500';
-      case 'note':
-        return 'bg-green-500';
-      default:
-        return 'bg-purple-500';
     }
   };
 
@@ -118,343 +112,46 @@ const Calendar: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Calendar Grid */}
         <div className="lg:col-span-2">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-              <CardTitle className="text-xl font-semibold">
-                {format(viewDate, 'MMMM yyyy')}
-              </CardTitle>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => navigateMonth('prev')}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => navigateMonth('next')}
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-7 gap-1 mb-4">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                  <div key={day} className="p-2 text-center text-sm font-medium text-muted-foreground">
-                    {day}
-                  </div>
-                ))}
-              </div>
-              <div className="grid grid-cols-7 gap-1">
-                {calendarDays.map((day) => {
-                  const dayEvents = getEventsForDate(day);
-                  const dayNotes = getNotesForDate(day);
-                  const isSelected = isSameDay(day, selectedDate);
-                  const isCurrentMonth = isSameMonth(day, viewDate);
-                  
-                  return (
-                    <button
-                      key={day.toISOString()}
-                      onClick={() => setSelectedDate(day)}
-                      className={`
-                        relative p-3 h-32 rounded-lg border transition-all duration-200 flex flex-col
-                        ${isSelected ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50'}
-                        ${!isCurrentMonth ? 'opacity-40' : ''}
-                        ${isToday(day) ? 'bg-accent' : ''}
-                      `}
-                    >
-                      <div className="text-sm font-medium mb-2">
-                        {format(day, 'd')}
-                      </div>
-                      
-                      {/* Events section */}
-                      <div className="flex-1 space-y-1">
-                        {dayEvents.slice(0, 2).map((event) => (
-                          <div
-                            key={event.id}
-                            className="flex items-center gap-1 p-1 rounded text-xs bg-white/10 backdrop-blur-sm"
-                          >
-                            {getEventTypeIcon(event.type)}
-                            <span className="truncate">{event.title}</span>
-                          </div>
-                        ))}
-                        
-                        {/* Notes section */}
-                        {dayNotes.slice(0, 1).map((note) => (
-                          <button
-                            key={note.id}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleNoteClick(note);
-                            }}
-                            className="flex items-center gap-1 p-1 rounded text-xs bg-orange-500/20 backdrop-blur-sm hover:bg-orange-500/30 transition-colors w-full text-left"
-                          >
-                            <FileText className="w-3 h-3" />
-                            <span className="truncate">{note.title}</span>
-                          </button>
-                        ))}
-                        
-                        {/* Show count if more items */}
-                        {(dayEvents.length + dayNotes.length) > 3 && (
-                          <div className="text-xs text-muted-foreground text-center">
-                            +{(dayEvents.length + dayNotes.length) - 3} more
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* Quick action buttons */}
-                      <div className="flex gap-1 mt-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedDate(day);
-                            setIsEventFormOpen(true);
-                          }}
-                          className="p-1 rounded bg-blue-500/20 hover:bg-blue-500/30 transition-colors"
-                          title="Add Event"
-                        >
-                          <CalendarIcon className="w-3 h-3" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedDate(day);
-                            setIsNoteFormOpen(true);
-                          }}
-                          className="p-1 rounded bg-green-500/20 hover:bg-green-500/30 transition-colors"
-                          title="Add Note"
-                        >
-                          <FileText className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
+          <CalendarGrid
+            viewDate={viewDate}
+            selectedDate={selectedDate}
+            events={events}
+            notes={notes}
+            onDateSelect={setSelectedDate}
+            onNavigateMonth={navigateMonth}
+            onAddEvent={handleAddEvent}
+            onAddNote={handleAddNote}
+            onNoteClick={handleNoteClick}
+            getEventTypeIcon={getEventTypeIcon}
+          />
         </div>
 
         {/* Selected Date Details */}
         <div className="space-y-4">
           {/* Create New Event Form */}
-          {isEventFormOpen && (
-            <Card className="border-primary/20 bg-gradient-to-br from-background to-accent/5">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Plus className="w-4 h-4 text-primary" />
-                    New Event
-                  </CardTitle>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => setIsEventFormOpen(false)}
-                    className="h-6 w-6 p-0"
-                  >
-                    ×
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-3">
-                  <div className="space-y-1">
-                    <label htmlFor="event-title" className="text-xs font-medium text-muted-foreground">Title</label>
-                    <input
-                      id="event-title"
-                      type="text"
-                      className="w-full px-2 py-1.5 text-sm border rounded-md bg-background/50"
-                      placeholder="Event title"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label htmlFor="event-desc" className="text-xs font-medium text-muted-foreground">Description</label>
-                    <textarea
-                      id="event-desc"
-                      className="w-full px-2 py-1.5 text-sm border rounded-md bg-background/50 h-16 resize-none"
-                      placeholder="Event description"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="space-y-1">
-                      <label className="text-xs font-medium text-muted-foreground">Type</label>
-                      <select className="w-full px-2 py-1.5 text-sm border rounded-md bg-background/50">
-                        <option value="event">Event</option>
-                        <option value="meeting">Meeting</option>
-                        <option value="note">Important Note</option>
-                      </select>
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-medium text-muted-foreground">Time</label>
-                      <input
-                        type="time"
-                        className="w-full px-2 py-1.5 text-sm border rounded-md bg-background/50"
-                      />
-                    </div>
-                  </div>
-                  <Button 
-                    onClick={() => {
-                      // Handle form submission here
-                      setIsEventFormOpen(false);
-                    }}
-                    className="w-full h-8 text-sm"
-                    size="sm"
-                  >
-                    Create Event
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          <CalendarEventFormInline
+            isOpen={isEventFormOpen}
+            onClose={() => setIsEventFormOpen(false)}
+            onSubmit={handleEventSubmit}
+            selectedDate={selectedDate}
+          />
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <CalendarIcon className="w-4 h-4" />
-                {format(selectedDate, 'EEEE, MMM d')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <Tabs defaultValue="events" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 h-8">
-                  <TabsTrigger value="events" className="text-xs">Events</TabsTrigger>
-                  <TabsTrigger value="notes" className="text-xs">Notes</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="events" className="space-y-2 mt-3">
-                  {selectedDateEvents.length === 0 ? (
-                    <p className="text-xs text-muted-foreground">No events for this date</p>
-                  ) : (
-                    selectedDateEvents.map((event) => (
-                      <div key={event.id} className="p-2 border rounded-lg space-y-1.5 bg-accent/5">
-                        <div className="flex items-center gap-2">
-                          {getEventTypeIcon(event.type)}
-                          <span className="font-medium text-sm">{event.title}</span>
-                          <Badge variant="secondary" className="ml-auto text-xs">
-                            {event.type}
-                          </Badge>
-                        </div>
-                        {event.time && (
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <Clock className="w-3 h-3" />
-                            {event.time}
-                          </div>
-                        )}
-                        {event.description && (
-                          <p className="text-xs text-muted-foreground">{event.description}</p>
-                        )}
-                      </div>
-                    ))
-                  )}
-                </TabsContent>
-                
-                <TabsContent value="notes" className="space-y-2 mt-3">
-                  {selectedDateNotes.length === 0 ? (
-                    <p className="text-xs text-muted-foreground">No notes for this date</p>
-                  ) : (
-                    selectedDateNotes.map((note) => (
-                      <button
-                        key={note.id}
-                        onClick={() => handleNoteClick(note)}
-                        className="w-full p-2 border rounded-lg space-y-1.5 text-left hover:bg-accent/10 transition-colors bg-accent/5"
-                      >
-                        <div className="flex items-center gap-2">
-                          <FileText className="w-3 h-3" />
-                          <span className="font-medium text-sm">{note.title}</span>
-                          <Badge variant="outline" className="ml-auto text-xs">
-                            {note.category}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-muted-foreground line-clamp-2">
-                          {note.content}
-                        </p>
-                        <div className="flex gap-1">
-                          {note.tags.map((tag) => (
-                            <Badge key={tag} variant="secondary" className="text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      </button>
-                    ))
-                  )}
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
+          <CalendarDateDetails
+            selectedDate={selectedDate}
+            events={selectedDateEvents}
+            notes={selectedDateNotes}
+            onNoteClick={handleNoteClick}
+            getEventTypeIcon={getEventTypeIcon}
+          />
         </div>
       </div>
 
       {/* Inline Note Creation Form */}
-      {isNoteFormOpen && (
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>Create New Note</span>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setIsNoteFormOpen(false)}
-              >
-                Cancel
-              </Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="note-title" className="text-sm font-medium">Title</label>
-                <input
-                  id="note-title"
-                  type="text"
-                  className="w-full px-3 py-2 border rounded-md"
-                  placeholder="Enter note title"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      const title = e.currentTarget.value;
-                      const content = document.getElementById('note-content') as HTMLTextAreaElement;
-                      if (title.trim()) {
-                        handleNoteSubmit({ title, content: content?.value || '' });
-                      }
-                    }
-                  }}
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="note-content" className="text-sm font-medium">Content</label>
-                <textarea
-                  id="note-content"
-                  className="w-full px-3 py-2 border rounded-md h-32"
-                  placeholder="Enter note content"
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button 
-                  onClick={() => {
-                    const title = (document.getElementById('note-title') as HTMLInputElement).value;
-                    const content = (document.getElementById('note-content') as HTMLTextAreaElement).value;
-                    if (title.trim()) {
-                      handleNoteSubmit({ title, content });
-                    }
-                  }}
-                  className="flex-1"
-                >
-                  Create Note
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsNoteFormOpen(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <CalendarNoteFormInline
+        isOpen={isNoteFormOpen}
+        onClose={() => setIsNoteFormOpen(false)}
+        onSubmit={handleNoteSubmit}
+      />
     </div>
   );
 };
