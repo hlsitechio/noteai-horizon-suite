@@ -50,6 +50,7 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
             minLength={2}
             maxLength={50}
             autoComplete="name"
+            autoFocus={isSignUp}
           />
         </div>
       )}
@@ -67,7 +68,8 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
           placeholder="Enter your email address"
           className="h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 focus:ring-blue-500"
           required
-          autoComplete="email"
+          autoComplete={isSignUp ? "email" : "username email"}
+          autoFocus={!isSignUp}
         />
       </div>
 
@@ -87,6 +89,8 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
             required
             minLength={6}
             autoComplete={isSignUp ? "new-password" : "current-password"}
+            data-lpignore="false"
+            data-form-type="password"
           />
           <Button
             type="button"
@@ -122,6 +126,7 @@ const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
             className="h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 focus:ring-blue-500"
             required
             autoComplete="new-password"
+            data-lpignore="false"
           />
           {password && confirmPassword && password !== confirmPassword && (
             <p className="text-xs text-red-500 mt-1">

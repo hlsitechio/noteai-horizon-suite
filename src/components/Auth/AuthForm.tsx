@@ -104,7 +104,12 @@ const AuthForm: React.FC = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form 
+            onSubmit={handleSubmit} 
+            className="space-y-6"
+            autoComplete={isSignUp ? "off" : "on"}
+            data-form-type={isSignUp ? "signup" : "login"}
+          >
             <AuthFormFields
               isSignUp={isSignUp}
               name={name}
