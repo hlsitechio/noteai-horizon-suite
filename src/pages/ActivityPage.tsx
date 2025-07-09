@@ -17,7 +17,8 @@ import {
   ArrowLeft,
   Search,
   Calendar,
-  Filter
+  Filter,
+  ExternalLink
 } from 'lucide-react';
 import { ActivityService, UserActivity } from '@/services/activityService';
 import { format } from 'date-fns';
@@ -169,15 +170,57 @@ export function ActivityPage() {
                   const IconComponent = getActivityIcon(activity.activity_type);
                   const colorClass = getActivityColor(activity.activity_type);
                   
-                  return (
-                    <div key={activity.id} className="flex items-start space-x-4 p-4 rounded-lg border border-border/50 hover:bg-muted/30 transition-colors">
+                  // Determine navigation path based on activity type and entity
+                  const getNavigationPath = () => {
+                    if (activity.entity_id) {
+                      switch (activity.entity_type) {
+                        case 'note':
+                          return `/app/editor/${activity.entity_id}`;
+                        case 'folder':
+                          return `/app/folders/${activity.entity_id}`;
+                        case 'project':
+                          return `/app/projects/${activity.entity_id}`;
+                        default:
+                          return null;
+                      }
+                    }
+                    
+                    // Fallback navigation based on activity type
+                    switch (activity.activity_type) {
+                      case 'note_created':
+                      case 'note_updated':
+                      case 'note_deleted':
+                      case 'note_favorited':
+                      case 'note_unfavorited':
+                        return '/app/notes';
+                      case 'folder_created':
+                      case 'folder_updated':
+                      case 'folder_deleted':
+                        return '/app/notes';
+                      case 'dashboard_viewed':
+                        return '/app/dashboard';
+                      case 'settings_updated':
+                        return '/app/settings';
+                      default:
+                        return null;
+                    }
+                  };
+
+                  const navigationPath = getNavigationPath();
+                  const isClickable = !!navigationPath;
+                  
+                  const ActivityContent = () => (
+                    <div className="flex items-start space-x-4 p-4 rounded-lg border border-border/50 hover:bg-muted/30 transition-colors">
                       <div className={`p-2 rounded-full ${colorClass}`}>
                         <IconComponent className="h-4 w-4 text-white" />
                       </div>
                       <div className="flex-1 min-w-0 space-y-1">
                         <div className="flex items-center justify-between">
-                          <h3 className="text-sm font-medium text-foreground">
+                          <h3 className={`text-sm font-medium text-foreground ${isClickable ? 'hover:text-primary cursor-pointer' : ''}`}>
                             {activity.activity_title}
+                            {isClickable && activity.entity_id && (
+                              <span className="ml-2 text-xs text-primary">→</span>
+                            )}
                           </h3>
                           <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                             <span>{format(new Date(activity.created_at), 'MMM d, yyyy')}</span>
@@ -190,17 +233,38 @@ export function ActivityPage() {
                             {activity.activity_description}
                           </p>
                         )}
-                        <div className="flex items-center space-x-2">
-                          <Badge variant="outline" className="text-xs">
-                            {activity.activity_type.replace('_', ' ')}
-                          </Badge>
-                          {activity.entity_type && (
-                            <Badge variant="secondary" className="text-xs">
-                              {activity.entity_type}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <Badge variant="outline" className="text-xs">
+                              {activity.activity_type.replace('_', ' ')}
                             </Badge>
+                            {activity.entity_type && (
+                              <Badge variant="secondary" className="text-xs">
+                                {activity.entity_type}
+                              </Badge>
+                            )}
+                          </div>
+                          {isClickable && (
+                            <div className="text-xs text-primary font-medium">
+                              {activity.entity_id ? 'Open' : 'Go to section'}
+                            </div>
                           )}
                         </div>
                       </div>
+                    </div>
+                  );
+                  
+                  return (
+                    <div 
+                      key={activity.id} 
+                      className={isClickable ? 'cursor-pointer' : ''}
+                      onClick={() => {
+                        if (isClickable && navigationPath) {
+                          navigate(navigationPath);
+                        }
+                      }}
+                    >
+                      <ActivityContent />
                     </div>
                   );
                 })}
