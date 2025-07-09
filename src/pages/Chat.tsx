@@ -428,8 +428,9 @@ const Chat: React.FC = () => {
                     <Button
                       onClick={handleSend}
                       disabled={isLoading || !message.trim() || isRecording}
+                      variant="primary"
                       size="lg"
-                      className="h-12 px-6 rounded-xl bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-200"
+                      className="shadow-xl"
                       type="button"
                     >
                       {isLoading ? (
@@ -437,7 +438,7 @@ const Chat: React.FC = () => {
                       ) : (
                         <div className="flex items-center gap-2">
                           <Send className="w-5 h-5" />
-                          <span className="font-medium">Send</span>
+                          <span className="text-sm font-bold tracking-wide">SEND MESSAGE</span>
                         </div>
                       )}
                     </Button>
