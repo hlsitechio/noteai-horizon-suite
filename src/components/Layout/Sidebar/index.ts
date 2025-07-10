@@ -10,6 +10,6 @@ export {
 export * from './hooks/useSidebarState';
 export * from './hooks/useSidebarActions';
 
-// Legacy exports for backward compatibility
-export { SidebarMain } from './SidebarMain';
+// Main unified sidebar export
+export { SidebarUnified } from './SidebarUnified';
 export { NotesSection } from './NotesSection';
