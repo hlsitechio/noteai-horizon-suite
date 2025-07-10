@@ -8,7 +8,7 @@ import BlockFormattingGroup from './toolbar/BlockFormattingGroup';
 import FontControlsGroup from './toolbar/FontControlsGroup';
 import MediaToolsGroup from './toolbar/MediaToolsGroup';
 import ToolbarActionsGroup from './toolbar/ToolbarActionsGroup';
-import AIAssistantBar from './toolbar/AIAssistantBar';
+import UnifiedAIAssistant from './UnifiedAIAssistant';
 
 interface SmartToolbarProps {
   onFormatClick: (formatId: string, event: React.MouseEvent) => void;
@@ -128,13 +128,14 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
       </div>
 
       {/* AI Assistant Bar */}
-      {showAIBar && (
-        <AIAssistantBar
-          selectedText={selectedText}
-          onAIProcess={handleAIProcess}
-          onClose={() => setShowAIBar(false)}
-        />
-      )}
+      <UnifiedAIAssistant
+        selectedText={selectedText || ''}
+        onTextInsert={onTextInsert || (() => {})}
+        onTextReplace={(text) => onTextInsert?.(text)}
+        isVisible={showAIBar}
+        onClose={() => setShowAIBar(false)}
+        mode="bar"
+      />
 
       {/* Speech to Text Modal */}
       <SpeechToText

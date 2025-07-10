@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { UnifiedAIButton } from '@/components/AICopilot';
-import EnhancedAICopilot from '@/components/Editor/EnhancedAICopilot';
+import UnifiedAIAssistant from '@/components/Editor/UnifiedAIAssistant';
 
 interface PageAICopilotProps {
   pageContext?: string;
@@ -69,7 +69,7 @@ const PageAICopilot: React.FC<PageAICopilotProps> = ({ pageContext }) => {
       </div>
 
       {/* AI Copilot Interface */}
-      <EnhancedAICopilot
+      <UnifiedAIAssistant
         selectedText={selectedText}
         onTextInsert={handleTextInsert}
         onTextReplace={handleTextReplace}
@@ -77,6 +77,7 @@ const PageAICopilot: React.FC<PageAICopilotProps> = ({ pageContext }) => {
         onClose={() => setIsVisible(false)}
         position={position}
         noteId={undefined}
+        mode="popup"
       />
     </>
   );

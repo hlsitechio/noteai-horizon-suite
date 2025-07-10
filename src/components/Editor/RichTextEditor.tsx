@@ -4,7 +4,7 @@ import SmartToolbar from './SmartToolbar';
 import TextSelectionContextMenu from './TextSelectionContextMenu';
 import EditorContent from './components/EditorContent';
 import ResizableImage from './ResizableImage';
-import AIAssistant from '../../pages/Editor/ai/AIAssistant';
+import UnifiedAIAssistant from './UnifiedAIAssistant';
 
 import { useOptimizedRichTextEditor } from './hooks/useOptimizedRichTextEditor';
 
@@ -115,14 +115,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       />
 
 
-      <AIAssistant
+      <UnifiedAIAssistant
         selectedText={selectedText}
         onTextInsert={handleAIInsert}
         onTextReplace={handleAIReplace}
         isVisible={showAIAssistant}
         onClose={handleAIClose}
         position={assistantPosition}
-        mode="inline"
+        mode="popup"
       />
     </>
   );
