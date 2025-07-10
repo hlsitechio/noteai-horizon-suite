@@ -76,13 +76,13 @@ const PremiumHero: React.FC = () => {
         {/* Main Headline */}
         <motion.h1 
           variants={itemVariants}
-          className="text-6xl md:text-7xl lg:text-8xl font-display font-bold mb-8 leading-tight"
+          className="text-hero font-display font-black mb-8 leading-none tracking-tight"
         >
-          <span className="bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent">
+          <span className="text-gradient-premium animate-gradient-flow">
             Transform Your
           </span>
           <br />
-          <span className="bg-[var(--gradient-premium)] bg-clip-text text-transparent bg-size-200 animate-gradient-flow">
+          <span className="text-shimmer bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent bg-size-200">
             Ideas Into Reality
           </span>
         </motion.h1>
@@ -90,9 +90,10 @@ const PremiumHero: React.FC = () => {
         {/* Subtitle */}
         <motion.p 
           variants={itemVariants}
-          className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed"
+          className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed font-light"
         >
-          Experience the future of note-taking with AI that understands your thoughts, 
+          Experience the future of note-taking with{' '}
+          <span className="text-foreground font-medium">AI that understands your thoughts</span>, 
           enhances your creativity, and transforms your workflow into something extraordinary.
         </motion.p>
 
@@ -104,10 +105,10 @@ const PremiumHero: React.FC = () => {
           <Link to="/register">
             <Button 
               size="lg" 
-              className="px-12 py-6 text-lg bg-[var(--gradient-primary)] hover:shadow-[var(--shadow-premium)] transform hover:scale-105 transition-all duration-300 group min-w-[240px]"
+              className="button-premium px-12 py-6 text-lg font-semibold hover:shadow-glow transform hover:scale-105 transition-all duration-slow group min-w-[240px] animate-pulse-glow"
             >
               Start Your Journey
-              <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform duration-base" />
             </Button>
           </Link>
           
@@ -115,7 +116,7 @@ const PremiumHero: React.FC = () => {
             <Button 
               size="lg" 
               variant="outline" 
-              className="px-12 py-6 text-lg border-2 hover:border-primary hover:bg-primary/5 transition-all duration-300 min-w-[240px]"
+              className="glass px-12 py-6 text-lg border-2 border-border/30 hover:border-primary hover:bg-primary/5 hover:shadow-elegant transition-all duration-slow min-w-[240px] hover-lift-premium"
             >
               Watch Demo
             </Button>

@@ -127,14 +127,15 @@ const PremiumFeatures: React.FC = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-20"
         >
-          <h2 className="text-5xl md:text-6xl font-display font-bold mb-6">
-            <span className="bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
+          <h2 className="text-display font-display font-black mb-6 tracking-tight">
+            <span className="text-gradient-premium">
               Powerful Features
             </span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Experience the perfect blend of simplicity and power with features designed 
-            to transform how you capture, organize, and evolve your ideas.
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-light leading-relaxed">
+            Experience the perfect blend of{' '}
+            <span className="text-foreground font-medium">simplicity and power</span>{' '}
+            with features designed to transform how you capture, organize, and evolve your ideas.
           </p>
         </motion.div>
 
@@ -149,18 +150,18 @@ const PremiumFeatures: React.FC = () => {
             const Icon = feature.icon;
             return (
               <motion.div key={index} variants={itemVariants}>
-                <Card className="p-8 h-full bg-card/50 backdrop-blur-sm border-border/50 hover:border-primary/30 transition-all duration-500 group hover:shadow-[var(--shadow-elegant)] hover:-translate-y-2">
+                <Card className="card-premium group border-animate hover-lift-premium">
                   <div className="flex items-center mb-6">
-                    <div className={`p-3 rounded-xl bg-gradient-to-r ${feature.color} shadow-lg group-hover:shadow-xl transition-shadow`}>
-                      <Icon className="w-6 h-6 text-white" />
+                    <div className={`p-4 rounded-2xl bg-gradient-to-r ${feature.color} shadow-premium group-hover:shadow-glow transition-all duration-slow animate-float-gentle`}>
+                      <Icon className="w-7 h-7 text-white" />
                     </div>
                   </div>
                   
-                  <h3 className="text-xl font-semibold mb-4 group-hover:text-primary transition-colors">
+                  <h3 className="text-headline font-semibold mb-4 group-hover:text-primary transition-colors duration-base">
                     {feature.title}
                   </h3>
                   
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground leading-relaxed font-light">
                     {feature.description}
                   </p>
                 </Card>

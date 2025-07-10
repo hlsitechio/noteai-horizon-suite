@@ -8,6 +8,7 @@ import PremiumTestimonials from '../components/Landing/Premium/PremiumTestimonia
 import PremiumPricing from '../components/Landing/Premium/PremiumPricing';
 import PremiumCTA from '../components/Landing/Premium/PremiumCTA';
 import PremiumFooter from '../components/Landing/Premium/PremiumFooter';
+import PremiumBackground from '../components/Landing/Premium/PremiumBackground';
 import { AnalyticsService } from '../services/analyticsService';
 
 const PremiumLanding: React.FC = () => {
@@ -45,17 +46,14 @@ const PremiumLanding: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Dynamic background with parallax */}
+      {/* Premium animated background */}
+      <PremiumBackground mousePosition={mousePosition} />
+      
+      {/* Additional parallax layer */}
       <motion.div 
         style={{ y: backgroundY }}
-        className="fixed inset-0 -z-10"
+        className="fixed inset-0 -z-5 opacity-50"
       >
-        <div 
-          className="absolute inset-0 opacity-30"
-          style={{
-            background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, hsl(var(--primary) / 0.1) 0%, transparent 50%)`
-          }}
-        />
         <div className="absolute inset-0 bg-[var(--gradient-hero)]" />
       </motion.div>
 

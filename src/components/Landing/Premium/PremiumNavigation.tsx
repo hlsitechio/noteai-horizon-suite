@@ -42,9 +42,9 @@ const PremiumNavigation: React.FC<PremiumNavigationProps> = ({ mousePosition }) 
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-slower ${
           isScrolled 
-            ? 'bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-[var(--shadow-elegant)]'
+            ? 'glass-strong border-b border-border/30 shadow-premium'
             : 'bg-transparent'
         }`}
       >
@@ -59,7 +59,7 @@ const PremiumNavigation: React.FC<PremiumNavigationProps> = ({ mousePosition }) 
                 <Sparkles className="w-8 h-8 text-primary animate-glow" />
                 <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
               </div>
-              <span className="text-2xl font-display font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <span className="text-2xl font-display font-black text-gradient-premium">
                 Online Note AI
               </span>
             </motion.div>
@@ -73,10 +73,9 @@ const PremiumNavigation: React.FC<PremiumNavigationProps> = ({ mousePosition }) 
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1, duration: 0.6 }}
-                  className="relative text-foreground/80 hover:text-foreground transition-colors duration-300 group"
+                  className="nav-item-premium text-foreground/80 hover:text-foreground font-medium"
                 >
                   {item.label}
-                  <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300" />
                 </motion.a>
               ))}
             </div>
@@ -89,9 +88,9 @@ const PremiumNavigation: React.FC<PremiumNavigationProps> = ({ mousePosition }) 
                 </Button>
               </Link>
               <Link to="/register">
-                <Button className="bg-[var(--gradient-primary)] hover:shadow-[var(--shadow-glow)] transition-all duration-300 group">
+                <Button className="button-premium hover:shadow-glow hover-scale-premium group">
                   Get Started
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-base" />
                 </Button>
               </Link>
             </div>

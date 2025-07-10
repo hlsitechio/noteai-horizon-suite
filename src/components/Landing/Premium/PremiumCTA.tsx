@@ -22,10 +22,10 @@ const PremiumCTA: React.FC = () => {
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 1 }}
         >
-          <Card className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20 backdrop-blur-sm">
+          <Card className="relative overflow-hidden glass-strong border-animate shadow-premium">
             {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-primary/20 to-transparent rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-accent/20 to-transparent rounded-full blur-3xl" />
+            <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-mesh opacity-20 rounded-full blur-3xl animate-gradient-mesh" />
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-accent/30 to-primary/30 rounded-full blur-3xl animate-float-gentle" />
             
             <div className="relative z-10 p-12 lg:p-20 text-center">
               {/* Header */}
@@ -40,15 +40,17 @@ const PremiumCTA: React.FC = () => {
                   <span className="text-sm font-medium">Ready to Transform Your Productivity?</span>
                 </div>
                 
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6 leading-tight">
-                  <span className="bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent">
+                <h2 className="text-display font-display font-black mb-6 leading-tight tracking-tight">
+                  <span className="text-gradient-premium animate-gradient-flow">
                     Start Your Journey Today
                   </span>
                 </h2>
                 
-                <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                  Join thousands of professionals who have already transformed their 
-                  workflow with our AI-powered platform. Experience the future of productivity.
+                <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light">
+                  Join{' '}
+                  <span className="text-foreground font-semibold">thousands of professionals</span>{' '}
+                  who have already transformed their workflow with our AI-powered platform. 
+                  Experience the future of productivity.
                 </p>
               </motion.div>
 
@@ -99,10 +101,10 @@ const PremiumCTA: React.FC = () => {
                 <Link to="/register">
                   <Button 
                     size="lg" 
-                    className="px-12 py-6 text-lg bg-[var(--gradient-primary)] hover:shadow-[var(--shadow-premium)] transform hover:scale-105 transition-all duration-300 group min-w-[280px]"
+                    className="button-premium px-12 py-6 text-lg font-semibold hover:shadow-glow hover-scale-premium transition-all duration-slower group min-w-[280px] animate-pulse-glow"
                   >
                     Start Free Trial
-                    <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform duration-base" />
                   </Button>
                 </Link>
                 
@@ -110,7 +112,7 @@ const PremiumCTA: React.FC = () => {
                   <Button 
                     size="lg" 
                     variant="outline" 
-                    className="px-12 py-6 text-lg border-2 hover:border-primary hover:bg-primary/5 transition-all duration-300 min-w-[280px]"
+                    className="glass px-12 py-6 text-lg border-2 border-border/30 hover:border-primary hover:bg-primary/10 hover:shadow-elegant transition-all duration-slower min-w-[280px] hover-lift-premium"
                   >
                     Schedule Demo
                   </Button>
