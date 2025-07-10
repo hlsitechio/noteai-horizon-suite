@@ -5,7 +5,7 @@ import {
   ChevronRight, 
   ChevronDown,
   Folder,
-  FolderPlus
+  Plus
 } from 'lucide-react';
 
 interface FoldersListHeaderProps {
@@ -60,7 +60,7 @@ export function FoldersListHeader({
               }}
               title="Create Folder"
             >
-              <FolderPlus className="h-3 w-3" />
+              <Plus className="h-3 w-3" />
             </Button>
             {isExpanded ? (
               <ChevronDown className="h-3 w-3 mr-1" />
