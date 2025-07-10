@@ -6,8 +6,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Palette, Check, Waves, Sun, Trees, Crown, Zap, Sparkles, Paintbrush, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAccentColor } from '../../contexts/AccentColorContext';
+import { useTheme } from '../../providers/ThemeProvider';
+import { getResolvedTheme } from '../../utils/themeUtils';
 
-// Preset Color Themes
+// Preset Color Themes with both light and dark variants
 const presetThemes = [
   {
     id: 'ocean-breeze',
@@ -15,11 +17,30 @@ const presetThemes = [
     description: 'Cool and calming blues',
     icon: Waves,
     colors: {
-      primary: '200 80% 50%', // Ocean blue
-      secondary: '210 70% 45%', // Deeper blue
-      accent: '190 85% 55%', // Cyan
-      background: '210 15% 95%', // Light blue-gray
-      foreground: '210 40% 15%', // Dark blue-gray
+      light: {
+        primary: '200 80% 50%', // Ocean blue
+        secondary: '210 70% 45%', // Deeper blue
+        accent: '190 85% 55%', // Cyan
+        background: '210 15% 98%', // Light blue-gray
+        foreground: '210 40% 15%', // Dark blue-gray
+        card: '210 10% 96%',
+        'card-foreground': '210 40% 15%',
+        muted: '210 15% 92%',
+        'muted-foreground': '210 25% 40%',
+        border: '210 20% 88%'
+      },
+      dark: {
+        primary: '200 80% 60%', // Brighter ocean blue for dark
+        secondary: '210 70% 55%', // Adjusted blue
+        accent: '190 85% 65%', // Brighter cyan
+        background: '210 40% 8%', // Dark blue-gray
+        foreground: '210 15% 90%', // Light blue-gray
+        card: '210 35% 12%',
+        'card-foreground': '210 15% 90%',
+        muted: '210 30% 15%',
+        'muted-foreground': '210 15% 70%',
+        border: '210 25% 20%'
+      }
     },
     preview: 'linear-gradient(135deg, hsl(200 80% 50%), hsl(210 70% 45%), hsl(190 85% 55%))'
   },
@@ -29,11 +50,30 @@ const presetThemes = [
     description: 'Warm sunset colors',
     icon: Sun,
     colors: {
-      primary: '15 85% 60%', // Orange
-      secondary: '25 80% 55%', // Orange-red
-      accent: '45 90% 65%', // Yellow-orange
-      background: '30 20% 95%', // Warm white
-      foreground: '15 30% 20%', // Dark brown
+      light: {
+        primary: '15 85% 60%', // Orange
+        secondary: '25 80% 55%', // Orange-red
+        accent: '45 90% 65%', // Yellow-orange
+        background: '30 20% 98%', // Warm white
+        foreground: '15 30% 20%', // Dark brown
+        card: '30 15% 96%',
+        'card-foreground': '15 30% 20%',
+        muted: '30 20% 92%',
+        'muted-foreground': '15 20% 40%',
+        border: '30 25% 88%'
+      },
+      dark: {
+        primary: '15 85% 65%', // Brighter orange
+        secondary: '25 80% 60%', // Adjusted orange-red
+        accent: '45 90% 70%', // Brighter yellow-orange
+        background: '15 40% 8%', // Dark warm
+        foreground: '30 20% 90%', // Light warm
+        card: '15 35% 12%',
+        'card-foreground': '30 20% 90%',
+        muted: '15 30% 15%',
+        'muted-foreground': '30 15% 70%',
+        border: '15 25% 20%'
+      }
     },
     preview: 'linear-gradient(135deg, hsl(15 85% 60%), hsl(25 80% 55%), hsl(45 90% 65%))'
   },
@@ -43,11 +83,30 @@ const presetThemes = [
     description: 'Natural green tones',
     icon: Trees,
     colors: {
-      primary: '140 65% 45%', // Forest green
-      secondary: '120 60% 40%', // Darker green
-      accent: '160 70% 50%', // Mint green
-      background: '140 10% 95%', // Light green-gray
-      foreground: '140 40% 15%', // Dark green
+      light: {
+        primary: '140 65% 45%', // Forest green
+        secondary: '120 60% 40%', // Darker green
+        accent: '160 70% 50%', // Mint green
+        background: '140 10% 98%', // Light green-gray
+        foreground: '140 40% 15%', // Dark green
+        card: '140 8% 96%',
+        'card-foreground': '140 40% 15%',
+        muted: '140 10% 92%',
+        'muted-foreground': '140 20% 40%',
+        border: '140 15% 88%'
+      },
+      dark: {
+        primary: '140 65% 55%', // Brighter forest green
+        secondary: '120 60% 50%', // Adjusted green
+        accent: '160 70% 60%', // Brighter mint
+        background: '140 40% 8%', // Dark green
+        foreground: '140 10% 90%', // Light green-gray
+        card: '140 35% 12%',
+        'card-foreground': '140 10% 90%',
+        muted: '140 30% 15%',
+        'muted-foreground': '140 10% 70%',
+        border: '140 25% 20%'
+      }
     },
     preview: 'linear-gradient(135deg, hsl(140 65% 45%), hsl(120 60% 40%), hsl(160 70% 50%))'
   },
@@ -57,11 +116,30 @@ const presetThemes = [
     description: 'Rich purple shades',
     icon: Crown,
     colors: {
-      primary: '270 75% 55%', // Royal purple
-      secondary: '285 70% 50%', // Blue-purple
-      accent: '255 80% 60%', // Violet
-      background: '270 15% 95%', // Light purple-gray
-      foreground: '270 40% 15%', // Dark purple
+      light: {
+        primary: '270 75% 55%', // Royal purple
+        secondary: '285 70% 50%', // Blue-purple
+        accent: '255 80% 60%', // Violet
+        background: '270 15% 98%', // Light purple-gray
+        foreground: '270 40% 15%', // Dark purple
+        card: '270 10% 96%',
+        'card-foreground': '270 40% 15%',
+        muted: '270 15% 92%',
+        'muted-foreground': '270 25% 40%',
+        border: '270 20% 88%'
+      },
+      dark: {
+        primary: '270 75% 65%', // Brighter royal purple
+        secondary: '285 70% 60%', // Adjusted blue-purple
+        accent: '255 80% 70%', // Brighter violet
+        background: '270 40% 8%', // Dark purple
+        foreground: '270 15% 90%', // Light purple-gray
+        card: '270 35% 12%',
+        'card-foreground': '270 15% 90%',
+        muted: '270 30% 15%',
+        'muted-foreground': '270 15% 70%',
+        border: '270 25% 20%'
+      }
     },
     preview: 'linear-gradient(135deg, hsl(270 75% 55%), hsl(285 70% 50%), hsl(255 80% 60%))'
   },
@@ -71,11 +149,30 @@ const presetThemes = [
     description: 'Classic grayscale',
     icon: Palette,
     colors: {
-      primary: '0 0% 30%', // Dark gray
-      secondary: '0 0% 50%', // Medium gray
-      accent: '0 0% 70%', // Light gray
-      background: '0 0% 98%', // Almost white
-      foreground: '0 0% 10%', // Almost black
+      light: {
+        primary: '0 0% 30%', // Dark gray
+        secondary: '0 0% 50%', // Medium gray
+        accent: '0 0% 70%', // Light gray
+        background: '0 0% 98%', // Almost white
+        foreground: '0 0% 10%', // Almost black
+        card: '0 0% 96%',
+        'card-foreground': '0 0% 10%',
+        muted: '0 0% 92%',
+        'muted-foreground': '0 0% 40%',
+        border: '0 0% 88%'
+      },
+      dark: {
+        primary: '0 0% 70%', // Light gray for dark mode
+        secondary: '0 0% 50%', // Medium gray
+        accent: '0 0% 60%', // Adjusted gray
+        background: '0 0% 8%', // Almost black
+        foreground: '0 0% 90%', // Almost white
+        card: '0 0% 12%',
+        'card-foreground': '0 0% 90%',
+        muted: '0 0% 15%',
+        'muted-foreground': '0 0% 70%',
+        border: '0 0% 20%'
+      }
     },
     preview: 'linear-gradient(135deg, hsl(0 0% 30%), hsl(0 0% 50%), hsl(0 0% 70%))'
   },
@@ -85,11 +182,30 @@ const presetThemes = [
     description: 'Vibrant neon colors',
     icon: Zap,
     colors: {
-      primary: '300 100% 50%', // Neon magenta
-      secondary: '180 100% 50%', // Neon cyan
-      accent: '60 100% 50%', // Neon yellow
-      background: '0 0% 5%', // Almost black
-      foreground: '0 0% 95%', // Almost white
+      light: {
+        primary: '300 80% 45%', // Toned down magenta for light
+        secondary: '180 80% 45%', // Toned down cyan
+        accent: '60 80% 50%', // Toned down yellow
+        background: '0 0% 98%', // Light background
+        foreground: '0 0% 10%', // Dark text
+        card: '0 0% 96%',
+        'card-foreground': '0 0% 10%',
+        muted: '0 0% 92%',
+        'muted-foreground': '0 0% 40%',
+        border: '0 0% 88%'
+      },
+      dark: {
+        primary: '300 100% 65%', // Bright neon magenta
+        secondary: '180 100% 65%', // Bright neon cyan
+        accent: '60 100% 65%', // Bright neon yellow
+        background: '0 0% 5%', // Almost black
+        foreground: '0 0% 95%', // Almost white
+        card: '0 0% 8%',
+        'card-foreground': '0 0% 95%',
+        muted: '0 0% 12%',
+        'muted-foreground': '0 0% 75%',
+        border: '0 0% 18%'
+      }
     },
     preview: 'linear-gradient(135deg, hsl(300 100% 50%), hsl(180 100% 50%), hsl(60 100% 50%))'
   }
@@ -151,23 +267,43 @@ export const ThemePresets: React.FC = () => {
   const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
   const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
   const { setAccentColor } = useAccentColor();
+  const { theme } = useTheme();
+  const resolvedTheme = getResolvedTheme(theme);
 
-  const applyTheme = (theme: typeof presetThemes[0]) => {
+  const applyTheme = (themeConfig: typeof presetThemes[0]) => {
     const root = document.documentElement;
+    const isDark = resolvedTheme === 'dark';
+    const colors = isDark ? themeConfig.colors.dark : themeConfig.colors.light;
     
-    // Apply color variables
-    root.style.setProperty('--primary', theme.colors.primary);
-    root.style.setProperty('--secondary', theme.colors.secondary);
-    root.style.setProperty('--accent', theme.colors.accent);
-    root.style.setProperty('--background', theme.colors.background);
-    root.style.setProperty('--foreground', theme.colors.foreground);
+    // Apply all color variables for comprehensive theming
+    Object.entries(colors).forEach(([key, value]) => {
+      root.style.setProperty(`--${key}`, value);
+    });
+    
+    // Apply additional semantic colors that are consistent
+    root.style.setProperty('--destructive', isDark ? '0 85% 65%' : '0 84.2% 60.2%');
+    root.style.setProperty('--destructive-foreground', isDark ? '0 0% 95%' : '210 40% 98%');
+    root.style.setProperty('--success', '142.1 76.2% 36.3%');
+    root.style.setProperty('--success-foreground', isDark ? '0 0% 95%' : '210 40% 98%');
+    root.style.setProperty('--warning', '38.2 92% 50%');
+    root.style.setProperty('--warning-foreground', isDark ? '0 0% 10%' : '222.2 84% 4.9%');
+    root.style.setProperty('--info', colors.primary);
+    root.style.setProperty('--info-foreground', isDark ? '0 0% 10%' : '210 40% 98%');
+    
+    // Update input and ring colors to match theme
+    root.style.setProperty('--input', colors.border);
+    root.style.setProperty('--ring', colors.primary);
+    
+    // Update popover colors
+    root.style.setProperty('--popover', colors.card);
+    root.style.setProperty('--popover-foreground', colors['card-foreground']);
     
     // Update accent color context
-    setAccentColor(`hsl(${theme.colors.primary})`, theme.colors.primary);
+    setAccentColor(`hsl(${colors.primary})`, colors.primary);
     
-    setSelectedTheme(theme.id);
+    setSelectedTheme(themeConfig.id);
     setSelectedGradient(null);
-    toast.success(`Applied ${theme.name} theme!`);
+    toast.success(`Applied ${themeConfig.name} theme!`);
   };
 
   const applyGradient = (gradient: typeof gradientPresets[0]) => {
@@ -188,16 +324,41 @@ export const ThemePresets: React.FC = () => {
 
   const resetToDefault = () => {
     const root = document.documentElement;
+    const isDark = resolvedTheme === 'dark';
     
-    // Reset to default theme values
-    root.style.setProperty('--primary', '187 100% 42%');
-    root.style.setProperty('--secondary', '210 40% 98%');
-    root.style.setProperty('--accent', '210 40% 98%');
-    root.style.setProperty('--background', '0 0% 100%');
-    root.style.setProperty('--foreground', '222.2 84% 4.9%');
+    if (isDark) {
+      // Reset to default dark theme values (Quantum Aurora)
+      root.style.setProperty('--primary', '165 100% 65%');
+      root.style.setProperty('--secondary', '45 100% 70%');
+      root.style.setProperty('--accent', '290 100% 75%');
+      root.style.setProperty('--background', '220 30% 2%');
+      root.style.setProperty('--foreground', '45 100% 95%');
+      root.style.setProperty('--card', '220 25% 4%');
+      root.style.setProperty('--card-foreground', '45 90% 92%');
+      root.style.setProperty('--muted', '220 20% 8%');
+      root.style.setProperty('--muted-foreground', '45 40% 75%');
+      root.style.setProperty('--border', '220 25% 15%');
+      setAccentColor('hsl(165 100% 65%)', '165 100% 65%');
+    } else {
+      // Reset to default light theme values
+      root.style.setProperty('--primary', '221.2 83.2% 53.3%');
+      root.style.setProperty('--secondary', '210 40% 96%');
+      root.style.setProperty('--accent', '210 40% 96%');
+      root.style.setProperty('--background', '0 0% 100%');
+      root.style.setProperty('--foreground', '222.2 84% 4.9%');
+      root.style.setProperty('--card', '0 0% 100%');
+      root.style.setProperty('--card-foreground', '222.2 84% 4.9%');
+      root.style.setProperty('--muted', '210 40% 96%');
+      root.style.setProperty('--muted-foreground', '215.4 16.3% 46.9%');
+      root.style.setProperty('--border', '214.3 31.8% 91.4%');
+      setAccentColor('hsl(221.2 83.2% 53.3%)', '221.2 83.2% 53.3%');
+    }
+    
+    // Reset common properties
+    root.style.setProperty('--input', '214.3 31.8% 91.4%');
+    root.style.setProperty('--ring', '221.2 83.2% 53.3%');
     root.style.removeProperty('--gradient-primary');
     
-    setAccentColor('hsl(187 100% 42%)', '187 100% 42%');
     setSelectedTheme(null);
     setSelectedGradient(null);
     toast.success('Reset to default theme');
@@ -281,17 +442,17 @@ export const ThemePresets: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Color Swatches */}
-                      <div className="flex gap-2 mt-3">
-                        {Object.entries(theme.colors).slice(0, 3).map(([key, value]) => (
-                          <div
-                            key={key}
-                            className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
-                            style={{ backgroundColor: `hsl(${value})` }}
-                            title={key}
-                          />
-                        ))}
-                      </div>
+                       {/* Color Swatches */}
+                       <div className="flex gap-2 mt-3">
+                         {Object.entries(resolvedTheme === 'dark' ? theme.colors.dark : theme.colors.light).slice(0, 3).map(([key, value]) => (
+                           <div
+                             key={key}
+                             className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+                             style={{ backgroundColor: `hsl(${value})` }}
+                             title={key}
+                           />
+                         ))}
+                       </div>
                     </CardContent>
                   </Card>
                 );
