@@ -123,7 +123,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
         >
           <div className="h-full">
             <ScrollArea className="h-full">
-              <div className="p-3 md:p-6">
+              <div className="p-3 md:p-4">{/* Reduced padding from p-6 to p-4 */}
                 <KPIStats
                   totalNotes={totalNotes}
                   favoriteNotes={favoriteNotes}

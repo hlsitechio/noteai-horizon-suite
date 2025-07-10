@@ -14,9 +14,9 @@ export const useDashboardPanelSizes = () => {
   
   const panelSizes = {
     banner: settingsPanelSizes.banner || 25,
-    analytics: settingsPanelSizes.analytics || 30,
-    topSection: settingsPanelSizes.topSection || 35,
-    bottomSection: settingsPanelSizes.bottomSection || 35,
+    analytics: settingsPanelSizes.analytics || 20, // Reduced from 30 to 20
+    topSection: settingsPanelSizes.topSection || 40, // Increased from 35 to 40
+    bottomSection: settingsPanelSizes.bottomSection || 40, // Increased from 35 to 40
     leftPanels: settingsPanelSizes.leftPanels || 50,
     rightPanels: settingsPanelSizes.rightPanels || 50,
   };
