@@ -1,11 +1,11 @@
 /**
- * Worker-enhanced OCR Hook
- * Uses worker threads for CPU-intensive OCR processing
+ * OCR Hook (Simplified Browser-Compatible Version)
+ * Uses Tesseract.js directly for OCR processing
  */
 
 import { useState } from 'react';
 import { useToast } from './useToast';
-import { workerPool } from '@/workers/worker-pool';
+import Tesseract from 'tesseract.js';
 
 interface OCRResult {
   text: string;
@@ -18,106 +18,84 @@ export const useWorkerOCR = () => {
   const [progress, setProgress] = useState(0);
   const { toast } = useToast();
 
-  const processImage = async (
-    imageSource: Blob | File,
-    options?: {
-      language?: string;
-      preprocess?: boolean;
-    }
-  ): Promise<OCRResult> => {
+  const processImage = async (imageFile: File, progressCallback?: (progress: number) => void): Promise<OCRResult> => {
     setIsProcessing(true);
     setProgress(0);
     
     try {
-      console.log('[Worker OCR] Starting image processing');
+      const startTime = Date.now();
       
-      // Show loading notification
-      toast.info('Processing image with OCR...', 'Please wait while we extract text');
-      
-      // Process image in worker thread
-      const workerResult = await workerPool.runOCRTask({
-        type: 'process-image',
-        payload: {
-          imageData: imageSource,
-          options: {
-            language: options?.language || 'eng',
-            whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz .,!?-:;()[]{}"\'/\\@#$%^&*+=<>|`~_',
+      // Use Tesseract.js directly (browser-compatible)
+      const result = await Tesseract.recognize(imageFile, 'eng', {
+        logger: (m) => {
+          if (m.status === 'recognizing text') {
+            const progress = Math.round(m.progress * 100);
+            setProgress(progress);
+            progressCallback?.(progress);
           }
         }
-      }, (progress) => {
-        setProgress(progress);
       });
-
-      if (!workerResult.success) {
-        throw new Error(workerResult.error || 'OCR processing failed');
-      }
-
-      const { text, confidence, processingTime } = workerResult.data;
       
-      console.log(`[Worker OCR] Processing completed in ${processingTime}ms with ${confidence}% confidence`);
+      const processingTime = Date.now() - startTime;
       
-      if (text.trim()) {
-        toast.success(`Text extracted successfully (${confidence.toFixed(1)}% confidence)`);
-      } else {
-        toast.warning('No text found in the image');
-      }
+      setProgress(100);
+      setIsProcessing(false);
       
-      return { text, confidence, processingTime };
-
-    } catch (error: any) {
-      console.error('[Worker OCR] Error:', error);
-      
-      if (error.message?.includes('Worker')) {
-        toast.error('OCR processing failed. Please try again.');
-      } else if (error.message?.includes('network')) {
-        toast.error('Network error during OCR processing');
-      } else {
-        toast.error(`OCR failed: ${error.message}`);
-      }
-      
-      throw error;
-    } finally {
+      return {
+        text: result.data.text || '',
+        confidence: result.data.confidence || 0,
+        processingTime
+      };
+    } catch (error) {
+      console.error('OCR processing failed:', error);
       setIsProcessing(false);
       setProgress(0);
+      toast.error('Failed to process image');
+      throw error;
     }
   };
 
-  const processScreenCapture = async (imageBlob: Blob): Promise<OCRResult> => {
+  const processScreenCapture = async (canvas: HTMLCanvasElement): Promise<OCRResult> => {
     setIsProcessing(true);
     setProgress(0);
     
     try {
-      console.log('[Worker OCR] Starting screen capture processing');
+      const startTime = Date.now();
       
-      const workerResult = await workerPool.runOCRTask({
-        type: 'process-screen-capture',
-        payload: {
-          imageData: imageBlob,
-          options: {
-            language: 'eng',
-            psm: 6, // Uniform block of text
+      // Convert canvas to blob
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('Failed to convert canvas to blob'));
+        }, 'image/png');
+      });
+      
+      // Use Tesseract.js directly
+      const result = await Tesseract.recognize(blob, 'eng', {
+        logger: (m) => {
+          if (m.status === 'recognizing text') {
+            const progress = Math.round(m.progress * 100);
+            setProgress(progress);
           }
         }
-      }, (progress) => {
-        setProgress(progress);
       });
-
-      if (!workerResult.success) {
-        throw new Error(workerResult.error || 'Screen capture OCR failed');
-      }
-
-      const { text, confidence, processingTime } = workerResult.data;
       
-      console.log(`[Worker OCR] Screen capture processed in ${processingTime}ms`);
+      const processingTime = Date.now() - startTime;
       
-      return { text, confidence, processingTime };
-
-    } catch (error: any) {
-      console.error('[Worker OCR] Screen capture error:', error);
-      throw error;
-    } finally {
+      setProgress(100);
+      setIsProcessing(false);
+      
+      return {
+        text: result.data.text || '',
+        confidence: result.data.confidence || 0,
+        processingTime
+      };
+    } catch (error) {
+      console.error('Screen capture OCR failed:', error);
       setIsProcessing(false);
       setProgress(0);
+      toast.error('Failed to process screen capture');
+      throw error;
     }
   };
 

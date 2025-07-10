@@ -51,7 +51,7 @@ const OCRScreenCapture: React.FC<OCRScreenCaptureProps> = ({ onTextReceived, isV
               
               // Use worker thread for OCR processing
               try {
-                const result = await processScreenCapture(blob);
+                const result = await processImage(new File([blob], 'screenshot.png', { type: 'image/png' }));
                 setExtractedText(result.text);
                 console.log(`OCR completed: ${result.text.length} characters extracted with ${result.confidence}% confidence`);
               } catch (error) {
