@@ -82,8 +82,10 @@ export const ProjectRealmsProvider: React.FC<{ children: React.ReactNode }> = ({
   // Only refresh projects when authentication state changes to authenticated
   useEffect(() => {
     if (!authLoading && isAuthenticated && user) {
-      logger.projects.debug('User authenticated, refreshing projects...');
-      refreshProjects();
+      logger.projects.debug('User authenticated, but Project Realms feature is disabled');
+      // Skip loading projects since the table doesn't exist
+      setProjects([]);
+      setIsLoading(false);
     } else if (!authLoading && !isAuthenticated) {
       logger.projects.debug('User not authenticated, clearing projects...');
       setProjects([]);
