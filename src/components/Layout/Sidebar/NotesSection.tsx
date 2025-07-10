@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { NotesListSection } from './NotesListSection';
 import { FoldersListSection } from './FoldersListSection';
 import { FavoritesListSection } from './FavoritesListSection';
-import { DraggableSidebarContent } from './DraggableSidebarContent';
-import { SortableSection } from './SortableSection';
+import { DraggableNotesContext } from './DraggableSidebarContent';
 import { useOptimizedNotes } from '../../../contexts/OptimizedNotesContext';
 import { useFolders } from '../../../contexts/FoldersContext';
 import { useNavigate } from 'react-router-dom';
@@ -33,7 +32,7 @@ const contentVariants = {
 };
 
 export function NotesSection() {
-  const { notes, createNote, setCurrentNote } = useOptimizedNotes();
+  const { notes, createNote, setCurrentNote, updateNote } = useOptimizedNotes();
   const { folders, createFolder } = useFolders();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -82,6 +81,22 @@ export function NotesSection() {
       ...prev,
       [section]: !prev[section]
     }));
+  };
+
+  const handleMoveToFolder = async (noteId: string, folderId: string | null) => {
+    try {
+      await updateNote(noteId, { folder_id: folderId });
+    } catch (error) {
+      console.error('Failed to move note to folder:', error);
+    }
+  };
+
+  const handleToggleFavorite = async (noteId: string, isFavorite: boolean) => {
+    try {
+      await updateNote(noteId, { isFavorite });
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error);
+    }
   };
 
   const handleSectionReorder = (newOrder: string[]) => {
@@ -213,17 +228,14 @@ export function NotesSection() {
             exit="collapsed"
             className="h-full overflow-hidden space-y-2"
           >
-            <DraggableSidebarContent
-              items={sectionOrder}
-              onReorder={handleSectionReorder}
+            <DraggableNotesContext
+              notes={notes}
+              onMoveToFolder={handleMoveToFolder}
+              onToggleFavorite={handleToggleFavorite}
             >
               <div className="h-full overflow-y-auto space-y-1 px-2 scrollbar-thin scrollbar-thumb-sidebar-border scrollbar-track-transparent hover:scrollbar-thumb-sidebar-accent/50">
                 {sectionOrder.map((sectionId, index) => (
-                  <SortableSection 
-                    key={sectionId} 
-                    id={sectionId}
-                    className="transition-all duration-200"
-                  >
+                  <div key={sectionId} className="transition-all duration-200">
                     <motion.div
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -231,10 +243,10 @@ export function NotesSection() {
                     >
                       {renderSection(sectionId)}
                     </motion.div>
-                  </SortableSection>
+                  </div>
                 ))}
               </div>
-            </DraggableSidebarContent>
+            </DraggableNotesContext>
           </motion.div>
         </AnimatePresence>
       </div>

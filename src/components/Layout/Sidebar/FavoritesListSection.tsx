@@ -16,6 +16,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Note } from '../../../types/note';
 import { useOptimizedNotes } from '../../../contexts/OptimizedNotesContext';
 import { useConfirmDialog } from '@/hooks/useConfirmDialog';
+import { DroppableContainer } from './DroppableContainer';
 import DesktopPopOutButton from '../../FloatingNotes/DesktopPopOutButton';
 
 interface FavoritesListSectionProps {
@@ -129,7 +130,8 @@ export function FavoritesListSection({
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="space-y-1 px-2">
+            <DroppableContainer id="favorites-container" className="min-h-[2rem]">
+              <div className="space-y-1 px-2">
               {notes.length > 0 ? (
                 notes.map((note) => (
                   <div key={note.id} className="flex items-center w-full group">
@@ -176,6 +178,7 @@ export function FavoritesListSection({
                 </Button>
               )}
             </div>
+            </DroppableContainer>
           </motion.div>
         )}
       </AnimatePresence>
