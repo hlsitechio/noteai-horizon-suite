@@ -24,38 +24,41 @@ const AICustomPrompt: React.FC<AICustomPromptProps> = ({
 }) => {
   if (mode === 'bar') {
     return (
-      <>
+      <div className="space-y-3">
+        {/* Toggle Button */}
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={onToggleCustom}
-          className="h-8 px-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 text-white border border-gray-400/30"
+          className="h-8 px-3 text-xs hover:bg-accent hover:text-accent-foreground"
         >
           <PencilIcon className="w-3 h-3 mr-1.5" />
-          Custom
+          Custom Instructions
         </Button>
         
+        {/* Custom Prompt Input */}
         {showCustom && (
-          <div className="mt-3 animate-fade-in">
-            <div className="flex gap-2">
+          <div className="space-y-3 p-3 bg-muted/30 border border-border rounded-lg animate-fade-in">
+            <div className="space-y-2">
               <Textarea
                 value={customPrompt}
                 onChange={(e) => onPromptChange(e.target.value)}
-                placeholder="Tell the AI what you want to do with the text..."
-                className="flex-1 h-20 text-sm bg-gray-800 border-gray-600 text-gray-200 placeholder-gray-400 resize-none"
+                placeholder="Describe what you want the AI to do with your text..."
+                className="min-h-[80px] text-sm resize-none border-border bg-background"
               />
               <Button
                 onClick={onProcess}
                 disabled={!customPrompt.trim() || isLoading}
-                className="h-20 px-4 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 hover:from-purple-600 hover:via-blue-600 hover:to-cyan-600 border border-purple-400/30"
+                size="sm"
+                className="w-full h-9"
               >
                 <SparklesIcon className="w-4 h-4 mr-2" />
-                Process
+                {isLoading ? 'Processing...' : 'Apply Custom Instructions'}
               </Button>
             </div>
           </div>
         )}
-      </>
+      </div>
     );
   }
 

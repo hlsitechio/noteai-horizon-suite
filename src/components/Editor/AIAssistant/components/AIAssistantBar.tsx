@@ -49,59 +49,92 @@ const AIAssistantBar: React.FC<AIAssistantBarProps> = ({
   onFeedback
 }) => {
   return (
-    <div className="bg-gradient-to-r from-gray-900/95 to-gray-800/95 border-t border-gray-400/30 backdrop-blur-sm">
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
+    <div className="bg-card/95 border-t border-border backdrop-blur-sm">
+      <div className="p-4">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-              <SparklesIcon className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-white">AI Assistant</h3>
-              <p className="text-sm text-gray-400">Pro</p>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-md flex items-center justify-center">
+                <SparklesIcon className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-semibold text-foreground">AI Assistant</span>
+              <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full font-medium">Pro</span>
             </div>
           </div>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onClose}
+            className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </div>
 
-        <AIQuickActions
-          onAction={onAction}
-          isLoading={isLoading}
-          mode="bar"
-          selectedText={selectedText}
-        />
-        
-        <AICustomPrompt
-          customPrompt={customPrompt}
-          onPromptChange={onPromptChange}
-          onProcess={onCustomProcess}
-          isLoading={isLoading}
-          mode="bar"
-          showCustom={showCustom}
-          onToggleCustom={onToggleCustom}
-        />
-
-        {/* Processing State */}
-        {isLoading && (
-          <div className="mt-6 flex items-center justify-center py-6 bg-gray-800/30 rounded-xl border border-gray-600/30">
-            <div className="flex items-center gap-3 text-gray-300">
-              <Bot className="w-5 h-5 animate-pulse text-blue-400" />
-              <span className="font-medium">AI is processing your request...</span>
+        {/* Content Area */}
+        <div className="space-y-4">
+          {/* Selected Text Display */}
+          {selectedText && (
+            <div className="bg-muted/50 border border-border rounded-lg p-3">
+              <div className="text-xs text-muted-foreground uppercase tracking-wide mb-2">Selected Text</div>
+              <div className="text-sm text-foreground font-medium leading-relaxed">
+                "{selectedText.slice(0, 120)}{selectedText.length > 120 ? '...' : ''}"
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Results section for bar mode */}
-        <AIResultDisplay
-          result={result}
-          response={response}
-          copied={copied}
-          selectedText={selectedText}
-          onCopy={onCopy}
-          onInsert={onInsert}
-          onReplace={onReplace}
-          onFeedback={onFeedback}
-          mode="bar"
-        />
+          {/* Quick Actions */}
+          <div className="space-y-3">
+            <AIQuickActions
+              onAction={onAction}
+              isLoading={isLoading}
+              mode="bar"
+              selectedText={selectedText}
+            />
+          </div>
+
+          {/* Custom Prompt Section */}
+          <div className="border-t border-border pt-3">
+            <AICustomPrompt
+              customPrompt={customPrompt}
+              onPromptChange={onPromptChange}
+              onProcess={onCustomProcess}
+              isLoading={isLoading}
+              mode="bar"
+              showCustom={showCustom}
+              onToggleCustom={onToggleCustom}
+            />
+          </div>
+
+          {/* Processing State */}
+          {isLoading && (
+            <div className="bg-muted/30 border border-border rounded-lg p-4">
+              <div className="flex items-center gap-3 text-muted-foreground">
+                <Bot className="w-5 h-5 animate-pulse text-primary" />
+                <span className="font-medium">AI is processing your request...</span>
+                <div className="flex gap-1 ml-auto">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Results */}
+          <AIResultDisplay
+            result={result}
+            response={response}
+            copied={copied}
+            selectedText={selectedText}
+            onCopy={onCopy}
+            onInsert={onInsert}
+            onReplace={onReplace}
+            onFeedback={onFeedback}
+            mode="bar"
+          />
+        </div>
       </div>
     </div>
   );

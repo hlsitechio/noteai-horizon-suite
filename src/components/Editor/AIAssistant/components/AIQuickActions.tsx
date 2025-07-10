@@ -29,7 +29,7 @@ const AIQuickActions: React.FC<AIQuickActionsProps> = ({
   selectedText
 }) => {
   if (mode === 'bar') {
-    // Group actions by category for better organization
+    // Group actions by category for organized display
     const primaryActions = aiActions.filter(action => action.category === 'primary');
     const styleActions = aiActions.filter(action => action.category === 'style');
     const lengthActions = aiActions.filter(action => action.category === 'length');
@@ -38,42 +38,33 @@ const AIQuickActions: React.FC<AIQuickActionsProps> = ({
 
     return (
       <div className="space-y-3">
-        {/* Selected text display */}
-        {selectedText && (
-          <div className="bg-gray-800/50 border border-gray-600/30 rounded-lg p-3">
-            <div className="text-xs text-gray-400 mb-1">SELECTED TEXT</div>
-            <div className="text-sm text-gray-200 font-medium">
-              "{selectedText.slice(0, 80)}{selectedText.length > 80 ? '...' : ''}"
-            </div>
-          </div>
-        )}
-
-        {/* Primary Actions */}
-        <div className="flex items-center gap-3">
+        {/* Primary Actions - Most commonly used */}
+        <div className="flex flex-wrap gap-2">
           {primaryActions.map(({ id, label, icon, color }) => {
             const Icon = iconMap[icon as keyof typeof iconMap];
             return (
               <Button
                 key={id}
-                variant="ghost"
-                size="lg"
+                variant="default"
+                size="sm"
                 onClick={() => onAction(id as AIAction)}
                 disabled={isLoading}
-                className={`h-12 px-6 bg-gradient-to-r ${color} hover:opacity-90 text-white border border-white/10 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 rounded-xl font-medium`}
+                className="h-9 px-4 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
               >
-                <Icon className="w-5 h-5 mr-2" />
+                <Icon className="w-4 h-4 mr-2" />
                 {label}
               </Button>
             );
           })}
         </div>
 
-        {/* Style and Length Actions */}
+        {/* Secondary Actions Grid */}
         <div className="grid grid-cols-2 gap-3">
+          {/* Style Actions */}
           <div className="space-y-2">
-            <div className="text-xs text-gray-400 font-medium">STYLE</div>
-            <div className="flex gap-2">
-              {styleActions.map(({ id, label, icon, color }) => {
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Style</div>
+            <div className="space-y-2">
+              {styleActions.map(({ id, label, icon }) => {
                 const Icon = iconMap[icon as keyof typeof iconMap];
                 return (
                   <Button
@@ -82,9 +73,9 @@ const AIQuickActions: React.FC<AIQuickActionsProps> = ({
                     size="sm"
                     onClick={() => onAction(id as AIAction)}
                     disabled={isLoading}
-                    className={`flex-1 h-10 bg-gradient-to-r ${color} hover:opacity-90 text-white border border-white/10 shadow-md hover:shadow-lg transition-all duration-200 rounded-lg`}
+                    className="w-full h-8 justify-start text-xs hover:bg-accent hover:text-accent-foreground"
                   >
-                    <Icon className="w-4 h-4 mr-1.5" />
+                    <Icon className="w-3 h-3 mr-2" />
                     {label}
                   </Button>
                 );
@@ -92,10 +83,11 @@ const AIQuickActions: React.FC<AIQuickActionsProps> = ({
             </div>
           </div>
 
+          {/* Length Actions */}
           <div className="space-y-2">
-            <div className="text-xs text-gray-400 font-medium">LENGTH</div>
-            <div className="flex gap-2">
-              {lengthActions.map(({ id, label, icon, color }) => {
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Length</div>
+            <div className="space-y-2">
+              {lengthActions.map(({ id, label, icon }) => {
                 const Icon = iconMap[icon as keyof typeof iconMap];
                 return (
                   <Button
@@ -104,9 +96,9 @@ const AIQuickActions: React.FC<AIQuickActionsProps> = ({
                     size="sm"
                     onClick={() => onAction(id as AIAction)}
                     disabled={isLoading}
-                    className={`flex-1 h-10 bg-gradient-to-r ${color} hover:opacity-90 text-white border border-white/10 shadow-md hover:shadow-lg transition-all duration-200 rounded-lg`}
+                    className="w-full h-8 justify-start text-xs hover:bg-accent hover:text-accent-foreground"
                   >
-                    <Icon className="w-4 h-4 mr-1.5" />
+                    <Icon className="w-3 h-3 mr-2" />
                     {label}
                   </Button>
                 );
@@ -115,42 +107,29 @@ const AIQuickActions: React.FC<AIQuickActionsProps> = ({
           </div>
         </div>
 
-        {/* Utility and Advanced Actions */}
-        <div className="flex items-center gap-2 pt-2 border-t border-gray-600/30">
-          {utilityActions.map(({ id, label, icon, color }) => {
-            const Icon = iconMap[icon as keyof typeof iconMap];
-            return (
-              <Button
-                key={id}
-                variant="ghost"
-                size="sm"
-                onClick={() => onAction(id as AIAction)}
-                disabled={isLoading}
-                className={`h-9 px-4 bg-gradient-to-r ${color} hover:opacity-90 text-white border border-white/10 shadow-sm hover:shadow-md transition-all duration-200 rounded-lg`}
-              >
-                <Icon className="w-4 h-4 mr-1.5" />
-                {label}
-              </Button>
-            );
-          })}
-          
-          {advancedActions.map(({ id, label, icon, color }) => {
-            const Icon = iconMap[icon as keyof typeof iconMap];
-            return (
-              <Button
-                key={id}
-                variant="ghost"
-                size="sm"
-                onClick={() => onAction(id as AIAction)}
-                disabled={isLoading}
-                className={`h-9 px-4 bg-gradient-to-r ${color} hover:opacity-90 text-white border border-white/10 shadow-sm hover:shadow-md transition-all duration-200 rounded-lg`}
-              >
-                <Icon className="w-4 h-4 mr-1.5" />
-                {label}
-              </Button>
-            );
-          })}
-        </div>
+        {/* Utility & Advanced Actions - Compact row */}
+        {(utilityActions.length > 0 || advancedActions.length > 0) && (
+          <div className="pt-2 border-t border-border">
+            <div className="flex flex-wrap gap-1">
+              {[...utilityActions, ...advancedActions].map(({ id, label, icon }) => {
+                const Icon = iconMap[icon as keyof typeof iconMap];
+                return (
+                  <Button
+                    key={id}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onAction(id as AIAction)}
+                    disabled={isLoading}
+                    className="h-7 px-3 text-xs hover:bg-muted"
+                  >
+                    <Icon className="w-3 h-3 mr-1" />
+                    {label}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
