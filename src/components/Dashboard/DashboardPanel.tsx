@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -20,6 +21,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
   panelKey,
   className = 'p-6 h-full'
 }) => {
+  const navigate = useNavigate();
   const { getPanelConfiguration } = useDashboardLayout();
   const config = getPanelConfiguration(panelKey);
 
@@ -64,7 +66,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
               variant="ghost"
               size="sm"
               onClick={() => {
-                window.location.href = '/app/components';
+                navigate('/app/components');
               }}
               className="opacity-0 group-hover:opacity-100 transition-opacity text-xs px-2 py-1 h-auto"
             >
@@ -101,7 +103,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  window.location.href = '/app/components';
+                  navigate('/app/components');
                 }}
                 className="border-primary/30 text-primary hover:bg-primary/10"
               >
