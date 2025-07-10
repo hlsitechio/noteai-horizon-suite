@@ -23,12 +23,22 @@ export const useDashboardBanner = () => {
     console.log('AI Generate with prompt:', prompt);
   };
 
-  const handleImageSelect = (imageUrl: string) => {
-    updateBannerSelection(imageUrl, 'image');
-    toast({
-      title: "Banner Updated",
-      description: "Your dashboard banner has been updated successfully.",
-    });
+  const handleImageSelect = async (imageUrl: string) => {
+    // Update banner selection in database and local state
+    const success = await updateBannerSelection(imageUrl, 'image');
+    
+    if (success) {
+      toast({
+        title: "Banner Updated",
+        description: "Your dashboard banner has been updated successfully.",
+      });
+    } else {
+      toast({
+        title: "Update Failed",
+        description: "Failed to update banner. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return {
