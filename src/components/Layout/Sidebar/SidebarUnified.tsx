@@ -9,7 +9,6 @@ import { NotesSection } from './NotesSection';
 import { SidebarQuickActions } from './SidebarQuickActions';
 import { SidebarFooter } from './SidebarFooter';
 import { useSidebarKeyboardShortcuts } from './SidebarKeyboardShortcuts';
-
 const sidebarVariants = {
   expanded: {
     width: 'auto',
@@ -29,7 +28,6 @@ const sidebarVariants = {
     }
   }
 };
-
 const sectionVariants = {
   expanded: {
     opacity: 1,
@@ -48,93 +46,84 @@ const sectionVariants = {
     }
   }
 };
-
 export function SidebarUnified() {
-  const { isCollapsed } = useSidebarCollapse();
+  const {
+    isCollapsed
+  } = useSidebarCollapse();
   const isMobile = useIsMobile();
-  
+
   // Enable keyboard shortcuts
   useSidebarKeyboardShortcuts();
-
-  return (
-    <TooltipProvider>
-      <motion.div 
-        className="h-full bg-sidebar flex flex-col"
-        variants={sidebarVariants}
-        initial="expanded"
-        animate={isCollapsed ? "collapsed" : "expanded"}
-      >
+  return <TooltipProvider>
+      <motion.div className="h-full bg-sidebar flex flex-col" variants={sidebarVariants} initial="expanded" animate={isCollapsed ? "collapsed" : "expanded"}>
         {/* Navigation Section */}
-        <motion.div 
-          className="flex-shrink-0 p-2"
-          variants={sectionVariants}
-        >
+        <motion.div className="flex-shrink-0 p-2" variants={sectionVariants}>
           <NavigationMenu />
         </motion.div>
 
         <AnimatePresence>
-          {!isCollapsed && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-            >
+          {!isCollapsed && <motion.div initial={{
+          opacity: 0,
+          height: 0
+        }} animate={{
+          opacity: 1,
+          height: 'auto'
+        }} exit={{
+          opacity: 0,
+          height: 0
+        }} transition={{
+          duration: 0.2
+        }}>
               <Separator className="mx-2" />
-            </motion.div>
-          )}
+            </motion.div>}
         </AnimatePresence>
 
         {/* Quick Actions Section */}
-        <motion.div 
-          className="flex-shrink-0 py-2"
-          variants={sectionVariants}
-        >
-          <SidebarQuickActions />
-        </motion.div>
+        
 
         <AnimatePresence>
-          {!isCollapsed && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-            >
+          {!isCollapsed && <motion.div initial={{
+          opacity: 0,
+          height: 0
+        }} animate={{
+          opacity: 1,
+          height: 'auto'
+        }} exit={{
+          opacity: 0,
+          height: 0
+        }} transition={{
+          duration: 0.2
+        }}>
               <Separator className="mx-2" />
-            </motion.div>
-          )}
+            </motion.div>}
         </AnimatePresence>
 
         {/* Content Section - Notes */}
-        <motion.div 
-          className="flex-1 min-h-0 overflow-hidden"
-          variants={sectionVariants}
-        >
+        <motion.div className="flex-1 min-h-0 overflow-hidden" variants={sectionVariants}>
           <NotesSection />
         </motion.div>
 
         <AnimatePresence>
-          {!isCollapsed && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-            >
+          {!isCollapsed && <motion.div initial={{
+          opacity: 0,
+          height: 0
+        }} animate={{
+          opacity: 1,
+          height: 'auto'
+        }} exit={{
+          opacity: 0,
+          height: 0
+        }} transition={{
+          duration: 0.2
+        }}>
               <Separator className="mx-2" />
-            </motion.div>
-          )}
+            </motion.div>}
         </AnimatePresence>
 
         {/* Footer Section */}
-        <motion.div 
-          className="flex-shrink-0 p-2 border-t border-sidebar-border"
-          variants={sectionVariants}
-        >
+        <motion.div className="flex-shrink-0 p-2 border-t border-sidebar-border" variants={sectionVariants}>
           <SidebarFooter />
         </motion.div>
       </motion.div>
-    </TooltipProvider>
-  );
+    </TooltipProvider>;
 }
