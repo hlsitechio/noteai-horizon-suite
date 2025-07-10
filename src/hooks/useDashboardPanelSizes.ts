@@ -21,10 +21,12 @@ export const useDashboardPanelSizes = () => {
     rightPanels: settingsPanelSizes.rightPanels || 50,
   }), [settingsPanelSizes]);
 
-  // Log panel sizes when they change
+  // Log panel sizes when they change (development only)
   useEffect(() => {
-    console.log('Dashboard panel sizes updated:', panelSizes);
-    console.log('Settings loaded state:', !!settings);
+    if (import.meta.env.DEV) {
+      console.log('Dashboard panel sizes updated:', panelSizes);
+      console.log('Settings loaded state:', !!settings);
+    }
   }, [JSON.stringify(panelSizes), !!settings]);
 
   // Track when user actually interacts with panels
@@ -73,7 +75,9 @@ export const useDashboardPanelSizes = () => {
         break;
     }
     
-    console.log(`Panel sizes updated (${sizeKey}):`, newSizes);
+    if (import.meta.env.DEV) {
+      console.log(`Panel sizes updated (${sizeKey}):`, newSizes);
+    }
     debouncedSave(newSizes);
   };
 
