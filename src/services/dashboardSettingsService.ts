@@ -62,7 +62,7 @@ export class DashboardSettingsService {
           settings: {}
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -196,7 +196,7 @@ export class DashboardSettingsService {
         .from('dashboard_settings')
         .select('id')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
       if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
 

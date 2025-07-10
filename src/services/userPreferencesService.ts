@@ -37,7 +37,7 @@ export class UserPreferencesService {
         .from('user_preferences')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         if (error.code === 'PGRST116') {
@@ -78,7 +78,7 @@ export class UserPreferencesService {
         .from('user_preferences')
         .insert([defaultPrefs])
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error creating default preferences:', error);
@@ -109,7 +109,7 @@ export class UserPreferencesService {
           onConflict: 'user_id'
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error updating user preferences:', error);
@@ -164,7 +164,7 @@ export class UserPreferencesService {
         .from('dashboard_settings')
         .select('dashboard_edit_mode')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         if (error.code === 'PGRST116') {

@@ -43,25 +43,11 @@ export function FoldersListHeader({
           </TooltipContent>
         </Tooltip>
       ) : (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto w-full justify-between"
-          onClick={onToggle}
-        >
-          <div className="flex items-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-4 w-4 p-0 hover:bg-accent hover:text-accent-foreground transition-colors mr-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                onCreateFolder();
-              }}
-              title="Create Folder"
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
+        <div className="flex items-center justify-between w-full">
+          <div 
+            className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto flex-1"
+            onClick={onToggle}
+          >
             {isExpanded ? (
               <ChevronDown className="h-3 w-3 mr-1" />
             ) : (
@@ -70,8 +56,24 @@ export function FoldersListHeader({
             <Folder className="h-3 w-3 mr-1" />
             Folders
           </div>
-          <span className="text-xs">({foldersCount})</span>
-        </Button>
+          <div className="flex items-center gap-1">
+            <span className="text-xs text-sidebar-foreground/70">({foldersCount})</span>
+            {!isMobile && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCreateFolder();
+                }}
+                title="Create Folder"
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
