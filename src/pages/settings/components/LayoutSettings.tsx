@@ -4,7 +4,8 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { Layout, Image } from 'lucide-react';
+import { Layout, Image, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { UserPreferencesService } from '@/services/userPreferencesService';
 import { ActivityService } from '@/services/activityService';
@@ -17,6 +18,7 @@ export const LayoutSettings: React.FC = () => {
   const [isSavingLayout, setIsSavingLayout] = useState(false);
   const [isBannerGalleryOpen, setIsBannerGalleryOpen] = useState(false);
   const { handleImageSelect } = useDashboardBanner();
+  const navigate = useNavigate();
 
   const toggleDashboardEditMode = async () => {
     const newMode = !isDashboardEditMode;
@@ -99,6 +101,28 @@ export const LayoutSettings: React.FC = () => {
               >
                 <Image className="h-4 w-4" />
                 Manage Banners
+              </Button>
+            </div>
+          </div>
+
+          <Separator />
+          
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <Label>Dashboard Components</Label>
+                <p className="text-sm text-muted-foreground">
+                  Manage and configure dashboard components
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/app/components')}
+                className="gap-2"
+              >
+                <Settings className="h-4 w-4" />
+                Components
               </Button>
             </div>
           </div>

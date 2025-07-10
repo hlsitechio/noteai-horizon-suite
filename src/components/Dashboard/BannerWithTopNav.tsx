@@ -102,29 +102,17 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
       {/* Banner Content */}
       <div className="flex-1 relative overflow-visible">
         {/* Control buttons positioned in banner area - hidden on mobile */}
-        {!isMobile && (
+        {!isMobile && onEditLayoutClick && (
           <div className="absolute top-4 right-4 z-50 flex items-center gap-2 p-2 bg-background/90 backdrop-blur-sm rounded-lg border border-border/50 shadow-sm">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate('/app/components')}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onEditLayoutClick}
               className="gap-2 transition-all duration-200 hover:bg-accent bg-transparent text-foreground hover:text-accent-foreground"
             >
-              <Settings className="h-4 w-4" />
-              Components
+              <Edit3 className="h-4 w-4" />
+              Edit Layout
             </Button>
-            
-            {onEditLayoutClick && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onEditLayoutClick}
-                className="gap-2 transition-all duration-200 hover:bg-accent bg-transparent text-foreground hover:text-accent-foreground"
-              >
-                <Edit3 className="h-4 w-4" />
-                Edit Layout
-              </Button>
-            )}
           </div>
         )}
         
