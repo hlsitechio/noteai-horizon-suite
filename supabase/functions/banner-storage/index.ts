@@ -40,7 +40,7 @@ serve(async (req) => {
       )
     }
 
-    const { pagePath, bannerData } = await req.json()
+    const { pagePath, bannerData, action } = await req.json()
 
     if (!pagePath) {
       return new Response(
@@ -49,9 +49,9 @@ serve(async (req) => {
       )
     }
 
-    console.log(`[banner-storage] Processing request for user ${user.id}, page: ${pagePath}`)
+    console.log(`[banner-storage] Processing ${action || 'unknown'} request for user ${user.id}, page: ${pagePath}`)
 
-    if (req.method === 'POST') {
+    if (action === 'update' || (req.method === 'POST' && !action)) {
       // Save banner settings
       if (!bannerData) {
         return new Response(
@@ -94,7 +94,7 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
 
-    } else if (req.method === 'GET') {
+    } else if (action === 'get' || (req.method === 'GET' && !action)) {
       // Load banner settings
       console.log(`[banner-storage] Loading banner settings for page: ${pagePath}`)
 
@@ -130,7 +130,7 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
 
-    } else if (req.method === 'DELETE') {
+    } else if (action === 'delete' || (req.method === 'DELETE' && !action)) {
       // Delete banner settings
       console.log(`[banner-storage] Deleting banner settings for page: ${pagePath}`)
 

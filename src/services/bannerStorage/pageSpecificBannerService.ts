@@ -13,8 +13,7 @@ export class PageBannerService {
 
       // Use the banner-storage edge function for reliable data access
       const { data, error } = await supabase.functions.invoke('banner-storage', {
-        body: { pagePath },
-        method: 'GET'
+        body: { pagePath, action: 'get' }
       });
 
       if (error) {
@@ -46,9 +45,9 @@ export class PageBannerService {
       const { data, error } = await supabase.functions.invoke('banner-storage', {
         body: { 
           pagePath,
-          bannerData: settings
-        },
-        method: 'POST'
+          bannerData: settings,
+          action: 'update'
+        }
       });
 
       if (error) {
@@ -75,8 +74,7 @@ export class PageBannerService {
 
       // Use the banner-storage edge function for reliable deletion
       const { data, error } = await supabase.functions.invoke('banner-storage', {
-        body: { pagePath },
-        method: 'DELETE'
+        body: { pagePath, action: 'delete' }
       });
 
       if (error) {
