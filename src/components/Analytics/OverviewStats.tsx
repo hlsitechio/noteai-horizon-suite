@@ -1,7 +1,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import 'boxicons/css/boxicons.min.css';
+import { FileText, TrendingUp, Calendar, Heart, Target, Clock, Zap, Award } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 
 interface OverviewStatsProps {
   totalNotes: number;
@@ -27,35 +29,81 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
+    hidden: { opacity: 0, y: 30, scale: 0.9 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      transition: {
+        type: "spring" as const,
+        stiffness: 300,
+        damping: 20
+      }
+    }
   };
+
+  // Calculate additional metrics
+  const averageWordsPerNote = totalNotes > 0 ? Math.round(totalWords / totalNotes) : 0;
+  const weeklyGrowth = totalNotes > 0 ? Math.round((weeklyNotes / totalNotes) * 100) : 0;
+  const favoriteRate = totalNotes > 0 ? Math.round((favoriteNotes / totalNotes) * 100) : 0;
 
   const stats = [
     {
-      icon: 'bx bx-bar-chart',
+      id: 'total-notes',
+      icon: FileText,
       label: 'Total Notes',
-      value: totalNotes,
-      color: 'blue',
+      value: totalNotes.toLocaleString(),
+      subtitle: 'All time',
+      progress: Math.min((totalNotes / 100) * 100, 100),
+      trend: '+12%',
+      trendDirection: 'up',
+      gradient: 'from-blue-500/20 via-blue-600/10 to-blue-500/5',
+      iconColor: 'text-blue-600',
+      iconBg: 'bg-blue-500/10',
+      borderColor: 'border-blue-500/20'
     },
     {
-      icon: 'bx bx-trending-up',
+      id: 'total-words',
+      icon: TrendingUp,
       label: 'Total Words',
       value: totalWords.toLocaleString(),
-      color: 'green',
+      subtitle: `~${averageWordsPerNote} per note`,
+      progress: Math.min((totalWords / 10000) * 100, 100),
+      trend: '+8%',
+      trendDirection: 'up',
+      gradient: 'from-green-500/20 via-green-600/10 to-green-500/5',
+      iconColor: 'text-green-600',
+      iconBg: 'bg-green-500/10',
+      borderColor: 'border-green-500/20'
     },
     {
-      icon: 'bx bx-calendar',
+      id: 'weekly-notes',
+      icon: Calendar,
       label: 'This Week',
-      value: weeklyNotes,
-      color: 'purple',
+      value: weeklyNotes.toString(),
+      subtitle: `${weeklyGrowth}% of total`,
+      progress: Math.min((weeklyNotes / 20) * 100, 100),
+      trend: '+15%',
+      trendDirection: 'up',
+      gradient: 'from-purple-500/20 via-purple-600/10 to-purple-500/5',
+      iconColor: 'text-purple-600',
+      iconBg: 'bg-purple-500/10',
+      borderColor: 'border-purple-500/20'
     },
     {
-      icon: 'bx bx-time',
+      id: 'favorites',
+      icon: Heart,
       label: 'Favorites',
-      value: favoriteNotes,
-      color: 'orange',
-    },
+      value: favoriteNotes.toString(),
+      subtitle: `${favoriteRate}% rate`,
+      progress: favoriteRate,
+      trend: '+5%',
+      trendDirection: 'up',
+      gradient: 'from-red-500/20 via-red-600/10 to-red-500/5',
+      iconColor: 'text-red-600',
+      iconBg: 'bg-red-500/10',
+      borderColor: 'border-red-500/20'
+    }
   ];
 
   return (
@@ -63,27 +111,85 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+      className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"
     >
-      {stats.map((stat, index) => {
-        return (
-          <motion.div 
-            key={stat.label}
-            variants={itemVariants} 
-            className="p-6 bg-card rounded-xl border shadow-sm"
-          >
-            <div className="flex items-center gap-3">
-              <div className={`p-2 bg-${stat.color}-100 dark:bg-${stat.color}-900/20 rounded-lg`}>
-                <i className={`${stat.icon} text-lg text-${stat.color}-600 dark:text-${stat.color}-400`}></i>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-                <p className="text-2xl font-bold">{stat.value}</p>
-              </div>
+      {stats.map((stat) => (
+        <motion.div
+          key={stat.id}
+          variants={itemVariants}
+          whileHover={{ 
+            y: -8, 
+            transition: { type: "spring" as const, stiffness: 400, damping: 10 } 
+          }}
+          className="group cursor-pointer"
+        >
+          <Card className={`relative overflow-hidden border-2 ${stat.borderColor} bg-gradient-to-br ${stat.gradient} transition-all duration-300 group-hover:shadow-xl group-hover:shadow-current/5`}>
+            {/* Animated background pattern */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 animate-pulse" />
             </div>
-          </motion.div>
-        );
-      })}
+            
+            <CardContent className="p-6 relative">
+              <div className="flex items-start justify-between mb-4">
+                <div className={`p-3 rounded-xl ${stat.iconBg} transition-transform duration-200 group-hover:scale-110`}>
+                  <stat.icon className={`h-6 w-6 ${stat.iconColor}`} />
+                </div>
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className={`px-2 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-600 border border-green-500/20`}
+                >
+                  {stat.trend}
+                </motion.div>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <motion.p 
+                    className="text-3xl font-bold text-foreground"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    {stat.value}
+                  </motion.p>
+                  <p className="text-sm font-medium text-foreground/90">{stat.label}</p>
+                  <p className="text-xs text-muted-foreground">{stat.subtitle}</p>
+                </div>
+
+                <motion.div 
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                  className="w-full"
+                >
+                  <Progress 
+                    value={stat.progress} 
+                    className="h-2 bg-white/10"
+                  />
+                </motion.div>
+              </div>
+
+              {/* Floating micro-animation elements */}
+              <motion.div 
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100"
+                animate={{ 
+                  y: [0, -10, 0],
+                  opacity: [0, 0.5, 0]
+                }}
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity,
+                  delay: Math.random() * 2
+                }}
+              >
+                <div className={`w-2 h-2 rounded-full ${stat.iconBg}`} />
+              </motion.div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      ))}
     </motion.div>
   );
 };
