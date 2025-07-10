@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Upload, AlertCircle, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
-import { BannerStorageService } from '@/services/bannerStorage';
+// Banner storage service removed - functionality disabled
 import { useDynamicAccent } from '../../contexts/DynamicAccentContext';
 import { BannerUploadProps, BannerState } from './BannerUpload/types';
 import { validateFile } from './BannerUpload/utils';
@@ -88,36 +88,10 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
     try {
       logger.debug('BANNER', 'Uploading file:', state.selectedFile.name, state.selectedFile.size, state.selectedFile.type);
       
-      const bannerData = await BannerStorageService.uploadBanner(state.selectedFile, 'dashboard');
-      
-      if (bannerData) {
-        logger.debug('BANNER', 'Upload successful:', bannerData);
-        onBannerUpdate?.(bannerData.file_url, bannerData.file_type);
-        
-        // Extract color from the uploaded banner URL if dynamic accent is enabled
-        if (isDynamicAccentEnabled) {
-          logger.debug('BANNER', 'Extracting color from uploaded banner');
-          try {
-            await extractColorFromMedia(bannerData.file_url);
-            toast.success('Banner uploaded and accent color updated!');
-          } catch (error) {
-            logger.error('BANNER', 'Color extraction from uploaded banner failed:', error);
-            toast.success('Banner uploaded successfully!');
-          }
-        } else {
-          toast.success('Banner uploaded successfully!');
-        }
-        
-        updateState({ 
-          isOpen: false, 
-          selectedBanner: null, 
-          selectedFile: null,
-          uploadError: null 
-        });
-      } else {
-        logger.error('BANNER', 'Upload returned null result');
-        updateState({ uploadError: 'Upload failed. Please try again.' });
-      }
+      // Banner upload service disabled - banners table missing from database schema
+      logger.warn('Banner upload disabled - banners table missing from database schema');
+      toast.error('Banner upload is currently disabled');
+      updateState({ uploadError: 'Banner upload is currently disabled' });
     } catch (error) {
       logger.error('BANNER', 'Upload error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -132,14 +106,10 @@ const BannerUpload: React.FC<BannerUploadProps> = ({
     logger.debug('BANNER', 'Deleting banner');
     updateState({ isDeleting: true });
     try {
-      const success = await BannerStorageService.deleteBanner('dashboard');
-      if (success) {
-        onBannerDelete?.();
-        updateState({ isOpen: false });
-        toast.success('Dashboard banner deleted successfully!');
-      } else {
-        toast.error('Failed to delete banner');
-      }
+      // Banner deletion disabled - banners table missing from database schema
+      logger.warn('Banner deletion disabled - banners table missing from database schema');
+      toast.error('Banner deletion is currently disabled');
+      return;
     } catch (error) {
       logger.error('BANNER', 'Delete error:', error);
       toast.error('Failed to delete banner');

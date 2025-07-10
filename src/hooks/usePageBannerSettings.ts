@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { PageBannerService } from '@/services/bannerStorage/pageSpecificBannerService';
+// Page banner service removed - functionality disabled
 import { useToast } from '@/hooks/use-toast';
 
 export interface PageBannerSettings {
@@ -30,11 +30,10 @@ export const usePageBannerSettings = () => {
 
   const loadPageSettings = async () => {
     try {
-      console.log('usePageBannerSettings: Starting to load settings for:', pagePath);
+      console.log('usePageBannerSettings: Page banner service disabled');
       setIsLoading(true);
-      const pageSettings = await PageBannerService.getPageBannerSettings(pagePath);
-      console.log('usePageBannerSettings: Loaded settings:', pageSettings);
-      setSettings(pageSettings || {});
+      // Page banner service disabled - banners table missing from database schema
+      setSettings({});
     } catch (error) {
       console.error('Failed to load page banner settings:', error);
       setSettings({});
@@ -44,15 +43,9 @@ export const usePageBannerSettings = () => {
   };
 
   const updateBannerSettings = async (updates: Partial<PageBannerSettings>) => {
-    try {
-      const newSettings = { ...settings, ...updates };
-      await PageBannerService.updatePageBannerSettings(pagePath, newSettings);
-      setSettings(newSettings);
-      return true;
-    } catch (error) {
-      console.error('Failed to update banner settings:', error);
-      return false;
-    }
+    // Page banner service disabled - banners table missing from database schema
+    console.warn('Page banner service disabled - banners table missing from database schema');
+    return false;
   };
 
   const updateBannerSelection = async (bannerUrl: string | null, bannerType?: string) => {
@@ -71,92 +64,39 @@ export const usePageBannerSettings = () => {
   };
 
   const resetPageSettings = async () => {
-    try {
-      await PageBannerService.deletePageBannerSettings(pagePath);
-      setSettings({});
-      return true;
-    } catch (error) {
-      console.error('Failed to reset page settings:', error);
-      return false;
-    }
+    // Page banner service disabled - banners table missing from database schema
+    console.warn('Page banner service disabled - banners table missing from database schema');
+    return false;
   };
 
   const handleImageUpload = async (file: File) => {
-    try {
-      const uploadedUrl = await PageBannerService.uploadBannerFile(file, pagePath);
-      if (uploadedUrl) {
-        await updateBannerSelection(uploadedUrl, 'image');
-        toast({
-          title: "Banner Uploaded",
-          description: `Banner uploaded and set for ${pagePath} page.`,
-        });
-      } else {
-        toast({
-          title: "Upload Failed",
-          description: "Failed to upload banner. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error('Banner upload error:', error);
-      toast({
-        title: "Upload Failed",
-        description: "Failed to upload banner. Please try again.",
-        variant: "destructive",
-      });
-    }
+    // Page banner service disabled - banners table missing from database schema
+    console.warn('Page banner service disabled - banners table missing from database schema');
+    toast({
+      title: "Upload Disabled",
+      description: "Banner upload is currently disabled.",
+      variant: "destructive",
+    });
   };
 
   const handleVideoUpload = async (file: File) => {
-    try {
-      const uploadedUrl = await PageBannerService.uploadBannerFile(file, pagePath);
-      if (uploadedUrl) {
-        await updateBannerSelection(uploadedUrl, 'video');
-        toast({
-          title: "Video Banner Uploaded",
-          description: `Video banner uploaded and set for ${pagePath} page.`,
-        });
-      } else {
-        toast({
-          title: "Upload Failed",
-          description: "Failed to upload video banner. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error('Video upload error:', error);
-      toast({
-        title: "Upload Failed",
-        description: "Failed to upload video banner. Please try again.",
-        variant: "destructive",
-      });
-    }
+    // Page banner service disabled - banners table missing from database schema
+    console.warn('Page banner service disabled - banners table missing from database schema');
+    toast({
+      title: "Upload Disabled",
+      description: "Video banner upload is currently disabled.",
+      variant: "destructive",
+    });
   };
 
   const handleAIGenerate = async (prompt: string) => {
-    try {
-      const generatedUrl = await PageBannerService.generateAIBanner(prompt, pagePath);
-      if (generatedUrl) {
-        await updateBannerSelection(generatedUrl, 'image');
-        toast({
-          title: "AI Banner Generated",
-          description: `AI banner generated and set for ${pagePath} page.`,
-        });
-      } else {
-        toast({
-          title: "Generation Failed",
-          description: "Failed to generate AI banner. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error('AI generation error:', error);
-      toast({
-        title: "Generation Failed",
-        description: "Failed to generate AI banner. Please try again.",
-        variant: "destructive",
-      });
-    }
+    // Page banner service disabled - banners table missing from database schema
+    console.warn('Page banner service disabled - banners table missing from database schema');
+    toast({
+      title: "Generation Disabled",
+      description: "AI banner generation is currently disabled.",
+      variant: "destructive",
+    });
   };
 
   const handleImageSelect = async (imageUrl: string) => {
