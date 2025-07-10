@@ -140,6 +140,7 @@ export function NotesSection() {
             isExpanded={expandedSections.folders}
             onToggle={() => toggleSection('folders')}
             onCreateFolder={handleCreateFolder}
+            onMoveToFolder={handleMoveToFolder}
             isMobile={isMobile}
           />
         );
@@ -214,7 +215,7 @@ export function NotesSection() {
     <div className="flex-1 min-h-0">
       {!isMobile && (
         <div className="p-2">
-          <h3 className="text-sm font-medium text-sidebar-foreground mb-3 transition-colors duration-200">
+          <h3 className="text-xs font-medium text-sidebar-foreground mb-3 transition-colors duration-200">
             Content
           </h3>
         </div>

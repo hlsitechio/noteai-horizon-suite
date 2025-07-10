@@ -19,6 +19,7 @@ import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 import { Note } from '../../../types/note';
 import { Folder as FolderType } from '../../../types/folder';
 import DesktopPopOutButton from '../../FloatingNotes/DesktopPopOutButton';
+import { DroppableContainer } from './DroppableContainer';
 
 interface FoldersListSectionProps {
   folders: FolderType[];
@@ -26,6 +27,7 @@ interface FoldersListSectionProps {
   isExpanded: boolean;
   onToggle: () => void;
   onCreateFolder: () => Promise<void>;
+  onMoveToFolder: (noteId: string, folderId: string | null) => void;
   isMobile: boolean;
 }
 
@@ -35,6 +37,7 @@ export function FoldersListSection({
   isExpanded, 
   onToggle,
   onCreateFolder,
+  onMoveToFolder,
   isMobile
 }: FoldersListSectionProps) {
   const [expandedFolders, setExpandedFolders] = React.useState<Set<string>>(new Set());
@@ -74,7 +77,11 @@ export function FoldersListSection({
     const isFolderExpanded = expandedFolders.has(folder.id);
 
     return (
-      <div key={folder.id} className="space-y-1">
+      <DroppableContainer
+        key={folder.id}
+        id={`folder-${folder.id}`}
+        className="space-y-1"
+      >
         <div className="flex items-center w-full group">
           <Button 
             variant="ghost"
@@ -164,7 +171,7 @@ export function FoldersListSection({
             )}
           </motion.div>
         )}
-      </div>
+      </DroppableContainer>
     );
   };
 
