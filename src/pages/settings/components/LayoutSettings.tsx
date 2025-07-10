@@ -3,15 +3,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Layout } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Layout, Image } from 'lucide-react';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { UserPreferencesService } from '@/services/userPreferencesService';
 import { ActivityService } from '@/services/activityService';
+import { useDashboardBanner } from '@/hooks/useDashboardBanner';
+import BannerGalleryModal from '@/components/Dashboard/BannerSettings/BannerGalleryModal';
 import { toast } from 'sonner';
 
 export const LayoutSettings: React.FC = () => {
   const { isDashboardEditMode, setIsDashboardEditMode } = useEditMode();
   const [isSavingLayout, setIsSavingLayout] = useState(false);
+  const [isBannerGalleryOpen, setIsBannerGalleryOpen] = useState(false);
+  const { handleImageSelect } = useDashboardBanner();
 
   const toggleDashboardEditMode = async () => {
     const newMode = !isDashboardEditMode;
@@ -78,6 +83,28 @@ export const LayoutSettings: React.FC = () => {
           
           <Separator />
           
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <Label>Dashboard Banner</Label>
+                <p className="text-sm text-muted-foreground">
+                  Upload and manage banner images for your dashboard
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsBannerGalleryOpen(true)}
+                className="gap-2"
+              >
+                <Image className="h-4 w-4" />
+                Manage Banners
+              </Button>
+            </div>
+          </div>
+
+          <Separator />
+          
           <div className="space-y-2">
             <h4 className="font-medium">Layout Instructions</h4>
             <div className="text-sm text-muted-foreground space-y-2">
@@ -94,6 +121,12 @@ export const LayoutSettings: React.FC = () => {
           </div>
         </div>
       </CardContent>
+
+      <BannerGalleryModal
+        open={isBannerGalleryOpen}
+        onOpenChange={setIsBannerGalleryOpen}
+        onSelectImage={handleImageSelect}
+      />
     </Card>
   );
 };
