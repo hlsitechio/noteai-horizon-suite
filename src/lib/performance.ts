@@ -2,7 +2,7 @@
  * Performance utilities for optimizing React components and operations
  */
 
-import { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 /**
  * Debounce hook that persists across re-renders
@@ -76,6 +76,25 @@ export function shallowEqual(a: any, b: any): boolean {
   }
   
   return true;
+}
+
+/**
+ * Optimized memoization hook with custom comparison
+ */
+export function useShallowMemo<T>(factory: () => T, deps: any[]): T {
+  const [state, setState] = useState(() => ({
+    deps,
+    value: factory()
+  }));
+  
+  if (!shallowEqual(state.deps, deps)) {
+    setState({
+      deps,
+      value: factory()
+    });
+  }
+  
+  return state.value;
 }
 
 /**

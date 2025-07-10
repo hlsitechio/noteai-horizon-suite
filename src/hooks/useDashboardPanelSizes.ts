@@ -50,44 +50,47 @@ export const useDashboardPanelSizes = () => {
     }
   }, 500);
 
-  const createSizeHandler = (sizeKey: string) => (sizes: number[]) => {
-    // Track user interaction
-    trackUserInteraction();
-    
-    const newSizes = { ...settingsPanelSizes };
-    
-    switch (sizeKey) {
-      case 'banner':
-        if (sizes.length >= 2) newSizes.banner = Math.round(sizes[0]);
-        break;
-      case 'mainContent':
-        if (sizes.length >= 3) {
-          newSizes.analytics = Math.round(sizes[0]);
-          newSizes.topSection = Math.round(sizes[1]);
-          newSizes.bottomSection = Math.round(sizes[2]);
-        }
-        break;
-      case 'horizontal':
-        if (sizes.length >= 2) {
-          newSizes.leftPanels = Math.round(sizes[0]);
-          newSizes.rightPanels = Math.round(sizes[1]);
-        }
-        break;
-    }
-    
-    if (import.meta.env.DEV) {
-      console.log(`Panel sizes updated (${sizeKey}):`, newSizes);
-    }
-    debouncedSave(newSizes);
-  };
+  const createSizeHandler = useCallback((sizeKey: string) => {
+    return useCallback((sizes: number[]) => {
+      // Track user interaction
+      trackUserInteraction();
+      
+      const newSizes = { ...settingsPanelSizes };
+      
+      switch (sizeKey) {
+        case 'banner':
+          if (sizes.length >= 2) newSizes.banner = Math.round(sizes[0]);
+          break;
+        case 'mainContent':
+          if (sizes.length >= 3) {
+            newSizes.analytics = Math.round(sizes[0]);
+            newSizes.topSection = Math.round(sizes[1]);
+            newSizes.bottomSection = Math.round(sizes[2]);
+          }
+          break;
+        case 'horizontal':
+          if (sizes.length >= 2) {
+            newSizes.leftPanels = Math.round(sizes[0]);
+            newSizes.rightPanels = Math.round(sizes[1]);
+          }
+          break;
+      }
+      
+      debouncedSave(newSizes);
+    }, [settingsPanelSizes, debouncedSave, trackUserInteraction]);
+  }, [settingsPanelSizes, debouncedSave, trackUserInteraction]);
 
   // Remove the cleanup as it's handled by useDebounceCallback
 
-  return {
-    panelSizes,
+  const handlers = useMemo(() => ({
     handleBannerResize: createSizeHandler('banner'),
     handleMainContentResize: createSizeHandler('mainContent'),
     handleHorizontalResize: createSizeHandler('horizontal'),
+  }), [createSizeHandler]);
+
+  return {
+    panelSizes,
+    ...handlers,
     trackUserInteraction,
   };
 };
