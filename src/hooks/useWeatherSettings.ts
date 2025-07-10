@@ -45,7 +45,7 @@ export function useWeatherSettings() {
         .from('user_preferences')
         .select('weather_enabled, weather_city, weather_units, weather_update_interval')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (fetchError && fetchError.code !== 'PGRST116') {
         throw fetchError;

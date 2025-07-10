@@ -89,18 +89,26 @@ export function FavoritesListSection({
             </TooltipContent>
           </Tooltip>
         ) : (
-          <Button
-            variant="ghost"
-            size="sm" 
-            className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto w-full justify-between"
-            onClick={onToggle}
-          >
-            <div className="flex items-center">
+          <div className="flex items-center justify-between w-full">
+            <div 
+              className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto flex-1"
+              onClick={onToggle}
+            >
+              {isExpanded ? (
+                <ChevronDown className="h-3 w-3 mr-1" />
+              ) : (
+                <ChevronRight className="h-3 w-3 mr-1" />
+              )}
+              <Star className="h-3 w-3 mr-1" />
+              Favorites
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-sidebar-foreground/70">({notes.length})</span>
               {!isMobile && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-4 w-4 p-0 hover:bg-accent hover:text-accent-foreground transition-colors mr-1"
+                  className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
                   onClick={(e) => {
                     e.stopPropagation();
                     onCreateNote();
@@ -110,16 +118,8 @@ export function FavoritesListSection({
                   <Plus className="h-3 w-3" />
                 </Button>
               )}
-              {isExpanded ? (
-                <ChevronDown className="h-3 w-3 mr-1" />
-              ) : (
-                <ChevronRight className="h-3 w-3 mr-1" />
-              )}
-              <Star className="h-3 w-3 mr-1" />
-              Favorites
             </div>
-            <span className="text-xs">({notes.length})</span>
-          </Button>
+          </div>
         )}
       </div>
       

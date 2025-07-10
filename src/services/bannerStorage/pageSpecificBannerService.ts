@@ -30,7 +30,7 @@ export class PageBannerService {
         .select('*')
         .eq('user_id', session.user.id)
         .eq('page_path', pagePath)
-        .single();
+        .maybeSingle();
 
       let result: PageBannerSettings | null = null;
 

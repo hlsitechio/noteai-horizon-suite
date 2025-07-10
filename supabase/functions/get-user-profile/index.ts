@@ -48,7 +48,7 @@ serve(async (req) => {
       .from('user_profiles')
       .select('id, display_name, email, avatar_url, created_at')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     if (profileError) {
       console.error('Error fetching user profile:', profileError);
