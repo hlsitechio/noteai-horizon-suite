@@ -53,7 +53,7 @@ const Analytics = lazyWithRetry(() => import('../pages/Analytics'));
 const Settings = lazyWithRetry(() => import('../pages/settings'));
 const Chat = lazyWithRetry(() => import('../pages/Chat'));
 const VoiceChat = lazyWithRetry(() => import('../pages/VoiceChat'));
-const Calendar = lazyWithRetry(() => import('../pages/Calendar'));
+const Calendar = lazy(() => import('../pages/Calendar').then(module => ({ default: module.default })));
 const ProjectRealms = lazyWithRetry(() => import('../pages/ProjectRealms'));
 const ProjectDetail = lazyWithRetry(() => import('../pages/ProjectDetail'));
 const FolderDetail = lazyWithRetry(() => import('../pages/FolderDetail'));

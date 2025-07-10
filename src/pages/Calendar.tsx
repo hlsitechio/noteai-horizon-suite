@@ -11,6 +11,7 @@ import { CalendarNoteFormInline } from '../components/Calendar/CalendarNoteFormI
 import { CalendarEvent } from '../types/calendar';
 import { useCalendarEvents } from '../hooks/useCalendarEvents';
 import { useNotes } from '../contexts/NotesContext';
+
 const Calendar: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [viewDate, setViewDate] = useState(new Date());

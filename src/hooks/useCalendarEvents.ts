@@ -1,9 +1,10 @@
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CalendarEvent } from '../types/calendar';
 import { CalendarEventService } from '../services/calendarEventService';
 
 export const useCalendarEvents = () => {
+  console.log('useCalendarEvents hook called', { React });
   const [events, setEvents] = useState<CalendarEvent[]>([]);
 
   useEffect(() => {
