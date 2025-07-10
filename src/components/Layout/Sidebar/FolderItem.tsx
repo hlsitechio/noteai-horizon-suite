@@ -54,15 +54,17 @@ export function FolderItem({
         <Button variant="ghost" size="sm" asChild className="flex-1 h-auto p-1">
           <Link 
             to={`/app/folders/${folder.id}`}
-            className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full"
+            className="flex items-center justify-between hover:bg-accent hover:text-accent-foreground transition-colors w-full"
           >
-            <div 
-              className="w-2 h-2 rounded-full mr-2 flex-shrink-0" 
-              style={{ backgroundColor: folder.color }}
-            />
-            <Folder className="h-3 w-3 mr-2 flex-shrink-0" />
-            <span className="truncate text-xs flex-1">{folder.name}</span>
-            <span className="text-xs text-sidebar-foreground/40 ml-2">
+            <div className="flex items-center">
+              <div 
+                className="w-2 h-2 rounded-full mr-2 flex-shrink-0" 
+                style={{ backgroundColor: folder.color }}
+              />
+              <Folder className="h-3 w-3 mr-2 flex-shrink-0" />
+              <span className="truncate text-xs">{folder.name}</span>
+            </div>
+            <span className="text-xs text-sidebar-foreground/40">
               ({folderNotes.length})
             </span>
           </Link>
