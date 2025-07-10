@@ -8,6 +8,7 @@ import BlockFormattingGroup from './toolbar/BlockFormattingGroup';
 import FontControlsGroup from './toolbar/FontControlsGroup';
 import MediaToolsGroup from './toolbar/MediaToolsGroup';
 import ToolbarActionsGroup from './toolbar/ToolbarActionsGroup';
+import AIAssistantBar from './toolbar/AIAssistantBar';
 
 interface SmartToolbarProps {
   onFormatClick: (formatId: string, event: React.MouseEvent) => void;
@@ -40,6 +41,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
 }) => {
   const [showSpeechToText, setShowSpeechToText] = useState(false);
   const [showOCR, setShowOCR] = useState(false);
+  const [showAIBar, setShowAIBar] = useState(false);
   const [fontSize, setFontSize] = useState(16);
   const [fontFamily, setFontFamily] = useState('inter');
 
@@ -67,6 +69,13 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
     if (onFontChange) {
       onFontChange(newFontFamily, fontSize);
     }
+  };
+
+  const handleAIProcess = (action: string, customInstruction?: string) => {
+    // Handle AI processing logic here
+    console.log('AI Action:', action, customInstruction);
+    // You can integrate this with your existing AI functionality
+    onAIClick();
   };
 
 
@@ -108,16 +117,24 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
 
         <Separator orientation="vertical" className="h-6 mx-2 bg-gray-400/50" />
 
-        {/* AI Assistant & Focus Mode */}
+        {/* AI Assistant & Actions */}
         <ToolbarActionsGroup
-          selectedText={selectedText}
-          onAIClick={onAIClick}
+          onAIClick={() => setShowAIBar(!showAIBar)}
           onFocusModeToggle={onFocusModeToggle}
           onSave={onSave}
           canSave={canSave}
           isSaving={isSaving}
         />
       </div>
+
+      {/* AI Assistant Bar */}
+      {showAIBar && (
+        <AIAssistantBar
+          selectedText={selectedText}
+          onAIProcess={handleAIProcess}
+          onClose={() => setShowAIBar(false)}
+        />
+      )}
 
       {/* Speech to Text Modal */}
       <SpeechToText

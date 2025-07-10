@@ -1,11 +1,9 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { EyeIcon } from '@heroicons/react/24/outline';
-import AIAssistantControl from './AIAssistantControl';
+import { EyeIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import SaveButton from './SaveButton';
 
 interface ToolbarActionsGroupProps {
-  selectedText?: string;
   onAIClick: () => void;
   onFocusModeToggle?: () => void;
   onSave: () => void;
@@ -14,7 +12,6 @@ interface ToolbarActionsGroupProps {
 }
 
 const ToolbarActionsGroup: React.FC<ToolbarActionsGroupProps> = ({
-  selectedText,
   onAIClick,
   onFocusModeToggle,
   onSave,
@@ -23,10 +20,17 @@ const ToolbarActionsGroup: React.FC<ToolbarActionsGroupProps> = ({
 }) => {
   return (
     <div className="flex items-center gap-2">
-      <AIAssistantControl
-        selectedText={selectedText}
-        onAIClick={onAIClick}
-      />
+      {/* AI Assistant Button */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={onAIClick}
+        className="h-8 px-3 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 hover:from-purple-600 hover:via-blue-600 hover:to-cyan-600 text-white border border-purple-400/30 shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg font-medium"
+        title="Open AI Assistant"
+      >
+        <SparklesIcon className="w-4 h-4 mr-1.5" />
+        AI Assistant
+      </Button>
 
       {/* Focus Mode Button */}
       {onFocusModeToggle && (
