@@ -80,3 +80,12 @@ verify_jwt = true
 
 [functions.ai-writing-assistant]
 verify_jwt = true
+
+[functions.generate-banner-image]
+verify_jwt = true
+
+[functions.banner-storage]
+verify_jwt = true
+
+[functions.banner-upload]
+verify_jwt = true

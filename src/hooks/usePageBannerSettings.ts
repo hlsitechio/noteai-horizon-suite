@@ -78,19 +78,82 @@ export const usePageBannerSettings = () => {
     }
   };
 
-  const handleImageUpload = (file: File) => {
-    // This would be handled by the banner service to upload and return URL
-    console.log('Image uploaded:', file.name);
+  const handleImageUpload = async (file: File) => {
+    try {
+      const uploadedUrl = await PageBannerService.uploadBannerFile(file, pagePath);
+      if (uploadedUrl) {
+        await updateBannerSelection(uploadedUrl, 'image');
+        toast({
+          title: "Banner Uploaded",
+          description: `Banner uploaded and set for ${pagePath} page.`,
+        });
+      } else {
+        toast({
+          title: "Upload Failed",
+          description: "Failed to upload banner. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Banner upload error:', error);
+      toast({
+        title: "Upload Failed",
+        description: "Failed to upload banner. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleVideoUpload = (file: File) => {
-    // This would be handled by the banner service to upload and return URL
-    console.log('Video uploaded:', file.name);
+  const handleVideoUpload = async (file: File) => {
+    try {
+      const uploadedUrl = await PageBannerService.uploadBannerFile(file, pagePath);
+      if (uploadedUrl) {
+        await updateBannerSelection(uploadedUrl, 'video');
+        toast({
+          title: "Video Banner Uploaded",
+          description: `Video banner uploaded and set for ${pagePath} page.`,
+        });
+      } else {
+        toast({
+          title: "Upload Failed",
+          description: "Failed to upload video banner. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Video upload error:', error);
+      toast({
+        title: "Upload Failed",
+        description: "Failed to upload video banner. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleAIGenerate = (prompt: string) => {
-    // This would be handled by the AI service to generate and return URL
-    console.log('AI Generate with prompt:', prompt);
+  const handleAIGenerate = async (prompt: string) => {
+    try {
+      const generatedUrl = await PageBannerService.generateAIBanner(prompt, pagePath);
+      if (generatedUrl) {
+        await updateBannerSelection(generatedUrl, 'image');
+        toast({
+          title: "AI Banner Generated",
+          description: `AI banner generated and set for ${pagePath} page.`,
+        });
+      } else {
+        toast({
+          title: "Generation Failed",
+          description: "Failed to generate AI banner. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('AI generation error:', error);
+      toast({
+        title: "Generation Failed",
+        description: "Failed to generate AI banner. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleImageSelect = async (imageUrl: string) => {
