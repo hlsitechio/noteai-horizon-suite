@@ -128,17 +128,6 @@ export function NotesListSection({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between px-2">
-        {!isMobile && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
-            onClick={onCreateNote}
-            title="Create Note"
-          >
-            <Plus className="h-3 w-3" />
-          </Button>
-        )}
         {isMobile ? (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -163,6 +152,20 @@ export function NotesListSection({
             className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto"
             onClick={onToggle}
           >
+            {!isMobile && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-4 w-4 p-0 hover:bg-accent hover:text-accent-foreground transition-colors mr-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCreateNote();
+                }}
+                title="Create Note"
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+            )}
             {isExpanded ? (
               <ChevronDown className="h-3 w-3 mr-1" />
             ) : (
