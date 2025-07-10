@@ -15,7 +15,11 @@ export function DroppableContainer({ id, children, className = '' }: DroppableCo
   return (
     <div
       ref={setNodeRef}
-      className={`${className} ${isOver ? 'bg-accent/20 border-2 border-dashed border-accent' : ''} transition-all duration-200`}
+      className={`${className} transition-all duration-200 ${
+        isOver 
+          ? 'bg-primary/10 border-2 border-dashed border-primary/60 rounded-md' 
+          : 'border-2 border-transparent'
+      }`}
     >
       {children}
     </div>

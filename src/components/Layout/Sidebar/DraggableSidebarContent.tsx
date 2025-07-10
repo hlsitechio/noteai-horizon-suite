@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   DndContext,
-  closestCenter,
+  closestCorners,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -10,6 +10,7 @@ import {
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
+  rectIntersection,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -37,13 +38,25 @@ export function DraggableNotesContext({
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, // Require dragging 8px before activating
+        distance: 3, // Reduced for better responsiveness
       },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  // Custom collision detection for better accuracy in vertical sidebar layout
+  const customCollisionDetection = (args: any) => {
+    // First try rectangle intersection for better accuracy
+    const rectIntersectionCollisions = rectIntersection(args);
+    if (rectIntersectionCollisions.length > 0) {
+      return rectIntersectionCollisions;
+    }
+    
+    // Fallback to closest corners
+    return closestCorners(args);
+  };
 
   const handleDragStart = (event: DragStartEvent) => {
     console.log('Drag started:', event);
@@ -61,7 +74,7 @@ export function DraggableNotesContext({
     setActiveNote(null);
 
     if (!over || active.id === over.id) {
-      console.log('No valid drop target');
+      console.log('No valid drop target, over:', over);
       return;
     }
 
@@ -98,14 +111,14 @@ export function DraggableNotesContext({
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={customCollisionDetection}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
       {children}
       <DragOverlay>
         {activeNote ? (
-          <div className="bg-card border rounded p-2 shadow-lg opacity-90">
+          <div className="bg-card border border-primary/50 rounded p-2 shadow-lg opacity-95 transform rotate-2">
             <span className="text-sm font-medium">{activeNote.title}</span>
           </div>
         ) : null}
