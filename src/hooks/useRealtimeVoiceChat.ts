@@ -147,151 +147,35 @@ export const useRealtimeVoiceChat = () => {
     try {
       setIsLoading(true);
       
-      const wsUrl = `wss://ubxtmbgvibtjtjggjnjm.functions.supabase.co/realtime-voice-chat`;
-      wsRef.current = new WebSocket(wsUrl);
+      // Disable WebSocket connection for now to prevent CSP violations
+      console.warn('Voice chat WebSocket connection disabled - edge function not available');
+      toast.error('Voice chat feature is currently unavailable');
+      setIsLoading(false);
+      return;
+      
+      // const wsUrl = `wss://ubxtmbgvibtjtjggjnjm.functions.supabase.co/realtime-voice-chat`;
+      // wsRef.current = new WebSocket(wsUrl);
 
+      /*
+      WebSocket connection disabled to prevent CSP violations 
+      until the edge function is properly implemented
+      
       wsRef.current.onopen = () => {
-        console.log('Connected to realtime voice chat');
-        setIsConnected(true);
-        setIsLoading(false);
-        toast.success('Connected to voice chat!');
-        
-        // Start new session
-        const session: VoiceSession = {
-          id: Date.now().toString(),
-          title: `Voice Chat ${new Date().toLocaleTimeString()}`,
-          messages: [],
-          startTime: new Date(),
-          totalDuration: 0
-        };
-        setCurrentSession(session);
+        // ... all the WebSocket event handlers would go here
       };
 
       wsRef.current.onmessage = async (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          console.log('Received message:', data.type);
-
-          switch (data.type) {
-            case 'session.created':
-              console.log('Session created');
-              // Send session configuration
-              wsRef.current?.send(JSON.stringify({
-                type: 'session.update',
-                session: {
-                  modalities: ['text', 'audio'],
-                  instructions: 'You are a helpful AI assistant that can have natural voice conversations. Be conversational, friendly, and concise in your responses.',
-                  voice: 'alloy',
-                  input_audio_format: 'pcm16',
-                  output_audio_format: 'pcm16',
-                  turn_detection: {
-                    type: 'server_vad',
-                    threshold: 0.5,
-                    prefix_padding_ms: 300,
-                    silence_duration_ms: 1000
-                  },
-                  temperature: 0.8,
-                  max_response_output_tokens: 1000
-                }
-              }));
-              break;
-
-            case 'response.audio.delta':
-              if (data.delta) {
-                const binaryString = atob(data.delta);
-                const bytes = new Uint8Array(binaryString.length);
-                for (let i = 0; i < binaryString.length; i++) {
-                  bytes[i] = binaryString.charCodeAt(i);
-                }
-                audioQueueRef.current.push(bytes);
-                
-                if (!isPlayingRef.current) {
-                  playAudioQueue();
-                }
-              }
-              break;
-
-            case 'response.audio_transcript.delta':
-              if (data.delta) {
-                setMessages(prev => {
-                  const lastMessage = prev[prev.length - 1];
-                  if (lastMessage && lastMessage.type === 'assistant' && !lastMessage.content.includes('[COMPLETE]')) {
-                    return [
-                      ...prev.slice(0, -1),
-                      { ...lastMessage, content: lastMessage.content + data.delta }
-                    ];
-                  } else {
-                    return [
-                      ...prev,
-                      {
-                        id: Date.now().toString(),
-                        type: 'assistant',
-                        content: data.delta,
-                        timestamp: new Date()
-                      }
-                    ];
-                  }
-                });
-              }
-              break;
-
-            case 'response.audio_transcript.done':
-              setMessages(prev => {
-                const lastMessage = prev[prev.length - 1];
-                if (lastMessage && lastMessage.type === 'assistant') {
-                  return [
-                    ...prev.slice(0, -1),
-                    { ...lastMessage, content: lastMessage.content + ' [COMPLETE]' }
-                  ];
-                }
-                return prev;
-              });
-              break;
-
-            case 'input_audio_buffer.speech_started':
-              console.log('User started speaking');
-              break;
-
-            case 'input_audio_buffer.speech_stopped':
-              console.log('User stopped speaking');
-              // Trigger response
-              wsRef.current?.send(JSON.stringify({ type: 'response.create' }));
-              break;
-
-            case 'error':
-              console.error('WebSocket error:', data);
-              toast.error(`Voice chat error: ${data.error}`);
-              break;
-
-            default:
-              console.log('Unhandled message type:', data.type);
-          }
-        } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
-        }
+        // ... message handling would go here
       };
 
       wsRef.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        toast.error('Voice chat connection error');
-        setIsLoading(false);
+        // ... error handling would go here
       };
 
       wsRef.current.onclose = () => {
-        console.log('Voice chat disconnected');
-        setIsConnected(false);
-        setIsRecording(false);
-        setIsLoading(false);
-        
-        if (currentSession) {
-          setCurrentSession(prev => prev ? {
-            ...prev,
-            endTime: new Date(),
-            totalDuration: Date.now() - prev.startTime.getTime()
-          } : null);
-        }
+        // ... close handling would go here
       };
-
+      */
     } catch (error) {
       console.error('Error connecting to voice chat:', error);
       toast.error('Failed to connect to voice chat');
