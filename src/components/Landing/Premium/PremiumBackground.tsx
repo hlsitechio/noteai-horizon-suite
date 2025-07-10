@@ -1,74 +1,108 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import ParticleSystem from './ParticleSystem';
+import QuantumWebGLBackground from './QuantumWebGLBackground';
+import SimpleParticleField from './SimpleParticleField';
 import ScrollLighting from './ScrollLighting';
 
 interface PremiumBackgroundProps {
   mousePosition: { x: number; y: number };
+  scrollProgress?: number;
 }
 
-const PremiumBackground: React.FC<PremiumBackgroundProps> = ({ mousePosition }) => {
+const PremiumBackground: React.FC<PremiumBackgroundProps> = ({ 
+  mousePosition, 
+  scrollProgress = 0 
+}) => {
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden">
-      {/* Advanced particle system */}
-      <ParticleSystem density={80} speed={0.8} interactive={true} />
+      {/* Revolutionary WebGL Quantum Aurora Background */}
+      <QuantumWebGLBackground 
+        mousePosition={mousePosition} 
+        scrollProgress={scrollProgress}
+      />
       
-      {/* Dynamic scroll lighting */}
-      <ScrollLighting intensity={1.2}>
+      {/* Quantum Particle Field */}
+      <SimpleParticleField 
+        mousePosition={mousePosition} 
+        intensity={1.5}
+      />
+      
+      {/* Quantum scroll lighting */}
+      <ScrollLighting 
+        intensity={2} 
+        colorPrimary="165 100% 65%" 
+        colorSecondary="45 100% 70%"
+      >
         <div />
       </ScrollLighting>
       
-      {/* Neural mesh background */}
-      <div className="absolute inset-0 bg-neural-mesh opacity-60" />
-      
-      {/* Cyberpunk grid */}
-      <div className="absolute inset-0 bg-cyberpunk-grid opacity-20" />
-      
-      {/* Dynamic gradient overlay */}
+      {/* Quantum gradient overlay with mouse interaction */}
       <motion.div 
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 opacity-20 mix-blend-overlay"
         style={{
           background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, 
-            hsl(280 100% 70% / 0.3), 
-            hsl(195 100% 50% / 0.2), 
-            transparent 50%)`
+            hsl(165 100% 65% / 0.4), 
+            hsl(45 100% 70% / 0.3), 
+            hsl(290 100% 75% / 0.2),
+            transparent 60%)`
         }}
         animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.3, 0.5, 0.3]
+          scale: [1, 1.2, 1],
+          opacity: [0.2, 0.4, 0.2]
         }}
         transition={{
-          duration: 8,
+          duration: 12,
           repeat: Infinity,
           ease: "easeInOut"
         }}
       />
       
-      {/* Floating holographic elements */}
+      {/* Quantum energy orbs */}
       <div className="absolute inset-0">
-        {Array.from({ length: 15 }).map((_, i) => (
+        {Array.from({ length: 8 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-primary/40 rounded-full neural-float"
+            className="absolute rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              filter: 'blur(1px)'
+              width: `${Math.random() * 6 + 2}px`,
+              height: `${Math.random() * 6 + 2}px`,
+              background: i % 3 === 0 
+                ? 'hsl(165 100% 65% / 0.6)' 
+                : i % 3 === 1 
+                ? 'hsl(45 100% 70% / 0.6)' 
+                : 'hsl(290 100% 75% / 0.6)',
+              filter: 'blur(1px)',
+              boxShadow: '0 0 20px currentColor'
             }}
             animate={{
-              y: [0, -100, 0],
+              y: [0, -150, 0],
+              x: [0, Math.sin(i) * 50, 0],
               opacity: [0, 1, 0],
-              scale: [0.5, 1.5, 0.5]
+              scale: [0.3, 1.8, 0.3]
             }}
             transition={{
-              duration: 6 + Math.random() * 4,
-              delay: i * 0.4,
+              duration: 8 + Math.random() * 6,
+              delay: i * 0.8,
               repeat: Infinity,
               ease: "easeInOut"
             }}
           />
         ))}
       </div>
+      
+      {/* Quantum field distortion */}
+      <div 
+        className="absolute inset-0 opacity-10"
+        style={{
+          background: `conic-gradient(from ${mousePosition.x * 0.1}deg at 50% 50%, 
+            hsl(165 100% 65%), 
+            hsl(45 100% 70%), 
+            hsl(290 100% 75%), 
+            hsl(165 100% 65%))`
+        }}
+      />
     </div>
   );
 };

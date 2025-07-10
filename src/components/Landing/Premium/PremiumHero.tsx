@@ -7,6 +7,7 @@ import { Badge } from '../../ui/badge';
 import NeuralNetwork3D from './NeuralNetwork3D';
 import HolographicText from './HolographicText';
 import CyberpunkCard from './CyberpunkCard';
+import QuantumTextField from './QuantumTextField';
 
 const PremiumHero: React.FC = () => {
   const containerVariants = {
@@ -58,18 +59,23 @@ const PremiumHero: React.FC = () => {
             className="text-6xl md:text-7xl lg:text-8xl font-neural font-black mb-6 leading-tight"
             glitchEffect={true}
           >
-            <span className="block">Neural Mind</span>
-            <span className="block text-neural-glow">Palace</span>
+            <span className="block bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">Quantum</span>
+            <span className="block bg-gradient-to-r from-accent via-primary to-secondary bg-clip-text text-transparent">Aurora</span>
           </HolographicText>
         </motion.div>
 
         {/* Subtitle */}
-        <motion.p 
+        <motion.div 
           variants={itemVariants}
-          className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed"
+          className="mb-8 max-w-2xl mx-auto"
         >
-          Online Note AI, an open-source platform, serves as an all-in-one replacement for Notion, Obsidian, and traditional note-taking apps.
-        </motion.p>
+          <QuantumTextField
+            text="Online Note AI, an open-source platform, serves as an all-in-one replacement for Notion, Obsidian, and traditional note-taking apps."
+            className="text-lg md:text-xl text-center leading-relaxed"
+            speed={0.3}
+            quantumEffect={true}
+          />
+        </motion.div>
 
         {/* CTA Button - Huly Style */}
         <motion.div 
@@ -101,10 +107,16 @@ const PremiumHero: React.FC = () => {
               />
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="text-center bg-background/20 backdrop-blur-sm rounded-2xl p-8 border border-primary/30">
-                  <HolographicText className="text-2xl font-cyber font-bold mb-2">
-                    AI-Powered Neural Network
-                  </HolographicText>
-                  <p className="text-foreground/80 font-cyber">Your thoughts, connected intelligently</p>
+                  <QuantumTextField
+                    text="AI-Powered Quantum Network"
+                    className="text-2xl font-cyber font-bold mb-2"
+                    speed={0.4}
+                  />
+                  <QuantumTextField
+                    text="Your thoughts, connected across dimensions"
+                    className="text-foreground/80 font-cyber"
+                    speed={0.2}
+                  />
                 </div>
               </div>
             </div>

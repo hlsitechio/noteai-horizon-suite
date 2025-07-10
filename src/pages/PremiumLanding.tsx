@@ -13,7 +13,7 @@ import { AnalyticsService } from '../services/analyticsService';
 
 const PremiumLanding: React.FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
   
   // Parallax effects
   const backgroundY = useTransform(scrollY, [0, 1000], [0, -300]);
@@ -46,8 +46,11 @@ const PremiumLanding: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Revolutionary Neural Background */}
-      <PremiumBackground mousePosition={mousePosition} />
+      {/* Revolutionary Quantum Aurora Background */}
+      <PremiumBackground 
+        mousePosition={mousePosition} 
+        scrollProgress={scrollYProgress.get()}
+      />
       
       {/* Neural-enhanced Navigation */}
       <PremiumNavigation mousePosition={mousePosition} />

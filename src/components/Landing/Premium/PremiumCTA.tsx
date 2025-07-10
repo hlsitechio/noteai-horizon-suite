@@ -61,21 +61,21 @@ const PremiumCTA: React.FC = () => {
               >
                 <div className="inline-flex items-center bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 rounded-full px-8 py-4 mb-12 neural-float">
                   <Sparkles className="w-6 h-6 text-primary mr-3 neural-pulse" />
-                  <span className="text-lg font-neural font-bold">TRANSCEND INTO THE NEURAL REALM</span>
+                  <span className="text-lg font-neural font-bold">TRANSCEND INTO THE QUANTUM DIMENSION</span>
                 </div>
                 
                 <HolographicText 
                   className="text-6xl md:text-7xl lg:text-8xl font-neural font-black mb-8 leading-tight"
                   glitchEffect={true}
                 >
-                  <span className="block">JOIN THE</span>
-                  <span className="block text-neural-glow">REVOLUTION</span>
+                  <span className="block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">JOIN THE</span>
+                  <span className="block bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">QUANTUM AGE</span>
                 </HolographicText>
                 
                 <p className="text-2xl text-foreground/80 max-w-4xl mx-auto leading-relaxed font-cyber">
                   Step into the future of{' '}
-                  <span className="text-holographic font-neural font-bold">neural productivity</span>{' '}
-                  where your thoughts become reality through AI-powered intelligence.
+                  <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent font-neural font-bold">quantum productivity</span>{' '}
+                  where your thoughts transcend reality through hyperdimensional intelligence.
                 </p>
               </motion.div>
 
@@ -89,18 +89,18 @@ const PremiumCTA: React.FC = () => {
                 {[
                   {
                     icon: Users,
-                    title: "100K+ Neural Minds",
-                    description: "Connected across the digital realm"
+                    title: "100K+ Quantum Minds",
+                    description: "Connected across hyperdimensional space"
                   },
                   {
                     icon: Shield,
-                    title: "Quantum Encrypted",
-                    description: "Military-grade neural protection"
+                    title: "Aurora Encrypted",
+                    description: "Quantum-grade hyperdimensional protection"
                   },
                   {
                     icon: Sparkles,
-                    title: "AI Singularity Ready",
-                    description: "Next-generation consciousness interface"
+                    title: "Quantum Singularity",
+                    description: "Transcendental consciousness interface"
                   }
                 ].map((item, index) => (
                   <FloatingCard3D key={index} depth={25} glowIntensity={0.8}>
@@ -128,7 +128,7 @@ const PremiumCTA: React.FC = () => {
                       size="lg" 
                       className="bg-gradient-to-r from-primary to-accent text-primary-foreground px-16 py-8 text-xl font-neural font-bold rounded-2xl hover:shadow-glow transition-all duration-500 neural-float group"
                     >
-                      ENTER THE MATRIX
+                      ENTER THE QUANTUM REALM
                       <ArrowRight className="w-6 h-6 ml-4 group-hover:translate-x-2 transition-transform duration-300" />
                     </Button>
                   </FloatingCard3D>
@@ -141,7 +141,7 @@ const PremiumCTA: React.FC = () => {
                       variant="outline" 
                       className="border-2 border-primary/50 text-primary px-16 py-8 text-xl font-neural font-bold rounded-2xl hover:bg-primary/10 hover:border-primary transition-all duration-500 neural-float"
                     >
-                      REQUEST NEURAL ACCESS
+                      REQUEST QUANTUM ACCESS
                     </Button>
                   </FloatingCard3D>
                 </Link>
@@ -155,12 +155,12 @@ const PremiumCTA: React.FC = () => {
                 className="text-center"
               >
                 <p className="text-lg text-foreground/60 mb-6 font-cyber">
-                  ✓ Instant Neural Integration • ✓ No Credit Card Required • ✓ Quantum Security Guaranteed
+                  ✓ Instant Quantum Integration • ✓ No Credit Card Required • ✓ Aurora Security Guaranteed
                 </p>
                 <div className="inline-flex items-center space-x-8 opacity-70">
-                  <span className="text-sm font-neural font-bold">NEURAL CERTIFIED</span>
-                  <span className="text-sm font-neural font-bold">QUANTUM COMPLIANT</span>
-                  <span className="text-sm font-neural font-bold">AI SINGULARITY READY</span>
+                  <span className="text-sm font-neural font-bold">QUANTUM CERTIFIED</span>
+                  <span className="text-sm font-neural font-bold">AURORA COMPLIANT</span>
+                  <span className="text-sm font-neural font-bold">HYPERDIMENSIONAL READY</span>
                 </div>
               </motion.div>
             </CyberpunkCard>
