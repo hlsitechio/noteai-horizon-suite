@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import ConstellationNetwork from '../components/Landing/Constellation/ConstellationNetwork';
 import DataFlowBackground from '../components/Landing/Constellation/DataFlowBackground';
 import ParallaxSection from '../components/Landing/Constellation/ParallaxSection';
+import ScrollTrailStars from '../components/Landing/Constellation/ScrollTrailStars';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowRight, Sparkles, Network, TrendingUp, Eye, Shield, Zap, Globe, Star, CheckCircle, Users, Award } from 'lucide-react';
@@ -46,6 +47,9 @@ const ConstellationLanding: React.FC = () => {
 
   return (
     <div ref={containerRef} className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90 text-foreground overflow-hidden">
+      {/* Scroll Trail Stars Effect */}
+      <ScrollTrailStars mousePosition={mousePosition} />
+      
       {/* Constellation Data Flow Background with Parallax */}
       <motion.div style={{ y: y1, scale, opacity }}>
         <DataFlowBackground 
