@@ -81,6 +81,8 @@ const config = {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Playfair Display', 'serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        neural: ['Orbitron', 'Exo 2', 'sans-serif'],
+        cyber: ['Exo 2', 'Inter', 'sans-serif'],
       },
       fontSize: {
         'hero': 'var(--font-size-hero)',

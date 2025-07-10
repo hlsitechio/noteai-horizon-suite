@@ -4,6 +4,9 @@ import { ArrowRight, Sparkles, Zap, Shield, Rocket } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../../ui/button';
 import { Badge } from '../../ui/badge';
+import NeuralNetwork3D from './NeuralNetwork3D';
+import HolographicText from './HolographicText';
+import CyberpunkCard from './CyberpunkCard';
 
 const PremiumHero: React.FC = () => {
   const containerVariants = {
@@ -49,16 +52,16 @@ const PremiumHero: React.FC = () => {
         animate="visible"
         className="max-w-5xl mx-auto text-center"
       >
-        {/* Main Headline - Huly Style */}
-        <motion.h1 
-          variants={itemVariants}
-          className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight"
-        >
-          <span className="text-foreground">Everything App</span>
-          <br />
-          <span className="text-foreground">for your </span>
-          <span className="text-primary">notes</span>
-        </motion.h1>
+        {/* Neural Mind Palace Headline */}
+        <motion.div variants={itemVariants} className="mb-8">
+          <HolographicText 
+            className="text-6xl md:text-7xl lg:text-8xl font-neural font-black mb-6 leading-tight"
+            glitchEffect={true}
+          >
+            <span className="block">Neural Mind</span>
+            <span className="block text-neural-glow">Palace</span>
+          </HolographicText>
+        </motion.div>
 
         {/* Subtitle */}
         <motion.p 
@@ -83,30 +86,29 @@ const PremiumHero: React.FC = () => {
           </Link>
         </motion.div>
 
-        {/* Product Screenshot Placeholder */}
+        {/* Neural Network Visualization */}
         <motion.div 
           variants={itemVariants}
-          className="relative max-w-4xl mx-auto"
+          className="relative max-w-5xl mx-auto"
         >
-          <div className="relative bg-card border border-border rounded-2xl overflow-hidden shadow-2xl">
-            {/* Mock Interface */}
-            <div className="bg-muted/50 p-4 border-b border-border">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              </div>
-            </div>
-            <div className="aspect-video bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-24 h-24 bg-primary/20 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                  <Sparkles className="w-12 h-12 text-primary" />
+          <CyberpunkCard variant="neural" className="p-8">
+            <div className="relative">
+              <NeuralNetwork3D 
+                nodeCount={40}
+                width={1000}
+                height={400}
+                interactive={true}
+              />
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="text-center bg-background/20 backdrop-blur-sm rounded-2xl p-8 border border-primary/30">
+                  <HolographicText className="text-2xl font-cyber font-bold mb-2">
+                    AI-Powered Neural Network
+                  </HolographicText>
+                  <p className="text-foreground/80 font-cyber">Your thoughts, connected intelligently</p>
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">Your AI Note-Taking Workspace</h3>
-                <p className="text-muted-foreground">Intelligent, organized, and always accessible</p>
               </div>
             </div>
-          </div>
+          </CyberpunkCard>
         </motion.div>
 
         {/* Feature List - Huly Style */}
