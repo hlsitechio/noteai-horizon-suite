@@ -2,6 +2,7 @@ import React from 'react';
 import { TabsContent } from '@/components/ui/tabs';
 import { AdvancedColorPicker } from '@/components/Settings/AdvancedColorPicker';
 import DynamicAccentSection from '@/components/Settings/DynamicAccentSection';
+import { ThemePresets } from '@/components/Settings/ThemePresets';
 
 interface ThemesTabContentProps {
   accentColor: string;
@@ -14,6 +15,7 @@ export const ThemesTabContent: React.FC<ThemesTabContentProps> = ({
 }) => {
   return (
     <TabsContent value="themes" className="space-y-6">
+      <ThemePresets />
       <DynamicAccentSection />
       <AdvancedColorPicker 
         currentColor={accentColor}
