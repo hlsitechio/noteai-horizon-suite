@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useAIWritingAssistant, AIMode, AITone } from '@/hooks/useAIWritingAssistant';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -30,7 +31,7 @@ const toneOptions = [
   { id: 'casual', label: 'Casual', icon: '😊' },
   { id: 'creative', label: 'Creative', icon: '🎨' },
   { id: 'academic', label: 'Academic', icon: '🎓' },
-  { id: 'persuasive', label: 'Persuasive', icon: '💪' },
+  { id: 'formal', label: 'Formal', icon: '🎩' },
   { id: 'friendly', label: 'Friendly', icon: '🌟' },
 ];
 
@@ -48,46 +49,74 @@ const TextSelectionContextMenu: React.FC<TextSelectionContextMenuProps> = ({
   position,
   onClose
 }) => {
-  const [isProcessing, setIsProcessing] = useState(false);
   const [activeAction, setActiveAction] = useState<string | null>(null);
-
-  const simulateAIProcessing = async (action: string, option?: string): Promise<string> => {
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    switch (action) {
-      case 'tone':
-        return `[${option?.charAt(0).toUpperCase()}${option?.slice(1)} tone] ${selectedText}`;
-      case 'style-simplify':
-        return selectedText.split(' ').slice(0, Math.max(5, Math.floor(selectedText.split(' ').length / 2))).join(' ') + '.';
-      case 'style-elaborate':
-        return `${selectedText} This concept deserves deeper exploration, as it encompasses multiple dimensions that warrant careful consideration and analysis.`;
-      case 'make-longer':
-        return `${selectedText} Furthermore, this point can be expanded with additional context and supporting details that provide a more comprehensive understanding of the subject matter.`;
-      case 'make-shorter':
-        return selectedText.split(' ').slice(0, Math.max(3, Math.floor(selectedText.split(' ').length / 3))).join(' ') + '...';
-      case 'improve':
-        return `Enhanced: ${selectedText.charAt(0).toUpperCase() + selectedText.slice(1)}`;
-      case 'continue':
-        return `${selectedText} Additionally, this leads to further insights and opens up new possibilities for exploration and development.`;
-      default:
-        return `AI-processed: ${selectedText}`;
-    }
-  };
+  const { 
+    enhanceText, 
+    expandText, 
+    rewriteText, 
+    isLoading,
+    processWithAI 
+  } = useAIWritingAssistant();
 
   const handleAction = async (action: string, option?: string) => {
     if (!selectedText) return;
     
-    setIsProcessing(true);
     setActiveAction(action);
     
     try {
-      const result = await simulateAIProcessing(action, option);
+      let result: string;
+      
+      switch (action) {
+        case 'improve':
+          result = await enhanceText(selectedText);
+          break;
+        case 'continue':
+          result = await expandText(selectedText);
+          break;
+        case 'tone':
+          result = await rewriteText(selectedText, option as AITone);
+          break;
+        case 'make-longer':
+          result = await processWithAI({
+            mode: 'expand' as AIMode,
+            content: '',
+            selectedText,
+            tone: 'professional'
+          });
+          break;
+        case 'make-shorter':
+          result = await processWithAI({
+            mode: 'summarize' as AIMode,
+            content: selectedText,
+            tone: 'professional',
+            length: 'short'
+          });
+          break;
+        case 'style-simplify':
+          result = await processWithAI({
+            mode: 'rewrite' as AIMode,
+            content: '',
+            selectedText,
+            tone: 'casual'
+          });
+          break;
+        case 'style-elaborate':
+          result = await processWithAI({
+            mode: 'expand' as AIMode,
+            content: '',
+            selectedText,
+            tone: 'academic'
+          });
+          break;
+        default:
+          result = await enhanceText(selectedText);
+      }
+      
       onTextReplace(result);
       onClose();
     } catch (error) {
       console.error('AI processing failed:', error);
     } finally {
-      setIsProcessing(false);
       setActiveAction(null);
     }
   };
@@ -141,7 +170,7 @@ const TextSelectionContextMenu: React.FC<TextSelectionContextMenuProps> = ({
           </div>
         </div>
 
-        {isProcessing ? (
+        {isLoading ? (
           <div className="flex items-center justify-center py-8">
             <div className="text-center">
               <div className="w-8 h-8 bg-purple-500 rounded-full animate-pulse flex items-center justify-center mx-auto mb-2">

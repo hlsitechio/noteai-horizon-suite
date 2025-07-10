@@ -33,7 +33,7 @@ interface SmartToolbarProps {
   onFontChange?: (fontFamily: string, fontSize: number) => void;
   onFocusModeToggle?: () => void;
   activeFormats: Set<string>;
-  onAdvancedAI?: () => void;
+  
   selectedText?: string;
   canSave?: boolean;
   isSaving?: boolean;
@@ -48,7 +48,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
   onFontChange,
   onFocusModeToggle,
   activeFormats,
-  onAdvancedAI,
+  
   selectedText,
   canSave = true,
   isSaving = false
@@ -181,18 +181,6 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
           )}
 
           {/* Save Note Button */}
-        {/* Advanced AI Button */}
-        {onAdvancedAI && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onAdvancedAI}
-            className="text-purple-600 border-purple-200 hover:bg-purple-50"
-          >
-            <Brain className="h-4 w-4 mr-1" />
-            Advanced AI
-          </Button>
-        )}
 
         <SaveButton
             onSave={onSave}

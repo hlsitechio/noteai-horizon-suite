@@ -5,7 +5,7 @@ import TextSelectionContextMenu from './TextSelectionContextMenu';
 import EditorContent from './components/EditorContent';
 import ResizableImage from './ResizableImage';
 import AIAssistant from '../../pages/Editor/ai/AIAssistant';
-import AIWritingPanel from './AIWritingPanel';
+
 import { useOptimizedRichTextEditor } from './hooks/useOptimizedRichTextEditor';
 
 interface RichTextEditorProps {
@@ -29,8 +29,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   isSaving = false,
   cursorPosition = 0
 }) => {
-  // Enhanced AI state
-  const [showAdvancedAI, setShowAdvancedAI] = useState(false);
   // Use the optimized hook for all editor functionality
   const {
     showAIAssistant,
@@ -72,7 +70,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           onFontChange={handleFontChange}
           onFocusModeToggle={onFocusModeToggle}
           activeFormats={getActiveFormats()}
-          onAdvancedAI={() => setShowAdvancedAI(true)}
+          
           selectedText={selectedText}
           canSave={canSave}
           isSaving={isSaving}
@@ -116,15 +114,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         onClose={closeContextMenu}
       />
 
-      <AIWritingPanel
-        content={value}
-        selectedText={selectedText}
-        cursorPosition={cursorPosition}
-        onTextInsert={handleTextInsert}
-        onTextReplace={handleAIReplace}
-        isVisible={showAdvancedAI}
-        onClose={() => setShowAdvancedAI(false)}
-      />
 
       <AIAssistant
         selectedText={selectedText}
