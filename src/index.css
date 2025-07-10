@@ -50,6 +50,17 @@
     --warning-foreground: 222.2 84% 4.9%;
     --info: 199.89 89% 48%;
     --info-foreground: 210 40% 98%;
+    
+    /* Premium gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(217 91% 70%));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.05));
+    --gradient-premium: linear-gradient(135deg, hsl(217 91% 60%), hsl(258 90% 66%), hsl(160 84% 50%));
+    
+    /* Premium shadows */
+    --shadow-premium: 0 20px 40px -12px hsl(var(--primary) / 0.25);
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--foreground) / 0.1);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.3);
   }
 
   .dark {
@@ -91,6 +102,17 @@
     --warning-foreground: 220 13% 9%;
     --info: 217 91% 60%;
     --info-foreground: 220 13% 9%;
+    
+    /* Premium dark gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(217 91% 70%));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary) / 0.05), hsl(var(--accent) / 0.02));
+    --gradient-premium: linear-gradient(135deg, hsl(217 91% 60%), hsl(258 90% 66%), hsl(160 84% 50%));
+    
+    /* Premium dark shadows */
+    --shadow-premium: 0 20px 40px -12px hsl(var(--primary) / 0.4);
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--foreground) / 0.1);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.5);
   }
 }
 

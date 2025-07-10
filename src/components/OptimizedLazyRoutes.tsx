@@ -39,6 +39,7 @@ const lazyWithRetry = (importFn: () => Promise<any>) => {
 };
 
 const Landing = lazyWithRetry(() => import('../pages/Landing'));
+const PremiumLanding = lazyWithRetry(() => import('../pages/PremiumLanding'));
 const Login = lazyWithRetry(() => import('../pages/Auth/Login'));
 const Register = lazyWithRetry(() => import('../pages/Auth/Register'));
 const ResetPassword = lazyWithRetry(() => import('../pages/Auth/ResetPassword'));
@@ -103,6 +104,7 @@ export const OptimizedLazyRoutes: React.FC = () => {
         {/* Public Routes */}
         <Route path="/" element={<HomeRedirect />} />
         <Route path="/landing" element={<Landing />} />
+        <Route path="/landing.2" element={<PremiumLanding />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/reset-password" element={<ResetPassword />} />
