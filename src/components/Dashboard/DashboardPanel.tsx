@@ -27,8 +27,10 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
   const defaultComponents: Record<string, string> = {
     'topLeft': 'quick-actions',
     'topRight': 'recent-activity', 
-    'bottomLeft': 'notes-summary',
-    'bottomRight': 'analytics-overview'
+    'middleLeft': 'notes-summary',
+    'middleRight': 'analytics-overview',
+    'bottomLeft': 'system-status',
+    'bottomRight': 'task-list'
   };
 
   const componentKey = config?.component_key || defaultComponents[panelKey];
@@ -37,7 +39,9 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
   const formatPanelName = (panelKey: string) => {
     const panelNames: Record<string, string> = {
       'topLeft': 'Top Left Panel',
-      'topRight': 'Top Right Panel', 
+      'topRight': 'Top Right Panel',
+      'middleLeft': 'Middle Left Panel',
+      'middleRight': 'Middle Right Panel', 
       'bottomLeft': 'Bottom Left Panel',
       'bottomRight': 'Bottom Right Panel'
     };

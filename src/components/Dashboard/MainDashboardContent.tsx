@@ -31,6 +31,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
   onHorizontalResize,
 }) => {
   const isMobile = useIsMobile();
+  
   // Calculate stats for KPIStats
   const totalNotes = notes.length;
   const favoriteNotes = notes.filter(note => note.tags?.includes('favorite')).length;
@@ -98,6 +99,8 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           <div className="text-xs font-medium text-muted-foreground mb-2">Dashboard Components</div>
           <DashboardPanel panelKey="topLeft" className="p-4 min-h-[200px]" />
           <DashboardPanel panelKey="topRight" className="p-4 min-h-[200px]" />
+          <DashboardPanel panelKey="middleLeft" className="p-4 min-h-[200px]" />
+          <DashboardPanel panelKey="middleRight" className="p-4 min-h-[200px]" />
           <DashboardPanel panelKey="bottomLeft" className="p-4 min-h-[200px]" />
           <DashboardPanel panelKey="bottomRight" className="p-4 min-h-[200px]" />
         </div>
@@ -146,7 +149,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
         
         {/* Middle Panel - Two Boxes */}
         <Panel 
-          id="top-section-panel"
+          id="middle-section-panel"
           order={1}
           defaultSize={topSectionSize} 
           minSize={isDashboardEditMode ? 25 : undefined}
@@ -201,10 +204,67 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           className={isDashboardEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"} 
         />
         
+        {/* Middle Panel - Two More Boxes */}
+        <Panel 
+          id="middle-section-panel"
+          order={2}
+          defaultSize={topSectionSize} 
+          minSize={isDashboardEditMode ? 25 : undefined}
+          maxSize={isDashboardEditMode ? 75 : undefined}
+        >
+          <div className="h-full">
+            <PanelGroup 
+              direction="horizontal" 
+              className="h-full" 
+              onLayout={handleHorizontalResize}
+              id="horizontal-middle"
+              storage={createStorageHandler()}
+            >
+              <Panel 
+                id="middle-left-panel"
+                order={0}
+                defaultSize={leftPanelsSize} 
+                minSize={isDashboardEditMode ? 30 : undefined}
+                maxSize={isDashboardEditMode ? 70 : undefined}
+              >
+                <div className="h-full border-r border-border/50">
+                  <ScrollArea className="h-full">
+                    <DashboardPanel panelKey="middleLeft" className="p-4 min-h-full" />
+                  </ScrollArea>
+                </div>
+              </Panel>
+              
+              {/* Only show resize handle when in edit mode - Always present */}
+              <HorizontalResizableHandle 
+                className={isDashboardEditMode ? "opacity-100" : "opacity-0 pointer-events-none w-1"} 
+              />
+              
+              <Panel 
+                id="middle-right-panel"
+                order={1}
+                defaultSize={rightPanelsSize} 
+                minSize={isDashboardEditMode ? 30 : undefined}
+                maxSize={isDashboardEditMode ? 70 : undefined}
+              >
+                <div className="h-full">
+                  <ScrollArea className="h-full">
+                    <DashboardPanel panelKey="middleRight" className="p-4 min-h-full" />
+                  </ScrollArea>
+                </div>
+              </Panel>
+            </PanelGroup>
+          </div>
+        </Panel>
+        
+        {/* Only show resize handle when in edit mode - Always present */}
+        <HorizontalResizableHandle 
+          className={isDashboardEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"} 
+        />
+        
         {/* Bottom Panel - Two More Boxes */}
         <Panel 
           id="bottom-section-panel"
-          order={2}
+          order={3}
           defaultSize={bottomSectionSize} 
           minSize={isDashboardEditMode ? 25 : undefined}
           maxSize={isDashboardEditMode ? 75 : undefined}
@@ -274,6 +334,16 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
             </div>
             <div className="min-h-[400px]">
               <DashboardPanel panelKey="topRight" className="p-4 h-full" />
+            </div>
+          </div>
+          
+          {/* Middle Row - Two Panels */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-3 md:px-4">
+            <div className="min-h-[400px]">
+              <DashboardPanel panelKey="middleLeft" className="p-4 h-full" />
+            </div>
+            <div className="min-h-[400px]">
+              <DashboardPanel panelKey="middleRight" className="p-4 h-full" />
             </div>
           </div>
           

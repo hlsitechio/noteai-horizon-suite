@@ -27,7 +27,15 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
   const Icon = component.icon;
 
   const formatPanelName = (panelKey: string) => {
-    return panelKey.replace(/([A-Z])/g, ' $1').trim();
+    const panelNames: Record<string, string> = {
+      'topLeft': 'Top Left',
+      'topRight': 'Top Right',
+      'middleLeft': 'Middle Left',
+      'middleRight': 'Middle Right',
+      'bottomLeft': 'Bottom Left',
+      'bottomRight': 'Bottom Right'
+    };
+    return panelNames[panelKey] || panelKey.replace(/([A-Z])/g, ' $1').trim();
   };
 
   return (

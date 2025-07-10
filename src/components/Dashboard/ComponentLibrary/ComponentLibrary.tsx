@@ -12,7 +12,7 @@ interface ComponentLibraryProps {
 
 export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({ 
   onAddComponent,
-  availablePanels = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight']
+  availablePanels = ['topLeft', 'topRight', 'middleLeft', 'middleRight', 'bottomLeft', 'bottomRight']
 }) => {
   const {
     searchTerm,
