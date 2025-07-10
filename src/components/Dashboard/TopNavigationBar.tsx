@@ -28,25 +28,32 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [isLoadingWeather, setIsLoadingWeather] = useState(false);
   const [weatherUnits, setWeatherUnits] = useState<'celsius' | 'fahrenheit'>('celsius');
-  const [savedWeatherCity, setSavedWeatherCity] = useState<string>(weatherCity);
+  const [savedWeatherCity, setSavedWeatherCity] = useState<string>('New York');
 
   // Load weather settings from localStorage
   useEffect(() => {
-    const savedSettings = localStorage.getItem('weather-settings');
-    if (savedSettings) {
-      try {
-        const settings = JSON.parse(savedSettings);
-        if (settings.units) {
-          setWeatherUnits(settings.units);
+    const loadWeatherSettings = () => {
+      const savedSettings = localStorage.getItem('weather-settings');
+      if (savedSettings) {
+        try {
+          const settings = JSON.parse(savedSettings);
+          if (settings.units) {
+            setWeatherUnits(settings.units);
+          }
+          if (settings.city) {
+            setSavedWeatherCity(settings.city);
+          }
+        } catch (error) {
+          console.error('Failed to load weather settings:', error);
         }
-        if (settings.city) {
-          setSavedWeatherCity(settings.city);
-        }
-      } catch (error) {
-        console.error('Failed to load weather settings:', error);
+      } else {
+        // Use the weatherCity prop only if no saved settings exist
+        setSavedWeatherCity(weatherCity);
       }
-    }
-  }, []);
+    };
+
+    loadWeatherSettings();
+  }, [weatherCity]);
 
   // Listen for weather settings changes
   useEffect(() => {
@@ -66,8 +73,31 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
       }
     };
 
+    // Listen for custom events for same-tab updates
+    const handleCustomStorageChange = () => {
+      const savedSettings = localStorage.getItem('weather-settings');
+      if (savedSettings) {
+        try {
+          const settings = JSON.parse(savedSettings);
+          if (settings.units) {
+            setWeatherUnits(settings.units);
+          }
+          if (settings.city) {
+            setSavedWeatherCity(settings.city);
+          }
+        } catch (error) {
+          console.error('Failed to parse weather settings:', error);
+        }
+      }
+    };
+
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener('weather-settings-changed', handleCustomStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('weather-settings-changed', handleCustomStorageChange);
+    };
   }, []);
 
   // Update clock every second
