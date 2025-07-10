@@ -12,13 +12,22 @@ import { useDashboardPanelSizes, useDashboardBanner } from '@/hooks';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const OptimizedDashboard: React.FC = () => {
+  console.log('OptimizedDashboard: Component starting to render');
+  
   const { notes } = useOptimizedNotes();
+  console.log('OptimizedDashboard: Notes loaded', notes?.length || 0);
+  
   const { isDashboardEditMode, isLoading } = useEditMode();
+  console.log('OptimizedDashboard: Edit mode state', { isDashboardEditMode, isLoading });
+  
   const [showEditLayoutModal, setShowEditLayoutModal] = React.useState(false);
   const isMobile = useIsMobile();
+  console.log('OptimizedDashboard: Mobile state', isMobile);
 
   // Custom hooks for clean separation of concerns
   const { panelSizes, handleMainContentResize, handleHorizontalResize } = useDashboardPanelSizes();
+  console.log('OptimizedDashboard: Panel sizes loaded', panelSizes);
+  
   const { 
     selectedBannerUrl, 
     handleImageUpload, 
@@ -26,8 +35,20 @@ const OptimizedDashboard: React.FC = () => {
     handleAIGenerate, 
     handleImageSelect 
   } = useDashboardBanner();
+  console.log('OptimizedDashboard: Banner state loaded', selectedBannerUrl);
 
-  // Removed excessive console logging to prevent PostHog rate limiting
+  // Loading state
+  if (isLoading) {
+    console.log('OptimizedDashboard: Still loading...');
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+          <p>Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Memoize computed values to prevent unnecessary re-renders
   const dashboardClassName = React.useMemo(() => 
