@@ -64,7 +64,7 @@ ip_version = "ipv4"
 verify_jwt = true
 
 [functions.ai-writing-assistant-enhanced]
-verify_jwt = false
+verify_jwt = true
 
 [functions.ai-chat-with-context]
 verify_jwt = true

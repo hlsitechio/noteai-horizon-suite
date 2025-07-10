@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,10 +17,26 @@ import {
   Sparkles,
   Loader2,
   Copy,
-  Check
+  Check,
+  Zap
 } from 'lucide-react';
-import { useAIWritingAssistant, AIMode, AITone, AILength } from '@/hooks/useAIWritingAssistant';
 import { useToast } from '@/hooks/useToast';
+import { supabase } from '@/integrations/supabase/client';
+
+export type AIMode = 
+  | 'continue' 
+  | 'enhance' 
+  | 'summarize' 
+  | 'expand' 
+  | 'rewrite' 
+  | 'grammar' 
+  | 'suggest' 
+  | 'complete'
+  | 'outline'
+  | 'brainstorm';
+
+export type AITone = 'professional' | 'casual' | 'friendly' | 'formal' | 'creative' | 'academic';
+export type AILength = 'short' | 'medium' | 'long';
 
 interface AIWritingPanelProps {
   content: string;
@@ -47,8 +63,8 @@ const AIWritingPanel: React.FC<AIWritingPanelProps> = ({
   const [customPrompt, setCustomPrompt] = useState('');
   const [result, setResult] = useState('');
   const [copied, setCopied] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
-  const { processWithAI, isLoading } = useAIWritingAssistant();
   const { toast } = useToast();
 
   const aiActions = [
@@ -64,6 +80,57 @@ const AIWritingPanel: React.FC<AIWritingPanelProps> = ({
     { id: 'brainstorm', label: 'Brainstorm Ideas', icon: Sparkles, color: 'bg-pink-500' }
   ] as const;
 
+  const processWithAI = useCallback(async (request: {
+    mode: AIMode;
+    content: string;
+    context?: string;
+    tone?: AITone;
+    length?: AILength;
+    selectedText?: string;
+    cursorPosition?: number;
+  }): Promise<string> => {
+    setIsLoading(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-writing-assistant-enhanced', {
+        body: request
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data?.result) {
+        throw new Error('No result received from AI assistant');
+      }
+
+      // Show success toast with mode-specific message
+      const modeMessages = {
+        continue: 'Content continued successfully',
+        enhance: 'Text enhanced successfully',
+        summarize: 'Summary generated successfully', 
+        expand: 'Content expanded successfully',
+        rewrite: 'Text rewritten successfully',
+        grammar: 'Grammar checked and improved',
+        suggest: 'Writing suggestions generated',
+        complete: 'Text completed successfully',
+        outline: 'Outline created successfully',
+        brainstorm: 'Ideas brainstormed successfully'
+      };
+
+      toast.success(modeMessages[request.mode] || 'AI processing completed');
+      
+      return data.result;
+
+    } catch (error) {
+      console.error('AI Writing Assistant error:', error);
+      toast.error(`AI processing failed: ${error.message}`);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+
   const handleAIProcess = async () => {
     if (!content && !selectedText && mode !== 'brainstorm') {
       toast.error('Please provide some content to work with');
@@ -71,9 +138,10 @@ const AIWritingPanel: React.FC<AIWritingPanelProps> = ({
     }
 
     try {
+      const requestContent = mode === 'brainstorm' ? customPrompt : content;
       const aiResult = await processWithAI({
         mode,
-        content: mode === 'enhance' || mode === 'expand' || mode === 'rewrite' ? '' : content,
+        content: ['enhance', 'expand', 'rewrite'].includes(mode) ? '' : requestContent,
         selectedText: ['enhance', 'expand', 'rewrite'].includes(mode) ? selectedText : '',
         tone,
         length,
@@ -115,8 +183,8 @@ const AIWritingPanel: React.FC<AIWritingPanelProps> = ({
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
-              <Brain className="h-5 w-5 text-primary" />
-              AI Writing Assistant
+              <Zap className="h-5 w-5 text-primary" />
+              AI Writing Assistant (Powered by OpenRouter)
             </CardTitle>
             <Button variant="ghost" size="sm" onClick={onClose}>
               ✕
@@ -208,6 +276,9 @@ const AIWritingPanel: React.FC<AIWritingPanelProps> = ({
               )}
               <Badge variant="outline">
                 Mode: {mode}
+              </Badge>
+              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                OpenRouter DeepSeek R1
               </Badge>
             </div>
           </div>
