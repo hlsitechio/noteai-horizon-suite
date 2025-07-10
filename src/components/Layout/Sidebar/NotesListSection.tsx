@@ -89,7 +89,7 @@ export function NotesListSection({
           className={`flex-1 justify-start h-auto p-1 ${isActive ? 'bg-accent text-accent-foreground' : ''}`}
           onClick={() => handleNoteClick(note)}
         >
-          <FileText className="h-3 w-3 mr-2 flex-shrink-0" />
+          <FileText className="h-3 w-3 mr-1 flex-shrink-0" />
           <span className="truncate text-xs flex-1">{note.title}</span>
           {note.isFavorite && (
             <Star className="h-3 w-3 ml-1 text-accent fill-current flex-shrink-0" />
