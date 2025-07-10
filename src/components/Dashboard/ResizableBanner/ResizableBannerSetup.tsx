@@ -11,6 +11,7 @@ import AIGenerateModal from '../BannerSettings/AIGenerateModal';
 import PreviewModeModal from '../BannerSettings/PreviewModeModal';
 import CompactBannerPlaceholder from '../BannerSettings/CompactBannerPlaceholder';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { usePageBannerSettings } from '@/hooks/usePageBannerSettings';
 
 interface ResizableBannerSetupProps {
   onImageUpload?: (file: File) => void;
@@ -35,12 +36,31 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const isMobile = useIsMobile();
   
-  // Banner positioning and sizing states
-  const [bannerPosition, setBannerPosition] = useState({ x: 0, y: 0 });
-  const [bannerHeight, setBannerHeight] = useState(100); // Height percentage
+  // Use per-page banner settings
+  const {
+    settings,
+    selectedBannerUrl: pageSelectedBannerUrl,
+    bannerHeight: pageBannerHeight,
+    bannerPosition: pageBannerPosition,
+    updateBannerPosition,
+    handleImageSelect: pageHandleImageSelect
+  } = usePageBannerSettings();
+  
+  // Use page-specific banner URL if no prop is provided
+  const effectiveSelectedImageUrl = selectedImageUrl || pageSelectedBannerUrl;
+  
+  // Banner positioning and sizing states - initialize from page settings
+  const [bannerPosition, setBannerPosition] = useState(pageBannerPosition);
+  const [bannerHeight, setBannerHeight] = useState(pageBannerHeight);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0, initialHeight: 100 });
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0, initialHeight: pageBannerHeight });
   const bannerRef = useRef<HTMLDivElement>(null);
+  
+  // Sync local state with page settings when they change
+  React.useEffect(() => {
+    setBannerPosition(pageBannerPosition);
+    setBannerHeight(pageBannerHeight);
+  }, [pageBannerPosition.x, pageBannerPosition.y, pageBannerHeight]);
   
   // Modal states
   const [showBannerSettings, setShowBannerSettings] = useState(false);
@@ -127,8 +147,11 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
     setBannerHeight(newHeight);
   };
 
-  const handleBannerDragEnd = () => {
+  const handleBannerDragEnd = async () => {
     setIsDragging(false);
+    
+    // Save the new position and height to the database
+    await updateBannerPosition(bannerPosition.x, bannerPosition.y, bannerHeight);
   };
 
   // Add global mouse events for drag
@@ -149,8 +172,11 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
         setBannerHeight(newHeight);
       };
 
-      const handleMouseUp = () => {
+      const handleMouseUp = async () => {
         setIsDragging(false);
+        
+        // Save the new position and height to the database
+        await updateBannerPosition(bannerPosition.x, bannerPosition.y, bannerHeight);
       };
 
       document.addEventListener('mousemove', handleMouseMove);
@@ -197,7 +223,7 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
       >
         <div className="w-full max-w-4xl mx-auto">
           {/* Conditional Content - Show Image if Selected, Otherwise Show Compact Placeholder */}
-          {selectedImageUrl ? (
+          {effectiveSelectedImageUrl ? (
             // Show Selected Banner Image - Full Size
             <>
               <motion.div 
@@ -214,7 +240,7 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
                   }}
                 >
                   <img
-                    src={selectedImageUrl}
+                    src={effectiveSelectedImageUrl}
                     alt="Selected banner"
                     className={`w-full h-full ${isMobile ? 'object-cover object-center' : 'object-cover'}`}
                   />
@@ -284,7 +310,7 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
           )}
 
           {/* Drop Zone Indicator - Only show when no image is selected */}
-          {dragOver && !isEditMode && !selectedImageUrl && (
+          {dragOver && !isEditMode && !effectiveSelectedImageUrl && (
             <motion.div
               className="absolute inset-4 border-2 border-dashed border-primary bg-primary/5 rounded-lg flex items-center justify-center backdrop-blur-sm z-10"
               initial={{ opacity: 0, scale: 0.9 }}
@@ -319,13 +345,13 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
       <BannerGalleryModal 
         open={showGallery} 
         onOpenChange={setShowGallery} 
-        onSelectImage={onImageSelect}
+        onSelectImage={onImageSelect || pageHandleImageSelect}
       />
       
       <AIGenerateModal 
         open={showAIGenerate} 
         onOpenChange={setShowAIGenerate}
-        onImageGenerated={onImageSelect}
+        onImageGenerated={onImageSelect || pageHandleImageSelect}
       />
       
       <PreviewModeModal 

@@ -6,7 +6,7 @@ import MobileBottomNav from './MobileBottomNav';
 import MobileDesktopViewButton from '../components/MobileDesktopViewButton';
 import { useLocation } from 'react-router-dom';
 import { BannerWithTopNav } from '@/components/Dashboard/BannerWithTopNav';
-import { useDashboardBanner } from '@/hooks/useDashboardBanner';
+import { usePageBannerSettings } from '@/hooks/usePageBannerSettings';
 
 const MobileLayout: React.FC = () => {
   const location = useLocation();
@@ -18,7 +18,7 @@ const MobileLayout: React.FC = () => {
     handleVideoUpload, 
     handleAIGenerate, 
     handleImageSelect 
-  } = useDashboardBanner();
+  } = usePageBannerSettings();
 
   return (
     <div className="h-full w-full flex flex-col bg-background overflow-hidden relative">

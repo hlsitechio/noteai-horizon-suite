@@ -4,7 +4,7 @@ import { PanelGroup, Panel } from 'react-resizable-panels';
 import { ResizableHandle } from '@/components/ui/resizable';
 import { BannerWithTopNav } from '@/components/Dashboard/BannerWithTopNav';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useDashboardBanner } from '@/hooks/useDashboardBanner';
+import { usePageBannerSettings } from '@/hooks/usePageBannerSettings';
 import { useDashboardPanelSizes } from '@/hooks/useDashboardPanelSizes';
 import { useEditMode } from '@/contexts/EditModeContext';
 
@@ -18,7 +18,7 @@ const BannerLayout: React.FC = () => {
     handleVideoUpload, 
     handleAIGenerate, 
     handleImageSelect 
-  } = useDashboardBanner();
+  } = usePageBannerSettings();
 
   // Mobile layout - simpler vertical stack
   if (isMobile) {

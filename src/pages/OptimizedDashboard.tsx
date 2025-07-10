@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { LayoutDashboard, BarChart3, Settings } from 'lucide-react';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useEditMode } from '@/contexts/EditModeContext';
-import { useDashboardPanelSizes, useDashboardBanner } from '@/hooks';
+import { useDashboardPanelSizes } from '@/hooks';
+import { usePageBannerSettings } from '@/hooks/usePageBannerSettings';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const OptimizedDashboard: React.FC = () => {
@@ -25,7 +26,7 @@ const OptimizedDashboard: React.FC = () => {
     handleVideoUpload, 
     handleAIGenerate, 
     handleImageSelect 
-  } = useDashboardBanner();
+  } = usePageBannerSettings();
 
   // Memoize computed values to prevent unnecessary re-renders
   const dashboardClassName = React.useMemo(() => 

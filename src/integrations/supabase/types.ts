@@ -275,6 +275,54 @@ export type Database = {
           },
         ]
       }
+      page_banner_settings: {
+        Row: {
+          banner_height: number | null
+          banner_position_x: number | null
+          banner_position_y: number | null
+          banner_type: string | null
+          banner_url: string | null
+          banner_width: number | null
+          created_at: string
+          id: string
+          is_enabled: boolean | null
+          page_path: string
+          panel_sizes: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          banner_height?: number | null
+          banner_position_x?: number | null
+          banner_position_y?: number | null
+          banner_type?: string | null
+          banner_url?: string | null
+          banner_width?: number | null
+          created_at?: string
+          id?: string
+          is_enabled?: boolean | null
+          page_path: string
+          panel_sizes?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          banner_height?: number | null
+          banner_position_x?: number | null
+          banner_position_y?: number | null
+          banner_type?: string | null
+          banner_url?: string | null
+          banner_width?: number | null
+          created_at?: string
+          id?: string
+          is_enabled?: boolean | null
+          page_path?: string
+          panel_sizes?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       reminders: {
         Row: {
           created_at: string
