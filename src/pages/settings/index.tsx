@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Tabs } from '@/components/ui/tabs';
 import { SettingsHeader } from './components/SettingsHeader';
 import { SettingsTabs } from './components/SettingsTabs';
 import { SettingsContent } from './components/SettingsContent';
@@ -7,6 +8,8 @@ import { SettingsContent } from './components/SettingsContent';
 const Settings: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('profile');
+  
+  console.log('Settings component rendered with activeTab:', activeTab);
 
   // Check for tab parameter in URL
   useEffect(() => {
@@ -24,11 +27,13 @@ const Settings: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       <SettingsHeader />
-      <SettingsTabs 
-        activeTab={activeTab} 
-        onTabChange={handleTabChange} 
-      />
-      <SettingsContent activeTab={activeTab} />
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <SettingsTabs 
+          activeTab={activeTab} 
+          onTabChange={handleTabChange} 
+        />
+        <SettingsContent activeTab={activeTab} />
+      </Tabs>
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Tabs } from '@/components/ui/tabs';
 import { useAccentColor } from '@/contexts/AccentColorContext';
 import { ProfileTabContent } from './tabs/ProfileTabContent';
 import { LayoutTabContent } from './tabs/LayoutTabContent';
@@ -23,21 +22,19 @@ export const SettingsContent: React.FC<SettingsContentProps> = ({ activeTab }) =
   };
 
   return (
-    <Tabs value={activeTab} className="w-full">
-      <div className="mt-6">
-        <ProfileTabContent />
-        <LayoutTabContent />
-        <ThemesTabContent 
-          accentColor={accentColor}
-          onColorChange={handleColorChange}
-        />
-        <PreferencesTabContent />
-        <WeatherTabContent />
-        <AITabContent />
-        <DataTabContent />
-        <DownloadTabContent />
-        <AboutTabContent />
-      </div>
-    </Tabs>
+    <div className="mt-6">
+      <ProfileTabContent />
+      <LayoutTabContent />
+      <ThemesTabContent 
+        accentColor={accentColor}
+        onColorChange={handleColorChange}
+      />
+      <PreferencesTabContent />
+      <WeatherTabContent />
+      <AITabContent />
+      <DataTabContent />
+      <DownloadTabContent />
+      <AboutTabContent />
+    </div>
   );
 };

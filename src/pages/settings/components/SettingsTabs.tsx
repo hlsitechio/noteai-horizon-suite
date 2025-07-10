@@ -8,6 +8,7 @@ interface SettingsTabsProps {
 }
 
 export const SettingsTabs: React.FC<SettingsTabsProps> = ({ activeTab, onTabChange }) => {
+  console.log('SettingsTabs rendered with activeTab:', activeTab);
   return (
     <TabsList className="grid w-full grid-cols-9">
       <TabsTrigger value="profile" className="flex items-center gap-2">
