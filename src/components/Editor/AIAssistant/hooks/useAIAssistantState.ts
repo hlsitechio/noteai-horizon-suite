@@ -20,6 +20,18 @@ export const useAIAssistantState = () => {
       return;
     }
 
+    // Handle special actions
+    if (action === 'copy-text') {
+      try {
+        await navigator.clipboard.writeText(selectedText);
+        toast.success('Text copied to clipboard!');
+        return;
+      } catch (error) {
+        toast.error('Failed to copy text');
+        return;
+      }
+    }
+
     setActiveAction(action);
     setResult('');
     setResponse(null);

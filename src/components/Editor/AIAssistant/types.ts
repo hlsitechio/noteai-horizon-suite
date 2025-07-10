@@ -1,4 +1,4 @@
-export type AIAction = 'improve' | 'translate' | 'summarize' | 'expand' | 'simplify' | 'custom';
+export type AIAction = 'improve' | 'continue' | 'translate' | 'summarize' | 'expand' | 'simplify' | 'change-tone' | 'change-style' | 'longer' | 'shorter' | 'copy-text' | 'custom';
 
 export interface AIAssistantProps {
   selectedText: string;
@@ -30,9 +30,13 @@ export const languages: Language[] = [
 ];
 
 export const aiActions = [
-  { id: 'improve', label: 'Improve', icon: 'SparklesIcon', color: 'from-blue-500 to-purple-500' },
-  { id: 'translate', label: 'Translate', icon: 'LanguageIcon', color: 'from-green-500 to-teal-500' },
-  { id: 'summarize', label: 'Summarize', icon: 'DocumentTextIcon', color: 'from-purple-500 to-pink-500' },
-  { id: 'expand', label: 'Expand', icon: 'PlusIcon', color: 'from-orange-500 to-red-500' },
-  { id: 'simplify', label: 'Simplify', icon: 'MinusIcon', color: 'from-teal-500 to-blue-500' },
+  { id: 'improve', label: 'Improve', icon: 'SparklesIcon', color: 'from-blue-500 to-blue-600', category: 'primary' },
+  { id: 'continue', label: 'Continue', icon: 'ArrowRightIcon', color: 'from-green-500 to-green-600', category: 'primary' },
+  { id: 'change-tone', label: 'Change Tone', icon: 'ChatBubbleLeftIcon', color: 'from-purple-500 to-purple-600', category: 'style' },
+  { id: 'change-style', label: 'Change Style', icon: 'PaintBrushIcon', color: 'from-indigo-500 to-indigo-600', category: 'style' },
+  { id: 'longer', label: 'Longer', icon: 'PlusIcon', color: 'from-emerald-500 to-emerald-600', category: 'length' },
+  { id: 'shorter', label: 'Shorter', icon: 'MinusIcon', color: 'from-orange-500 to-orange-600', category: 'length' },
+  { id: 'translate', label: 'Translate', icon: 'LanguageIcon', color: 'from-cyan-500 to-cyan-600', category: 'advanced' },
+  { id: 'summarize', label: 'Summarize', icon: 'DocumentTextIcon', color: 'from-violet-500 to-violet-600', category: 'advanced' },
+  { id: 'copy-text', label: 'Copy Text', icon: 'ClipboardIcon', color: 'from-gray-500 to-gray-600', category: 'utility' },
 ];

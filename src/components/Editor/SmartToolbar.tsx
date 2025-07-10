@@ -41,7 +41,6 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
 }) => {
   const [showSpeechToText, setShowSpeechToText] = useState(false);
   const [showOCR, setShowOCR] = useState(false);
-  const [showAIBar, setShowAIBar] = useState(false);
   const [fontSize, setFontSize] = useState(16);
   const [fontFamily, setFontFamily] = useState('inter');
 
@@ -71,12 +70,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
     }
   };
 
-  const handleAIProcess = (action: string, customInstruction?: string) => {
-    // Handle AI processing logic here
-    console.log('AI Action:', action, customInstruction);
-    // You can integrate this with your existing AI functionality
-    onAIClick();
-  };
+  // Remove the handleAIProcess function since AI is always visible now
 
 
   return (
@@ -119,7 +113,7 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
 
         {/* AI Assistant & Actions */}
         <ToolbarActionsGroup
-          onAIClick={() => setShowAIBar(!showAIBar)}
+          onAIClick={() => {}} // AI is now always visible
           onFocusModeToggle={onFocusModeToggle}
           onSave={onSave}
           canSave={canSave}
@@ -127,13 +121,13 @@ const SmartToolbar: React.FC<SmartToolbarProps> = ({
         />
       </div>
 
-      {/* AI Assistant Bar */}
+      {/* AI Assistant Bar - Always visible */}
       <UnifiedAIAssistant
         selectedText={selectedText || ''}
         onTextInsert={onTextInsert || (() => {})}
         onTextReplace={(text) => onTextInsert?.(text)}
-        isVisible={showAIBar}
-        onClose={() => setShowAIBar(false)}
+        isVisible={true}
+        onClose={() => {}}
         mode="bar"
       />
 

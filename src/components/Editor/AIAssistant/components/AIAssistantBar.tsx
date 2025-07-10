@@ -49,32 +49,25 @@ const AIAssistantBar: React.FC<AIAssistantBarProps> = ({
   onFeedback
 }) => {
   return (
-    <div className="bg-gray-900/95 border-t border-gray-400/30 p-4 animate-fade-in">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <SparklesIcon className="w-5 h-5 text-purple-400" />
-          <span className="text-sm font-medium text-gray-200">AI Assistant</span>
-          {selectedText && (
-            <span className="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded">
-              "{selectedText.slice(0, 30)}..."
-            </span>
-          )}
+    <div className="bg-gradient-to-r from-gray-900/95 to-gray-800/95 border-t border-gray-400/30 backdrop-blur-sm">
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+              <SparklesIcon className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-white">AI Assistant</h3>
+              <p className="text-sm text-gray-400">Pro</p>
+            </div>
+          </div>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onClose}
-          className="h-6 w-6 p-0 text-gray-400 hover:text-white"
-        >
-          <X className="w-4 h-4" />
-        </Button>
-      </div>
 
-      <div className="flex items-center gap-2">
         <AIQuickActions
           onAction={onAction}
           isLoading={isLoading}
           mode="bar"
+          selectedText={selectedText}
         />
         
         <AICustomPrompt
@@ -86,30 +79,30 @@ const AIAssistantBar: React.FC<AIAssistantBarProps> = ({
           showCustom={showCustom}
           onToggleCustom={onToggleCustom}
         />
-      </div>
 
-      {/* Processing State */}
-      {isLoading && (
-        <div className="mt-4 flex items-center justify-center py-4">
-          <div className="flex items-center gap-2 text-sm text-gray-400">
-            <Bot className="w-4 h-4 animate-pulse" />
-            <span>AI is processing...</span>
+        {/* Processing State */}
+        {isLoading && (
+          <div className="mt-6 flex items-center justify-center py-6 bg-gray-800/30 rounded-xl border border-gray-600/30">
+            <div className="flex items-center gap-3 text-gray-300">
+              <Bot className="w-5 h-5 animate-pulse text-blue-400" />
+              <span className="font-medium">AI is processing your request...</span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Results section for bar mode */}
-      <AIResultDisplay
-        result={result}
-        response={response}
-        copied={copied}
-        selectedText={selectedText}
-        onCopy={onCopy}
-        onInsert={onInsert}
-        onReplace={onReplace}
-        onFeedback={onFeedback}
-        mode="bar"
-      />
+        {/* Results section for bar mode */}
+        <AIResultDisplay
+          result={result}
+          response={response}
+          copied={copied}
+          selectedText={selectedText}
+          onCopy={onCopy}
+          onInsert={onInsert}
+          onReplace={onReplace}
+          onFeedback={onFeedback}
+          mode="bar"
+        />
+      </div>
     </div>
   );
 };

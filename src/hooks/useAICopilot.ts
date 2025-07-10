@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export interface CopilotRequest {
-  action: 'improve' | 'translate' | 'summarize' | 'expand' | 'simplify' | 'custom';
+  action: 'improve' | 'continue' | 'translate' | 'summarize' | 'expand' | 'simplify' | 'change-tone' | 'change-style' | 'longer' | 'shorter' | 'copy-text' | 'custom';
   text: string;
   noteId?: string;
   targetLanguage?: string;
