@@ -141,8 +141,9 @@ export function FavoritesListSection({
                       className={`w-full justify-start h-auto p-1 ${isNoteActive(note.id) ? 'bg-accent text-accent-foreground' : ''}`}
                       onClick={() => handleNoteClick(note)}
                     >
-                      <Star className="h-3 w-3 mr-2 flex-shrink-0 text-accent fill-current" />
+                      <FileText className="h-3 w-3 mr-1 flex-shrink-0" />
                       <span className="truncate text-xs text-left flex-1">{note.title}</span>
+                      <Star className="h-3 w-3 ml-1 text-accent fill-current flex-shrink-0" />
                     </Button>
                     
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
