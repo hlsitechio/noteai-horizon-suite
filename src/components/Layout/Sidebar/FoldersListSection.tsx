@@ -7,6 +7,7 @@ import {
   ChevronRight, 
   ChevronDown,
   Folder,
+  FolderPlus,
   FileText,
   Star
 } from 'lucide-react';
@@ -125,6 +126,17 @@ export function FoldersListSection({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between px-2">
+        {!isMobile && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
+            onClick={onCreateFolder}
+            title="Create Folder"
+          >
+            <FolderPlus className="h-3 w-3" />
+          </Button>
+        )}
         {isMobile ? (
           <Tooltip>
             <TooltipTrigger asChild>

@@ -86,11 +86,11 @@ export function NotesListSection({
         <Button 
           variant="ghost"
           size="sm"
-          className={`flex-1 justify-start h-auto p-1 ${isActive ? 'bg-accent text-accent-foreground' : ''}`}
+          className={`w-full justify-start h-auto p-1 ${isActive ? 'bg-accent text-accent-foreground' : ''}`}
           onClick={() => handleNoteClick(note)}
         >
           <FileText className="h-3 w-3 mr-1 flex-shrink-0" />
-          <span className="truncate text-xs flex-1">{note.title}</span>
+          <span className="truncate text-xs text-left flex-1">{note.title}</span>
           {note.isFavorite && (
             <Star className="h-3 w-3 ml-1 text-accent fill-current flex-shrink-0" />
           )}
@@ -129,26 +129,15 @@ export function NotesListSection({
     <div className="space-y-2">
       <div className="flex items-center justify-between px-2">
         {!isMobile && (
-          <div className="flex gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
-              onClick={onCreateFolder}
-              title="Create Folder"
-            >
-              <FolderPlus className="h-3 w-3" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
-              onClick={onCreateNote}
-              title="Create Note"
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
+            onClick={onCreateNote}
+            title="Create Note"
+          >
+            <Plus className="h-3 w-3" />
+          </Button>
         )}
         {isMobile ? (
           <Tooltip>
