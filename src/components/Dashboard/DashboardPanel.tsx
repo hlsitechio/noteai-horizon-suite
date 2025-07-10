@@ -49,10 +49,10 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
   };
 
   return (
-    <div className={cn('relative', className)} aria-live="polite" role="region">
+    <div className={cn('relative group', className)} aria-live="polite" role="region">
       {isEnabled ? (
-        <div className="h-full">
-          {/* Panel Header with Label */}
+        <div className="h-full relative">
+          {/* Panel Header with Label and Change Button */}
           <div className="flex items-center justify-between p-3 border-b bg-muted/5">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-primary"></div>
@@ -60,7 +60,16 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
                 {formatPanelName(panelKey)}
               </span>
             </div>
-            <Settings2 className="w-3 h-3 text-muted-foreground/50" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                window.location.href = '/app/components';
+              }}
+              className="opacity-0 group-hover:opacity-100 transition-opacity text-xs px-2 py-1 h-auto"
+            >
+              Change
+            </Button>
           </div>
           <div className="h-[calc(100%-48px)]">
             <DashboardComponentRenderer
