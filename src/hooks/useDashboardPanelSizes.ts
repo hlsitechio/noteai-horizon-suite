@@ -1,25 +1,25 @@
-import { useCallback, useRef, useEffect } from 'react';
+import { useCallback, useRef, useEffect, useMemo } from 'react';
 import { useDashboardSettings } from './useDashboardSettings';
 import { useEditMode } from '@/contexts/EditModeContext';
+import { useDebounceCallback } from '@/lib/performance';
 import { toast } from 'sonner';
 
 export const useDashboardPanelSizes = () => {
   const { settings, updateSidebarPanelSizes } = useDashboardSettings();
   const { handlePanelSizeSave } = useEditMode();
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hasUserInteractedRef = useRef(false);
   
   // Get saved panel sizes from settings
   const settingsPanelSizes = settings?.sidebar_panel_sizes || {};
   
-  const panelSizes = {
+  const panelSizes = useMemo(() => ({
     banner: settingsPanelSizes.banner || 25,
-    analytics: settingsPanelSizes.analytics || 20, // Reduced from 30 to 20
-    topSection: settingsPanelSizes.topSection || 40, // Increased from 35 to 40
-    bottomSection: settingsPanelSizes.bottomSection || 40, // Increased from 35 to 40
+    analytics: settingsPanelSizes.analytics || 20,
+    topSection: settingsPanelSizes.topSection || 40,
+    bottomSection: settingsPanelSizes.bottomSection || 40,
     leftPanels: settingsPanelSizes.leftPanels || 50,
     rightPanels: settingsPanelSizes.rightPanels || 50,
-  };
+  }), [settingsPanelSizes]);
 
   // Log panel sizes when they change
   useEffect(() => {
@@ -32,32 +32,21 @@ export const useDashboardPanelSizes = () => {
     hasUserInteractedRef.current = true;
   }, []);
 
-  // Debounced save function with unified edit mode handling
-  const debouncedSave = useCallback((newSizes: Record<string, number>) => {
-    // Clear existing timeout
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
+  // Optimized debounced save function
+  const debouncedSave = useDebounceCallback(async (newSizes: Record<string, number>) => {
+    const success = await updateSidebarPanelSizes(newSizes);
     
-    // Set new timeout
-    saveTimeoutRef.current = setTimeout(async () => {
-      console.log('Saving dashboard panel sizes:', newSizes);
-      const success = await updateSidebarPanelSizes(newSizes);
+    if (success) {
+      toast.success('Dashboard layout saved');
       
-      if (success) {
-        console.log('Dashboard panel sizes saved successfully:', newSizes);
-        toast.success('Dashboard layout saved');
-        
-        // Auto-lock edit modes after successful save (only if user interacted)
-        if (hasUserInteractedRef.current) {
-          await handlePanelSizeSave();
-        }
-      } else {
-        console.error('Failed to save dashboard panel sizes');
-        toast.error('Failed to save dashboard layout');
+      // Auto-lock edit modes after successful save (only if user interacted)
+      if (hasUserInteractedRef.current) {
+        await handlePanelSizeSave();
       }
-    }, 500); // 500ms debounce
-  }, [updateSidebarPanelSizes, handlePanelSizeSave]);
+    } else {
+      toast.error('Failed to save dashboard layout');
+    }
+  }, 500);
 
   const createSizeHandler = (sizeKey: string) => (sizes: number[]) => {
     // Track user interaction
@@ -88,14 +77,7 @@ export const useDashboardPanelSizes = () => {
     debouncedSave(newSizes);
   };
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-    };
-  }, []);
+  // Remove the cleanup as it's handled by useDebounceCallback
 
   return {
     panelSizes,

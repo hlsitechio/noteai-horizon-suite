@@ -50,11 +50,22 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: {
+          // Core framework
           vendor: ['react', 'react-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs'],
-          utils: ['clsx', 'tailwind-merge', 'date-fns'],
-          sentry: ['@sentry/react'],
+          // UI components
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs', '@radix-ui/react-select', '@radix-ui/react-popover'],
+          // Utilities and helpers
+          utils: ['clsx', 'tailwind-merge', 'date-fns', 'lodash.debounce', 'lodash.throttle'],
+          // Rich text editor
+          editor: ['slate', 'slate-react', 'slate-history', 'slate-dom'],
+          // Monitoring and analytics
+          monitoring: ['@sentry/react', '@hyperdx/browser'],
+          // Backend services
           supabase: ['@supabase/supabase-js'],
+          // Charts and visualization
+          charts: ['recharts'],
+          // Animation and motion
+          animation: ['framer-motion'],
         },
       },
     },
@@ -75,8 +86,13 @@ export default defineConfig(({ mode }) => ({
     include: [
       'react',
       'react-dom',
+      'react/jsx-runtime',
       '@sentry/react',
       '@supabase/supabase-js',
+      'clsx',
+      'tailwind-merge',
+      'date-fns',
+      'framer-motion',
     ],
     exclude: ['@vite/client', '@vite/env'],
     force: mode === 'development',

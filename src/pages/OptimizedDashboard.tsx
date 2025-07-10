@@ -35,6 +35,16 @@ const OptimizedDashboard: React.FC = () => {
     }`, [isDashboardEditMode]
   );
 
+  // Memoize handlers for performance
+  const memoizedHandlers = React.useMemo(() => ({
+    onMainContentResize: handleMainContentResize,
+    onHorizontalResize: handleHorizontalResize,
+    onImageUpload: handleImageUpload,
+    onVideoUpload: handleVideoUpload,
+    onAIGenerate: handleAIGenerate,
+    onImageSelect: handleImageSelect,
+  }), [handleMainContentResize, handleHorizontalResize, handleImageUpload, handleVideoUpload, handleAIGenerate, handleImageSelect]);
+
   const memoizedMainContent = React.useMemo(() => (
     <MainDashboardContent
       notes={notes}
@@ -44,10 +54,10 @@ const OptimizedDashboard: React.FC = () => {
       leftPanelsSize={panelSizes.leftPanels}
       rightPanelsSize={panelSizes.rightPanels}
       isDashboardEditMode={isDashboardEditMode}
-      onMainContentResize={handleMainContentResize}
-      onHorizontalResize={handleHorizontalResize}
+      onMainContentResize={memoizedHandlers.onMainContentResize}
+      onHorizontalResize={memoizedHandlers.onHorizontalResize}
     />
-  ), [notes, panelSizes.analytics, panelSizes.topSection, panelSizes.bottomSection, panelSizes.leftPanels, panelSizes.rightPanels, isDashboardEditMode, handleMainContentResize, handleHorizontalResize]);
+  ), [notes, panelSizes, isDashboardEditMode, memoizedHandlers]);
 
   return (
     <div className="w-full h-full bg-background">
@@ -62,10 +72,10 @@ const OptimizedDashboard: React.FC = () => {
       <EditLayoutModal
         open={showEditLayoutModal}
         onOpenChange={setShowEditLayoutModal}
-        onImageUpload={handleImageUpload}
-        onAIGenerate={handleAIGenerate}
-        onVideoUpload={handleVideoUpload}
-        onImageSelect={handleImageSelect}
+        onImageUpload={memoizedHandlers.onImageUpload}
+        onAIGenerate={memoizedHandlers.onAIGenerate}
+        onVideoUpload={memoizedHandlers.onVideoUpload}
+        onImageSelect={memoizedHandlers.onImageSelect}
       />
     </div>
   );
