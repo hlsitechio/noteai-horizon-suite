@@ -470,6 +470,10 @@ export type Database = {
           smart_formatting_enabled: boolean | null
           updated_at: string
           user_id: string
+          weather_city: string | null
+          weather_enabled: boolean | null
+          weather_units: string | null
+          weather_update_interval: number | null
         }
         Insert: {
           ai_model?: string | null
@@ -483,6 +487,10 @@ export type Database = {
           smart_formatting_enabled?: boolean | null
           updated_at?: string
           user_id: string
+          weather_city?: string | null
+          weather_enabled?: boolean | null
+          weather_units?: string | null
+          weather_update_interval?: number | null
         }
         Update: {
           ai_model?: string | null
@@ -496,6 +504,10 @@ export type Database = {
           smart_formatting_enabled?: boolean | null
           updated_at?: string
           user_id?: string
+          weather_city?: string | null
+          weather_enabled?: boolean | null
+          weather_units?: string | null
+          weather_update_interval?: number | null
         }
         Relationships: []
       }

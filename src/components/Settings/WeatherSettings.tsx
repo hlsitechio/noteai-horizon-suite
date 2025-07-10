@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,19 +7,13 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Cloud, Save, RefreshCw, Key, AlertCircle } from 'lucide-react';
+import { MapPin, Cloud, Save, RefreshCw, Key, AlertCircle, Database, Loader } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useWeatherSettings } from '@/hooks/useWeatherSettings';
 
 interface WeatherSettingsProps {
-  onSettingsChange?: (settings: WeatherSettings) => void;
-}
-
-export interface WeatherSettings {
-  enabled: boolean;
-  city: string;
-  units: 'celsius' | 'fahrenheit';
-  updateInterval: number; // minutes
+  onSettingsChange?: (settings: any) => void;
 }
 
 const PREDEFINED_CITIES = [
@@ -32,46 +26,30 @@ const PREDEFINED_CITIES = [
   'Ottawa'
 ];
 
-const DEFAULT_SETTINGS: WeatherSettings = {
-  enabled: true,
-  city: 'New York',
-  units: 'celsius',
-  updateInterval: 30
-};
-
 export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChange }) => {
-  const [settings, setSettings] = useState<WeatherSettings>(DEFAULT_SETTINGS);
+  const { 
+    settings, 
+    isLoading, 
+    error, 
+    updateSetting, 
+    saveSettings 
+  } = useWeatherSettings();
+  
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [isCustomCity, setIsCustomCity] = useState(false);
 
-  // Load settings from localStorage on mount
-  useEffect(() => {
-    const savedSettings = localStorage.getItem('weather-settings');
-    if (savedSettings) {
-      try {
-        const parsed = JSON.parse(savedSettings);
-        setSettings({ ...DEFAULT_SETTINGS, ...parsed });
-        // Check if the loaded city is in predefined list
-        setIsCustomCity(!PREDEFINED_CITIES.includes(parsed.city || DEFAULT_SETTINGS.city));
-      } catch (error) {
-        console.error('Failed to parse saved weather settings:', error);
-      }
-    }
-  }, []);
+  // Check if current city is custom
+  React.useEffect(() => {
+    setIsCustomCity(!PREDEFINED_CITIES.includes(settings.city));
+  }, [settings.city]);
 
-  const saveSettings = () => {
+  const handleSaveSettings = async () => {
     try {
-      localStorage.setItem('weather-settings', JSON.stringify(settings));
+      await saveSettings(settings);
       onSettingsChange?.(settings);
-      
-      // Dispatch a custom event for same-tab updates
-      window.dispatchEvent(new CustomEvent('weather-settings-changed'));
-      
-      toast.success('Weather settings saved successfully');
     } catch (error) {
-      console.error('Failed to save weather settings:', error);
-      toast.error('Failed to save weather settings');
+      // Error handling is done in the hook
     }
   };
 
@@ -90,7 +68,8 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
       const { data, error } = await supabase.functions.invoke('weather-api', {
         body: { 
           city: settings.city.trim(),
-          units: settings.units === 'celsius' ? 'metric' : 'imperial'
+          units: settings.units === 'celsius' ? 'metric' : 'imperial',
+          useCache: false // Force fresh data for testing
         }
       });
 
@@ -103,7 +82,8 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
 
       if (data && data.temperature !== undefined) {
         setConnectionStatus('success');
-        toast.success(`Weather connection successful! Current temperature in ${data.city}: ${data.temperature}°${settings.units === 'celsius' ? 'C' : 'F'}`);
+        const cacheInfo = data.cached ? ' (cached)' : ' (fresh)';
+        toast.success(`Weather connection successful! Current temperature in ${data.city}: ${data.temperature}°${settings.units === 'celsius' ? 'C' : 'F'}${cacheInfo}`);
       } else {
         setConnectionStatus('error');
         toast.error('Invalid response from weather service');
@@ -117,12 +97,24 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
     }
   };
 
-  const updateSetting = <K extends keyof WeatherSettings>(
-    key: K, 
-    value: WeatherSettings[K]
-  ) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
-  };
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Cloud className="h-5 w-5" />
+            Weather Widget Settings
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center py-8">
+          <div className="flex items-center gap-2">
+            <Loader className="h-4 w-4 animate-spin" />
+            <span>Loading weather settings...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -130,9 +122,23 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
         <CardTitle className="flex items-center gap-2">
           <Cloud className="h-5 w-5" />
           Weather Widget Settings
+          <Badge variant="outline" className="ml-auto">
+            <Database className="h-3 w-3 mr-1" />
+            Supabase Synced
+          </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        {error && (
+          <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+            <AlertCircle className="h-4 w-4 text-destructive mt-0.5 flex-shrink-0" />
+            <div className="text-sm">
+              <p className="font-medium text-destructive">Settings Error</p>
+              <p className="text-muted-foreground">{error}</p>
+            </div>
+          </div>
+        )}
+
         {/* Enable/Disable Weather */}
         <div className="flex items-center justify-between">
           <div className="space-y-1">
@@ -315,9 +321,9 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
         <Separator />
 
         {/* Save Button */}
-        <Button onClick={saveSettings} className="w-full">
+        <Button onClick={handleSaveSettings} className="w-full" disabled={isLoading}>
           <Save className="h-4 w-4 mr-2" />
-          Save Weather Settings
+          {isLoading ? 'Saving...' : 'Save Weather Settings'}
         </Button>
       </CardContent>
     </Card>
