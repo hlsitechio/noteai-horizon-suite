@@ -1,46 +1,11 @@
 
-import React, { useState, useEffect, createContext, useContext, useRef } from 'react';
-import { DragDropContext } from 'react-beautiful-dnd';
-import { useUnifiedDragDrop } from '../../hooks/useUnifiedDragDrop';
-
-interface DragDropReadyContextType {
-  isReady: boolean;
-  contextRef: React.RefObject<any>;
-}
-
-const DragDropReadyContext = createContext<DragDropReadyContextType>({ 
-  isReady: false, 
-  contextRef: { current: null } 
-});
-
-export const useDragDropReady = () => useContext(DragDropReadyContext);
+import React from 'react';
 
 interface UnifiedDragDropProviderProps {
   children: React.ReactNode;
 }
 
 export function UnifiedDragDropProvider({ children }: UnifiedDragDropProviderProps) {
-  const { handleDragEnd } = useUnifiedDragDrop();
-  const [isReady, setIsReady] = useState(false);
-  const contextRef = useRef<any>(null);
-  const mountedRef = useRef(false);
-
-  useEffect(() => {
-    mountedRef.current = true;
-    
-    // Set ready immediately since we're providing the context
-    setIsReady(true);
-
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
-
-  return (
-    <DragDropReadyContext.Provider value={{ isReady: true, contextRef }}>
-      <DragDropContext onDragEnd={handleDragEnd}>
-        {children}
-      </DragDropContext>
-    </DragDropReadyContext.Provider>
-  );
+  // Simplified provider - using @dnd-kit/core instead of react-beautiful-dnd
+  return <>{children}</>;
 }
