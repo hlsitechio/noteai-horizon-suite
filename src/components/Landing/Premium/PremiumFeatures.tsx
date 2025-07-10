@@ -21,78 +21,63 @@ const PremiumFeatures: React.FC = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const features = [
+  const mainFeatures = [
     {
       icon: Brain,
       title: "AI-Powered Intelligence",
-      description: "Advanced AI that learns from your writing patterns and suggests intelligent improvements, auto-completes thoughts, and enhances clarity.",
-      color: "from-blue-500 to-purple-600"
+      description: "Advanced AI that learns from your writing patterns and suggests intelligent improvements.",
+      category: "Core"
     },
     {
       icon: Zap,
-      title: "Lightning Fast Performance",
-      description: "Instant search, real-time collaboration, and zero-latency editing. Experience the speed of thought with our optimized infrastructure.",
-      color: "from-yellow-500 to-orange-600"
+      title: "Lightning Performance",
+      description: "Instant search, real-time collaboration, and zero-latency editing.",
+      category: "Performance"
     },
     {
       icon: Shield,
       title: "Enterprise Security",
-      description: "Military-grade encryption, zero-knowledge architecture, and compliance with GDPR, SOC 2, and ISO 27001 standards.",
-      color: "from-green-500 to-emerald-600"
-    },
-    {
-      icon: Cloud,
-      title: "Universal Sync",
-      description: "Seamless synchronization across all devices with offline support. Your notes are always available, everywhere you go.",
-      color: "from-cyan-500 to-blue-600"
+      description: "Military-grade encryption, zero-knowledge architecture, and compliance standards.",
+      category: "Security"
     },
     {
       icon: Search,
       title: "Intelligent Search",
-      description: "Find anything instantly with AI-powered semantic search that understands context, not just keywords.",
-      color: "from-purple-500 to-pink-600"
+      description: "AI-powered semantic search that understands context, not just keywords.",
+      category: "Core"
+    }
+  ];
+
+  const secondaryFeatures = [
+    {
+      icon: Cloud,
+      title: "Universal Sync",
+      description: "Seamless synchronization across all devices with offline support."
     },
     {
       icon: Users,
       title: "Team Collaboration",
-      description: "Real-time collaboration with team permissions, commenting, and version history. Work together seamlessly.",
-      color: "from-indigo-500 to-purple-600"
-    },
-    {
-      icon: Palette,
-      title: "Infinite Customization",
-      description: "Personalize every aspect of your experience with themes, layouts, and workflows that adapt to your unique style.",
-      color: "from-pink-500 to-red-600"
+      description: "Real-time collaboration with permissions and version history."
     },
     {
       icon: Smartphone,
       title: "Mobile Excellence",
-      description: "Native mobile apps with full feature parity. Capture ideas on the go with voice notes and instant synchronization.",
-      color: "from-emerald-500 to-teal-600"
+      description: "Native mobile apps with full feature parity."
     },
     {
       icon: Globe,
       title: "Global Infrastructure",
-      description: "Edge computing and global CDN ensure optimal performance worldwide. 99.9% uptime guaranteed.",
-      color: "from-blue-500 to-cyan-600"
+      description: "Edge computing and global CDN with 99.9% uptime."
     },
     {
       icon: Lock,
       title: "Privacy First",
-      description: "Your data belongs to you. Zero tracking, no ads, and complete control over your information.",
-      color: "from-gray-600 to-gray-800"
-    },
-    {
-      icon: BarChart3,
-      title: "Advanced Analytics",
-      description: "Gain insights into your productivity patterns with detailed analytics and personalized recommendations.",
-      color: "from-orange-500 to-yellow-600"
+      description: "Zero tracking, no ads, complete data control."
     },
     {
       icon: Workflow,
-      title: "Automation & Integrations",
-      description: "Connect with 1000+ apps and automate your workflow with smart templates and custom integrations.",
-      color: "from-violet-500 to-purple-600"
+      title: "Automation",
+      description: "Connect with 1000+ apps and automate workflows."
     }
   ];
 
@@ -118,54 +103,115 @@ const PremiumFeatures: React.FC = () => {
   };
 
   return (
-    <section id="features" className="py-32 px-6 lg:px-8 relative">
+    <section id="features" className="py-24 px-6 lg:px-8 relative">
       <div className="max-w-7xl mx-auto" ref={ref}>
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-20"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
         >
-          <h2 className="text-display font-display font-black mb-6 tracking-tight">
-            <span className="text-gradient-premium">
-              Powerful Features
-            </span>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+            Powerful Features
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-light leading-relaxed">
-            Experience the perfect blend of{' '}
-            <span className="text-foreground font-medium">simplicity and power</span>{' '}
-            with features designed to transform how you capture, organize, and evolve your ideas.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Everything you need to capture, organize, and transform your ideas into action.
           </p>
         </motion.div>
 
-        {/* Features Grid */}
+        {/* Bento Grid Layout */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12"
         >
-          {features.map((feature, index) => {
+          {/* Main Feature - Spans 2x2 */}
+          <motion.div variants={itemVariants} className="md:col-span-2 md:row-span-2">
+            <Card className="p-8 h-full bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/20 transition-all duration-300">
+              <div className="flex items-center mb-6">
+                <div className="p-3 rounded-xl bg-primary/10 text-primary">
+                  <Brain className="w-8 h-8" />
+                </div>
+                <span className="ml-3 text-sm font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
+                  Core
+                </span>
+              </div>
+              <h3 className="text-2xl font-semibold mb-4 text-foreground">
+                AI-Powered Intelligence
+              </h3>
+              <p className="text-muted-foreground text-base leading-relaxed mb-6">
+                Advanced AI that learns from your writing patterns and suggests intelligent improvements, auto-completes thoughts, and enhances clarity with contextual understanding.
+              </p>
+              <div className="space-y-3">
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                  Smart auto-completion
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                  Context-aware suggestions
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                  Writing pattern analysis
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Other main features */}
+          {mainFeatures.slice(1).map((feature, index) => {
             const Icon = feature.icon;
             return (
               <motion.div key={index} variants={itemVariants}>
-                <Card className="card-premium group border-animate hover-lift-premium">
-                  <div className="flex items-center mb-6">
-                    <div className={`p-4 rounded-2xl bg-gradient-to-r ${feature.color} shadow-premium group-hover:shadow-glow transition-all duration-slow animate-float-gentle`}>
-                      <Icon className="w-7 h-7 text-white" />
+                <Card className="p-6 h-full bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/20 transition-all duration-300">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                      <Icon className="w-6 h-6" />
                     </div>
+                    <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
+                      {feature.category}
+                    </span>
                   </div>
-                  
-                  <h3 className="text-headline font-semibold mb-4 group-hover:text-primary transition-colors duration-base">
+                  <h3 className="text-lg font-semibold mb-2 text-foreground">
                     {feature.title}
                   </h3>
-                  
-                  <p className="text-muted-foreground leading-relaxed font-light">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     {feature.description}
                   </p>
                 </Card>
               </motion.div>
+            );
+          })}
+        </motion.div>
+
+        {/* Secondary Features - Horizontal Showcase */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
+          {secondaryFeatures.map((feature, index) => {
+            const Icon = feature.icon;
+            return (
+              <Card key={index} className="p-4 bg-card/30 backdrop-blur-sm border border-border/30 hover:bg-card/50 hover:border-border/50 transition-all duration-200">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 rounded-lg bg-muted/50">
+                    <Icon className="w-5 h-5 text-foreground" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm text-foreground">
+                      {feature.title}
+                    </h4>
+                    <p className="text-xs text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
+              </Card>
             );
           })}
         </motion.div>

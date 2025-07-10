@@ -52,14 +52,13 @@ const PremiumNavigation: React.FC<PremiumNavigationProps> = ({ mousePosition }) 
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <motion.div
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.02 }}
               className="flex items-center space-x-3"
             >
-              <div className="relative">
-                <Sparkles className="w-8 h-8 text-primary animate-glow" />
-                <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Sparkles className="w-6 h-6 text-primary" />
               </div>
-              <span className="text-2xl font-display font-black text-gradient-premium">
+              <span className="text-xl font-bold text-foreground">
                 Online Note AI
               </span>
             </motion.div>
@@ -83,14 +82,14 @@ const PremiumNavigation: React.FC<PremiumNavigationProps> = ({ mousePosition }) 
             {/* CTA Buttons */}
             <div className="hidden md:flex items-center space-x-4">
               <Link to="/login">
-                <Button variant="ghost" className="text-foreground/80 hover:text-foreground">
+                <Button variant="ghost" className="text-foreground hover:text-foreground hover:bg-muted/50">
                   Sign In
                 </Button>
               </Link>
               <Link to="/register">
-                <Button className="button-premium hover:shadow-glow hover-scale-premium group">
+                <Button variant="primary" className="group">
                   Get Started
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-base" />
+                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
                 </Button>
               </Link>
             </div>
@@ -132,7 +131,7 @@ const PremiumNavigation: React.FC<PremiumNavigationProps> = ({ mousePosition }) 
                     </Button>
                   </Link>
                   <Link to="/register" className="block">
-                    <Button className="w-full bg-[var(--gradient-primary)]">
+                    <Button variant="primary" className="w-full">
                       Get Started
                     </Button>
                   </Link>
