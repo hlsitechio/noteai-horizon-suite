@@ -36,138 +36,93 @@ const PremiumHero: React.FC = () => {
   ];
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-20 px-6 lg:px-8 overflow-hidden">
-      {/* Floating Icons */}
-      {floatingIcons.map(({ Icon, delay, x, y }, index) => (
-        <motion.div
-          key={index}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 0.1, scale: 1 }}
-          transition={{ delay: delay + 2, duration: 1 }}
-          className="absolute hidden lg:block"
-          style={{ left: x, top: y }}
-        >
-          <motion.div
-            animate={{ y: [-10, 10, -10] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <Icon className="w-16 h-16 text-primary" />
-          </motion.div>
-        </motion.div>
-      ))}
+    <section className="relative min-h-screen flex items-center justify-center pt-20 px-6 lg:px-8">
+      {/* Background with subtle beam effect */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-primary/5" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-50" />
+      </div>
 
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="max-w-6xl mx-auto text-center"
+        className="max-w-5xl mx-auto text-center"
       >
-        {/* Badge */}
-        <motion.div variants={itemVariants} className="mb-8">
-          <Badge 
-            variant="outline" 
-            className="px-6 py-2 text-sm font-medium bg-primary/5 border-primary/20 text-primary hover:bg-primary/10 transition-colors"
-          >
-            <Sparkles className="w-4 h-4 mr-2" />
-            AI-Powered Excellence
-          </Badge>
-        </motion.div>
-
-        {/* Main Headline */}
+        {/* Main Headline - Huly Style */}
         <motion.h1 
           variants={itemVariants}
-          className="text-hero font-display font-black mb-8 leading-none tracking-tight"
+          className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight"
         >
-          <span className="text-gradient-premium animate-gradient-flow">
-            Transform Your
-          </span>
+          <span className="text-foreground">Everything App</span>
           <br />
-          <span className="text-shimmer bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent bg-size-200">
-            Ideas Into Reality
-          </span>
+          <span className="text-foreground">for your </span>
+          <span className="text-primary">notes</span>
         </motion.h1>
 
         {/* Subtitle */}
         <motion.p 
           variants={itemVariants}
-          className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed font-light"
+          className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed"
         >
-          Experience the future of note-taking with{' '}
-          <span className="text-foreground font-medium">AI that understands your thoughts</span>, 
-          enhances your creativity, and transforms your workflow into something extraordinary.
+          Online Note AI, an open-source platform, serves as an all-in-one replacement for Notion, Obsidian, and traditional note-taking apps.
         </motion.p>
 
-        {/* CTA Buttons */}
+        {/* CTA Button - Huly Style */}
         <motion.div 
           variants={itemVariants}
-          className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16"
+          className="mb-16"
         >
           <Link to="/register">
             <Button 
               size="lg" 
-              className="button-premium px-12 py-6 text-lg font-semibold hover:shadow-glow transform hover:scale-105 transition-all duration-slow group min-w-[240px] animate-pulse-glow"
+              className="px-8 py-3 text-base font-medium bg-primary hover:bg-primary/90 text-primary-foreground rounded-full"
             >
-              Start Your Journey
-              <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform duration-base" />
-            </Button>
-          </Link>
-          
-          <Link to="#showcase">
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="glass px-12 py-6 text-lg border-2 border-border/30 hover:border-primary hover:bg-primary/5 hover:shadow-elegant transition-all duration-slow min-w-[240px] hover-lift-premium"
-            >
-              Watch Demo
+              Try it Free
             </Button>
           </Link>
         </motion.div>
 
-        {/* Stats */}
+        {/* Product Screenshot Placeholder */}
         <motion.div 
           variants={itemVariants}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
+          className="relative max-w-4xl mx-auto"
         >
-          {[
-            { number: '10M+', label: 'Notes Created', delay: 0 },
-            { number: '99.9%', label: 'Uptime Guarantee', delay: 0.1 },
-            { number: '150+', label: 'Countries Served', delay: 0.2 }
-          ].map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 3 + stat.delay, duration: 0.6 }}
-              className="group"
-            >
-              <div className="text-4xl md:text-5xl font-bold bg-[var(--gradient-primary)] bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform">
-                {stat.number}
+          <div className="relative bg-card border border-border rounded-2xl overflow-hidden shadow-2xl">
+            {/* Mock Interface */}
+            <div className="bg-muted/50 p-4 border-b border-border">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
               </div>
-              <div className="text-muted-foreground text-sm uppercase tracking-wider">
-                {stat.label}
+            </div>
+            <div className="aspect-video bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center">
+              <div className="text-center">
+                <div className="w-24 h-24 bg-primary/20 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                  <Sparkles className="w-12 h-12 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">Your AI Note-Taking Workspace</h3>
+                <p className="text-muted-foreground">Intelligent, organized, and always accessible</p>
               </div>
-            </motion.div>
-          ))}
+            </div>
+          </div>
         </motion.div>
-      </motion.div>
 
-      {/* Bottom scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 4, duration: 1 }}
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-6 h-10 border-2 border-primary/30 rounded-full flex justify-center"
+        {/* Feature List - Huly Style */}
+        <motion.div 
+          variants={itemVariants}
+          className="mt-16 text-sm text-muted-foreground"
         >
-          <motion.div
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="w-1 h-3 bg-primary rounded-full mt-2"
-          />
+          <p className="mb-4">Everything you need for productive note-taking:</p>
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 max-w-2xl mx-auto">
+            <span>• AI Writing Assistant</span>
+            <span>• Smart Organization</span>
+            <span>• Real-time Sync</span>
+            <span>• Collaborative Editing</span>
+            <span>• Advanced Search</span>
+            <span>• Export Options</span>
+          </div>
         </motion.div>
       </motion.div>
     </section>

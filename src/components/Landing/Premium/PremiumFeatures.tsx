@@ -21,63 +21,27 @@ const PremiumFeatures: React.FC = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const mainFeatures = [
+  const features = [
     {
       icon: Brain,
-      title: "AI-Powered Intelligence",
-      description: "Advanced AI that learns from your writing patterns and suggests intelligent improvements.",
-      category: "Core"
-    },
-    {
-      icon: Zap,
-      title: "Lightning Performance",
-      description: "Instant search, real-time collaboration, and zero-latency editing.",
-      category: "Performance"
-    },
-    {
-      icon: Shield,
-      title: "Enterprise Security",
-      description: "Military-grade encryption, zero-knowledge architecture, and compliance standards.",
-      category: "Security"
-    },
-    {
-      icon: Search,
-      title: "Intelligent Search",
-      description: "AI-powered semantic search that understands context, not just keywords.",
-      category: "Core"
-    }
-  ];
-
-  const secondaryFeatures = [
-    {
-      icon: Cloud,
-      title: "Universal Sync",
-      description: "Seamless synchronization across all devices with offline support."
+      title: "Unmatched productivity",
+      description: "Online Note AI is a comprehensive note-taking and knowledge management platform that provides amazing collaboration opportunities for students, professionals, and creative teams alike.",
+      items: [
+        { title: "AI Assistance", desc: "Work efficiently with intelligent auto-completion and suggestions." },
+        { title: "Smart Organization", desc: "Keep track of your ideas by organizing notes in dynamic folders and tags." },
+        { title: "Real-time Sync", desc: "Keep up to date with any changes by receiving instant synchronization across devices." },
+        { title: "Collaborative Editing", desc: "Transform individual notes into collaborative workspaces for team productivity." }
+      ]
     },
     {
       icon: Users,
-      title: "Team Collaboration",
-      description: "Real-time collaboration with permissions and version history."
-    },
-    {
-      icon: Smartphone,
-      title: "Mobile Excellence",
-      description: "Native mobile apps with full feature parity."
-    },
-    {
-      icon: Globe,
-      title: "Global Infrastructure",
-      description: "Edge computing and global CDN with 99.9% uptime."
-    },
-    {
-      icon: Lock,
-      title: "Privacy First",
-      description: "Zero tracking, no ads, complete data control."
-    },
-    {
-      icon: Workflow,
-      title: "Automation",
-      description: "Connect with 1000+ apps and automate workflows."
+      title: "Work together. Like in real life.",
+      description: "Create customized collaborative spaces for any project or team with seamless real-time editing and high-quality sharing capabilities.",
+      features: [
+        { title: "Shared Workspaces", desc: "Create your own note collections and collaborative spaces to suit your team's needs.", icon: "🏢" },
+        { title: "Real-time Collaboration", desc: "Edit documents simultaneously with team members with live cursor tracking.", icon: "🎥" },
+        { title: "Comment System", desc: "Collaborate with team members without ever needing to leave your workspace.", icon: "💬" }
+      ]
     }
   ];
 
@@ -86,135 +50,91 @@ const PremiumFeatures: React.FC = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.2
       }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6
+        duration: 0.5
       }
     }
   };
 
   return (
-    <section id="features" className="py-24 px-6 lg:px-8 relative">
-      <div className="max-w-7xl mx-auto" ref={ref}>
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-            Powerful Features
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Everything you need to capture, organize, and transform your ideas into action.
-          </p>
-        </motion.div>
-
-        {/* Bento Grid Layout */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12"
-        >
-          {/* Main Feature - Spans 2x2 */}
-          <motion.div variants={itemVariants} className="md:col-span-2 md:row-span-2">
-            <Card className="p-8 h-full bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/20 transition-all duration-300">
+    <section className="py-20 px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto" ref={ref}>
+        {features.map((section, sectionIndex) => (
+          <motion.div
+            key={sectionIndex}
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            className={`${sectionIndex > 0 ? 'mt-32' : ''}`}
+          >
+            {/* Section Header */}
+            <motion.div variants={itemVariants} className="mb-16">
               <div className="flex items-center mb-6">
-                <div className="p-3 rounded-xl bg-primary/10 text-primary">
-                  <Brain className="w-8 h-8" />
+                <div className="p-3 bg-primary/10 rounded-2xl text-primary mr-4">
+                  <section.icon className="w-8 h-8" />
                 </div>
-                <span className="ml-3 text-sm font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
-                  Core
-                </span>
               </div>
-              <h3 className="text-2xl font-semibold mb-4 text-foreground">
-                AI-Powered Intelligence
-              </h3>
-              <p className="text-muted-foreground text-base leading-relaxed mb-6">
-                Advanced AI that learns from your writing patterns and suggests intelligent improvements, auto-completes thoughts, and enhances clarity with contextual understanding.
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+                {section.title}
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">
+                {section.description}
               </p>
-              <div className="space-y-3">
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                  Smart auto-completion
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                  Context-aware suggestions
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                  Writing pattern analysis
-                </div>
-              </div>
-            </Card>
-          </motion.div>
+            </motion.div>
 
-          {/* Other main features */}
-          {mainFeatures.slice(1).map((feature, index) => {
-            const Icon = feature.icon;
-            return (
-              <motion.div key={index} variants={itemVariants}>
-                <Card className="p-6 h-full bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/20 transition-all duration-300">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                      <Icon className="w-6 h-6" />
+            {/* Feature Items */}
+            {section.items && (
+              <motion.div variants={containerVariants} className="space-y-8">
+                {section.items.map((item, index) => (
+                  <motion.div
+                    key={index}
+                    variants={itemVariants}
+                    className="flex items-start space-x-4 group"
+                  >
+                    <div className="flex-shrink-0 w-2 h-2 bg-primary rounded-full mt-3"></div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
+                        {item.title}
+                      </h3>
+                      <p className="text-muted-foreground">
+                        {item.desc}
+                      </p>
                     </div>
-                    <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
-                      {feature.category}
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2 text-foreground">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {feature.description}
-                  </p>
-                </Card>
+                  </motion.div>
+                ))}
               </motion.div>
-            );
-          })}
-        </motion.div>
+            )}
 
-        {/* Secondary Features - Horizontal Showcase */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-        >
-          {secondaryFeatures.map((feature, index) => {
-            const Icon = feature.icon;
-            return (
-              <Card key={index} className="p-4 bg-card/30 backdrop-blur-sm border border-border/30 hover:bg-card/50 hover:border-border/50 transition-all duration-200">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 rounded-lg bg-muted/50">
-                    <Icon className="w-5 h-5 text-foreground" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-sm text-foreground">
-                      {feature.title}
-                    </h4>
-                    <p className="text-xs text-muted-foreground">
-                      {feature.description}
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
-        </motion.div>
+            {/* Feature Cards */}
+            {section.features && (
+              <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {section.features.map((feature, index) => (
+                  <motion.div key={index} variants={itemVariants}>
+                    <Card className="p-6 bg-card/50 border border-border/50 hover:border-primary/20 hover:bg-card/70 transition-all duration-300">
+                      <div className="text-3xl mb-4">{feature.icon}</div>
+                      <h3 className="text-lg font-semibold text-foreground mb-2">
+                        {feature.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {feature.desc}
+                      </p>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </motion.div>
+        ))}
       </div>
     </section>
   );
