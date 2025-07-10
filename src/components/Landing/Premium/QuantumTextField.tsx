@@ -45,7 +45,7 @@ const QuantumTextField: React.FC<QuantumTextFieldProps> = ({
         
         // Quantum particle
         const alpha = Math.sin(phase) * 0.3 + 0.1;
-        const size = Math.sin(phase * 2) * 2 + 1;
+        const size = Math.abs(Math.sin(phase * 2) * 2) + 0.5; // Ensure positive size
         
         ctx.globalAlpha = alpha;
         ctx.fillStyle = i % 3 === 0 
