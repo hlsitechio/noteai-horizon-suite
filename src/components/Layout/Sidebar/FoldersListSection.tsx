@@ -149,6 +149,7 @@ export function FoldersListSection({
             className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto"
             onClick={onToggle}
           >
+            <Folder className="h-3 w-3 mr-1" />
             {isExpanded ? (
               <ChevronDown className="h-3 w-3 mr-1" />
             ) : (

@@ -128,6 +128,28 @@ export function NotesListSection({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between px-2">
+        {!isMobile && (
+          <div className="flex gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
+              onClick={onCreateFolder}
+              title="Create Folder"
+            >
+              <FolderPlus className="h-3 w-3" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
+              onClick={onCreateNote}
+              title="Create Note"
+            >
+              <Plus className="h-3 w-3" />
+            </Button>
+          </div>
+        )}
         {isMobile ? (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -159,28 +181,6 @@ export function NotesListSection({
             )}
             Notes ({notes.length})
           </Button>
-        )}
-        {!isMobile && (
-          <div className="flex gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
-              onClick={onCreateFolder}
-              title="Create Folder"
-            >
-              <FolderPlus className="h-3 w-3" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground transition-colors"
-              onClick={onCreateNote}
-              title="Create Note"
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
-          </div>
         )}
       </div>
       
