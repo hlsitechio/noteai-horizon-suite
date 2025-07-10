@@ -8,7 +8,7 @@ import BlockFormattingGroup from './toolbar/BlockFormattingGroup';
 import FontControlsGroup from './toolbar/FontControlsGroup';
 import MediaToolsGroup from './toolbar/MediaToolsGroup';
 import ToolbarActionsGroup from './toolbar/ToolbarActionsGroup';
-import UnifiedAIAssistant from './UnifiedAIAssistant';
+import UnifiedAIAssistant from './AIAssistant';
 
 interface SmartToolbarProps {
   onFormatClick: (formatId: string, event: React.MouseEvent) => void;

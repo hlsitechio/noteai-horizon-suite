@@ -4,7 +4,7 @@ import SmartToolbar from './SmartToolbar';
 import TextSelectionContextMenu from './TextSelectionContextMenu';
 import EditorContent from './components/EditorContent';
 import ResizableImage from './ResizableImage';
-import UnifiedAIAssistant from './UnifiedAIAssistant';
+import UnifiedAIAssistant from './AIAssistant';
 
 import { useOptimizedRichTextEditor } from './hooks/useOptimizedRichTextEditor';
 

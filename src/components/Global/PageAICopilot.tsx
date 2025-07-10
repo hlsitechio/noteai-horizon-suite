@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { UnifiedAIButton } from '@/components/AICopilot';
-import UnifiedAIAssistant from '@/components/Editor/UnifiedAIAssistant';
+import UnifiedAIAssistant from '@/components/Editor/AIAssistant';
 
 interface PageAICopilotProps {
   pageContext?: string;
