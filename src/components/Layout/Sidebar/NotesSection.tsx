@@ -1,35 +1,12 @@
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { NotesListSection } from './NotesListSection';
-import { FoldersListSection } from './FoldersListSection';
-import { FavoritesListSection } from './FavoritesListSection';
-import { DraggableNotesContext } from './DraggableSidebarContent';
 import { useOptimizedNotes } from '../../../contexts/OptimizedNotesContext';
 import { useFolders } from '../../../contexts/FoldersContext';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSidebarCollapse } from '@/contexts/SidebarContext';
-import { Button } from '@/components/ui/button';
-import { Star, Folder, FileText, Plus } from 'lucide-react';
-
-const contentVariants = {
-  expanded: {
-    opacity: 1,
-    height: 'auto',
-    transition: {
-      delay: 0.1,
-      duration: 0.3
-    }
-  },
-  collapsed: {
-    opacity: 0,
-    height: 0,
-    transition: {
-      duration: 0.2
-    }
-  }
-};
+import { CollapsedNotesView } from './CollapsedNotesView';
+import { ExpandedNotesView } from './ExpandedNotesView';
 
 export function NotesSection() {
   const { notes, createNote, setCurrentNote, updateNote } = useOptimizedNotes();
@@ -99,12 +76,6 @@ export function NotesSection() {
     }
   };
 
-  const handleSectionReorder = (newOrder: string[]) => {
-    setSectionOrder(newOrder);
-    // Optionally save to localStorage or user preferences
-    localStorage.setItem('sidebarSectionOrder', JSON.stringify(newOrder));
-  };
-
   // Load saved section order on mount
   React.useEffect(() => {
     const saved = localStorage.getItem('sidebarSectionOrder');
@@ -120,137 +91,32 @@ export function NotesSection() {
     }
   }, []);
 
-  const renderSection = (sectionId: string) => {
-    switch (sectionId) {
-      case 'favorites':
-        return (
-          <FavoritesListSection
-            notes={favoriteNotes}
-            isExpanded={expandedSections.favorites}
-            onToggle={() => toggleSection('favorites')}
-            onCreateNote={handleCreateNote}
-            isMobile={isMobile}
-          />
-        );
-      case 'folders':
-        return (
-          <FoldersListSection
-            folders={folders}
-            notes={notes}
-            isExpanded={expandedSections.folders}
-            onToggle={() => toggleSection('folders')}
-            onCreateFolder={handleCreateFolder}
-            onMoveToFolder={handleMoveToFolder}
-            isMobile={isMobile}
-          />
-        );
-      case 'notes':
-        return (
-          <NotesListSection
-            notes={notes}
-            isExpanded={expandedSections.notes}
-            onToggle={() => toggleSection('notes')}
-            onCreateNote={handleCreateNote}
-            onCreateFolder={handleCreateFolder}
-            isMobile={isMobile}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
   const favoriteNotes = notes.filter(note => note.isFavorite);
 
   // Collapsed icon-only view with enhanced animations
   if (!sidebarOpen && !isMobile) {
     return (
-      <div className="flex-1 min-h-0 flex flex-col items-center py-4 space-y-3">
-        {/* Favorites icon */}
-        {favoriteNotes.length > 0 && (
-          <Button
-            variant="ghost" 
-            size="sm"
-            className="h-10 w-10 p-0 rounded-xl hover:bg-sidebar-accent hover:scale-110 transition-all duration-200 group"
-            onClick={() => {/* Navigate to favorites */}}
-          >
-            <Star className="w-5 h-5 text-sidebar-foreground group-hover:text-yellow-500 transition-colors duration-200" />
-          </Button>
-        )}
-        
-        {/* Folders icon */}
-        <Button
-          variant="ghost"
-          size="sm" 
-          className="h-10 w-10 p-0 rounded-xl hover:bg-sidebar-accent hover:scale-110 transition-all duration-200 group"
-          onClick={handleCreateFolder}
-        >
-          <Folder className="w-5 h-5 text-sidebar-foreground group-hover:text-blue-500 transition-colors duration-200" />
-        </Button>
-        
-        {/* Notes icon */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-10 w-10 p-0 rounded-xl hover:bg-sidebar-accent hover:scale-110 transition-all duration-200 group" 
-          onClick={handleCreateNote}
-        >
-          <FileText className="w-5 h-5 text-sidebar-foreground group-hover:text-green-500 transition-colors duration-200" />
-        </Button>
-        
-        {/* Add icon */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-10 w-10 p-0 rounded-xl hover:bg-sidebar-accent hover:scale-110 transition-all duration-200 group"
-          onClick={handleCreateNote}
-        >
-          <Plus className="w-5 h-5 text-sidebar-foreground group-hover:text-primary transition-colors duration-200" />
-        </Button>
-      </div>
+      <CollapsedNotesView
+        favoriteNotes={favoriteNotes}
+        onCreateNote={handleCreateNote}
+        onCreateFolder={handleCreateFolder}
+      />
     );
   }
 
   return (
-    <div className="flex-1 min-h-0">
-      {!isMobile && (
-        <div className="p-2">
-          <h3 className="text-xs font-medium text-sidebar-foreground mb-3 transition-colors duration-200">
-            Content
-          </h3>
-        </div>
-      )}
-      <div className="h-full">
-        <AnimatePresence>
-          <motion.div
-            variants={contentVariants}
-            initial="collapsed"
-            animate="expanded"
-            exit="collapsed"
-            className="h-full overflow-hidden space-y-2"
-          >
-            <DraggableNotesContext
-              notes={notes}
-              onMoveToFolder={handleMoveToFolder}
-              onToggleFavorite={handleToggleFavorite}
-            >
-              <div className="h-full overflow-y-auto space-y-1 px-2 scrollbar-thin scrollbar-thumb-sidebar-border scrollbar-track-transparent hover:scrollbar-thumb-sidebar-accent/50">
-                {sectionOrder.map((sectionId, index) => (
-                  <div key={sectionId} className="transition-all duration-200">
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1, duration: 0.3 }}
-                    >
-                      {renderSection(sectionId)}
-                    </motion.div>
-                  </div>
-                ))}
-              </div>
-            </DraggableNotesContext>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </div>
+    <ExpandedNotesView
+      notes={notes}
+      folders={folders}
+      favoriteNotes={favoriteNotes}
+      sectionOrder={sectionOrder}
+      expandedSections={expandedSections}
+      onToggleSection={toggleSection}
+      onCreateNote={handleCreateNote}
+      onCreateFolder={handleCreateFolder}
+      onMoveToFolder={handleMoveToFolder}
+      onToggleFavorite={handleToggleFavorite}
+      isMobile={isMobile}
+    />
   );
 }
