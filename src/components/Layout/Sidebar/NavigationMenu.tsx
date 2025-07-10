@@ -85,15 +85,17 @@ const NavigationMenu: React.FC = () => {
               variant="ghost"
               size="sm"
               onClick={toggleCollapse}
-              className="w-full h-10 px-3 flex items-center justify-start hover:bg-sidebar-accent/50"
+              className="w-full h-10 px-3 flex items-center justify-start hover:bg-sidebar-accent/50 transition-all duration-200 group"
             >
               {isCollapsed ? (
-                <PanelLeftOpen className="h-4 w-4" />
+                <PanelLeftOpen className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
               ) : (
-                <PanelLeftClose className="h-4 w-4" />
+                <PanelLeftClose className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
               )}
               {!isCollapsed && !isMobile && (
-                <span className="ml-3 text-sm">Collapse</span>
+                <span className="ml-3 text-sm group-hover:text-sidebar-accent-foreground transition-colors duration-200">
+                  Collapse
+                </span>
               )}
             </Button>
           </TooltipTrigger>
@@ -104,44 +106,51 @@ const NavigationMenu: React.FC = () => {
       </div>
       
       <nav className="space-y-1">
-        {navigationItems.map((item) => {
+        {navigationItems.map((item, index) => {
         const isActive = location.pathname === item.path;
         
         const buttonContent = (
           <Button
             variant={isActive ? "secondary" : "ghost"}
-            className={`w-full transition-all duration-200 ${
+            className={`w-full transition-all duration-300 group ${
               isMobile 
                 ? 'justify-center px-2 h-10' 
                 : 'justify-start px-3 h-12'
             } ${
-              isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'hover:bg-sidebar-accent/50'
+              isActive 
+                ? 'bg-sidebar-accent text-sidebar-accent-foreground shadow-sm' 
+                : 'hover:bg-sidebar-accent/50 hover:scale-[1.02] active:scale-[0.98]'
             }`}
           >
-            <i className={`${item.icon} text-sm ${
+            <i className={`${item.icon} text-sm transition-transform duration-200 ${
               isMobile || isCollapsed ? '' : 'mr-3'
             } ${
-              isActive ? 'text-sidebar-accent-foreground' : ''
+              isActive ? 'text-sidebar-accent-foreground' : 'group-hover:scale-110'
             }`}></i>
             {!isMobile && !isCollapsed && (
-              <div className="flex flex-col items-start">
-                <span className="text-sm font-medium">{item.label}</span>
-                <span className="text-xs text-sidebar-foreground/60">
+              <div className="flex flex-col items-start transition-all duration-200">
+                <span className="text-sm font-medium group-hover:text-sidebar-accent-foreground">
+                  {item.label}
+                </span>
+                <span className="text-xs text-sidebar-foreground/60 group-hover:text-sidebar-foreground/80">
                   {item.description}
                 </span>
               </div>
+            )}
+            {isActive && !isCollapsed && !isMobile && (
+              <div className="ml-auto w-1 h-6 bg-sidebar-accent-foreground rounded-full opacity-80" />
             )}
           </Button>
         );
 
         return (
-          <Link key={item.path} to={item.path}>
+          <Link key={item.path} to={item.path} className="block">
             {isMobile || isCollapsed ? (
               <Tooltip>
                 <TooltipTrigger asChild>
                   {buttonContent}
                 </TooltipTrigger>
-                <TooltipContent side="right">
+                <TooltipContent side="right" className="animate-fade-in">
                   <div>
                     <p className="font-medium">{item.label}</p>
                     <p className="text-xs text-muted-foreground">{item.description}</p>
