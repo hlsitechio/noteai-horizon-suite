@@ -10,16 +10,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-transparent text-accent border-2 border-accent hover:bg-accent/10 hover:-translate-y-0.5 hover:scale-[1.02]",
-        primary: "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground border-2 border-primary hover:from-primary/90 hover:to-primary hover:shadow-lg hover:-translate-y-0.5 hover:scale-[1.02]",
+        default: "bg-accent/5 text-accent border border-accent/20 hover:bg-accent/15 hover:border-accent/40 hover:shadow-md",
+        primary: "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:from-primary/90 hover:to-primary hover:shadow-lg",
         destructive:
-          "bg-transparent text-destructive border-2 border-destructive hover:bg-destructive/10 hover:-translate-y-0.5 hover:scale-[1.02]",
+          "bg-destructive/5 text-destructive border border-destructive/20 hover:bg-destructive/15 hover:border-destructive/40 hover:shadow-md",
         outline:
-          "bg-transparent border-2 border-border/50 hover:bg-border/10 hover:text-foreground hover:-translate-y-0.5 hover:scale-[1.02]",
+          "bg-background/50 border border-border hover:bg-muted/50 hover:text-foreground hover:shadow-sm",
         secondary:
-          "bg-transparent text-secondary-foreground border-2 border-secondary hover:bg-secondary/10 hover:-translate-y-0.5 hover:scale-[1.02]",
-        ghost: "hover:bg-accent/10 hover:text-foreground",
-        link: "text-accent underline-offset-4 hover:underline",
+          "bg-secondary/10 text-secondary-foreground border border-secondary/30 hover:bg-secondary/20 hover:border-secondary/50 hover:shadow-md",
+        ghost: "hover:bg-accent/10 hover:text-accent",
+        link: "text-accent underline-offset-4 hover:underline hover:text-accent/80",
       },
       size: {
         default: "h-10 px-4 py-2",
