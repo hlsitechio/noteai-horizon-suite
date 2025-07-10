@@ -1,5 +1,5 @@
 
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { Editor, Element as SlateElement } from 'slate';
 import { CustomText, CustomElement } from '../types';
 import { toggleMark, toggleBlock } from '../utils/editorUtils';

@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Editor, Range, Transforms } from 'slate';
 
 export const useTextSelection = (editor: Editor) => {

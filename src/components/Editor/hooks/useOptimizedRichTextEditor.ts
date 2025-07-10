@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { useRichTextEditor } from './useRichTextEditor';
 import { useTextSelection } from './useTextSelection';
 import { useEditorFormatting } from './useEditorFormatting';
