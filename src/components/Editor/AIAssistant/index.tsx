@@ -2,7 +2,6 @@ import React from 'react';
 import { toast } from 'sonner';
 import { useAIAssistantState } from './hooks/useAIAssistantState';
 import AIAssistantBar from './components/AIAssistantBar';
-import AIAssistantPopup from './components/AIAssistantPopup';
 import { AIAssistantProps, AIAction } from './types';
 
 const UnifiedAIAssistant: React.FC<AIAssistantProps> = ({
@@ -69,52 +68,26 @@ const UnifiedAIAssistant: React.FC<AIAssistantProps> = ({
 
   if (!isVisible) return null;
 
-  if (mode === 'bar') {
-    return (
-      <AIAssistantBar
-        selectedText={selectedText}
-        onClose={onClose}
-        activeAction={activeAction}
-        result={result}
-        response={response}
-        copied={copied}
-        customPrompt={customPrompt}
-        showCustom={showCustom}
-        isLoading={isLoading}
-        onAction={onAction}
-        onPromptChange={setCustomPrompt}
-        onToggleCustom={() => setShowCustom(!showCustom)}
-        onCustomProcess={handleCustomProcess}
-        onCopy={handleCopy}
-        onInsert={handleInsert}
-        onReplace={handleReplace}
-        onFeedback={handleFeedback}
-      />
-    );
-  }
-
+  // Always render as bar since AI Assistant is now always visible
   return (
-    <AIAssistantPopup
+    <AIAssistantBar
       selectedText={selectedText}
-      position={position}
       onClose={onClose}
       activeAction={activeAction}
-      targetLanguage={targetLanguage}
-      customPrompt={customPrompt}
       result={result}
       response={response}
       copied={copied}
+      customPrompt={customPrompt}
+      showCustom={showCustom}
       isLoading={isLoading}
       onAction={onAction}
-      onLanguageChange={setTargetLanguage}
       onPromptChange={setCustomPrompt}
-      onTranslate={handleTranslate}
+      onToggleCustom={() => setShowCustom(!showCustom)}
       onCustomProcess={handleCustomProcess}
       onCopy={handleCopy}
       onInsert={handleInsert}
       onReplace={handleReplace}
       onFeedback={handleFeedback}
-      onBack={handleBack}
     />
   );
 };

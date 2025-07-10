@@ -20,13 +20,14 @@ const ToolbarActionsGroup: React.FC<ToolbarActionsGroupProps> = ({
 }) => {
   return (
     <div className="flex items-center gap-2">
-      {/* AI Assistant Button */}
+      {/* AI Assistant Button - Now always visible below, this button disabled */}
       <Button
         variant="ghost"
         size="sm"
-        onClick={onAIClick}
-        className="h-8 px-3 bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 hover:from-purple-600 hover:via-blue-600 hover:to-cyan-600 text-white border border-purple-400/30 shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg font-medium"
-        title="Open AI Assistant"
+        onClick={() => {}} // Disabled since AI is always visible
+        disabled
+        className="h-8 px-3 bg-gray-500/50 text-gray-400 border border-gray-600/30 rounded-lg font-medium opacity-50 cursor-not-allowed"
+        title="AI Assistant is always visible below"
       >
         <SparklesIcon className="w-4 h-4 mr-1.5" />
         AI Assistant

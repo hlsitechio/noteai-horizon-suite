@@ -15,7 +15,7 @@ export const useOptimizedRichTextEditor = ({
   onSave
 }: UseOptimizedRichTextEditorProps) => {
   // State management with optimized updates
-  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  // Removed showAIAssistant state - AI is now always visible
   const [editorFontFamily, setEditorFontFamily] = useState('inter');
   const [editorFontSize, setEditorFontSize] = useState(16);
   const [images, setImages] = useState<Array<{
@@ -41,7 +41,6 @@ export const useOptimizedRichTextEditor = ({
 
   const {
     selectedText,
-    assistantPosition,
     contextMenuPosition,
     handleTextSelection,
     handleContextMenuReplace,
@@ -101,14 +100,7 @@ export const useOptimizedRichTextEditor = ({
     ));
   }, []);
 
-  // AI Assistant handlers
-  const handleAIToggle = useCallback(() => {
-    setShowAIAssistant(prev => !prev);
-  }, []);
-
-  const handleAIClose = useCallback(() => {
-    setShowAIAssistant(false);
-  }, []);
+  // AI Assistant handlers removed - AI is now always visible below editor controls
 
   // Debounced save function
   const handleOptimizedSave = useCallback(() => {
@@ -125,8 +117,7 @@ export const useOptimizedRichTextEditor = ({
   }, [onSave, value]);
 
   return {
-    // State
-    showAIAssistant,
+    // State (removed showAIAssistant - AI is now always visible)
     editorFontFamily,
     editorFontSize,
     images,
@@ -135,7 +126,6 @@ export const useOptimizedRichTextEditor = ({
     editor,
     slateValue,
     selectedText,
-    assistantPosition,
     contextMenuPosition,
     
     // Styles
@@ -156,8 +146,8 @@ export const useOptimizedRichTextEditor = ({
     handleImageInsert,
     handleImageRemove,
     handleImageSizeChange,
-    handleAIToggle,
-    handleAIClose,
+    
+    // Removed AI toggle/close handlers - AI is now always visible
     handleOptimizedSave,
   };
 };

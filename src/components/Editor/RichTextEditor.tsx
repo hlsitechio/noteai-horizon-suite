@@ -31,12 +31,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 }) => {
   // Use the optimized hook for all editor functionality
   const {
-    showAIAssistant,
     images,
     editor,
     slateValue,
     selectedText,
-    assistantPosition,
     contextMenuPosition,
     editorStyle,
     handleChange,
@@ -53,8 +51,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     handleImageInsert,
     handleImageRemove,
     handleImageSizeChange,
-    handleAIToggle,
-    handleAIClose,
     handleOptimizedSave,
   } = useOptimizedRichTextEditor({ value, onChange, onSave });
 
@@ -63,7 +59,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       <div className="rounded-2xl shadow-large overflow-hidden bg-black border border-silver/20">
         <SmartToolbar
           onFormatClick={handleFormatClick}
-          onAIClick={handleAIToggle}
+          onAIClick={() => {}} // AI is now always visible
           onSave={handleOptimizedSave}
           onTextInsert={handleTextInsert}
           onImageInsert={handleImageInsert}
@@ -84,7 +80,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             placeholder={placeholder}
             onSelect={handleTextSelection}
             onKeyDown={handleKeyboardShortcuts}
-            onAIToggle={handleAIToggle}
+            onAIToggle={() => {}} // AI is now always visible
           />
           
           {/* Render images */}
@@ -115,15 +111,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       />
 
 
-      <UnifiedAIAssistant
-        selectedText={selectedText}
-        onTextInsert={handleAIInsert}
-        onTextReplace={handleAIReplace}
-        isVisible={showAIAssistant}
-        onClose={handleAIClose}
-        position={assistantPosition}
-        mode="popup"
-      />
+      {/* AI Assistant popup removed - now always visible below editor controls */}
     </>
   );
 };

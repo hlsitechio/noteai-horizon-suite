@@ -59,26 +59,7 @@ const PageAICopilot: React.FC<PageAICopilotProps> = ({ pageContext }) => {
 
   return (
     <>
-      {/* Floating AI Copilot Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <UnifiedAIButton
-          onClick={() => setIsVisible(true)}
-          isActive={isVisible}
-          className="shadow-xl"
-        />
-      </div>
-
-      {/* AI Copilot Interface */}
-      <UnifiedAIAssistant
-        selectedText={selectedText}
-        onTextInsert={handleTextInsert}
-        onTextReplace={handleTextReplace}
-        isVisible={isVisible}
-        onClose={() => setIsVisible(false)}
-        position={position}
-        noteId={undefined}
-        mode="popup"
-      />
+      {/* Global AI Copilot removed - AI Assistant is now permanently visible in the editor */}
     </>
   );
 };
