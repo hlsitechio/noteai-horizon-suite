@@ -83,7 +83,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - handle requests with appropriate strategy
+// Fetch event - handle requests with appropriate strategy and circuit breaker
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = new URL(request.url);
@@ -102,6 +102,29 @@ self.addEventListener('fetch', (event) => {
   if (isSkippedRoute(url.href)) {
     return;
   }
+
+  // Circuit breaker - prevent infinite loops
+  const requestKey = `sw_request_${url.pathname}`;
+  const requestCount = parseInt(self.globalThis[requestKey] || '0');
+  
+  // If too many requests to same URL, return simple response
+  if (requestCount > 10) {
+    console.warn('[SW] Circuit breaker triggered for:', url.href);
+    event.respondWith(new Response('Service temporarily unavailable', { 
+      status: 503, 
+      statusText: 'Service Unavailable',
+      headers: { 'Content-Type': 'text/plain' }
+    }));
+    return;
+  }
+  
+  // Increment request counter
+  self.globalThis[requestKey] = String(requestCount + 1);
+  
+  // Reset counter after a delay
+  setTimeout(() => {
+    delete self.globalThis[requestKey];
+  }, 5000);
 
   // Determine caching strategy based on URL
   if (isNetworkFirst(url.href)) {
@@ -164,26 +187,45 @@ async function cacheFirstStrategy(request) {
   }
 }
 
-// Stale-while-revalidate strategy (for most content)
+// Stale-while-revalidate strategy (for most content) - FIXED
 async function staleWhileRevalidateStrategy(request) {
   const cache = await caches.open(DYNAMIC_CACHE_NAME);
   const cachedResponse = await cache.match(request);
   
+  // Prevent excessive retries by tracking failed requests
+  const cacheKey = `failed_${request.url}`;
+  const failedAttempts = parseInt(localStorage.getItem(cacheKey) || '0');
+  
+  // If too many failures, return cache or simple response
+  if (failedAttempts > 3) {
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    // Don't keep retrying failed requests
+    return new Response('Service temporarily unavailable', { 
+      status: 503, 
+      statusText: 'Service Unavailable',
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  }
+  
   const fetchPromise = fetch(request).then((response) => {
-    // Ensure we only cache successful responses
+    // Reset failure count on success
     if (response && response.ok && response.status === 200) {
+      localStorage.removeItem(cacheKey);
       cache.put(request, response.clone());
     }
     return response;
   }).catch((error) => {
+    // Increment failure count
+    localStorage.setItem(cacheKey, String(failedAttempts + 1));
     console.log('[SW] Fetch failed for:', request.url, error);
-    // Return cached response if available
-    return cachedResponse;
+    return null;
   });
   
   // Return cached response immediately if available
   if (cachedResponse) {
-    // Background update
+    // Background update without blocking
     fetchPromise.catch(() => {}); // Silent fail
     return cachedResponse;
   }
@@ -197,18 +239,20 @@ async function staleWhileRevalidateStrategy(request) {
       return networkResponse;
     }
     
-    // If network response failed but we have cache, return cache
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-    
     // For navigation requests, try to return the main app
     if (request.destination === 'document') {
-      return caches.match('/') || fetch('/');
+      const mainApp = await caches.match('/');
+      if (mainApp) {
+        return mainApp;
+      }
     }
     
-    // For other requests, just pass through the error
-    throw new Error('Resource not available');
+    // Return a proper 404 without causing loops
+    return new Response('Page not found', { 
+      status: 404, 
+      statusText: 'Not Found',
+      headers: { 'Content-Type': 'text/html' }
+    });
   } catch (error) {
     // Return cached response if available
     if (cachedResponse) {
@@ -223,11 +267,10 @@ async function staleWhileRevalidateStrategy(request) {
       }
     }
     
-    // For other requests, return a simple response instead of throwing
-    console.log('[SW] Resource not available, returning 404:', request.url);
-    return new Response('Resource not found', { 
-      status: 404, 
-      statusText: 'Not Found',
+    // Return a proper error without causing loops
+    return new Response('Service temporarily unavailable', { 
+      status: 503, 
+      statusText: 'Service Unavailable',
       headers: { 'Content-Type': 'text/plain' }
     });
   }

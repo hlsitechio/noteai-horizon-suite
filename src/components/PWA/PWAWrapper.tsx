@@ -46,15 +46,40 @@ export function PWAWrapper({
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
-    // Register service worker
+    // Register service worker with better error handling
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then((registration) => {
           console.log('Service Worker registered:', registration);
+          
+          // Listen for service worker errors that might cause loops
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            if (newWorker) {
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // New service worker is available
+                  console.log('New service worker available');
+                }
+              });
+            }
+          });
         })
         .catch((error) => {
           console.error('Service Worker registration failed:', error);
+          // Clear any existing service worker if it's causing issues
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+          }
         });
+
+      // Add message listener for service worker communications
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data?.type === 'SW_ERROR') {
+          console.warn('Service Worker reported error:', event.data.error);
+          // Could implement recovery logic here
+        }
+      });
     }
 
     return () => {
