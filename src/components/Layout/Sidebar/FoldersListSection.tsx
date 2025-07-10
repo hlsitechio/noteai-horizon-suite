@@ -9,9 +9,13 @@ import {
   Folder,
   FolderPlus,
   FileText,
-  Star
+  Star,
+  Edit,
+  Trash2
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useFolders } from '../../../contexts/FoldersContext';
+import { useConfirmDialog } from '@/hooks/useConfirmDialog';
 import { Note } from '../../../types/note';
 import { Folder as FolderType } from '../../../types/folder';
 import DesktopPopOutButton from '../../FloatingNotes/DesktopPopOutButton';
@@ -34,6 +38,9 @@ export function FoldersListSection({
   isMobile
 }: FoldersListSectionProps) {
   const [expandedFolders, setExpandedFolders] = React.useState<Set<string>>(new Set());
+  const { deleteFolder } = useFolders();
+  const { confirmDelete, ConfirmDialog } = useConfirmDialog();
+  const navigate = useNavigate();
 
   const toggleFolder = (folderId: string) => {
     const newExpanded = new Set(expandedFolders);
@@ -45,13 +52,30 @@ export function FoldersListSection({
     setExpandedFolders(newExpanded);
   };
 
+  const handleEditFolder = (folder: FolderType, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    navigate(`/app/folders/${folder.id}?edit=true`);
+  };
+
+  const handleDeleteFolder = async (folderId: string, folderName: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const confirmed = await confirmDelete(folderName);
+    
+    if (confirmed) {
+      await deleteFolder(folderId);
+    }
+  };
+
   const renderFolder = (folder: FolderType) => {
     const folderNotes = notes.filter(note => note.folder_id === folder.id);
     const isFolderExpanded = expandedFolders.has(folder.id);
 
     return (
       <div key={folder.id} className="space-y-1">
-        <div className="flex items-center w-full">
+        <div className="flex items-center w-full group">
           <Button 
             variant="ghost"
             size="sm"
@@ -80,6 +104,27 @@ export function FoldersListSection({
               </span>
             </Link>
           </Button>
+          
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground"
+              onClick={(e) => handleEditFolder(folder, e)}
+              title="Edit folder"
+            >
+              <Edit className="h-3 w-3" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+              onClick={(e) => handleDeleteFolder(folder.id, folder.name, e)}
+              title="Delete folder"
+            >
+              <Trash2 className="h-3 w-3" />
+            </Button>
+          </div>
         </div>
         
         {/* Folder Notes */}
@@ -198,6 +243,8 @@ export function FoldersListSection({
           </motion.div>
         )}
       </AnimatePresence>
+      
+      <ConfirmDialog />
     </div>
   );
 }

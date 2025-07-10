@@ -7,10 +7,16 @@ import {
   ChevronRight, 
   ChevronDown,
   Star,
-  Plus
+  Plus,
+  Edit,
+  Trash2,
+  FileText
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Note } from '../../../types/note';
+import { useOptimizedNotes } from '../../../contexts/OptimizedNotesContext';
+import { useConfirmDialog } from '@/hooks/useConfirmDialog';
+import DesktopPopOutButton from '../../FloatingNotes/DesktopPopOutButton';
 
 interface FavoritesListSectionProps {
   notes: Note[];
@@ -27,6 +33,39 @@ export function FavoritesListSection({
   onCreateNote,
   isMobile
 }: FavoritesListSectionProps) {
+  const { setCurrentNote, deleteNote } = useOptimizedNotes();
+  const { confirmDelete, ConfirmDialog } = useConfirmDialog();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNoteClick = (note: Note) => {
+    setCurrentNote(note);
+    navigate(`/app/notes?note=${note.id}`);
+  };
+
+  const handleEditNote = (note: Note, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setCurrentNote(note);
+    navigate(`/app/editor/${note.id}`);
+  };
+
+  const handleDeleteNote = async (noteId: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const note = notes.find(n => n.id === noteId);
+    const confirmed = await confirmDelete(note?.title || 'this note');
+    
+    if (confirmed) {
+      await deleteNote(noteId);
+    }
+  };
+
+  const isNoteActive = (noteId: string) => {
+    const urlParams = new URLSearchParams(location.search);
+    return urlParams.get('note') === noteId;
+  };
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between px-2">
@@ -93,15 +132,43 @@ export function FavoritesListSection({
             <div className="space-y-1 px-2">
               {notes.length > 0 ? (
                 notes.map((note) => (
-                  <Button key={note.id} variant="ghost" size="sm" asChild className="w-full justify-start h-auto p-1">
-                    <Link 
-                      to={`/app/notes?note=${note.id}`} 
-                      className="flex items-center hover:bg-accent hover:text-accent-foreground transition-colors w-full"
+                  <div key={note.id} className="flex items-center w-full group">
+                    <Button 
+                      variant="ghost"
+                      size="sm"
+                      className={`w-full justify-start h-auto p-1 ${isNoteActive(note.id) ? 'bg-accent text-accent-foreground' : ''}`}
+                      onClick={() => handleNoteClick(note)}
                     >
                       <Star className="h-3 w-3 mr-2 flex-shrink-0 text-accent fill-current" />
-                      <span className="truncate text-xs flex-1">{note.title}</span>
-                    </Link>
-                  </Button>
+                      <span className="truncate text-xs text-left flex-1">{note.title}</span>
+                    </Button>
+                    
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0 hover:bg-accent hover:text-accent-foreground"
+                        onClick={(e) => handleEditNote(note, e)}
+                        title="Edit note"
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        onClick={(e) => handleDeleteNote(note.id, e)}
+                        title="Delete note"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                      <DesktopPopOutButton 
+                        note={note} 
+                        size="sm" 
+                        className="h-6 w-6 p-0 flex-shrink-0" 
+                      />
+                    </div>
+                  </div>
                 ))
               ) : (
                 <Button variant="ghost" size="sm" disabled className="w-full justify-start h-auto p-1">
@@ -112,6 +179,8 @@ export function FavoritesListSection({
           </motion.div>
         )}
       </AnimatePresence>
+      
+      <ConfirmDialog />
     </div>
   );
 }
