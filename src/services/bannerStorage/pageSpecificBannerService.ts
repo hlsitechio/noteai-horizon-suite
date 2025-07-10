@@ -1,31 +1,64 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { PageBannerSettings } from '@/hooks/usePageBannerSettings';
 
+// Add a simple cache to prevent infinite loops
+const settingsCache = new Map<string, { data: PageBannerSettings | null; timestamp: number }>();
+const CACHE_DURATION = 5000; // 5 seconds
+
 export class PageBannerService {
   static async getPageBannerSettings(pagePath: string): Promise<PageBannerSettings | null> {
     try {
+      // Check cache first to prevent repeated calls
+      const cacheKey = pagePath;
+      const cached = settingsCache.get(cacheKey);
+      if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+        console.log(`[PageBannerService] Using cached settings for: ${pagePath}`);
+        return cached.data;
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        throw new Error('User not authenticated');
+        console.log('[PageBannerService] User not authenticated, returning empty settings');
+        return {};
       }
 
       console.log(`[PageBannerService] Loading settings for page: ${pagePath}`);
 
-      // Use the banner-storage edge function for reliable data access
-      const { data, error } = await supabase.functions.invoke('banner-storage', {
-        body: { pagePath, action: 'get' }
-      });
+      // Try direct database access first for better reliability
+      const { data, error } = await supabase
+        .from('page_banner_settings')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .eq('page_path', pagePath)
+        .single();
 
-      if (error) {
-        console.error('[PageBannerService] Error loading settings:', error);
-        return null;
+      let result: PageBannerSettings | null = null;
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found"
+        console.error('[PageBannerService] Database error:', error);
+        result = null;
+      } else if (data) {
+        result = {
+          bannerUrl: data.banner_url,
+          bannerType: data.banner_type,
+          bannerHeight: data.banner_height || 100,
+          bannerPositionX: data.banner_position_x || 0,
+          bannerPositionY: data.banner_position_y || 0,
+          bannerWidth: data.banner_width || 100,
+          isEnabled: data.is_enabled !== false
+        };
+      } else {
+        result = {}; // No settings found, return empty object
       }
 
-      console.log(`[PageBannerService] Loaded settings:`, data?.settings);
-      return data?.settings || null;
+      // Cache the result
+      settingsCache.set(cacheKey, { data: result, timestamp: Date.now() });
+
+      console.log(`[PageBannerService] Loaded settings:`, result);
+      return result;
     } catch (error) {
       console.error('[PageBannerService] Failed to get page banner settings:', error);
-      return null;
+      return {};
     }
   }
 
@@ -54,6 +87,9 @@ export class PageBannerService {
         console.error('[PageBannerService] Error saving settings:', error);
         return false;
       }
+
+      // Clear cache after successful update
+      settingsCache.delete(pagePath);
 
       console.log(`[PageBannerService] Settings saved successfully:`, data);
       return true;

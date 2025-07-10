@@ -24,13 +24,16 @@ export const usePageBannerSettings = () => {
 
   // Load settings for current page
   useEffect(() => {
+    console.log('usePageBannerSettings: Loading settings for page:', pagePath);
     loadPageSettings();
   }, [pagePath]);
 
   const loadPageSettings = async () => {
     try {
+      console.log('usePageBannerSettings: Starting to load settings for:', pagePath);
       setIsLoading(true);
       const pageSettings = await PageBannerService.getPageBannerSettings(pagePath);
+      console.log('usePageBannerSettings: Loaded settings:', pageSettings);
       setSettings(pageSettings || {});
     } catch (error) {
       console.error('Failed to load page banner settings:', error);

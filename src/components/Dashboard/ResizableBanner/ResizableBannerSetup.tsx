@@ -49,6 +49,15 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
   // Use page-specific banner URL if no prop is provided
   const effectiveSelectedImageUrl = selectedImageUrl || pageSelectedBannerUrl;
   
+  // Debug logging
+  React.useEffect(() => {
+    console.log('ResizableBannerSetup: Banner URL changed', {
+      selectedImageUrl,
+      pageSelectedBannerUrl,
+      effectiveSelectedImageUrl
+    });
+  }, [selectedImageUrl, pageSelectedBannerUrl, effectiveSelectedImageUrl]);
+  
   // Banner positioning and sizing states - initialize from page settings
   const [bannerPosition, setBannerPosition] = useState(pageBannerPosition);
   const [bannerHeight, setBannerHeight] = useState(pageBannerHeight);
