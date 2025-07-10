@@ -106,7 +106,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
   }
 
   return (
-    <div className="h-full overflow-hidden">
+    <div className="h-full overflow-auto">
       <PanelGroup 
         direction="vertical" 
         className="h-full" 
