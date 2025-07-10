@@ -34,33 +34,65 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
   const componentKey = config?.component_key || defaultComponents[panelKey];
   const isEnabled = componentKey && (config?.enabled !== false);
 
+  const formatPanelName = (panelKey: string) => {
+    const panelNames: Record<string, string> = {
+      'topLeft': 'Top Left Panel',
+      'topRight': 'Top Right Panel', 
+      'bottomLeft': 'Bottom Left Panel',
+      'bottomRight': 'Bottom Right Panel'
+    };
+    return panelNames[panelKey] || panelKey;
+  };
+
   return (
     <div className={cn('relative', className)} aria-live="polite" role="region">
       {isEnabled ? (
-        <DashboardComponentRenderer
-          componentKey={componentKey}
-          props={config?.props || {}}
-        />
+        <div className="h-full">
+          {/* Panel Header with Label */}
+          <div className="flex items-center justify-between p-3 border-b bg-muted/5">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-primary"></div>
+              <span className="text-xs font-medium text-muted-foreground">
+                {formatPanelName(panelKey)}
+              </span>
+            </div>
+            <Settings2 className="w-3 h-3 text-muted-foreground/50" />
+          </div>
+          <div className="h-[calc(100%-48px)]">
+            <DashboardComponentRenderer
+              componentKey={componentKey}
+              props={config?.props || {}}
+            />
+          </div>
+        </div>
       ) : (
-        <Card className="h-full border-dashed border-muted border-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-muted-foreground">
+        <Card className="h-full border-dashed border-primary/30 border-2 bg-primary/5 hover:bg-primary/10 transition-colors">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-primary">
               <Settings2 className="w-4 h-4" />
-              Empty Panel
+              {formatPanelName(panelKey)}
             </CardTitle>
           </CardHeader>
           <CardContent className="h-full">
-            <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground gap-4">
-              <p>This panel is not configured yet.</p>
+            <div className="flex flex-col items-center justify-center h-full text-center gap-4">
+              <div className="w-16 h-16 rounded-lg border-2 border-dashed border-primary/30 flex items-center justify-center">
+                <Settings2 className="w-8 h-8 text-primary/50" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-foreground mb-1">No Component</p>
+                <p className="text-xs text-muted-foreground">
+                  Add a component from the library
+                </p>
+              </div>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => {
-                  // Redirect to a settings page, or open modal
-                  // e.g. navigate('/app/settings/layout')
+                  window.location.href = '/app/components';
                 }}
+                className="border-primary/30 text-primary hover:bg-primary/10"
               >
-                Go to Settings
+                Browse Components
               </Button>
             </div>
           </CardContent>

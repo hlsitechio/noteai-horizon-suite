@@ -94,11 +94,12 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
         </div>
         
         {/* Dashboard Panels - Stacked on mobile */}
-        <div className="grid grid-cols-1 gap-3 p-3">
-          <DashboardPanel panelKey="topLeft" className="p-4" />
-          <DashboardPanel panelKey="topRight" className="p-4" />
-          <DashboardPanel panelKey="bottomLeft" className="p-4" />
-          <DashboardPanel panelKey="bottomRight" className="p-4" />
+        <div className="space-y-3 p-3">
+          <div className="text-xs font-medium text-muted-foreground mb-2">Dashboard Components</div>
+          <DashboardPanel panelKey="topLeft" className="p-4 min-h-[200px]" />
+          <DashboardPanel panelKey="topRight" className="p-4 min-h-[200px]" />
+          <DashboardPanel panelKey="bottomLeft" className="p-4 min-h-[200px]" />
+          <DashboardPanel panelKey="bottomRight" className="p-4 min-h-[200px]" />
         </div>
       </div>
     );
@@ -164,9 +165,9 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
                 minSize={isDashboardEditMode ? 30 : undefined}
                 maxSize={isDashboardEditMode ? 70 : undefined}
               >
-                <div className="h-full">
+                <div className="h-full border-r border-border/50">
                   <ScrollArea className="h-full">
-                    <DashboardPanel panelKey="topLeft" />
+                    <DashboardPanel panelKey="topLeft" className="p-4 min-h-full" />
                   </ScrollArea>
                 </div>
               </Panel>
@@ -185,7 +186,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
               >
                 <div className="h-full">
                   <ScrollArea className="h-full">
-                    <DashboardPanel panelKey="topRight" />
+                    <DashboardPanel panelKey="topRight" className="p-4 min-h-full" />
                   </ScrollArea>
                 </div>
               </Panel>
@@ -221,9 +222,9 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
                 minSize={isDashboardEditMode ? 30 : undefined}
                 maxSize={isDashboardEditMode ? 70 : undefined}
               >
-                <div className="h-full">
+                <div className="h-full border-r border-border/50">
                   <ScrollArea className="h-full">
-                    <DashboardPanel panelKey="bottomLeft" />
+                    <DashboardPanel panelKey="bottomLeft" className="p-4 min-h-full" />
                   </ScrollArea>
                 </div>
               </Panel>
@@ -242,7 +243,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
               >
                 <div className="h-full">
                   <ScrollArea className="h-full">
-                    <DashboardPanel panelKey="bottomRight" />
+                    <DashboardPanel panelKey="bottomRight" className="p-4 min-h-full" />
                   </ScrollArea>
                 </div>
               </Panel>
