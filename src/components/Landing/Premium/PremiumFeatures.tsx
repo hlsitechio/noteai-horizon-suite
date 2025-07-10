@@ -15,7 +15,10 @@ import {
   BarChart3,
   Workflow
 } from 'lucide-react';
-import { Card } from '../../ui/card';
+import FloatingCard3D from './FloatingCard3D';
+import HolographicText from './HolographicText';
+import CyberpunkCard from './CyberpunkCard';
+import ScrollLighting from './ScrollLighting';
 
 const PremiumFeatures: React.FC = () => {
   const ref = useRef(null);
@@ -67,76 +70,101 @@ const PremiumFeatures: React.FC = () => {
   };
 
   return (
-    <section className="py-20 px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto" ref={ref}>
-        {features.map((section, sectionIndex) => (
-          <motion.div
-            key={sectionIndex}
-            variants={containerVariants}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-            className={`${sectionIndex > 0 ? 'mt-32' : ''}`}
-          >
-            {/* Section Header */}
-            <motion.div variants={itemVariants} className="mb-16">
-              <div className="flex items-center mb-6">
-                <div className="p-3 bg-primary/10 rounded-2xl text-primary mr-4">
-                  <section.icon className="w-8 h-8" />
-                </div>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-                {section.title}
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">
-                {section.description}
-              </p>
-            </motion.div>
-
-            {/* Feature Items */}
-            {section.items && (
-              <motion.div variants={containerVariants} className="space-y-8">
-                {section.items.map((item, index) => (
-                  <motion.div
-                    key={index}
-                    variants={itemVariants}
-                    className="flex items-start space-x-4 group"
-                  >
-                    <div className="flex-shrink-0 w-2 h-2 bg-primary rounded-full mt-3"></div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="text-muted-foreground">
-                        {item.desc}
-                      </p>
+    <ScrollLighting intensity={1.5}>
+      <section className="py-32 px-6 lg:px-8 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto" ref={ref}>
+          {features.map((section, sectionIndex) => (
+            <motion.div
+              key={sectionIndex}
+              variants={containerVariants}
+              initial="hidden"
+              animate={isInView ? "visible" : "hidden"}
+              className={`${sectionIndex > 0 ? 'mt-40' : ''}`}
+            >
+              {/* Revolutionary Section Header */}
+              <FloatingCard3D 
+                depth={30} 
+                glowIntensity={0.8}
+                className="mb-20"
+              >
+                <motion.div variants={itemVariants} className="p-12 text-center">
+                  <div className="flex items-center justify-center mb-8">
+                    <div className="p-6 bg-gradient-to-br from-primary/20 to-accent/20 rounded-3xl text-primary mr-6 neural-float">
+                      <section.icon className="w-12 h-12" />
                     </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
+                  </div>
+                  <HolographicText 
+                    className="text-5xl md:text-6xl font-neural font-black mb-8"
+                    glitchEffect={true}
+                  >
+                    {section.title}
+                  </HolographicText>
+                  <p className="text-xl text-foreground/80 max-w-4xl mx-auto leading-relaxed font-cyber">
+                    {section.description}
+                  </p>
+                </motion.div>
+              </FloatingCard3D>
 
-            {/* Feature Cards */}
-            {section.features && (
-              <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {section.features.map((feature, index) => (
-                  <motion.div key={index} variants={itemVariants}>
-                    <Card className="p-6 bg-card/50 border border-border/50 hover:border-primary/20 hover:bg-card/70 transition-all duration-300">
-                      <div className="text-3xl mb-4">{feature.icon}</div>
-                      <h3 className="text-lg font-semibold text-foreground mb-2">
-                        {feature.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {feature.desc}
-                      </p>
-                    </Card>
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
-          </motion.div>
-        ))}
-      </div>
-    </section>
+              {/* Neural Feature Items */}
+              {section.items && (
+                <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                  {section.items.map((item, index) => (
+                    <FloatingCard3D
+                      key={index}
+                      depth={25}
+                      glowIntensity={0.6}
+                      className="group"
+                    >
+                      <CyberpunkCard variant="neural" className="p-8 h-full">
+                        <motion.div
+                          variants={itemVariants}
+                          className="flex items-start space-x-6"
+                        >
+                          <div className="flex-shrink-0 w-4 h-4 bg-gradient-to-r from-primary to-accent rounded-full mt-2 neural-pulse"></div>
+                          <div>
+                            <HolographicText className="text-2xl font-neural font-bold mb-4 group-hover:text-neural-glow transition-all duration-500">
+                              {item.title}
+                            </HolographicText>
+                            <p className="text-foreground/70 font-cyber leading-relaxed">
+                              {item.desc}
+                            </p>
+                          </div>
+                        </motion.div>
+                      </CyberpunkCard>
+                    </FloatingCard3D>
+                  ))}
+                </motion.div>
+              )}
+
+              {/* Advanced Feature Cards */}
+              {section.features && (
+                <motion.div variants={containerVariants} className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                  {section.features.map((feature, index) => (
+                    <FloatingCard3D
+                      key={index}
+                      depth={35}
+                      glowIntensity={0.7}
+                    >
+                      <CyberpunkCard variant="holographic" className="p-8 h-full hover-neural">
+                        <motion.div variants={itemVariants} className="text-center">
+                          <div className="text-6xl mb-6 neural-float">{feature.icon}</div>
+                          <HolographicText className="text-xl font-neural font-bold mb-4">
+                            {feature.title}
+                          </HolographicText>
+                          <p className="text-foreground/70 font-cyber leading-relaxed">
+                            {feature.desc}
+                          </p>
+                        </motion.div>
+                      </CyberpunkCard>
+                    </FloatingCard3D>
+                  ))}
+                </motion.div>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      </section>
+    </ScrollLighting>
   );
 };
 

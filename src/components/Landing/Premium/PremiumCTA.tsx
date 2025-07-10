@@ -4,118 +4,146 @@ import { useRef } from 'react';
 import { ArrowRight, Sparkles, Users, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../../ui/button';
-import { Card } from '../../ui/card';
+import FloatingCard3D from './FloatingCard3D';
+import HolographicText from './HolographicText';
+import CyberpunkCard from './CyberpunkCard';
+import ScrollLighting from './ScrollLighting';
 
 const PremiumCTA: React.FC = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="py-32 px-6 lg:px-8 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
-      <div className="absolute inset-0 bg-[var(--gradient-hero)]" />
-      
-      <div className="max-w-6xl mx-auto relative" ref={ref}>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 1 }}
-        >
-          <Card className="relative overflow-hidden glass-strong border-animate shadow-premium">
-            {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-mesh opacity-20 rounded-full blur-3xl animate-gradient-mesh" />
-            <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-accent/30 to-primary/30 rounded-full blur-3xl animate-float-gentle" />
-            
-            <div className="relative z-10 p-12 lg:p-20 text-center">
+    <ScrollLighting intensity={2}>
+      <section className="py-40 px-6 lg:px-8 relative overflow-hidden">
+        {/* Advanced background effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
+        <div className="absolute inset-0 bg-neural-mesh opacity-30" />
+        
+        <div className="max-w-6xl mx-auto relative" ref={ref}>
+          <FloatingCard3D 
+            depth={50} 
+            glowIntensity={1.2}
+            className="w-full"
+          >
+            <CyberpunkCard variant="holographic" className="p-16 lg:p-24 text-center hover-neural">
+              {/* Floating elements */}
+              <div className="absolute inset-0 pointer-events-none">
+                {Array.from({ length: 20 }).map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute w-1 h-1 bg-primary rounded-full"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`
+                    }}
+                    animate={{
+                      scale: [0, 1.5, 0],
+                      opacity: [0, 1, 0],
+                      rotate: [0, 360]
+                    }}
+                    transition={{
+                      duration: 3,
+                      delay: i * 0.2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                ))}
+              </div>
+
               {/* Header */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 50 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="mb-12"
+                transition={{ duration: 1, delay: 0.2 }}
+                className="mb-16"
               >
-                <div className="inline-flex items-center bg-primary/10 border border-primary/20 rounded-full px-6 py-3 mb-8">
-                  <Sparkles className="w-5 h-5 text-primary mr-2" />
-                  <span className="text-sm font-medium">Ready to Transform Your Productivity?</span>
+                <div className="inline-flex items-center bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 rounded-full px-8 py-4 mb-12 neural-float">
+                  <Sparkles className="w-6 h-6 text-primary mr-3 neural-pulse" />
+                  <span className="text-lg font-neural font-bold">TRANSCEND INTO THE NEURAL REALM</span>
                 </div>
                 
-                <h2 className="text-display font-display font-black mb-6 leading-tight tracking-tight">
-                  <span className="text-gradient-premium animate-gradient-flow">
-                    Start Your Journey Today
-                  </span>
-                </h2>
+                <HolographicText 
+                  className="text-6xl md:text-7xl lg:text-8xl font-neural font-black mb-8 leading-tight"
+                  glitchEffect={true}
+                >
+                  <span className="block">JOIN THE</span>
+                  <span className="block text-neural-glow">REVOLUTION</span>
+                </HolographicText>
                 
-                <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light">
-                  Join{' '}
-                  <span className="text-foreground font-semibold">thousands of professionals</span>{' '}
-                  who have already transformed their workflow with our AI-powered platform. 
-                  Experience the future of productivity.
+                <p className="text-2xl text-foreground/80 max-w-4xl mx-auto leading-relaxed font-cyber">
+                  Step into the future of{' '}
+                  <span className="text-holographic font-neural font-bold">neural productivity</span>{' '}
+                  where your thoughts become reality through AI-powered intelligence.
                 </p>
               </motion.div>
 
               {/* Stats/Features Row */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 50 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
+                transition={{ duration: 1, delay: 0.4 }}
+                className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16"
               >
                 {[
                   {
                     icon: Users,
-                    title: "50K+ Users",
-                    description: "Trusted by professionals worldwide"
+                    title: "100K+ Neural Minds",
+                    description: "Connected across the digital realm"
                   },
                   {
                     icon: Shield,
-                    title: "Enterprise Secure",
-                    description: "Military-grade encryption & compliance"
+                    title: "Quantum Encrypted",
+                    description: "Military-grade neural protection"
                   },
                   {
                     icon: Sparkles,
-                    title: "AI-Powered",
-                    description: "Next-generation intelligence"
+                    title: "AI Singularity Ready",
+                    description: "Next-generation consciousness interface"
                   }
-                ].map((item, index) => {
-                  const Icon = item.icon;
-                  return (
-                    <div key={index} className="flex flex-col items-center">
-                      <div className="p-4 rounded-xl bg-gradient-to-r from-primary/20 to-accent/20 mb-4">
-                        <Icon className="w-8 h-8 text-primary" />
+                ].map((item, index) => (
+                  <FloatingCard3D key={index} depth={25} glowIntensity={0.8}>
+                    <div className="flex flex-col items-center p-8">
+                      <div className="p-6 rounded-2xl bg-gradient-to-r from-primary/30 to-accent/30 mb-6 neural-rotate">
+                        <item.icon className="w-10 h-10 text-primary" />
                       </div>
-                      <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                      <p className="text-sm text-muted-foreground text-center">{item.description}</p>
+                      <HolographicText className="text-xl font-neural font-bold mb-3">{item.title}</HolographicText>
+                      <p className="text-foreground/70 text-center font-cyber">{item.description}</p>
                     </div>
-                  );
-                })}
+                  </FloatingCard3D>
+                ))}
               </motion.div>
 
-              {/* CTA Buttons */}
+              {/* Revolutionary CTA Buttons */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 50 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8"
+                transition={{ duration: 1, delay: 0.6 }}
+                className="flex flex-col sm:flex-row items-center justify-center gap-8 mb-12"
               >
                 <Link to="/register">
-                  <Button 
-                    size="lg" 
-                    className="button-premium px-12 py-6 text-lg font-semibold hover:shadow-glow hover-scale-premium transition-all duration-slower group min-w-[280px] animate-pulse-glow"
-                  >
-                    Start Free Trial
-                    <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform duration-base" />
-                  </Button>
+                  <FloatingCard3D depth={20} glowIntensity={1}>
+                    <Button 
+                      size="lg" 
+                      className="bg-gradient-to-r from-primary to-accent text-primary-foreground px-16 py-8 text-xl font-neural font-bold rounded-2xl hover:shadow-glow transition-all duration-500 neural-float group"
+                    >
+                      ENTER THE MATRIX
+                      <ArrowRight className="w-6 h-6 ml-4 group-hover:translate-x-2 transition-transform duration-300" />
+                    </Button>
+                  </FloatingCard3D>
                 </Link>
                 
                 <Link to="/contact">
-                  <Button 
-                    size="lg" 
-                    variant="outline" 
-                    className="glass px-12 py-6 text-lg border-2 border-border/30 hover:border-primary hover:bg-primary/10 hover:shadow-elegant transition-all duration-slower min-w-[280px] hover-lift-premium"
-                  >
-                    Schedule Demo
-                  </Button>
+                  <FloatingCard3D depth={15} glowIntensity={0.8}>
+                    <Button 
+                      size="lg" 
+                      variant="outline" 
+                      className="border-2 border-primary/50 text-primary px-16 py-8 text-xl font-neural font-bold rounded-2xl hover:bg-primary/10 hover:border-primary transition-all duration-500 neural-float"
+                    >
+                      REQUEST NEURAL ACCESS
+                    </Button>
+                  </FloatingCard3D>
                 </Link>
               </motion.div>
 
@@ -123,23 +151,23 @@ const PremiumCTA: React.FC = () => {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={isInView ? { opacity: 1 } : {}}
-                transition={{ duration: 0.8, delay: 0.8 }}
+                transition={{ duration: 1, delay: 0.8 }}
                 className="text-center"
               >
-                <p className="text-sm text-muted-foreground mb-4">
-                  ✓ 14-day free trial • ✓ No credit card required • ✓ Cancel anytime
+                <p className="text-lg text-foreground/60 mb-6 font-cyber">
+                  ✓ Instant Neural Integration • ✓ No Credit Card Required • ✓ Quantum Security Guaranteed
                 </p>
-                <div className="inline-flex items-center space-x-6 opacity-60">
-                  <span className="text-sm font-medium">SOC 2 Certified</span>
-                  <span className="text-sm font-medium">GDPR Compliant</span>
-                  <span className="text-sm font-medium">ISO 27001</span>
+                <div className="inline-flex items-center space-x-8 opacity-70">
+                  <span className="text-sm font-neural font-bold">NEURAL CERTIFIED</span>
+                  <span className="text-sm font-neural font-bold">QUANTUM COMPLIANT</span>
+                  <span className="text-sm font-neural font-bold">AI SINGULARITY READY</span>
                 </div>
               </motion.div>
-            </div>
-          </Card>
-        </motion.div>
-      </div>
-    </section>
+            </CyberpunkCard>
+          </FloatingCard3D>
+        </div>
+      </section>
+    </ScrollLighting>
   );
 };
 

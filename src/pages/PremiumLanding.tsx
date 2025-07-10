@@ -46,29 +46,38 @@ const PremiumLanding: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Premium animated background */}
+      {/* Revolutionary Neural Background */}
       <PremiumBackground mousePosition={mousePosition} />
       
-      {/* Additional parallax layer */}
-      <motion.div 
-        style={{ y: backgroundY }}
-        className="fixed inset-0 -z-5 opacity-50"
-      >
-        <div className="absolute inset-0 bg-[var(--gradient-hero)]" />
-      </motion.div>
-
+      {/* Neural-enhanced Navigation */}
       <PremiumNavigation mousePosition={mousePosition} />
       
-      <motion.div style={{ y: heroY }}>
+      {/* Neural Mind Palace Hero */}
+      <motion.div 
+        style={{ y: heroY }}
+        className="relative z-10"
+      >
         <PremiumHero />
       </motion.div>
       
-      <PremiumFeatures />
-      <PremiumShowcase />
-      <PremiumTestimonials />
-      <PremiumPricing />
-      <PremiumCTA />
-      <PremiumFooter />
+      {/* Revolutionary Features */}
+      <div className="relative z-10">
+        <PremiumFeatures />
+        <PremiumShowcase />
+        <PremiumTestimonials />
+        <PremiumPricing />
+        <PremiumCTA />
+        <PremiumFooter />
+      </div>
+      
+      {/* Additional neural effects overlay */}
+      <div className="fixed inset-0 pointer-events-none z-5">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl neural-float opacity-30" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/5 rounded-full blur-3xl neural-float opacity-40" 
+             style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-secondary/5 rounded-full blur-3xl neural-float opacity-20"
+             style={{ animationDelay: '4s' }} />
+      </div>
     </div>
   );
 };
