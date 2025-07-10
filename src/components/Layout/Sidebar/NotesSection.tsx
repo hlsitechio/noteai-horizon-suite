@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { NotesListSection } from './NotesListSection';
 import { FoldersListSection } from './FoldersListSection';
 import { FavoritesListSection } from './FavoritesListSection';
+import { DraggableSidebarContent } from './DraggableSidebarContent';
+import { SortableSection } from './SortableSection';
 import { useOptimizedNotes } from '../../../contexts/OptimizedNotesContext';
 import { useFolders } from '../../../contexts/FoldersContext';
 import { useNavigate } from 'react-router-dom';
@@ -37,6 +39,9 @@ export function NotesSection() {
   const isMobile = useIsMobile();
   const { isCollapsed } = useSidebarCollapse();
   const sidebarOpen = !isCollapsed;
+
+  // Section order state for drag and drop
+  const [sectionOrder, setSectionOrder] = useState(['favorites', 'folders', 'notes']);
 
   const [expandedSections, setExpandedSections] = useState({
     favorites: true,
@@ -77,6 +82,66 @@ export function NotesSection() {
       ...prev,
       [section]: !prev[section]
     }));
+  };
+
+  const handleSectionReorder = (newOrder: string[]) => {
+    setSectionOrder(newOrder);
+    // Optionally save to localStorage or user preferences
+    localStorage.setItem('sidebarSectionOrder', JSON.stringify(newOrder));
+  };
+
+  // Load saved section order on mount
+  React.useEffect(() => {
+    const saved = localStorage.getItem('sidebarSectionOrder');
+    if (saved) {
+      try {
+        const parsedOrder = JSON.parse(saved);
+        if (Array.isArray(parsedOrder)) {
+          setSectionOrder(parsedOrder);
+        }
+      } catch (error) {
+        console.warn('Failed to parse saved section order:', error);
+      }
+    }
+  }, []);
+
+  const renderSection = (sectionId: string) => {
+    switch (sectionId) {
+      case 'favorites':
+        return (
+          <FavoritesListSection
+            notes={favoriteNotes}
+            isExpanded={expandedSections.favorites}
+            onToggle={() => toggleSection('favorites')}
+            onCreateNote={handleCreateNote}
+            isMobile={isMobile}
+          />
+        );
+      case 'folders':
+        return (
+          <FoldersListSection
+            folders={folders}
+            notes={notes}
+            isExpanded={expandedSections.folders}
+            onToggle={() => toggleSection('folders')}
+            onCreateFolder={handleCreateFolder}
+            isMobile={isMobile}
+          />
+        );
+      case 'notes':
+        return (
+          <NotesListSection
+            notes={notes}
+            isExpanded={expandedSections.notes}
+            onToggle={() => toggleSection('notes')}
+            onCreateNote={handleCreateNote}
+            onCreateFolder={handleCreateFolder}
+            isMobile={isMobile}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   const favoriteNotes = notes.filter(note => note.isFavorite);
@@ -148,54 +213,28 @@ export function NotesSection() {
             exit="collapsed"
             className="h-full overflow-hidden space-y-2"
           >
-            <div className="h-full overflow-y-auto space-y-1 px-2 scrollbar-thin scrollbar-thumb-sidebar-border scrollbar-track-transparent hover:scrollbar-thumb-sidebar-accent/50">
-              {/* Favorites Section - Enhanced animations */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1, duration: 0.3 }}
-              >
-                <FavoritesListSection
-                  notes={favoriteNotes}
-                  isExpanded={expandedSections.favorites}
-                  onToggle={() => toggleSection('favorites')}
-                  onCreateNote={handleCreateNote}
-                  isMobile={isMobile}
-                />
-              </motion.div>
-
-              {/* Folders Section */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2, duration: 0.3 }}
-              >
-                <FoldersListSection
-                  folders={folders}
-                  notes={notes}
-                  isExpanded={expandedSections.folders}
-                  onToggle={() => toggleSection('folders')}
-                  onCreateFolder={handleCreateFolder}
-                  isMobile={isMobile}
-                />
-              </motion.div>
-
-              {/* Notes Section */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3, duration: 0.3 }}
-              >
-                <NotesListSection
-                  notes={notes}
-                  isExpanded={expandedSections.notes}
-                  onToggle={() => toggleSection('notes')}
-                  onCreateNote={handleCreateNote}
-                  onCreateFolder={handleCreateFolder}
-                  isMobile={isMobile}
-                />
-              </motion.div>
-            </div>
+            <DraggableSidebarContent
+              items={sectionOrder}
+              onReorder={handleSectionReorder}
+            >
+              <div className="h-full overflow-y-auto space-y-1 px-2 scrollbar-thin scrollbar-thumb-sidebar-border scrollbar-track-transparent hover:scrollbar-thumb-sidebar-accent/50">
+                {sectionOrder.map((sectionId, index) => (
+                  <SortableSection 
+                    key={sectionId} 
+                    id={sectionId}
+                    className="transition-all duration-200"
+                  >
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1, duration: 0.3 }}
+                    >
+                      {renderSection(sectionId)}
+                    </motion.div>
+                  </SortableSection>
+                ))}
+              </div>
+            </DraggableSidebarContent>
           </motion.div>
         </AnimatePresence>
       </div>
