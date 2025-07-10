@@ -63,7 +63,7 @@ export function FolderItem({
             <Folder className="h-3 w-3 mr-2 flex-shrink-0" />
             <span className="truncate text-xs flex-1">{folder.name}</span>
             <span className="text-xs text-sidebar-foreground/40 ml-2">
-              {folderNotes.length}
+              ({folderNotes.length})
             </span>
           </Link>
         </Button>
