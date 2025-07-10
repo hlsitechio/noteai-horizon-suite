@@ -8,6 +8,7 @@ import { useUserProfile } from '../hooks/useUserProfile';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ChatHistoryPanel from '../components/Chat/ChatHistoryPanel';
 import { NotePreviewPanel } from '../components/Chat/NotePreviewPanel';
+import { CanvasDrawingPanel } from '../components/Chat/CanvasDrawingPanel';
 import ChatHeader from '../components/Chat/ChatHeader';
 import ChatMessages from '../components/Chat/ChatMessages';
 import ChatInput from '../components/Chat/ChatInput';
@@ -15,6 +16,7 @@ import ChatInput from '../components/Chat/ChatInput';
 const Chat: React.FC = () => {
   const [message, setMessage] = useState('');
   const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(false);
+  const [activePanel, setActivePanel] = useState<'notes' | 'canvas'>('notes');
   const isMobile = useIsMobile();
   
   const { profile, isLoading: profileLoading } = useUserProfile();
@@ -158,18 +160,53 @@ const Chat: React.FC = () => {
           </div>
         </div>
 
-        {/* Note Canva Panel - Hidden on mobile for better UX */}
+        {/* Enhanced Canva Panel - Switch between Notes and Drawing Canvas */}
         {!isMobile && (
-          <div className="flex-shrink-0">
-            <NotePreviewPanel
-              note={currentNote}
-              isVisible={isPreviewVisible}
-              onToggleVisibility={toggleVisibility}
-              onNoteUpdate={updateNote}
-              onRequestModification={requestModification}
-              isModifying={isModifying}
-              className="w-96"
-            />
+          <div className="flex-shrink-0 flex flex-col">
+            {/* Panel Switcher */}
+            <div className="h-12 border-l border-border/30 bg-muted/10 flex items-center justify-center gap-2 px-4">
+              <button
+                onClick={() => setActivePanel('notes')}
+                className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 ${
+                  activePanel === 'notes' 
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'bg-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                }`}
+              >
+                Notes
+              </button>
+              <button
+                onClick={() => setActivePanel('canvas')}
+                className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 ${
+                  activePanel === 'canvas' 
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'bg-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                }`}
+              >
+                Drawing
+              </button>
+            </div>
+            
+            {/* Panel Content */}
+            <div className="flex-1">
+              {activePanel === 'notes' ? (
+                <NotePreviewPanel
+                  note={currentNote}
+                  isVisible={isPreviewVisible}
+                  onToggleVisibility={toggleVisibility}
+                  onNoteUpdate={updateNote}
+                  onRequestModification={requestModification}
+                  isModifying={isModifying}
+                  className="w-96 h-full"
+                />
+              ) : (
+                <CanvasDrawingPanel
+                  isVisible={isPreviewVisible}
+                  onToggleVisibility={toggleVisibility}
+                  className="w-96 h-full"
+                />
+              )}
+            </div>
           </div>
         )}
       </div>
