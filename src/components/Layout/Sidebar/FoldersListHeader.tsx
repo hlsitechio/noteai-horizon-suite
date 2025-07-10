@@ -50,26 +50,24 @@ export function FoldersListHeader({
           onClick={onToggle}
         >
           <div className="flex items-center">
-            {!isMobile && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-4 w-4 p-0 hover:bg-accent hover:text-accent-foreground transition-colors mr-1"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onCreateFolder();
-                }}
-                title="Create Folder"
-              >
-                <FolderPlus className="h-3 w-3" />
-              </Button>
-            )}
-            <Folder className="h-3 w-3 mr-1" />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-4 w-4 p-0 hover:bg-accent hover:text-accent-foreground transition-colors mr-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                onCreateFolder();
+              }}
+              title="Create Folder"
+            >
+              <FolderPlus className="h-3 w-3" />
+            </Button>
             {isExpanded ? (
               <ChevronDown className="h-3 w-3 mr-1" />
             ) : (
               <ChevronRight className="h-3 w-3 mr-1" />
             )}
+            <Folder className="h-3 w-3 mr-1" />
             Folders
           </div>
           <span className="text-xs">({foldersCount})</span>
