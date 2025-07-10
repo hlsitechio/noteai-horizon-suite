@@ -6,7 +6,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { 
   ChevronRight, 
   ChevronDown,
-  Star
+  Star,
+  Plus
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Note } from '../../../types/note';
@@ -15,6 +16,7 @@ interface FavoritesListSectionProps {
   notes: Note[];
   isExpanded: boolean;
   onToggle: () => void;
+  onCreateNote: () => void;
   isMobile: boolean;
 }
 
@@ -22,6 +24,7 @@ export function FavoritesListSection({
   notes, 
   isExpanded, 
   onToggle,
+  onCreateNote,
   isMobile
 }: FavoritesListSectionProps) {
   return (
@@ -48,16 +51,33 @@ export function FavoritesListSection({
           <Button
             variant="ghost"
             size="sm" 
-            className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto"
+            className="flex items-center cursor-pointer text-xs font-medium text-sidebar-foreground/70 hover:text-accent transition-colors p-1 h-auto w-full justify-between"
             onClick={onToggle}
           >
-            {isExpanded ? (
-              <ChevronDown className="h-3 w-3 mr-1" />
-            ) : (
-              <ChevronRight className="h-3 w-3 mr-1" />
-            )}
-            <Star className="h-3 w-3 mr-1" />
-            Favorites ({notes.length})
+            <div className="flex items-center">
+              {!isMobile && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-4 w-4 p-0 hover:bg-accent hover:text-accent-foreground transition-colors mr-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCreateNote();
+                  }}
+                  title="Create Favorite Note"
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              )}
+              {isExpanded ? (
+                <ChevronDown className="h-3 w-3 mr-1" />
+              ) : (
+                <ChevronRight className="h-3 w-3 mr-1" />
+              )}
+              <Star className="h-3 w-3 mr-1" />
+              Favorites
+            </div>
+            <span className="text-xs">({notes.length})</span>
           </Button>
         )}
       </div>

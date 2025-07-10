@@ -159,6 +159,7 @@ export function NotesSection() {
                   notes={favoriteNotes}
                   isExpanded={expandedSections.favorites}
                   onToggle={() => toggleSection('favorites')}
+                  onCreateNote={handleCreateNote}
                   isMobile={isMobile}
                 />
               </motion.div>
