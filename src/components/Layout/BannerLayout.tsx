@@ -5,9 +5,13 @@ import { ResizableHandle } from '@/components/ui/resizable';
 import { BannerWithTopNav } from '@/components/Dashboard/BannerWithTopNav';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useDashboardBanner } from '@/hooks/useDashboardBanner';
+import { useDashboardPanelSizes } from '@/hooks/useDashboardPanelSizes';
+import { useEditMode } from '@/contexts/EditModeContext';
 
 const BannerLayout: React.FC = () => {
   const isMobile = useIsMobile();
+  const { isDashboardEditMode } = useEditMode();
+  const { panelSizes, handleBannerResize } = useDashboardPanelSizes();
   const { 
     selectedBannerUrl, 
     handleImageUpload, 
@@ -40,20 +44,21 @@ const BannerLayout: React.FC = () => {
     );
   }
 
-  // Desktop layout - resizable panels
+  // Desktop layout - resizable panels with proper saving
   return (
     <div className="h-full w-full bg-background">
       <PanelGroup 
         direction="vertical" 
         className="w-full h-full"
+        onLayout={handleBannerResize}
         id="banner-layout"
       >
-        {/* Banner Panel */}
+        {/* Banner Panel - Now with proper sizing and save functionality */}
         <Panel
           id="banner-panel"
-          defaultSize={30}
-          minSize={20}
-          maxSize={50}
+          defaultSize={panelSizes.banner}
+          minSize={isDashboardEditMode ? 15 : undefined}
+          maxSize={isDashboardEditMode ? 50 : undefined}
           className="flex flex-col"
         >
           <div className="h-full w-full">
@@ -63,13 +68,15 @@ const BannerLayout: React.FC = () => {
               onVideoUpload={handleVideoUpload}
               onImageSelect={handleImageSelect}
               selectedImageUrl={selectedBannerUrl}
-              isEditMode={false}
+              isEditMode={isDashboardEditMode}
             />
           </div>
         </Panel>
         
-        {/* Resize Handle */}
-        <ResizableHandle className="opacity-0 hover:opacity-100 transition-opacity h-1" />
+        {/* Resize Handle - Only visible in edit mode */}
+        <ResizableHandle 
+          className={isDashboardEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"} 
+        />
         
         {/* Main Content Panel */}
         <Panel
