@@ -106,14 +106,16 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
   }
 
   return (
-    <div className="h-full overflow-auto">
-      <PanelGroup 
-        direction="vertical" 
-        className="h-full" 
-        onLayout={handleMainContentResize}
-        id="main-dashboard-content"
-        storage={createStorageHandler()}
-      >
+    <div className="min-h-full overflow-auto">
+      {/* When in edit mode, use resizable panels */}
+      {isDashboardEditMode ? (
+        <PanelGroup 
+          direction="vertical" 
+          className="h-full" 
+          onLayout={handleMainContentResize}
+          id="main-dashboard-content"
+          storage={createStorageHandler()}
+        >
         {/* Top Panel - KPI Stats */}
         <Panel 
           id="analytics-panel"
@@ -251,6 +253,41 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           </div>
         </Panel>
       </PanelGroup>
+      ) : (
+        /* Normal scrollable layout when not in edit mode */
+        <div className="space-y-6">
+          {/* KPI Stats */}
+          <div className="p-3 md:p-4">
+            <KPIStats
+              totalNotes={totalNotes}
+              favoriteNotes={favoriteNotes}
+              categoryCounts={categoryCounts}
+              weeklyNotes={weeklyNotes}
+              notes={notes}
+            />
+          </div>
+          
+          {/* Top Row - Two Panels */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-3 md:px-4">
+            <div className="min-h-[400px]">
+              <DashboardPanel panelKey="topLeft" className="p-4 h-full" />
+            </div>
+            <div className="min-h-[400px]">
+              <DashboardPanel panelKey="topRight" className="p-4 h-full" />
+            </div>
+          </div>
+          
+          {/* Bottom Row - Two Panels */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-3 md:px-4 pb-6">
+            <div className="min-h-[400px]">
+              <DashboardPanel panelKey="bottomLeft" className="p-4 h-full" />
+            </div>
+            <div className="min-h-[400px]">
+              <DashboardPanel panelKey="bottomRight" className="p-4 h-full" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
