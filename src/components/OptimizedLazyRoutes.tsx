@@ -72,6 +72,7 @@ const ComponentGallery = lazyWithRetry(() => import('../pages/ComponentGallery')
 const ComponentLibraryPage = lazyWithRetry(() => import('../pages/ComponentLibraryPage'));
 const ActivityPage = lazyWithRetry(() => import('../pages/ActivityPage'));
 const MobileApp = lazyWithRetry(() => import('../mobile/MobileApp'));
+const ReferralPage = lazyWithRetry(() => import('../pages/ReferralPage'));
 
 // Enhanced loading fallback with better UX
 const LoadingFallback = () => (
@@ -117,6 +118,7 @@ export const OptimizedLazyRoutes: React.FC = () => {
         <Route path="/terms" element={<Terms />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/sitemap" element={<Sitemap />} />
+        <Route path="/referral" element={<ReferralPage />} />
 
         {/* Mobile Routes */}
         <Route path="/mobile/*" element={
