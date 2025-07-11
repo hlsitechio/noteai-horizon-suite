@@ -8,6 +8,7 @@ import { BacklinkAnalysis } from './components/BacklinkAnalysis';
 import { AdvancedSEOAssistant } from './components/AdvancedSEOAssistant';
 import { AdvancedSEOAuditor } from './components/AdvancedSEOAuditor';
 import { SEOHeader } from './components/SEOHeader';
+import VisitorTrackingWidget from '@/components/SEO/VisitorTrackingWidget';
 
 const SEODashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -18,7 +19,7 @@ const SEODashboard: React.FC = () => {
         <SEOHeader />
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="overview">SEO Analysis</TabsTrigger>
             <TabsTrigger value="ai-assistant">🧠 AI Assistant</TabsTrigger>
             <TabsTrigger value="auditor">🔍 SEO Auditor</TabsTrigger>
@@ -26,6 +27,7 @@ const SEODashboard: React.FC = () => {
             <TabsTrigger value="technical">Technical SEO</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="backlinks">Backlinks</TabsTrigger>
+            <TabsTrigger value="visitor-tracking">👁️ Visitor Tracking</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -54,6 +56,10 @@ const SEODashboard: React.FC = () => {
 
           <TabsContent value="backlinks" className="space-y-6">
             <BacklinkAnalysis />
+          </TabsContent>
+
+          <TabsContent value="visitor-tracking" className="space-y-6">
+            <VisitorTrackingWidget />
           </TabsContent>
         </Tabs>
       </div>

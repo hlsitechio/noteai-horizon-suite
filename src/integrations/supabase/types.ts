@@ -370,6 +370,48 @@ export type Database = {
           },
         ]
       }
+      seo_active_sessions: {
+        Row: {
+          current_page: string
+          id: string
+          is_active: boolean | null
+          last_activity: string
+          session_id: string
+          started_at: string
+          total_pages_viewed: number | null
+          total_time_spent: number | null
+          user_id: string
+          visitor_id: string
+          website_domain: string
+        }
+        Insert: {
+          current_page: string
+          id?: string
+          is_active?: boolean | null
+          last_activity?: string
+          session_id: string
+          started_at?: string
+          total_pages_viewed?: number | null
+          total_time_spent?: number | null
+          user_id: string
+          visitor_id: string
+          website_domain: string
+        }
+        Update: {
+          current_page?: string
+          id?: string
+          is_active?: boolean | null
+          last_activity?: string
+          session_id?: string
+          started_at?: string
+          total_pages_viewed?: number | null
+          total_time_spent?: number | null
+          user_id?: string
+          visitor_id?: string
+          website_domain?: string
+        }
+        Relationships: []
+      }
       seo_alerts: {
         Row: {
           alert_type: string | null
@@ -700,6 +742,129 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      seo_visitor_analytics: {
+        Row: {
+          bounce_rate: boolean | null
+          browser: string | null
+          city: string | null
+          conversion_event: string | null
+          country: string | null
+          created_at: string
+          device_type: string | null
+          id: string
+          ip_address: string | null
+          os: string | null
+          page_load_time: number | null
+          page_path: string
+          referrer: string | null
+          screen_resolution: string | null
+          session_id: string
+          time_on_page: number | null
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          visitor_id: string
+          website_domain: string
+        }
+        Insert: {
+          bounce_rate?: boolean | null
+          browser?: string | null
+          city?: string | null
+          conversion_event?: string | null
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          ip_address?: string | null
+          os?: string | null
+          page_load_time?: number | null
+          page_path: string
+          referrer?: string | null
+          screen_resolution?: string | null
+          session_id: string
+          time_on_page?: number | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          visitor_id: string
+          website_domain: string
+        }
+        Update: {
+          bounce_rate?: boolean | null
+          browser?: string | null
+          city?: string | null
+          conversion_event?: string | null
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          ip_address?: string | null
+          os?: string | null
+          page_load_time?: number | null
+          page_path?: string
+          referrer?: string | null
+          screen_resolution?: string | null
+          session_id?: string
+          time_on_page?: number | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          visitor_id?: string
+          website_domain?: string
+        }
+        Relationships: []
+      }
+      seo_website_configs: {
+        Row: {
+          created_at: string
+          goals: Json | null
+          id: string
+          tracking_enabled: boolean | null
+          updated_at: string
+          user_id: string
+          website_domain: string
+          website_name: string
+          widget_settings: Json | null
+        }
+        Insert: {
+          created_at?: string
+          goals?: Json | null
+          id?: string
+          tracking_enabled?: boolean | null
+          updated_at?: string
+          user_id: string
+          website_domain: string
+          website_name: string
+          widget_settings?: Json | null
+        }
+        Update: {
+          created_at?: string
+          goals?: Json | null
+          id?: string
+          tracking_enabled?: boolean | null
+          updated_at?: string
+          user_id?: string
+          website_domain?: string
+          website_name?: string
+          widget_settings?: Json | null
         }
         Relationships: []
       }
