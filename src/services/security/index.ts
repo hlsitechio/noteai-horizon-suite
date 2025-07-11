@@ -9,12 +9,14 @@ export { auditLogService } from './auditLogService';
 export { apiKeySecurityService } from './apiKeySecurityService';
 export { threatDetectionService } from './threatDetectionService';
 export { incidentResponseService } from './incidentResponseService';
+export { antiScrapingService } from './antiScrapingService';
 export type { SecurityContext, SecurityResult } from './payloadValidationService';
 export type { AuditEvent } from './auditLogService';
 
 import { rateLimitingService } from './rateLimitingService';
 import { payloadValidationService } from './payloadValidationService';
 import { userAgentAnalysisService } from './userAgentAnalysisService';
+import { antiScrapingService } from './antiScrapingService';
 import { logger } from '@/utils/logger';
 import type { SecurityContext, SecurityResult } from './payloadValidationService';
 
@@ -46,7 +48,13 @@ export class UnifiedSecurityService {
       }
     }
 
-    // 3. Payload validation
+    // 3. Anti-scraping analysis
+    const antiScrapingResult = await antiScrapingService.checkForScraping(context, undefined, payload);
+    if (!antiScrapingResult.allowed) {
+      return antiScrapingResult;
+    }
+
+    // 4. Payload validation
     if (payload) {
       const payloadResult = payloadValidationService.validatePayload(payload, context);
       if (!payloadResult.allowed) {
@@ -54,7 +62,7 @@ export class UnifiedSecurityService {
       }
     }
 
-    // 4. Endpoint-specific checks
+    // 5. Endpoint-specific checks
     const endpointResult = this.checkEndpointSecurity(endpoint, method, context);
     if (!endpointResult.allowed) {
       return endpointResult;
@@ -108,6 +116,7 @@ export class UnifiedSecurityService {
     return {
       rateLimiting: rateLimitingService.getStats(),
       userAgent: userAgentAnalysisService.getStats(),
+      antiScraping: antiScrapingService.getStats(),
       timestamp: new Date().toISOString(),
       service: 'UnifiedSecurityService',
     };
