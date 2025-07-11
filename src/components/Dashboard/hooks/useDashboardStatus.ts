@@ -44,47 +44,32 @@ export const useDashboardStatus = () => {
           .eq('user_id', user.id)
           .limit(1);
 
-        // Reset onboarding for ALL users on every login
-        // This ensures users always go through the dashboard onboarding flow
-        
-        console.log('Resetting dashboard onboarding for user:', user.email);
-        
-        // Reset onboarding status for all users
-        await supabase
-          .from('user_onboarding')
-          .upsert({
-            user_id: user.id,
-            onboarding_completed: false,
-            current_step: 0
-          }, { onConflict: 'user_id' });
+        // Check if user is truly new (no existing data)
+        const isNewUser = !onboardingData?.onboarding_completed && 
+                         !dashboardSettings && 
+                         (!notes || count === 0) && 
+                         (!folders || foldersCount === 0);
 
-        // Reset theme to default and clear dashboard components for all users
-        await supabase
-          .from('user_preferences')
-          .upsert({
-            user_id: user.id,
-            dashboard_theme: 'default',
-            dashboard_components: []
-          }, { onConflict: 'user_id' });
+        if (isNewUser) {
+          console.log('New user detected, initializing dashboard onboarding for:', user.email);
+          
+          // Only reset for new users
+          await supabase
+            .from('user_onboarding')
+            .upsert({
+              user_id: user.id,
+              onboarding_completed: false,
+              current_step: 0
+            }, { onConflict: 'user_id' });
 
-        // Reset dashboard settings
-        await supabase
-          .from('dashboard_settings')
-          .upsert({
-            user_id: user.id,
-            settings: {},
-            dashboard_edit_mode: false,
-            sidebar_edit_mode: false,
-            sidebar_panel_sizes: {},
-            selected_banner_url: null,
-            selected_banner_type: null
-          }, { onConflict: 'user_id' });
+          setIsDashboardInitialized(false);
+        } else {
+          console.log('Existing user detected, skipping dashboard reset for:', user.email);
+          // For existing users, consider them initialized
+          setIsDashboardInitialized(true);
+        }
         
-        console.log('Dashboard reset completed for user:', user.email);
         setHasResetCompleted(true);
-        
-        // Always set as not initialized to force onboarding
-        setIsDashboardInitialized(false);
       } catch (error) {
         console.error('Error checking dashboard status:', error);
         setIsDashboardInitialized(false);
