@@ -6,6 +6,7 @@ import { ThemesTabContent } from './tabs/ThemesTabContent';
 import { PreferencesTabContent } from './tabs/PreferencesTabContent';
 import { WeatherTabContent } from './tabs/WeatherTabContent';
 import { AITabContent } from './tabs/AITabContent';
+import { GoogleDriveTabContent } from './tabs/GoogleDriveTabContent';
 import { DataTabContent } from './tabs/DataTabContent';
 import { DownloadTabContent } from './tabs/DownloadTabContent';
 import { AboutTabContent } from './tabs/AboutTabContent';
@@ -32,6 +33,7 @@ export const SettingsContent: React.FC<SettingsContentProps> = ({ activeTab }) =
       <PreferencesTabContent />
       <WeatherTabContent />
       <AITabContent />
+      <GoogleDriveTabContent />
       <DataTabContent />
       <DownloadTabContent />
       <AboutTabContent />
