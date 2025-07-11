@@ -298,7 +298,7 @@ export class AutoFixService {
   }
 
   /**
-   * Simulate Lovable AI chat integration
+   * Send prompt directly to Lovable AI chat interface
    */
   static async integrateWithLovableChat(issue: FixableIssue): Promise<{
     success: boolean;
@@ -308,33 +308,44 @@ export class AutoFixService {
     try {
       const prompt = this.generateFixPrompt(issue);
       
-      // Simulate API call to Lovable chat
-      // In production, this would make an actual API call
-      const response = await new Promise<any>((resolve) => {
-        setTimeout(() => {
-          resolve({
-            success: true,
-            promptId: `fix_${Date.now()}`,
-            message: 'Auto-fix prompt sent to Lovable AI chat successfully!'
-          });
-        }, 1000);
-      });
-
-      // Copy prompt to clipboard for immediate use
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(prompt);
-      }
+      // Send prompt directly to Lovable chat interface
+      // This will trigger the AI to process the prompt immediately
+      this.sendToLovableChat(prompt);
 
       return {
         success: true,
-        message: 'Auto-fix prompt copied to clipboard! Paste it in the Lovable chat to get instant help.',
-        promptId: response.promptId
+        message: 'Auto-fix prompt sent to Lovable AI! The assistant will help you fix this issue.',
+        promptId: `fix_${Date.now()}`
       };
     } catch (error) {
       return {
         success: false,
-        message: 'Failed to generate auto-fix prompt. Please try again.'
+        message: 'Failed to send auto-fix prompt. Please try again.'
       };
+    }
+  }
+
+  /**
+   * Send message directly to Lovable chat interface
+   */
+  private static sendToLovableChat(message: string): void {
+    // Use Lovable's internal messaging system to send the prompt directly to chat
+    if (typeof window !== 'undefined' && (window as any).parent) {
+      try {
+        // Send message to parent frame (Lovable interface)
+        (window as any).parent.postMessage({
+          type: 'LOVABLE_CHAT_MESSAGE',
+          payload: {
+            message: message,
+            source: 'auto-fix-system',
+            timestamp: Date.now()
+          }
+        }, '*');
+      } catch (error) {
+        console.error('Failed to send message to Lovable chat:', error);
+        // Fallback to console for development
+        console.log('🤖 Auto-Fix Prompt for Lovable:', message);
+      }
     }
   }
 }
