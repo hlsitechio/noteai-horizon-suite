@@ -73,7 +73,7 @@ const ComponentLibraryPage = lazyWithRetry(() => import('../pages/ComponentLibra
 const ActivityPage = lazyWithRetry(() => import('../pages/ActivityPage'));
 const MobileApp = lazyWithRetry(() => import('../mobile/MobileApp'));
 const ReferralPage = lazyWithRetry(() => import('../pages/ReferralPage'));
-const SEODashboard = lazyWithRetry(() => import('../pages/SEODashboard'));
+const SEODashboard = lazyWithRetry(() => import('../pages/SEODashboardSimple'));
 
 // Enhanced loading fallback with better UX
 const LoadingFallback = () => (
