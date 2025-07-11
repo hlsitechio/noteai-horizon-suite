@@ -9,68 +9,40 @@ export class ChatIntegration {
     try {
       const prompt = PromptGenerator.generateFixPrompt(issue);
       
-      // Send prompt directly to Lovable chat interface
-      this.sendToLovableChat(prompt);
+      // Show the prompt in a modal/alert that user can copy
+      this.showPromptModal(prompt);
 
       return {
         success: true,
-        message: 'Auto-fix prompt sent to Lovable AI! The assistant will help you fix this issue.',
+        message: 'Auto-fix prompt ready! Copy the text and paste it in the Lovable chat.',
         promptId: `fix_${Date.now()}`
       };
     } catch (error) {
       return {
         success: false,
-        message: 'Failed to send auto-fix prompt. Please try again.'
+        message: 'Failed to generate auto-fix prompt. Please try again.'
       };
     }
   }
 
   /**
-   * Send message directly to Lovable chat interface
+   * Show prompt in a copyable modal
    */
-  private static sendToLovableChat(message: string): void {
-    if (typeof window !== 'undefined') {
-      try {
-        // Try to find and populate the actual Lovable chat input
-        const chatInput = document.getElementById('chatinput') as HTMLTextAreaElement;
-        
-        if (chatInput) {
-          // Set the message in the textarea
-          chatInput.value = message;
-          chatInput.style.height = 'auto';
-          chatInput.style.height = chatInput.scrollHeight + 'px';
-          
-          // Trigger input event to notify the form
-          const inputEvent = new Event('input', { bubbles: true });
-          chatInput.dispatchEvent(inputEvent);
-          
-          // Focus the textarea
-          chatInput.focus();
-          
-          console.log('✅ Auto-fix prompt inserted into Lovable chat');
-          return;
-        }
-        
-        // Fallback: Use postMessage to parent frame
-        if ((window as any).parent) {
-          (window as any).parent.postMessage({
-            type: 'LOVABLE_CHAT_MESSAGE',
-            payload: {
-              message: message,
-              source: 'auto-fix-system',
-              timestamp: Date.now()
-            }
-          }, '*');
-          console.log('📤 Auto-fix prompt sent via postMessage');
-          return;
-        }
-        
-      } catch (error) {
-        console.error('Failed to send message to Lovable chat:', error);
-      }
-      
-      // Final fallback - log to console
-      console.log('🤖 Auto-Fix Prompt for Lovable:', message);
+   private static showPromptModal(prompt: string): void {
+    // Create a simple prompt display that works in any environment
+    const promptText = `${prompt}\n\n👆 Copy this text and paste it in the Lovable chat to get AI assistance!`;
+    
+    // Try to copy to clipboard automatically
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(prompt).then(() => {
+        alert('✅ Auto-fix prompt copied to clipboard!\n\nPaste it in the Lovable chat to get instant help.');
+      }).catch(() => {
+        // Fallback: show prompt for manual copy
+        prompt = window.prompt('Copy this auto-fix prompt and paste it in Lovable chat:', prompt) || '';
+      });
+    } else {
+      // Fallback for browsers without clipboard API
+      window.prompt('Copy this auto-fix prompt and paste it in Lovable chat:', prompt);
     }
   }
 
