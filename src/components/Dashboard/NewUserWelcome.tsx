@@ -61,6 +61,13 @@ export const NewUserWelcome: React.FC<NewUserWelcomeProps> = ({
       }
 
       try {
+        // Check if user has completed onboarding before
+        const { data: onboardingData } = await supabase
+          .from('user_onboarding')
+          .select('onboarding_completed')
+          .eq('user_id', user.id)
+          .single();
+
         // Check if user has dashboard settings (indicating initialization)
         const { data: dashboardSettings } = await supabase
           .from('dashboard_settings')
@@ -82,13 +89,17 @@ export const NewUserWelcome: React.FC<NewUserWelcomeProps> = ({
           .eq('user_id', user.id)
           .limit(1);
 
-        // Consider dashboard initialized if they have settings or content
+        // Consider dashboard initialized if they have:
+        // 1. Completed onboarding before
+        // 2. Dashboard settings with initialized flag
+        // 3. Any existing content (notes or folders)
+        const hasCompletedOnboarding = onboardingData?.onboarding_completed === true;
         const hasSettings = dashboardSettings?.settings && 
           typeof dashboardSettings.settings === 'object' && 
           (dashboardSettings.settings as any)?.initialized;
         const hasContent = (count || 0) > 0 || (foldersCount || 0) > 0;
         
-        setIsDashboardInitialized(hasSettings || hasContent);
+        setIsDashboardInitialized(hasCompletedOnboarding || hasSettings || hasContent);
       } catch (error) {
         console.error('Error checking dashboard status:', error);
         setIsDashboardInitialized(false);
