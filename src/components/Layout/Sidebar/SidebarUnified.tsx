@@ -55,7 +55,7 @@ export function SidebarUnified() {
   // Enable keyboard shortcuts
   useSidebarKeyboardShortcuts();
   return <TooltipProvider>
-      <motion.div className="h-full bg-sidebar flex flex-col" variants={sidebarVariants} initial="expanded" animate={isCollapsed ? "collapsed" : "expanded"}>
+      <motion.div className="h-full bg-sidebar flex flex-col" variants={sidebarVariants} initial="expanded" animate={isCollapsed ? "collapsed" : "expanded"} data-onboarding="sidebar">
         {/* Navigation Section */}
         <motion.div className="flex-shrink-0 p-2" variants={sectionVariants}>
           <NavigationMenu />

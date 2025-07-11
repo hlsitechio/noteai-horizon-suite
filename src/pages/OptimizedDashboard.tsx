@@ -60,7 +60,7 @@ const OptimizedDashboard: React.FC = () => {
   ), [notes, panelSizes, isDashboardEditMode, memoizedHandlers]);
 
   return (
-    <div className="w-full h-full bg-background">
+    <div className="w-full h-full bg-background" data-onboarding="dashboard">
       {!isMobile && <DashboardControls onEditLayoutClick={() => setShowEditLayoutModal(true)} />}
       
       {/* Main Content - No banner needed since it's handled by BannerLayout */}

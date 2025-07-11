@@ -14,7 +14,7 @@ const Settings: React.FC = () => {
   // Check for tab parameter in URL
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab && ['profile', 'layout', 'themes', 'preferences', 'weather', 'ai', 'data', 'download', 'about'].includes(tab)) {
+    if (tab && ['profile', 'layout', 'themes', 'preferences', 'weather', 'ai', 'data', 'download', 'onboarding', 'about'].includes(tab)) {
       setActiveTab(tab);
     }
   }, [searchParams]);

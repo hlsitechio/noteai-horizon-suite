@@ -10,6 +10,7 @@ import { GoogleDriveTabContent } from './tabs/GoogleDriveTabContent';
 import { DataTabContent } from './tabs/DataTabContent';
 import { DownloadTabContent } from './tabs/DownloadTabContent';
 import { AboutTabContent } from './tabs/AboutTabContent';
+import { OnboardingTabContent } from './tabs/OnboardingTabContent';
 
 interface SettingsContentProps {
   activeTab: string;
@@ -36,6 +37,7 @@ export const SettingsContent: React.FC<SettingsContentProps> = ({ activeTab }) =
       <GoogleDriveTabContent />
       <DataTabContent />
       <DownloadTabContent />
+      <OnboardingTabContent />
       <AboutTabContent />
     </div>
   );

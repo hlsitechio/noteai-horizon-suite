@@ -991,6 +991,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_onboarding: {
+        Row: {
+          completed_steps: string[] | null
+          created_at: string
+          current_step: number
+          id: string
+          last_seen_step: number | null
+          onboarding_completed: boolean
+          onboarding_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_steps?: string[] | null
+          created_at?: string
+          current_step?: number
+          id?: string
+          last_seen_step?: number | null
+          onboarding_completed?: boolean
+          onboarding_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_steps?: string[] | null
+          created_at?: string
+          current_step?: number
+          id?: string
+          last_seen_step?: number | null
+          onboarding_completed?: boolean
+          onboarding_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           ai_model: string | null

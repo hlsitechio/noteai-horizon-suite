@@ -105,18 +105,20 @@ export function NotesSection() {
   }
 
   return (
-    <ExpandedNotesView
-      notes={notes}
-      folders={folders}
-      favoriteNotes={favoriteNotes}
-      sectionOrder={sectionOrder}
-      expandedSections={expandedSections}
-      onToggleSection={toggleSection}
-      onCreateNote={handleCreateNote}
-      onCreateFolder={handleCreateFolder}
-      onMoveToFolder={handleMoveToFolder}
-      onToggleFavorite={handleToggleFavorite}
-      isMobile={isMobile}
-    />
+    <div data-onboarding="notes-list">
+      <ExpandedNotesView
+        notes={notes}
+        folders={folders}
+        favoriteNotes={favoriteNotes}
+        sectionOrder={sectionOrder}
+        expandedSections={expandedSections}
+        onToggleSection={toggleSection}
+        onCreateNote={handleCreateNote}
+        onCreateFolder={handleCreateFolder}
+        onMoveToFolder={handleMoveToFolder}
+        onToggleFavorite={handleToggleFavorite}
+        isMobile={isMobile}
+      />
+    </div>
   );
 }

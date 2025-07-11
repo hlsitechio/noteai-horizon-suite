@@ -70,6 +70,7 @@ export function NotesListHeader({
                 onCreateNote();
               }}
               title="Create Note"
+              data-onboarding="create-note"
             >
               <Plus className="h-3 w-3" />
             </Button>

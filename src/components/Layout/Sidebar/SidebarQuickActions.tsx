@@ -82,7 +82,8 @@ export function SidebarQuickActions() {
       label: 'Settings',
       description: 'Configure your preferences',
       action: () => navigate('/app/settings'),
-      color: 'text-purple-500'
+      color: 'text-purple-500',
+      'data-onboarding': 'settings'
     }
   ];
 

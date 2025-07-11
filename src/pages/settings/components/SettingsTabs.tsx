@@ -1,6 +1,6 @@
 import React from 'react';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Layout, Palette, Settings as SettingsIcon, Cloud, Sliders, Download, Monitor, Info, HardDrive } from 'lucide-react';
+import { User, Layout, Palette, Settings as SettingsIcon, Cloud, Sliders, Download, Monitor, Info, HardDrive, GraduationCap } from 'lucide-react';
 
 interface SettingsTabsProps {
   activeTab: string;
@@ -10,7 +10,7 @@ interface SettingsTabsProps {
 export const SettingsTabs: React.FC<SettingsTabsProps> = ({ activeTab, onTabChange }) => {
   console.log('SettingsTabs rendered with activeTab:', activeTab);
   return (
-    <TabsList className="grid w-full grid-cols-10">
+    <TabsList className="grid w-full grid-cols-11">
       <TabsTrigger value="profile" className="flex items-center gap-2">
         <User className="h-4 w-4" />
         Profile
@@ -46,6 +46,10 @@ export const SettingsTabs: React.FC<SettingsTabsProps> = ({ activeTab, onTabChan
       <TabsTrigger value="download" className="flex items-center gap-2">
         <Monitor className="h-4 w-4" />
         Desktop App
+      </TabsTrigger>
+      <TabsTrigger value="onboarding" className="flex items-center gap-2">
+        <GraduationCap className="h-4 w-4" />
+        Onboarding
       </TabsTrigger>
       <TabsTrigger value="about" className="flex items-center gap-2">
         <Info className="h-4 w-4" />
