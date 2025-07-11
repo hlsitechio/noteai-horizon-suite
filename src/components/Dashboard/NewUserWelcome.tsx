@@ -5,6 +5,7 @@ import { useWelcomeFlow } from './hooks/useWelcomeFlow';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { ComponentsStep } from './steps/ComponentsStep';
 import { ThemeStep } from './steps/ThemeStep';
+import { TourStep } from './steps/TourStep';
 import { InitializeStep } from './steps/InitializeStep';
 
 interface NewUserWelcomeProps {
@@ -54,13 +55,25 @@ export const NewUserWelcome: React.FC<NewUserWelcomeProps> = ({
     );
   }
 
+  // Interface Tour Step
+  if (currentStep === 'tour') {
+    return (
+      <TourStep
+        onTourCompleted={handlers.handleTourCompleted}
+        onSkip={handlers.handleSkipTour}
+        onBackToTheme={handlers.handleBackToTheme}
+        className={className}
+      />
+    );
+  }
+
   // Initialize Step
   if (currentStep === 'initialize') {
     return (
       <InitializeStep
         selectedComponents={selectedComponents}
         onInitialized={handleDashboardInitialized}
-        onBackToComponents={handlers.handleBackToTheme}
+        onBackToComponents={handlers.handleBackToTour}
         className={className}
       />
     );
