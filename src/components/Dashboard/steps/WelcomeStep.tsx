@@ -20,10 +20,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
             Welcome to Online Note AI! 
             <span className="inline-block ml-2">🚀</span>
           </CardTitle>
-          <CardDescription className="text-lg max-w-2xl mx-auto leading-relaxed">
-            Transform your productivity with AI-powered note-taking. Let's customize 
-            your workspace to match your workflow perfectly.
-          </CardDescription>
+          
         </CardHeader>
 
         <CardContent className="pb-8">
