@@ -1036,6 +1036,7 @@ export type Database = {
           context_awareness_enabled: boolean | null
           created_at: string
           dashboard_components: string[] | null
+          dashboard_theme: string | null
           default_note_category: string | null
           id: string
           smart_formatting_enabled: boolean | null
@@ -1054,6 +1055,7 @@ export type Database = {
           context_awareness_enabled?: boolean | null
           created_at?: string
           dashboard_components?: string[] | null
+          dashboard_theme?: string | null
           default_note_category?: string | null
           id?: string
           smart_formatting_enabled?: boolean | null
@@ -1072,6 +1074,7 @@ export type Database = {
           context_awareness_enabled?: boolean | null
           created_at?: string
           dashboard_components?: string[] | null
+          dashboard_theme?: string | null
           default_note_category?: string | null
           id?: string
           smart_formatting_enabled?: boolean | null
