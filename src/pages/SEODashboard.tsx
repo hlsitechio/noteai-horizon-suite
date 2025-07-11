@@ -17,6 +17,7 @@ import CoreWebVitalsMonitor from '@/components/SEO/CoreWebVitalsMonitor';
 import AIContentOptimizer from '@/components/AI/AIContentOptimizer';
 import VoiceSearchOptimizer from '@/components/SEO/VoiceSearchOptimizer';
 import AdvancedSEOOptimizer from '@/components/SEO/AdvancedSEOOptimizer';
+import TechnicalSEODashboard from '@/components/SEO/TechnicalSEODashboard';
 
 const SEODashboard: React.FC = () => {
   // Mock SEO overview data
@@ -127,13 +128,17 @@ const SEODashboard: React.FC = () => {
 
         {/* Main Content */}
         <Tabs defaultValue="analysis" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="analysis" className="flex items-center gap-2">
               <Search className="h-4 w-4" />
               Analysis
             </TabsTrigger>
-            <TabsTrigger value="performance" className="flex items-center gap-2">
+            <TabsTrigger value="technical" className="flex items-center gap-2">
               <Gauge className="h-4 w-4" />
+              Technical
+            </TabsTrigger>
+            <TabsTrigger value="performance" className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
               Performance
             </TabsTrigger>
             <TabsTrigger value="content" className="flex items-center gap-2">
@@ -152,6 +157,10 @@ const SEODashboard: React.FC = () => {
 
           <TabsContent value="analysis">
             <SEOAnalysisDashboard />
+          </TabsContent>
+
+          <TabsContent value="technical">
+            <TechnicalSEODashboard />
           </TabsContent>
 
           <TabsContent value="performance">
