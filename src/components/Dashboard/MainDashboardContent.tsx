@@ -36,43 +36,6 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
   const { user } = useAuth();
   const [showNewUserWelcome, setShowNewUserWelcome] = React.useState(false);
   const [isCheckingUserStatus, setIsCheckingUserStatus] = React.useState(true);
-
-  // Check if user needs dashboard initialization
-  React.useEffect(() => {
-    const checkUserStatus = async () => {
-      if (!user) {
-        setIsCheckingUserStatus(false);
-        return;
-      }
-
-      // If user has no notes, folders, or dashboard settings, show welcome
-      const hasNoContent = notes.length === 0;
-      
-      if (hasNoContent) {
-        setShowNewUserWelcome(true);
-      }
-      
-      setIsCheckingUserStatus(false);
-    };
-
-    checkUserStatus();
-  }, [user, notes.length]);
-
-  const handleDashboardInitialized = () => {
-    setShowNewUserWelcome(false);
-  };
-
-  // Show welcome screen if it's a new user
-  if (showNewUserWelcome && !isCheckingUserStatus) {
-    return (
-      <div className="h-full overflow-y-auto">
-        <NewUserWelcome 
-          onDashboardInitialized={handleDashboardInitialized}
-          className="py-8"
-        />
-      </div>
-    );
-  }
   
   // Calculate stats for KPIStats
   const totalNotes = notes.length;
@@ -114,6 +77,43 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
       onHorizontalResize(sizes);
     }
   }, [isDashboardEditMode, onHorizontalResize]);
+
+  // Check if user needs dashboard initialization
+  React.useEffect(() => {
+    const checkUserStatus = async () => {
+      if (!user) {
+        setIsCheckingUserStatus(false);
+        return;
+      }
+
+      // If user has no notes, show welcome
+      const hasNoContent = notes.length === 0;
+      
+      if (hasNoContent) {
+        setShowNewUserWelcome(true);
+      }
+      
+      setIsCheckingUserStatus(false);
+    };
+
+    checkUserStatus();
+  }, [user, notes.length]);
+
+  const handleDashboardInitialized = () => {
+    setShowNewUserWelcome(false);
+  };
+
+  // Show welcome screen if it's a new user
+  if (showNewUserWelcome && !isCheckingUserStatus) {
+    return (
+      <div className="h-full overflow-y-auto">
+        <NewUserWelcome 
+          onDashboardInitialized={handleDashboardInitialized}
+          className="py-8"
+        />
+      </div>
+    );
+  }
 
   // Create storage handler that returns null to disable localStorage persistence
   // We handle persistence through our own system
