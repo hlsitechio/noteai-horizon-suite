@@ -6,6 +6,7 @@ export const useDashboardStatus = () => {
   const { user } = useAuth();
   const [isDashboardInitialized, setIsDashboardInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasResetCompleted, setHasResetCompleted] = useState(false);
 
   useEffect(() => {
     const checkDashboardStatus = async () => {
@@ -46,6 +47,8 @@ export const useDashboardStatus = () => {
         // Reset onboarding for ALL users on every login
         // This ensures users always go through the dashboard onboarding flow
         
+        console.log('Resetting dashboard onboarding for user:', user.email);
+        
         // Reset onboarding status for all users
         await supabase
           .from('user_onboarding')
@@ -77,6 +80,9 @@ export const useDashboardStatus = () => {
             selected_banner_type: null
           }, { onConflict: 'user_id' });
         
+        console.log('Dashboard reset completed for user:', user.email);
+        setHasResetCompleted(true);
+        
         // Always set as not initialized to force onboarding
         setIsDashboardInitialized(false);
       } catch (error) {
@@ -92,7 +98,8 @@ export const useDashboardStatus = () => {
 
   return {
     isDashboardInitialized,
-    isLoading,
-    setIsDashboardInitialized
+    isLoading: isLoading || !hasResetCompleted,
+    setIsDashboardInitialized,
+    hasResetCompleted
   };
 };
