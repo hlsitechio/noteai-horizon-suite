@@ -1,18 +1,6 @@
-import { supabase } from '@/integrations/supabase/client';
+import { FixableIssue } from './types';
 
-export interface FixableIssue {
-  id: string;
-  type: 'missing_h1' | 'broken_link' | 'large_image' | 'missing_alt' | 'duplicate_meta' | 'mobile_friendly' | 'https_certificate' | 'core_web_vitals' | 'page_speed';
-  title: string;
-  description: string;
-  severity: 'critical' | 'warning' | 'info';
-  page_path?: string;
-  element?: string;
-  current_value?: string;
-  target_value?: string;
-}
-
-export class AutoFixService {
+export class PromptGenerator {
   /**
    * Generate targeted AI prompts for different types of issues
    */
@@ -196,59 +184,6 @@ export class AutoFixService {
   }
 
   /**
-   * Send auto-fix prompt to Lovable AI chat
-   */
-  static async sendAutoFixPrompt(issue: FixableIssue): Promise<boolean> {
-    try {
-      const prompt = this.generateFixPrompt(issue);
-      
-      // In a real implementation, this would use Lovable's API to send the prompt
-      // For now, we'll log it and copy to clipboard
-      console.log('🤖 Auto-Fix Prompt Generated:', prompt);
-      
-      // Copy to clipboard so user can paste into chat
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(prompt);
-        return true;
-      }
-      
-      return false;
-    } catch (error) {
-      console.error('Error sending auto-fix prompt:', error);
-      return false;
-    }
-  }
-
-  /**
-   * Log fix attempt in database
-   */
-  static async logFixAttempt(userId: string, issue: FixableIssue, promptSent: boolean): Promise<void> {
-    try {
-      await supabase
-        .from('seo_audits')
-        .insert({
-          user_id: userId,
-          audit_type: 'auto_fix_attempt',
-          audit_data: {
-            issue_id: issue.id,
-            issue_type: issue.type,
-            issue_title: issue.title,
-            issue_description: issue.description,
-            issue_severity: issue.severity,
-            prompt_sent: promptSent,
-            timestamp: new Date().toISOString(),
-            prompt: this.generateFixPrompt(issue)
-          } as any,
-          audit_score: 0,
-          issues_found: 1,
-          issues_fixed: 0
-        });
-    } catch (error) {
-      console.error('Error logging fix attempt:', error);
-    }
-  }
-
-  /**
    * Get fix suggestions based on issue type
    */
   static getQuickFixSuggestions(issue: FixableIssue): string[] {
@@ -294,58 +229,6 @@ export class AutoFixService {
           'Implement targeted fixes',
           'Test the solution thoroughly'
         ];
-    }
-  }
-
-  /**
-   * Send prompt directly to Lovable AI chat interface
-   */
-  static async integrateWithLovableChat(issue: FixableIssue): Promise<{
-    success: boolean;
-    message: string;
-    promptId?: string;
-  }> {
-    try {
-      const prompt = this.generateFixPrompt(issue);
-      
-      // Send prompt directly to Lovable chat interface
-      // This will trigger the AI to process the prompt immediately
-      this.sendToLovableChat(prompt);
-
-      return {
-        success: true,
-        message: 'Auto-fix prompt sent to Lovable AI! The assistant will help you fix this issue.',
-        promptId: `fix_${Date.now()}`
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: 'Failed to send auto-fix prompt. Please try again.'
-      };
-    }
-  }
-
-  /**
-   * Send message directly to Lovable chat interface
-   */
-  private static sendToLovableChat(message: string): void {
-    // Use Lovable's internal messaging system to send the prompt directly to chat
-    if (typeof window !== 'undefined' && (window as any).parent) {
-      try {
-        // Send message to parent frame (Lovable interface)
-        (window as any).parent.postMessage({
-          type: 'LOVABLE_CHAT_MESSAGE',
-          payload: {
-            message: message,
-            source: 'auto-fix-system',
-            timestamp: Date.now()
-          }
-        }, '*');
-      } catch (error) {
-        console.error('Failed to send message to Lovable chat:', error);
-        // Fallback to console for development
-        console.log('🤖 Auto-Fix Prompt for Lovable:', message);
-      }
     }
   }
 }

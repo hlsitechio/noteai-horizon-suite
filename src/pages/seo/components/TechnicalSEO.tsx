@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { AutoFixService, FixableIssue } from '@/services/autoFixService';
+import { AutoFixService, type FixableIssue } from '@/services/seo/autoFixService';
 import { toast } from 'sonner';
 import AutoFixHelper from '@/components/SEO/AutoFixHelper';
 
