@@ -12,11 +12,20 @@ import { useDebounce } from 'use-debounce';
 
 const ProfileSection: React.FC = () => {
   const { user, refreshUser } = useAuth();
-  const [name, setName] = useState(user?.name || '');
-  const [email, setEmail] = useState(user?.email || '');
-  const [welcomeMessage, setWelcomeMessage] = useState(user?.welcome_message || 'Welcome back');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [welcomeMessage, setWelcomeMessage] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+  // Initialize state when user data is available
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setEmail(user.email || '');
+      setWelcomeMessage(user.welcome_message || 'Welcome back');
+    }
+  }, [user]);
 
   // Debounced values for real-time updates
   const [debouncedName] = useDebounce(name, 500);
@@ -48,26 +57,17 @@ const ProfileSection: React.FC = () => {
 
   // Effect for real-time name updates
   useEffect(() => {
-    if (debouncedName && debouncedName !== user?.name && user) {
+    if (debouncedName && debouncedName !== user?.name && user && debouncedName.trim()) {
       updateProfileRealTime({ display_name: debouncedName });
     }
-  }, [debouncedName, user?.name, updateProfileRealTime]);
+  }, [debouncedName, user?.name, updateProfileRealTime, user]);
 
   // Effect for real-time welcome message updates
   useEffect(() => {
-    if (debouncedWelcomeMessage && debouncedWelcomeMessage !== user?.welcome_message && user) {
+    if (debouncedWelcomeMessage && debouncedWelcomeMessage !== user?.welcome_message && user && debouncedWelcomeMessage.trim()) {
       updateProfileRealTime({ welcome_message: debouncedWelcomeMessage });
     }
-  }, [debouncedWelcomeMessage, user?.welcome_message, updateProfileRealTime]);
-
-  // Update local state when user data changes
-  useEffect(() => {
-    if (user) {
-      setName(user.name || '');
-      setEmail(user.email || '');
-      setWelcomeMessage(user.welcome_message || 'Welcome back');
-    }
-  }, [user]);
+  }, [debouncedWelcomeMessage, user?.welcome_message, updateProfileRealTime, user]);
 
   const handleUpdateProfile = async () => {
     if (!user) return;
