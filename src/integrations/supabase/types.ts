@@ -370,6 +370,51 @@ export type Database = {
           },
         ]
       }
+      seo_alerts: {
+        Row: {
+          alert_type: string | null
+          created_at: string
+          id: string
+          is_read: boolean | null
+          keyword: string | null
+          message: string
+          metric_value: number | null
+          page_path: string | null
+          previous_value: number | null
+          severity: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          alert_type?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          keyword?: string | null
+          message: string
+          metric_value?: number | null
+          page_path?: string | null
+          previous_value?: number | null
+          severity?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          alert_type?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          keyword?: string | null
+          message?: string
+          metric_value?: number | null
+          page_path?: string | null
+          previous_value?: number | null
+          severity?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       seo_analytics: {
         Row: {
           created_at: string
@@ -396,6 +441,120 @@ export type Database = {
           metric_value?: number | null
           page_path?: string
           recorded_date?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      seo_audits: {
+        Row: {
+          audit_data: Json | null
+          audit_score: number | null
+          audit_type: string | null
+          created_at: string
+          id: string
+          issues_fixed: number | null
+          issues_found: number | null
+          user_id: string
+        }
+        Insert: {
+          audit_data?: Json | null
+          audit_score?: number | null
+          audit_type?: string | null
+          created_at?: string
+          id?: string
+          issues_fixed?: number | null
+          issues_found?: number | null
+          user_id: string
+        }
+        Update: {
+          audit_data?: Json | null
+          audit_score?: number | null
+          audit_type?: string | null
+          created_at?: string
+          id?: string
+          issues_fixed?: number | null
+          issues_found?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      seo_competitors: {
+        Row: {
+          analysis_data: Json | null
+          competitor_domain: string
+          competitor_name: string
+          created_at: string
+          id: string
+          last_analyzed: string | null
+          target_keywords: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          analysis_data?: Json | null
+          competitor_domain: string
+          competitor_name: string
+          created_at?: string
+          id?: string
+          last_analyzed?: string | null
+          target_keywords?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          analysis_data?: Json | null
+          competitor_domain?: string
+          competitor_name?: string
+          created_at?: string
+          id?: string
+          last_analyzed?: string | null
+          target_keywords?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      seo_content_gaps: {
+        Row: {
+          competitor_ranking_urls: string[] | null
+          content_outline: string | null
+          content_type_suggestion: string | null
+          created_at: string
+          id: string
+          is_targeted: boolean | null
+          keyword: string
+          keyword_difficulty: number | null
+          priority_score: number | null
+          search_volume: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          competitor_ranking_urls?: string[] | null
+          content_outline?: string | null
+          content_type_suggestion?: string | null
+          created_at?: string
+          id?: string
+          is_targeted?: boolean | null
+          keyword: string
+          keyword_difficulty?: number | null
+          priority_score?: number | null
+          search_volume?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          competitor_ranking_urls?: string[] | null
+          content_outline?: string | null
+          content_type_suggestion?: string | null
+          created_at?: string
+          id?: string
+          is_targeted?: boolean | null
+          keyword?: string
+          keyword_difficulty?: number | null
+          priority_score?: number | null
+          search_volume?: number | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -488,6 +647,57 @@ export type Database = {
           og_image?: string | null
           og_title?: string | null
           page_path?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      seo_recommendations: {
+        Row: {
+          action_items: string[] | null
+          ai_generated: boolean | null
+          created_at: string
+          description: string
+          id: string
+          impact_score: number | null
+          implementation_difficulty: string | null
+          is_implemented: boolean | null
+          page_path: string
+          priority: string | null
+          recommendation_type: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_items?: string[] | null
+          ai_generated?: boolean | null
+          created_at?: string
+          description: string
+          id?: string
+          impact_score?: number | null
+          implementation_difficulty?: string | null
+          is_implemented?: boolean | null
+          page_path: string
+          priority?: string | null
+          recommendation_type?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_items?: string[] | null
+          ai_generated?: boolean | null
+          created_at?: string
+          description?: string
+          id?: string
+          impact_score?: number | null
+          implementation_difficulty?: string | null
+          is_implemented?: boolean | null
+          page_path?: string
+          priority?: string | null
+          recommendation_type?: string | null
+          title?: string
           updated_at?: string
           user_id?: string
         }

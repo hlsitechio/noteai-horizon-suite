@@ -5,6 +5,8 @@ import { KeywordTracker } from './components/KeywordTracker';
 import { TechnicalSEO } from './components/TechnicalSEO';
 import { ContentOptimization } from './components/ContentOptimization';
 import { BacklinkAnalysis } from './components/BacklinkAnalysis';
+import { AdvancedSEOAssistant } from './components/AdvancedSEOAssistant';
+import { AdvancedSEOAuditor } from './components/AdvancedSEOAuditor';
 import { SEOHeader } from './components/SEOHeader';
 
 const SEODashboard: React.FC = () => {
@@ -16,8 +18,10 @@ const SEODashboard: React.FC = () => {
         <SEOHeader />
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview">SEO Analysis</TabsTrigger>
+            <TabsTrigger value="ai-assistant">🧠 AI Assistant</TabsTrigger>
+            <TabsTrigger value="auditor">🔍 SEO Auditor</TabsTrigger>
             <TabsTrigger value="keywords">Keywords</TabsTrigger>
             <TabsTrigger value="technical">Technical SEO</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
@@ -26,6 +30,14 @@ const SEODashboard: React.FC = () => {
 
           <TabsContent value="overview" className="space-y-6">
             <SEOAnalysis />
+          </TabsContent>
+
+          <TabsContent value="ai-assistant" className="space-y-6">
+            <AdvancedSEOAssistant />
+          </TabsContent>
+
+          <TabsContent value="auditor" className="space-y-6">
+            <AdvancedSEOAuditor />
           </TabsContent>
 
           <TabsContent value="keywords" className="space-y-6">
