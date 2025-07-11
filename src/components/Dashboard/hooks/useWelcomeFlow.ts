@@ -2,15 +2,39 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 
-export type WelcomeStep = 'welcome' | 'components' | 'theme' | 'tour' | 'initialize';
+export type WelcomeStep = 'welcome' | 'userinfo' | 'components' | 'theme' | 'tour' | 'initialize';
 
 export const useWelcomeFlow = (onDashboardInitialized?: () => void) => {
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState<WelcomeStep>('welcome');
   const [selectedComponents, setSelectedComponents] = useState<string[]>([]);
   const [selectedTheme, setSelectedTheme] = useState<string>('default');
+  const [userInfo, setUserInfo] = useState<{ name: string; nickname: string; bio?: string } | null>(null);
 
   const handleGetStarted = () => {
+    setCurrentStep('userinfo');
+  };
+
+  const handleUserInfoComplete = async (info: { name: string; nickname: string; bio?: string }) => {
+    setUserInfo(info);
+    
+    // Save user info to profile
+    try {
+      const { error } = await supabase
+        .from('user_profiles')
+        .update({
+          display_name: info.name,
+          welcome_message: `Welcome back, ${info.nickname}!`
+        })
+        .eq('id', user!.id);
+
+      if (error) {
+        console.error('Error saving user profile:', error);
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error);
+    }
+
     setCurrentStep('components');
   };
 
@@ -98,8 +122,10 @@ export const useWelcomeFlow = (onDashboardInitialized?: () => void) => {
     currentStep,
     selectedComponents,
     selectedTheme,
+    userInfo,
     handlers: {
       handleGetStarted,
+      handleUserInfoComplete,
       handleComponentsSelected,
       handleSkipComponentSelection,
       handleThemeSelected,

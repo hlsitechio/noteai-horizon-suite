@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDashboardStatus } from './hooks/useDashboardStatus';
 import { useWelcomeFlow } from './hooks/useWelcomeFlow';
+import { UserInfoStep } from './steps/UserInfoStep';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { ComponentsStep } from './steps/ComponentsStep';
 import { ThemeStep } from './steps/ThemeStep';
@@ -29,6 +30,16 @@ export const NewUserWelcome: React.FC<NewUserWelcomeProps> = ({
   // Don't show if dashboard is already initialized or still loading
   if (isLoading || isDashboardInitialized || !user) {
     return null;
+  }
+
+  // User Info Step
+  if (currentStep === 'userinfo') {
+    return (
+      <UserInfoStep
+        onComplete={handlers.handleUserInfoComplete}
+        className={className}
+      />
+    );
   }
 
   // Component Selection Step

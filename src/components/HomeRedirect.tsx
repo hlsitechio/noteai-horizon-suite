@@ -35,10 +35,10 @@ const HomeRedirect: React.FC = () => {
     if (needsOnboarding) {
       return <Navigate to="/onboarding" replace />;
     }
-    // Always redirect to dashboard onboarding first (since we reset it on every login)
-    // The dashboard onboarding flow will handle checking if initialization is needed
+    // Always redirect to dashboard setup first (since we reset it on every login)
+    // This is a standalone page outside the dashboard layout
     if (!isDashboardInitialized) {
-      return <Navigate to="/app/dashboard/onboarding" replace />;
+      return <Navigate to="/setup" replace />;
     }
     // Otherwise, redirect to main dashboard
     return <Navigate to="/app/dashboard" replace />;

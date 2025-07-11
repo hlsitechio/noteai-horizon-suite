@@ -130,6 +130,15 @@ export const OptimizedLazyRoutes: React.FC = () => {
           </ProtectedRoute>
         } />
 
+        {/* Dashboard Setup Onboarding - standalone, not within app layout */}
+        <Route path="/setup" element={
+          <ProtectedRoute>
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <DashboardOnboarding />
+            </Suspense>
+          </ProtectedRoute>
+        } />
+
         {/* Mobile Routes */}
         <Route path="/mobile/*" element={
           <ProtectedRoute>
@@ -152,12 +161,6 @@ export const OptimizedLazyRoutes: React.FC = () => {
             </Suspense>
           } />
           
-          {/* Dashboard Onboarding for new users */}
-          <Route path="dashboard/onboarding" element={
-            <Suspense fallback={<DashboardLoadingFallback />}>
-              <DashboardOnboarding />
-            </Suspense>
-          } />
           
           {/* Other routes with standard suspense */}
           <Route path="editor/:noteId?" element={
