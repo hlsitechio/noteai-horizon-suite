@@ -73,84 +73,12 @@ export const TourStep: React.FC<TourStepProps> = ({
 
   return (
     <div className={`fixed inset-0 z-50 ${className}`}>
-      {/* Blurred Background */}
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      {/* Blurred Background Overlay */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       
-      {/* Mock Dashboard Layout */}
-      <div className="relative h-full flex">
-        {/* Mock Sidebar */}
-        <div className="w-64 bg-card border-r border-border shadow-lg">
-          <div className="p-4 border-b border-border">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">ON</span>
-              </div>
-              <span className="font-semibold text-foreground">Online Note AI</span>
-            </div>
-          </div>
-          
-          <nav className="p-4 space-y-2">
-            <div className="flex items-center gap-3 p-2 rounded-lg bg-primary/10 text-primary">
-              <FileText className="h-4 w-4" />
-              <span>Dashboard</span>
-            </div>
-            <div className="flex items-center gap-3 p-2 rounded-lg text-muted-foreground hover:bg-muted">
-              <FileText className="h-4 w-4" />
-              <span>Notes</span>
-            </div>
-            <div className="flex items-center gap-3 p-2 rounded-lg text-muted-foreground hover:bg-muted">
-              <Bell className="h-4 w-4" />
-              <span>Calendar</span>
-            </div>
-            <div className="flex items-center gap-3 p-2 rounded-lg text-muted-foreground hover:bg-muted">
-              <Settings className="h-4 w-4" />
-              <span>Settings</span>
-            </div>
-          </nav>
-        </div>
-
-        {/* Mock Main Content */}
-        <div className="flex-1 flex flex-col">
-          {/* Mock Header */}
-          <header className="h-16 border-b border-border bg-card px-6 flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-foreground">Welcome to Your Dashboard</h1>
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" className="text-muted-foreground">
-                <Bell className="h-4 w-4" />
-              </Button>
-              <div className="w-8 h-8 bg-muted rounded-full" />
-            </div>
-          </header>
-          
-          {/* Mock Content Area */}
-          <main className="flex-1 p-6 bg-background">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold mb-2">Quick Notes</h3>
-                  <p className="text-sm text-muted-foreground">Your recent notes will appear here</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold mb-2">Calendar Events</h3>
-                  <p className="text-sm text-muted-foreground">Upcoming events and reminders</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold mb-2">Analytics</h3>
-                  <p className="text-sm text-muted-foreground">Your productivity insights</p>
-                </CardContent>
-              </Card>
-            </div>
-          </main>
-        </div>
-      </div>
-
-      {/* Highlight Overlay */}
+      {/* Highlight Overlay for current step */}
       <div 
-        className={`absolute bg-primary/20 border-2 border-primary rounded-lg transition-all duration-500 ${currentStep.highlight}`}
+        className={`absolute bg-primary/20 border-2 border-primary rounded-lg transition-all duration-500 pointer-events-none ${currentStep.highlight}`}
       />
 
       {/* Tour Tooltip */}

@@ -57,9 +57,18 @@ export const useDashboardStatus = () => {
           (dashboardSettings.settings as any)?.initialized;
         const hasContent = (count || 0) > 0 || (foldersCount || 0) > 0;
         
-        // Demo user should only be considered initialized if they explicitly completed onboarding
+        // Demo user should ALWAYS go through onboarding (reset every time)
         if (isDemoUser) {
-          setIsDashboardInitialized(hasCompletedOnboarding);
+          // Reset demo user onboarding status
+          await supabase
+            .from('user_onboarding')
+            .upsert({
+              user_id: user.id,
+              onboarding_completed: false,
+              current_step: 0
+            }, { onConflict: 'user_id' });
+          
+          setIsDashboardInitialized(false);
         } else {
           // Regular users: consider initialized if they have onboarding completed, settings, or content
           setIsDashboardInitialized(hasCompletedOnboarding || hasSettings || hasContent);
