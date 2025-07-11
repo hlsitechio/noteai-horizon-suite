@@ -42,14 +42,14 @@ const HomeRedirect: React.FC = () => {
 
   // Redirect based on authentication status after hydration
   if (user) {
+    // Always redirect to dashboard setup first (since we reset it on every login)
+    // This ensures the flow: /setup -> /onboarding -> /app/dashboard
+    if (!isDashboardInitialized) {
+      return <Navigate to="/setup" replace />;
+    }
     // If user needs initial onboarding (role selection + profile setup)
     if (needsOnboarding) {
       return <Navigate to="/onboarding" replace />;
-    }
-    // Always redirect to dashboard setup first (since we reset it on every login)
-    // This is a standalone page outside the dashboard layout
-    if (!isDashboardInitialized) {
-      return <Navigate to="/setup" replace />;
     }
     // Otherwise, redirect to main dashboard
     return <Navigate to="/app/dashboard" replace />;
