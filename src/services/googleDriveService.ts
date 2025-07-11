@@ -90,7 +90,8 @@ export class GoogleDriveService {
   }
 
   static async initiateOAuth(): Promise<string> {
-    const clientId = 'GOOGLE_DRIVE_CLIENT_ID'; // This will be replaced by edge function
+    // Get client ID from edge function or environment
+    const clientId = '1050262574987-ld7p7mmpd58o4aob49uf5lh0q1et8jbi.apps.googleusercontent.com'; // Replace with your actual client ID
     const redirectUri = `${window.location.origin}/settings?tab=drive&auth=callback`;
     const scope = 'https://www.googleapis.com/auth/drive.file';
     const responseType = 'code';
@@ -120,21 +121,16 @@ export class GoogleDriveService {
       }
 
       // Call edge function to exchange code for tokens
-      const response = await fetch('/api/google-drive-auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        },
-        body: JSON.stringify({ code })
+      const { data, error } = await supabase.functions.invoke('google-drive-auth', {
+        body: { code }
       });
 
-      if (!response.ok) {
-        console.error('Failed to exchange code for tokens');
+      if (error) {
+        console.error('Failed to exchange code for tokens:', error);
         return false;
       }
 
-      const { access_token, refresh_token, expires_at } = await response.json();
+      const { access_token, refresh_token, expires_at } = data;
 
       // Save tokens to database
       await this.saveSettings({
@@ -159,18 +155,13 @@ export class GoogleDriveService {
       const settings = await this.getUserSettings();
       if (!settings?.refresh_token) return false;
 
-      const response = await fetch('/api/google-drive-refresh', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        },
-        body: JSON.stringify({ refresh_token: settings.refresh_token })
+      const { data, error } = await supabase.functions.invoke('google-drive-refresh', {
+        body: { refresh_token: settings.refresh_token }
       });
 
-      if (!response.ok) return false;
+      if (error) return false;
 
-      const { access_token, expires_at } = await response.json();
+      const { access_token, expires_at } = data;
 
       await this.saveSettings({
         access_token,
@@ -189,21 +180,16 @@ export class GoogleDriveService {
       const settings = await this.getUserSettings();
       if (!settings?.access_token) return null;
 
-      const response = await fetch('/api/google-drive-folder', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        },
-        body: JSON.stringify({ 
+      const { data, error } = await supabase.functions.invoke('google-drive-folder', {
+        body: { 
           name, 
           parentId: parentId || settings.drive_folder_id 
-        })
+        }
       });
 
-      if (!response.ok) return null;
+      if (error) return null;
 
-      return await response.json();
+      return data;
     } catch (error) {
       console.error('Error creating folder:', error);
       return null;
@@ -219,17 +205,13 @@ export class GoogleDriveService {
       formData.append('file', file);
       formData.append('folderId', folderId || settings.drive_folder_id || '');
 
-      const response = await fetch('/api/google-drive-upload', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        },
+      const { data, error } = await supabase.functions.invoke('google-drive-upload', {
         body: formData
       });
 
-      if (!response.ok) return null;
+      if (error) return null;
 
-      return await response.json();
+      return data;
     } catch (error) {
       console.error('Error uploading file:', error);
       return null;
@@ -241,21 +223,15 @@ export class GoogleDriveService {
       const settings = await this.getUserSettings();
       if (!settings?.access_token) return [];
 
-      const response = await fetch('/api/google-drive-files', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        },
-        body: JSON.stringify({ 
+      const { data, error } = await supabase.functions.invoke('google-drive-files', {
+        body: { 
           folderId: folderId || settings.drive_folder_id 
-        })
+        }
       });
 
-      if (!response.ok) return [];
+      if (error) return [];
 
-      const { files } = await response.json();
-      return files || [];
+      return data?.files || [];
     } catch (error) {
       console.error('Error listing files:', error);
       return [];
@@ -267,18 +243,18 @@ export class GoogleDriveService {
       const settings = await this.getUserSettings();
       if (!settings?.access_token) return null;
 
-      const response = await fetch('/api/google-drive-download', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        },
-        body: JSON.stringify({ fileId })
+      const { data, error } = await supabase.functions.invoke('google-drive-download', {
+        body: { fileId }
       });
 
-      if (!response.ok) return null;
+      if (error) return null;
 
-      return await response.blob();
+      // Convert the response to blob if it's not already
+      if (data instanceof Blob) {
+        return data;
+      } else {
+        return new Blob([data]);
+      }
     } catch (error) {
       console.error('Error downloading file:', error);
       return null;
@@ -290,16 +266,11 @@ export class GoogleDriveService {
       const settings = await this.getUserSettings();
       if (!settings?.access_token) return false;
 
-      const response = await fetch('/api/google-drive-delete', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
-        },
-        body: JSON.stringify({ fileId })
+      const { error } = await supabase.functions.invoke('google-drive-delete', {
+        body: { fileId }
       });
 
-      return response.ok;
+      return !error;
     } catch (error) {
       console.error('Error deleting file:', error);
       return false;
