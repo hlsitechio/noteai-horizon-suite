@@ -39,7 +39,7 @@ const Terms: React.FC = () => {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">Contact Information</h2>
             <p>
-              If you have any questions about these Terms of Service, please contact us at legal@example.com
+              If you have any questions about these Terms of Service, please contact us at legal@onlinnote.ai
             </p>
           </section>
         </div>
