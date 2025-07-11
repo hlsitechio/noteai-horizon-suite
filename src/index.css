@@ -445,6 +445,104 @@
 }
 
 /* ========================================
+   CLEAN DEFAULT THEME (No Effects)
+   ======================================== */
+
+@layer base {
+  .theme-clean-default {
+    /* Pure light theme without any gradients or effects */
+    --background: 0 0% 100%;
+    --foreground: 220 13% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 18%;
+    --primary: 220 14% 50%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 13% 18%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 220 13% 18%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 220 14% 50%;
+    
+    /* Clean sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 220 13% 18%;
+    --sidebar-primary: 220 14% 50%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 220 14% 94%;
+    --sidebar-accent-foreground: 220 13% 18%;
+    --sidebar-border: 220 13% 88%;
+    --sidebar-ring: 220 14% 50%;
+
+    /* Remove all premium effects for clean theme */
+    --gradient-primary: none;
+    --gradient-secondary: none;
+    --gradient-hero: none;
+    --gradient-premium: none;
+    --gradient-mesh: none;
+    --gradient-glass: none;
+    --shadow-premium: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-elegant: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-glow: none;
+    --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-inner: none;
+  }
+
+  .theme-clean-default.dark {
+    /* Clean dark theme without any gradients or effects */
+    --background: 220 13% 9%;
+    --foreground: 220 9% 88%;
+    --card: 220 13% 11%;
+    --card-foreground: 220 9% 88%;
+    --popover: 220 13% 11%;
+    --popover-foreground: 220 9% 88%;
+    --primary: 220 14% 60%;
+    --primary-foreground: 220 13% 9%;
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 220 9% 82%;
+    --muted: 220 13% 15%;
+    --muted-foreground: 220 9% 65%;
+    --accent: 220 13% 15%;
+    --accent-foreground: 220 9% 82%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 220 9% 94%;
+    --border: 220 13% 18%;
+    --input: 220 13% 15%;
+    --ring: 220 14% 60%;
+    
+    /* Clean dark sidebar */
+    --sidebar-background: 220 13% 7%;
+    --sidebar-foreground: 220 9% 82%;
+    --sidebar-primary: 220 14% 60%;
+    --sidebar-primary-foreground: 220 13% 9%;
+    --sidebar-accent: 220 13% 13%;
+    --sidebar-accent-foreground: 220 9% 88%;
+    --sidebar-border: 220 13% 18%;
+    --sidebar-ring: 220 14% 60%;
+
+    /* Remove all premium effects for clean dark theme */
+    --gradient-primary: none;
+    --gradient-secondary: none;
+    --gradient-hero: none;
+    --gradient-premium: none;
+    --gradient-mesh: none;
+    --gradient-glass: none;
+    --shadow-premium: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-elegant: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-glow: none;
+    --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-inner: none;
+  }
+}
+
+/* ========================================
    THEME PRESET 6: PURE BLACK (Ultra Dark)
    ======================================== */
 

@@ -167,7 +167,7 @@ export const ComponentSelector: React.FC<ComponentSelectorProps> = ({
   return (
     <div className={`max-w-5xl mx-auto p-6 space-y-6 ${className}`}>
       {/* Header */}
-      <Card className="text-center border-primary/20 bg-gradient-to-br from-primary/5 via-background to-purple-500/5">
+      <Card className="text-center border-border bg-card">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
             Customize Your Dashboard 🎛️

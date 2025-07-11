@@ -3,10 +3,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { NewUserWelcome } from '@/components/Dashboard/NewUserWelcome';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
+import { useThemeManager } from '@/hooks/useThemeManager';
 
 const DashboardOnboarding: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  
+  // Apply theme management
+  useThemeManager();
 
   const handleDashboardInitialized = () => {
     // After onboarding is complete, redirect to main dashboard
