@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { HelmetProvider } from 'react-helmet-async';
 import { AppInitializationService } from './services/appInitializationService';
 import { initPerfMonitor } from './utils/perfMonitor';
 
@@ -32,12 +33,16 @@ const root = createRoot(container);
 const AppWrapper = import.meta.env.DEV ? (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App />
+      <HelmetProvider>
+        <App />
+      </HelmetProvider>
     </QueryClientProvider>
   </React.StrictMode>
 ) : (
   <QueryClientProvider client={queryClient}>
-    <App />
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
   </QueryClientProvider>
 );
 
