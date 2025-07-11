@@ -44,7 +44,7 @@ export const useDashboardStatus = () => {
           .limit(1);
 
         // Check if this is the demo user (should always go through onboarding unless explicitly completed)
-        const isDemoUser = user.email === 'demo@noteai.com';
+        const isDemoUser = user.email === 'demo@onlinenote.ai';
         
         // Consider dashboard initialized if they have:
         // 1. Completed onboarding before
