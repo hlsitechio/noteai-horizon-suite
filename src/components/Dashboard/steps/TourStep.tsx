@@ -15,32 +15,32 @@ const tourSteps = [
     id: 'navigation',
     title: 'Navigation Sidebar',
     description: 'Access all your main features here - Notes, Calendar, Settings, and more. Click the menu icon to collapse or expand.',
-    position: { top: '20%', left: '15%' },
-    highlight: 'left-0 top-0 w-64 h-full',
+    position: { top: '25%', left: '16rem' },
+    highlight: 'left-0 top-0 w-60 h-full',
     icon: Navigation
   },
   {
     id: 'content',
-    title: 'Main Content Area',
+    title: 'Main Content Area', 
     description: 'This is where your notes, dashboard widgets, and main content will appear. Everything is customizable based on your preferences.',
-    position: { top: '30%', left: '45%' },
-    highlight: 'left-64 top-0 right-0 bottom-16',
+    position: { top: '20%', left: '50%', transform: 'translateX(-50%)' },
+    highlight: 'left-60 top-0 right-0 bottom-0',
     icon: FileText
   },
   {
     id: 'profile',
     title: 'Profile & Quick Actions',
     description: 'Access your profile, notifications, and quick settings from the top-right corner.',
-    position: { top: '15%', right: '5%' },
-    highlight: 'right-0 top-0 w-48 h-16',
+    position: { top: '15%', right: '1rem' },
+    highlight: 'right-0 top-0 w-80 h-16',
     icon: User
   },
   {
     id: 'settings',
     title: 'Settings & Customization',
-    description: 'Personalize your experience with themes, preferences, and advanced settings available in the sidebar.',
-    position: { top: '60%', left: '15%' },
-    highlight: 'left-0 bottom-0 w-64 h-32',
+    description: 'Personalize your experience with themes, preferences, and advanced settings available in the sidebar bottom section.',
+    position: { bottom: '25%', left: '16rem' },
+    highlight: 'left-0 bottom-0 w-60 h-40',
     icon: Settings
   }
 ];
@@ -73,17 +73,20 @@ export const TourStep: React.FC<TourStepProps> = ({
 
   return (
     <div className={`fixed inset-0 z-50 ${className}`}>
-      {/* Blurred Background Overlay */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      {/* Dark overlay that blurs everything */}
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
       
-      {/* Highlight Overlay for current step */}
+      {/* Precise highlight box for current step */}
       <div 
-        className={`absolute bg-primary/20 border-2 border-primary rounded-lg transition-all duration-500 pointer-events-none ${currentStep.highlight}`}
+        className={`absolute bg-white/10 border-2 border-primary/80 rounded-lg transition-all duration-500 pointer-events-none shadow-lg ${currentStep.highlight}`}
+        style={{
+          boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(139, 92, 246, 0.3)'
+        }}
       />
 
       {/* Tour Tooltip */}
       <Card 
-        className="absolute z-10 w-80 shadow-2xl border-primary/20 bg-card/95 backdrop-blur"
+        className="absolute z-20 w-80 shadow-2xl border-primary/30 bg-background/95 backdrop-blur border-2"
         style={currentStep.position}
       >
         <CardContent className="p-6">

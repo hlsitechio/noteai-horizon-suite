@@ -59,13 +59,22 @@ export const useDashboardStatus = () => {
         
         // Demo user should ALWAYS go through onboarding (reset every time)
         if (isDemoUser) {
-          // Reset demo user onboarding status
+          // Reset demo user onboarding status AND theme preferences
           await supabase
             .from('user_onboarding')
             .upsert({
               user_id: user.id,
               onboarding_completed: false,
               current_step: 0
+            }, { onConflict: 'user_id' });
+
+          // Reset theme to default for demo user
+          await supabase
+            .from('user_preferences')
+            .upsert({
+              user_id: user.id,
+              dashboard_theme: 'default',
+              dashboard_components: []
             }, { onConflict: 'user_id' });
           
           setIsDashboardInitialized(false);
