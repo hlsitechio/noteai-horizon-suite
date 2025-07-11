@@ -103,18 +103,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Circuit breaker - prevent infinite loops
+  // Circuit breaker - prevent infinite loops (made less aggressive)
   const requestKey = `sw_request_${url.pathname}`;
   const requestCount = parseInt(self.globalThis[requestKey] || '0');
   
-  // If too many requests to same URL, return simple response
-  if (requestCount > 10) {
+  // Only trigger circuit breaker for excessive requests (increased threshold)
+  if (requestCount > 25) {
     console.warn('[SW] Circuit breaker triggered for:', url.href);
-    event.respondWith(new Response('Service temporarily unavailable', { 
-      status: 503, 
-      statusText: 'Service Unavailable',
-      headers: { 'Content-Type': 'text/plain' }
-    }));
+    // Let the request pass through without service worker intervention
     return;
   }
   
@@ -124,7 +120,7 @@ self.addEventListener('fetch', (event) => {
   // Reset counter after a delay
   setTimeout(() => {
     delete self.globalThis[requestKey];
-  }, 5000);
+  }, 10000); // Increased timeout
 
   // Determine caching strategy based on URL
   if (isNetworkFirst(url.href)) {
@@ -199,17 +195,17 @@ async function staleWhileRevalidateStrategy(request) {
   const cacheKey = `failed_${request.url}`;
   const failedAttempts = failedRequests.get(cacheKey) || 0;
   
-  // If too many failures, return cache or simple response
-  if (failedAttempts > 3) {
+  // Be less aggressive - only block after many failures
+  if (failedAttempts > 8) {
     if (cachedResponse) {
       return cachedResponse;
     }
-    // Don't keep retrying failed requests
-    return new Response('Service temporarily unavailable', { 
-      status: 503, 
-      statusText: 'Service Unavailable',
-      headers: { 'Content-Type': 'text/plain' }
-    });
+    // For critical routes, let them pass through instead of blocking
+    if (request.url.includes('/app/') || request.url.includes('/api/')) {
+      console.log('[SW] Allowing critical route despite failures:', request.url);
+      // Let the request pass through normally
+      return fetch(request);
+    }
   }
   
   const fetchPromise = fetch(request).then((response) => {
