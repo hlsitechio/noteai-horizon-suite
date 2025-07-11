@@ -3,11 +3,10 @@ const CACHE_NAME = 'noteai-pwa-v1';
 const STATIC_CACHE_NAME = 'noteai-static-v1';
 const DYNAMIC_CACHE_NAME = 'noteai-dynamic-v1';
 
-// Files to cache immediately
+// Files to cache immediately - adjusted for Lovable preview environment
 const STATIC_ASSETS = [
-  '/',
   '/app/dashboard',
-  '/app/notes',
+  '/app/notes', 
   '/app/chat',
   '/manifest.json'
 ];
@@ -103,14 +102,19 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Circuit breaker - prevent infinite loops (made less aggressive)
+  // Skip root path requests in preview environment to prevent 404 loops
+  if (url.pathname === '/' && url.hostname.includes('lovable')) {
+    console.log('[SW] Skipping root path cache in Lovable preview environment');
+    return;
+  }
+
+  // Circuit breaker - prevent infinite loops
   const requestKey = `sw_request_${url.pathname}`;
   const requestCount = parseInt(self.globalThis[requestKey] || '0');
   
-  // Only trigger circuit breaker for excessive requests (increased threshold)
-  if (requestCount > 25) {
+  // Only trigger circuit breaker for excessive requests
+  if (requestCount > 10) {
     console.warn('[SW] Circuit breaker triggered for:', url.href);
-    // Let the request pass through without service worker intervention
     return;
   }
   
@@ -151,9 +155,9 @@ async function networkFirstStrategy(request) {
       return cachedResponse;
     }
     
-    // Return offline page for navigation requests
+    // Return a fallback page for navigation requests
     if (request.destination === 'document') {
-      return caches.match('/');
+      return caches.match('/app/dashboard');
     }
     
     throw error;
@@ -238,11 +242,11 @@ async function staleWhileRevalidateStrategy(request) {
       return networkResponse;
     }
     
-    // For navigation requests, try to return the main app
+    // For navigation requests, try to return the dashboard
     if (request.destination === 'document') {
-      const mainApp = await caches.match('/');
-      if (mainApp) {
-        return mainApp;
+      const dashboard = await caches.match('/app/dashboard');
+      if (dashboard) {
+        return dashboard;
       }
     }
     
@@ -258,11 +262,11 @@ async function staleWhileRevalidateStrategy(request) {
       return cachedResponse;
     }
     
-    // For navigation requests, try to return the main app
+    // For navigation requests, try to return the dashboard
     if (request.destination === 'document') {
-      const mainApp = await caches.match('/');
-      if (mainApp) {
-        return mainApp;
+      const dashboard = await caches.match('/app/dashboard');
+      if (dashboard) {
+        return dashboard;
       }
     }
     
