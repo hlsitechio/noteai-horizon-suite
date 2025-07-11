@@ -68,6 +68,12 @@ const NavigationMenu: React.FC = () => {
       description: 'Writing insights and stats'
     },
     { 
+      icon: 'bx bx-search-alt', 
+      label: 'SEO', 
+      path: '/app/seo',
+      description: 'SEO optimization and analysis'
+    },
+    { 
       icon: 'bx bx-list-ul', 
       label: 'Activity', 
       path: '/app/activity',
