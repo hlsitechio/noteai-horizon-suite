@@ -5,18 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { useOnboardingContext } from '@/components/Onboarding/OnboardingProvider';
+import { useOnboarding } from '@/hooks/useOnboarding';
 import { Play, RotateCcw, Info } from 'lucide-react';
 
 export function OnboardingTabContent() {
-  const { 
-    onboardingState, 
-    toggleOnboarding, 
-    startOnboarding, 
-    isLoading 
-  } = useOnboardingContext();
+  const onboarding = useOnboarding();
 
-  if (isLoading) {
+  if (onboarding.isLoading) {
     return (
       <TabsContent value="onboarding" className="mt-6">
         <div className="flex items-center justify-center h-32">
@@ -51,8 +46,8 @@ export function OnboardingTabContent() {
             </div>
             <Switch
               id="onboarding-enabled"
-              checked={onboardingState.enabled}
-              onCheckedChange={toggleOnboarding}
+              checked={onboarding.onboardingState.enabled}
+              onCheckedChange={onboarding.toggleOnboarding}
             />
           </div>
 
@@ -64,18 +59,18 @@ export function OnboardingTabContent() {
               <div>
                 <h4 className="text-sm font-medium">Onboarding Status</h4>
                 <p className="text-sm text-muted-foreground">
-                  {onboardingState.completed 
+                  {onboarding.onboardingState.completed 
                     ? 'You have completed the onboarding tour' 
-                    : `Step ${onboardingState.currentStep + 1} of ${6}`
+                    : `Step ${onboarding.onboardingState.currentStep + 1} of ${6}`
                   }
                 </p>
               </div>
               <div className="flex gap-2">
-                {onboardingState.completed ? (
+                {onboarding.onboardingState.completed ? (
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={startOnboarding}
+                    onClick={onboarding.startOnboarding}
                     className="flex items-center gap-2"
                   >
                     <RotateCcw className="h-4 w-4" />
@@ -85,7 +80,7 @@ export function OnboardingTabContent() {
                   <Button
                     variant="default"
                     size="sm"
-                    onClick={startOnboarding}
+                    onClick={onboarding.startOnboarding}
                     className="flex items-center gap-2"
                   >
                     <Play className="h-4 w-4" />
@@ -99,13 +94,13 @@ export function OnboardingTabContent() {
             <div className="space-y-2">
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>Progress</span>
-                <span>{Math.round((onboardingState.currentStep / 6) * 100)}%</span>
+                <span>{Math.round((onboarding.onboardingState.currentStep / 6) * 100)}%</span>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
                 <div 
                   className="bg-primary h-2 rounded-full transition-all duration-300" 
                   style={{ 
-                    width: `${Math.max(0, (onboardingState.currentStep / 6) * 100)}%` 
+                    width: `${Math.max(0, (onboarding.onboardingState.currentStep / 6) * 100)}%` 
                   }}
                 />
               </div>
@@ -129,15 +124,15 @@ export function OnboardingTabContent() {
                 <div 
                   key={step.id}
                   className={`flex items-center gap-3 p-3 rounded-lg border ${
-                    onboardingState.completedSteps.includes(step.id) 
+                    onboarding.onboardingState.completedSteps.includes(step.id) 
                       ? 'bg-primary/5 border-primary/20' 
                       : 'bg-muted/30'
                   }`}
                 >
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
-                    onboardingState.completedSteps.includes(step.id)
+                    onboarding.onboardingState.completedSteps.includes(step.id)
                       ? 'bg-primary text-primary-foreground'
-                      : index === onboardingState.currentStep
+                      : index === onboarding.onboardingState.currentStep
                       ? 'bg-secondary text-foreground border-2 border-primary'
                       : 'bg-muted text-muted-foreground'
                   }`}>
@@ -147,7 +142,7 @@ export function OnboardingTabContent() {
                     <div className="text-sm font-medium">{step.title}</div>
                     <div className="text-xs text-muted-foreground">{step.description}</div>
                   </div>
-                  {onboardingState.completedSteps.includes(step.id) && (
+                  {onboarding.onboardingState.completedSteps.includes(step.id) && (
                     <div className="text-primary text-xs">✓</div>
                   )}
                 </div>
