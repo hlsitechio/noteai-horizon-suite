@@ -4,10 +4,10 @@ import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/re
 import { ScrollArea } from '@/components/ui/scroll-area';
 import KPIStats from './KPIStats';
 import { DashboardPanel } from './DashboardPanel';
-import { NewUserWelcome } from './NewUserWelcome';
 import { Note } from '@/types/note';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { useDashboardStatus } from './hooks/useDashboardStatus';
 
 interface MainDashboardContentProps {
@@ -35,7 +35,8 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const { user } = useAuth();
-  const { isDashboardInitialized, isLoading, setIsDashboardInitialized } = useDashboardStatus();
+  const navigate = useNavigate();
+  const { isDashboardInitialized, isLoading } = useDashboardStatus();
   
   // Calculate stats for KPIStats
   const totalNotes = notes.length;
@@ -78,21 +79,12 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
     }
   }, [isDashboardEditMode, onHorizontalResize]);
 
-  const handleDashboardInitialized = () => {
-    setIsDashboardInitialized(true);
-  };
-
-  // Show welcome screen if user hasn't initialized dashboard yet
-  if (!isDashboardInitialized && !isLoading && user) {
-    return (
-      <div className="h-full overflow-y-auto">
-        <NewUserWelcome 
-          onDashboardInitialized={handleDashboardInitialized}
-          className="py-8"
-        />
-      </div>
-    );
-  }
+  // Redirect new users to onboarding if they haven't initialized dashboard yet
+  React.useEffect(() => {
+    if (!isLoading && !isDashboardInitialized && user) {
+      navigate('/app/dashboard/onboarding', { replace: true });
+    }
+  }, [isDashboardInitialized, isLoading, user, navigate]);
 
   // Show loading state while checking dashboard status
   if (isLoading) {
@@ -101,6 +93,18 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If user should be redirected to onboarding, show loading while redirecting
+  if (!isDashboardInitialized && user) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Redirecting to onboarding...</p>
         </div>
       </div>
     );

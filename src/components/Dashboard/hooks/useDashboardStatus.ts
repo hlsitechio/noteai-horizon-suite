@@ -43,17 +43,27 @@ export const useDashboardStatus = () => {
           .eq('user_id', user.id)
           .limit(1);
 
+        // Check if this is the demo user (should always go through onboarding unless explicitly completed)
+        const isDemoUser = user.email === 'demo@noteai.com';
+        
         // Consider dashboard initialized if they have:
         // 1. Completed onboarding before
-        // 2. Dashboard settings with initialized flag
+        // 2. Dashboard settings with initialized flag  
         // 3. Any existing content (notes or folders)
+        // 4. For demo user: only if onboarding is explicitly completed
         const hasCompletedOnboarding = onboardingData?.onboarding_completed === true;
         const hasSettings = dashboardSettings?.settings && 
           typeof dashboardSettings.settings === 'object' && 
           (dashboardSettings.settings as any)?.initialized;
         const hasContent = (count || 0) > 0 || (foldersCount || 0) > 0;
         
-        setIsDashboardInitialized(hasCompletedOnboarding || hasSettings || hasContent);
+        // Demo user should only be considered initialized if they explicitly completed onboarding
+        if (isDemoUser) {
+          setIsDashboardInitialized(hasCompletedOnboarding);
+        } else {
+          // Regular users: consider initialized if they have onboarding completed, settings, or content
+          setIsDashboardInitialized(hasCompletedOnboarding || hasSettings || hasContent);
+        }
       } catch (error) {
         console.error('Error checking dashboard status:', error);
         setIsDashboardInitialized(false);

@@ -47,6 +47,7 @@ const ResetPassword = lazyWithRetry(() => import('../pages/Auth/ResetPassword'))
 
 // Dashboard pages - optimized for performance
 const OptimizedDashboard = lazyWithRetry(() => import('../pages/OptimizedDashboard'));
+const DashboardOnboarding = lazyWithRetry(() => import('../pages/DashboardOnboarding'));
 const Editor = lazyWithRetry(() => import('../pages/Editor'));
 const Explorer = lazyWithRetry(() => import('../pages/Explorer'));
 const Analytics = lazyWithRetry(() => import('../pages/Analytics'));
@@ -140,6 +141,13 @@ export const OptimizedLazyRoutes: React.FC = () => {
           <Route path="dashboard" element={
             <Suspense fallback={<DashboardLoadingFallback />}>
               <OptimizedDashboard />
+            </Suspense>
+          } />
+          
+          {/* Dashboard Onboarding for new users */}
+          <Route path="dashboard/onboarding" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <DashboardOnboarding />
             </Suspense>
           } />
           
