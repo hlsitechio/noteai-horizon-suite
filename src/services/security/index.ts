@@ -7,6 +7,8 @@ export { userAgentAnalysisService } from './userAgentAnalysisService';
 export { sessionSecurityService } from './sessionSecurityService';
 export { auditLogService } from './auditLogService';
 export { apiKeySecurityService } from './apiKeySecurityService';
+export { threatDetectionService } from './threatDetectionService';
+export { incidentResponseService } from './incidentResponseService';
 export type { SecurityContext, SecurityResult } from './payloadValidationService';
 export type { AuditEvent } from './auditLogService';
 
