@@ -17,8 +17,17 @@ interface OnboardingProviderProps {
   children: React.ReactNode;
 }
 
+// Fixed OnboardingProvider - no useLocation dependency
 export function OnboardingProvider({ children }: OnboardingProviderProps) {
+  console.log('OnboardingProvider rendering - no useLocation here!');
   const onboarding = useOnboarding();
+  
+  if (!onboarding) {
+    console.log('No onboarding data yet');
+    return <>{children}</>;
+  }
+
+  console.log('OnboardingProvider state:', onboarding.onboardingState);
 
   return (
     <OnboardingContext.Provider value={onboarding}>
