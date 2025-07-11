@@ -997,6 +997,7 @@ export type Database = {
           created_at: string
           current_step: number
           id: string
+          initial_onboarding_completed: boolean | null
           last_seen_step: number | null
           onboarding_completed: boolean
           onboarding_enabled: boolean
@@ -1008,6 +1009,7 @@ export type Database = {
           created_at?: string
           current_step?: number
           id?: string
+          initial_onboarding_completed?: boolean | null
           last_seen_step?: number | null
           onboarding_completed?: boolean
           onboarding_enabled?: boolean
@@ -1019,6 +1021,7 @@ export type Database = {
           created_at?: string
           current_step?: number
           id?: string
+          initial_onboarding_completed?: boolean | null
           last_seen_step?: number | null
           onboarding_completed?: boolean
           onboarding_enabled?: boolean
@@ -1042,6 +1045,7 @@ export type Database = {
           smart_formatting_enabled: boolean | null
           updated_at: string
           user_id: string
+          user_role: Database["public"]["Enums"]["user_role_type"] | null
           weather_city: string | null
           weather_enabled: boolean | null
           weather_units: string | null
@@ -1061,6 +1065,7 @@ export type Database = {
           smart_formatting_enabled?: boolean | null
           updated_at?: string
           user_id: string
+          user_role?: Database["public"]["Enums"]["user_role_type"] | null
           weather_city?: string | null
           weather_enabled?: boolean | null
           weather_units?: string | null
@@ -1080,6 +1085,7 @@ export type Database = {
           smart_formatting_enabled?: boolean | null
           updated_at?: string
           user_id?: string
+          user_role?: Database["public"]["Enums"]["user_role_type"] | null
           weather_city?: string | null
           weather_enabled?: boolean | null
           weather_units?: string | null
@@ -1125,7 +1131,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_role_type:
+        | "developer"
+        | "designer"
+        | "product_manager"
+        | "analyst"
+        | "content_creator"
+        | "student"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1252,6 +1265,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role_type: [
+        "developer",
+        "designer",
+        "product_manager",
+        "analyst",
+        "content_creator",
+        "student",
+        "other",
+      ],
+    },
   },
 } as const

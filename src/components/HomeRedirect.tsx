@@ -3,11 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useDashboardStatus } from './Dashboard/hooks/useDashboardStatus';
+import { useInitialOnboarding } from '@/hooks/useInitialOnboarding';
 import { Loader2 } from 'lucide-react';
 
 const HomeRedirect: React.FC = () => {
   const { user, isLoading } = useAuth();
   const { isDashboardInitialized, isLoading: isDashboardLoading } = useDashboardStatus();
+  const { needsOnboarding, isLoading: onboardingLoading } = useInitialOnboarding();
   const [isHydrated, setIsHydrated] = useState(false);
 
   // Ensure hydration is complete before rendering navigation
@@ -15,8 +17,8 @@ const HomeRedirect: React.FC = () => {
     setIsHydrated(true);
   }, []);
 
-  // Always show loading during initial hydration or auth/dashboard loading
-  if (!isHydrated || isLoading || isDashboardLoading) {
+  // Always show loading during initial hydration or auth/dashboard/onboarding loading
+  if (!isHydrated || isLoading || isDashboardLoading || onboardingLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
@@ -29,7 +31,11 @@ const HomeRedirect: React.FC = () => {
 
   // Redirect based on authentication status after hydration
   if (user) {
-    // If user hasn't initialized dashboard, redirect to onboarding
+    // If user needs initial onboarding (role selection + profile setup)
+    if (needsOnboarding) {
+      return <Navigate to="/onboarding" replace />;
+    }
+    // If user hasn't initialized dashboard, redirect to dashboard onboarding
     if (!isDashboardInitialized) {
       return <Navigate to="/app/dashboard/onboarding" replace />;
     }
