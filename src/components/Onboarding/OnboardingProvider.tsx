@@ -28,12 +28,17 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
 
   // Determine current page from pathname
   const currentPage = location.pathname === '/' ? 'landing' : 
+                     location.pathname === '/landing' ? 'landing' :
                      location.pathname === '/dashboard' ? 'dashboard' :
                      location.pathname === '/settings' ? 'settings' : 
                      location.pathname.slice(1); // remove leading slash
 
+  console.log('Current pathname:', location.pathname, 'Detected page:', currentPage);
+
   // Check if onboarding should show on current page
   const shouldShowOnCurrentPage = onboarding.shouldShowOnboarding(currentPage);
+  
+  console.log('Should show onboarding on', currentPage, ':', shouldShowOnCurrentPage);
 
   return (
     <OnboardingContext.Provider value={onboarding}>
