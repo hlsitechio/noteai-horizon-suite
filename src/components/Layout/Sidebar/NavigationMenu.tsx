@@ -32,10 +32,10 @@ const NavigationMenu: React.FC = () => {
       description: 'Overview and analytics'
     },
     { 
-      icon: 'bx bx-file', 
-      label: 'Notes', 
+      icon: 'bx bx-folder-open', 
+      label: 'Explorer', 
       path: '/app/notes',
-      description: 'Browse and manage notes'
+      description: 'File manager and explorer'
     },
     { 
       icon: 'bx bx-folder', 
