@@ -43,45 +43,42 @@ export const useDashboardStatus = () => {
           .eq('user_id', user.id)
           .limit(1);
 
-        // Check if this is the demo user (should always go through onboarding unless explicitly completed)
-        const isDemoUser = user.email === 'demo@onlinenote.ai';
+        // Reset onboarding for ALL users on every login
+        // This ensures users always go through the dashboard onboarding flow
         
-        // Consider dashboard initialized if they have:
-        // 1. Completed onboarding before
-        // 2. Dashboard settings with initialized flag  
-        // 3. Any existing content (notes or folders)
-        // 4. For demo user: only if onboarding is explicitly completed
-        const hasCompletedOnboarding = onboardingData?.onboarding_completed === true;
-        const hasSettings = dashboardSettings?.settings && 
-          typeof dashboardSettings.settings === 'object' && 
-          (dashboardSettings.settings as any)?.initialized;
-        const hasContent = (count || 0) > 0 || (foldersCount || 0) > 0;
-        
-        // Demo user should ALWAYS go through onboarding (reset every time)
-        if (isDemoUser) {
-          // Reset demo user onboarding status AND theme preferences
-          await supabase
-            .from('user_onboarding')
-            .upsert({
-              user_id: user.id,
-              onboarding_completed: false,
-              current_step: 0
-            }, { onConflict: 'user_id' });
+        // Reset onboarding status for all users
+        await supabase
+          .from('user_onboarding')
+          .upsert({
+            user_id: user.id,
+            onboarding_completed: false,
+            current_step: 0
+          }, { onConflict: 'user_id' });
 
-          // Reset theme to default for demo user
-          await supabase
-            .from('user_preferences')
-            .upsert({
-              user_id: user.id,
-              dashboard_theme: 'default',
-              dashboard_components: []
-            }, { onConflict: 'user_id' });
-          
-          setIsDashboardInitialized(false);
-        } else {
-          // Regular users: consider initialized if they have onboarding completed, settings, or content
-          setIsDashboardInitialized(hasCompletedOnboarding || hasSettings || hasContent);
-        }
+        // Reset theme to default and clear dashboard components for all users
+        await supabase
+          .from('user_preferences')
+          .upsert({
+            user_id: user.id,
+            dashboard_theme: 'default',
+            dashboard_components: []
+          }, { onConflict: 'user_id' });
+
+        // Reset dashboard settings
+        await supabase
+          .from('dashboard_settings')
+          .upsert({
+            user_id: user.id,
+            settings: {},
+            dashboard_edit_mode: false,
+            sidebar_edit_mode: false,
+            sidebar_panel_sizes: {},
+            selected_banner_url: null,
+            selected_banner_type: null
+          }, { onConflict: 'user_id' });
+        
+        // Always set as not initialized to force onboarding
+        setIsDashboardInitialized(false);
       } catch (error) {
         console.error('Error checking dashboard status:', error);
         setIsDashboardInitialized(false);
