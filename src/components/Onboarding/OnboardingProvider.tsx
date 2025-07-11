@@ -1,4 +1,5 @@
 import React, { createContext, useContext } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { OnboardingTooltip } from './OnboardingTooltip';
 import { WelcomeScreen } from './WelcomeScreen';
@@ -17,32 +18,37 @@ interface OnboardingProviderProps {
   children: React.ReactNode;
 }
 
-// Fixed OnboardingProvider - no useLocation dependency
 export function OnboardingProvider({ children }: OnboardingProviderProps) {
-  console.log('OnboardingProvider rendering - no useLocation here!');
+  const location = useLocation();
   const onboarding = useOnboarding();
   
   if (!onboarding) {
-    console.log('No onboarding data yet');
     return <>{children}</>;
   }
 
-  console.log('OnboardingProvider state:', onboarding.onboardingState);
+  // Determine current page from pathname
+  const currentPage = location.pathname === '/' ? 'landing' : 
+                     location.pathname === '/dashboard' ? 'dashboard' :
+                     location.pathname === '/settings' ? 'settings' : 
+                     location.pathname.slice(1); // remove leading slash
+
+  // Check if onboarding should show on current page
+  const shouldShowOnCurrentPage = onboarding.shouldShowOnboarding(currentPage);
 
   return (
     <OnboardingContext.Provider value={onboarding}>
       {children}
       
-      {/* Welcome Screen */}
-      {onboarding.onboardingState.showWelcome && !onboarding.isLoading && (
+      {/* Welcome Screen - only show if should show on current page */}
+      {shouldShowOnCurrentPage && onboarding.onboardingState.showWelcome && !onboarding.isLoading && (
         <WelcomeScreen
           onStartTour={onboarding.startWelcomeTour}
           onSkip={onboarding.skipWelcome}
         />
       )}
       
-      {/* Onboarding Tooltip */}
-      {onboarding.activeStep && !onboarding.onboardingState.showWelcome && (
+      {/* Onboarding Tooltip - only show if should show on current page */}
+      {shouldShowOnCurrentPage && onboarding.activeStep && !onboarding.onboardingState.showWelcome && (
         <OnboardingTooltip
           step={onboarding.activeStep}
           onNext={onboarding.nextStep}

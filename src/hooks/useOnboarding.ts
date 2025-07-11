@@ -230,6 +230,11 @@ export function useOnboarding() {
       return false;
     }
 
+    // Never show onboarding on landing page
+    if (page === 'landing') {
+      return false;
+    }
+
     const currentStepData = ONBOARDING_STEPS[onboardingState.currentStep];
     if (!currentStepData) return false;
 
