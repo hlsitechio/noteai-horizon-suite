@@ -4,6 +4,7 @@ import { useDashboardStatus } from './hooks/useDashboardStatus';
 import { useWelcomeFlow } from './hooks/useWelcomeFlow';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { ComponentsStep } from './steps/ComponentsStep';
+import { ThemeStep } from './steps/ThemeStep';
 import { InitializeStep } from './steps/InitializeStep';
 
 interface NewUserWelcomeProps {
@@ -17,7 +18,7 @@ export const NewUserWelcome: React.FC<NewUserWelcomeProps> = ({
 }) => {
   const { user } = useAuth();
   const { isDashboardInitialized, isLoading, setIsDashboardInitialized } = useDashboardStatus();
-  const { currentStep, selectedComponents, handlers } = useWelcomeFlow(onDashboardInitialized);
+  const { currentStep, selectedComponents, selectedTheme, handlers } = useWelcomeFlow(onDashboardInitialized);
 
   const handleDashboardInitialized = () => {
     setIsDashboardInitialized(true);
@@ -41,13 +42,25 @@ export const NewUserWelcome: React.FC<NewUserWelcomeProps> = ({
     );
   }
 
+  // Theme Selection Step
+  if (currentStep === 'theme') {
+    return (
+      <ThemeStep
+        onThemeSelected={handlers.handleThemeSelected}
+        onSkip={handlers.handleSkipThemeSelection}
+        onBackToComponents={handlers.handleBackToComponents}
+        className={className}
+      />
+    );
+  }
+
   // Initialize Step
   if (currentStep === 'initialize') {
     return (
       <InitializeStep
         selectedComponents={selectedComponents}
         onInitialized={handleDashboardInitialized}
-        onBackToComponents={handlers.handleBackToComponents}
+        onBackToComponents={handlers.handleBackToTheme}
         className={className}
       />
     );

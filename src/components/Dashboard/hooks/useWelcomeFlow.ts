@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 
-export type WelcomeStep = 'welcome' | 'components' | 'initialize';
+export type WelcomeStep = 'welcome' | 'components' | 'theme' | 'initialize';
 
 export const useWelcomeFlow = (onDashboardInitialized?: () => void) => {
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState<WelcomeStep>('welcome');
   const [selectedComponents, setSelectedComponents] = useState<string[]>([]);
+  const [selectedTheme, setSelectedTheme] = useState<string>('default');
 
   const handleGetStarted = () => {
     setCurrentStep('components');
@@ -32,15 +33,45 @@ export const useWelcomeFlow = (onDashboardInitialized?: () => void) => {
       console.error('Error saving preferences:', error);
     }
 
-    setCurrentStep('initialize');
+    setCurrentStep('theme');
   };
 
   const handleSkipComponentSelection = () => {
+    setCurrentStep('theme');
+  };
+
+  const handleThemeSelected = async (theme: string) => {
+    setSelectedTheme(theme);
+    
+    // Save selected theme to user preferences
+    try {
+      const { error } = await supabase
+        .from('user_preferences')
+        .upsert({
+          user_id: user!.id,
+          dashboard_theme: theme
+        }, { onConflict: 'user_id' });
+
+      if (error) {
+        console.error('Error saving theme preference:', error);
+      }
+    } catch (error) {
+      console.error('Error saving theme:', error);
+    }
+
+    setCurrentStep('initialize');
+  };
+
+  const handleSkipThemeSelection = () => {
     setCurrentStep('initialize');
   };
 
   const handleBackToComponents = () => {
     setCurrentStep('components');
+  };
+
+  const handleBackToTheme = () => {
+    setCurrentStep('theme');
   };
 
   const handleBackToWelcome = () => {
@@ -54,11 +85,15 @@ export const useWelcomeFlow = (onDashboardInitialized?: () => void) => {
   return {
     currentStep,
     selectedComponents,
+    selectedTheme,
     handlers: {
       handleGetStarted,
       handleComponentsSelected,
       handleSkipComponentSelection,
+      handleThemeSelected,
+      handleSkipThemeSelection,
       handleBackToComponents,
+      handleBackToTheme,
       handleBackToWelcome,
       handleDashboardInitialized
     }
