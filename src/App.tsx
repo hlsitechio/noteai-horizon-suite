@@ -17,6 +17,7 @@ import { FloatingNotesProvider } from './contexts/FloatingNotesContext';
 import { QuantumAIProvider } from './contexts/QuantumAIContext';
 import { usePerformanceMonitoring } from './hooks/usePerformanceMonitoring';
 import { AppProviders } from './components/AppProviders';
+import { OnboardingProvider } from './components/Onboarding/OnboardingProvider';
 import { OptimizedLazyRoutes } from './components/OptimizedLazyRoutes';
 import { ReminderManager } from './components/ReminderManager';
 import { SmartErrorBoundary } from './components/ErrorBoundary/SmartErrorBoundary';
@@ -34,10 +35,12 @@ function App() {
       <ReloadPreventionProvider>
         <AppProviders>
           <SentryRouter>
-            <OptimizedLazyRoutes />
-            <ReminderManager />
-            <Toaster />
-            <Sonner />
+            <OnboardingProvider>
+              <OptimizedLazyRoutes />
+              <ReminderManager />
+              <Toaster />
+              <Sonner />
+            </OnboardingProvider>
           </SentryRouter>
         </AppProviders>
       </ReloadPreventionProvider>
