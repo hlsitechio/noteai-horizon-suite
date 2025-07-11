@@ -21,6 +21,8 @@ export function OnboardingTabContent() {
     );
   }
 
+  const totalSteps = 6;
+
   return (
     <TabsContent value="onboarding" className="mt-6">
       <Card>
@@ -61,7 +63,7 @@ export function OnboardingTabContent() {
                 <p className="text-sm text-muted-foreground">
                   {onboarding.onboardingState.completed 
                     ? 'You have completed the onboarding tour' 
-                    : `Step ${onboarding.onboardingState.currentStep + 1} of ${6}`
+                    : `Step ${onboarding.onboardingState.currentStep + 1} of ${totalSteps}`
                   }
                 </p>
               </div>
@@ -94,13 +96,13 @@ export function OnboardingTabContent() {
             <div className="space-y-2">
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>Progress</span>
-                <span>{Math.round((onboarding.onboardingState.currentStep / 6) * 100)}%</span>
+                <span>{Math.round((onboarding.onboardingState.currentStep / totalSteps) * 100)}%</span>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
                 <div 
                   className="bg-primary h-2 rounded-full transition-all duration-300" 
                   style={{ 
-                    width: `${Math.max(0, (onboarding.onboardingState.currentStep / 6) * 100)}%` 
+                    width: `${Math.max(0, (onboarding.onboardingState.currentStep / totalSteps) * 100)}%` 
                   }}
                 />
               </div>
@@ -109,7 +111,7 @@ export function OnboardingTabContent() {
 
           <Separator />
 
-          {/* Completed Steps */}
+          {/* Tour Steps */}
           <div className="space-y-3">
             <h4 className="text-sm font-medium">Tour Steps</h4>
             <div className="grid gap-2">
