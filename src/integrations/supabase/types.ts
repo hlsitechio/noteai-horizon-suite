@@ -216,6 +216,42 @@ export type Database = {
           },
         ]
       }
+      google_drive_settings: {
+        Row: {
+          access_token: string | null
+          created_at: string
+          drive_folder_id: string | null
+          id: string
+          refresh_token: string | null
+          sync_enabled: boolean | null
+          token_expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          created_at?: string
+          drive_folder_id?: string | null
+          id?: string
+          refresh_token?: string | null
+          sync_enabled?: boolean | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          created_at?: string
+          drive_folder_id?: string | null
+          id?: string
+          refresh_token?: string | null
+          sync_enabled?: boolean | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notes_v2: {
         Row: {
           content: string | null
