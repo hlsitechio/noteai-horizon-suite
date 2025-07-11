@@ -67,6 +67,7 @@ interface OnboardingState {
   completed: boolean;
   currentStep: number;
   completedSteps: string[];
+  showWelcome: boolean;
 }
 
 export function useOnboarding() {
@@ -75,7 +76,8 @@ export function useOnboarding() {
     enabled: true,
     completed: false,
     currentStep: 0,
-    completedSteps: []
+    completedSteps: [],
+    showWelcome: true
   });
   const [isLoading, setIsLoading] = useState(true);
   const [activeStep, setActiveStep] = useState<OnboardingStep | null>(null);
@@ -105,7 +107,8 @@ export function useOnboarding() {
           enabled: data.onboarding_enabled,
           completed: data.onboarding_completed,
           currentStep: data.current_step,
-          completedSteps: data.completed_steps || []
+          completedSteps: data.completed_steps || [],
+          showWelcome: !data.onboarding_completed && data.current_step === 0
         });
       }
     } catch (error) {
@@ -205,7 +208,19 @@ export function useOnboarding() {
 
   // Skip onboarding
   const skipOnboarding = useCallback(async () => {
-    await saveOnboardingState({ enabled: false, completed: true });
+    await saveOnboardingState({ enabled: false, completed: true, showWelcome: false });
+    setActiveStep(null);
+  }, [saveOnboardingState]);
+
+  // Start welcome screen
+  const startWelcomeTour = useCallback(async () => {
+    await saveOnboardingState({ showWelcome: false, currentStep: 0 });
+    setActiveStep(ONBOARDING_STEPS[0]);
+  }, [saveOnboardingState]);
+
+  // Skip welcome screen
+  const skipWelcome = useCallback(async () => {
+    await saveOnboardingState({ enabled: false, completed: true, showWelcome: false });
     setActiveStep(null);
   }, [saveOnboardingState]);
 
@@ -250,6 +265,8 @@ export function useOnboarding() {
     nextStep,
     previousStep,
     skipOnboarding,
+    startWelcomeTour,
+    skipWelcome,
     shouldShowOnboarding,
     showStepForPage,
     steps: ONBOARDING_STEPS

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { OnboardingTooltip } from './OnboardingTooltip';
+import { WelcomeScreen } from './WelcomeScreen';
 import { useLocation } from 'react-router-dom';
 
 const OnboardingContext = createContext<ReturnType<typeof useOnboarding> | null>(null);
@@ -34,8 +35,16 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
     <OnboardingContext.Provider value={onboarding}>
       {children}
       
+      {/* Welcome Screen */}
+      {onboarding.onboardingState.showWelcome && !onboarding.isLoading && (
+        <WelcomeScreen
+          onStartTour={onboarding.startWelcomeTour}
+          onSkip={onboarding.skipWelcome}
+        />
+      )}
+      
       {/* Onboarding Tooltip */}
-      {onboarding.activeStep && (
+      {onboarding.activeStep && !onboarding.onboardingState.showWelcome && (
         <OnboardingTooltip
           step={onboarding.activeStep}
           onNext={onboarding.nextStep}
