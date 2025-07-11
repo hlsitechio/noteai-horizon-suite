@@ -29,23 +29,48 @@ export class ChatIntegration {
    * Send message directly to Lovable chat interface
    */
   private static sendToLovableChat(message: string): void {
-    // Use Lovable's internal messaging system to send the prompt directly to chat
-    if (typeof window !== 'undefined' && (window as any).parent) {
+    if (typeof window !== 'undefined') {
       try {
-        // Send message to parent frame (Lovable interface)
-        (window as any).parent.postMessage({
-          type: 'LOVABLE_CHAT_MESSAGE',
-          payload: {
-            message: message,
-            source: 'auto-fix-system',
-            timestamp: Date.now()
-          }
-        }, '*');
+        // Try to find and populate the actual Lovable chat input
+        const chatInput = document.getElementById('chatinput') as HTMLTextAreaElement;
+        
+        if (chatInput) {
+          // Set the message in the textarea
+          chatInput.value = message;
+          chatInput.style.height = 'auto';
+          chatInput.style.height = chatInput.scrollHeight + 'px';
+          
+          // Trigger input event to notify the form
+          const inputEvent = new Event('input', { bubbles: true });
+          chatInput.dispatchEvent(inputEvent);
+          
+          // Focus the textarea
+          chatInput.focus();
+          
+          console.log('✅ Auto-fix prompt inserted into Lovable chat');
+          return;
+        }
+        
+        // Fallback: Use postMessage to parent frame
+        if ((window as any).parent) {
+          (window as any).parent.postMessage({
+            type: 'LOVABLE_CHAT_MESSAGE',
+            payload: {
+              message: message,
+              source: 'auto-fix-system',
+              timestamp: Date.now()
+            }
+          }, '*');
+          console.log('📤 Auto-fix prompt sent via postMessage');
+          return;
+        }
+        
       } catch (error) {
         console.error('Failed to send message to Lovable chat:', error);
-        // Fallback to console for development
-        console.log('🤖 Auto-Fix Prompt for Lovable:', message);
       }
+      
+      // Final fallback - log to console
+      console.log('🤖 Auto-Fix Prompt for Lovable:', message);
     }
   }
 
