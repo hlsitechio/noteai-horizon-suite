@@ -91,7 +91,7 @@ export class GoogleDriveService {
 
   static async initiateOAuth(): Promise<string> {
     // Get client ID from edge function or environment
-    const clientId = '1050262574987-ld7p7mmpd58o4aob49uf5lh0q1et8jbi.apps.googleusercontent.com'; // Replace with your actual client ID
+    const clientId = '956327056449-ld7p7mmpd58o4aob49uf5lh0q1et8jbi.apps.googleusercontent.com'; // Replace with your actual client ID
     const redirectUri = `${window.location.origin}/settings?tab=drive&auth=callback`;
     const scope = 'https://www.googleapis.com/auth/drive.file';
     const responseType = 'code';
