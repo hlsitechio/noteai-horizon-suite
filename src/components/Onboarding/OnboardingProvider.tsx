@@ -1,8 +1,7 @@
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext } from 'react';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { OnboardingTooltip } from './OnboardingTooltip';
 import { WelcomeScreen } from './WelcomeScreen';
-import { useLocation } from 'react-router-dom';
 
 const OnboardingContext = createContext<ReturnType<typeof useOnboarding> | null>(null);
 
@@ -20,16 +19,6 @@ interface OnboardingProviderProps {
 
 export function OnboardingProvider({ children }: OnboardingProviderProps) {
   const onboarding = useOnboarding();
-  const location = useLocation();
-
-  // Auto-show onboarding for current page
-  useEffect(() => {
-    const currentPage = location.pathname.includes('/app/dashboard') ? 'dashboard' :
-                       location.pathname.includes('/app/settings') ? 'settings' :
-                       'dashboard';
-    
-    onboarding.showStepForPage(currentPage);
-  }, [location.pathname, onboarding]);
 
   return (
     <OnboardingContext.Provider value={onboarding}>
