@@ -82,7 +82,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
   // Redirect new users to onboarding if they haven't initialized dashboard yet
   React.useEffect(() => {
     if (!isLoading && !isDashboardInitialized && user) {
-      navigate('/app/dashboard/onboarding', { replace: true });
+      navigate('/setup', { replace: true });
     }
   }, [isDashboardInitialized, isLoading, user, navigate]);
 

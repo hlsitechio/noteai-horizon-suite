@@ -138,7 +138,7 @@ const OnboardingProfileSection: React.FC = () => {
 
           // Small delay for better UX
           setTimeout(() => {
-            navigate('/app/dashboard/onboarding');
+            navigate('/setup');
           }, 1500);
         }
       }
