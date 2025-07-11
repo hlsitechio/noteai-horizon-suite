@@ -370,6 +370,129 @@ export type Database = {
           },
         ]
       }
+      seo_analytics: {
+        Row: {
+          created_at: string
+          id: string
+          metric_type: string
+          metric_value: number | null
+          page_path: string
+          recorded_date: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metric_type: string
+          metric_value?: number | null
+          page_path: string
+          recorded_date?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metric_type?: string
+          metric_value?: number | null
+          page_path?: string
+          recorded_date?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      seo_keywords: {
+        Row: {
+          created_at: string
+          current_position: number | null
+          difficulty: string | null
+          id: string
+          keyword: string
+          last_checked: string | null
+          previous_position: number | null
+          search_volume: string | null
+          target_url: string
+          traffic: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_position?: number | null
+          difficulty?: string | null
+          id?: string
+          keyword: string
+          last_checked?: string | null
+          previous_position?: number | null
+          search_volume?: string | null
+          target_url: string
+          traffic?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_position?: number | null
+          difficulty?: string | null
+          id?: string
+          keyword?: string
+          last_checked?: string | null
+          previous_position?: number | null
+          search_volume?: string | null
+          target_url?: string
+          traffic?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      seo_page_settings: {
+        Row: {
+          canonical_url: string | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          meta_description: string | null
+          meta_keywords: string[] | null
+          meta_title: string | null
+          og_description: string | null
+          og_image: string | null
+          og_title: string | null
+          page_path: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          canonical_url?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          meta_description?: string | null
+          meta_keywords?: string[] | null
+          meta_title?: string | null
+          og_description?: string | null
+          og_image?: string | null
+          og_title?: string | null
+          page_path: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          canonical_url?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          meta_description?: string | null
+          meta_keywords?: string[] | null
+          meta_title?: string | null
+          og_description?: string | null
+          og_image?: string | null
+          og_title?: string | null
+          page_path?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_activities: {
         Row: {
           activity_description: string | null

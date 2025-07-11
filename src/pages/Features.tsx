@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Brain, Lock, Zap, Globe, Users } from 'lucide-react';
+import DynamicSEOOptimizer from '@/components/SEO/DynamicSEOOptimizer';
 
 
 const Features: React.FC = () => {
@@ -38,7 +39,14 @@ const Features: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+    <>
+      <DynamicSEOOptimizer 
+        pagePath="/features"
+        fallbackTitle="Advanced Note Taking App Features - OnlineNote AI"
+        fallbackDescription="Discover powerful features of our AI-powered note taking app. Smart organization, real-time sync, and intelligent suggestions for maximum productivity."
+        fallbackKeywords={['note taking app', 'productivity features', 'smart notes', 'ai features', 'real-time sync', 'ai writing']}
+      />
+      <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Background Effects */}
       <div className="fixed inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-pink-900/20" />
       <div className="fixed top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
@@ -111,7 +119,8 @@ const Features: React.FC = () => {
       </section>
 
       
-    </div>
+      </div>
+    </>
   );
 };
 
