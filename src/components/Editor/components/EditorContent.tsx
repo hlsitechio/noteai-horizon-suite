@@ -37,13 +37,13 @@ const EditorContent: React.FC<EditorContentProps> = ({
   }, [onKeyDown, onAIToggle]);
 
   return (
-    <div className="editor-content p-8 min-h-[500px] max-h-[700px] overflow-y-auto bg-black">
+    <div className="editor-content p-8 min-h-[500px] max-h-[700px] overflow-y-auto bg-slate-900">
       <Slate editor={editor} initialValue={slateValue} onValueChange={onChange}>
         <Editable
           renderElement={renderElement}
           renderLeaf={renderLeaf}
           placeholder={placeholder}
-          className="focus:outline-none prose prose-lg max-w-none text-gray-200 leading-relaxed placeholder:text-gray-400"
+          className="focus:outline-none prose prose-lg max-w-none text-slate-100 leading-relaxed placeholder:text-slate-400 [&_*]:text-slate-100"
           spellCheck
           onSelect={onSelect}
           onKeyDown={handleKeyDown}

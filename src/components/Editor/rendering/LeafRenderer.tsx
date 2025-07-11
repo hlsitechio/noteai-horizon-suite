@@ -7,23 +7,23 @@ const LeafRenderer = ({ attributes, children, leaf }: RenderLeafProps) => {
   const customLeaf = leaf as CustomText;
   
   if (customLeaf.bold) {
-    children = <strong className="font-semibold dark:text-slate-100">{children}</strong>;
+    children = <strong className="font-semibold text-slate-100">{children}</strong>;
   }
 
   if (customLeaf.code) {
     children = (
-      <code className="bg-muted px-2 py-1 rounded-md text-sm font-mono border border-border dark:bg-slate-800 dark:text-blue-300 dark:border-slate-600">
+      <code className="bg-slate-800 px-2 py-1 rounded-md text-sm font-mono border border-slate-600 text-blue-300">
         {children}
       </code>
     );
   }
 
   if (customLeaf.italic) {
-    children = <em className="italic dark:text-slate-300">{children}</em>;
+    children = <em className="italic text-slate-200">{children}</em>;
   }
 
   if (customLeaf.underline) {
-    children = <u className="underline decoration-2 underline-offset-2 dark:decoration-blue-400/70">{children}</u>;
+    children = <u className="underline decoration-2 underline-offset-2 decoration-blue-400">{children}</u>;
   }
 
   return <span {...attributes}>{children}</span>;
