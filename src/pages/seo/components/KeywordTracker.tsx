@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Search, TrendingUp, TrendingDown, Minus, Loader2 } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Plus, Search, TrendingUp, TrendingDown, Minus, Loader2, Upload } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -24,9 +25,12 @@ export const KeywordTracker: React.FC = () => {
   const { user } = useAuth();
   const [newKeyword, setNewKeyword] = useState('');
   const [newTargetUrl, setNewTargetUrl] = useState('');
+  const [bulkKeywords, setBulkKeywords] = useState('');
+  const [bulkTargetUrl, setBulkTargetUrl] = useState('/');
   const [keywords, setKeywords] = useState<SEOKeyword[]>([]);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
+  const [bulkImporting, setBulkImporting] = useState(false);
 
   const fetchKeywords = async () => {
     if (!user) return;
@@ -79,6 +83,51 @@ export const KeywordTracker: React.FC = () => {
       toast.error('Failed to add keyword');
     } finally {
       setAdding(false);
+    }
+  };
+
+  const bulkImportKeywords = async () => {
+    if (!user || !bulkKeywords.trim() || !bulkTargetUrl.trim()) return;
+
+    setBulkImporting(true);
+    try {
+      // Parse keywords - split by lines and filter out empty lines
+      const keywordList = bulkKeywords
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .map(keyword => ({
+          user_id: user.id,
+          keyword,
+          target_url: bulkTargetUrl.trim(),
+          current_position: null,
+          previous_position: null,
+          search_volume: null,
+          difficulty: 'Medium',
+          traffic: null
+        }));
+
+      if (keywordList.length === 0) {
+        toast.error('Please enter at least one keyword');
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('seo_keywords')
+        .insert(keywordList)
+        .select();
+
+      if (error) throw error;
+
+      setKeywords(prev => [...(data || []), ...prev]);
+      setBulkKeywords('');
+      setBulkTargetUrl('/');
+      toast.success(`Successfully imported ${keywordList.length} keywords`);
+    } catch (error) {
+      console.error('Error bulk importing keywords:', error);
+      toast.error('Failed to import keywords');
+    } finally {
+      setBulkImporting(false);
     }
   };
 
@@ -152,6 +201,46 @@ export const KeywordTracker: React.FC = () => {
                 )}
                 Add Keyword
               </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Bulk Import Keywords</CardTitle>
+          <CardDescription>Import multiple keywords at once - paste one keyword per line</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="md:col-span-2">
+                <Textarea
+                  placeholder="AI note-taking app&#10;AI note-taking&#10;AI note taker&#10;Note-taking app&#10;Online note-taking tool&#10;..."
+                  value={bulkKeywords}
+                  onChange={(e) => setBulkKeywords(e.target.value)}
+                  className="min-h-[120px]"
+                />
+              </div>
+              <div className="space-y-2">
+                <Input
+                  placeholder="Target URL (e.g., /)"
+                  value={bulkTargetUrl}
+                  onChange={(e) => setBulkTargetUrl(e.target.value)}
+                />
+                <Button 
+                  onClick={bulkImportKeywords}
+                  disabled={bulkImporting || !bulkKeywords.trim() || !bulkTargetUrl.trim()}
+                  className="w-full"
+                >
+                  {bulkImporting ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Upload className="h-4 w-4 mr-2" />
+                  )}
+                  Import Keywords
+                </Button>
+              </div>
             </div>
           </div>
         </CardContent>
