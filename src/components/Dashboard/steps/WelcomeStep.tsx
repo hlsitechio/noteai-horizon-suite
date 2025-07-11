@@ -51,7 +51,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({ onGetStarted, classNam
           <div className="w-full text-center space-y-4">
             <Button 
               onClick={onGetStarted}
-              className="h-12 px-8 text-base font-medium bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
+              className="h-12 px-8 text-base font-medium text-white bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary"
               size="lg"
             >
               Let's Get Started
