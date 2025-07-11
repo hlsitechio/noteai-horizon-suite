@@ -18,12 +18,17 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { AutoFixService, FixableIssue } from '@/services/autoFixService';
+import { toast } from 'sonner';
+import AutoFixHelper from '@/components/SEO/AutoFixHelper';
 
 export const TechnicalSEO: React.FC = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [auditData, setAuditData] = useState<any>(null);
   const [technicalScore, setTechnicalScore] = useState(0);
+  const [fixingIssue, setFixingIssue] = useState<string | null>(null);
+  const [showHelper, setShowHelper] = useState(true);
 
   useEffect(() => {
     if (user) {
@@ -143,6 +148,58 @@ export const TechnicalSEO: React.FC = () => {
     }
   };
 
+  const handleAutoFix = async (issueTitle: string, issueType: string, count: number) => {
+    if (!user) return;
+    
+    setFixingIssue(issueTitle);
+    
+    try {
+      // Create fixable issue object
+      const issue: FixableIssue = {
+        id: `${issueType}_${Date.now()}`,
+        type: issueType as any,
+        title: issueTitle,
+        description: `${count} issues found that need to be resolved`,
+        severity: count > 5 ? 'critical' : count > 2 ? 'warning' : 'info',
+        page_path: window.location.pathname,
+        current_value: count.toString(),
+        target_value: '0'
+      };
+
+      // Send to Lovable AI chat
+      const result = await AutoFixService.integrateWithLovableChat(issue);
+      
+      if (result.success) {
+        toast.success(result.message, {
+          description: 'The AI assistant will help you fix this issue step by step.',
+          duration: 5000
+        });
+        
+        // Log the fix attempt
+        await AutoFixService.logFixAttempt(user.id, issue, true);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Auto-fix error:', error);
+      toast.error('Failed to send auto-fix request. Please try again.');
+    } finally {
+      setFixingIssue(null);
+    }
+  };
+
+  const getIssueTypeFromTitle = (title: string): string => {
+    if (title.toLowerCase().includes('h1')) return 'missing_h1';
+    if (title.toLowerCase().includes('link')) return 'broken_link';
+    if (title.toLowerCase().includes('image') && title.toLowerCase().includes('large')) return 'large_image';
+    if (title.toLowerCase().includes('alt')) return 'missing_alt';
+    if (title.toLowerCase().includes('meta')) return 'duplicate_meta';
+    if (title.toLowerCase().includes('mobile')) return 'mobile_friendly';
+    if (title.toLowerCase().includes('https')) return 'https_certificate';
+    if (title.toLowerCase().includes('speed')) return 'page_speed';
+    return 'technical_issue';
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -154,6 +211,9 @@ export const TechnicalSEO: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {showHelper && (
+        <AutoFixHelper onClose={() => setShowHelper(false)} />
+      )}
       <div className="grid gap-6 md:grid-cols-2">
         {technicalChecks.map((category, index) => (
           <Card key={index}>
@@ -201,8 +261,20 @@ export const TechnicalSEO: React.FC = () => {
                     <p className="text-sm text-muted-foreground">{issue.count} issues found</p>
                   </div>
                 </div>
-                <Button variant="outline" size="sm">
-                  Fix Issues
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleAutoFix(issue.title, getIssueTypeFromTitle(issue.title), issue.count)}
+                  disabled={fixingIssue === issue.title}
+                >
+                  {fixingIssue === issue.title ? (
+                    <>
+                      <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    'Fix Issues'
+                  )}
                 </Button>
               </div>
             ))}
