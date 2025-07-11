@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Brain, Shield, Zap, Users, Target } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Sparkles, Brain, Shield, Zap, Users, Target, ArrowLeft } from 'lucide-react';
 import { InitializeDashboardButton } from './InitializeDashboardButton';
+import { ComponentSelector } from './ComponentSelector';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 const FEATURES = [
   {
@@ -46,6 +49,8 @@ export const NewUserWelcome: React.FC<NewUserWelcomeProps> = ({
   const { user } = useAuth();
   const [isDashboardInitialized, setIsDashboardInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentStep, setCurrentStep] = useState<'welcome' | 'components' | 'initialize'>('welcome');
+  const [selectedComponents, setSelectedComponents] = useState<string[]>([]);
 
   // Check if dashboard is already initialized
   useEffect(() => {
@@ -95,6 +100,40 @@ export const NewUserWelcome: React.FC<NewUserWelcomeProps> = ({
     checkDashboardStatus();
   }, [user]);
 
+  const handleGetStarted = () => {
+    setCurrentStep('components');
+  };
+
+  const handleComponentsSelected = async (components: string[]) => {
+    setSelectedComponents(components);
+    
+    // Save selected components to user preferences
+    try {
+      const { error } = await supabase
+        .from('user_preferences')
+        .upsert({
+          user_id: user!.id,
+          dashboard_components: components
+        }, { onConflict: 'user_id' });
+
+      if (error) {
+        console.error('Error saving component preferences:', error);
+      }
+    } catch (error) {
+      console.error('Error saving preferences:', error);
+    }
+
+    setCurrentStep('initialize');
+  };
+
+  const handleSkipComponentSelection = () => {
+    setCurrentStep('initialize');
+  };
+
+  const handleBackToComponents = () => {
+    setCurrentStep('components');
+  };
+
   const handleDashboardInitialized = () => {
     setIsDashboardInitialized(true);
     onDashboardInitialized?.();
@@ -105,6 +144,57 @@ export const NewUserWelcome: React.FC<NewUserWelcomeProps> = ({
     return null;
   }
 
+  // Component Selection Step
+  if (currentStep === 'components') {
+    return (
+      <div className={`${className}`}>
+        <ComponentSelector
+          onComponentsSelected={handleComponentsSelected}
+          onSkip={handleSkipComponentSelection}
+        />
+        <div className="flex justify-center mt-4">
+          <Button variant="ghost" onClick={() => setCurrentStep('welcome')} className="gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Welcome
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Initialize Step
+  if (currentStep === 'initialize') {
+    return (
+      <div className={`max-w-2xl mx-auto p-6 space-y-6 ${className}`}>
+        <Card className="text-center border-primary/20 bg-gradient-to-br from-primary/5 via-background to-purple-500/5">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">
+              Ready to Initialize! 🚀
+            </CardTitle>
+            <CardDescription className="text-lg">
+              {selectedComponents.length > 0 
+                ? `We'll set up your dashboard with ${selectedComponents.length} selected components and create your workspace.`
+                : "We'll create your basic workspace with default settings."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <InitializeDashboardButton
+              onInitialized={handleDashboardInitialized}
+              variant="default"
+              size="lg"
+              className="w-full text-lg py-6 font-semibold shadow-lg hover:shadow-xl transition-shadow"
+            />
+            <Button variant="ghost" onClick={handleBackToComponents} className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Component Selection
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Welcome Step (default)
   return (
     <div className={`max-w-4xl mx-auto p-6 space-y-6 ${className}`}>
       {/* Hero Section */}
@@ -122,26 +212,24 @@ export const NewUserWelcome: React.FC<NewUserWelcomeProps> = ({
             Welcome to Online Note AI! 🎉
           </CardTitle>
           <CardDescription className="text-lg max-w-2xl mx-auto mt-2">
-            Transform your productivity with AI-powered note-taking. Let's set up your personalized workspace to get you started on your journey to smarter organization.
+            Transform your productivity with AI-powered note-taking. Let's customize your workspace to match your workflow perfectly.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-wrap justify-center gap-2 mb-6">
             <Badge variant="secondary" className="text-xs">New User</Badge>
-            <Badge variant="outline" className="text-xs">Setup Required</Badge>
+            <Badge variant="outline" className="text-xs">Custom Setup</Badge>
             <Badge variant="default" className="text-xs">AI-Powered</Badge>
           </div>
 
-          <div className="max-w-md mx-auto">
-            <InitializeDashboardButton
-              onInitialized={handleDashboardInitialized}
-              variant="default"
+          <div className="max-w-sm mx-auto">
+            <Button
+              onClick={handleGetStarted}
               size="lg"
               className="w-full text-lg py-6 font-semibold shadow-lg hover:shadow-xl transition-shadow"
-            />
-            <p className="text-xs text-muted-foreground mt-2">
-              This will create your personal storage, settings, and welcome content
-            </p>
+            >
+              Let's Get Started
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -169,36 +257,6 @@ export const NewUserWelcome: React.FC<NewUserWelcomeProps> = ({
           );
         })}
       </div>
-
-      {/* What You'll Get Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
-            What happens during initialization?
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div className="space-y-2">
-              <h4 className="font-medium">🗄️ Personal Storage</h4>
-              <p className="text-muted-foreground">Secure buckets for your files, banners, and attachments</p>
-            </div>
-            <div className="space-y-2">
-              <h4 className="font-medium">⚙️ Dashboard Settings</h4>
-              <p className="text-muted-foreground">Optimized preferences and layout configurations</p>
-            </div>
-            <div className="space-y-2">
-              <h4 className="font-medium">📁 Folder Structure</h4>
-              <p className="text-muted-foreground">Organized workspace with default folders</p>
-            </div>
-            <div className="space-y-2">
-              <h4 className="font-medium">📝 Welcome Content</h4>
-              <p className="text-muted-foreground">Helpful guides and tips to get you started</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
