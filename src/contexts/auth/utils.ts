@@ -8,7 +8,7 @@ export const transformUser = async (supabaseUser: SupabaseUser): Promise<User> =
     // Fetch the user profile from our profiles table
     const { data: profile, error } = await supabase
       .from('user_profiles')
-      .select('display_name, avatar_url')
+      .select('display_name, avatar_url, welcome_message')
       .eq('id', supabaseUser.id)
       .single();
 
@@ -37,7 +37,8 @@ export const transformUser = async (supabaseUser: SupabaseUser): Promise<User> =
       id: supabaseUser.id,
       email: supabaseUser.email || '',
       name: profile?.display_name || supabaseUser.email?.split('@')[0] || 'User',
-      avatar: profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.display_name || supabaseUser.email?.split('@')[0] || 'User')}&background=6366f1&color=fff`
+      avatar: profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.display_name || supabaseUser.email?.split('@')[0] || 'User')}&background=6366f1&color=fff`,
+      welcome_message: profile?.welcome_message || 'Welcome back'
     };
   } catch (error) {
     console.error('Error transforming user:', error);
@@ -45,7 +46,8 @@ export const transformUser = async (supabaseUser: SupabaseUser): Promise<User> =
       id: supabaseUser.id,
       email: supabaseUser.email || '',
       name: supabaseUser.email?.split('@')[0] || 'User',
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(supabaseUser.email?.split('@')[0] || 'User')}&background=6366f1&color=fff`
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(supabaseUser.email?.split('@')[0] || 'User')}&background=6366f1&color=fff`,
+      welcome_message: 'Welcome back'
     };
   }
 };

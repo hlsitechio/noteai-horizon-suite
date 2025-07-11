@@ -176,6 +176,7 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   };
 
   const firstName = user?.name?.split(' ')[0] || 'User';
+  const welcomeMessage = user?.welcome_message || 'Welcome back';
 
   return (
     <Card className="w-full border-0 shadow-none bg-background/80 backdrop-blur-sm">
@@ -183,7 +184,7 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
         {/* Welcome Message */}
         <div className={`flex items-center gap-2 ${isMobile ? 'justify-center' : ''}`}>
           <span className={`font-medium text-foreground ${isMobile ? 'text-sm' : 'text-base'}`}>
-            Welcome back, {firstName}!
+            {welcomeMessage}, {firstName}!
           </span>
         </div>
 

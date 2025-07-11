@@ -1,20 +1,73 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Camera, Upload, User, Mail } from 'lucide-react';
+import { Camera, Upload, User, Mail, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
+import { useDebounce } from 'use-debounce';
 
 const ProfileSection: React.FC = () => {
   const { user, refreshUser } = useAuth();
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
+  const [welcomeMessage, setWelcomeMessage] = useState(user?.welcome_message || 'Welcome back');
   const [isUpdating, setIsUpdating] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+  // Debounced values for real-time updates
+  const [debouncedName] = useDebounce(name, 500);
+  const [debouncedWelcomeMessage] = useDebounce(welcomeMessage, 500);
+
+  // Real-time update function
+  const updateProfileRealTime = useCallback(async (updates: { display_name?: string; welcome_message?: string }) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('user_profiles')
+        .upsert({
+          id: user.id,
+          email: user.email,
+          ...updates,
+        }, {
+          onConflict: 'id'
+        });
+
+      if (!error) {
+        // Refresh the user data in AuthContext to update the top nav in real-time
+        await refreshUser();
+      }
+    } catch (error) {
+      console.error('Real-time update error:', error);
+    }
+  }, [user, refreshUser]);
+
+  // Effect for real-time name updates
+  useEffect(() => {
+    if (debouncedName && debouncedName !== user?.name && user) {
+      updateProfileRealTime({ display_name: debouncedName });
+    }
+  }, [debouncedName, user?.name, updateProfileRealTime]);
+
+  // Effect for real-time welcome message updates
+  useEffect(() => {
+    if (debouncedWelcomeMessage && debouncedWelcomeMessage !== user?.welcome_message && user) {
+      updateProfileRealTime({ welcome_message: debouncedWelcomeMessage });
+    }
+  }, [debouncedWelcomeMessage, user?.welcome_message, updateProfileRealTime]);
+
+  // Update local state when user data changes
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setEmail(user.email || '');
+      setWelcomeMessage(user.welcome_message || 'Welcome back');
+    }
+  }, [user]);
 
   const handleUpdateProfile = async () => {
     if (!user) return;
@@ -30,6 +83,7 @@ const ProfileSection: React.FC = () => {
           id: user.id,
           display_name: name,
           email: email,
+          welcome_message: welcomeMessage,
         }, {
           onConflict: 'id'
         });
@@ -182,6 +236,22 @@ const ProfileSection: React.FC = () => {
               className="h-11 rounded-lg border-2 focus:border-primary transition-colors" 
               placeholder="Enter your full name"
             />
+          </div>
+          
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground flex items-center gap-2">
+              <MessageSquare className="w-4 h-4" />
+              Welcome Message
+            </label>
+            <Input 
+              value={welcomeMessage}
+              onChange={(e) => setWelcomeMessage(e.target.value)}
+              className="h-11 rounded-lg border-2 focus:border-primary transition-colors" 
+              placeholder="Enter your welcome message"
+            />
+            <p className="text-xs text-muted-foreground">
+              This message will appear in the top navigation bar
+            </p>
           </div>
           
           <div className="space-y-2">
