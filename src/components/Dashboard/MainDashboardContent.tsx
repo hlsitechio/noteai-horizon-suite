@@ -4,8 +4,10 @@ import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/re
 import { ScrollArea } from '@/components/ui/scroll-area';
 import KPIStats from './KPIStats';
 import { DashboardPanel } from './DashboardPanel';
+import { NewUserWelcome } from './NewUserWelcome';
 import { Note } from '@/types/note';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface MainDashboardContentProps {
   notes: Note[];
@@ -31,6 +33,46 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
   onHorizontalResize,
 }) => {
   const isMobile = useIsMobile();
+  const { user } = useAuth();
+  const [showNewUserWelcome, setShowNewUserWelcome] = React.useState(false);
+  const [isCheckingUserStatus, setIsCheckingUserStatus] = React.useState(true);
+
+  // Check if user needs dashboard initialization
+  React.useEffect(() => {
+    const checkUserStatus = async () => {
+      if (!user) {
+        setIsCheckingUserStatus(false);
+        return;
+      }
+
+      // If user has no notes, folders, or dashboard settings, show welcome
+      const hasNoContent = notes.length === 0;
+      
+      if (hasNoContent) {
+        setShowNewUserWelcome(true);
+      }
+      
+      setIsCheckingUserStatus(false);
+    };
+
+    checkUserStatus();
+  }, [user, notes.length]);
+
+  const handleDashboardInitialized = () => {
+    setShowNewUserWelcome(false);
+  };
+
+  // Show welcome screen if it's a new user
+  if (showNewUserWelcome && !isCheckingUserStatus) {
+    return (
+      <div className="h-full overflow-y-auto">
+        <NewUserWelcome 
+          onDashboardInitialized={handleDashboardInitialized}
+          className="py-8"
+        />
+      </div>
+    );
+  }
   
   // Calculate stats for KPIStats
   const totalNotes = notes.length;
