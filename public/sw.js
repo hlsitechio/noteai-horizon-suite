@@ -187,14 +187,17 @@ async function cacheFirstStrategy(request) {
   }
 }
 
+// In-memory storage for failed requests (since localStorage isn't available in SW)
+const failedRequests = new Map();
+
 // Stale-while-revalidate strategy (for most content) - FIXED
 async function staleWhileRevalidateStrategy(request) {
   const cache = await caches.open(DYNAMIC_CACHE_NAME);
   const cachedResponse = await cache.match(request);
   
-  // Prevent excessive retries by tracking failed requests
+  // Prevent excessive retries by tracking failed requests in memory
   const cacheKey = `failed_${request.url}`;
-  const failedAttempts = parseInt(localStorage.getItem(cacheKey) || '0');
+  const failedAttempts = failedRequests.get(cacheKey) || 0;
   
   // If too many failures, return cache or simple response
   if (failedAttempts > 3) {
@@ -212,13 +215,13 @@ async function staleWhileRevalidateStrategy(request) {
   const fetchPromise = fetch(request).then((response) => {
     // Reset failure count on success
     if (response && response.ok && response.status === 200) {
-      localStorage.removeItem(cacheKey);
+      failedRequests.delete(cacheKey);
       cache.put(request, response.clone());
     }
     return response;
   }).catch((error) => {
     // Increment failure count
-    localStorage.setItem(cacheKey, String(failedAttempts + 1));
+    failedRequests.set(cacheKey, failedAttempts + 1);
     console.log('[SW] Fetch failed for:', request.url, error);
     return null;
   });
