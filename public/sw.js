@@ -38,17 +38,31 @@ const SKIP_ROUTES = [
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing service worker...');
+  // Development logging only
+  if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+    console.log('[SW] Installing service worker...');
+  }
   
   event.waitUntil(
     Promise.all([
       caches.open(STATIC_CACHE_NAME).then((cache) => {
-        console.log('[SW] Caching static assets');
+        // Development logging only
+        if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+          console.log('[SW] Caching static assets');
+        }
         return cache.addAll(STATIC_ASSETS).catch((error) => {
-          console.warn('[SW] Failed to cache some assets:', error);
+          // Development logging only
+          if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+            console.warn('[SW] Failed to cache some assets:', error);
+          }
           // Cache individual assets that work
           return Promise.allSettled(
-            STATIC_ASSETS.map(url => cache.add(url).catch(err => console.warn(`Failed to cache ${url}:`, err)))
+            STATIC_ASSETS.map(url => cache.add(url).catch(err => {
+              // Development logging only
+              if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+                console.warn(`Failed to cache asset:`, err);
+              }
+            }))
           );
         });
       }),
@@ -59,7 +73,10 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating service worker...');
+  // Development logging only
+  if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+    console.log('[SW] Activating service worker...');
+  }
   
   event.waitUntil(
     Promise.all([
@@ -72,7 +89,10 @@ self.addEventListener('activate', (event) => {
               cacheName !== DYNAMIC_CACHE_NAME
             )
             .map((cacheName) => {
-              console.log('[SW] Deleting old cache:', cacheName);
+              // Development logging only
+              if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+                console.log('[SW] Deleting old cache:', cacheName);
+              }
               return caches.delete(cacheName);
             })
         );
@@ -104,7 +124,10 @@ self.addEventListener('fetch', (event) => {
 
   // Skip root path requests in preview environment to prevent 404 loops
   if (url.pathname === '/' && url.hostname.includes('lovable')) {
-    console.log('[SW] Skipping root path cache in Lovable preview environment');
+    // Development logging only
+    if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+      console.log('[SW] Skipping root path cache in Lovable preview environment');
+    }
     return;
   }
 
@@ -114,7 +137,10 @@ self.addEventListener('fetch', (event) => {
   
   // Only trigger circuit breaker for excessive requests
   if (requestCount > 10) {
-    console.warn('[SW] Circuit breaker triggered for:', url.href);
+    // Development logging only - DO NOT expose full URLs in production
+    if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+      console.warn('[SW] Circuit breaker triggered for request');
+    }
     return;
   }
   
@@ -148,7 +174,10 @@ async function networkFirstStrategy(request) {
     
     return response;
   } catch (error) {
-    console.log('[SW] Network failed, trying cache:', error);
+    // Development logging only
+    if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+      console.log('[SW] Network failed, trying cache:', error);
+    }
     const cachedResponse = await caches.match(request);
     
     if (cachedResponse) {
@@ -182,7 +211,10 @@ async function cacheFirstStrategy(request) {
     
     return response;
   } catch (error) {
-    console.log('[SW] Failed to fetch asset:', error);
+    // Development logging only
+    if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+      console.log('[SW] Failed to fetch asset:', error);
+    }
     throw error;
   }
 }
@@ -206,7 +238,10 @@ async function staleWhileRevalidateStrategy(request) {
     }
     // For critical routes, let them pass through instead of blocking
     if (request.url.includes('/app/') || request.url.includes('/api/')) {
-      console.log('[SW] Allowing critical route despite failures:', request.url);
+      // Development logging only - DO NOT expose URLs in production
+      if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+        console.log('[SW] Allowing critical route despite failures');
+      }
       // Let the request pass through normally
       return fetch(request);
     }
@@ -222,7 +257,10 @@ async function staleWhileRevalidateStrategy(request) {
   }).catch((error) => {
     // Increment failure count
     failedRequests.set(cacheKey, failedAttempts + 1);
-    console.log('[SW] Fetch failed for:', request.url, error);
+    // Development logging only - DO NOT expose URLs in production
+    if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+      console.log('[SW] Fetch failed for request:', error);
+    }
     return null;
   });
   
@@ -294,7 +332,10 @@ function isSkippedRoute(url) {
 
 // Background sync for offline actions
 self.addEventListener('sync', (event) => {
-  console.log('[SW] Background sync:', event.tag);
+  // Development logging only
+  if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+    console.log('[SW] Background sync:', event.tag);
+  }
   
   if (event.tag === 'sync-notes') {
     event.waitUntil(syncOfflineNotes());
@@ -305,13 +346,19 @@ self.addEventListener('sync', (event) => {
 async function syncOfflineNotes() {
   try {
     // Get offline notes from IndexedDB and sync with server
-    console.log('[SW] Syncing offline notes...');
+    // Development logging only
+    if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+      console.log('[SW] Syncing offline notes...');
+    }
     
     // This would integrate with your note storage system
     // For now, just log the action
     
   } catch (error) {
-    console.error('[SW] Failed to sync offline notes:', error);
+    // Development logging only
+    if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
+      console.error('[SW] Failed to sync offline notes:', error);
+    }
   }
 }
 

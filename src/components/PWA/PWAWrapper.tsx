@@ -40,7 +40,10 @@ export function PWAWrapper({
     const handleAppInstalled = () => {
       setIsInstallable(false);
       setDeferredPrompt(null);
-      console.log('PWA was installed');
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('PWA was installed');
+      }
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -51,7 +54,10 @@ export function PWAWrapper({
       // First, unregister any existing service worker
       navigator.serviceWorker.getRegistrations().then((registrations) => {
         registrations.forEach((registration) => {
-          console.log('🧹 Unregistering old service worker:', registration);
+          // Development logging only
+          if (import.meta.env.DEV) {
+            console.log('🧹 Unregistering old service worker');
+          }
           registration.unregister();
         });
         
@@ -62,31 +68,44 @@ export function PWAWrapper({
             updateViaCache: 'none' // Force refresh of SW file
           })
             .then((registration) => {
-              console.log('✅ Service Worker registered successfully:', registration);
+              // Development logging only
+              if (import.meta.env.DEV) {
+                console.log('✅ Service Worker registered successfully');
+              }
               
               registration.addEventListener('updatefound', () => {
                 const newWorker = registration.installing;
                 if (newWorker) {
                   newWorker.addEventListener('statechange', () => {
                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                      console.log('🔄 New service worker available');
+                      // Development logging only
+                      if (import.meta.env.DEV) {
+                        console.log('🔄 New service worker available');
+                      }
                     }
                   });
                 }
               });
             })
             .catch((error) => {
+              // Keep this error for production as it's important for debugging
               console.error('❌ Service Worker registration failed:', error);
             });
         }, 100);
       }).catch((error) => {
-        console.error('Error getting service worker registrations:', error);
+        // Development logging only
+        if (import.meta.env.DEV) {
+          console.error('Error getting service worker registrations:', error);
+        }
       });
 
       // Add message listener for service worker communications
       navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data?.type === 'SW_ERROR') {
-          console.warn('Service Worker reported error:', event.data.error);
+          // Development logging only
+          if (import.meta.env.DEV) {
+            console.warn('Service Worker reported error:', event.data.error);
+          }
         }
       });
     }
@@ -104,9 +123,15 @@ export function PWAWrapper({
     const { outcome } = await deferredPrompt.userChoice;
     
     if (outcome === 'accepted') {
-      console.log('User accepted the install prompt');
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('User accepted the install prompt');
+      }
     } else {
-      console.log('User dismissed the install prompt');
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('User dismissed the install prompt');
+      }
     }
     
     setDeferredPrompt(null);

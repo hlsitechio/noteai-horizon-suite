@@ -52,7 +52,10 @@ export function PWADownloadSection() {
     const handleAppInstalled = () => {
       setIsInstallable(false);
       setIsPWA(true);
-      console.log('PWA was installed');
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('PWA was installed');
+      }
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -72,7 +75,10 @@ export function PWADownloadSection() {
       const { outcome } = await deferredPrompt.userChoice;
       
       if (outcome === 'accepted') {
-        console.log('User accepted the install prompt');
+        // Development logging only
+        if (import.meta.env.DEV) {
+          console.log('User accepted the install prompt');
+        }
       }
       
       setDeferredPrompt(null);
