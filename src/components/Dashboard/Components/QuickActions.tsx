@@ -57,7 +57,7 @@ export function QuickActions() {
   };
 
   const handleViewDocuments = () => {
-    navigate('/app/notes');
+    navigate('/app/explorer');
   };
 
   const handleSchedule = () => {

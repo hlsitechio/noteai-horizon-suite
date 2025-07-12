@@ -27,7 +27,7 @@ const WorkflowActions: React.FC<WorkflowActionsProps> = ({
     if (favoriteNotes.length > 0) {
       onEditNote(favoriteNotes[0]);
     } else {
-      navigate('/app/notes');
+      navigate('/app/explorer');
     }
   };
 
@@ -75,7 +75,7 @@ const WorkflowActions: React.FC<WorkflowActionsProps> = ({
           <div className="grid grid-cols-2 gap-3">
             <Button 
               variant="outline"
-              onClick={() => navigate('/app/notes')}
+              onClick={() => navigate('/app/explorer')}
               className="flex-col gap-2 border border-border/20 bg-card/50 hover:bg-card/80 text-foreground hover:text-foreground w-full rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-accent/30 h-20 text-sm"
             >
               <FileText className="w-5 h-5" />
@@ -131,7 +131,7 @@ const WorkflowActions: React.FC<WorkflowActionsProps> = ({
                   key={category}
                   variant="secondary"
                   className="text-xs bg-accent/10 text-accent border-accent/20 cursor-pointer hover:bg-accent/20 transition-colors px-3 py-1"
-                  onClick={() => navigate(`/app/notes?category=${category}`)}
+                  onClick={() => navigate(`/app/explorer?category=${category}`)}
                 >
                   {category} ({count})
                 </Badge>

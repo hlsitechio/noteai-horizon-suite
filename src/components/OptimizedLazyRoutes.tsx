@@ -50,6 +50,8 @@ const OptimizedDashboard = lazyWithRetry(() => import('../pages/OptimizedDashboa
 const DashboardOnboarding = lazyWithRetry(() => import('../pages/DashboardOnboarding'));
 const InitialOnboarding = lazyWithRetry(() => import('../pages/InitialOnboarding'));
 const Editor = lazyWithRetry(() => import('../pages/Editor'));
+const Notes = lazyWithRetry(() => import('../pages/Notes'));
+const NotesExplorer = lazyWithRetry(() => import('../pages/NotesExplorer'));
 const Explorer = lazyWithRetry(() => import('../pages/Explorer'));
 const Analytics = lazyWithRetry(() => import('../pages/Analytics'));
 const Settings = lazyWithRetry(() => import('../pages/settings'));
@@ -169,7 +171,19 @@ export const OptimizedLazyRoutes: React.FC = () => {
             </Suspense>
           } />
           
+          <Route path="explorer" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <NotesExplorer />
+            </Suspense>
+          } />
+          
           <Route path="notes" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <Notes />
+            </Suspense>
+          } />
+          
+          <Route path="files" element={
             <Suspense fallback={<DashboardLoadingFallback />}>
               <Explorer />
             </Suspense>

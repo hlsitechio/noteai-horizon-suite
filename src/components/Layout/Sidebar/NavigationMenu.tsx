@@ -34,7 +34,7 @@ const NavigationMenu: React.FC = () => {
     { 
       icon: 'bx bx-folder-open', 
       label: 'Explorer', 
-      path: '/app/notes',
+      path: '/app/explorer',
       description: 'File manager and explorer'
     },
     { 

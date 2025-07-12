@@ -39,7 +39,7 @@ export function useSidebarKeyboardShortcuts() {
             break;
           case 'N':
             e.preventDefault();
-            navigate('/app/notes');
+            navigate('/app/explorer');
             toast.success('Navigated to Notes');
             break;
           case 'E':
@@ -80,7 +80,7 @@ export function useSidebarKeyboardShortcuts() {
       // Search shortcut
       if (cmdOrCtrl && e.key === 'k') {
         e.preventDefault();
-        navigate('/app/notes');
+        navigate('/app/explorer');
         toast.success('Search opened');
         return;
       }

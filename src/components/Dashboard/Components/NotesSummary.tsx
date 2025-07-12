@@ -126,7 +126,7 @@ export function NotesSummary() {
               variant="ghost" 
               size="sm" 
               className="h-6 w-6 p-0"
-              onClick={() => navigate('/app/notes')}
+              onClick={() => navigate('/app/explorer')}
               title="Search Notes"
             >
               <Search className="h-3 w-3" />
@@ -232,7 +232,7 @@ export function NotesSummary() {
             variant="ghost" 
             size="sm" 
             className="w-full text-xs text-muted-foreground"
-            onClick={() => navigate('/app/notes')}
+            onClick={() => navigate('/app/explorer')}
           >
             View All Notes
           </Button>

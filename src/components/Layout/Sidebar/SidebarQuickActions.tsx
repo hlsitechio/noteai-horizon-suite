@@ -60,21 +60,21 @@ export function SidebarQuickActions() {
       icon: Search,
       label: 'Search',
       description: 'Find notes and folders',
-      action: () => navigate('/app/notes'),
+      action: () => navigate('/app/explorer'),
       color: 'text-blue-500'
     },
     {
       icon: Bookmark,
       label: 'Favorites',
       description: 'View favorite notes',
-      action: () => navigate('/app/notes?filter=favorites'),
+      action: () => navigate('/app/explorer?filter=favorites'),
       color: 'text-yellow-500'
     },
     {
       icon: Archive,
       label: 'Archive',
       description: 'Browse archived content',
-      action: () => navigate('/app/notes?filter=archived'),
+      action: () => navigate('/app/explorer?filter=archived'),
       color: 'text-gray-500'
     },
     {
