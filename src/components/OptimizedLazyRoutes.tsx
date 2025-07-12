@@ -78,6 +78,7 @@ const ActivityPage = lazyWithRetry(() => import('../pages/ActivityPage'));
 const MobileApp = lazyWithRetry(() => import('../mobile/MobileApp'));
 const ReferralPage = lazyWithRetry(() => import('../pages/ReferralPage'));
 const SEODashboard = lazyWithRetry(() => import('../pages/seo'));
+const APMPage = lazyWithRetry(() => import('../pages/APMPage').then(module => ({ default: module.APMPage })));
 
 // Enhanced loading fallback with better UX
 const LoadingFallback = () => (
@@ -238,12 +239,17 @@ export const OptimizedLazyRoutes: React.FC = () => {
             </Suspense>
           } />
            <Route path="component-gallery" element={<ComponentGallery />} />
-           <Route path="seo" element={
-             <Suspense fallback={<DashboardLoadingFallback />}>
-               <SEODashboard />
-             </Suspense>
-           } />
-           <Route path="editor-test" element={<EditorControlsTest />} />
+            <Route path="seo" element={
+              <Suspense fallback={<DashboardLoadingFallback />}>
+                <SEODashboard />
+              </Suspense>
+            } />
+            <Route path="apm" element={
+              <Suspense fallback={<DashboardLoadingFallback />}>
+                <APMPage />
+              </Suspense>
+            } />
+            <Route path="editor-test" element={<EditorControlsTest />} />
         </Route>
 
         {/* Legacy route redirects for 404 prevention */}

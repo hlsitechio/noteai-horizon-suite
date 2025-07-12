@@ -23,6 +23,20 @@ class Logger {
     } else {
       console[level](prefix, message);
     }
+
+    // Integrate with APM if available
+    if (typeof window !== 'undefined' && (window as any).apmService) {
+      const apmService = (window as any).apmService;
+      if (level === 'error') {
+        apmService.recordError({
+          error_type: 'logger_error',
+          error_message: message,
+          component_name: 'logger',
+          severity: 'medium',
+          tags: context || {}
+        });
+      }
+    }
   }
   
   debug(message: string, context?: LogContext) {

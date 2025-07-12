@@ -14,6 +14,174 @@ export type Database = {
   }
   public: {
     Tables: {
+      apm_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          current_value: number | null
+          description: string
+          id: string
+          is_acknowledged: boolean | null
+          is_resolved: boolean | null
+          severity: string | null
+          threshold_value: number | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          current_value?: number | null
+          description: string
+          id?: string
+          is_acknowledged?: boolean | null
+          is_resolved?: boolean | null
+          severity?: string | null
+          threshold_value?: number | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          current_value?: number | null
+          description?: string
+          id?: string
+          is_acknowledged?: boolean | null
+          is_resolved?: boolean | null
+          severity?: string | null
+          threshold_value?: number | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      apm_error_logs: {
+        Row: {
+          component_name: string | null
+          created_at: string
+          error_message: string
+          error_stack: string | null
+          error_type: string
+          id: string
+          is_filtered: boolean | null
+          severity: string | null
+          tags: Json | null
+          timestamp: string
+          url: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          component_name?: string | null
+          created_at?: string
+          error_message: string
+          error_stack?: string | null
+          error_type: string
+          id?: string
+          is_filtered?: boolean | null
+          severity?: string | null
+          tags?: Json | null
+          timestamp?: string
+          url?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          component_name?: string | null
+          created_at?: string
+          error_message?: string
+          error_stack?: string | null
+          error_type?: string
+          id?: string
+          is_filtered?: boolean | null
+          severity?: string | null
+          tags?: Json | null
+          timestamp?: string
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      apm_performance_metrics: {
+        Row: {
+          created_at: string
+          id: string
+          metric_name: string
+          metric_type: string
+          metric_value: number
+          tags: Json | null
+          timestamp: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metric_name: string
+          metric_type: string
+          metric_value: number
+          tags?: Json | null
+          timestamp?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metric_name?: string
+          metric_type?: string
+          metric_value?: number
+          tags?: Json | null
+          timestamp?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      apm_sessions: {
+        Row: {
+          avg_load_time: number | null
+          bounce_rate: number | null
+          created_at: string
+          end_time: string | null
+          id: string
+          page_views: number | null
+          session_id: string
+          start_time: string
+          total_errors: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avg_load_time?: number | null
+          bounce_rate?: number | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          page_views?: number | null
+          session_id: string
+          start_time?: string
+          total_errors?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avg_load_time?: number | null
+          bounce_rate?: number | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          page_views?: number | null
+          session_id?: string
+          start_time?: string
+          total_errors?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       calendar_events: {
         Row: {
           created_at: string
