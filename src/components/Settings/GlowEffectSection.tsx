@@ -2,23 +2,56 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
-import { Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Sparkles, Check } from 'lucide-react';
+import { toast } from 'sonner';
 
 const GlowEffectSection: React.FC = () => {
   const [glowIntensity, setGlowIntensity] = useState<number>(() => {
     const saved = localStorage.getItem('glow-effect-intensity');
     return saved ? parseInt(saved, 10) : 100;
   });
+  
+  const [appliedIntensity, setAppliedIntensity] = useState<number>(glowIntensity);
+  const [hasUnappliedChanges, setHasUnappliedChanges] = useState<boolean>(false);
 
   useEffect(() => {
-    localStorage.setItem('glow-effect-intensity', glowIntensity.toString());
+    // Initialize with saved intensity on mount
+    const intensity = appliedIntensity / 100;
+    applyGlowEffects(intensity);
+  }, [appliedIntensity]);
+
+  useEffect(() => {
+    setHasUnappliedChanges(glowIntensity !== appliedIntensity);
+  }, [glowIntensity, appliedIntensity]);
+
+  const applyGlowEffects = (intensity: number) => {
+    const root = document.documentElement;
     
-    // Apply the glow effect intensity to the document root
-    document.documentElement.style.setProperty('--glow-intensity', (glowIntensity / 100).toString());
-  }, [glowIntensity]);
+    // Set global glow intensity variable
+    root.style.setProperty('--glow-intensity', intensity.toString());
+    root.style.setProperty('--glow-opacity', (intensity * 0.8).toString());
+    root.style.setProperty('--glow-blur', `${intensity * 20}px`);
+    root.style.setProperty('--glow-spread', `${intensity * 10}px`);
+    
+    // Apply to various shadow variables used across the dashboard
+    root.style.setProperty('--shadow-glow', `0 0 ${intensity * 40}px hsl(var(--primary) / ${intensity * 0.3})`);
+    root.style.setProperty('--shadow-elegant', `0 10px 30px -10px hsl(var(--primary) / ${intensity * 0.3})`);
+    root.style.setProperty('--shadow-primary-glow', `0 0 ${intensity * 25}px hsl(var(--primary) / ${intensity * 0.4})`);
+  };
 
   const handleGlowChange = (value: number[]) => {
     setGlowIntensity(value[0]);
+  };
+
+  const handleApplyChanges = () => {
+    localStorage.setItem('glow-effect-intensity', glowIntensity.toString());
+    setAppliedIntensity(glowIntensity);
+    applyGlowEffects(glowIntensity / 100);
+    
+    toast.success('Glow effects applied successfully!', {
+      description: `Glow intensity set to ${glowIntensity}%`
+    });
   };
 
   return (
@@ -71,6 +104,24 @@ const GlowEffectSection: React.FC = () => {
               }}
             />
           </div>
+        </div>
+
+        {/* Apply button */}
+        <div className="pt-4 border-t">
+          <Button 
+            onClick={handleApplyChanges}
+            disabled={!hasUnappliedChanges}
+            className="w-full"
+            variant={hasUnappliedChanges ? "default" : "secondary"}
+          >
+            <Check className="mr-2 h-4 w-4" />
+            {hasUnappliedChanges ? 'Apply Changes' : 'Applied'}
+          </Button>
+          {hasUnappliedChanges && (
+            <p className="text-xs text-muted-foreground mt-2 text-center">
+              Changes will be applied to all dashboard glow effects
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>
