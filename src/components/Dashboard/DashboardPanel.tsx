@@ -9,7 +9,7 @@ import {
 import { DashboardComponentRenderer } from './ComponentRegistry';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 import { cn } from '@/lib/utils';
-import { Settings2 } from 'lucide-react';
+import { Settings2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface DashboardPanelProps {
@@ -22,7 +22,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
   className = 'p-6 h-full'
 }) => {
   const navigate = useNavigate();
-  const { getPanelConfiguration } = useDashboardLayout();
+  const { getPanelConfiguration, updatePanelConfiguration } = useDashboardLayout();
   const config = getPanelConfiguration(panelKey);
 
   // Default components for each panel if not configured
@@ -50,11 +50,15 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
     return panelNames[panelKey] || panelKey;
   };
 
+  const handleRemoveComponent = async () => {
+    await updatePanelConfiguration(panelKey, '', false);
+  };
+
   return (
     <div className={cn('relative group', className)} aria-live="polite" role="region">
       {isEnabled ? (
         <div className="h-full relative">
-          {/* Panel Header with Label and Change Button */}
+          {/* Panel Header with Label and Action Buttons */}
           <div className="flex items-center justify-between p-3 border-b bg-muted/5">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-primary"></div>
@@ -62,16 +66,26 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
                 {formatPanelName(panelKey)}
               </span>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                navigate('/app/components');
-              }}
-              className="opacity-0 group-hover:opacity-100 transition-opacity text-xs px-2 py-1 h-auto"
-            >
-              Change
-            </Button>
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  navigate('/app/components');
+                }}
+                className="text-xs px-2 py-1 h-auto"
+              >
+                Change
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleRemoveComponent}
+                className="text-xs px-2 py-1 h-auto text-destructive hover:text-destructive"
+              >
+                <X className="w-3 h-3" />
+              </Button>
+            </div>
           </div>
           <div className="h-[calc(100%-48px)]">
             <DashboardComponentRenderer
