@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { CreateItemDialog } from '@/components/Explorer/CreateItemDialog';
 import { CreateItemDropdown } from '@/components/Explorer/CreateItemDropdown';
+import { PreviewPanel } from '@/components/Explorer/PreviewPanel';
 
 type ViewMode = 'extra-large' | 'large' | 'medium' | 'small' | 'list' | 'details';
 type SortBy = 'name' | 'modified' | 'created' | 'size' | 'category';
@@ -126,7 +127,18 @@ const NotesExplorer: React.FC = () => {
     return allItems;
   }, [folders, filteredNotes, searchTerm, sortBy, sortOrder]);
 
-  const handleItemClick = (item: any) => {
+  const handleItemClick = (item: any, event: React.MouseEvent) => {
+    // Handle selection first
+    if (event.ctrlKey || event.metaKey) {
+      // Multi-select with Ctrl/Cmd
+      toggleItemSelection(item.id);
+    } else {
+      // Single select
+      setSelectedItems(new Set([item.id]));
+    }
+  };
+
+  const handleItemDoubleClick = (item: any) => {
     if (item.type === 'folder') {
       navigate(`/app/folders/${item.id}`);
     } else {
@@ -194,7 +206,8 @@ const NotesExplorer: React.FC = () => {
           isSelected ? "border-primary bg-primary/5" : "border-border",
           getItemSize()
         )}
-        onClick={() => handleItemClick(item)}
+        onClick={(e) => handleItemClick(item, e)}
+        onDoubleClick={() => handleItemDoubleClick(item)}
         onContextMenu={(e) => {
           e.preventDefault();
           toggleItemSelection(item.id);
@@ -281,7 +294,8 @@ const NotesExplorer: React.FC = () => {
           "hover:bg-accent/50 active:bg-accent",
           isSelected ? "bg-primary/5 border border-primary" : "border border-transparent"
         )}
-        onClick={() => handleItemClick(item)}
+        onClick={(e) => handleItemClick(item, e)}
+        onDoubleClick={() => handleItemDoubleClick(item)}
         onContextMenu={(e) => {
           e.preventDefault();
           toggleItemSelection(item.id);
@@ -492,17 +506,12 @@ const NotesExplorer: React.FC = () => {
                   <div className="p-4 border-b">
                     <h3 className="font-semibold">Preview</h3>
                   </div>
-                  <ScrollArea className="h-[calc(100%-60px)] p-4">
-                    {selectedItems.size === 0 ? (
-                      <div className="text-center text-muted-foreground mt-8">
-                        Select an item to preview
-                      </div>
-                    ) : (
-                      <div className="text-center text-muted-foreground mt-8">
-                        Preview coming soon
-                      </div>
-                    )}
-                  </ScrollArea>
+                  <div className="h-[calc(100%-60px)]">
+                    <PreviewPanel 
+                      selectedItems={selectedItems} 
+                      allItems={sortedItems}
+                    />
+                  </div>
                 </div>
               </ResizablePanel>
             </>
