@@ -15,7 +15,7 @@ import { DynamicAccentProvider } from './contexts/DynamicAccentContext';
 import { ProjectRealmsProvider } from './contexts/ProjectRealmsContext';
 import { FloatingNotesProvider } from './contexts/FloatingNotesContext';
 import { QuantumAIProvider } from './contexts/QuantumAIContext';
-import { usePerformanceMonitoring } from './hooks/usePerformanceMonitoring';
+
 import { AppProviders } from './components/AppProviders';
 import { OnboardingProvider } from './components/Onboarding/OnboardingProvider';
 import { OptimizedLazyRoutes } from './components/OptimizedLazyRoutes';
@@ -28,7 +28,6 @@ import './App.css';
 const SentryRouter = Sentry.withSentryRouting(Router);
 
 function App() {
-  const { trackOperation } = usePerformanceMonitoring();
 
   return (
     <SmartErrorBoundary preserveWork={true}>
