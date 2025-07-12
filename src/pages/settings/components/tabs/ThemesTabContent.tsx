@@ -1,7 +1,7 @@
 import React from 'react';
 import { TabsContent } from '@/components/ui/tabs';
 import { AdvancedColorPicker } from '@/components/Settings/AdvancedColorPicker';
-import DynamicAccentSection from '@/components/Settings/DynamicAccentSection';
+import GlowEffectSection from '@/components/Settings/GlowEffectSection';
 import { ThemePresets } from '@/components/Settings/ThemePresets';
 
 interface ThemesTabContentProps {
@@ -16,7 +16,7 @@ export const ThemesTabContent: React.FC<ThemesTabContentProps> = ({
   return (
     <TabsContent value="themes" className="space-y-6">
       <ThemePresets />
-      <DynamicAccentSection />
+      <GlowEffectSection />
       <AdvancedColorPicker 
         currentColor={accentColor}
         onColorChange={onColorChange}
