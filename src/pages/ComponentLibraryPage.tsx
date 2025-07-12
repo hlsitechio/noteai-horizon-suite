@@ -3,9 +3,20 @@ import { ComponentLibrary } from '@/components/Dashboard/ComponentLibrary';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 
 const ComponentLibraryPage: React.FC = () => {
   const navigate = useNavigate();
+  const { getPanelConfiguration } = useDashboardLayout();
+
+  // Get available panels - panels that don't have a component or are disabled
+  const getAvailablePanels = () => {
+    const allPanels = ['topLeft', 'topRight', 'middleLeft', 'middleRight', 'bottomLeft', 'bottomRight'];
+    return allPanels.filter(panelKey => {
+      const config = getPanelConfiguration(panelKey);
+      return !config?.enabled || !config?.component_key;
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -32,7 +43,7 @@ const ComponentLibraryPage: React.FC = () => {
 
       {/* Content */}
       <div className="container mx-auto px-6 py-8">
-        <ComponentLibrary />
+        <ComponentLibrary availablePanels={getAvailablePanels()} />
       </div>
     </div>
   );
