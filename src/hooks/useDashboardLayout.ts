@@ -47,27 +47,32 @@ export const useDashboardLayout = () => {
     if (!layout) return;
 
     try {
+      // Make database update first
       await DashboardLayoutService.updatePanelConfiguration(layout.id, panelKey, {
         component_key: componentKey,
         enabled,
         props: {}
       });
 
-      // Update local state
-      const updatedLayout = { ...layout };
-      const panelConfigs = updatedLayout.panel_configurations as Record<string, any> || {};
-      panelConfigs[panelKey] = {
-        component_key: componentKey,
-        enabled,
-        props: {}
-      };
-      updatedLayout.panel_configurations = panelConfigs as any;
-      
-      setLayout(updatedLayout);
-      toast.success('Panel configuration updated');
+      // Batch state updates using React's automatic batching
+      await new Promise(resolve => {
+        // Update local state
+        const updatedLayout = { ...layout };
+        const panelConfigs = updatedLayout.panel_configurations as Record<string, any> || {};
+        panelConfigs[panelKey] = {
+          component_key: componentKey,
+          enabled,
+          props: {}
+        };
+        updatedLayout.panel_configurations = panelConfigs as any;
+        
+        setLayout(updatedLayout);
+        resolve(void 0);
+      });
+
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update panel configuration';
-      toast.error(errorMessage);
+      throw new Error(errorMessage);
     }
   };
 

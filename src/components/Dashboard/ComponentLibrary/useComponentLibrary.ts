@@ -22,11 +22,20 @@ export const useComponentLibrary = (availablePanels: string[]) => {
 
   const handleAddToPanel = async (componentKey: string, panelKey: string) => {
     try {
+      // Use setTimeout to defer DOM updates and prevent forced reflow
+      await new Promise(resolve => setTimeout(resolve, 0));
+      
       await updatePanelConfiguration(panelKey, componentKey, true);
-      toast.success(`Component added to ${panelKey} panel`);
+      
+      // Defer toast notification to next frame
+      requestAnimationFrame(() => {
+        toast.success(`Component added to ${panelKey.replace(/([A-Z])/g, ' $1').trim()} panel`);
+      });
     } catch (error) {
       console.error('Failed to add component:', error);
-      toast.error('Failed to add component to panel');
+      requestAnimationFrame(() => {
+        toast.error('Failed to add component to panel');
+      });
     }
   };
 

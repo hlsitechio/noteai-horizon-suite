@@ -25,7 +25,19 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
   availablePanels,
   onAddToPanel
 }) => {
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const Icon = component.icon;
+
+  const handleAddToPanel = async (componentKey: string, panelKey: string) => {
+    // Close dialog first to prevent layout thrashing
+    setIsDialogOpen(false);
+    
+    // Small delay to allow dialog close animation
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    // Then add component
+    await onAddToPanel(componentKey, panelKey);
+  };
 
   const formatPanelName = (panelKey: string) => {
     const panelNames: Record<string, string> = {
@@ -77,7 +89,7 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
         </div>
 
         {/* Add to Panel Button */}
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button size="sm" className="w-full flex items-center space-x-1">
               <Plus className="h-3 w-3" />
@@ -97,7 +109,7 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
                   <Button
                     key={panelKey}
                     variant="outline"
-                    onClick={() => onAddToPanel(component.componentKey, panelKey)}
+                    onClick={() => handleAddToPanel(component.componentKey, panelKey)}
                     className="justify-start"
                   >
                     {formatPanelName(panelKey)}
