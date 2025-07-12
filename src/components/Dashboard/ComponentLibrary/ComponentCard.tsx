@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { 
   Dialog, 
   DialogContent, 
+  DialogDescription,
   DialogHeader, 
   DialogTitle, 
   DialogTrigger 
@@ -86,11 +87,11 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add Component to Panel</DialogTitle>
+              <DialogDescription>
+                Select a panel to add the "{component.name}" component to your dashboard.
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Select a panel to add the "{component.name}" component:
-              </p>
               <div className="grid grid-cols-2 gap-2">
                 {availablePanels.map((panelKey) => (
                   <Button
