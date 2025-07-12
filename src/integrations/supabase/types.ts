@@ -181,6 +181,78 @@ export type Database = {
         }
         Relationships: []
       }
+      dashboard_workspaces: {
+        Row: {
+          banner_settings: Json | null
+          created_at: string
+          custom_settings: Json | null
+          dashboard_edit_mode: boolean | null
+          dashboard_layout: Json | null
+          edit_mode_expires_at: string | null
+          glowing_effects_enabled: boolean | null
+          id: string
+          is_default: boolean
+          panel_sizes: Json | null
+          selected_banner_type: string | null
+          selected_banner_url: string | null
+          sidebar_edit_mode: boolean | null
+          sidebar_layout: Json | null
+          theme_settings: Json | null
+          updated_at: string
+          user_id: string
+          weather_enabled: boolean | null
+          weather_location: string | null
+          weather_units: string | null
+          workspace_name: string
+        }
+        Insert: {
+          banner_settings?: Json | null
+          created_at?: string
+          custom_settings?: Json | null
+          dashboard_edit_mode?: boolean | null
+          dashboard_layout?: Json | null
+          edit_mode_expires_at?: string | null
+          glowing_effects_enabled?: boolean | null
+          id?: string
+          is_default?: boolean
+          panel_sizes?: Json | null
+          selected_banner_type?: string | null
+          selected_banner_url?: string | null
+          sidebar_edit_mode?: boolean | null
+          sidebar_layout?: Json | null
+          theme_settings?: Json | null
+          updated_at?: string
+          user_id: string
+          weather_enabled?: boolean | null
+          weather_location?: string | null
+          weather_units?: string | null
+          workspace_name?: string
+        }
+        Update: {
+          banner_settings?: Json | null
+          created_at?: string
+          custom_settings?: Json | null
+          dashboard_edit_mode?: boolean | null
+          dashboard_layout?: Json | null
+          edit_mode_expires_at?: string | null
+          glowing_effects_enabled?: boolean | null
+          id?: string
+          is_default?: boolean
+          panel_sizes?: Json | null
+          selected_banner_type?: string | null
+          selected_banner_url?: string | null
+          sidebar_edit_mode?: boolean | null
+          sidebar_layout?: Json | null
+          theme_settings?: Json | null
+          updated_at?: string
+          user_id?: string
+          weather_enabled?: boolean | null
+          weather_location?: string | null
+          weather_units?: string | null
+          workspace_name?: string
+        }
+        Relationships: []
+      }
       folders: {
         Row: {
           created_at: string
