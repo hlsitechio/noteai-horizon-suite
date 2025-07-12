@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       port: 8080,
       clientPort: 8080,
-      host: '0.0.0.0',
+      host: 'localhost',
       protocol: 'ws',
     },
   },
