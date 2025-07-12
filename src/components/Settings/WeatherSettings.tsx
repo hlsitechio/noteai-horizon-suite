@@ -63,7 +63,10 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
     setConnectionStatus('idle');
 
     try {
-      console.log(`Testing weather connection for: ${settings.city}`);
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log(`Testing weather connection for: ${settings.city}`);
+      }
       
       const { data, error } = await supabase.functions.invoke('weather-api', {
         body: { 

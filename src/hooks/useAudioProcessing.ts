@@ -108,7 +108,10 @@ export const useAudioProcessing = () => {
     
     try {
       const finalSettings = { ...voiceSettings, ...settings };
-      console.log('Synthesizing speech with settings:', finalSettings);
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('Synthesizing speech with settings');
+      }
 
       const { data, error } = await supabase.functions.invoke('advanced-text-to-speech', {
         body: {

@@ -33,7 +33,10 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
 
   // Load weather settings from localStorage
   useEffect(() => {
-    console.log('BannerWithTopNav: Loading weather settings');
+    // Development logging only
+    if (import.meta.env.DEV) {
+      console.log('BannerWithTopNav: Loading weather settings');
+    }
     const savedSettings = localStorage.getItem('weather-settings');
     if (savedSettings) {
       try {
@@ -49,9 +52,15 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
 
   // Listen for weather settings changes
   useEffect(() => {
-    console.log('BannerWithTopNav: Setting up storage listeners');
+    // Development logging only
+    if (import.meta.env.DEV) {
+      console.log('BannerWithTopNav: Setting up storage listeners');
+    }
     const handleStorageChange = (e: StorageEvent) => {
-      console.log('BannerWithTopNav: Storage change detected', e.key);
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('BannerWithTopNav: Storage change detected', e.key);
+      }
       if (e.key === 'weather-settings' && e.newValue) {
         try {
           const settings = JSON.parse(e.newValue);
@@ -66,7 +75,10 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
 
     // Also listen for custom events (for same-tab updates)
     const handleCustomStorageChange = () => {
-      console.log('BannerWithTopNav: Custom storage change detected');
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('BannerWithTopNav: Custom storage change detected');
+      }
       const savedSettings = localStorage.getItem('weather-settings');
       if (savedSettings) {
         try {
@@ -84,7 +96,10 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
     window.addEventListener('weather-settings-changed', handleCustomStorageChange);
     
     return () => {
-      console.log('BannerWithTopNav: Removing storage listeners');
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('BannerWithTopNav: Removing storage listeners');
+      }
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('weather-settings-changed', handleCustomStorageChange);
     };

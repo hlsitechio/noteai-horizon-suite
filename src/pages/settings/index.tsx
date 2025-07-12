@@ -9,7 +9,10 @@ const Settings: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('profile');
   
-  console.log('Settings component rendered with activeTab:', activeTab);
+  // Development logging only
+  if (import.meta.env.DEV) {
+    console.log('Settings component rendered with activeTab:', activeTab);
+  }
 
   // Check for tab parameter in URL
   useEffect(() => {

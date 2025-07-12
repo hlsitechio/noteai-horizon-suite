@@ -24,13 +24,19 @@ export const usePageBannerSettings = () => {
 
   // Load settings for current page
   useEffect(() => {
-    console.log('usePageBannerSettings: Loading settings for page:', pagePath);
+    // Development logging only
+    if (import.meta.env.DEV) {
+      console.log('usePageBannerSettings: Loading settings for page:', pagePath);
+    }
     loadPageSettings();
   }, [pagePath]);
 
   const loadPageSettings = async () => {
     try {
-      console.log('usePageBannerSettings: Page banner service disabled');
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('usePageBannerSettings: Page banner service disabled');
+      }
       setIsLoading(true);
       // Page banner service disabled - banners table missing from database schema
       setSettings({});

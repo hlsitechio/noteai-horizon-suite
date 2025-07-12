@@ -35,7 +35,10 @@ const BannerPreview: React.FC<BannerPreviewProps> = ({
               console.error('BannerUpload: Video preview error:', e);
             }}
             onLoadedMetadata={() => {
-              console.log('BannerUpload: Video metadata loaded successfully');
+              // Development logging only
+              if (import.meta.env.DEV) {
+                console.log('BannerUpload: Video metadata loaded successfully');
+              }
             }}
           >
             Your browser does not support video playback.

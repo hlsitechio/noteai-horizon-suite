@@ -35,11 +35,18 @@ export const useEditModeState = () => {
       }
 
       const settings = await DashboardSettingsService.getUserSettings(user.id);
-      console.log('Retrieved settings:', settings);
+      
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('Retrieved settings (sanitized)');
+      }
       
       if (settings) {
-        console.log('Setting dashboard edit mode to:', settings.dashboard_edit_mode);
-        console.log('Setting sidebar edit mode to:', settings.sidebar_edit_mode);
+        // Development logging only
+        if (import.meta.env.DEV) {
+          console.log('Setting dashboard edit mode');
+          console.log('Setting sidebar edit mode');
+        }
         setIsDashboardEditMode(settings.dashboard_edit_mode);
         setIsSidebarEditMode(settings.sidebar_edit_mode);
         
@@ -48,7 +55,10 @@ export const useEditModeState = () => {
           setupAutoDisableTimer();
         }
       } else {
-        console.log('No settings found, defaulting to false');
+        // Development logging only
+        if (import.meta.env.DEV) {
+          console.log('No settings found, defaulting to false');
+        }
         setIsDashboardEditMode(false);
         setIsSidebarEditMode(false);
       }

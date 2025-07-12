@@ -32,7 +32,10 @@ const AIBannerGenerator: React.FC<AIBannerGeneratorProps> = ({ onBannerGenerated
     }
 
     setIsGenerating(true);
-    console.log('Generating AI banner with prompt:', prompt);
+    // Development logging only
+    if (import.meta.env.DEV) {
+      console.log('Generating AI banner with prompt');
+    }
 
     try {
       const { data, error } = await supabase.functions.invoke('generate-banner-image', {
@@ -48,7 +51,10 @@ const AIBannerGenerator: React.FC<AIBannerGeneratorProps> = ({ onBannerGenerated
       }
 
       if (data?.image) {
-        console.log('Banner generated successfully');
+        // Development logging only
+        if (import.meta.env.DEV) {
+          console.log('Banner generated successfully');
+        }
         onBannerGenerated(data.image);
         setIsOpen(false);
         setPrompt('');

@@ -47,8 +47,12 @@
     <meta name="twitter:image" content="/lovable-uploads/bbed60df-5590-4275-a90f-6e1a6d4b9d6c.png" />
 
     <!-- Simple welcome message -->
+    <!-- Development welcome message only -->
     <script>
-      console.log('🚀 Welcome to Online Note AI!');
+      // Only log in development (check for localhost or dev domains)
+      if (window.location.hostname === 'localhost' || window.location.hostname.includes('lovable.app')) {
+        console.log('🚀 Welcome to Online Note AI!');
+      }
       
       // Prevent Firebase errors by ensuring no Firebase globals exist
       if (typeof window !== 'undefined') {

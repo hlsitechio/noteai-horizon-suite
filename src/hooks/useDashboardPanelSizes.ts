@@ -24,8 +24,11 @@ export const useDashboardPanelSizes = () => {
   // Log panel sizes when they change (development only)
   useEffect(() => {
     if (import.meta.env.DEV) {
-      console.log('Dashboard panel sizes updated:', panelSizes);
-      console.log('Settings loaded state:', !!settings);
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('Dashboard panel sizes updated');
+        console.log('Settings loaded state:', !!settings);
+      }
     }
   }, [JSON.stringify(panelSizes), !!settings]);
 
