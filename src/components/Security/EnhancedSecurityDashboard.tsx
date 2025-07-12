@@ -179,7 +179,7 @@ export const EnhancedSecurityDashboard: React.FC = () => {
                       <div key={framework} className="text-center">
                         <div className="text-lg font-semibold">{framework}</div>
                         <div className={`text-2xl font-bold ${getScoreColor(score as number)}`}>
-                          {score}/100
+                          {(score as number)}/100
                         </div>
                       </div>
                     ))}
