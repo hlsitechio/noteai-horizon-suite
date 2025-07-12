@@ -6,19 +6,34 @@ import MobileBottomNav from './MobileBottomNav';
 import MobileDesktopViewButton from '../components/MobileDesktopViewButton';
 import { useLocation } from 'react-router-dom';
 import { BannerWithTopNav } from '@/components/Dashboard/BannerWithTopNav';
-import { usePageBannerSettings } from '@/hooks/usePageBannerSettings';
+import { useDashboardWorkspace } from '@/hooks/useDashboardWorkspace';
 
 const MobileLayout: React.FC = () => {
   const location = useLocation();
   const isEditor = location.pathname === '/mobile/editor';
   
   const { 
-    selectedBannerUrl, 
-    handleImageUpload, 
-    handleVideoUpload, 
-    handleAIGenerate, 
-    handleImageSelect 
-  } = usePageBannerSettings();
+    getBannerSettings,
+    updateBannerSelection 
+  } = useDashboardWorkspace();
+  
+  const { url: selectedBannerUrl } = getBannerSettings();
+
+  const handleImageUpload = async (file: File) => {
+    console.log('Image upload:', file);
+  };
+
+  const handleVideoUpload = async (file: File) => {
+    console.log('Video upload:', file);
+  };
+
+  const handleAIGenerate = async () => {
+    console.log('AI generate');
+  };
+
+  const handleImageSelect = async (url: string) => {
+    await updateBannerSelection(url, 'image');
+  };
 
   return (
     <div className="h-full w-full flex flex-col bg-background overflow-hidden relative">

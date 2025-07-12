@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Check, Layout, PanelLeft } from 'lucide-react';
-import { useDashboardSettings } from '@/hooks/useDashboardSettings';
+import { useDashboardWorkspace } from '@/hooks/useDashboardWorkspace';
 import { toast } from 'sonner';
 
 interface SidebarLayoutPreset {
@@ -57,10 +57,10 @@ interface SidebarLayoutPresetsProps {
 }
 
 const SidebarLayoutPresets: React.FC<SidebarLayoutPresetsProps> = ({ onClose }) => {
-  const { settings, updateSidebarPanelSizes } = useDashboardSettings();
+  const { workspace, updatePanelSizes } = useDashboardWorkspace();
   const [applying, setApplying] = useState<string | null>(null);
 
-  const currentSizes = settings?.sidebar_panel_sizes;
+  const currentSizes = workspace?.panel_sizes;
 
   const isCurrentPreset = (preset: SidebarLayoutPreset) => {
     if (!currentSizes) return false;
@@ -76,7 +76,7 @@ const SidebarLayoutPresets: React.FC<SidebarLayoutPresetsProps> = ({ onClose }) 
     setApplying(preset.id);
     
     try {
-      const success = await updateSidebarPanelSizes(preset.sizes);
+      const success = await updatePanelSizes(preset.sizes);
       
       if (success) {
         toast.success(`Applied "${preset.name}" sidebar layout`);

@@ -8,8 +8,7 @@ import { Button } from '@/components/ui/button';
 import { LayoutDashboard, BarChart3, Settings } from 'lucide-react';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useEditMode } from '@/contexts/EditModeContext';
-import { useDashboardPanelSizes } from '@/hooks';
-import { usePageBannerSettings } from '@/hooks/usePageBannerSettings';
+import { useDashboardWorkspace } from '@/hooks/useDashboardWorkspace';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const OptimizedDashboard: React.FC = () => {
@@ -19,14 +18,51 @@ const OptimizedDashboard: React.FC = () => {
   const isMobile = useIsMobile();
 
   // Custom hooks for clean separation of concerns
-  const { panelSizes, handleMainContentResize, handleHorizontalResize } = useDashboardPanelSizes();
   const { 
-    selectedBannerUrl, 
-    handleImageUpload, 
-    handleVideoUpload, 
-    handleAIGenerate, 
-    handleImageSelect 
-  } = usePageBannerSettings();
+    workspace, 
+    getPanelSizes, 
+    updatePanelSizes,
+    getBannerSettings,
+    updateBannerSelection 
+  } = useDashboardWorkspace();
+  
+  const panelSizes = getPanelSizes();
+  const { url: selectedBannerUrl } = getBannerSettings();
+
+  const handleMainContentResize = async (sizes: number[]) => {
+    if (sizes.length >= 3) {
+      const newSizes = { ...panelSizes };
+      newSizes.analytics = Math.round(sizes[0]);
+      newSizes.topSection = Math.round(sizes[1]);
+      newSizes.bottomSection = Math.round(sizes[2]);
+      await updatePanelSizes(newSizes);
+    }
+  };
+
+  const handleHorizontalResize = async (sizes: number[]) => {
+    if (sizes.length >= 2) {
+      const newSizes = { ...panelSizes };
+      newSizes.leftPanels = Math.round(sizes[0]);
+      newSizes.rightPanels = Math.round(sizes[1]);
+      await updatePanelSizes(newSizes);
+    }
+  };
+
+  const handleImageUpload = async (file: File) => {
+    console.log('Image upload:', file);
+  };
+
+  const handleVideoUpload = async (file: File) => {
+    console.log('Video upload:', file);
+  };
+
+  const handleAIGenerate = async () => {
+    console.log('AI generate');
+  };
+
+  const handleImageSelect = async (url: string) => {
+    await updateBannerSelection(url, 'image');
+  };
 
   // Memoize computed values to prevent unnecessary re-renders
   const dashboardClassName = React.useMemo(() => 

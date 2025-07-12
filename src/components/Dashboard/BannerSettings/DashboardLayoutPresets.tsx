@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Check, Layout, LayoutDashboard } from 'lucide-react';
-import { useDashboardSettings } from '@/hooks/useDashboardSettings';
+import { useDashboardWorkspace } from '@/hooks/useDashboardWorkspace';
 import { toast } from 'sonner';
 
 interface DashboardLayoutPreset {
@@ -95,10 +95,10 @@ interface DashboardLayoutPresetsProps {
 }
 
 const DashboardLayoutPresets: React.FC<DashboardLayoutPresetsProps> = ({ onClose }) => {
-  const { settings, updateSidebarPanelSizes } = useDashboardSettings();
+  const { workspace, updatePanelSizes } = useDashboardWorkspace();
   const [applying, setApplying] = useState<string | null>(null);
 
-  const currentSizes = settings?.sidebar_panel_sizes;
+  const currentSizes = workspace?.panel_sizes;
 
   const isCurrentPreset = (preset: DashboardLayoutPreset) => {
     if (!currentSizes) return false;
@@ -118,7 +118,7 @@ const DashboardLayoutPresets: React.FC<DashboardLayoutPresetsProps> = ({ onClose
     setApplying(preset.id);
     
     try {
-      const success = await updateSidebarPanelSizes(preset.sizes);
+      const success = await updatePanelSizes(preset.sizes);
       
       if (success) {
         toast.success(`Applied "${preset.name}" dashboard layout`);

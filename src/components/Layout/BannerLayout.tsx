@@ -4,21 +4,47 @@ import { PanelGroup, Panel } from 'react-resizable-panels';
 import { ResizableHandle } from '@/components/ui/resizable';
 import { BannerWithTopNav } from '@/components/Dashboard/BannerWithTopNav';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { usePageBannerSettings } from '@/hooks/usePageBannerSettings';
-import { useDashboardPanelSizes } from '@/hooks/useDashboardPanelSizes';
+import { useDashboardWorkspace } from '@/hooks/useDashboardWorkspace';
 import { useEditMode } from '@/contexts/EditModeContext';
 
 const BannerLayout: React.FC = () => {
   const isMobile = useIsMobile();
   const { isDashboardEditMode } = useEditMode();
-  const { panelSizes, handleBannerResize } = useDashboardPanelSizes();
   const { 
-    selectedBannerUrl, 
-    handleImageUpload, 
-    handleVideoUpload, 
-    handleAIGenerate, 
-    handleImageSelect 
-  } = usePageBannerSettings();
+    workspace, 
+    getPanelSizes, 
+    updatePanelSizes,
+    getBannerSettings,
+    updateBannerSelection 
+  } = useDashboardWorkspace();
+  
+  const panelSizes = getPanelSizes();
+  const { url: selectedBannerUrl } = getBannerSettings();
+
+  const handleBannerResize = async (sizes: number[]) => {
+    if (sizes.length >= 2) {
+      await updatePanelSizes({ ...panelSizes, banner: Math.round(sizes[0]) });
+    }
+  };
+
+  const handleImageUpload = async (file: File) => {
+    // Handle image upload logic here
+    console.log('Image upload:', file);
+  };
+
+  const handleVideoUpload = async (file: File) => {
+    // Handle video upload logic here
+    console.log('Video upload:', file);
+  };
+
+  const handleAIGenerate = async () => {
+    // Handle AI generation logic here
+    console.log('AI generate');
+  };
+
+  const handleImageSelect = async (url: string) => {
+    await updateBannerSelection(url, 'image');
+  };
 
   // Mobile layout - simpler vertical stack
   if (isMobile) {
@@ -56,7 +82,7 @@ const BannerLayout: React.FC = () => {
         {/* Banner Panel - Now with proper sizing and save functionality */}
         <Panel
           id="banner-panel"
-          defaultSize={panelSizes.banner}
+          defaultSize={panelSizes.banner || 25}
           minSize={isDashboardEditMode ? 15 : undefined}
           maxSize={isDashboardEditMode ? 50 : undefined}
           className="flex flex-col"

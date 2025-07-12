@@ -1,4 +1,5 @@
 // Dashboard Hooks
+export { useDashboardWorkspace } from './useDashboardWorkspace';
 export { useDashboardSettings } from './useDashboardSettings';
 export { useDashboardLayout } from './useDashboardLayout';
 export { useDashboardPanelSizes } from './useDashboardPanelSizes';

@@ -1,12 +1,11 @@
-import { useDashboardSettings } from './useDashboardSettings';
+import { useDashboardWorkspace } from './useDashboardWorkspace';
 import { useToast } from '@/hooks/use-toast';
 
 export const useDashboardBanner = () => {
-  const { settings, updateBannerSelection } = useDashboardSettings();
+  const { getBannerSettings, updateBannerSelection } = useDashboardWorkspace();
   const { toast } = useToast();
 
-  const selectedBannerUrl = settings?.selected_banner_url || null;
-  const selectedBannerType = settings?.selected_banner_type || null;
+  const { url: selectedBannerUrl, type: selectedBannerType } = getBannerSettings();
 
   const handleImageUpload = (file: File) => {
     // This would be handled by the banner service to upload and return URL

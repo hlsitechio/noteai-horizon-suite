@@ -1,16 +1,16 @@
 import { useCallback, useRef, useEffect, useMemo } from 'react';
-import { useDashboardSettings } from './useDashboardSettings';
+import { useDashboardWorkspace } from './useDashboardWorkspace';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { useDebounceCallback } from '@/lib/performance';
 import { toast } from 'sonner';
 
 export const useDashboardPanelSizes = () => {
-  const { settings, updateSidebarPanelSizes } = useDashboardSettings();
+  const { workspace, updatePanelSizes } = useDashboardWorkspace();
   const { handlePanelSizeSave } = useEditMode();
   const hasUserInteractedRef = useRef(false);
   
   // Get saved panel sizes from settings
-  const settingsPanelSizes = settings?.sidebar_panel_sizes || {};
+  const settingsPanelSizes = workspace?.panel_sizes || {};
   
   const panelSizes = useMemo(() => ({
     banner: settingsPanelSizes.banner || 25,
@@ -26,11 +26,10 @@ export const useDashboardPanelSizes = () => {
     if (import.meta.env.DEV) {
       // Development logging only
       if (import.meta.env.DEV) {
-        console.log('Dashboard panel sizes updated');
-        console.log('Settings loaded state:', !!settings);
+        console.log('Settings loaded state:', !!workspace);
       }
     }
-  }, [JSON.stringify(panelSizes), !!settings]);
+  }, [JSON.stringify(panelSizes), !!workspace]);
 
   // Track when user actually interacts with panels
   const trackUserInteraction = useCallback(() => {
@@ -39,7 +38,7 @@ export const useDashboardPanelSizes = () => {
 
   // Optimized debounced save function
   const debouncedSave = useDebounceCallback(async (newSizes: Record<string, number>) => {
-    const success = await updateSidebarPanelSizes(newSizes);
+    const success = await updatePanelSizes(newSizes);
     
     if (success) {
       toast.success('Dashboard layout saved');
