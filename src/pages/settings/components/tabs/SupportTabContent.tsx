@@ -97,6 +97,15 @@ export const SupportTabContent: React.FC = () => {
     setIsSubmitting(true);
 
     try {
+      console.log('Attempting to call edge function with data:', {
+        subject: formData.subject,
+        department: formData.department,
+        message: formData.message,
+        userId: user.id,
+        workspaceId: workspaceId,
+        userEmail: user.email
+      });
+
       const { data, error } = await supabase.functions.invoke('send-support-email', {
         body: {
           subject: formData.subject,
@@ -108,7 +117,12 @@ export const SupportTabContent: React.FC = () => {
         }
       });
 
-      if (error) throw error;
+      console.log('Edge function response:', { data, error });
+
+      if (error) {
+        console.error('Edge function error details:', error);
+        throw error;
+      }
 
       toast({
         title: "Support request submitted",
