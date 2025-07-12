@@ -117,6 +117,8 @@ const config = {
         'gradient-mesh': 'var(--gradient-mesh)',
         'gradient-glass': 'var(--gradient-glass)',
         'gradient-premium': 'var(--gradient-premium)',
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       transitionDuration: {
         'fast': 'var(--timing-fast)',
