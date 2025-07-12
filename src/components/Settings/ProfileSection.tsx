@@ -74,7 +74,10 @@ const ProfileSection: React.FC = () => {
 
     setIsUpdating(true);
     try {
-      console.log('Updating profile for user:', user.id, 'with name:', name, 'and email:', email);
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('Updating profile for user');
+      }
       
       // Update the user profile in our profiles table
       const { error } = await supabase
@@ -128,7 +131,10 @@ const ProfileSection: React.FC = () => {
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}/avatar-${Date.now()}.${fileExt}`;
 
-      console.log('Uploading avatar for user:', user.id, 'filename:', fileName);
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('Uploading avatar for user');
+      }
 
       // Upload the file to Supabase storage
       const { error: uploadError } = await supabase.storage

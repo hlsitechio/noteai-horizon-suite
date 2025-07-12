@@ -18,13 +18,19 @@ export const useEditModeState = () => {
     }
 
     try {
-      console.log('Loading edit modes for user:', user.id);
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('Loading edit modes for user');
+      }
       
       // Check and clear expired edit modes first
       const wasCleared = await DashboardSettingsService.checkAndClearExpiredEditModes(user.id);
       
       if (wasCleared) {
-        console.log('Edit modes were cleared due to expiration');
+        // Development logging only
+        if (import.meta.env.DEV) {
+          console.log('Edit modes were cleared due to expiration');
+        }
         toast.info('Edit mode automatically disabled due to inactivity');
       }
 
@@ -53,7 +59,10 @@ export const useEditModeState = () => {
       setIsSidebarEditMode(false);
     } finally {
       setIsLoading(false);
-      console.log('Edit mode loading completed');
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('Edit mode loading completed');
+      }
     }
   }, [user?.id]); // Only depend on user.id to prevent unnecessary re-creation
 

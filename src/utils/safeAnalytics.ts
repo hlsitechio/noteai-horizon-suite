@@ -24,7 +24,10 @@ export function safeSendAnalyticsEvent(eventName: string, eventParams?: Record<s
 
 export function safeSetAnalyticsUserId(userId: string) {
   try {
-    console.log('Analytics User ID set:', userId);
+    // Development logging only
+    if (import.meta.env.DEV) {
+      console.log('Analytics User ID set');
+    }
     // gtag('config', 'GA_MEASUREMENT_ID', { user_id: userId });
     // mixpanel.identify(userId);
   } catch (error) {

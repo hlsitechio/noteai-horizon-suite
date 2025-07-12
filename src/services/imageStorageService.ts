@@ -57,7 +57,10 @@ export class ImageStorageService {
       }
 
       const user = session.user;
-      console.log('Uploading image for user:', user.id);
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('Uploading image for user');
+      }
 
       // Create unique file path
       const fileExt = file.name.split('.').pop();

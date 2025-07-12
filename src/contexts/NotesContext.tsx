@@ -56,7 +56,10 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const refreshNotes = async () => {
     if (!user) {
-      console.log('No user, skipping notes refresh');
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('No user, skipping notes refresh');
+      }
       setIsLoading(false);
       return;
     }
@@ -124,7 +127,10 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       // Wait for auth to be ready and ensure user is authenticated
       if (authLoading || !user) {
-        console.log('Auth not ready or no user, skipping real-time setup');
+        // Development logging only
+        if (import.meta.env.DEV) {
+          console.log('Auth not ready or no user, skipping real-time setup');
+        }
         setIsLoading(false);
         isSetupInProgress = false;
         return;
@@ -136,13 +142,19 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       // Prevent multiple subscriptions for the same user
       if (hasSubscribedRef.current && !userChanged) {
-        console.log('Real-time subscription already exists for current user, skipping setup');
+        // Development logging only
+        if (import.meta.env.DEV) {
+          console.log('Real-time subscription already exists for current user, skipping setup');
+        }
         isSetupInProgress = false;
         return;
       }
 
       try {
-        console.log('Setting up real-time subscription for user:', user.id);
+        // Development logging only
+        if (import.meta.env.DEV) {
+          console.log('Setting up real-time subscription');
+        }
         
         // Initial load
         await refreshNotes();

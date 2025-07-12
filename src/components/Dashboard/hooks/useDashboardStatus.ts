@@ -51,7 +51,10 @@ export const useDashboardStatus = () => {
                          (!folders || foldersCount === 0);
 
         if (isNewUser) {
-          console.log('New user detected, initializing dashboard onboarding for:', user.email);
+          // Development logging only
+          if (import.meta.env.DEV) {
+            console.log('New user detected, initializing dashboard onboarding');
+          }
           
           // Only reset for new users
           await supabase
@@ -64,7 +67,10 @@ export const useDashboardStatus = () => {
 
           setIsDashboardInitialized(false);
         } else {
-          console.log('Existing user detected, skipping dashboard reset for:', user.email);
+          // Development logging only
+          if (import.meta.env.DEV) {
+            console.log('Existing user detected, skipping dashboard reset');
+          }
           // For existing users, consider them initialized
           setIsDashboardInitialized(true);
         }

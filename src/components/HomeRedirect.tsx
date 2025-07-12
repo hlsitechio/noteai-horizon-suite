@@ -12,16 +12,18 @@ const HomeRedirect: React.FC = () => {
   const { needsOnboarding, isLoading: onboardingLoading } = useInitialOnboarding();
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Debug logging
-  console.log('HomeRedirect Debug:', {
-    user: user?.email || 'not authenticated',
-    isLoading,
-    isDashboardInitialized,
-    isDashboardLoading,
-    needsOnboarding,
-    onboardingLoading,
-    isHydrated
-  });
+  // Debug logging (development only)
+  if (import.meta.env.DEV) {
+    console.log('HomeRedirect Debug:', {
+      user: user ? 'authenticated' : 'not authenticated',
+      isLoading,
+      isDashboardInitialized,
+      isDashboardLoading,
+      needsOnboarding,
+      onboardingLoading,
+      isHydrated
+    });
+  }
 
   // Ensure hydration is complete before rendering navigation
   useEffect(() => {

@@ -42,7 +42,10 @@ export const useUserProfile = () => {
         setProfile(data.profile);
         
         if (data.created) {
-          console.log('New user profile created:', data.profile.display_name);
+          // Development logging only
+          if (import.meta.env.DEV) {
+            console.log('New user profile created');
+          }
           toast.success(`Welcome ${data.profile.display_name}! Your profile has been created.`);
         }
       }

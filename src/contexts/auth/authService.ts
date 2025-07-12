@@ -29,7 +29,10 @@ export const loginUser = async (email: string, password: string): Promise<boolea
     }
 
     if (data.user && data.session) {
-      console.log('Login successful for user:', data.user.email);
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('Login successful');
+      }
       toast.success('Welcome back!');
       return true;
     }

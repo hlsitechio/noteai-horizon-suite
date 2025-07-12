@@ -35,7 +35,10 @@ export function safeSetAnalyticsUserId(userId: string) {
       window.gtag('config', 'GA_MEASUREMENT_ID', {
         user_id: userId,
       });
-      console.log('Analytics user ID set:', userId);
+      // Development logging only
+      if (import.meta.env.DEV) {
+        console.log('Analytics user ID set');
+      }
     }
   } catch (error) {
     console.warn('Failed to set analytics user ID:', error);

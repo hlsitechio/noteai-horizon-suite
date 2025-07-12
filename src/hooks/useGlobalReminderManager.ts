@@ -12,7 +12,10 @@ export const useGlobalReminderManager = () => {
 
     // The useReminderManager hook already sets up the reminder checking interval
     // We just need to make sure it's running when user is authenticated
-    console.log('Global reminder manager initialized for user:', user.id);
+    // Development logging only
+    if (import.meta.env.DEV) {
+      console.log('Global reminder manager initialized');
+    }
   }, [user]);
 
   return reminderManager;
