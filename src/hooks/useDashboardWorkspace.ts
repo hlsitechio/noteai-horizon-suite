@@ -169,6 +169,46 @@ export const useDashboardWorkspace = () => {
     }
   }, [user?.id]); // Only depend on user ID to prevent unnecessary reloads
 
+  // Media management methods
+  const uploadBanner = useCallback(async (file: File) => {
+    if (!user || !workspace) return false;
+    
+    try {
+      const success = await DashboardWorkspaceService.uploadAndSetBanner(user.id, file, workspace.id);
+      if (success) {
+        // Refresh workspace to get updated banner
+        await loadWorkspace();
+        toast.success('Banner uploaded successfully');
+      } else {
+        toast.error('Failed to upload banner');
+      }
+      return success;
+    } catch (error) {
+      console.error('Failed to upload banner:', error);
+      toast.error('Failed to upload banner');
+      return false;
+    }
+  }, [user, workspace, loadWorkspace]);
+
+  const getWorkspaceMedia = useCallback(async (type?: 'image' | 'video' | 'document' | 'note-attachment') => {
+    if (!user) return [];
+    return await DashboardWorkspaceService.getWorkspaceMedia(user.id, type);
+  }, [user]);
+
+  const getWorkspaceBanners = useCallback(async () => {
+    if (!user) return [];
+    return await DashboardWorkspaceService.getWorkspaceBanners(user.id);
+  }, [user]);
+
+  const cleanupMedia = useCallback(async () => {
+    if (!user) return 0;
+    const deletedCount = await DashboardWorkspaceService.cleanupWorkspaceMedia(user.id);
+    if (deletedCount > 0) {
+      toast.success(`Cleaned up ${deletedCount} unused files`);
+    }
+    return deletedCount;
+  }, [user]);
+
   // Convenience getters
   const getLayoutSettings = useCallback(() => {
     if (!workspace) return { dashboard: {}, sidebar: {} };
@@ -227,6 +267,12 @@ export const useDashboardWorkspace = () => {
     updateUISettings,
     updateEditModes,
     updateWorkspace,
+    
+    // Media management
+    uploadBanner,
+    getWorkspaceMedia,
+    getWorkspaceBanners,
+    cleanupMedia,
     
     // Convenience getters
     getLayoutSettings,

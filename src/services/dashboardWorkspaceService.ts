@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { WorkspaceMediaService } from "./workspaceMediaService";
 
 export interface DashboardWorkspace {
   id: string;
@@ -169,6 +170,25 @@ export class DashboardWorkspaceService {
     });
   }
 
+  // Upload and set new banner
+  static async uploadAndSetBanner(
+    userId: string,
+    file: File,
+    workspaceId: string
+  ): Promise<boolean> {
+    try {
+      const result = await WorkspaceMediaService.uploadBanner(file, userId, workspaceId);
+      
+      if (result) {
+        return await this.updateBannerSettings(userId, result.url, result.type);
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Error uploading and setting banner:', error);
+      return false;
+    }
+  }
   static async updatePanelSizes(
     userId: string,
     panelSizes: Record<string, number>
@@ -249,5 +269,20 @@ export class DashboardWorkspaceService {
       console.error('Error ensuring workspace exists:', error);
       return false;
     }
+  }
+
+  // Get workspace media files
+  static async getWorkspaceMedia(userId: string, type?: 'image' | 'video' | 'document' | 'note-attachment') {
+    return await WorkspaceMediaService.getUserMedia(userId, type);
+  }
+
+  // Get workspace banners for selection
+  static async getWorkspaceBanners(userId: string) {
+    return await WorkspaceMediaService.getWorkspaceBanners(userId);
+  }
+
+  // Clean up unused media files
+  static async cleanupWorkspaceMedia(userId: string): Promise<number> {
+    return await WorkspaceMediaService.cleanupOrphanedFiles(userId);
   }
 }
