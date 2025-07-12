@@ -11,6 +11,7 @@ import { DataTabContent } from './tabs/DataTabContent';
 import { DownloadTabContent } from './tabs/DownloadTabContent';
 import { AboutTabContent } from './tabs/AboutTabContent';
 import { OnboardingTabContent } from './tabs/OnboardingTabContent';
+import { SupportTabContent } from './tabs/SupportTabContent';
 
 interface SettingsContentProps {
   activeTab: string;
@@ -38,6 +39,7 @@ export const SettingsContent: React.FC<SettingsContentProps> = ({ activeTab }) =
       <DataTabContent />
       <DownloadTabContent />
       <OnboardingTabContent />
+      <SupportTabContent />
       <AboutTabContent />
     </div>
   );
