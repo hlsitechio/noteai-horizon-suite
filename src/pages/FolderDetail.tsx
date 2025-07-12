@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useFolders } from '../contexts/FoldersContext';
-import { useNotes } from '../contexts/NotesContext';
+import { useOptimizedNotes } from '../contexts/OptimizedNotesContext';
 import { Folder as FolderType } from '../types/folder';
 import { Note } from '../types/note';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,7 +23,7 @@ const FolderDetail: React.FC = () => {
   const { folderId } = useParams<{ folderId: string }>();
   const navigate = useNavigate();
   const { folders } = useFolders();
-  const { notes, createNote, setCurrentNote } = useNotes();
+  const { notes, createNote, setSelectedNote } = useOptimizedNotes();
   const [folder, setFolder] = useState<FolderType | null>(null);
   const [folderNotes, setFolderNotes] = useState<Note[]>([]);
 
@@ -35,7 +35,7 @@ const FolderDetail: React.FC = () => {
         const notesInFolder = notes.filter(note => note.folder_id === folderId);
         setFolderNotes(notesInFolder);
       } else {
-        navigate('/app/notes');
+        navigate('/app/explorer');
       }
     }
   }, [folderId, folders, notes, navigate]);
@@ -52,13 +52,13 @@ const FolderDetail: React.FC = () => {
       folder_id: folder.id
     });
     
-    setCurrentNote(newNote);
-    navigate('/app/editor');
+    setSelectedNote(newNote);
+    navigate(`/app/editor/${newNote.id}`);
   };
 
   const handleNoteClick = (note: Note) => {
-    setCurrentNote(note);
-    navigate(`/app/notes?note=${note.id}`);
+    setSelectedNote(note);
+    navigate(`/app/editor/${note.id}`);
   };
 
   if (!folder) {
@@ -80,11 +80,11 @@ const FolderDetail: React.FC = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/app/notes')}
+            onClick={() => navigate('/app/explorer')}
             className="flex items-center"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Notes
+            Back to Explorer
           </Button>
           <div className="flex items-center space-x-3">
             <div 
