@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Grid3X3, List, MoreHorizontal, SortAsc, Filter, Star, Clock, FileText, Folder, Plus, ArrowLeft, ArrowRight, ChevronDown, Eye, EyeOff } from 'lucide-react';
+import { Search, Grid3X3, List, MoreHorizontal, SortAsc, Filter, Star, Clock, FileText, Folder, Plus, ArrowLeft, ArrowRight, ChevronDown, Eye, EyeOff, Calendar, Heart } from 'lucide-react';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useFolders } from '@/contexts/FoldersContext';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
@@ -15,6 +15,8 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/componen
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { CreateItemDialog } from '@/components/Explorer/CreateItemDialog';
+import { CreateItemDropdown } from '@/components/Explorer/CreateItemDropdown';
 
 type ViewMode = 'extra-large' | 'large' | 'medium' | 'small' | 'list' | 'details';
 type SortBy = 'name' | 'modified' | 'created' | 'size' | 'category';
@@ -337,15 +339,43 @@ const NotesExplorer: React.FC = () => {
             
             <Separator orientation="vertical" className="h-6" />
             
-            <Button size="sm" variant="ghost" onClick={() => navigate('/app/editor')}>
-              <Plus className="w-4 h-4 mr-2" />
-              New Note
-            </Button>
+            <CreateItemDialog type="note">
+              <Button size="sm" variant="ghost">
+                <Plus className="w-4 h-4 mr-2" />
+                New Note
+              </Button>
+            </CreateItemDialog>
             
-            <Button size="sm" variant="ghost">
-              <Folder className="w-4 h-4 mr-2" />
-              New Folder
-            </Button>
+            <CreateItemDialog type="folder">
+              <Button size="sm" variant="ghost">
+                <Folder className="w-4 h-4 mr-2" />
+                New Folder
+              </Button>
+            </CreateItemDialog>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" variant="ghost">
+                  <Plus className="w-4 h-4 mr-2" />
+                  More
+                  <ChevronDown className="w-3 h-3 ml-1" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <CreateItemDropdown type="favorite">
+                  <DropdownMenuItem>
+                    <Star className="w-4 h-4 mr-2" />
+                    New Favorite
+                  </DropdownMenuItem>
+                </CreateItemDropdown>
+                <CreateItemDropdown type="event">
+                  <DropdownMenuItem>
+                    <Calendar className="w-4 h-4 mr-2" />
+                    New Event
+                  </DropdownMenuItem>
+                </CreateItemDropdown>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Center - Search */}
