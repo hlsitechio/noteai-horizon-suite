@@ -54,20 +54,24 @@
     --info: 199.89 89% 48%;
     --info-foreground: 210 40% 98%;
     
-    /* Premium gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(217 91% 70%));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--accent)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--accent) / 0.03));
-    --gradient-premium: linear-gradient(135deg, hsl(217 91% 60%), hsl(258 90% 66%), hsl(160 84% 50%));
-    --gradient-mesh: conic-gradient(from 180deg at 50% 50%, hsl(217 91% 60%) 0deg, hsl(258 90% 66%) 120deg, hsl(160 84% 50%) 240deg, hsl(217 91% 60%) 360deg);
-    --gradient-glass: linear-gradient(135deg, hsl(var(--background) / 0.7), hsl(var(--background) / 0.3));
+    /* Premium gradients with intensity control */
+    --gradient-intensity: 1;
+    --gradient-opacity-multiplier: 1;
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary) / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))), hsl(217 91% 70% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary) / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))), hsl(var(--accent) / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary) / calc(var(--gradient-intensity) * 0.08)), hsl(var(--accent) / calc(var(--gradient-intensity) * 0.03)));
+    --gradient-premium: linear-gradient(135deg, hsl(217 91% 60% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))), hsl(258 90% 66% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))), hsl(160 84% 50% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))));
+    --gradient-mesh: conic-gradient(from 180deg at 50% 50%, hsl(217 91% 60% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 0deg, hsl(258 90% 66% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 120deg, hsl(160 84% 50% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 240deg, hsl(217 91% 60% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 360deg);
+    --gradient-glass: linear-gradient(135deg, hsl(var(--background) / calc(var(--gradient-intensity) * 0.7)), hsl(var(--background) / calc(var(--gradient-intensity) * 0.3)));
     
-    /* Premium shadows */
-    --shadow-premium: 0 25px 50px -12px hsl(var(--primary) / 0.3);
-    --shadow-elegant: 0 15px 35px -5px hsl(var(--foreground) / 0.12);
-    --shadow-glow: 0 0 60px hsl(var(--primary) / 0.4);
-    --shadow-soft: 0 4px 20px hsl(var(--foreground) / 0.08);
-    --shadow-inner: inset 0 2px 10px hsl(var(--foreground) / 0.1);
+    /* Premium shadows with intensity control */
+    --glow-intensity: 1;
+    --shadow-premium: 0 calc(25px * var(--glow-intensity)) calc(50px * var(--glow-intensity)) calc(-12px * var(--glow-intensity)) hsl(var(--primary) / calc(0.3 * var(--glow-intensity)));
+    --shadow-elegant: 0 calc(15px * var(--glow-intensity)) calc(35px * var(--glow-intensity)) calc(-5px * var(--glow-intensity)) hsl(var(--foreground) / calc(0.12 * var(--glow-intensity)));
+    --shadow-glow: 0 0 calc(60px * var(--glow-intensity)) hsl(var(--primary) / calc(0.4 * var(--glow-intensity)));
+    --shadow-soft: 0 calc(4px * var(--glow-intensity)) calc(20px * var(--glow-intensity)) hsl(var(--foreground) / calc(0.08 * var(--glow-intensity)));
+    --shadow-inner: inset 0 calc(2px * var(--glow-intensity)) calc(10px * var(--glow-intensity)) hsl(var(--foreground) / calc(0.1 * var(--glow-intensity)));
+    --shadow-primary-glow: 0 0 calc(40px * var(--glow-intensity)) hsl(var(--primary) / calc(0.5 * var(--glow-intensity)));
     
     /* Premium typography */
     --font-size-hero: clamp(3rem, 8vw, 6rem);
@@ -140,23 +144,27 @@
     --info: 217 91% 60%;
     --info-foreground: 220 13% 9%;
     
-    /* Quantum Aurora Gradients - Revolutionary Color Fusion */
-    --gradient-primary: linear-gradient(135deg, hsl(165 100% 65%), hsl(45 100% 70%));
-    --gradient-secondary: linear-gradient(135deg, hsl(45 100% 70%), hsl(290 100% 75%));
-    --gradient-hero: linear-gradient(135deg, hsl(165 100% 65% / 0.08), hsl(45 100% 70% / 0.05));
-    --gradient-premium: linear-gradient(135deg, hsl(165 100% 65%), hsl(45 100% 70%), hsl(290 100% 75%));
-    --gradient-mesh: conic-gradient(from 180deg at 50% 50%, hsl(165 100% 65%) 0deg, hsl(45 100% 70%) 120deg, hsl(290 100% 75%) 240deg, hsl(165 100% 65%) 360deg);
-    --gradient-glass: linear-gradient(135deg, hsl(var(--background) / 0.95), hsl(var(--background) / 0.7));
-    --gradient-quantum: radial-gradient(circle at 30% 70%, hsl(165 100% 65% / 0.4), transparent 60%), radial-gradient(circle at 70% 30%, hsl(45 100% 70% / 0.4), transparent 60%), radial-gradient(circle at 50% 50%, hsl(290 100% 75% / 0.3), transparent 70%);
-    --gradient-aurora: linear-gradient(45deg, hsl(165 100% 65% / 0.15), hsl(45 100% 70% / 0.15), hsl(290 100% 75% / 0.15));
-    --gradient-holographic: linear-gradient(135deg, hsl(165 100% 65%), hsl(200 100% 70%), hsl(45 100% 70%), hsl(290 100% 75%), hsl(165 100% 65%));
+    /* Quantum Aurora Gradients with intensity control */
+    --gradient-intensity: 1;
+    --gradient-opacity-multiplier: 1;
+    --gradient-primary: linear-gradient(135deg, hsl(165 100% 65% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))), hsl(45 100% 70% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))));
+    --gradient-secondary: linear-gradient(135deg, hsl(45 100% 70% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))), hsl(290 100% 75% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))));
+    --gradient-hero: linear-gradient(135deg, hsl(165 100% 65% / calc(var(--gradient-intensity) * 0.08)), hsl(45 100% 70% / calc(var(--gradient-intensity) * 0.05)));
+    --gradient-premium: linear-gradient(135deg, hsl(165 100% 65% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))), hsl(45 100% 70% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))), hsl(290 100% 75% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))));
+    --gradient-mesh: conic-gradient(from 180deg at 50% 50%, hsl(165 100% 65% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 0deg, hsl(45 100% 70% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 120deg, hsl(290 100% 75% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 240deg, hsl(165 100% 65% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 360deg);
+    --gradient-glass: linear-gradient(135deg, hsl(var(--background) / calc(var(--gradient-intensity) * 0.95)), hsl(var(--background) / calc(var(--gradient-intensity) * 0.7)));
+    --gradient-quantum: radial-gradient(circle at 30% 70%, hsl(165 100% 65% / calc(var(--gradient-intensity) * 0.4)), transparent 60%), radial-gradient(circle at 70% 30%, hsl(45 100% 70% / calc(var(--gradient-intensity) * 0.4)), transparent 60%), radial-gradient(circle at 50% 50%, hsl(290 100% 75% / calc(var(--gradient-intensity) * 0.3)), transparent 70%);
+    --gradient-aurora: linear-gradient(45deg, hsl(165 100% 65% / calc(var(--gradient-intensity) * 0.15)), hsl(45 100% 70% / calc(var(--gradient-intensity) * 0.15)), hsl(290 100% 75% / calc(var(--gradient-intensity) * 0.15)));
+    --gradient-holographic: linear-gradient(135deg, hsl(165 100% 65% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))), hsl(200 100% 70% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))), hsl(45 100% 70% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))), hsl(290 100% 75% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))), hsl(165 100% 65% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))));
     
-    /* Premium dark shadows */
-    --shadow-premium: 0 30px 60px -12px hsl(var(--primary) / 0.5);
-    --shadow-elegant: 0 20px 40px -5px hsl(var(--foreground) / 0.15);
-    --shadow-glow: 0 0 80px hsl(var(--primary) / 0.6);
-    --shadow-soft: 0 6px 25px hsl(var(--foreground) / 0.12);
-    --shadow-inner: inset 0 2px 10px hsl(var(--foreground) / 0.15);
+    /* Premium dark shadows with intensity control */
+    --glow-intensity: 1;
+    --shadow-premium: 0 calc(30px * var(--glow-intensity)) calc(60px * var(--glow-intensity)) calc(-12px * var(--glow-intensity)) hsl(var(--primary) / calc(0.5 * var(--glow-intensity)));
+    --shadow-elegant: 0 calc(20px * var(--glow-intensity)) calc(40px * var(--glow-intensity)) calc(-5px * var(--glow-intensity)) hsl(var(--foreground) / calc(0.15 * var(--glow-intensity)));
+    --shadow-glow: 0 0 calc(80px * var(--glow-intensity)) hsl(var(--primary) / calc(0.6 * var(--glow-intensity)));
+    --shadow-soft: 0 calc(6px * var(--glow-intensity)) calc(25px * var(--glow-intensity)) hsl(var(--foreground) / calc(0.12 * var(--glow-intensity)));
+    --shadow-inner: inset 0 calc(2px * var(--glow-intensity)) calc(10px * var(--glow-intensity)) hsl(var(--foreground) / calc(0.15 * var(--glow-intensity)));
+    --shadow-primary-glow: 0 0 calc(50px * var(--glow-intensity)) hsl(var(--primary) / calc(0.7 * var(--glow-intensity)));
   }
 }
 

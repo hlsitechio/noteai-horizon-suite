@@ -28,16 +28,54 @@ const GlowEffectSection: React.FC = () => {
   const applyGlowEffects = (intensity: number) => {
     const root = document.documentElement;
     
-    // Set global glow intensity variable
+    // Core intensity variables - controls all gradient and glow effects
     root.style.setProperty('--glow-intensity', intensity.toString());
+    root.style.setProperty('--gradient-intensity', intensity.toString());
+    root.style.setProperty('--gradient-opacity-multiplier', intensity.toString());
+    
+    // Extended glow properties for fine-tuned control
     root.style.setProperty('--glow-opacity', (intensity * 0.8).toString());
     root.style.setProperty('--glow-blur', `${intensity * 20}px`);
     root.style.setProperty('--glow-spread', `${intensity * 10}px`);
     
-    // Apply to various shadow variables used across the dashboard
-    root.style.setProperty('--shadow-glow', `0 0 ${intensity * 40}px hsl(var(--primary) / ${intensity * 0.3})`);
-    root.style.setProperty('--shadow-elegant', `0 10px 30px -10px hsl(var(--primary) / ${intensity * 0.3})`);
-    root.style.setProperty('--shadow-primary-glow', `0 0 ${intensity * 25}px hsl(var(--primary) / ${intensity * 0.4})`);
+    // Dynamic shadow system - all shadow variables now respond to intensity
+    const shadowIntensityFactor = Math.max(0.1, intensity); // Prevent shadows from disappearing completely
+    root.style.setProperty('--shadow-glow', `0 0 ${shadowIntensityFactor * 60}px hsl(var(--primary) / ${shadowIntensityFactor * 0.4})`);
+    root.style.setProperty('--shadow-elegant', `0 ${shadowIntensityFactor * 15}px ${shadowIntensityFactor * 35}px ${-shadowIntensityFactor * 5}px hsl(var(--foreground) / ${shadowIntensityFactor * 0.12})`);
+    root.style.setProperty('--shadow-premium', `0 ${shadowIntensityFactor * 25}px ${shadowIntensityFactor * 50}px ${-shadowIntensityFactor * 12}px hsl(var(--primary) / ${shadowIntensityFactor * 0.3})`);
+    root.style.setProperty('--shadow-soft', `0 ${shadowIntensityFactor * 4}px ${shadowIntensityFactor * 20}px hsl(var(--foreground) / ${shadowIntensityFactor * 0.08})`);
+    root.style.setProperty('--shadow-inner', `inset 0 ${shadowIntensityFactor * 2}px ${shadowIntensityFactor * 10}px hsl(var(--foreground) / ${shadowIntensityFactor * 0.1})`);
+    root.style.setProperty('--shadow-primary-glow', `0 0 ${shadowIntensityFactor * 40}px hsl(var(--primary) / ${shadowIntensityFactor * 0.5})`);
+    
+    // Update special effect intensities
+    updateHolographicEffects(intensity);
+    updateAnimationIntensities(intensity);
+  };
+
+  const updateHolographicEffects = (intensity: number) => {
+    const root = document.documentElement;
+    
+    // Holographic and neural effects
+    const neuralIntensity = intensity * 0.6; // Slightly subdued for neural effects
+    root.style.setProperty('--neural-glow-intensity', neuralIntensity.toString());
+    root.style.setProperty('--holographic-opacity', (intensity * 0.8).toString());
+    
+    // Update neural node intensities
+    const neuralNodes = document.querySelectorAll('.neural-node');
+    neuralNodes.forEach(node => {
+      (node as HTMLElement).style.setProperty('--node-intensity', neuralIntensity.toString());
+    });
+  };
+
+  const updateAnimationIntensities = (intensity: number) => {
+    const root = document.documentElement;
+    
+    // Pulse and glow animations
+    root.style.setProperty('--pulse-intensity', intensity.toString());
+    root.style.setProperty('--glow-animation-intensity', intensity.toString());
+    
+    // Border glow animations
+    root.style.setProperty('--border-glow-intensity', (intensity * 0.7).toString());
   };
 
   const handleGlowChange = (value: number[]) => {
@@ -49,60 +87,130 @@ const GlowEffectSection: React.FC = () => {
     setAppliedIntensity(glowIntensity);
     applyGlowEffects(glowIntensity / 100);
     
-    toast.success('Glow effects applied successfully!', {
-      description: `Glow intensity set to ${glowIntensity}%`
+    toast.success('Gradient & glow effects applied successfully!', {
+      description: `Effect intensity set to ${glowIntensity}%`
     });
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5" />
-          Glow Effects
-        </CardTitle>
-        <CardDescription>
-          Control the intensity of glowing effects across the dashboard
-        </CardDescription>
+    <Card className="w-full">
+      <CardHeader className="space-y-2">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Sparkles className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <CardTitle className="text-lg font-semibold">
+              Gradient & Glow Effects
+            </CardTitle>
+            <CardDescription className="text-sm">
+              Control all gradient and glow effects across the entire dashboard
+            </CardDescription>
+          </div>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-3">
+      
+      <CardContent className="space-y-6">
+        {/* Intensity Slider */}
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <Label htmlFor="glow-slider">Glow Intensity</Label>
+            <Label htmlFor="effect-intensity" className="text-sm font-medium">
+              Effect Intensity
+            </Label>
             <span className="text-sm text-muted-foreground font-mono">
               {glowIntensity}%
             </span>
           </div>
+          
           <Slider
-            id="glow-slider"
+            id="effect-intensity"
             min={0}
-            max={100}
+            max={150}
             step={5}
             value={[glowIntensity]}
             onValueChange={handleGlowChange}
             className="w-full"
           />
+          
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>Minimal</span>
-            <span>Maximum</span>
+            <span>Disabled</span>
+            <span>Normal</span>
+            <span>Enhanced</span>
           </div>
         </div>
-        
-        {/* Preview indicator */}
-        <div className="pt-2">
-          <div className="text-xs text-muted-foreground mb-2">Preview:</div>
-          <div 
-            className="w-full h-8 rounded-md border-2 border-primary/20 bg-primary/10 relative overflow-hidden"
-            style={{
-              boxShadow: `0 0 ${20 * (glowIntensity / 100)}px hsl(var(--primary) / ${0.3 * (glowIntensity / 100)})`
-            }}
-          >
+
+        {/* Effects Preview Grid */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium">Effect Preview</Label>
+          <div className="grid grid-cols-2 gap-3">
+            {/* Gradient Preview */}
             <div 
-              className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent"
+              className="relative h-16 rounded-lg border border-border/50 flex items-center justify-center transition-all duration-300"
               style={{
-                opacity: glowIntensity / 100
+                background: `linear-gradient(135deg, hsl(var(--primary) / ${glowIntensity * 0.01}), hsl(var(--accent) / ${glowIntensity * 0.007}))`
               }}
-            />
+            >
+              <span className="text-xs font-medium text-center">Gradients</span>
+            </div>
+
+            {/* Glow Preview */}
+            <div 
+              className="relative h-16 rounded-lg border border-border/50 bg-card flex items-center justify-center transition-all duration-300"
+              style={{
+                boxShadow: `0 0 ${glowIntensity * 0.3}px hsl(var(--primary) / ${glowIntensity * 0.008})`
+              }}
+            >
+              <Sparkles 
+                className="h-5 w-5 text-primary transition-all duration-300" 
+                style={{
+                  filter: `drop-shadow(0 0 ${glowIntensity * 0.15}px hsl(var(--primary) / ${glowIntensity * 0.01}))`
+                }}
+              />
+            </div>
+
+            {/* Shadow Preview */}
+            <div 
+              className="relative h-16 rounded-lg bg-card border border-border/50 flex items-center justify-center transition-all duration-300"
+              style={{
+                boxShadow: `0 ${glowIntensity * 0.1}px ${glowIntensity * 0.2}px hsl(var(--foreground) / ${glowIntensity * 0.002})`
+              }}
+            >
+              <span className="text-xs font-medium">Shadows</span>
+            </div>
+
+            {/* Premium Effects Preview */}
+            <div 
+              className="relative h-16 rounded-lg border border-primary/20 flex items-center justify-center transition-all duration-300"
+              style={{
+                background: `var(--gradient-glass)`,
+                backdropFilter: `blur(${glowIntensity * 0.1}px)`,
+                boxShadow: `0 0 ${glowIntensity * 0.2}px hsl(var(--primary) / ${glowIntensity * 0.005})`
+              }}
+            >
+              <span className="text-xs font-medium">Premium</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Effect Status Indicators */}
+        <div className="grid grid-cols-3 gap-2 text-xs">
+          <div className="text-center p-2 rounded bg-muted/50">
+            <div className="font-medium text-foreground">Gradients</div>
+            <div className="text-muted-foreground">
+              {glowIntensity === 0 ? 'Off' : glowIntensity < 50 ? 'Subtle' : glowIntensity < 100 ? 'Normal' : 'Enhanced'}
+            </div>
+          </div>
+          <div className="text-center p-2 rounded bg-muted/50">
+            <div className="font-medium text-foreground">Shadows</div>
+            <div className="text-muted-foreground">
+              {glowIntensity === 0 ? 'Minimal' : glowIntensity < 100 ? 'Active' : 'Intense'}
+            </div>
+          </div>
+          <div className="text-center p-2 rounded bg-muted/50">
+            <div className="font-medium text-foreground">Effects</div>
+            <div className="text-muted-foreground">
+              {glowIntensity === 0 ? 'Disabled' : glowIntensity > 100 ? 'Premium' : 'Standard'}
+            </div>
           </div>
         </div>
 
@@ -119,7 +227,7 @@ const GlowEffectSection: React.FC = () => {
           </Button>
           {hasUnappliedChanges && (
             <p className="text-xs text-muted-foreground mt-2 text-center">
-              Changes will be applied to all dashboard glow effects
+              Changes will affect all gradients, shadows, and glow effects across the dashboard
             </p>
           )}
         </div>
