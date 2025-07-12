@@ -24,13 +24,13 @@ export const warmThemes: PresetTheme[] = [
         primary: '15 85% 65%', // Brighter orange
         secondary: '25 80% 60%', // Adjusted orange-red
         accent: '45 90% 70%', // Brighter yellow-orange
-        background: '15 40% 8%', // Dark warm
-        foreground: '30 20% 90%', // Light warm
-        card: '15 35% 12%',
-        'card-foreground': '30 20% 90%',
-        muted: '15 30% 15%',
-        'muted-foreground': '30 15% 70%',
-        border: '15 25% 20%'
+        background: '15 25% 15%', // Softer dark warm (was 8%)
+        foreground: '30 15% 85%', // Softer light warm (was 90%)
+        card: '15 20% 18%', // Softer card background (was 12%)
+        'card-foreground': '30 15% 85%', // Consistent with foreground
+        muted: '15 20% 22%', // Less harsh muted (was 15%)
+        'muted-foreground': '30 12% 65%', // Softer muted text (was 70%)
+        border: '15 18% 28%' // Softer borders (was 20%)
       }
     },
     preview: 'linear-gradient(135deg, hsl(15 85% 60%), hsl(25 80% 55%), hsl(45 90% 65%))'
@@ -57,13 +57,13 @@ export const warmThemes: PresetTheme[] = [
         primary: '25 55% 55%', // Lighter coffee for dark
         secondary: '20 50% 50%', // Medium brown
         accent: '30 70% 60%', // Light brown accent
-        background: '25 35% 8%', // Dark coffee
-        foreground: '25 15% 90%', // Light cream
-        card: '25 30% 12%',
-        'card-foreground': '25 15% 90%',
-        muted: '25 25% 15%',
-        'muted-foreground': '25 15% 70%',
-        border: '25 25% 20%'
+        background: '25 22% 16%', // Softer dark coffee (was 8%)
+        foreground: '25 12% 82%', // Softer light cream (was 90%)
+        card: '25 18% 20%', // Softer card (was 12%)
+        'card-foreground': '25 12% 82%', // Consistent with foreground
+        muted: '25 16% 25%', // Less harsh muted (was 15%)
+        'muted-foreground': '25 10% 62%', // Softer muted text (was 70%)
+        border: '25 15% 30%' // Softer borders (was 20%)
       }
     },
     preview: 'linear-gradient(135deg, hsl(25 50% 35%), hsl(20 45% 30%), hsl(30 65% 50%))'
@@ -90,13 +90,13 @@ export const warmThemes: PresetTheme[] = [
         primary: '40 85% 65%', // Brighter gold for dark
         secondary: '35 80% 60%', // Adjusted orange-gold
         accent: '50 90% 70%', // Bright yellow accent
-        background: '40 35% 8%', // Dark golden brown
-        foreground: '40 20% 90%', // Light cream
-        card: '40 30% 12%',
-        'card-foreground': '40 20% 90%',
-        muted: '40 25% 15%',
-        'muted-foreground': '40 15% 70%',
-        border: '40 25% 20%'
+        background: '40 20% 16%', // Softer dark golden brown (was 8%)
+        foreground: '40 15% 84%', // Softer light cream (was 90%)
+        card: '40 16% 20%', // Softer card (was 12%)
+        'card-foreground': '40 15% 84%', // Consistent with foreground
+        muted: '40 14% 26%', // Less harsh muted (was 15%)
+        'muted-foreground': '40 12% 64%', // Softer muted text (was 70%)
+        border: '40 12% 32%' // Softer borders (was 20%)
       }
     },
     preview: 'linear-gradient(135deg, hsl(40 85% 55%), hsl(35 80% 50%), hsl(50 90% 60%))'

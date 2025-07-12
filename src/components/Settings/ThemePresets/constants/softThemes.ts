@@ -24,13 +24,13 @@ export const softThemes: PresetTheme[] = [
         primary: '330 70% 70%', // Brighter pink for dark
         secondary: '340 65% 65%', // Adjusted rose
         accent: '320 80% 75%', // Bright accent pink
-        background: '330 35% 8%', // Dark pink
-        foreground: '330 20% 90%', // Light pink-gray
-        card: '330 30% 12%',
-        'card-foreground': '330 20% 90%',
-        muted: '330 25% 15%',
-        'muted-foreground': '330 15% 70%',
-        border: '330 25% 20%'
+        background: '330 22% 16%', // Softer dark pink (was 8%)
+        foreground: '330 15% 84%', // Softer light pink-gray (was 90%)
+        card: '330 18% 20%', // Softer card (was 12%)
+        'card-foreground': '330 15% 84%', // Consistent with foreground
+        muted: '330 16% 26%', // Less harsh muted (was 15%)
+        'muted-foreground': '330 12% 64%', // Softer muted text (was 70%)
+        border: '330 14% 32%' // Softer borders (was 20%)
       }
     },
     preview: 'linear-gradient(135deg, hsl(330 70% 60%), hsl(340 65% 55%), hsl(320 80% 65%))'
@@ -57,13 +57,13 @@ export const softThemes: PresetTheme[] = [
         primary: '250 60% 70%', // Brighter lavender
         secondary: '240 55% 65%', // Adjusted purple-blue
         accent: '260 70% 75%', // Bright purple accent
-        background: '250 35% 8%', // Dark lavender
-        foreground: '250 15% 90%', // Light lavender-gray
-        card: '250 30% 12%',
-        'card-foreground': '250 15% 90%',
-        muted: '250 25% 15%',
-        'muted-foreground': '250 15% 70%',
-        border: '250 25% 20%'
+        background: '250 22% 16%', // Softer dark lavender (was 8%)
+        foreground: '250 12% 84%', // Softer light lavender-gray (was 90%)
+        card: '250 18% 20%', // Softer card (was 12%)
+        'card-foreground': '250 12% 84%', // Consistent with foreground
+        muted: '250 16% 26%', // Less harsh muted (was 15%)
+        'muted-foreground': '250 10% 64%', // Softer muted text (was 70%)
+        border: '250 14% 32%' // Softer borders (was 20%)
       }
     },
     preview: 'linear-gradient(135deg, hsl(250 60% 60%), hsl(240 55% 55%), hsl(260 70% 65%))'

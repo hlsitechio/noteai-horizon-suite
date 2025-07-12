@@ -24,13 +24,13 @@ export const natureThemes: PresetTheme[] = [
         primary: '200 80% 60%', // Brighter ocean blue for dark
         secondary: '210 70% 55%', // Adjusted blue
         accent: '190 85% 65%', // Brighter cyan
-        background: '210 40% 8%', // Dark blue-gray
-        foreground: '210 15% 90%', // Light blue-gray
-        card: '210 35% 12%',
-        'card-foreground': '210 15% 90%',
-        muted: '210 30% 15%',
-        'muted-foreground': '210 15% 70%',
-        border: '210 25% 20%'
+        background: '210 25% 16%', // Softer dark blue-gray (was 8%)
+        foreground: '210 12% 84%', // Softer light blue-gray (was 90%)
+        card: '210 20% 20%', // Softer card (was 12%)
+        'card-foreground': '210 12% 84%', // Consistent with foreground
+        muted: '210 18% 26%', // Less harsh muted (was 15%)
+        'muted-foreground': '210 10% 64%', // Softer muted text (was 70%)
+        border: '210 15% 32%' // Softer borders (was 20%)
       }
     },
     preview: 'linear-gradient(135deg, hsl(200 80% 50%), hsl(210 70% 45%), hsl(190 85% 55%))'
@@ -57,13 +57,13 @@ export const natureThemes: PresetTheme[] = [
         primary: '140 65% 55%', // Brighter forest green
         secondary: '120 60% 50%', // Adjusted green
         accent: '160 70% 60%', // Brighter mint
-        background: '140 40% 8%', // Dark green
-        foreground: '140 10% 90%', // Light green-gray
-        card: '140 35% 12%',
-        'card-foreground': '140 10% 90%',
-        muted: '140 30% 15%',
-        'muted-foreground': '140 10% 70%',
-        border: '140 25% 20%'
+        background: '140 24% 16%', // Softer dark green (was 8%)
+        foreground: '140 8% 84%', // Softer light green-gray (was 90%)
+        card: '140 20% 20%', // Softer card (was 12%)
+        'card-foreground': '140 8% 84%', // Consistent with foreground
+        muted: '140 16% 26%', // Less harsh muted (was 15%)
+        'muted-foreground': '140 6% 64%', // Softer muted text (was 70%)
+        border: '140 12% 32%' // Softer borders (was 20%)
       }
     },
     preview: 'linear-gradient(135deg, hsl(140 65% 45%), hsl(120 60% 40%), hsl(160 70% 50%))'
@@ -90,13 +90,13 @@ export const natureThemes: PresetTheme[] = [
         primary: '170 70% 55%', // Brighter emerald
         secondary: '160 65% 50%', // Adjusted teal
         accent: '180 75% 60%', // Bright teal accent
-        background: '170 40% 8%', // Dark emerald
-        foreground: '170 15% 90%', // Light teal-gray
-        card: '170 35% 12%',
-        'card-foreground': '170 15% 90%',
-        muted: '170 30% 15%',
-        'muted-foreground': '170 15% 70%',
-        border: '170 25% 20%'
+        background: '170 25% 16%', // Softer dark emerald (was 8%)
+        foreground: '170 12% 84%', // Softer light teal-gray (was 90%)
+        card: '170 20% 20%', // Softer card (was 12%)
+        'card-foreground': '170 12% 84%', // Consistent with foreground
+        muted: '170 18% 26%', // Less harsh muted (was 15%)
+        'muted-foreground': '170 10% 64%', // Softer muted text (was 70%)
+        border: '170 15% 32%' // Softer borders (was 20%)
       }
     },
     preview: 'linear-gradient(135deg, hsl(170 70% 45%), hsl(160 65% 40%), hsl(180 75% 50%))'
