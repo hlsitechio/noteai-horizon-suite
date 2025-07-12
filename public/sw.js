@@ -131,6 +131,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Also skip app routes to prevent interference with React Router
+  if (url.pathname.startsWith('/app/')) {
+    return;
+  }
+
   // Circuit breaker - prevent infinite loops
   const requestKey = `sw_request_${url.pathname}`;
   const requestCount = parseInt(self.globalThis[requestKey] || '0');
