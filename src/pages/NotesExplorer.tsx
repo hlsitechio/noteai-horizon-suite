@@ -18,6 +18,7 @@ import { Card } from '@/components/ui/card';
 import { CreateItemDialog } from '@/components/Explorer/CreateItemDialog';
 import { CreateItemDropdown } from '@/components/Explorer/CreateItemDropdown';
 import { PreviewPanel } from '@/components/Explorer/PreviewPanel';
+import { FolderTree } from '@/components/Explorer/FolderTree';
 
 type ViewMode = 'extra-large' | 'large' | 'medium' | 'small' | 'list' | 'details';
 type SortBy = 'name' | 'modified' | 'created' | 'size' | 'category';
@@ -36,7 +37,9 @@ const NotesExplorer: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [previewVisible, setPreviewVisible] = useState(true);
+  const [treeVisible, setTreeVisible] = useState(true);
   const [currentPath, setCurrentPath] = useState('/');
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
 
   useQuantumAIIntegration({
     page: '/app/explorer',
@@ -52,7 +55,7 @@ const NotesExplorer: React.FC = () => {
     }
   });
 
-  // Combined and sorted items
+  // Combined and sorted items (filtered by selected folder if any)
   const sortedItems = useMemo(() => {
     type CombinedItem = {
       id: string;
@@ -63,19 +66,33 @@ const NotesExplorer: React.FC = () => {
       [key: string]: any;
     };
 
+    // Filter notes by selected folder
+    let notesToShow = filteredNotes;
+    if (selectedFolderId) {
+      if (selectedFolderId === 'unorganized') {
+        notesToShow = filteredNotes.filter(note => !note.folder_id);
+      } else {
+        notesToShow = filteredNotes.filter(note => note.folder_id === selectedFolderId);
+      }
+    }
+
+    // Filter by search term
+    notesToShow = notesToShow.filter(note => 
+      searchTerm === '' || 
+      note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      note.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+
     let allItems: CombinedItem[] = [
-      ...folders.map(folder => ({ 
+      // Only show folders if no specific folder is selected
+      ...(selectedFolderId ? [] : folders.map(folder => ({ 
         ...folder, 
         type: 'folder' as const, 
         displayName: folder.name,
         modifiedDate: folder.updatedAt 
-      })),
-      ...filteredNotes.filter(note => 
-        searchTerm === '' || 
-        note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        note.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-      ).map(note => ({ 
+      }))),
+      ...notesToShow.map(note => ({ 
         ...note, 
         type: 'note' as const, 
         displayName: note.title,
@@ -125,7 +142,10 @@ const NotesExplorer: React.FC = () => {
     }
 
     return allItems;
-  }, [folders, filteredNotes, searchTerm, sortBy, sortOrder]);
+  }, [folders, filteredNotes, searchTerm, sortBy, sortOrder, selectedFolderId]);
+
+  // Get current folder info for breadcrumb
+  const currentFolder = selectedFolderId ? folders.find(f => f.id === selectedFolderId) : null;
 
   const handleItemClick = (item: any, event: React.MouseEvent) => {
     // Handle selection first
@@ -392,12 +412,26 @@ const NotesExplorer: React.FC = () => {
             </DropdownMenu>
           </div>
 
-          {/* Center - Search */}
+          {/* Center - Breadcrumb and Search */}
           <div className="flex-1 max-w-md mx-8">
+            {/* Breadcrumb */}
+            {currentFolder && (
+              <div className="flex items-center gap-2 mb-2 text-sm text-muted-foreground">
+                <span 
+                  className="hover:text-foreground cursor-pointer"
+                  onClick={() => setSelectedFolderId(null)}
+                >
+                  All Notes
+                </span>
+                <span>/</span>
+                <span className="text-foreground font-medium">{currentFolder.name}</span>
+              </div>
+            )}
+            
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search notes and folders..."
+                placeholder={selectedFolderId ? `Search in ${currentFolder?.name || 'folder'}...` : "Search notes and folders..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -407,6 +441,14 @@ const NotesExplorer: React.FC = () => {
 
           {/* Right side - View controls */}
           <div className="flex items-center space-x-2">
+            <Button
+              size="sm"
+              variant={treeVisible ? "default" : "ghost"}
+              onClick={() => setTreeVisible(!treeVisible)}
+            >
+              <Folder className="w-4 h-4" />
+            </Button>
+            
             <Button
               size="sm"
               variant={previewVisible ? "default" : "ghost"}
@@ -474,15 +516,36 @@ const NotesExplorer: React.FC = () => {
       {/* Main content */}
       <div className="flex-1 overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full">
+          {/* Folder Tree */}
+          {treeVisible && (
+            <>
+              <ResizablePanel defaultSize={20} minSize={15} maxSize={35}>
+                <FolderTree 
+                  selectedFolderId={selectedFolderId}
+                  onFolderSelect={setSelectedFolderId}
+                />
+              </ResizablePanel>
+              <ResizableHandle withHandle />
+            </>
+          )}
+
           {/* Main explorer area */}
-          <ResizablePanel defaultSize={previewVisible ? 70 : 100} minSize={50}>
+          <ResizablePanel defaultSize={previewVisible ? (treeVisible ? 50 : 70) : (treeVisible ? 80 : 100)} minSize={40}>
             <ScrollArea className="h-full p-6">
               {sortedItems.length === 0 ? (
                 <div className="text-center py-12">
                   <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No items found</h3>
+                  <h3 className="text-lg font-medium mb-2">
+                    {selectedFolderId ? 
+                      (selectedFolderId === 'unorganized' ? 'No unorganized notes' : `No items in ${currentFolder?.name}`) : 
+                      'No items found'
+                    }
+                  </h3>
                   <p className="text-muted-foreground">
-                    {searchTerm ? 'No notes or folders match your search.' : 'Create your first note or folder.'}
+                    {searchTerm ? 
+                      'No notes or folders match your search.' : 
+                      (selectedFolderId ? 'This folder is empty.' : 'Create your first note or folder.')
+                    }
                   </p>
                 </div>
               ) : viewMode === 'list' || viewMode === 'details' ? (
@@ -525,6 +588,7 @@ const NotesExplorer: React.FC = () => {
           <span>
             {selectedItems.size > 0 ? `${selectedItems.size} selected • ` : ''}
             {sortedItems.length} items • {notes.length} notes • {folders.length} folders
+            {selectedFolderId && currentFolder && ` • in ${currentFolder.name}`}
           </span>
           <span>Ready</span>
         </div>
