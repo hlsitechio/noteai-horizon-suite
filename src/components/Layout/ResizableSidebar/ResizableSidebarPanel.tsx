@@ -40,8 +40,10 @@ const ResizableSidebarPanel: React.FC<ResizableSidebarPanelProps> = ({
               </div>
             </Panel>
             
-            {/* Vertical Resize Handle */}
-            {isEditMode && <VerticalResizableHandle />}
+            {/* Vertical Resize Handle - Always present but styled based on edit mode */}
+            <VerticalResizableHandle 
+              className={isEditMode ? 'bg-primary/20 hover:bg-primary/40' : 'bg-transparent hover:bg-border'} 
+            />
             
             {/* Middle Panel */}
             <Panel defaultSize={35} minSize={20} maxSize={50}>
@@ -56,8 +58,10 @@ const ResizableSidebarPanel: React.FC<ResizableSidebarPanelProps> = ({
               </div>
             </Panel>
             
-            {/* Vertical Resize Handle */}
-            {isEditMode && <VerticalResizableHandle />}
+            {/* Vertical Resize Handle - Always present but styled based on edit mode */}
+            <VerticalResizableHandle 
+              className={isEditMode ? 'bg-primary/20 hover:bg-primary/40' : 'bg-transparent hover:bg-border'} 
+            />
             
             {/* Bottom Panel */}
             <Panel defaultSize={25} minSize={15} maxSize={40}>
