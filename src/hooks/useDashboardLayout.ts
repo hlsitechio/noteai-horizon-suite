@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { DashboardLayoutService, DashboardLayout, DashboardComponent } from '@/services/dashboardLayoutService';
+import { 
+  DashboardLayoutService, 
+  DashboardComponentService, 
+  DashboardPanelService,
+  type DashboardLayout, 
+  type DashboardComponent,
+  type PanelConfiguration 
+} from '@/services/dashboard';
 import { DashboardSettingsService } from '@/services/dashboardSettingsService';
 import { toast } from 'sonner';
 
-interface PanelConfiguration {
-  component_key: string;
-  enabled: boolean;
-  props: Record<string, unknown>;
-}
 
 export const useDashboardLayout = () => {
   const { user } = useAuth();
@@ -42,7 +44,7 @@ export const useDashboardLayout = () => {
 
   const loadAvailableComponents = async () => {
     try {
-      const components = await DashboardLayoutService.getAvailableComponents();
+      const components = await DashboardComponentService.getAvailableComponents();
       setAvailableComponents(components);
     } catch (err) {
       console.error('Failed to load available components:', err);
@@ -83,7 +85,7 @@ export const useDashboardLayout = () => {
       console.log('Updated configs to save:', updatedConfigs);
 
       // Make database update with the main panel configuration
-      await DashboardLayoutService.updatePanelConfiguration(layout.id, panelKey, {
+      await DashboardPanelService.updatePanelConfiguration(layout.id, panelKey, {
         component_key: componentKey,
         enabled,
         props: {}
@@ -95,7 +97,7 @@ export const useDashboardLayout = () => {
         const existingConfig = panelConfigs[key] as PanelConfiguration;
         if (key !== panelKey && existingConfig?.component_key !== typedConfig.component_key) {
           console.log(`Updating panel ${key} with config:`, config);
-          await DashboardLayoutService.updatePanelConfiguration(layout.id, key, {
+          await DashboardPanelService.updatePanelConfiguration(layout.id, key, {
             component_key: typedConfig.component_key,
             enabled: typedConfig.enabled,
             props: typedConfig.props as any

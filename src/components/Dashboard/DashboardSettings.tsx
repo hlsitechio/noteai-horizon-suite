@@ -14,7 +14,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Settings, Layout, Component, Info, Save, CheckCircle, Unlock } from 'lucide-react';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
-import { DashboardComponent } from '@/services/dashboardLayoutService';
+import { type DashboardComponent } from '@/services/dashboard';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
