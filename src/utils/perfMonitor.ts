@@ -15,15 +15,24 @@ interface PerformanceMetric {
   navigationType: string;
 }
 
-// Throttle Sentry messages to prevent rate limiting
+// Disable Sentry in development or when rate limited
 const throttledSentryCapture = throttle((message: string, options: any) => {
+  // Skip Sentry entirely in development
+  if (import.meta.env.DEV) {
+    return;
+  }
+  
   try {
+    // Further limit production messages
+    if (Math.random() > 0.1) { // Only send 10% of messages
+      return;
+    }
     Sentry.captureMessage(message, options);
   } catch (error) {
     // Silently handle Sentry errors to prevent site instability
     console.warn('Sentry capture failed:', error);
   }
-}, 5000); // Allow maximum 1 message per 5 seconds
+}, 30000); // Allow maximum 1 message per 30 seconds
 
 // Track sent messages to prevent duplicates
 const sentMessages = new Set<string>();

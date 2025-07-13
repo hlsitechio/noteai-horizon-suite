@@ -12,8 +12,8 @@ export const initSentry = () => {
       //   blockAllMedia: false,
       // }),
     ],
-    // Performance Monitoring - Further reduced to avoid rate limiting
-    tracesSampleRate: 0.001, // Reduced from 0.01 to 0.001
+    // Performance Monitoring - Disabled to avoid rate limiting
+    tracesSampleRate: 0, // Completely disabled
     // Disable session replay to avoid CSP conflicts
     replaysSessionSampleRate: 0,
     replaysOnErrorSampleRate: 0,
