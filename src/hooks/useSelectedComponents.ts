@@ -52,7 +52,11 @@ export const useSelectedComponents = () => {
       addedAt: new Date()
     };
     
-    setSelectedComponents(prev => [...prev, newComponent]);
+    // Remove any existing component with the same componentKey before adding the new one
+    setSelectedComponents(prev => {
+      const filtered = prev.filter(comp => comp.componentKey !== component.componentKey);
+      return [...filtered, newComponent];
+    });
     return newComponent;
   };
 
