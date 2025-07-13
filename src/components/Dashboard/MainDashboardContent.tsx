@@ -184,7 +184,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
         />
         
         <ResizableDashboardGrid
-          topSectionSize={bottomSectionSize}
+          topSectionSize={topSectionSize}
           bottomSectionSize={bottomSectionSize}
           leftPanelsSize={leftPanelsSize}
           rightPanelsSize={rightPanelsSize}

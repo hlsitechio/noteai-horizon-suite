@@ -16,6 +16,13 @@ interface ResizableDashboardGridProps {
   startOrder: number; // Starting order for panels
 }
 
+// Helper function to get correct panel key based on order and position
+const getPanelKey = (order: number, position: 'left' | 'right'): string => {
+  const section = order === 1 ? 'top' : order === 2 ? 'middle' : 'bottom';
+  const side = position === 'left' ? 'Left' : 'Right';
+  return `${section}${side}`;
+};
+
 export const ResizableDashboardGrid: React.FC<ResizableDashboardGridProps> = ({
   topSectionSize,
   bottomSectionSize,
@@ -34,11 +41,11 @@ export const ResizableDashboardGrid: React.FC<ResizableDashboardGridProps> = ({
 
   return (
     <>
-      {/* Middle Panel - Two Boxes */}
+      {/* Dashboard Section Panel */}
       <Panel 
-        id="middle-section-panel"
+        id={`section-${startOrder}-panel`}
         order={startOrder}
-        defaultSize={topSectionSize} 
+        defaultSize={startOrder === 3 ? bottomSectionSize : topSectionSize} 
         minSize={isDashboardEditMode ? 25 : undefined}
         maxSize={isDashboardEditMode ? 75 : undefined}
       >
@@ -60,7 +67,7 @@ export const ResizableDashboardGrid: React.FC<ResizableDashboardGridProps> = ({
               <div className="h-full border-r border-border/50">
                 <ScrollArea className="h-full">
                   <DashboardPanel 
-                    panelKey={startOrder === 1 ? "topLeft" : startOrder === 2 ? "middleLeft" : "bottomLeft"} 
+                    panelKey={getPanelKey(startOrder, 'left')} 
                     className="p-4 min-h-full" 
                   />
                 </ScrollArea>
@@ -81,7 +88,7 @@ export const ResizableDashboardGrid: React.FC<ResizableDashboardGridProps> = ({
               <div className="h-full">
                 <ScrollArea className="h-full">
                   <DashboardPanel 
-                    panelKey={startOrder === 1 ? "topRight" : startOrder === 2 ? "middleRight" : "bottomRight"} 
+                    panelKey={getPanelKey(startOrder, 'right')} 
                     className="p-4 min-h-full" 
                   />
                 </ScrollArea>
