@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Save, Star, Eye, MoreVertical } from 'lucide-react';
+import { ArrowLeft, Star, Eye, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -88,16 +88,6 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
           >
             <Eye className="w-4 h-4" />
           </Button>
-          
-          <Button 
-            variant="default" 
-            size="sm" 
-            onClick={onSave}
-            disabled={isSaving || !canSave}
-          >
-            <Save className="w-4 h-4 mr-1" />
-            {isSaving ? 'Saving...' : 'Save'}
-          </Button>
         </div>
       </div>
     );
@@ -113,11 +103,8 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
         </Button>
         
         <EditorActions
-          onSave={onSave}
           onFocusModeToggle={onFocusModeToggle}
           onCollapseAllBars={onCollapseAllBars}
-          isSaving={isSaving}
-          canSave={canSave}
         />
       </div>
 
