@@ -1,17 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
-import Navigation from '../components/Landing/Navigation';
-import Hero from '../components/Landing/Hero';
-import Features from '../components/Landing/Features';
-import Pricing from '../components/Landing/Pricing';
-import Footer from '../components/Landing/Footer';
-import EnhancedSecurityHeaders from '../components/Security/EnhancedSecurityHeaders';
-import NewsletterSignup from '../components/Marketing/NewsletterSignup';
-import SocialProof from '../components/Marketing/SocialProof';
-import MarketingCTA from '../components/Marketing/MarketingCTA';
-import SEOOptimizer from '../components/Marketing/SEOOptimizer';
+import Navigation from '@/components/Landing/Navigation';
+import Hero from '@/components/Landing/Hero';
+import Features from '@/components/Landing/Features';
+import Pricing from '@/components/Landing/Pricing';
+import Footer from '@/components/Landing/Footer';
+import EnhancedSecurityHeaders from '@/components/Security/EnhancedSecurityHeaders';
+import NewsletterSignup from '@/components/Marketing/NewsletterSignup';
+import SocialProof from '@/components/Marketing/SocialProof';
+import MarketingCTA from '@/components/Marketing/MarketingCTA';
+import SEOOptimizer from '@/components/Marketing/SEOOptimizer';
 
-import { AnalyticsService } from '../services/analyticsService';
+import { AnalyticsService } from '@/services/analyticsService';
 
 const Landing: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);

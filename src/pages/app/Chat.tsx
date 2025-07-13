@@ -1,17 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { useEnhancedAIChatWithSessions } from '../hooks/useEnhancedAIChatWithSessions';
-import { useSpeechToText } from '../hooks/useSpeechToText';
-import { useNotePreview } from '../hooks/useNotePreview';
-import { useUserProfile } from '../hooks/useUserProfile';
+import { useEnhancedAIChatWithSessions } from '@/hooks/useEnhancedAIChatWithSessions';
+import { useSpeechToText } from '@/hooks/useSpeechToText';
+import { useNotePreview } from '@/hooks/useNotePreview';
+import { useUserProfile } from '@/hooks/useUserProfile';
 import { useIsMobile } from '@/hooks/use-mobile';
-import ChatHistoryPanel from '../components/Chat/ChatHistoryPanel';
-import { NotePreviewPanel } from '../components/Chat/NotePreviewPanel';
-import { CanvasDrawingPanel } from '../components/Chat/CanvasDrawingPanel';
-import ChatHeader from '../components/Chat/ChatHeader';
-import ChatMessages from '../components/Chat/ChatMessages';
-import ChatInput from '../components/Chat/ChatInput';
+import ChatHistoryPanel from '@/components/Chat/ChatHistoryPanel';
+import { NotePreviewPanel } from '@/components/Chat/NotePreviewPanel';
+import { CanvasDrawingPanel } from '@/components/Chat/CanvasDrawingPanel';
+import ChatHeader from '@/components/Chat/ChatHeader';
+import ChatMessages from '@/components/Chat/ChatMessages';
+import ChatInput from '@/components/Chat/ChatInput';
 
 const Chat: React.FC = () => {
   const [message, setMessage] = useState('');

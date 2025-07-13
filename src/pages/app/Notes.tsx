@@ -1,14 +1,14 @@
 
 import React from 'react';
 import { BookOpen } from 'lucide-react';
-import { useOptimizedNotes } from '../contexts/OptimizedNotesContext';
-import { useFolders } from '../contexts/FoldersContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
+import { useFolders } from '@/contexts/FoldersContext';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import { useIsMobile } from '@/hooks/use-mobile';
-import NotesHeader from './Notes/NotesHeader';
-import NotesFilters from './Notes/NotesFilters';
-import NotesGrid from './Notes/NotesGrid';
-import EmptyNotesState from './Notes/EmptyNotesState';
+import NotesHeader from '../Notes/NotesHeader';
+import NotesFilters from '../Notes/NotesFilters';
+import NotesGrid from '../Notes/NotesGrid';
+import EmptyNotesState from '../Notes/EmptyNotesState';
 
 const Notes: React.FC = () => {
   const { filteredNotes, filters, isLoading, notes, selectedNote } = useOptimizedNotes();

@@ -10,7 +10,7 @@ import MobileChat from './pages/MobileChat';
 import MobileProjects from './pages/MobileProjects';
 import MobileAnalytics from './pages/MobileAnalytics';
 import EnhancedMobileSettings from './pages/EnhancedMobileSettings';
-import { useNotes } from '../contexts/NotesContext';
+import { useNotes } from '@/contexts/NotesContext';
 
 const MobileApp: React.FC = () => {
   const [searchParams] = useSearchParams();

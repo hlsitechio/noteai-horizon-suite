@@ -68,7 +68,7 @@ const Notes = lazyWithRetry(() => import('../pages/app/Notes'));
 const NotesExplorer = lazyWithRetry(() => import('../pages/app/NotesExplorer'));
 const Explorer = lazyWithRetry(() => import('../pages/Explorer'));
 const Analytics = lazyWithRetry(() => import('../pages/app/Analytics'));
-const Settings = lazyWithRetry(() => import('../pages/Settings'));
+const Settings = lazyWithRetry(() => import('../pages/app/Settings'));
 const Chat = lazyWithRetry(() => import('../pages/app/Chat'));
 const VoiceChat = lazyWithRetry(() => import('../pages/VoiceChat'));
 const Calendar = lazyWithRetry(() => import('../pages/app/Calendar'));
@@ -172,7 +172,7 @@ export const OptimizedLazyRoutes: React.FC = () => {
 
         {/* Legacy setup route redirects */}
         <Route path="/onboarding" element={<Navigate to="/setup/onboarding" replace />} />
-        <Route path="/setup" element={<Navigate to="/setup/dashboard" replace />} />
+        <Route path="/setup" element={<Navigate to="/setup/onboarding" replace />} />
 
         {/* ========== MOBILE ROUTES ========== */}
         <Route path="/mobile/*" element={

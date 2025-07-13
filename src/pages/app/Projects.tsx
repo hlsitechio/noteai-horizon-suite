@@ -5,11 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Search, Filter } from 'lucide-react';
-import { useProjectRealms } from '../contexts/ProjectRealmsContext';
+import { useProjectRealms } from '@/contexts/ProjectRealmsContext';
 import { useIsMobile } from '@/hooks/use-mobile';
-import ProjectCard from '../components/ProjectRealms/ProjectCard';
-import CreateProjectModal from '../components/ProjectRealms/CreateProjectModal';
-import { ProjectRealm } from '../types/project';
+import ProjectCard from '@/components/ProjectRealms/ProjectCard';
+import CreateProjectModal from '@/components/ProjectRealms/CreateProjectModal';
+import { ProjectRealm } from '@/types/project';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useNavigate } from 'react-router-dom';
 

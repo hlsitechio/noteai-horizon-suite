@@ -4,13 +4,13 @@ import { Plus, Users, FileText, Calendar as CalendarIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { CalendarGrid } from '../components/Calendar/CalendarGrid';
-import { CalendarEventFormInline } from '../components/Calendar/CalendarEventFormInline';
-import { CalendarDateDetails } from '../components/Calendar/CalendarDateDetails';
-import { CalendarNoteFormInline } from '../components/Calendar/CalendarNoteFormInline';
-import { CalendarEvent } from '../types/calendar';
-import { useCalendarEvents } from '../hooks/useCalendarEvents';
-import { useNotes } from '../contexts/NotesContext';
+import { CalendarGrid } from '@/components/Calendar/CalendarGrid';
+import { CalendarEventFormInline } from '@/components/Calendar/CalendarEventFormInline';
+import { CalendarDateDetails } from '@/components/Calendar/CalendarDateDetails';
+import { CalendarNoteFormInline } from '@/components/Calendar/CalendarNoteFormInline';
+import { CalendarEvent } from '@/types/calendar';
+import { useCalendarEvents } from '@/hooks/useCalendarEvents';
+import { useNotes } from '@/contexts/NotesContext';
 
 const Calendar: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());

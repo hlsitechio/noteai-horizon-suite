@@ -1,14 +1,14 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useOptimizedNotes } from '../contexts/OptimizedNotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useIsMobile } from '@/hooks/use-mobile';
-import AnalyticsHeader from '../components/Analytics/AnalyticsHeader';
-import OverviewStats from '../components/Analytics/OverviewStats';
-import SmartInsightsPanel from '../components/Analytics/SmartInsightsPanel';
-import TimeBasedAnalytics from '../components/Analytics/TimeBasedAnalytics';
-import EnhancedCategoryChart from '../components/Analytics/EnhancedCategoryChart';
-import WritingInsights from '../components/Analytics/WritingInsights';
+import AnalyticsHeader from '@/components/Analytics/AnalyticsHeader';
+import OverviewStats from '@/components/Analytics/OverviewStats';
+import SmartInsightsPanel from '@/components/Analytics/SmartInsightsPanel';
+import TimeBasedAnalytics from '@/components/Analytics/TimeBasedAnalytics';
+import EnhancedCategoryChart from '@/components/Analytics/EnhancedCategoryChart';
+import WritingInsights from '@/components/Analytics/WritingInsights';
 import { useToast } from '@/hooks/use-toast';
 
 const Analytics: React.FC = () => {
