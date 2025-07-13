@@ -9,13 +9,9 @@ const ComponentLibraryPage: React.FC = () => {
   const navigate = useNavigate();
   const { getPanelConfiguration } = useDashboardLayout();
 
-  // Get available panels - panels that don't have a component or are disabled
+  // Get all panels as available - allow replacement of existing components
   const getAvailablePanels = () => {
-    const allPanels = ['topLeft', 'topRight', 'middleLeft', 'middleRight', 'bottomLeft', 'bottomRight'];
-    return allPanels.filter(panelKey => {
-      const config = getPanelConfiguration(panelKey);
-      return !config?.enabled || !config?.component_key;
-    });
+    return ['topLeft', 'topRight', 'middleLeft', 'middleRight', 'bottomLeft', 'bottomRight'];
   };
 
   return (

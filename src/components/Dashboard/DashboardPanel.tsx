@@ -25,18 +25,9 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
   const { getPanelConfiguration, updatePanelConfiguration } = useDashboardLayout();
   const config = getPanelConfiguration(panelKey);
 
-  // Default components for each panel if not configured
-  const defaultComponents: Record<string, string> = {
-    'topLeft': 'quick-actions',
-    'topRight': 'recent-activity', 
-    'middleLeft': 'notes-summary',
-    'middleRight': 'analytics-overview',
-    'bottomLeft': 'system-status',
-    'bottomRight': 'task-list'
-  };
-
-  const componentKey = config?.component_key || defaultComponents[panelKey];
-  const isEnabled = componentKey && (config?.enabled !== false);
+  // Only use configured components, no default fallbacks
+  const componentKey = config?.component_key;
+  const isEnabled = componentKey && config?.enabled === true;
 
   const formatPanelName = (panelKey: string) => {
     const panelNames: Record<string, string> = {
