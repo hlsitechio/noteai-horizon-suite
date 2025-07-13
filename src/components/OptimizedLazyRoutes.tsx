@@ -6,10 +6,6 @@ import HomeRedirect from './HomeRedirect';
 import { Card } from './ui/card';
 import ComponentLibraryPage from '../pages/ComponentLibraryPage';
 
-// Setup folder imports (non-lazy for better UX)
-const InitialOnboarding = React.lazy(() => import('../pages/setup/InitialOnboarding'));
-const DashboardOnboarding = React.lazy(() => import('../pages/setup/DashboardOnboarding'));
-
 // Lazy load components with error handling for missing chunks
 const lazyWithRetry = (importFn: () => Promise<any>) => {
   return lazy(() => 
@@ -43,45 +39,53 @@ const lazyWithRetry = (importFn: () => Promise<any>) => {
   );
 };
 
-const Landing = lazyWithRetry(() => import('../pages/Landing'));
-const PremiumLanding = lazyWithRetry(() => import('../pages/PremiumLanding'));
-const ConstellationLanding = lazyWithRetry(() => import('../pages/ConstellationLanding'));
-const Login = lazyWithRetry(() => import('../pages/Auth/Login'));
-const Register = lazyWithRetry(() => import('../pages/Auth/Register'));
-const ResetPassword = lazyWithRetry(() => import('../pages/Auth/ResetPassword'));
+// PUBLIC PAGES
+const Landing = lazyWithRetry(() => import('../pages/public/Landing'));
+const PremiumLanding = lazyWithRetry(() => import('../pages/public/PremiumLanding'));
+const ConstellationLanding = lazyWithRetry(() => import('../pages/public/ConstellationLanding'));
+const Features = lazyWithRetry(() => import('../pages/public/Features'));
+const Pricing = lazyWithRetry(() => import('../pages/public/Pricing'));
+const About = lazyWithRetry(() => import('../pages/public/About'));
+const Privacy = lazyWithRetry(() => import('../pages/public/Privacy'));
+const Terms = lazyWithRetry(() => import('../pages/public/Terms'));
+const Contact = lazyWithRetry(() => import('../pages/public/Contact'));
+const Sitemap = lazyWithRetry(() => import('../pages/public/Sitemap'));
+const NotFound = lazyWithRetry(() => import('../pages/public/NotFound'));
 
-// Dashboard pages - optimized for performance
-const OptimizedDashboard = lazyWithRetry(() => import('../pages/OptimizedDashboard'));
+//AUTH PAGES
+const Login = lazyWithRetry(() => import('../pages/auth/Login'));
+const Register = lazyWithRetry(() => import('../pages/auth/Register'));
+const ResetPassword = lazyWithRetry(() => import('../pages/auth/ResetPassword'));
+
+// SETUP PAGES
+const InitialOnboarding = lazyWithRetry(() => import('../pages/setup/InitialOnboarding'));
+const DashboardOnboarding = lazyWithRetry(() => import('../pages/setup/DashboardOnboarding'));
+
+// APP PAGES - Main Application
+const Dashboard = lazyWithRetry(() => import('../pages/app/Dashboard'));
 const Editor = lazyWithRetry(() => import('../pages/Editor'));
-const Notes = lazyWithRetry(() => import('../pages/Notes'));
-const NotesExplorer = lazyWithRetry(() => import('../pages/NotesExplorer'));
+const Notes = lazyWithRetry(() => import('../pages/app/Notes'));
+const NotesExplorer = lazyWithRetry(() => import('../pages/app/NotesExplorer'));
 const Explorer = lazyWithRetry(() => import('../pages/Explorer'));
-const Analytics = lazyWithRetry(() => import('../pages/Analytics'));
-const Settings = lazyWithRetry(() => import('../pages/settings'));
-const Chat = lazyWithRetry(() => import('../pages/Chat'));
+const Analytics = lazyWithRetry(() => import('../pages/app/Analytics'));
+const Settings = lazyWithRetry(() => import('../pages/Settings'));
+const Chat = lazyWithRetry(() => import('../pages/app/Chat'));
 const VoiceChat = lazyWithRetry(() => import('../pages/VoiceChat'));
-const Calendar = lazy(() => import('../pages/Calendar').then(module => ({ default: module.default })));
-const ProjectRealms = lazyWithRetry(() => import('../pages/ProjectRealms'));
+const Calendar = lazyWithRetry(() => import('../pages/app/Calendar'));
+const Projects = lazyWithRetry(() => import('../pages/app/Projects'));
 const ProjectDetail = lazyWithRetry(() => import('../pages/ProjectDetail'));
 const FolderDetail = lazyWithRetry(() => import('../pages/FolderDetail'));
-
-// Static pages
-const NotFound = lazyWithRetry(() => import('../pages/NotFound'));
-const Privacy = lazyWithRetry(() => import('../pages/Privacy'));
-const Terms = lazyWithRetry(() => import('../pages/Terms'));
-const Contact = lazyWithRetry(() => import('../pages/Contact'));
-const Sitemap = lazyWithRetry(() => import('../pages/Sitemap'));
-const Features = lazyWithRetry(() => import('../pages/Features'));
-const Pricing = lazyWithRetry(() => import('../pages/Pricing'));
-const About = lazyWithRetry(() => import('../pages/About'));
-const EditorControlsTest = lazyWithRetry(() => import('./Editor/EditorControlsTest'));
-const ComponentGallery = lazyWithRetry(() => import('../pages/ComponentGallery'));
-
 const ActivityPage = lazyWithRetry(() => import('../pages/ActivityPage'));
-const MobileApp = lazyWithRetry(() => import('../mobile/MobileApp'));
 const ReferralPage = lazyWithRetry(() => import('../pages/ReferralPage'));
 const SEODashboard = lazyWithRetry(() => import('../pages/seo'));
 const APMPage = lazyWithRetry(() => import('../pages/APMPage').then(module => ({ default: module.APMPage })));
+
+// MOBILE PAGES
+const MobileApp = lazyWithRetry(() => import('../pages/mobile/MobileApp'));
+
+// DEVELOPMENT/TESTING PAGES
+const EditorControlsTest = lazyWithRetry(() => import('./Editor/EditorControlsTest'));
+const ComponentGallery = lazyWithRetry(() => import('../pages/ComponentGallery'));
 
 // Enhanced loading fallback with better UX
 const LoadingFallback = () => (
@@ -112,47 +116,74 @@ export const OptimizedLazyRoutes: React.FC = () => {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <Routes>
-        {/* Public Routes */}
+        {/* ========== PUBLIC ROUTES ========== */}
         <Route path="/" element={<HomeRedirect />} />
-        <Route path="/landing" element={<Landing />} />
-        <Route path="/landing.2" element={<PremiumLanding />} />
-        <Route path="/landing.3" element={<ConstellationLanding />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/features" element={<Features />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/sitemap" element={<Sitemap />} />
-        <Route path="/referral" element={<ReferralPage />} />
-        
-        {/* Initial Onboarding for new users */}
-        <Route path="/onboarding" element={
+        <Route path="/public/landing" element={<Landing />} />
+        <Route path="/public/landing-premium" element={<PremiumLanding />} />
+        <Route path="/public/landing-constellation" element={<ConstellationLanding />} />
+        <Route path="/public/features" element={<Features />} />
+        <Route path="/public/pricing" element={<Pricing />} />
+        <Route path="/public/about" element={<About />} />
+        <Route path="/public/privacy" element={<Privacy />} />
+        <Route path="/public/terms" element={<Terms />} />
+        <Route path="/public/contact" element={<Contact />} />
+        <Route path="/public/sitemap" element={<Sitemap />} />
+        <Route path="/public/referral" element={<ReferralPage />} />
+
+        {/* Legacy public route redirects */}
+        <Route path="/landing" element={<Navigate to="/public/landing" replace />} />
+        <Route path="/landing.2" element={<Navigate to="/public/landing-premium" replace />} />
+        <Route path="/landing.3" element={<Navigate to="/public/landing-constellation" replace />} />
+        <Route path="/features" element={<Navigate to="/public/features" replace />} />
+        <Route path="/pricing" element={<Navigate to="/public/pricing" replace />} />
+        <Route path="/about" element={<Navigate to="/public/about" replace />} />
+        <Route path="/privacy" element={<Navigate to="/public/privacy" replace />} />
+        <Route path="/terms" element={<Navigate to="/public/terms" replace />} />
+        <Route path="/contact" element={<Navigate to="/public/contact" replace />} />
+        <Route path="/sitemap" element={<Navigate to="/public/sitemap" replace />} />
+        <Route path="/referral" element={<Navigate to="/public/referral" replace />} />
+
+        {/* ========== AUTH ROUTES ========== */}
+        <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
+        <Route path="/auth/reset-password" element={<ResetPassword />} />
+
+        {/* Legacy auth route redirects */}
+        <Route path="/login" element={<Navigate to="/auth/login" replace />} />
+        <Route path="/register" element={<Navigate to="/auth/register" replace />} />
+        <Route path="/reset-password" element={<Navigate to="/auth/reset-password" replace />} />
+
+        {/* ========== SETUP ROUTES ========== */}
+        <Route path="/setup/onboarding" element={
           <ProtectedRoute>
-            <InitialOnboarding />
+            <Suspense fallback={<LoadingFallback />}>
+              <InitialOnboarding />
+            </Suspense>
           </ProtectedRoute>
         } />
 
-        {/* Dashboard Setup Onboarding - standalone, not within app layout */}
-        <Route path="/setup" element={
+        <Route path="/setup/dashboard" element={
           <ProtectedRoute>
-            <Suspense fallback={<DashboardLoadingFallback />}>
+            <Suspense fallback={<LoadingFallback />}>
               <DashboardOnboarding />
             </Suspense>
           </ProtectedRoute>
         } />
 
-        {/* Mobile Routes */}
+        {/* Legacy setup route redirects */}
+        <Route path="/onboarding" element={<Navigate to="/setup/onboarding" replace />} />
+        <Route path="/setup" element={<Navigate to="/setup/dashboard" replace />} />
+
+        {/* ========== MOBILE ROUTES ========== */}
         <Route path="/mobile/*" element={
           <ProtectedRoute>
-            <MobileApp />
+            <Suspense fallback={<LoadingFallback />}>
+              <MobileApp />
+            </Suspense>
           </ProtectedRoute>
         } />
 
-        {/* Protected App Routes with route-specific suspense */}
+        {/* ========== APP ROUTES ========== */}
         <Route path="/app" element={
           <ProtectedRoute>
             <Layout />
@@ -160,15 +191,19 @@ export const OptimizedLazyRoutes: React.FC = () => {
         }>
           <Route index element={<Navigate to="/app/dashboard" replace />} />
           
-          {/* Dashboard with optimized loading */}
+          {/* Core App Pages */}
           <Route path="dashboard" element={
             <Suspense fallback={<DashboardLoadingFallback />}>
-              <OptimizedDashboard />
+              <Dashboard />
             </Suspense>
           } />
           
+          <Route path="notes" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <Notes />
+            </Suspense>
+          } />
           
-          {/* Other routes with standard suspense */}
           <Route path="editor/:noteId?" element={
             <Suspense fallback={<DashboardLoadingFallback />}>
               <Editor />
@@ -181,27 +216,9 @@ export const OptimizedLazyRoutes: React.FC = () => {
             </Suspense>
           } />
           
-          <Route path="notes" element={
-            <Suspense fallback={<DashboardLoadingFallback />}>
-              <Notes />
-            </Suspense>
-          } />
-          
           <Route path="files" element={
             <Suspense fallback={<DashboardLoadingFallback />}>
               <Explorer />
-            </Suspense>
-          } />
-          
-          <Route path="analytics" element={
-            <Suspense fallback={<DashboardLoadingFallback />}>
-              <Analytics />
-            </Suspense>
-          } />
-          
-          <Route path="settings" element={
-            <Suspense fallback={<DashboardLoadingFallback />}>
-              <Settings />
             </Suspense>
           } />
           
@@ -217,45 +234,63 @@ export const OptimizedLazyRoutes: React.FC = () => {
             </Suspense>
           } />
           
+          <Route path="projects" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <Projects />
+            </Suspense>
+          } />
+          
+          <Route path="projects/:id" element={<ProjectDetail />} />
+          <Route path="folders/:id" element={<FolderDetail />} />
+          
           <Route path="calendar" element={
             <Suspense fallback={<DashboardLoadingFallback />}>
               <Calendar />
             </Suspense>
           } />
           
-          <Route path="projects" element={
+          <Route path="analytics" element={
             <Suspense fallback={<DashboardLoadingFallback />}>
-              <ProjectRealms />
+              <Analytics />
             </Suspense>
           } />
           
-          <Route path="projects/:id" element={<ProjectDetail />} />
-          <Route path="folders/:id" element={<FolderDetail />} />
+          <Route path="settings" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <Settings />
+            </Suspense>
+          } />
+          
           <Route path="activity" element={
             <Suspense fallback={<DashboardLoadingFallback />}>
               <ActivityPage />
             </Suspense>
           } />
+
+          {/* Tools & Features */}
+          <Route path="seo" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <SEODashboard />
+            </Suspense>
+          } />
+          
+          <Route path="apm" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <APMPage />
+            </Suspense>
+          } />
+
+          {/* Development Tools */}
           <Route path="components" element={<ComponentLibraryPage />} />
-           <Route path="component-gallery" element={<ComponentGallery />} />
-            <Route path="seo" element={
-              <Suspense fallback={<DashboardLoadingFallback />}>
-                <SEODashboard />
-              </Suspense>
-            } />
-            <Route path="apm" element={
-              <Suspense fallback={<DashboardLoadingFallback />}>
-                <APMPage />
-              </Suspense>
-            } />
-            <Route path="editor-test" element={<EditorControlsTest />} />
+          <Route path="component-gallery" element={<ComponentGallery />} />
+          <Route path="editor-test" element={<EditorControlsTest />} />
         </Route>
 
-        {/* Legacy route redirects for 404 prevention */}
+        {/* Legacy app route redirects */}
         <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
         <Route path="/components" element={<Navigate to="/app/components" replace />} />
 
-        {/* Catch all route */}
+        {/* ========== CATCH ALL ========== */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
