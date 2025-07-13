@@ -5,11 +5,11 @@ import { useSearchParams } from 'react-router-dom';
 import EnhancedMobileLayout from '@/mobile/layout/EnhancedMobileLayout';
 import MobileDashboard from '@/mobile/pages/MobileDashboard';
 import MobileNotes from '@/mobile/pages/MobileNotes';
+import MobileEditor from '@/mobile/pages/MobileEditor';
 import MobileChat from '@/mobile/pages/MobileChat';
 import MobileProjects from '@/mobile/pages/MobileProjects';
 import MobileAnalytics from '@/mobile/pages/MobileAnalytics';
 import EnhancedMobileSettings from '@/mobile/pages/EnhancedMobileSettings';
-import Editor from '@/pages/Editor';
 import { useNotes } from '@/contexts/NotesContext';
 
 const MobileApp: React.FC = () => {
@@ -36,7 +36,7 @@ const MobileApp: React.FC = () => {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<MobileDashboard />} />
           <Route path="notes" element={<MobileNotes />} />
-          <Route path="editor" element={<Editor />} />
+          <Route path="editor" element={<MobileEditor />} />
           <Route path="chat" element={<MobileChat />} />
           <Route path="projects" element={<MobileProjects />} />
           <Route path="analytics" element={<MobileAnalytics />} />
