@@ -6,6 +6,10 @@ import HomeRedirect from './HomeRedirect';
 import { Card } from './ui/card';
 import ComponentLibraryPage from '../pages/ComponentLibraryPage';
 
+// Setup folder imports (non-lazy for better UX)
+const InitialOnboarding = React.lazy(() => import('../pages/setup/InitialOnboarding'));
+const DashboardOnboarding = React.lazy(() => import('../pages/setup/DashboardOnboarding'));
+
 // Lazy load components with error handling for missing chunks
 const lazyWithRetry = (importFn: () => Promise<any>) => {
   return lazy(() => 
@@ -48,8 +52,6 @@ const ResetPassword = lazyWithRetry(() => import('../pages/Auth/ResetPassword'))
 
 // Dashboard pages - optimized for performance
 const OptimizedDashboard = lazyWithRetry(() => import('../pages/OptimizedDashboard'));
-const DashboardOnboarding = lazyWithRetry(() => import('../pages/DashboardOnboarding'));
-const InitialOnboarding = lazyWithRetry(() => import('../pages/InitialOnboarding'));
 const Editor = lazyWithRetry(() => import('../pages/Editor'));
 const Notes = lazyWithRetry(() => import('../pages/Notes'));
 const NotesExplorer = lazyWithRetry(() => import('../pages/NotesExplorer'));

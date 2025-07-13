@@ -3,14 +3,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { NewUserWelcome } from '@/components/Dashboard/NewUserWelcome';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { useThemeManager } from '@/hooks/useThemeManager';
 
 const DashboardOnboarding: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  
-  // Apply theme management
-  useThemeManager();
 
   const handleDashboardInitialized = () => {
     // After onboarding is complete, redirect to main dashboard
@@ -20,12 +16,12 @@ const DashboardOnboarding: React.FC = () => {
   // Show loading state if no user yet
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="p-8 flex items-center space-x-4 border-2 border-primary/20">
-          <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Card className="p-8 flex items-center space-x-4 border-2 border-purple-500/20 bg-gray-900/80">
+          <div className="animate-spin h-6 w-6 border-2 border-purple-500 border-t-transparent rounded-full" />
           <div className="flex flex-col">
-            <span className="text-foreground font-medium">Loading onboarding...</span>
-            <span className="text-xs text-muted-foreground">Please wait</span>
+            <span className="text-white font-medium">Loading onboarding...</span>
+            <span className="text-xs text-gray-400">Please wait</span>
           </div>
         </Card>
       </div>
@@ -33,7 +29,7 @@ const DashboardOnboarding: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black">
       <div className="container mx-auto px-4 py-8">
         <NewUserWelcome 
           onDashboardInitialized={handleDashboardInitialized}

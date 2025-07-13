@@ -106,14 +106,14 @@ const InitialOnboarding: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="w-full max-w-2xl"
       >
-        <Card className="border-2 border-border/50 shadow-2xl bg-card/80 backdrop-blur-sm">
+        <Card className="border-2 border-purple-500/20 shadow-2xl bg-gray-900/80 backdrop-blur-sm">
           <CardContent className="p-8">
             {/* Header */}
             <div className="text-center mb-8">
@@ -123,14 +123,14 @@ const InitialOnboarding: React.FC = () => {
                 transition={{ delay: 0.2, duration: 0.5 }}
                 className="flex items-center justify-center mb-4"
               >
-                <div className="bg-primary/10 p-3 rounded-full">
-                  <User className="w-8 h-8 text-primary" />
+                <div className="bg-purple-500/20 p-3 rounded-full">
+                  <User className="w-8 h-8 text-purple-400" />
                 </div>
               </motion.div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">
+              <h1 className="text-3xl font-bold text-white mb-2">
                 What best describes your role?
               </h1>
-              <p className="text-muted-foreground text-lg">
+              <p className="text-gray-300 text-lg">
                 Understanding your role helps us improve your experience.
               </p>
             </div>
@@ -148,23 +148,23 @@ const InitialOnboarding: React.FC = () => {
                     <Card
                       className={`cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${
                         selectedRole === role.id
-                          ? 'border-2 border-primary bg-primary/5 shadow-lg'
-                          : 'border border-border hover:border-primary/50'
+                          ? 'border-2 border-purple-500 bg-purple-500/10 shadow-lg'
+                          : 'border border-gray-700 hover:border-purple-500/50 bg-gray-800/50'
                       }`}
                       onClick={() => handleRoleSelect(role.id)}
                     >
                       <CardContent className="p-4 text-center">
                         <div className={`mb-3 flex justify-center ${
-                          selectedRole === role.id ? 'text-primary' : 'text-muted-foreground'
+                          selectedRole === role.id ? 'text-purple-400' : 'text-gray-400'
                         }`}>
                           {role.icon}
                         </div>
                         <h3 className={`font-semibold mb-1 ${
-                          selectedRole === role.id ? 'text-primary' : 'text-foreground'
+                          selectedRole === role.id ? 'text-purple-400' : 'text-white'
                         }`}>
                           {role.label}
                         </h3>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-gray-400">
                           {role.description}
                         </p>
                       </CardContent>
@@ -185,7 +185,7 @@ const InitialOnboarding: React.FC = () => {
                 onClick={handleGetStarted}
                 disabled={!selectedRole || isLoading}
                 size="lg"
-                className="px-8 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-8 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed bg-purple-600 hover:bg-purple-700 text-white"
               >
                 {isLoading ? (
                   <>
