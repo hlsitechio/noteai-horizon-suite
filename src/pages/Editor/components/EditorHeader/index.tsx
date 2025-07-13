@@ -65,7 +65,7 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
 
   if (isMobile) {
     return (
-      <div className="flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur-sm">
+      <div className="flex items-center justify-between p-4 border-b border-border/30 bg-background/95 backdrop-blur-sm">
         <Button variant="ghost" size="sm" onClick={handleBack}>
           <ArrowLeft className="w-5 h-5" />
         </Button>

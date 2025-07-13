@@ -38,12 +38,12 @@ const EditorMetadata: React.FC<EditorMetadataProps> = ({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-4 py-2 border-b border-border">
+    <div className="flex flex-wrap items-center gap-4 py-2 border-b border-border/30">
       {/* Category */}
       <div className="flex items-center gap-2">
         <span className="text-sm text-muted-foreground">Category:</span>
         <Select value={category} onValueChange={onCategoryChange}>
-          <SelectTrigger className="w-32">
+          <SelectTrigger className="w-32 border-border/30">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -78,7 +78,7 @@ const EditorMetadata: React.FC<EditorMetadataProps> = ({
               value={newTag}
               onChange={(e) => onNewTagChange(e.target.value)}
               onKeyPress={handleTagKeyPress}
-              className="w-24 h-6 text-xs"
+              className="w-24 h-6 text-xs border-border/30"
             />
             <Button
               size="sm"
