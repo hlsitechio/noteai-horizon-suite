@@ -261,9 +261,9 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                       <Button
                         size="sm"
-                        variant="secondary"
+                        variant="ghost"
                         onMouseDown={handleBannerDragStart}
-                        className="bg-background/90 backdrop-blur-sm cursor-grab active:cursor-grabbing gap-2 select-none"
+                        className="bg-transparent hover:bg-background/90 backdrop-blur-sm cursor-grab active:cursor-grabbing gap-2 select-none text-white hover:text-foreground transition-all duration-200"
                       >
                         <Move className="h-4 w-4" />
                         Drag to Resize & Reposition
