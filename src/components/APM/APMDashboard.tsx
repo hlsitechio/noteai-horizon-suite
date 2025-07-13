@@ -36,6 +36,33 @@ import {
   Zap
 } from 'lucide-react';
 
+interface APMMetric {
+  id: string;
+  metric_name: string;
+  metric_type: string;
+  metric_value: number;
+  timestamp: string;
+}
+
+interface APMError {
+  id: string;
+  error_type: string;
+  error_message: string;
+  component_name?: string;
+  is_filtered?: boolean;
+  timestamp: string;
+}
+
+interface APMAlert {
+  id: string;
+  title: string;
+  description: string;
+  severity: string;
+  is_acknowledged: boolean;
+  is_resolved: boolean;
+  created_at: string;
+}
+
 interface APMDashboardProps {
   className?: string;
 }
@@ -51,9 +78,9 @@ export const APMDashboard: React.FC<APMDashboardProps> = ({ className }) => {
   } = useAPMMonitoring();
 
   const [timeRange, setTimeRange] = useState<'1h' | '24h' | '7d' | '30d'>('24h');
-  const [metrics, setMetrics] = useState<any[]>([]);
-  const [errors, setErrors] = useState<any[]>([]);
-  const [alerts, setAlerts] = useState<any[]>([]);
+  const [metrics, setMetrics] = useState<APMMetric[]>([]);
+  const [errors, setErrors] = useState<APMError[]>([]);
+  const [alerts, setAlerts] = useState<APMAlert[]>([]);
   const [includeFiltered, setIncludeFiltered] = useState(false);
 
   // Load data
@@ -70,7 +97,10 @@ export const APMDashboard: React.FC<APMDashboardProps> = ({ className }) => {
         setErrors(errorsData);
         setAlerts(alertsData);
       } catch (error) {
-        console.error('Failed to load APM data:', error);
+        // TODO: Implement proper error logging service
+        if (import.meta.env.DEV) {
+          console.error('Failed to load APM data:', error);
+        }
       }
     };
 
@@ -91,7 +121,7 @@ export const APMDashboard: React.FC<APMDashboardProps> = ({ className }) => {
         acc.push({ hour, value: metric.metric_value });
       }
       return acc;
-    }, [] as any[]);
+    }, [] as Array<{ hour: number; value: number }>);
 
   const errorsByType = errors.reduce((acc, error) => {
     const type = error.error_type;

@@ -20,7 +20,7 @@ import { useAuth } from '@/contexts/AuthContext';
 export const BacklinkAnalysis: React.FC = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [competitors, setCompetitors] = useState<any[]>([]);
+  const [competitors, setCompetitors] = useState<Array<{ id: string; competitor_name: string; competitor_domain: string; analysis_data?: unknown }>>([]);
 
   useEffect(() => {
     if (user) {

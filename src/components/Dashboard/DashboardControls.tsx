@@ -27,11 +27,15 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
   const hasActiveEditMode = isDashboardEditMode;
 
   const handleSaveAndLockDashboard = async () => {
-    console.log('Starting dashboard save and lock process...');
+    if (import.meta.env.DEV) {
+      console.log('Starting dashboard save and lock process...');
+    }
     setIsLocking(true);
     
     try {
-      console.log('Calling dashboard-lock function...');
+      if (import.meta.env.DEV) {
+        console.log('Calling dashboard-lock function...');
+      }
       const { data, error } = await supabase.functions.invoke('dashboard-lock', {
         body: {
           lockDashboard: true,
@@ -39,7 +43,9 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
         }
       });
 
-      console.log('Function response:', { data, error });
+      if (import.meta.env.DEV) {
+        console.log('Function response:', { data, error });
+      }
 
       if (error) {
         console.error('Dashboard save and lock error:', error);
@@ -51,7 +57,9 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
         return;
       }
 
-      console.log('Function call successful, updating local state...');
+      if (import.meta.env.DEV) {
+        console.log('Function call successful, updating local state...');
+      }
       // Update local state immediately
       setIsDashboardEditMode(false);
       setIsSidebarEditMode(false);

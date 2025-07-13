@@ -71,8 +71,10 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ className = 
                       size="sm"
                       className="w-full justify-start h-8"
                       onClick={() => {
-                        // Handle navigation or action
-                        console.log(`Clicked: ${item.label}`);
+                        // TODO: Implement navigation or action
+                        if (import.meta.env.DEV) {
+                          console.log(`Clicked: ${item.label}`);
+                        }
                       }}
                     >
                       <IconComponent className="w-4 h-4 mr-2" />
@@ -98,7 +100,12 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ className = 
               variant="ghost"
               size="sm"
               className="w-full justify-start h-8"
-              onClick={() => console.log('Settings clicked')}
+              onClick={() => {
+                // TODO: Implement settings functionality
+                if (import.meta.env.DEV) {
+                  console.log('Settings clicked');
+                }
+              }}
             >
               <Settings className="w-4 h-4 mr-2" />
               Settings

@@ -25,8 +25,8 @@ export const ContentOptimization: React.FC = () => {
   const [targetKeyword, setTargetKeyword] = useState('');
   const [contentText, setContentText] = useState('');
   const [loading, setLoading] = useState(true);
-  const [recommendations, setRecommendations] = useState<any[]>([]);
-  const [keywords, setKeywords] = useState<any[]>([]);
+  const [recommendations, setRecommendations] = useState<Array<{ id: string; title: string; description: string; priority?: string }>>([]);
+  const [keywords, setKeywords] = useState<Array<{ id: string; keyword: string; current_position?: number; search_volume?: string; target_url?: string }>>([]);
 
   useEffect(() => {
     if (user) {

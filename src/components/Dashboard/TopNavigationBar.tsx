@@ -115,7 +115,9 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
     
     setIsLoadingWeather(true);
     try {
-      console.log(`Fetching weather for: ${city}`);
+      if (import.meta.env.DEV) {
+        console.log(`Fetching weather for: ${city}`);
+      }
       
       const { data, error } = await supabase.functions.invoke('weather-api', {
         body: { 
@@ -137,7 +139,9 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
           condition: data.condition || 'Unknown',
           icon: data.icon // Weather code from API
         });
-        console.log('Weather data updated:', data);
+        if (import.meta.env.DEV) {
+          console.log('Weather data updated:', data);
+        }
       } else {
         console.error('Invalid weather data received:', data);
         onWeatherError?.('Invalid weather data received');
@@ -151,7 +155,9 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   };
 
   useEffect(() => {
-    console.log(`Weather useEffect triggered - City: ${savedWeatherCity}, Units: ${weatherUnits}`);
+    if (import.meta.env.DEV) {
+      console.log(`Weather useEffect triggered - City: ${savedWeatherCity}, Units: ${weatherUnits}`);
+    }
     if (savedWeatherCity && savedWeatherCity.trim()) {
       fetchWeather(savedWeatherCity);
     }

@@ -134,7 +134,9 @@ export const InitializeDashboardButton: React.FC<InitializeDashboardButtonProps>
         throw new Error(data?.error || 'Dashboard initialization failed');
       }
 
-      console.log('Dashboard initialization completed:', data);
+      if (import.meta.env.DEV) {
+        console.log('Dashboard initialization completed:', data);
+      }
       
       setIsComplete(true);
       

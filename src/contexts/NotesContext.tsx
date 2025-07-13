@@ -14,7 +14,7 @@ interface NotesContextType {
   selectedNote: Note | null;
   filters: NoteFilters;
   isLoading: boolean;
-  folders: any[];
+  folders: Array<{ id: string; name: string; parent_folder_id?: string }>;
   syncStatus: 'connected' | 'disconnected' | 'syncing';
   createNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Note>;
   updateNote: (id: string, updates: Partial<Omit<Note, 'id' | 'createdAt'>>) => Promise<Note | null>;
@@ -47,12 +47,21 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const { user, isLoading: authLoading } = useAuth();
   
   // Initialize folders as empty array - will be populated when folders context is available
-  const folders: any[] = [];
+  const folders: Array<{ id: string; name: string; parent_folder_id?: string }> = [];
 
   // Track subscription state with refs to prevent multiple subscriptions
   const subscriptionRef = useRef<any>(null);
   const hasSubscribedRef = useRef(false);
   const currentUserIdRef = useRef<string | null>(null);
+
+  // Debounce utility function with proper typing
+  const debounce = <T extends (...args: unknown[]) => void>(func: T, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: Parameters<T>) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
 
   const refreshNotes = async () => {
     if (!user) {
@@ -85,19 +94,27 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Cleanup function to properly remove subscriptions
   const cleanupSubscription = () => {
     if (subscriptionRef.current) {
-      console.log('Cleaning up existing real-time subscription');
+      if (import.meta.env.DEV) {
+        console.log('Cleaning up existing real-time subscription');
+      }
       
       // First unsubscribe from the channel
       subscriptionRef.current.unsubscribe().then(() => {
-        console.log('Successfully unsubscribed from channel');
+        if (import.meta.env.DEV) {
+          console.log('Successfully unsubscribed from channel');
+        }
         
         // Then remove the channel
         if (subscriptionRef.current) {
           supabase.removeChannel(subscriptionRef.current);
-          console.log('Channel removed');
+          if (import.meta.env.DEV) {
+            console.log('Channel removed');
+          }
         }
       }).catch((error) => {
-        console.error('Error during unsubscribe:', error);
+        if (import.meta.env.DEV) {
+          console.error('Error during unsubscribe:', error);
+        }
         // Force remove the channel even if unsubscribe fails
         if (subscriptionRef.current) {
           supabase.removeChannel(subscriptionRef.current);
@@ -164,7 +181,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const channel = SupabaseNotesService.subscribeToNoteChanges(
           user.id,
           // onInsert - heavily debounced and throttled
-          debounce((newNote) => {
+          debounce((newNote: Note) => {
             setNotes(prev => {
               // Check if note already exists to avoid duplicates
               const exists = prev.find(note => note.id === newNote.id);
@@ -174,7 +191,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             });
           }, 2000), // 2 second debounce to prevent rapid-fire updates
           // onUpdate - heavily debounced and throttled
-          debounce((updatedNote) => {
+          debounce((updatedNote: Note) => {
             setNotes(prev => prev.map(note => 
               note.id === updatedNote.id ? updatedNote : note
             ));
@@ -188,7 +205,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             }
           }, 2000), // 2 second debounce
           // onDelete - heavily debounced
-          debounce((deletedNoteId) => {
+          debounce((deletedNoteId: string) => {
             setNotes(prev => prev.filter(note => note.id !== deletedNoteId));
             
             // Clear current note if it was deleted
@@ -206,7 +223,9 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         hasSubscribedRef.current = true;
         setSyncStatus('connected');
         
-        console.log('Real-time subscription setup completed');
+        if (import.meta.env.DEV) {
+          console.log('Real-time subscription setup completed');
+        }
       } catch (error) {
         console.error('Error setting up real-time subscription:', error);
         setSyncStatus('disconnected');
@@ -228,14 +247,6 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [user?.id, authLoading]); // Only depend on user ID and auth loading state
 
-  // Debounce utility function
-  const debounce = (func: (...args: any[]) => void, delay: number) => {
-    let timeoutId: NodeJS.Timeout;
-    return (...args: any[]) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => func(...args), delay);
-    };
-  };
 
   const createNote = async (noteData: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>): Promise<Note> => {
     if (!user) throw new Error('User not authenticated');
