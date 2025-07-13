@@ -12,8 +12,8 @@ export const initSentry = () => {
       //   blockAllMedia: false,
       // }),
     ],
-    // Performance Monitoring - Reduced to avoid rate limiting
-    tracesSampleRate: 0.01,
+    // Performance Monitoring - Further reduced to avoid rate limiting
+    tracesSampleRate: 0.001, // Reduced from 0.01 to 0.001
     // Disable session replay to avoid CSP conflicts
     replaysSessionSampleRate: 0,
     replaysOnErrorSampleRate: 0,
@@ -32,6 +32,16 @@ export const initSentry = () => {
       'ws://localhost',
       'Rate limiting',
       '429',
+      'Failed to load resource',
+      'net::ERR_FAILED',
+      'net::ERR_HTTP2_PROTOCOL_ERROR',
+      'CORS policy',
+      'Access to fetch',
+      'WebSocket connection',
+      'createOrJoinSocket',
+      'firestore.googleapis.com',
+      'lovable-api.com',
+      'lovableproject.com',
     ],
     
     debug: false,
@@ -44,10 +54,28 @@ export const initSentry = () => {
     
     beforeSend(event) {
       // Filter out known development/infrastructure errors
-      if (event.message?.includes('Failed to execute \'put\' on \'Cache\'') ||
-          event.message?.includes('Content Security Policy directive') ||
-          event.message?.includes('ws://localhost') ||
-          event.message?.includes('429')) {
+      const errorMessage = event.message || '';
+      const errorStack = event.exception?.values?.[0]?.stacktrace?.frames?.join('') || '';
+      const combinedText = errorMessage + errorStack;
+      
+      if (
+        combinedText.includes('Failed to execute \'put\' on \'Cache\'') ||
+        combinedText.includes('Content Security Policy directive') ||
+        combinedText.includes('ws://localhost') ||
+        combinedText.includes('429') ||
+        combinedText.includes('Failed to load resource') ||
+        combinedText.includes('net::ERR_FAILED') ||
+        combinedText.includes('net::ERR_HTTP2_PROTOCOL_ERROR') ||
+        combinedText.includes('CORS policy') ||
+        combinedText.includes('Access to fetch') ||
+        combinedText.includes('WebSocket connection') ||
+        combinedText.includes('createOrJoinSocket') ||
+        combinedText.includes('firestore.googleapis.com') ||
+        combinedText.includes('lovable-api.com') ||
+        combinedText.includes('lovableproject.com') ||
+        combinedText.includes('MIME type') ||
+        combinedText.includes('refused to apply style')
+      ) {
         return null;
       }
       return event;

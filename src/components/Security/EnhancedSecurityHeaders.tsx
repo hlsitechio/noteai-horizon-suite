@@ -11,7 +11,7 @@ const EnhancedSecurityHeaders = () => {
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https: blob:",
       "media-src 'self' data: blob:",
-      "connect-src 'self' https://qrdulwzjgbfgaplazgsh.supabase.co https://www.google-analytics.com https://api.openai.com https://api.openrouter.ai https://ingest.us.sentry.io wss://qrdulwzjgbfgaplazgsh.supabase.co ws://localhost:* ws://0.0.0.0:* ws://127.0.0.1:* *.lovable.app *.cloudflareinsights.com *.sentry.io",
+      "connect-src 'self' https://qrdulwzjgbfgaplazgsh.supabase.co https://www.google-analytics.com https://api.openai.com https://api.openrouter.ai https://ingest.us.sentry.io wss://qrdulwzjgbfgaplazgsh.supabase.co ws://localhost:* wss://localhost:* ws://0.0.0.0:* ws://127.0.0.1:* *.lovable.app *.lovableproject.com *.cloudflareinsights.com *.sentry.io https://lovable-api.com",
       "referrer no-referrer-when-downgrade",
       "frame-src 'self'",
       "frame-ancestors 'self'",
