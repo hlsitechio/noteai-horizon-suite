@@ -31,11 +31,13 @@ const OptimizedDashboard: React.FC = () => {
   const { url: selectedBannerUrl } = getBannerSettings();
 
   const handleMainContentResize = async (sizes: number[]) => {
-    if (sizes.length >= 3) {
+    if (sizes.length >= 5) {
       const newSizes = { ...panelSizes };
       newSizes.analytics = Math.round(sizes[0]);
-      newSizes.topSection = Math.round(sizes[1]);
-      newSizes.bottomSection = Math.round(sizes[2]);
+      newSizes.topSection = Math.round(sizes[1]);    // Grid 1
+      newSizes.middleSection = Math.round(sizes[2]);  // Grid 2
+      newSizes.bottomSection = Math.round(sizes[3]);  // Grid 3
+      newSizes.selectedComponents = Math.round(sizes[4]); // Selected Components
       await updatePanelSizes(newSizes);
     }
   };
@@ -87,7 +89,9 @@ const OptimizedDashboard: React.FC = () => {
       notes={notes}
       analyticsSize={panelSizes.analytics}
       topSectionSize={panelSizes.topSection}
+      middleSectionSize={panelSizes.middleSection}
       bottomSectionSize={panelSizes.bottomSection}
+      selectedComponentsSize={panelSizes.selectedComponents}
       leftPanelsSize={panelSizes.leftPanels}
       rightPanelsSize={panelSizes.rightPanels}
       isDashboardEditMode={isDashboardEditMode}

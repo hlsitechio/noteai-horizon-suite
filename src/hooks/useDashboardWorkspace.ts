@@ -219,7 +219,17 @@ export const useDashboardWorkspace = () => {
   }, [workspace]);
 
   const getPanelSizes = useCallback(() => {
-    return workspace?.panel_sizes || {};
+    const defaultSizes = {
+      analytics: 20,        // Analytics panel at top
+      topSection: 25,       // Top section grid
+      middleSection: 25,    // Middle section grid
+      bottomSection: 25,    // Bottom section grid  
+      selectedComponents: 5, // Selected components area at bottom - smaller default
+      leftPanels: 50,       // Left side of horizontal splits
+      rightPanels: 50,      // Right side of horizontal splits
+      banner: 25            // Banner panel
+    };
+    return { ...defaultSizes, ...(workspace?.panel_sizes || {}) };
   }, [workspace]);
 
   const getBannerSettings = useCallback(() => {

@@ -18,7 +18,9 @@ interface MainDashboardContentProps {
   notes: Note[];
   analyticsSize: number;
   topSectionSize: number;
+  middleSectionSize: number;
   bottomSectionSize: number;
+  selectedComponentsSize: number;
   leftPanelsSize: number;
   rightPanelsSize: number;
   isDashboardEditMode: boolean;
@@ -30,7 +32,9 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
   notes,
   analyticsSize,
   topSectionSize,
+  middleSectionSize,
   bottomSectionSize,
+  selectedComponentsSize,
   leftPanelsSize,
   rightPanelsSize,
   isDashboardEditMode,
@@ -172,7 +176,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
         />
         
         <ResizableDashboardGrid
-          topSectionSize={topSectionSize}
+          topSectionSize={middleSectionSize}
           bottomSectionSize={bottomSectionSize}
           leftPanelsSize={leftPanelsSize}
           rightPanelsSize={rightPanelsSize}
@@ -204,7 +208,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
         <Panel 
           id="selected-components-panel"
           order={4}
-          defaultSize={25} 
+          defaultSize={selectedComponentsSize} 
           minSize={isDashboardEditMode ? 15 : undefined}
           maxSize={isDashboardEditMode ? 40 : undefined}
         >
