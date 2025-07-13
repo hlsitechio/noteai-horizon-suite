@@ -46,6 +46,8 @@ export const useSelectedComponents = () => {
   }, [selectedComponents, user]);
 
   const addComponent = (component: Omit<SelectedComponent, 'id' | 'addedAt'>) => {
+    console.log('addComponent called with:', component);
+    
     const newComponent: SelectedComponent = {
       ...component,
       id: `${component.componentKey}-${Date.now()}`,
@@ -54,8 +56,12 @@ export const useSelectedComponents = () => {
     
     // Remove any existing component with the same componentKey before adding the new one
     setSelectedComponents(prev => {
+      console.log('Previous selected components:', prev);
       const filtered = prev.filter(comp => comp.componentKey !== component.componentKey);
-      return [...filtered, newComponent];
+      console.log('Filtered components:', filtered);
+      const newList = [...filtered, newComponent];
+      console.log('New component list:', newList);
+      return newList;
     });
     return newComponent;
   };

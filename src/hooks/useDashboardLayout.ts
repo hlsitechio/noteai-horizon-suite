@@ -53,13 +53,17 @@ export const useDashboardLayout = () => {
     if (!layout) return;
 
     try {
+      console.log('updatePanelConfiguration called:', { panelKey, componentKey, enabled });
+      
       // First, check if this component type already exists in another panel and remove it
       const panelConfigs = (layout.panel_configurations as unknown as Record<string, PanelConfiguration>) || {};
+      console.log('Current panel configs:', panelConfigs);
       
       // Find and clear any existing panels with the same component type
       const updatedConfigs = { ...panelConfigs };
       Object.keys(updatedConfigs).forEach(existingPanelKey => {
         if (existingPanelKey !== panelKey && updatedConfigs[existingPanelKey]?.component_key === componentKey) {
+          console.log(`Clearing existing component ${componentKey} from panel ${existingPanelKey}`);
           updatedConfigs[existingPanelKey] = {
             component_key: '',
             enabled: false,
@@ -75,7 +79,9 @@ export const useDashboardLayout = () => {
         props: {}
       };
 
-      // Make database update with all changes
+      console.log('Updated configs to save:', updatedConfigs);
+
+      // Make database update with the main panel configuration
       await DashboardLayoutService.updatePanelConfiguration(layout.id, panelKey, {
         component_key: componentKey,
         enabled,
@@ -85,6 +91,7 @@ export const useDashboardLayout = () => {
       // Update all affected panels in the database
       for (const [key, config] of Object.entries(updatedConfigs)) {
         if (key !== panelKey && panelConfigs[key]?.component_key !== config.component_key) {
+          console.log(`Updating panel ${key} with config:`, config);
           await DashboardLayoutService.updatePanelConfiguration(layout.id, key, {
             component_key: config.component_key,
             enabled: config.enabled,
@@ -93,17 +100,15 @@ export const useDashboardLayout = () => {
         }
       }
 
-      // Batch state updates using React's automatic batching
-      await new Promise(resolve => {
-        // Update local state
-        const updatedLayout = { ...layout };
-        updatedLayout.panel_configurations = updatedConfigs as any;
-        
-        setLayout(updatedLayout);
-        resolve(void 0);
-      });
+      // Update local state
+      const updatedLayout = { ...layout };
+      updatedLayout.panel_configurations = updatedConfigs as any;
+      
+      console.log('Setting updated layout:', updatedLayout);
+      setLayout(updatedLayout);
 
     } catch (err) {
+      console.error('Failed to update panel configuration:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to update panel configuration';
       throw new Error(errorMessage);
     }

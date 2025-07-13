@@ -91,7 +91,7 @@ export class DashboardLayoutService {
   static async createDefaultLayout(userId: string): Promise<DashboardLayout | null> {
     try {
       const defaultConfig = {
-        components: [],
+        components: {},  // This should be an object, not an array
         panelSizes: {},
         gridLayout: []
       };
@@ -164,6 +164,8 @@ export class DashboardLayoutService {
     configuration: PanelConfiguration
   ): Promise<void> {
     try {
+      console.log('updatePanelConfiguration DB call:', { layoutId, panelKey, configuration });
+      
       // Get current layout
       const { data: layout, error: fetchError } = await supabase
         .from('dashboard_layouts')
@@ -171,24 +173,38 @@ export class DashboardLayoutService {
         .eq('id', layoutId)
         .single();
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        console.error('Error fetching layout:', fetchError);
+        throw fetchError;
+      }
+
+      console.log('Current layout from DB:', layout);
 
       const currentConfig = layout.layout_config as any || {};
       const components = currentConfig.components || {};
       
       components[panelKey] = configuration;
 
+      const newConfig = { 
+        ...currentConfig, 
+        components 
+      };
+
+      console.log('Updating DB with new config:', newConfig);
+
       const { error: updateError } = await supabase
         .from('dashboard_layouts')
         .update({ 
-          layout_config: { 
-            ...currentConfig, 
-            components 
-          } 
+          layout_config: newConfig
         })
         .eq('id', layoutId);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Error updating layout:', updateError);
+        throw updateError;
+      }
+
+      console.log('Successfully updated layout in DB');
     } catch (error) {
       console.error('Error updating panel configuration:', error);
       throw error;
