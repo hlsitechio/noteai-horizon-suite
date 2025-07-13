@@ -48,6 +48,8 @@ export const SelectedComponentsArea: React.FC<SelectedComponentsAreaProps> = ({ 
         .upsert({
           user_id: user.id,
           dashboard_components: componentKeys,
+        }, {
+          onConflict: 'user_id'
         });
 
       if (error) {
