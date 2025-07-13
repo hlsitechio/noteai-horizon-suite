@@ -4,12 +4,12 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
 import EnhancedMobileLayout from '@/mobile/layout/EnhancedMobileLayout';
 import MobileDashboard from '@/mobile/pages/MobileDashboard';
-import EnhancedMobileNotes from '@/mobile/pages/MobileNotes';
-// MobileEditor removed - now using unified Editor
+import MobileNotes from '@/mobile/pages/MobileNotes';
 import MobileChat from '@/mobile/pages/MobileChat';
 import MobileProjects from '@/mobile/pages/MobileProjects';
 import MobileAnalytics from '@/mobile/pages/MobileAnalytics';
 import EnhancedMobileSettings from '@/mobile/pages/EnhancedMobileSettings';
+import Editor from '@/pages/Editor';
 import { useNotes } from '@/contexts/NotesContext';
 
 const MobileApp: React.FC = () => {
@@ -35,7 +35,8 @@ const MobileApp: React.FC = () => {
         <Route path="/" element={<EnhancedMobileLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<MobileDashboard />} />
-          <Route path="notes" element={<EnhancedMobileNotes />} />
+          <Route path="notes" element={<MobileNotes />} />
+          <Route path="editor" element={<Editor />} />
           <Route path="chat" element={<MobileChat />} />
           <Route path="projects" element={<MobileProjects />} />
           <Route path="analytics" element={<MobileAnalytics />} />

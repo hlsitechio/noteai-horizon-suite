@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from 'next-themes';
+import { useTheme } from '@/providers/ThemeProvider';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotes } from '../../contexts/NotesContext';
 import SyncStatusIndicator from '../../components/SyncStatusIndicator';
