@@ -47,6 +47,11 @@ const MobileNotes: React.FC = () => {
 
   return (
     <div className="h-full w-full flex flex-col bg-background min-h-0 overflow-hidden">
+      {/* Header */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border px-4 py-3 flex items-center space-x-3 z-10">
+        <h1 className="text-lg font-semibold text-foreground">Mobile/Notes</h1>
+      </div>
+      
       {/* Search and Actions */}
       <div className="p-4 space-y-3 flex-shrink-0 bg-background border-b">
         <div className="flex gap-2">

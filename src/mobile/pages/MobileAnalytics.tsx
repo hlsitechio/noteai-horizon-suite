@@ -63,7 +63,7 @@ const MobileAnalytics: React.FC = () => {
 
   return (
     <div className="h-full overflow-y-auto bg-background">
-      <DynamicMobileHeader title="Analytics" />
+      <DynamicMobileHeader title="Mobile/Analytics" />
       
       <div className="p-4 space-y-6">
         {/* Overview Stats */}

@@ -79,7 +79,7 @@ const MobileChat: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col bg-background">
-      <DynamicMobileHeader title="Enhanced AI Assistant" />
+      <DynamicMobileHeader title="Mobile/Chat" />
       
       {/* Messages */}
       <ScrollArea className="flex-1 p-4">

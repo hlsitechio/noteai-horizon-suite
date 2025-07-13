@@ -123,14 +123,17 @@ const MobileEditor: React.FC = () => {
       {/* Header */}
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex items-center justify-between p-4 border-b">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleBack}
-            className="h-9 w-9 p-0"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBack}
+              className="h-9 w-9 p-0"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-lg font-semibold text-foreground">Mobile/Editor</h1>
+          </div>
           
           <div className="flex items-center gap-2">
             <Button

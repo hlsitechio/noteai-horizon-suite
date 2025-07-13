@@ -29,7 +29,7 @@ const MobileProjects: React.FC = () => {
   return (
     <div className="h-full overflow-y-auto bg-background relative isolate">
       <DynamicMobileHeader 
-        title="Projects"
+        title="Mobile/Projects"
         rightActions={
           <Button size="sm" className="h-7 text-xs">
             <Plus className="w-3 h-3 mr-1" />
