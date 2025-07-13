@@ -5,7 +5,7 @@ import { useSidebarCollapse } from '@/contexts/SidebarContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Separator } from '@/components/ui/separator';
 import NavigationMenu from './NavigationMenu';
-import { NotesSection } from './NotesSection';
+
 import { SidebarQuickActions } from './SidebarQuickActions';
 import { SidebarFooter } from './SidebarFooter';
 import { useSidebarKeyboardShortcuts } from './SidebarKeyboardShortcuts';
@@ -81,44 +81,6 @@ export function SidebarUnified() {
         {/* Quick Actions Section */}
         
 
-        <AnimatePresence>
-          {!isCollapsed && <motion.div initial={{
-          opacity: 0,
-          height: 0
-        }} animate={{
-          opacity: 1,
-          height: 'auto'
-        }} exit={{
-          opacity: 0,
-          height: 0
-        }} transition={{
-          duration: 0.2
-        }}>
-              <Separator className="mx-2" />
-            </motion.div>}
-        </AnimatePresence>
-
-        {/* Content Section - Notes */}
-        <motion.div className="flex-1 min-h-0 overflow-hidden" variants={sectionVariants}>
-          <NotesSection />
-        </motion.div>
-
-        <AnimatePresence>
-          {!isCollapsed && <motion.div initial={{
-          opacity: 0,
-          height: 0
-        }} animate={{
-          opacity: 1,
-          height: 'auto'
-        }} exit={{
-          opacity: 0,
-          height: 0
-        }} transition={{
-          duration: 0.2
-        }}>
-              <Separator className="mx-2" />
-            </motion.div>}
-        </AnimatePresence>
 
         {/* Footer Section */}
         <motion.div className="flex-shrink-0 p-2 border-t border-sidebar-border" variants={sectionVariants}>
