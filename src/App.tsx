@@ -1,7 +1,7 @@
 
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import * as Sentry from "@sentry/react";
+// Sentry import removed
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -25,7 +25,8 @@ import { ReloadPreventionProvider } from './components/ReloadPrevention/ReloadPr
 
 import './App.css';
 
-const SentryRouter = Sentry.withSentryRouting(Router);
+// Sentry disabled - use plain Router
+const AppRouter = Router;
 
 function App() {
 
@@ -33,18 +34,18 @@ function App() {
     <SmartErrorBoundary preserveWork={true}>
       <ReloadPreventionProvider>
         <AppProviders>
-          <SentryRouter>
+          <AppRouter>
             <OnboardingProvider>
               <OptimizedLazyRoutes />
               <ReminderManager />
               <Toaster />
               <Sonner />
             </OnboardingProvider>
-          </SentryRouter>
+          </AppRouter>
         </AppProviders>
       </ReloadPreventionProvider>
     </SmartErrorBoundary>
   );
 }
 
-export default Sentry.withProfiler(App);
+export default App;

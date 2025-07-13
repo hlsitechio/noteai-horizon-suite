@@ -2,8 +2,6 @@
 import { AnalyticsService } from './analyticsService';
 import { PerformanceService } from './performanceService';
 import { CleanupService } from './cleanupService';
-import { initSentry } from '../config/sentry';
-import * as Sentry from "@sentry/react";
 import { logger } from '../utils/logger';
 
 export class AppInitializationService {
@@ -15,9 +13,6 @@ export class AppInitializationService {
     try {
       // Initialize cleanup service first to prevent issues
       CleanupService.initialize();
-
-      // Initialize Sentry with reduced configuration
-      initSentry();
 
       // Initialize performance monitoring (lightweight)
       PerformanceService.initialize();
@@ -34,7 +29,7 @@ export class AppInitializationService {
 
     } catch (error) {
       logger.error('❌ Failed to initialize application:', error);
-      Sentry.captureException(error);
+      // Sentry removed
     }
   }
 
@@ -48,7 +43,7 @@ export class AppInitializationService {
         return;
       }
       
-      Sentry.captureException(event.reason);
+      // Sentry removed
     });
 
     // Handle JavaScript errors
@@ -60,7 +55,7 @@ export class AppInitializationService {
         return;
       }
       
-      Sentry.captureException(event.error);
+      // Sentry removed
     });
   }
 

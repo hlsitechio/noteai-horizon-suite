@@ -2,7 +2,7 @@
 import { useEffect, useCallback } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import * as Sentry from '@sentry/react';
+// Sentry removed
 import { useAdvancedCleanup } from './useAdvancedCleanup';
 
 interface UseEnhancedSessionSyncProps {
@@ -25,9 +25,7 @@ export function useEnhancedSessionSync({
       
       if (error) {
         console.error('Session sync error:', error);
-        Sentry.captureException(error, {
-          tags: { context: 'session_sync' }
-        });
+        // Sentry removed
         onError?.(error);
         return;
       }
@@ -37,9 +35,7 @@ export function useEnhancedSessionSync({
     } catch (error) {
       const sessionError = error instanceof Error ? error : new Error('Unknown session sync error');
       console.error('Session sync failed:', sessionError);
-      Sentry.captureException(sessionError, {
-        tags: { context: 'session_sync_catch' }
-      });
+      // Sentry removed
       onError?.(sessionError);
     }
   }, [setSession, onError]);
@@ -88,12 +84,7 @@ export function useEnhancedSessionSync({
         } catch (error) {
           const authError = error instanceof Error ? error : new Error('Auth state change error');
           console.error('Auth state change error:', authError);
-          Sentry.captureException(authError, {
-            tags: { 
-              context: 'auth_state_change',
-              event: event 
-            }
-          });
+          // Sentry removed
           onError?.(authError);
         }
       }

@@ -4,7 +4,7 @@ import { User } from '@/contexts/auth/types';
 import { supabase } from '@/integrations/supabase/client';
 import { transformUser } from '@/contexts/auth/utils';
 import { logger } from '@/utils/logger';
-import * as Sentry from '@sentry/react';
+// Sentry removed
 
 interface UseStableAuthReturn {
   user: User | null;
@@ -97,7 +97,7 @@ export const useStableAuth = (): UseStableAuthReturn => {
     } catch (error) {
       logger.auth.error('Auth retry failed:', error);
       setAuthError(error instanceof Error ? error.message : 'Authentication retry failed');
-      Sentry.captureException(error);
+      // Sentry removed
     }
   }, [handleAuthChange]);
 
@@ -120,7 +120,7 @@ export const useStableAuth = (): UseStableAuthReturn => {
     } catch (error) {
       logger.auth.error('Error initializing auth:', error);
       setAuthError(error instanceof Error ? error.message : 'Failed to initialize authentication');
-      Sentry.captureException(error);
+      // Sentry removed
       
       // Attempt retry after initial failure
       if (retryCountRef.current < maxRetries) {
@@ -169,7 +169,7 @@ export const useStableAuth = (): UseStableAuthReturn => {
         } catch (error) {
           logger.auth.error('Error in auth state change:', error);
           setAuthError(error instanceof Error ? error.message : 'Authentication error occurred');
-          Sentry.captureException(error);
+          // Sentry removed
         }
       }
     );

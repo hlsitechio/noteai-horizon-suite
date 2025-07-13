@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react';
 import { onCLS, onLCP, onFCP, onTTFB } from 'web-vitals';
 import throttle from 'lodash.throttle';
 
@@ -15,24 +14,10 @@ interface PerformanceMetric {
   navigationType: string;
 }
 
-// Disable Sentry in development or when rate limited
+// Sentry completely disabled
 const throttledSentryCapture = throttle((message: string, options: any) => {
-  // Skip Sentry entirely in development
-  if (import.meta.env.DEV) {
-    return;
-  }
-  
-  try {
-    // Further limit production messages
-    if (Math.random() > 0.1) { // Only send 10% of messages
-      return;
-    }
-    Sentry.captureMessage(message, options);
-  } catch (error) {
-    // Silently handle Sentry errors to prevent site instability
-    console.warn('Sentry capture failed:', error);
-  }
-}, 30000); // Allow maximum 1 message per 30 seconds
+  // No-op - Sentry removed
+}, 30000);
 
 // Track sent messages to prevent duplicates
 const sentMessages = new Set<string>();

@@ -2,7 +2,7 @@ import React, { Component, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { logger } from '@/utils/logger';
-import * as Sentry from '@sentry/react';
+// Sentry removed
 
 interface Props {
   children: ReactNode;
@@ -53,15 +53,7 @@ export class SmartErrorBoundary extends Component<Props, State> {
     logger.error('Error boundary caught error:', error, errorInfo);
     
     // Send to Sentry with additional context
-    Sentry.withScope((scope) => {
-      scope.setTag('errorBoundary', true);
-      scope.setLevel('error');
-      scope.setContext('errorInfo', {
-        componentStack: errorInfo.componentStack,
-        retryCount: this.state.retryCount
-      });
-      Sentry.captureException(error);
-    });
+    // Sentry removed
 
     // Preserve work if enabled
     if (this.props.preserveWork) {

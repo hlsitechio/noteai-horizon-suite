@@ -1,6 +1,6 @@
 
 import { Component, ErrorInfo, ReactNode } from 'react';
-import * as Sentry from '@sentry/react';
+// Sentry removed
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,17 +33,7 @@ class EnhancedErrorBoundary extends Component<Props, State> {
     this.setState({ errorInfo: info });
     
     // Send to Sentry with enhanced context
-    Sentry.captureException(error, {
-      extra: {
-        componentStack: info.componentStack,
-        errorBoundary: 'enhanced',
-        timestamp: new Date().toISOString(),
-      },
-      tags: {
-        errorBoundary: 'enhanced',
-        component: 'EnhancedErrorBoundary'
-      }
-    });
+    // Sentry removed - captureException call disabled
 
     // Track error in analytics if available
     if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
