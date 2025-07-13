@@ -19,6 +19,7 @@ interface SectionRendererProps {
   onCreateNote: () => void;
   onCreateFolder: () => Promise<void>;
   onMoveToFolder: (noteId: string, folderId: string | null) => void;
+  onFolderSelect?: (folderId: string) => void;
   isMobile: boolean;
 }
 
@@ -32,6 +33,7 @@ export function SectionRenderer({
   onCreateNote,
   onCreateFolder,
   onMoveToFolder,
+  onFolderSelect,
   isMobile
 }: SectionRendererProps) {
   switch (sectionId) {
@@ -54,6 +56,7 @@ export function SectionRenderer({
           onToggle={() => onToggleSection('folders')}
           onCreateFolder={onCreateFolder}
           onMoveToFolder={onMoveToFolder}
+          onFolderSelect={onFolderSelect}
           isMobile={isMobile}
         />
       );

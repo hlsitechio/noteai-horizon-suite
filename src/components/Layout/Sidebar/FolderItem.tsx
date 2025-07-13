@@ -8,7 +8,7 @@ import {
   Edit,
   Trash2
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+
 import { Note } from '../../../types/note';
 import { Folder as FolderType } from '../../../types/folder';
 import { DroppableContainer } from './DroppableContainer';
@@ -21,6 +21,7 @@ interface FolderItemProps {
   onToggle: (folderId: string) => void;
   onEdit: (folder: FolderType, event: React.MouseEvent) => void;
   onDelete: (folderId: string, folderName: string, event: React.MouseEvent) => void;
+  onFolderSelect?: (folderId: string) => void;
 }
 
 export function FolderItem({ 
@@ -29,9 +30,15 @@ export function FolderItem({
   isExpanded, 
   onToggle, 
   onEdit, 
-  onDelete 
+  onDelete,
+  onFolderSelect
 }: FolderItemProps) {
   const folderNotes = notes.filter(note => note.folder_id === folder.id);
+
+  const handleFolderClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onFolderSelect?.(folder.id);
+  };
 
   return (
     <DroppableContainer
@@ -51,11 +58,13 @@ export function FolderItem({
             <ChevronRight className="h-3 w-3" />
           )}
         </Button>
-        <Button variant="ghost" size="sm" asChild className="flex-1 h-auto p-1">
-          <Link 
-            to={`/app/folders/${folder.id}`}
-            className="flex items-center justify-between hover:bg-accent hover:text-accent-foreground transition-colors w-full"
-          >
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="flex-1 h-auto p-1"
+          onClick={handleFolderClick}
+        >
+          <div className="flex items-center justify-between hover:bg-accent hover:text-accent-foreground transition-colors w-full">
             <div className="flex items-center">
               <div 
                 className="w-2 h-2 rounded-full mr-2 flex-shrink-0" 
@@ -67,7 +76,7 @@ export function FolderItem({
             <span className="text-xs text-sidebar-foreground/40">
               ({folderNotes.length})
             </span>
-          </Link>
+          </div>
         </Button>
         
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

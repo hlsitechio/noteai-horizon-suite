@@ -17,6 +17,7 @@ interface FoldersListSectionProps {
   onToggle: () => void;
   onCreateFolder: () => Promise<void>;
   onMoveToFolder: (noteId: string, folderId: string | null) => void;
+  onFolderSelect?: (folderId: string) => void;
   isMobile: boolean;
 }
 
@@ -27,6 +28,7 @@ export function FoldersListSection({
   onToggle,
   onCreateFolder,
   onMoveToFolder,
+  onFolderSelect,
   isMobile
 }: FoldersListSectionProps) {
   const [expandedFolders, setExpandedFolders] = React.useState<Set<string>>(new Set());
@@ -90,6 +92,7 @@ export function FoldersListSection({
                     onToggle={toggleFolder}
                     onEdit={handleEditFolder}
                     onDelete={handleDeleteFolder}
+                    onFolderSelect={onFolderSelect}
                   />
                 ))
               ) : (

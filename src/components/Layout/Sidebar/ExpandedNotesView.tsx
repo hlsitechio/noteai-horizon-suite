@@ -38,6 +38,7 @@ interface ExpandedNotesViewProps {
   onCreateFolder: () => Promise<void>;
   onMoveToFolder: (noteId: string, folderId: string | null) => void;
   onToggleFavorite: (noteId: string, isFavorite: boolean) => void;
+  onFolderSelect?: (folderId: string) => void;
   isMobile: boolean;
 }
 
@@ -52,6 +53,7 @@ export function ExpandedNotesView({
   onCreateFolder,
   onMoveToFolder,
   onToggleFavorite,
+  onFolderSelect,
   isMobile
 }: ExpandedNotesViewProps) {
   return (
@@ -95,6 +97,7 @@ export function ExpandedNotesView({
                         onCreateNote={onCreateNote}
                         onCreateFolder={onCreateFolder}
                         onMoveToFolder={onMoveToFolder}
+                        onFolderSelect={onFolderSelect}
                         isMobile={isMobile}
                       />
                     </motion.div>

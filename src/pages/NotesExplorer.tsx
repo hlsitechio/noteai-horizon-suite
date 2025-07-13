@@ -523,7 +523,7 @@ const NotesExplorer: React.FC = () => {
               <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
                 <div className="h-full border-r bg-background">
                   <div className="h-full">
-                    <NotesSection />
+                    <NotesSection onFolderSelect={(folderId) => setSelectedItems(new Set([folderId]))} />
                   </div>
                 </div>
               </ResizablePanel>

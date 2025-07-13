@@ -8,7 +8,11 @@ import { useSidebarCollapse } from '@/contexts/SidebarContext';
 import { CollapsedNotesView } from './CollapsedNotesView';
 import { ExpandedNotesView } from './ExpandedNotesView';
 
-export function NotesSection() {
+interface NotesSectionProps {
+  onFolderSelect?: (folderId: string) => void;
+}
+
+export function NotesSection({ onFolderSelect }: NotesSectionProps = {}) {
   const { notes, createNote, setCurrentNote, updateNote } = useOptimizedNotes();
   const { folders, createFolder } = useFolders();
   const navigate = useNavigate();
@@ -117,6 +121,7 @@ export function NotesSection() {
         onCreateFolder={handleCreateFolder}
         onMoveToFolder={handleMoveToFolder}
         onToggleFavorite={handleToggleFavorite}
+        onFolderSelect={onFolderSelect}
         isMobile={isMobile}
       />
     </div>
