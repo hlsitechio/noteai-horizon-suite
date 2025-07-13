@@ -39,6 +39,17 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
     await onAddToPanel(componentKey, panelKey);
   };
 
+  const handleAddToSelectedComponents = async () => {
+    // Close dialog first
+    setIsDialogOpen(false);
+    
+    // Small delay to allow dialog close animation
+    await new Promise(resolve => setTimeout(resolve, 150));
+    
+    // Add to selected components area
+    await onAddToPanel(component.componentKey, 'selectedComponents');
+  };
+
   const formatPanelName = (panelKey: string) => {
     const panelNames: Record<string, string> = {
       'topLeft': 'Top Left',
@@ -104,17 +115,36 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-2">
-                {availablePanels.map((panelKey) => (
-                  <Button
-                    key={panelKey}
-                    variant="outline"
-                    onClick={() => handleAddToPanel(component.componentKey, panelKey)}
-                    className="justify-start"
-                  >
-                    {formatPanelName(panelKey)}
-                  </Button>
-                ))}
+              {/* Add to Selected Components Area - Primary Option */}
+              <div className="p-3 border-2 border-primary/20 rounded-lg bg-primary/5">
+                <div className="text-sm font-medium mb-2">Recommended</div>
+                <Button
+                  onClick={handleAddToSelectedComponents}
+                  className="w-full justify-start"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add to Selected Components
+                </Button>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Add to the dedicated components area in your dashboard
+                </p>
+              </div>
+
+              {/* Add to Dashboard Panels - Secondary Option */}
+              <div>
+                <div className="text-sm font-medium mb-2">Or add to dashboard panel</div>
+                <div className="grid grid-cols-2 gap-2">
+                  {availablePanels.map((panelKey) => (
+                    <Button
+                      key={panelKey}
+                      variant="outline"
+                      onClick={() => handleAddToPanel(component.componentKey, panelKey)}
+                      className="justify-start"
+                    >
+                      {formatPanelName(panelKey)}
+                    </Button>
+                  ))}
+                </div>
               </div>
             </div>
           </DialogContent>

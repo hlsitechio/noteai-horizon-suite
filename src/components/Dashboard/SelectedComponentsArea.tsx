@@ -1,0 +1,109 @@
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { DashboardComponentRenderer } from './ComponentRegistry';
+import { Plus, X, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useSelectedComponents } from '@/hooks/useSelectedComponents';
+
+interface SelectedComponentsAreaProps {
+  className?: string;
+}
+
+export const SelectedComponentsArea: React.FC<SelectedComponentsAreaProps> = ({ className }) => {
+  const navigate = useNavigate();
+  const { selectedComponents, removeComponent } = useSelectedComponents();
+
+  const handleRemoveComponent = (componentId: string) => {
+    removeComponent(componentId);
+  };
+
+  const handleAddMoreComponents = () => {
+    navigate('/app/components');
+  };
+
+  return (
+    <Card className={className}>
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <CardTitle className="text-lg">Selected Components</CardTitle>
+            <Badge variant="secondary" className="text-xs">
+              {selectedComponents.length} items
+            </Badge>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleAddMoreComponents}
+              className="flex items-center space-x-1"
+            >
+              <Plus className="h-3 w-3" />
+              <span>Add More</span>
+            </Button>
+            <Button variant="ghost" size="sm">
+              <Settings className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {selectedComponents.length === 0 ? (
+          <div className="text-center py-8">
+            <div className="space-y-3">
+              <div className="mx-auto w-12 h-12 bg-muted rounded-full flex items-center justify-center">
+                <Plus className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <div>
+                <h3 className="font-medium">No components selected</h3>
+                <p className="text-sm text-muted-foreground">
+                  Browse the component library to add components here
+                </p>
+              </div>
+              <Button 
+                variant="outline" 
+                onClick={handleAddMoreComponents}
+                className="mt-4"
+              >
+                Browse Components
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <ScrollArea className="h-[400px]">
+            <div className="space-y-4">
+              {selectedComponents.map((component) => (
+                <div key={component.id} className="relative">
+                  <div className="border-2 border-dashed border-muted rounded-lg p-4 bg-muted/10">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-medium">{component.name}</span>
+                        <Badge variant="outline" className="text-xs">
+                          {new Date(component.addedAt).toLocaleDateString()}
+                        </Badge>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoveComponent(component.id)}
+                        className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                    <div className="max-w-full mx-auto">
+                      <DashboardComponentRenderer componentKey={component.componentKey} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+        )}
+      </CardContent>
+    </Card>
+  );
+};

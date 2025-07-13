@@ -4,6 +4,7 @@ import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/re
 import { ScrollArea } from '@/components/ui/scroll-area';
 import KPIStats from './KPIStats';
 import { DashboardPanel } from './DashboardPanel';
+import { SelectedComponentsArea } from './SelectedComponentsArea';
 import { Note } from '@/types/note';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
@@ -140,6 +141,9 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           <DashboardPanel panelKey="middleRight" className="p-4 min-h-[200px]" />
           <DashboardPanel panelKey="bottomLeft" className="p-4 min-h-[200px]" />
           <DashboardPanel panelKey="bottomRight" className="p-4 min-h-[200px]" />
+          
+          {/* Selected Components Area - Mobile */}
+          <SelectedComponentsArea className="min-h-[300px]" />
         </div>
       </div>
     );
@@ -349,6 +353,28 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
             </PanelGroup>
           </div>
         </Panel>
+        
+        {/* Only show resize handle when in edit mode - Always present */}
+        <HorizontalResizableHandle 
+          className={isDashboardEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"} 
+        />
+        
+        {/* Selected Components Area Panel */}
+        <Panel 
+          id="selected-components-panel"
+          order={4}
+          defaultSize={25} 
+          minSize={isDashboardEditMode ? 15 : undefined}
+          maxSize={isDashboardEditMode ? 40 : undefined}
+        >
+          <div className="h-full">
+            <ScrollArea className="h-full">
+              <div className="p-3 md:p-4">
+                <SelectedComponentsArea />
+              </div>
+            </ScrollArea>
+          </div>
+        </Panel>
       </PanelGroup>
       ) : (
         /* Normal scrollable layout when not in edit mode */
@@ -385,13 +411,18 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           </div>
           
           {/* Bottom Row - Two Panels */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-3 md:px-4 pb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-3 md:px-4">
             <div className="min-h-[400px]">
               <DashboardPanel panelKey="bottomLeft" className="p-4 h-full" />
             </div>
             <div className="min-h-[400px]">
               <DashboardPanel panelKey="bottomRight" className="p-4 h-full" />
             </div>
+          </div>
+
+          {/* Selected Components Area */}
+          <div className="px-3 md:px-4 pb-6">
+            <SelectedComponentsArea className="min-h-[300px]" />
           </div>
         </div>
       )}
