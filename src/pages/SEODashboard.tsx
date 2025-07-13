@@ -12,12 +12,8 @@ import {
   BarChart3,
   Target
 } from 'lucide-react';
-import SEOAnalysisDashboard from '@/components/SEO/SEOAnalysisDashboard';
-import CoreWebVitalsMonitor from '@/components/SEO/CoreWebVitalsMonitor';
-import AIContentOptimizer from '@/components/AI/AIContentOptimizer';
-import VoiceSearchOptimizer from '@/components/SEO/VoiceSearchOptimizer';
+import { KeywordTracker } from '@/pages/seo/components/KeywordTracker';
 import AdvancedSEOOptimizer from '@/components/SEO/AdvancedSEOOptimizer';
-import TechnicalSEODashboard from '@/components/SEO/TechnicalSEODashboard';
 
 const SEODashboard: React.FC = () => {
   // Mock SEO overview data
@@ -127,91 +123,75 @@ const SEODashboard: React.FC = () => {
         </div>
 
         {/* Main Content */}
-        <Tabs defaultValue="analysis" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="analysis" className="flex items-center gap-2">
+        <Tabs defaultValue="keywords" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="keywords" className="flex items-center gap-2">
               <Search className="h-4 w-4" />
-              Analysis
-            </TabsTrigger>
-            <TabsTrigger value="technical" className="flex items-center gap-2">
-              <Gauge className="h-4 w-4" />
-              Technical
-            </TabsTrigger>
-            <TabsTrigger value="performance" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Performance
+              Keyword Tracking
             </TabsTrigger>
             <TabsTrigger value="content" className="flex items-center gap-2">
               <Brain className="h-4 w-4" />
-              AI Content
-            </TabsTrigger>
-            <TabsTrigger value="voice" className="flex items-center gap-2">
-              <Volume2 className="h-4 w-4" />
-              Voice Search
+              Content Analysis
             </TabsTrigger>
             <TabsTrigger value="tools" className="flex items-center gap-2">
               <Sparkles className="h-4 w-4" />
-              Tools
+              SEO Tools
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="analysis">
-            <SEOAnalysisDashboard />
-          </TabsContent>
-
-          <TabsContent value="technical">
-            <TechnicalSEODashboard />
-          </TabsContent>
-
-          <TabsContent value="performance">
-            <div className="space-y-6">
-              <CoreWebVitalsMonitor />
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5" />
-                    Performance Recommendations
-                  </CardTitle>
-                  <CardDescription>
-                    AI-powered suggestions to improve your website performance
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="p-4 rounded-lg border">
-                      <h4 className="font-medium">Optimize Images</h4>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Compress and convert images to modern formats like WebP for faster loading
-                      </p>
-                      <Badge variant="secondary" className="mt-2">High Impact</Badge>
-                    </div>
-                    <div className="p-4 rounded-lg border">
-                      <h4 className="font-medium">Enable Compression</h4>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Use Gzip or Brotli compression to reduce file sizes
-                      </p>
-                      <Badge variant="secondary" className="mt-2">Medium Impact</Badge>
-                    </div>
-                    <div className="p-4 rounded-lg border">
-                      <h4 className="font-medium">Minimize JavaScript</h4>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Remove unused JavaScript and optimize bundle size
-                      </p>
-                      <Badge variant="secondary" className="mt-2">Medium Impact</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+          <TabsContent value="keywords">
+            <KeywordTracker />
           </TabsContent>
 
           <TabsContent value="content">
-            <AIContentOptimizer />
-          </TabsContent>
-
-          <TabsContent value="voice">
-            <VoiceSearchOptimizer />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5" />
+                  Content Analysis & Optimization
+                </CardTitle>
+                <CardDescription>
+                  Analyze your content against tracked keywords and get AI-powered optimization suggestions
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="p-6 rounded-lg border-2 border-dashed border-muted-foreground/25 text-center">
+                    <Brain className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-medium mb-2">Coming Soon: Advanced Content Analysis</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Analyze your content against your tracked keywords, get optimization suggestions, and improve your SEO rankings.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                      <div className="p-4 rounded-lg bg-muted/50">
+                        <h4 className="font-medium">✨ Keyword Density Analysis</h4>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Check if your content properly targets your tracked keywords
+                        </p>
+                      </div>
+                      <div className="p-4 rounded-lg bg-muted/50">
+                        <h4 className="font-medium">📊 Content Score</h4>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Get an overall SEO score for your content
+                        </p>
+                      </div>
+                      <div className="p-4 rounded-lg bg-muted/50">
+                        <h4 className="font-medium">🎯 Optimization Tips</h4>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          AI-powered suggestions to improve your content
+                        </p>
+                      </div>
+                      <div className="p-4 rounded-lg bg-muted/50">
+                        <h4 className="font-medium">📈 Performance Tracking</h4>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Monitor how changes affect your keyword rankings
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="tools">
@@ -220,10 +200,10 @@ const SEODashboard: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Sparkles className="h-5 w-5" />
-                    SEO Tools & Utilities
+                    SEO Tools & Resources
                   </CardTitle>
                   <CardDescription>
-                    Additional tools to enhance your SEO strategy
+                    Essential tools for keyword research and SEO optimization
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -232,47 +212,23 @@ const SEODashboard: React.FC = () => {
                       <Search className="h-8 w-8 text-primary mb-2" />
                       <h4 className="font-medium">Keyword Research</h4>
                       <p className="text-sm text-muted-foreground">
-                        Discover new keyword opportunities
+                        Find new keyword opportunities for your content
                       </p>
                     </div>
                     
                     <div className="p-4 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors">
                       <BarChart3 className="h-8 w-8 text-primary mb-2" />
-                      <h4 className="font-medium">Competitor Analysis</h4>
+                      <h4 className="font-medium">Rank Monitoring</h4>
                       <p className="text-sm text-muted-foreground">
-                        Analyze competitor SEO strategies
+                        Track your keyword positions over time
                       </p>
                     </div>
                     
                     <div className="p-4 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors">
                       <Target className="h-8 w-8 text-primary mb-2" />
-                      <h4 className="font-medium">Rank Tracking</h4>
+                      <h4 className="font-medium">Competition Analysis</h4>
                       <p className="text-sm text-muted-foreground">
-                        Monitor keyword rankings over time
-                      </p>
-                    </div>
-                    
-                    <div className="p-4 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors">
-                      <Brain className="h-8 w-8 text-primary mb-2" />
-                      <h4 className="font-medium">Content Suggestions</h4>
-                      <p className="text-sm text-muted-foreground">
-                        AI-powered content recommendations
-                      </p>
-                    </div>
-                    
-                    <div className="p-4 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors">
-                      <Volume2 className="h-8 w-8 text-primary mb-2" />
-                      <h4 className="font-medium">Voice Search Analytics</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Track voice search performance
-                      </p>
-                    </div>
-                    
-                    <div className="p-4 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors">
-                      <Gauge className="h-8 w-8 text-primary mb-2" />
-                      <h4 className="font-medium">Site Audit</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Comprehensive SEO health check
+                        Analyze what keywords your competitors rank for
                       </p>
                     </div>
                   </div>
