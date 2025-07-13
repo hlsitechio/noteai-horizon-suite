@@ -20,11 +20,15 @@ export const useSelectedComponents = () => {
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          // Convert addedAt strings back to Date objects
-          const components = parsed.map((comp: any) => ({
-            ...comp,
-            addedAt: new Date(comp.addedAt)
-          }));
+          // Convert addedAt strings back to Date objects and validate structure
+          const components = parsed
+            .filter((comp: any) => comp && typeof comp === 'object' && comp.id && comp.componentKey && comp.name)
+            .map((comp: any) => ({
+              id: comp.id,
+              componentKey: comp.componentKey,
+              name: comp.name,
+              addedAt: new Date(comp.addedAt || Date.now())
+            }));
           setSelectedComponents(components);
         } catch (error) {
           console.error('Failed to load selected components:', error);

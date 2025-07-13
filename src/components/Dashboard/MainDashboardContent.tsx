@@ -195,7 +195,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           startOrder={3}
         />
         
-        {/* Only show resize handle when in edit mode - Always present */}
+        {/* Final resize handle for Selected Components Area */}
         <HorizontalResizableHandle 
           className={isDashboardEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"} 
         />
