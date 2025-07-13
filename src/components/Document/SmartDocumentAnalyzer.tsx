@@ -161,7 +161,7 @@ const SmartDocumentAnalyzer: React.FC = () => {
             {selectedFiles.length > 0 && (
               <div className="flex flex-wrap gap-2 justify-center">
                 {selectedFiles.map((file, index) => (
-                  <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                  <Badge key={file.name} variant="secondary" className="flex items-center gap-1">
                     <FileText className="w-3 h-3" />
                     {file.name}
                   </Badge>

@@ -322,7 +322,7 @@ export const APMDashboard: React.FC<APMDashboardProps> = ({ className }) => {
               <CardContent>
                 <div className="space-y-2 max-h-64 overflow-y-auto">
                   {errors.slice(0, 10).map((error, index) => (
-                    <div key={index} className="p-3 border rounded-lg space-y-1">
+                    <div key={error.id || `error-${index}`} className="p-3 border rounded-lg space-y-1">
                       <div className="flex items-center justify-between">
                         <Badge variant={error.is_filtered ? "secondary" : "destructive"}>
                           {error.error_type}

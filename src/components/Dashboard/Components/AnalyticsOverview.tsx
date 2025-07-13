@@ -108,7 +108,7 @@ export function AnalyticsOverview() {
           </div>
           <div className="flex items-end justify-between h-16 space-x-1">
             {chartData.map((data, index) => (
-              <div key={index} className="flex flex-col items-center space-y-1 flex-1">
+              <div key={`chart-${data.day}`} className="flex flex-col items-center space-y-1 flex-1">
                 <div 
                   className="w-full bg-primary rounded-sm min-h-[4px]"
                   style={{ 

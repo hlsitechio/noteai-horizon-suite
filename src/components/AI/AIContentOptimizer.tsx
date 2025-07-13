@@ -227,7 +227,7 @@ const AIContentOptimizer: React.FC = () => {
               <CardContent>
                 <div className="space-y-4">
                   {optimization.suggestions.map((suggestion, index) => (
-                    <div key={index} className="flex items-start gap-3 p-3 rounded-lg border">
+                    <div key={`suggestion-${index}-${suggestion.type}`} className="flex items-start gap-3 p-3 rounded-lg border">
                       {getSuggestionIcon(suggestion.type)}
                       <div className="flex-1">
                         <p className="text-sm font-medium">{suggestion.message}</p>
@@ -284,7 +284,7 @@ const AIContentOptimizer: React.FC = () => {
               <CardContent>
                 <div className="space-y-4">
                   {optimization.keywords.map((keyword, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
+                    <div key={`keyword-${index}-${keyword.keyword}`} className="flex items-center justify-between p-3 rounded-lg border">
                       <div className="flex items-center gap-2">
                         {keyword.recommended ? (
                           <CheckCircle className="h-4 w-4 text-green-500" />
@@ -333,7 +333,7 @@ const AIContentOptimizer: React.FC = () => {
                   <label className="text-sm font-medium">Recommended Tags</label>
                   <div className="flex flex-wrap gap-2">
                     {optimization.metadata.tags.map((tag, index) => (
-                      <Badge key={index} variant="outline">
+                      <Badge key={tag} variant="outline">
                         {tag}
                       </Badge>
                     ))}

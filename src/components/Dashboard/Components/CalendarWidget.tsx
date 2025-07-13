@@ -97,13 +97,13 @@ export function CalendarWidget() {
           
           <div className="grid grid-cols-7 gap-1 text-center">
             {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
-              <div key={index} className="text-xs text-muted-foreground p-1">
+              <div key={day} className="text-xs text-muted-foreground p-1">
                 {day}
               </div>
             ))}
             {days.map((day, index) => (
               <div 
-                key={index} 
+                key={`day-${day}`} 
                 className={`text-xs p-1 rounded ${
                   day === today 
                     ? 'bg-primary text-primary-foreground font-medium' 

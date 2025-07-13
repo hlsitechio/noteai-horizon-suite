@@ -128,7 +128,7 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
           <span className="text-sm text-muted-foreground">Tags:</span>
           <div className="flex items-center gap-1 flex-wrap">
             {tags.map((tag, index) => (
-              <Badge key={index} variant="secondary" className="text-xs">
+              <Badge key={tag} variant="secondary" className="text-xs">
                 {tag}
               </Badge>
             ))}

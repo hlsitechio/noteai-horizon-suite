@@ -117,7 +117,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ variant = 'active' }) 
           </div>
           <div className="flex items-center space-x-1">
             {data.team.slice(0, 3).map((member, index) => (
-              <Avatar key={index} className="h-6 w-6">
+              <Avatar key={`member-${index}`} className="h-6 w-6">
                 <AvatarFallback className="text-xs">{member}</AvatarFallback>
               </Avatar>
             ))}

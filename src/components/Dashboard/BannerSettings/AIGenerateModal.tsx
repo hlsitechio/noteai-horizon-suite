@@ -176,8 +176,8 @@ const AIGenerateModal: React.FC<AIGenerateModalProps> = ({
                   <h3 className="font-medium">{selectedStylePreset.name}</h3>
                   <p className="text-sm text-muted-foreground">{selectedStylePreset.description}</p>
                   <div className="flex gap-2">
-                    {selectedStylePreset.examples.map((example, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
+                    {selectedStylePreset.examples.map((example) => (
+                      <Badge key={example} variant="secondary" className="text-xs">
                         {example}
                       </Badge>
                     ))}
@@ -203,7 +203,7 @@ const AIGenerateModal: React.FC<AIGenerateModalProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {quickPrompts.map((quickPrompt, index) => (
                   <Button
-                    key={index}
+                    key={quickPrompt}
                     variant="outline"
                     size="sm"
                     className="text-left justify-start h-auto py-2 px-3"
@@ -247,7 +247,7 @@ const AIGenerateModal: React.FC<AIGenerateModalProps> = ({
               <div className="grid grid-cols-2 gap-4">
                 {generatedImages.map((imageUrl, index) => (
                   <Card
-                    key={index}
+                    key={`generated-${index}`}
                     className="cursor-pointer group hover:shadow-lg transition-all overflow-hidden"
                     onClick={() => handleSelectImage(imageUrl)}
                   >

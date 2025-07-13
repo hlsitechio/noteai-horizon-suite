@@ -298,7 +298,7 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
                     </label>
                     <div className="flex flex-wrap gap-2">
                       {editedTags.map((tag, index) => (
-                        <Badge key={index} variant="secondary" className="flex items-center gap-2 px-3 py-1 rounded-lg bg-gradient-to-r from-secondary/80 to-secondary/60 hover:from-secondary to-secondary/80 transition-all duration-200">
+                        <Badge key={tag} variant="secondary" className="flex items-center gap-2 px-3 py-1 rounded-lg bg-gradient-to-r from-secondary/80 to-secondary/60 hover:from-secondary to-secondary/80 transition-all duration-200">
                           <Tag className="w-3 h-3" />
                           <span className="font-medium">{tag}</span>
                           {isEditing && (

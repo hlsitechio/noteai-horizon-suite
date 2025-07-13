@@ -176,7 +176,7 @@ const InteractiveNoteCard: React.FC<InteractiveNoteCardProps> = ({
           <div className="flex flex-wrap gap-1">
             {tags.map((tag, index) => (
               <Badge 
-                key={index} 
+                key={tag} 
                 variant="secondary" 
                 className="text-xs flex items-center gap-1"
               >

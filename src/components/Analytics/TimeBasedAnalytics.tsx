@@ -85,8 +85,8 @@ const TimeBasedAnalytics: React.FC<TimeBasedAnalyticsProps> = ({ notes }) => {
         <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl">
           <p className="font-medium text-foreground">{label}</p>
           <div className="space-y-1">
-            {payload.map((entry: any, index: number) => (
-              <p key={index} className="text-sm" style={{ color: entry.color }}>
+            {payload.map((entry: any) => (
+              <p key={entry.dataKey || entry.name} className="text-sm" style={{ color: entry.color }}>
                 {entry.name}: {entry.value}
               </p>
             ))}

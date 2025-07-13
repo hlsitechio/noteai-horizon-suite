@@ -164,7 +164,7 @@ export function WeatherWidget() {
           <span className="text-xs font-medium text-muted-foreground">4-Day Forecast</span>
           <div className="space-y-2">
             {forecast.map((day, index) => (
-              <div key={index} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
+              <div key={day.day} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
                 <div className="flex items-center space-x-3">
                   {getWeatherIcon(day.icon)}
                   <span className="text-xs font-medium text-foreground min-w-[60px]">

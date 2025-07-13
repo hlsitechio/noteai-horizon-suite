@@ -109,7 +109,7 @@ const AIBannerGenerator: React.FC<AIBannerGeneratorProps> = ({ onBannerGenerated
             <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
               {suggestedPrompts.map((suggestion, index) => (
                 <Button
-                  key={index}
+                  key={suggestion}
                   variant="ghost"
                   size="sm"
                   onClick={() => setPrompt(suggestion)}

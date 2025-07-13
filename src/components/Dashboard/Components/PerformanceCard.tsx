@@ -164,7 +164,7 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = ({ variant = 'cpu
         {/* Details */}
         <div className="space-y-2">
           {data.details.map((detail, index) => (
-            <div key={index} className="flex justify-between text-sm">
+            <div key={detail.label} className="flex justify-between text-sm">
               <span className="text-muted-foreground">{detail.label}</span>
               <span className="font-medium">{detail.value}</span>
             </div>
