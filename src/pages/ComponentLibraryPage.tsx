@@ -2,12 +2,15 @@ import React from 'react';
 import { ComponentLibrary } from '@/components/Dashboard/ComponentLibrary';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 
 const ComponentLibraryPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { getPanelConfiguration } = useDashboardLayout();
+  
+  const targetPanel = searchParams.get('targetPanel');
 
   // Get all panels as available - allow replacement of existing components
   const getAvailablePanels = () => {
@@ -39,7 +42,10 @@ const ComponentLibraryPage: React.FC = () => {
 
       {/* Content */}
       <div className="container mx-auto px-6 py-8">
-        <ComponentLibrary availablePanels={getAvailablePanels()} />
+        <ComponentLibrary 
+          availablePanels={getAvailablePanels()} 
+          targetPanel={targetPanel || undefined}
+        />
       </div>
     </div>
   );

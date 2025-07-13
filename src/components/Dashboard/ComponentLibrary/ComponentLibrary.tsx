@@ -8,11 +8,13 @@ import { useComponentLibrary } from './useComponentLibrary';
 interface ComponentLibraryProps {
   onAddComponent?: (componentKey: string, panelKey: string) => void;
   availablePanels?: string[];
+  targetPanel?: string;
 }
 
 export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({ 
   onAddComponent,
-  availablePanels = ['topLeft', 'topRight', 'middleLeft', 'middleRight', 'bottomLeft', 'bottomRight']
+  availablePanels = ['topLeft', 'topRight', 'middleLeft', 'middleRight', 'bottomLeft', 'bottomRight'],
+  targetPanel
 }) => {
   const {
     searchTerm,
@@ -77,6 +79,7 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
             component={component}
             availablePanels={availablePanels}
             onAddToPanel={onAddToPanel}
+            targetPanel={targetPanel}
           />
         ))}
       </div>

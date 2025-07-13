@@ -62,7 +62,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  navigate('/app/components');
+                  navigate(`/app/components?targetPanel=${panelKey}`);
                 }}
                 className="text-xs px-2 py-1 h-auto"
               >
@@ -108,7 +108,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  navigate('/app/components');
+                  navigate(`/app/components?targetPanel=${panelKey}`);
                 }}
                 className="border-primary/30 text-primary hover:bg-primary/10"
               >

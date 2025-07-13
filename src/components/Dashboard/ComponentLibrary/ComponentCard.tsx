@@ -18,12 +18,14 @@ interface ComponentCardProps {
   component: ComponentLibraryItem;
   availablePanels: string[];
   onAddToPanel: (componentKey: string, panelKey: string) => void;
+  targetPanel?: string;
 }
 
 export const ComponentCard: React.FC<ComponentCardProps> = ({
   component,
   availablePanels,
-  onAddToPanel
+  onAddToPanel,
+  targetPanel
 }) => {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const Icon = component.icon;
@@ -100,13 +102,23 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
         </div>
 
         {/* Add to Panel Button */}
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" className="w-full flex items-center space-x-1">
-              <Plus className="h-3 w-3" />
-              <span>Add to Panel</span>
-            </Button>
-          </DialogTrigger>
+        {targetPanel ? (
+          <Button 
+            size="sm" 
+            className="w-full flex items-center space-x-1"
+            onClick={() => handleAddToPanel(component.componentKey, targetPanel)}
+          >
+            <Plus className="h-3 w-3" />
+            <span>Add to {formatPanelName(targetPanel)}</span>
+          </Button>
+        ) : (
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="w-full flex items-center space-x-1">
+                <Plus className="h-3 w-3" />
+                <span>Add to Panel</span>
+              </Button>
+            </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add Component to Panel</DialogTitle>
@@ -149,6 +161,7 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
             </div>
           </DialogContent>
         </Dialog>
+        )}
       </CardContent>
     </Card>
   );
