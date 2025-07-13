@@ -1,7 +1,7 @@
 import { logger } from '@/utils/logger';
 import { securityService } from './securityService';
 import { supabase } from '@/integrations/supabase/client';
-import * as Sentry from '@sentry/react';
+// Sentry removed
 
 interface ErrorPattern {
   pattern: RegExp;
@@ -373,18 +373,7 @@ export class IntelligentBugResolutionService {
       suggestion.confidence = Math.min(suggestion.confidence + 0.1, 1.0);
       this.resolutionHistory.set(key, [suggestion]);
       
-      // Report to Sentry
-      Sentry.captureMessage('Bug auto-resolved', {
-        level: 'info',
-        tags: {
-          category: suggestion.category,
-          auto_resolved: true
-        },
-        extra: {
-          suggestion,
-          context
-        }
-      });
+      // Sentry removed - bug auto-resolution logged locally
     }
   }
 
@@ -429,17 +418,7 @@ export class IntelligentBugResolutionService {
       }
       
       if (issues.length > 0) {
-        // Report to analytics silently
-        issues.forEach(issue => {
-          Sentry.captureMessage('Proactive issue detected', {
-            level: 'warning',
-            tags: {
-              issue_type: issue.type,
-              severity: issue.severity
-            },
-            extra: issue
-          });
-        });
+        // Sentry removed - proactive issues logged locally
       }
     } catch (error) {
       // Silent error handling

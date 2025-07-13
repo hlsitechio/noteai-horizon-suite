@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as LaunchDarkly from 'launchdarkly-js-client-sdk';
-import * as Sentry from "@sentry/react";
+// Sentry removed
 import { supabase } from '@/integrations/supabase/client';
 
 interface FeatureFlagHook {
@@ -37,12 +37,11 @@ export const useFeatureFlags = (): FeatureFlagHook => {
           }
         };
 
-        // Initialize LaunchDarkly client with Sentry integration
+        // Initialize LaunchDarkly client
         const ldClient = LaunchDarkly.initialize(
           data.clientId,
           userContext,
           {
-            inspectors: [Sentry.buildLaunchDarklyFlagUsedHandler()],
             // Enable streaming for real-time flag updates
             streaming: true,
           }
@@ -57,7 +56,7 @@ export const useFeatureFlags = (): FeatureFlagHook => {
         console.log('LaunchDarkly client initialized successfully');
       } catch (error) {
         console.error('Failed to initialize LaunchDarkly client:', error);
-        Sentry.captureException(error);
+        // Sentry removed
       }
     };
 
@@ -80,7 +79,7 @@ export const useFeatureFlags = (): FeatureFlagHook => {
       return client.variation(flagKey, defaultValue);
     } catch (error) {
       console.error(`Failed to evaluate feature flag ${flagKey}:`, error);
-      Sentry.captureException(error);
+      // Sentry removed
       return defaultValue;
     }
   }, [client, isInitialized]);
@@ -94,7 +93,7 @@ export const useFeatureFlags = (): FeatureFlagHook => {
       return client.variation(flagKey, defaultValue);
     } catch (error) {
       console.error(`Failed to evaluate string feature flag ${flagKey}:`, error);
-      Sentry.captureException(error);
+      // Sentry removed
       return defaultValue;
     }
   }, [client, isInitialized]);
@@ -108,7 +107,7 @@ export const useFeatureFlags = (): FeatureFlagHook => {
       return client.variation(flagKey, defaultValue);
     } catch (error) {
       console.error(`Failed to evaluate number feature flag ${flagKey}:`, error);
-      Sentry.captureException(error);
+      // Sentry removed
       return defaultValue;
     }
   }, [client, isInitialized]);
@@ -134,12 +133,11 @@ export const verifyFeatureFlagsSetup = (client: LaunchDarkly.LDClient | null) =>
     const testFlag = client.variation("test-flag", false);
     console.log('Test flag value:', testFlag);
 
-    // Capture a test exception to verify Sentry integration
-    Sentry.captureException(new Error("Feature flags test - this should include flag data"));
+    // Sentry removed - test exception disabled
     
-    console.log('Feature flags verification completed. Check Sentry for flag data in error events.');
+    console.log('Feature flags verification completed.');
   } catch (error) {
     console.error('Feature flags verification failed:', error);
-    Sentry.captureException(error);
+    // Sentry removed
   }
 };

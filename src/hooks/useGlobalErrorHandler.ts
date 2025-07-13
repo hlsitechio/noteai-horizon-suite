@@ -1,7 +1,7 @@
 
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import * as Sentry from "@sentry/react";
+// Sentry removed
 import { useErrorTracing } from './useErrorTracing';
 import { bugResolutionService } from '@/services/intelligentBugResolutionService';
 import { toast } from 'sonner';
@@ -31,10 +31,8 @@ export const useGlobalErrorHandler = () => {
         }
       }
     } catch (analysisError) {
-      // Send analysis errors to Sentry instead of console
-      Sentry.captureException(analysisError, {
-        tags: { source: 'bugResolutionAnalysis' }
-      });
+      // Sentry removed - analysis errors logged to console
+      console.warn('Bug resolution analysis failed:', analysisError);
     }
   };
 
@@ -49,16 +47,7 @@ export const useGlobalErrorHandler = () => {
         breadcrumbs: []
       });
       
-      // Send to Sentry with additional context
-      Sentry.captureException(event.reason, {
-        tags: {
-          errorType: 'unhandledPromiseRejection',
-          source: 'globalErrorHandler'
-        },
-        extra: {
-          promiseRejectionReason: event.reason,
-        }
-      });
+      // Sentry removed
       
       traceError({
         component: 'GlobalErrorHandler',
@@ -85,19 +74,7 @@ export const useGlobalErrorHandler = () => {
         breadcrumbs: []
       });
       
-      // Send to Sentry with additional context
-      Sentry.captureException(event.error, {
-        tags: {
-          errorType: 'javascriptError',
-          source: 'globalErrorHandler'
-        },
-        extra: {
-          filename: event.filename,
-          lineno: event.lineno,
-          colno: event.colno,
-          message: event.message,
-        }
-      });
+      // Sentry removed
       
       traceError({
         component: 'GlobalErrorHandler',
@@ -119,7 +96,7 @@ export const useGlobalErrorHandler = () => {
       const target = event.target as HTMLElement;
       const errorMessage = `Failed to load resource: ${target.tagName} - ${(target as any).src || (target as any).href}`;
       
-      Sentry.captureMessage(errorMessage, 'error');
+      // Sentry removed
       
       traceError({
         component: 'GlobalErrorHandler',
@@ -151,16 +128,7 @@ export const useGlobalErrorHandler = () => {
             breadcrumbs: []
           });
           
-          // Send to Sentry
-          Sentry.captureException(query.state.error, {
-            tags: {
-              errorType: 'tanstackQueryError',
-              source: 'globalErrorHandler'
-            },
-            extra: {
-              queryKey: query.queryKey,
-            }
-          });
+          // Sentry removed
           
           traceError({
             component: 'GlobalErrorHandler',
@@ -186,16 +154,7 @@ export const useGlobalErrorHandler = () => {
             breadcrumbs: []
           });
           
-          // Send to Sentry
-          Sentry.captureException(mutation.state.error, {
-            tags: {
-              errorType: 'tanstackMutationError',
-              source: 'globalErrorHandler'
-            },
-            extra: {
-              mutationKey: mutation.options.mutationKey,
-            }
-          });
+          // Sentry removed
           
           traceError({
             component: 'GlobalErrorHandler',

@@ -59,7 +59,7 @@ export default defineConfig(({ mode }) => ({
           // Rich text editor
           editor: ['slate', 'slate-react', 'slate-history', 'slate-dom'],
           // Monitoring and analytics
-          monitoring: ['@sentry/react', '@hyperdx/browser'],
+          monitoring: ['@hyperdx/browser'],
           // Backend services
           supabase: ['@supabase/supabase-js'],
           // Charts and visualization
@@ -87,7 +87,7 @@ export default defineConfig(({ mode }) => ({
       'react',
       'react-dom',
       'react/jsx-runtime',
-      '@sentry/react',
+      
       '@supabase/supabase-js',
       'clsx',
       'tailwind-merge',
