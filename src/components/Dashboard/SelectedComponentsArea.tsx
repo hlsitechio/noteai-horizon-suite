@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { DashboardComponentRenderer } from './ComponentRegistry';
-import { Plus, X, Settings } from 'lucide-react';
+import { Plus, X, Settings, Save, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSelectedComponents } from '@/hooks/useSelectedComponents';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface SelectedComponentsAreaProps {
   className?: string;
@@ -14,10 +17,59 @@ interface SelectedComponentsAreaProps {
 
 export const SelectedComponentsArea: React.FC<SelectedComponentsAreaProps> = ({ className }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const { selectedComponents, removeComponent } = useSelectedComponents();
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   const handleRemoveComponent = (componentId: string) => {
     removeComponent(componentId);
+  };
+
+  const handleSaveComponents = async () => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to save components.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      // Prepare component data for database
+      const componentKeys = selectedComponents.map(comp => comp.componentKey);
+      
+      // Save to user_preferences
+      const { error } = await supabase
+        .from('user_preferences')
+        .upsert({
+          user_id: user.id,
+          dashboard_components: componentKeys,
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      setLastSaved(new Date());
+      toast({
+        title: "Success",
+        description: "Dashboard components saved successfully!",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('Failed to save components:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save dashboard components. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleAddMoreComponents = () => {
@@ -44,6 +96,23 @@ export const SelectedComponentsArea: React.FC<SelectedComponentsAreaProps> = ({ 
               <Plus className="h-3 w-3" />
               <span>Add More</span>
             </Button>
+            {selectedComponents.length > 0 && (
+              <Button 
+                onClick={handleSaveComponents}
+                disabled={isSaving}
+                size="sm"
+                className="flex items-center space-x-1 bg-primary hover:bg-primary/90"
+              >
+                {isSaving ? (
+                  <div className="animate-spin h-3 w-3 border-2 border-white border-t-transparent rounded-full" />
+                ) : lastSaved ? (
+                  <Check className="h-3 w-3" />
+                ) : (
+                  <Save className="h-3 w-3" />
+                )}
+                <span>{isSaving ? 'Saving...' : lastSaved ? 'Saved' : 'Save'}</span>
+              </Button>
+            )}
             <Button variant="ghost" size="sm">
               <Settings className="h-4 w-4" />
             </Button>
