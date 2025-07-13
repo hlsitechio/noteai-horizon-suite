@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import ConstellationNetwork from '../components/Landing/Constellation/ConstellationNetwork';
-import DataFlowBackground from '../components/Landing/Constellation/DataFlowBackground';
-import ParallaxSection from '../components/Landing/Constellation/ParallaxSection';
-import ScrollTrailStars from '../components/Landing/Constellation/ScrollTrailStars';
+import ConstellationNetwork from '@/components/Landing/Constellation/ConstellationNetwork';
+import DataFlowBackground from '@/components/Landing/Constellation/DataFlowBackground';
+import ParallaxSection from '@/components/Landing/Constellation/ParallaxSection';
+import ScrollTrailStars from '@/components/Landing/Constellation/ScrollTrailStars';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowRight, Sparkles, Network, TrendingUp, Eye, Shield, Zap, Globe, Star, CheckCircle, Users, Award } from 'lucide-react';

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import PremiumNavigation from '../components/Landing/Premium/PremiumNavigation';
-import PremiumHero from '../components/Landing/Premium/PremiumHero';
-import PremiumFeatures from '../components/Landing/Premium/PremiumFeatures';
-import PremiumShowcase from '../components/Landing/Premium/PremiumShowcase';
-import PremiumTestimonials from '../components/Landing/Premium/PremiumTestimonials';
-import PremiumPricing from '../components/Landing/Premium/PremiumPricing';
-import PremiumCTA from '../components/Landing/Premium/PremiumCTA';
-import PremiumFooter from '../components/Landing/Premium/PremiumFooter';
-import PremiumBackground from '../components/Landing/Premium/PremiumBackground';
-import { AnalyticsService } from '../services/analyticsService';
+import PremiumNavigation from '@/components/Landing/Premium/PremiumNavigation';
+import PremiumHero from '@/components/Landing/Premium/PremiumHero';
+import PremiumFeatures from '@/components/Landing/Premium/PremiumFeatures';
+import PremiumShowcase from '@/components/Landing/Premium/PremiumShowcase';
+import PremiumTestimonials from '@/components/Landing/Premium/PremiumTestimonials';
+import PremiumPricing from '@/components/Landing/Premium/PremiumPricing';
+import PremiumCTA from '@/components/Landing/Premium/PremiumCTA';
+import PremiumFooter from '@/components/Landing/Premium/PremiumFooter';
+import PremiumBackground from '@/components/Landing/Premium/PremiumBackground';
+import { AnalyticsService } from '@/services/analyticsService';
 
 const PremiumLanding: React.FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
