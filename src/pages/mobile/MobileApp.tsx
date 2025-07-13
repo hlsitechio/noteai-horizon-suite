@@ -2,14 +2,14 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
-import EnhancedMobileLayout from './layout/EnhancedMobileLayout';
-import MobileDashboard from './pages/MobileDashboard';
-import EnhancedMobileNotes from './pages/EnhancedMobileNotes';
+import EnhancedMobileLayout from '@/mobile/layout/EnhancedMobileLayout';
+import MobileDashboard from '@/mobile/pages/MobileDashboard';
+import EnhancedMobileNotes from '@/mobile/pages/MobileNotes';
 // MobileEditor removed - now using unified Editor
-import MobileChat from './pages/MobileChat';
-import MobileProjects from './pages/MobileProjects';
-import MobileAnalytics from './pages/MobileAnalytics';
-import EnhancedMobileSettings from './pages/EnhancedMobileSettings';
+import MobileChat from '@/mobile/pages/MobileChat';
+import MobileProjects from '@/mobile/pages/MobileProjects';
+import MobileAnalytics from '@/mobile/pages/MobileAnalytics';
+import EnhancedMobileSettings from '@/mobile/pages/EnhancedMobileSettings';
 import { useNotes } from '@/contexts/NotesContext';
 
 const MobileApp: React.FC = () => {
