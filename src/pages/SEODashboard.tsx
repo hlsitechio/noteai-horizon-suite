@@ -13,6 +13,7 @@ import {
   Target
 } from 'lucide-react';
 import { KeywordTracker } from '@/pages/seo/components/KeywordTracker';
+import { BacklinksTracker } from '@/pages/seo/components/BacklinksTracker';
 import AdvancedSEOOptimizer from '@/components/SEO/AdvancedSEOOptimizer';
 
 const SEODashboard: React.FC = () => {
@@ -124,23 +125,31 @@ const SEODashboard: React.FC = () => {
 
         {/* Main Content */}
         <Tabs defaultValue="keywords" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="keywords" className="flex items-center gap-2">
               <Search className="h-4 w-4" />
-              Keyword Tracking
+              Keywords
+            </TabsTrigger>
+            <TabsTrigger value="backlinks" className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Backlinks
             </TabsTrigger>
             <TabsTrigger value="content" className="flex items-center gap-2">
               <Brain className="h-4 w-4" />
-              Content Analysis
+              Content
             </TabsTrigger>
             <TabsTrigger value="tools" className="flex items-center gap-2">
               <Sparkles className="h-4 w-4" />
-              SEO Tools
+              Tools
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="keywords">
             <KeywordTracker />
+          </TabsContent>
+
+          <TabsContent value="backlinks">
+            <BacklinksTracker />
           </TabsContent>
 
           <TabsContent value="content">

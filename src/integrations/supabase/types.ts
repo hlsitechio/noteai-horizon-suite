@@ -796,6 +796,108 @@ export type Database = {
         }
         Relationships: []
       }
+      seo_backlink_analytics: {
+        Row: {
+          created_at: string
+          domain_authority: number | null
+          high_authority_links_percent: number | null
+          id: string
+          link_profile_health: number | null
+          low_authority_links_percent: number | null
+          medium_authority_links_percent: number | null
+          monthly_growth: number | null
+          recorded_date: string | null
+          referring_domains: number | null
+          total_backlinks: number | null
+          trust_flow: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          domain_authority?: number | null
+          high_authority_links_percent?: number | null
+          id?: string
+          link_profile_health?: number | null
+          low_authority_links_percent?: number | null
+          medium_authority_links_percent?: number | null
+          monthly_growth?: number | null
+          recorded_date?: string | null
+          referring_domains?: number | null
+          total_backlinks?: number | null
+          trust_flow?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          domain_authority?: number | null
+          high_authority_links_percent?: number | null
+          id?: string
+          link_profile_health?: number | null
+          low_authority_links_percent?: number | null
+          medium_authority_links_percent?: number | null
+          monthly_growth?: number | null
+          recorded_date?: string | null
+          referring_domains?: number | null
+          total_backlinks?: number | null
+          trust_flow?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      seo_backlinks: {
+        Row: {
+          anchor_text: string | null
+          authority_score: number | null
+          created_at: string
+          domain: string
+          first_seen: string | null
+          id: string
+          is_nofollow: boolean | null
+          last_checked: string | null
+          link_type: string | null
+          referring_url: string
+          status: string | null
+          target_url: string
+          traffic_level: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          anchor_text?: string | null
+          authority_score?: number | null
+          created_at?: string
+          domain: string
+          first_seen?: string | null
+          id?: string
+          is_nofollow?: boolean | null
+          last_checked?: string | null
+          link_type?: string | null
+          referring_url: string
+          status?: string | null
+          target_url: string
+          traffic_level?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          anchor_text?: string | null
+          authority_score?: number | null
+          created_at?: string
+          domain?: string
+          first_seen?: string | null
+          id?: string
+          is_nofollow?: boolean | null
+          last_checked?: string | null
+          link_type?: string | null
+          referring_url?: string
+          status?: string | null
+          target_url?: string
+          traffic_level?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       seo_competitors: {
         Row: {
           analysis_data: Json | null
