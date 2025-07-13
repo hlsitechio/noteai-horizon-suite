@@ -48,6 +48,12 @@ setInterval(() => {
  * Call this once at app startup
  */
 export function initPerfMonitor(): void {
+  // Completely disable performance monitoring in development
+  if (import.meta.env.DEV) {
+    console.log('Performance monitoring disabled in development');
+    return;
+  }
+  
   // Track Core Web Vitals with throttling
   onCLS(throttle(onPerfEntry, 2000));
   onLCP(throttle(onPerfEntry, 2000));
