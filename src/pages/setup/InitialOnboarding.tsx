@@ -199,6 +199,18 @@ const InitialOnboarding: React.FC = () => {
                   </>
                 )}
               </Button>
+              
+              {/* Quick Mobile Access Button */}
+              <div className="mt-6 text-center">
+                <p className="text-sm text-muted-foreground mb-3">Want to try the mobile experience?</p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/mobile')}
+                  className="w-full"
+                >
+                  Access Mobile Interface
+                </Button>
+              </div>
             </motion.div>
           </CardContent>
         </Card>
