@@ -446,16 +446,20 @@ const NotesExplorer: React.FC = () => {
               size="sm"
               variant={treeVisible ? "default" : "ghost"}
               onClick={() => setTreeVisible(!treeVisible)}
+              title={treeVisible ? "Hide Content Sidebar" : "Show Content Sidebar"}
             >
-              <Folder className="w-4 h-4" />
+              <Folder className="w-4 h-4 mr-1" />
+              Content
             </Button>
             
             <Button
               size="sm"
               variant={previewVisible ? "default" : "ghost"}
               onClick={() => setPreviewVisible(!previewVisible)}
+              title={previewVisible ? "Hide Preview Panel" : "Show Preview Panel"}
             >
-              {previewVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              {previewVisible ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
+              Preview
             </Button>
             
             <Separator orientation="vertical" className="h-6" />
@@ -527,7 +531,12 @@ const NotesExplorer: React.FC = () => {
                   </div>
                 </div>
               </ResizablePanel>
-              <ResizableHandle withHandle />
+              <ResizableHandle 
+                withHandle 
+                onDoubleClick={() => setTreeVisible(false)}
+                className="cursor-pointer"
+                title="Double-click to hide Content Sidebar"
+              />
             </>
           )}
 
@@ -565,7 +574,12 @@ const NotesExplorer: React.FC = () => {
           {/* Preview panel */}
           {previewVisible && (
             <>
-              <ResizableHandle withHandle />
+              <ResizableHandle 
+                withHandle 
+                onDoubleClick={() => setPreviewVisible(false)}
+                className="cursor-pointer"
+                title="Double-click to hide Preview Panel"
+              />
               <ResizablePanel defaultSize={30} minSize={25} maxSize={50}>
                 <div className="h-full border-l bg-card/30">
                   <div className="p-4 border-b">
