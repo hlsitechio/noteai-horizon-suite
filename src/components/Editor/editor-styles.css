@@ -12,7 +12,7 @@
 }
 
 .editor-content {
-  @apply p-8 min-h-[400px] max-h-[600px] overflow-y-auto bg-gradient-to-br from-white/95 to-slate-50/90 backdrop-blur-xl shadow-inner dark:from-slate-900/95 dark:to-slate-800/90;
+  @apply p-8 min-h-[400px] max-h-[600px] overflow-y-auto bg-transparent backdrop-blur-xl shadow-inner dark:from-slate-900/95 dark:to-slate-800/90;
 }
 
 .editor-content .prose {
