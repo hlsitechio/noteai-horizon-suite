@@ -56,7 +56,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   return (
     <>
-      <div className="rounded-2xl shadow-large overflow-hidden bg-black border border-silver/20">
+      <div className="rounded-2xl shadow-large overflow-hidden bg-black">
         <SmartToolbar
           onFormatClick={handleFormatClick}
           onAIClick={() => {}} // AI is now always visible
