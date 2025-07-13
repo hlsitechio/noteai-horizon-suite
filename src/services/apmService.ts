@@ -56,6 +56,16 @@ export interface APMEmailAlert {
   userEmail?: string;
 }
 
+// Known error patterns to track and suppress
+export const KNOWN_ERROR_PATTERNS = {
+  CACHE_PUT_ERROR: 'Failed to execute \'put\' on \'Cache\'',
+  PARTIAL_RESPONSE: 'Partial response (status code 206) is unsupported',
+  CSP_VIOLATION: 'Content Security Policy directive',
+  WEBSOCKET_LOCALHOST: 'ws://localhost',
+  RATE_LIMITING: '429',
+  SENTRY_RATE_LIMIT: 'Too Many Requests',
+};
+
 class APMService {
   private static instance: APMService;
   private sessionId: string;
@@ -216,7 +226,33 @@ class APMService {
 
   private shouldFilterError(error: APMError): boolean {
     const errorText = `${error.error_message} ${error.error_stack || ''}`;
-    return this.DEV_ERROR_PATTERNS.some(pattern => pattern.test(errorText));
+    
+    // Check against development patterns
+    const isDevError = this.DEV_ERROR_PATTERNS.some(pattern => pattern.test(errorText));
+    
+    // Check against known error patterns (these should be tracked but filtered from console)
+    const isKnownError = Object.values(KNOWN_ERROR_PATTERNS).some(pattern => 
+      errorText.includes(pattern)
+    );
+    
+    return isDevError || isKnownError;
+  }
+
+  // Track known infrastructure errors separately
+  async recordKnownInfrastructureError(errorMessage: string, errorType: string) {
+    if (!this.isEnabled || !this.userId) return;
+
+    await this.recordError({
+      error_type: `infrastructure_${errorType}`,
+      error_message: errorMessage,
+      severity: 'low',
+      is_filtered: true,
+      tags: { 
+        error_category: 'infrastructure',
+        error_pattern: errorType,
+        suppressed_from_console: true 
+      }
+    });
   }
 
   private async updateSessionErrorCount() {

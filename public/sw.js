@@ -172,7 +172,8 @@ async function networkFirstStrategy(request) {
   try {
     const response = await fetch(request);
     
-    if (response.ok) {
+    // Only cache successful responses that are not partial (avoid 206 status code errors)
+    if (response.ok && response.status !== 206) {
       const cache = await caches.open(DYNAMIC_CACHE_NAME);
       cache.put(request, response.clone());
     }

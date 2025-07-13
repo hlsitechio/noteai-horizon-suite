@@ -1,4 +1,4 @@
-import { apmService } from './apmService';
+import { apmService, KNOWN_ERROR_PATTERNS } from './apmService';
 import { logger } from '@/lib/logger';
 
 class IntelligentConsoleManager {
@@ -168,6 +168,18 @@ class IntelligentConsoleManager {
     // Check development patterns
     const matchesDevPattern = this.DEV_PATTERNS.some(pattern => pattern.test(message));
     if (matchesDevPattern) return true;
+
+    // Check known infrastructure error patterns (these should be tracked but filtered from console)
+    const isKnownInfraError = Object.entries(KNOWN_ERROR_PATTERNS).some(([type, pattern]) => {
+      const found = message.includes(pattern);
+      if (found) {
+        // Track the known infrastructure error in APM
+        apmService.recordKnownInfrastructureError(message, type.toLowerCase());
+      }
+      return found;
+    });
+    
+    if (isKnownInfraError) return true;
 
     // Check strict patterns if in strict mode
     if (this.filterLevel === 'strict') {

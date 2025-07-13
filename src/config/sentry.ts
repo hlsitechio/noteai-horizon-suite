@@ -12,8 +12,8 @@ export const initSentry = () => {
       //   blockAllMedia: false,
       // }),
     ],
-    // Performance Monitoring
-    tracesSampleRate: 0.1,
+    // Performance Monitoring - Reduced to avoid rate limiting
+    tracesSampleRate: 0.01,
     // Disable session replay to avoid CSP conflicts
     replaysSessionSampleRate: 0,
     replaysOnErrorSampleRate: 0,
@@ -26,8 +26,31 @@ export const initSentry = () => {
       'Script error.',
       'Network request failed',
       'Cannot assign to read only property',
+      'Failed to execute \'put\' on \'Cache\'',
+      'Partial response (status code 206) is unsupported',
+      'Content Security Policy directive',
+      'ws://localhost',
+      'Rate limiting',
+      '429',
     ],
     
     debug: false,
+    
+    // Rate limiting configuration
+    maxBreadcrumbs: 50,
+    
+    // Transport options for rate limiting
+    transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
+    
+    beforeSend(event) {
+      // Filter out known development/infrastructure errors
+      if (event.message?.includes('Failed to execute \'put\' on \'Cache\'') ||
+          event.message?.includes('Content Security Policy directive') ||
+          event.message?.includes('ws://localhost') ||
+          event.message?.includes('429')) {
+        return null;
+      }
+      return event;
+    },
   });
 };
