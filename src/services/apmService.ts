@@ -40,6 +40,22 @@ export interface APMSession {
   bounce_rate?: number;
 }
 
+export interface APMEmailAlert {
+  alertType: 'error' | 'performance';
+  title: string;
+  description: string;
+  severity: 'info' | 'warning' | 'error' | 'critical';
+  errorMessage?: string;
+  errorStack?: string;
+  componentName?: string;
+  url?: string;
+  userAgent?: string;
+  metricValue?: number;
+  thresholdValue?: number;
+  userId: string;
+  userEmail?: string;
+}
+
 class APMService {
   private static instance: APMService;
   private sessionId: string;
@@ -151,6 +167,20 @@ class APMService {
           description: `Critical error in ${error.component_name}: ${error.error_message}`,
           severity: 'critical'
         });
+
+        // Send email notification for critical errors
+        await this.sendEmailAlert({
+          alertType: 'error',
+          title: 'Critical Error Detected',
+          description: `Critical error in ${error.component_name}: ${error.error_message}`,
+          severity: 'critical',
+          errorMessage: error.error_message,
+          errorStack: error.error_stack,
+          componentName: error.component_name,
+          url: error.url || window.location.href,
+          userAgent: error.user_agent || navigator.userAgent,
+          userId: this.userId
+        });
       }
     } catch (err) {
       logger.error('Failed to record APM error', { err, error });
@@ -212,6 +242,24 @@ class APMService {
     }
   }
 
+  private async sendEmailAlert(alertData: APMEmailAlert) {
+    if (!this.isEnabled || !this.userId) return;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('send-apm-alert', {
+        body: alertData
+      });
+
+      if (error) {
+        logger.error('Failed to send APM email alert', { error, alertData });
+      } else {
+        logger.info('APM email alert sent successfully', { emailId: data?.emailId });
+      }
+    } catch (error) {
+      logger.error('Failed to invoke send-apm-alert function', { error, alertData });
+    }
+  }
+
   private async checkMetricThresholds(metric: APMMetric) {
     // Define performance thresholds
     const thresholds = {
@@ -223,14 +271,30 @@ class APMService {
 
     const threshold = thresholds[metric.metric_name as keyof typeof thresholds];
     if (threshold && metric.metric_value > threshold) {
+      const severity = metric.metric_value > threshold * 1.5 ? 'critical' : 'warning';
+      
       await this.createAlert({
         alert_type: 'performance',
         title: `High ${metric.metric_name}`,
         description: `${metric.metric_name} (${metric.metric_value}) exceeded threshold (${threshold})`,
         threshold_value: threshold,
         current_value: metric.metric_value,
-        severity: metric.metric_value > threshold * 1.5 ? 'critical' : 'warning'
+        severity
       });
+
+      // Send email for critical performance issues
+      if (severity === 'critical') {
+        await this.sendEmailAlert({
+          alertType: 'performance',
+          title: `Critical Performance Issue: High ${metric.metric_name}`,
+          description: `${metric.metric_name} (${metric.metric_value}) severely exceeded threshold (${threshold})`,
+          severity: 'critical',
+          metricValue: metric.metric_value,
+          thresholdValue: threshold,
+          url: window.location.href,
+          userId: this.userId
+        });
+      }
     }
   }
 
