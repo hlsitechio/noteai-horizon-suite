@@ -125,8 +125,8 @@ export const useDashboardWorkspace = () => {
   }, [updateWorkspace]);
 
   const updateLayoutSettings = useCallback(async (
-    dashboardLayout: Record<string, any>,
-    sidebarLayout: Record<string, any>
+    dashboardLayout: Record<string, unknown>,
+    sidebarLayout: Record<string, unknown>
   ) => {
     return updateWorkspace({
       dashboard_layout: dashboardLayout,
@@ -136,7 +136,7 @@ export const useDashboardWorkspace = () => {
 
   const updateUISettings = useCallback(async (
     glowingEffects: boolean,
-    themeSettings: Record<string, any>
+    themeSettings: Record<string, unknown>
   ) => {
     return updateWorkspace({
       glowing_effects_enabled: glowingEffects,

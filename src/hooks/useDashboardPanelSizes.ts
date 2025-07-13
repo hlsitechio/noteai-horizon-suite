@@ -21,15 +21,6 @@ export const useDashboardPanelSizes = () => {
     rightPanels: settingsPanelSizes.rightPanels || 50,
   }), [settingsPanelSizes]);
 
-  // Log panel sizes when they change (development only)
-  useEffect(() => {
-    if (import.meta.env.DEV) {
-      // Development logging only
-      if (import.meta.env.DEV) {
-        console.log('Settings loaded state:', !!workspace);
-      }
-    }
-  }, [JSON.stringify(panelSizes), !!workspace]);
 
   // Track when user actually interacts with panels
   const trackUserInteraction = useCallback(() => {

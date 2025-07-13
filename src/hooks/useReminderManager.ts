@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { ReminderService } from '../services/reminderService';
 import { NotificationService } from '../services/notificationService';
 import { toast } from 'sonner';
+import { type Reminder } from '@/types/note';
 
 export const useReminderManager = () => {
   const navigate = useNavigate();
   const [isChecking, setIsChecking] = useState(false);
-  const [pendingReminders, setPendingReminders] = useState<any[]>([]);
+  const [pendingReminders, setPendingReminders] = useState<Reminder[]>([]);
 
   const snoozeReminder = useCallback(async (reminderId: string, minutes: number = 15) => {
     const snoozeUntil = new Date(Date.now() + minutes * 60 * 1000);

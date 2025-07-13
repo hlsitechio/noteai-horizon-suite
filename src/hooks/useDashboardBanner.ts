@@ -7,19 +7,19 @@ export const useDashboardBanner = () => {
 
   const { url: selectedBannerUrl, type: selectedBannerType } = getBannerSettings();
 
-  const handleImageUpload = (file: File) => {
-    // This would be handled by the banner service to upload and return URL
-    console.log('Image uploaded:', file.name);
+  const handleImageUpload = async (file: File): Promise<boolean> => {
+    // TODO: Implement banner upload service
+    return false;
   };
 
-  const handleVideoUpload = (file: File) => {
-    // This would be handled by the banner service to upload and return URL
-    console.log('Video uploaded:', file.name);
+  const handleVideoUpload = async (file: File): Promise<boolean> => {
+    // TODO: Implement video upload service
+    return false;
   };
 
-  const handleAIGenerate = (prompt: string) => {
-    // This would be handled by the AI service to generate and return URL
-    console.log('AI Generate with prompt:', prompt);
+  const handleAIGenerate = async (prompt: string): Promise<string | null> => {
+    // TODO: Implement AI banner generation service
+    return null;
   };
 
   const handleImageSelect = async (imageUrl: string) => {

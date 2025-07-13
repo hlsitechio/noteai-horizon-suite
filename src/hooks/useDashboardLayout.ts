@@ -4,6 +4,12 @@ import { DashboardLayoutService, DashboardLayout, DashboardComponent } from '@/s
 import { DashboardSettingsService } from '@/services/dashboardSettingsService';
 import { toast } from 'sonner';
 
+interface PanelConfiguration {
+  component_key: string;
+  enabled: boolean;
+  props: Record<string, unknown>;
+}
+
 export const useDashboardLayout = () => {
   const { user } = useAuth();
   const [layout, setLayout] = useState<DashboardLayout | null>(null);
@@ -58,7 +64,7 @@ export const useDashboardLayout = () => {
       await new Promise(resolve => {
         // Update local state
         const updatedLayout = { ...layout };
-        const panelConfigs = updatedLayout.panel_configurations as Record<string, any> || {};
+        const panelConfigs = (updatedLayout.panel_configurations as unknown as Record<string, PanelConfiguration>) || {};
         panelConfigs[panelKey] = {
           component_key: componentKey,
           enabled,
@@ -104,7 +110,7 @@ export const useDashboardLayout = () => {
 
   const getPanelConfiguration = (panelKey: string) => {
     if (!layout) return null;
-    const configs = layout.panel_configurations as Record<string, any>;
+    const configs = layout.panel_configurations as unknown as Record<string, PanelConfiguration>;
     return configs?.[panelKey] || null;
   };
 
