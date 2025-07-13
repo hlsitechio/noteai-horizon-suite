@@ -56,7 +56,8 @@ export const useDashboardLayout = () => {
       console.log('updatePanelConfiguration called:', { panelKey, componentKey, enabled });
       
       // First, check if this component type already exists in another panel and remove it
-      const panelConfigs = (layout.panel_configurations as unknown as Record<string, PanelConfiguration>) || {};
+      const layoutConfig = layout.panel_configurations as any;
+      const panelConfigs = layoutConfig?.components || {};
       console.log('Current panel configs:', panelConfigs);
       
       // Find and clear any existing panels with the same component type
@@ -90,19 +91,22 @@ export const useDashboardLayout = () => {
 
       // Update all affected panels in the database
       for (const [key, config] of Object.entries(updatedConfigs)) {
-        if (key !== panelKey && panelConfigs[key]?.component_key !== config.component_key) {
+        const typedConfig = config as PanelConfiguration;
+        const existingConfig = panelConfigs[key] as PanelConfiguration;
+        if (key !== panelKey && existingConfig?.component_key !== typedConfig.component_key) {
           console.log(`Updating panel ${key} with config:`, config);
           await DashboardLayoutService.updatePanelConfiguration(layout.id, key, {
-            component_key: config.component_key,
-            enabled: config.enabled,
-            props: config.props as any
+            component_key: typedConfig.component_key,
+            enabled: typedConfig.enabled,
+            props: typedConfig.props as any
           });
         }
       }
 
       // Update local state
       const updatedLayout = { ...layout };
-      updatedLayout.panel_configurations = updatedConfigs as any;
+      const newLayoutConfig = { ...layoutConfig, components: updatedConfigs };
+      updatedLayout.panel_configurations = newLayoutConfig as any;
       
       console.log('Setting updated layout:', updatedLayout);
       setLayout(updatedLayout);
@@ -142,8 +146,9 @@ export const useDashboardLayout = () => {
 
   const getPanelConfiguration = (panelKey: string) => {
     if (!layout) return null;
-    const configs = layout.panel_configurations as unknown as Record<string, PanelConfiguration>;
-    return configs?.[panelKey] || null;
+    const layoutConfig = layout.panel_configurations as any;
+    const configs = layoutConfig?.components || {};
+    return configs[panelKey] || null;
   };
 
   const getPanelSizes = () => {

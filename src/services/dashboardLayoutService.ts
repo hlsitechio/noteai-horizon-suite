@@ -91,7 +91,7 @@ export class DashboardLayoutService {
   static async createDefaultLayout(userId: string): Promise<DashboardLayout | null> {
     try {
       const defaultConfig = {
-        components: {},  // This should be an object, not an array
+        components: {},
         panelSizes: {},
         gridLayout: []
       };
