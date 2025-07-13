@@ -19,6 +19,7 @@ import { CreateItemDialog } from '@/components/Explorer/CreateItemDialog';
 import { CreateItemDropdown } from '@/components/Explorer/CreateItemDropdown';
 import { PreviewPanel } from '@/components/Explorer/PreviewPanel';
 import { FolderTree } from '@/components/Explorer/FolderTree';
+import { NotesSection } from '@/components/Layout/Sidebar/NotesSection';
 
 type ViewMode = 'extra-large' | 'large' | 'medium' | 'small' | 'list' | 'details';
 type SortBy = 'name' | 'modified' | 'created' | 'size' | 'category';
@@ -516,14 +517,15 @@ const NotesExplorer: React.FC = () => {
       {/* Main content */}
       <div className="flex-1 overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full">
-          {/* Folder Tree */}
+          {/* Content Sidebar */}
           {treeVisible && (
             <>
-              <ResizablePanel defaultSize={20} minSize={15} maxSize={35}>
-                <FolderTree 
-                  selectedFolderId={selectedFolderId}
-                  onFolderSelect={setSelectedFolderId}
-                />
+              <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
+                <div className="h-full border-r bg-background">
+                  <div className="h-full">
+                    <NotesSection />
+                  </div>
+                </div>
               </ResizablePanel>
               <ResizableHandle withHandle />
             </>
