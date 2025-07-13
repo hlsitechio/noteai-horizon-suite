@@ -3,13 +3,16 @@ import { PanelGroup, Panel } from 'react-resizable-panels';
 import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/resizable';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import KPIStats from './KPIStats';
-import { DashboardPanel } from './DashboardPanel';
 import { SelectedComponentsArea } from './SelectedComponentsArea';
 import { Note } from '@/types/note';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useDashboardStatus } from './hooks/useDashboardStatus';
+import { MobileDashboardLayout } from './DashboardLayout/MobileDashboardLayout';
+import { DashboardGrid } from './DashboardLayout/DashboardGrid';
+import { ResizableDashboardGrid } from './DashboardLayout/ResizableDashboardGrid';
+import { DashboardLoadingState, RedirectLoadingState } from './DashboardLayout/DashboardLoadingStates';
 
 interface MainDashboardContentProps {
   notes: Note[];
@@ -89,26 +92,12 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
 
   // Show loading state while checking dashboard status
   if (isLoading) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading dashboard...</p>
-        </div>
-      </div>
-    );
+    return <DashboardLoadingState />;
   }
 
   // If user should be redirected to onboarding, show loading while redirecting
   if (!isDashboardInitialized && user) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Redirecting to onboarding...</p>
-        </div>
-      </div>
-    );
+    return <RedirectLoadingState />;
   }
 
   // Create storage handler that returns null to disable localStorage persistence
@@ -120,32 +109,13 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
   // On mobile, render a simpler stacked layout
   if (isMobile) {
     return (
-      <div className="h-full overflow-y-auto">
-        {/* KPI Stats */}
-        <div className="p-3">
-          <KPIStats
-            totalNotes={totalNotes}
-            favoriteNotes={favoriteNotes}
-            categoryCounts={categoryCounts}
-            weeklyNotes={weeklyNotes}
-            notes={notes}
-          />
-        </div>
-        
-        {/* Dashboard Panels - Stacked on mobile */}
-        <div className="space-y-3 p-3">
-          <div className="text-xs font-medium text-muted-foreground mb-2">Dashboard Components</div>
-          <DashboardPanel panelKey="topLeft" className="p-4 min-h-[200px]" />
-          <DashboardPanel panelKey="topRight" className="p-4 min-h-[200px]" />
-          <DashboardPanel panelKey="middleLeft" className="p-4 min-h-[200px]" />
-          <DashboardPanel panelKey="middleRight" className="p-4 min-h-[200px]" />
-          <DashboardPanel panelKey="bottomLeft" className="p-4 min-h-[200px]" />
-          <DashboardPanel panelKey="bottomRight" className="p-4 min-h-[200px]" />
-          
-          {/* Selected Components Area - Mobile */}
-          <SelectedComponentsArea className="min-h-[300px]" />
-        </div>
-      </div>
+      <MobileDashboardLayout
+        totalNotes={totalNotes}
+        favoriteNotes={favoriteNotes}
+        categoryCounts={categoryCounts}
+        weeklyNotes={weeklyNotes}
+        notes={notes}
+      />
     );
   }
 
@@ -188,171 +158,42 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           className={isDashboardEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"} 
         />
         
-        {/* Middle Panel - Two Boxes */}
-        <Panel 
-          id="middle-section-panel"
-          order={1}
-          defaultSize={topSectionSize} 
-          minSize={isDashboardEditMode ? 25 : undefined}
-          maxSize={isDashboardEditMode ? 75 : undefined}
-        >
-          <div className="h-full">
-            <PanelGroup 
-              direction="horizontal" 
-              className="h-full" 
-              onLayout={handleHorizontalResize}
-              id="horizontal-top"
-              storage={createStorageHandler()}
-            >
-              <Panel 
-                id="top-left-panel"
-                order={0}
-                defaultSize={leftPanelsSize} 
-                minSize={isDashboardEditMode ? 30 : undefined}
-                maxSize={isDashboardEditMode ? 70 : undefined}
-              >
-                <div className="h-full border-r border-border/50">
-                  <ScrollArea className="h-full">
-                    <DashboardPanel panelKey="topLeft" className="p-4 min-h-full" />
-                  </ScrollArea>
-                </div>
-              </Panel>
-              
-              {/* Only show resize handle when in edit mode - Always present */}
-              <HorizontalResizableHandle 
-                className={isDashboardEditMode ? "opacity-100" : "opacity-0 pointer-events-none w-1"} 
-              />
-              
-              <Panel 
-                id="top-right-panel"
-                order={1}
-                defaultSize={rightPanelsSize} 
-                minSize={isDashboardEditMode ? 30 : undefined}
-                maxSize={isDashboardEditMode ? 70 : undefined}
-              >
-                <div className="h-full">
-                  <ScrollArea className="h-full">
-                    <DashboardPanel panelKey="topRight" className="p-4 min-h-full" />
-                  </ScrollArea>
-                </div>
-              </Panel>
-            </PanelGroup>
-          </div>
-        </Panel>
-        
-        {/* Only show resize handle when in edit mode - Always present */}
-        <HorizontalResizableHandle 
-          className={isDashboardEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"} 
+        {/* Dashboard Grid Panels */}
+        <ResizableDashboardGrid
+          topSectionSize={topSectionSize}
+          bottomSectionSize={bottomSectionSize}
+          leftPanelsSize={leftPanelsSize}
+          rightPanelsSize={rightPanelsSize}
+          isDashboardEditMode={isDashboardEditMode}
+          onMainContentResize={handleMainContentResize}
+          onHorizontalResize={handleHorizontalResize}
+          createStorageHandler={createStorageHandler}
+          startOrder={1}
         />
         
-        {/* Middle Panel - Two More Boxes */}
-        <Panel 
-          id="middle-section-panel"
-          order={2}
-          defaultSize={topSectionSize} 
-          minSize={isDashboardEditMode ? 25 : undefined}
-          maxSize={isDashboardEditMode ? 75 : undefined}
-        >
-          <div className="h-full">
-            <PanelGroup 
-              direction="horizontal" 
-              className="h-full" 
-              onLayout={handleHorizontalResize}
-              id="horizontal-middle"
-              storage={createStorageHandler()}
-            >
-              <Panel 
-                id="middle-left-panel"
-                order={0}
-                defaultSize={leftPanelsSize} 
-                minSize={isDashboardEditMode ? 30 : undefined}
-                maxSize={isDashboardEditMode ? 70 : undefined}
-              >
-                <div className="h-full border-r border-border/50">
-                  <ScrollArea className="h-full">
-                    <DashboardPanel panelKey="middleLeft" className="p-4 min-h-full" />
-                  </ScrollArea>
-                </div>
-              </Panel>
-              
-              {/* Only show resize handle when in edit mode - Always present */}
-              <HorizontalResizableHandle 
-                className={isDashboardEditMode ? "opacity-100" : "opacity-0 pointer-events-none w-1"} 
-              />
-              
-              <Panel 
-                id="middle-right-panel"
-                order={1}
-                defaultSize={rightPanelsSize} 
-                minSize={isDashboardEditMode ? 30 : undefined}
-                maxSize={isDashboardEditMode ? 70 : undefined}
-              >
-                <div className="h-full">
-                  <ScrollArea className="h-full">
-                    <DashboardPanel panelKey="middleRight" className="p-4 min-h-full" />
-                  </ScrollArea>
-                </div>
-              </Panel>
-            </PanelGroup>
-          </div>
-        </Panel>
-        
-        {/* Only show resize handle when in edit mode - Always present */}
-        <HorizontalResizableHandle 
-          className={isDashboardEditMode ? "opacity-100" : "opacity-0 pointer-events-none h-1"} 
+        <ResizableDashboardGrid
+          topSectionSize={topSectionSize}
+          bottomSectionSize={bottomSectionSize}
+          leftPanelsSize={leftPanelsSize}
+          rightPanelsSize={rightPanelsSize}
+          isDashboardEditMode={isDashboardEditMode}
+          onMainContentResize={handleMainContentResize}
+          onHorizontalResize={handleHorizontalResize}
+          createStorageHandler={createStorageHandler}
+          startOrder={2}
         />
         
-        {/* Bottom Panel - Two More Boxes */}
-        <Panel 
-          id="bottom-section-panel"
-          order={3}
-          defaultSize={bottomSectionSize} 
-          minSize={isDashboardEditMode ? 25 : undefined}
-          maxSize={isDashboardEditMode ? 75 : undefined}
-        >
-          <div className="h-full">
-            <PanelGroup 
-              direction="horizontal" 
-              className="h-full" 
-              onLayout={handleHorizontalResize}
-              id="horizontal-bottom"
-              storage={createStorageHandler()}
-            >
-              <Panel 
-                id="bottom-left-panel"
-                order={0}
-                defaultSize={leftPanelsSize} 
-                minSize={isDashboardEditMode ? 30 : undefined}
-                maxSize={isDashboardEditMode ? 70 : undefined}
-              >
-                <div className="h-full border-r border-border/50">
-                  <ScrollArea className="h-full">
-                    <DashboardPanel panelKey="bottomLeft" className="p-4 min-h-full" />
-                  </ScrollArea>
-                </div>
-              </Panel>
-              
-              {/* Only show resize handle when in edit mode - Always present */}
-              <HorizontalResizableHandle 
-                className={isDashboardEditMode ? "opacity-100" : "opacity-0 pointer-events-none w-1"} 
-              />
-              
-              <Panel 
-                id="bottom-right-panel"
-                order={1}
-                defaultSize={rightPanelsSize} 
-                minSize={isDashboardEditMode ? 30 : undefined}
-                maxSize={isDashboardEditMode ? 70 : undefined}
-              >
-                <div className="h-full">
-                  <ScrollArea className="h-full">
-                    <DashboardPanel panelKey="bottomRight" className="p-4 min-h-full" />
-                  </ScrollArea>
-                </div>
-              </Panel>
-            </PanelGroup>
-          </div>
-        </Panel>
+        <ResizableDashboardGrid
+          topSectionSize={bottomSectionSize}
+          bottomSectionSize={bottomSectionSize}
+          leftPanelsSize={leftPanelsSize}
+          rightPanelsSize={rightPanelsSize}
+          isDashboardEditMode={isDashboardEditMode}
+          onMainContentResize={handleMainContentResize}
+          onHorizontalResize={handleHorizontalResize}
+          createStorageHandler={createStorageHandler}
+          startOrder={3}
+        />
         
         {/* Only show resize handle when in edit mode - Always present */}
         <HorizontalResizableHandle 
@@ -390,35 +231,8 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
             />
           </div>
           
-          {/* Top Row - Two Panels */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-3 md:px-4">
-            <div className="min-h-[400px]">
-              <DashboardPanel panelKey="topLeft" className="p-4 h-full" />
-            </div>
-            <div className="min-h-[400px]">
-              <DashboardPanel panelKey="topRight" className="p-4 h-full" />
-            </div>
-          </div>
-          
-          {/* Middle Row - Two Panels */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-3 md:px-4">
-            <div className="min-h-[400px]">
-              <DashboardPanel panelKey="middleLeft" className="p-4 h-full" />
-            </div>
-            <div className="min-h-[400px]">
-              <DashboardPanel panelKey="middleRight" className="p-4 h-full" />
-            </div>
-          </div>
-          
-          {/* Bottom Row - Two Panels */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-3 md:px-4">
-            <div className="min-h-[400px]">
-              <DashboardPanel panelKey="bottomLeft" className="p-4 h-full" />
-            </div>
-            <div className="min-h-[400px]">
-              <DashboardPanel panelKey="bottomRight" className="p-4 h-full" />
-            </div>
-          </div>
+          {/* Dashboard Grid */}
+          <DashboardGrid className="space-y-6" />
 
           {/* Selected Components Area */}
           <div className="px-3 md:px-4 pb-6">
