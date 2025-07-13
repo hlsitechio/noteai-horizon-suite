@@ -6,22 +6,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 
 const ComponentLibraryPage: React.FC = () => {
-  // Add error boundary for navigation hooks
-  let navigate: ReturnType<typeof useNavigate>;
-  let searchParams: URLSearchParams;
-  
-  try {
-    navigate = useNavigate();
-    const [searchParamsResult] = useSearchParams();
-    searchParams = searchParamsResult;
-  } catch (error) {
-    console.error('Router context error:', error);
-    // Fallback navigation
-    navigate = () => {
-      window.location.href = '/app/dashboard';
-    };
-    searchParams = new URLSearchParams(window.location.search);
-  }
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { getPanelConfiguration } = useDashboardLayout();
   
   const targetPanel = searchParams.get('targetPanel');
