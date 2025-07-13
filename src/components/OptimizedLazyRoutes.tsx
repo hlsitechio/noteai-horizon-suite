@@ -41,8 +41,6 @@ const lazyWithRetry = (importFn: () => Promise<any>) => {
 
 // PUBLIC PAGES
 const Landing = lazyWithRetry(() => import('../pages/public/Landing'));
-const PremiumLanding = lazyWithRetry(() => import('../pages/public/PremiumLanding'));
-const ConstellationLanding = lazyWithRetry(() => import('../pages/public/ConstellationLanding'));
 const Features = lazyWithRetry(() => import('../pages/public/Features'));
 const Pricing = lazyWithRetry(() => import('../pages/public/Pricing'));
 const About = lazyWithRetry(() => import('../pages/public/About'));
@@ -119,8 +117,6 @@ export const OptimizedLazyRoutes: React.FC = () => {
         {/* ========== PUBLIC ROUTES ========== */}
         <Route path="/" element={<HomeRedirect />} />
         <Route path="/public/landing" element={<Landing />} />
-        <Route path="/public/landing-premium" element={<PremiumLanding />} />
-        <Route path="/public/landing-constellation" element={<ConstellationLanding />} />
         <Route path="/public/features" element={<Features />} />
         <Route path="/public/pricing" element={<Pricing />} />
         <Route path="/public/about" element={<About />} />
@@ -132,8 +128,6 @@ export const OptimizedLazyRoutes: React.FC = () => {
 
         {/* Legacy public route redirects */}
         <Route path="/landing" element={<Navigate to="/public/landing" replace />} />
-        <Route path="/landing.2" element={<Navigate to="/public/landing-premium" replace />} />
-        <Route path="/landing.3" element={<Navigate to="/public/landing-constellation" replace />} />
         <Route path="/features" element={<Navigate to="/public/features" replace />} />
         <Route path="/pricing" element={<Navigate to="/public/pricing" replace />} />
         <Route path="/about" element={<Navigate to="/public/about" replace />} />
