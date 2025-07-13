@@ -4,6 +4,7 @@ import ProtectedRoute from './ProtectedRoute';
 import Layout from './Layout/Layout';
 import HomeRedirect from './HomeRedirect';
 import { Card } from './ui/card';
+import ComponentLibraryPage from '../pages/ComponentLibraryPage';
 
 // Lazy load components with error handling for missing chunks
 const lazyWithRetry = (importFn: () => Promise<any>) => {
@@ -73,7 +74,7 @@ const Pricing = lazyWithRetry(() => import('../pages/Pricing'));
 const About = lazyWithRetry(() => import('../pages/About'));
 const EditorControlsTest = lazyWithRetry(() => import('./Editor/EditorControlsTest'));
 const ComponentGallery = lazyWithRetry(() => import('../pages/ComponentGallery'));
-const ComponentLibraryPage = lazyWithRetry(() => import('../pages/ComponentLibraryPage'));
+
 const ActivityPage = lazyWithRetry(() => import('../pages/ActivityPage'));
 const MobileApp = lazyWithRetry(() => import('../mobile/MobileApp'));
 const ReferralPage = lazyWithRetry(() => import('../pages/ReferralPage'));
@@ -233,11 +234,7 @@ export const OptimizedLazyRoutes: React.FC = () => {
               <ActivityPage />
             </Suspense>
           } />
-          <Route path="components" element={
-            <Suspense fallback={<DashboardLoadingFallback />}>
-              <ComponentLibraryPage />
-            </Suspense>
-          } />
+          <Route path="components" element={<ComponentLibraryPage />} />
            <Route path="component-gallery" element={<ComponentGallery />} />
             <Route path="seo" element={
               <Suspense fallback={<DashboardLoadingFallback />}>
