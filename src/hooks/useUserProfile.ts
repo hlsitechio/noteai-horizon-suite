@@ -27,7 +27,17 @@ export const useUserProfile = () => {
       setIsLoading(true);
       console.log('Fetching user profile via edge function...');
 
-      const { data, error } = await supabase.functions.invoke('get-user-profile');
+      // Get the current session to pass the auth token
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        throw new Error('No valid session found');
+      }
+
+      const { data, error } = await supabase.functions.invoke('get-user-profile', {
+        headers: {
+          Authorization: `Bearer ${sessionData.session.access_token}`,
+        },
+      });
 
       if (error) {
         console.error('Error fetching user profile:', error);
