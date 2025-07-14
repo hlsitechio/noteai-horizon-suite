@@ -210,11 +210,11 @@ const SocialProof: React.FC<SocialProofProps> = ({
             className="text-center mb-8"
           >
             <p className="text-sm text-muted-foreground font-medium">
-              Trusted by teams at leading companies
+              Built with leading technologies
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-3 lg:grid-cols-6 gap-8 items-center opacity-60">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center opacity-60">
             {companyLogos.map((company, index) => (
               <motion.div
                 key={company.name}
@@ -226,8 +226,11 @@ const SocialProof: React.FC<SocialProofProps> = ({
               >
                 <img
                   src={company.logo}
-                  alt={company.name}
-                  className="h-8 w-auto"
+                  alt={`${company.name} logo`}
+                  className="h-8 w-auto max-w-[120px] object-contain"
+                  onError={(e) => {
+                    console.error(`Failed to load logo for ${company.name}:`, company.logo);
+                  }}
                 />
               </motion.div>
             ))}
