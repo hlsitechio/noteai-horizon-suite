@@ -41,14 +41,16 @@ export const useErrorTracing = () => {
 
       // Since security_audit_log table doesn't exist, just log locally for now
       // TODO: Create security_audit_log table if error tracing functionality is needed
-      console.warn('Security audit log not available - table missing');
-      console.log('Error trace would be stored:', {
-        user_id: user?.id || null,
-        action: 'error_trace',
-        table_name: payload.component,
-        record_id: traceId,
-        new_values: errorTrace
-      });
+      if (import.meta.env.DEV) {
+        console.warn('Security audit log not available - table missing');
+        console.log('Error trace would be stored:', {
+          user_id: user?.id || null,
+          action: 'error_trace',
+          table_name: payload.component,
+          record_id: traceId,
+          new_values: errorTrace
+        });
+      }
 
       // Store in localStorage as fallback
       try {
