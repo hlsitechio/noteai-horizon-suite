@@ -43,24 +43,17 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Minimal build configuration to fix chunk loading issues
+    // Disable all optimization to isolate the build issue
     target: 'es2020',
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: mode === 'production',
-        drop_debugger: mode === 'production',
-      },
-    },
-    // Disable manual chunking to prevent chunk loading errors
+    minify: false,  // Disable minification completely
+    sourcemap: true,
+    // Disable manual chunking completely
     rollupOptions: {
       output: {
-        // Let Vite handle chunking automatically
         manualChunks: undefined,
       },
     },
-    chunkSizeWarningLimit: 2000,
-    sourcemap: mode === 'development',
+    chunkSizeWarningLimit: 5000,
   },
   define: {
     // Remove development code in production
