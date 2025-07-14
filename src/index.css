@@ -1460,3 +1460,62 @@
   60% { transform: translate(-3px, -2px); }
   80% { transform: translate(-3px, 2px); }
 }
+
+/* ========================================
+   MOBILE SCROLLBAR HIDING & OPTIMIZATION
+   ======================================== */
+
+/* Hide scrollbars in mobile - Webkit browsers (Safari, Chrome mobile) */
+@media (max-width: 768px) {
+  /* Hide scrollbars but keep functionality */
+  * {
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scroll-behavior: smooth; /* Smooth scrolling behavior */
+  }
+  
+  /* Hide scrollbar for webkit browsers */
+  *::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+    background: transparent;
+  }
+  
+  /* Hide scrollbar for Firefox */
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  
+  /* Optimize scroll containers */
+  .mobile-scroll-container {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .mobile-scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Optimize touch interactions */
+  .mobile-page {
+    touch-action: pan-y; /* Allow vertical panning only */
+    -webkit-user-select: none; /* Prevent text selection on touch */
+    user-select: none;
+  }
+  
+  /* Smooth momentum scrolling */
+  .mobile-content {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .mobile-content::-webkit-scrollbar {
+    display: none;
+  }
+}

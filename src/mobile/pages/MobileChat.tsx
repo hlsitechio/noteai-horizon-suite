@@ -78,12 +78,12 @@ const MobileChat: React.FC = () => {
   ];
 
   return (
-    <div className="h-full w-full flex flex-col bg-background">
+    <div className="h-full w-full flex flex-col bg-background mobile-page">
       <DynamicMobileHeader title="Mobile/Chat" />
       
       {/* Messages */}
-      <div className="flex-1 min-h-0">
-        <ScrollArea className="h-full p-4">
+      <div className="flex-1 min-h-0 mobile-scroll-container">
+        <ScrollArea className="h-full p-4 mobile-content">
         <div className="space-y-4">
           {messages.length === 0 ? (
             <div className="text-center text-muted-foreground py-8">

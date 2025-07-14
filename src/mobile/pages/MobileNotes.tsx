@@ -46,7 +46,7 @@ const MobileNotes: React.FC = () => {
   };
 
   return (
-    <div className="h-full w-full flex flex-col bg-background min-h-0 overflow-hidden">
+    <div className="h-full w-full flex flex-col bg-background min-h-0 overflow-hidden mobile-page">
       {/* Header */}
       <div className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border px-4 py-3 flex items-center space-x-3 z-10">
         <h1 className="text-lg font-semibold text-foreground">Mobile/Notes</h1>
@@ -81,8 +81,8 @@ const MobileNotes: React.FC = () => {
       </div>
 
       {/* Notes List - Fixed scrolling container */}
-      <div className="flex-1 min-h-0 bg-background w-full overflow-hidden">
-        <div className="h-full w-full overflow-y-auto px-4 py-4">
+      <div className="flex-1 min-h-0 bg-background w-full overflow-hidden mobile-scroll-container">
+        <div className="h-full w-full mobile-content px-4 py-4">
           {filteredNotes.length === 0 ? (
             <div className="text-center py-12">
               <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
