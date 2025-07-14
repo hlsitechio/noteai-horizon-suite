@@ -292,7 +292,6 @@ const AdvancedSEOOptimizer: React.FC<AdvancedSEOProps> = ({
       {/* Performance and Preloading */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://api.openai.com" />
       <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       
       {/* Enhanced Structured Data */}

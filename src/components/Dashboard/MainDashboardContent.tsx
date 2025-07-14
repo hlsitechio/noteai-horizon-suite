@@ -131,7 +131,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           direction="vertical" 
           className="h-full" 
           onLayout={handleMainContentResize}
-          id="main-dashboard-content"
+          id="main-dashboard-content-panels"
           storage={createStorageHandler()}
         >
         {/* Top Panel - KPI Stats */}
