@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Grid3X3, List, MoreHorizontal, SortAsc, Filter, Star, Clock, FileText, Folder, Plus, ArrowLeft, ArrowRight, ChevronDown, Eye, EyeOff, Calendar, Heart } from 'lucide-react';
+import { Search, Grid3X3, List, MoreHorizontal, SortAsc, Filter, Star, Clock, FileText, Folder, Plus, ArrowLeft, ArrowRight, ChevronDown, Eye, EyeOff, Calendar, Heart, Upload } from 'lucide-react';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useFolders } from '@/contexts/FoldersContext';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { CreateItemDialog } from '@/components/Explorer/CreateItemDialog';
 import { CreateItemDropdown } from '@/components/Explorer/CreateItemDropdown';
+import { DocumentImportDialog } from '@/components/Explorer/DocumentImportDialog';
 import { PreviewPanel } from '@/components/Explorer/PreviewPanel';
 import { FolderTree } from '@/components/Explorer/FolderTree';
 import { NotesSection } from '@/components/Layout/Sidebar/NotesSection';
@@ -387,6 +388,13 @@ const NotesExplorer: React.FC = () => {
                 New Folder
               </Button>
             </CreateItemDialog>
+            
+            <DocumentImportDialog>
+              <Button size="sm" variant="ghost">
+                <Upload className="w-4 h-4 mr-2" />
+                Import Documents
+              </Button>
+            </DocumentImportDialog>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
