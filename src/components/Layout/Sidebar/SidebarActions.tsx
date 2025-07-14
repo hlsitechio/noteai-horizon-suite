@@ -81,12 +81,13 @@ export function SidebarSignOutButton({ isExpanded = true, isMobile = false }: { 
     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
       <Button
         variant="ghost"
-        size="sm"
-        className="w-full justify-start h-9 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-colors"
         onClick={logout}
+        className="w-full justify-start h-10 text-muted-foreground hover:text-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
       >
-        <LogOut className="w-4 h-4 mr-2" />
-        Sign Out
+        <div className="flex items-center gap-3">
+          <LogOut className="w-5 h-5" />
+          <span>Sign Out</span>
+        </div>
       </Button>
     </motion.div>
   );
