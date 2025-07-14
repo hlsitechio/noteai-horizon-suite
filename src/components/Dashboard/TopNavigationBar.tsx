@@ -228,16 +228,16 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
 
   return (
     <Card className="w-full border-0 shadow-none bg-background/80 backdrop-blur-sm">
-      <div className={`p-3 ${isMobile ? 'space-y-2' : 'flex items-center justify-between'}`}>
+      <div className={`p-3 ${isMobile ? 'space-y-2' : 'grid grid-cols-3 items-center'}`}>
         {/* Welcome Message */}
-        <div className={`flex items-center gap-2 ${isMobile ? 'justify-center' : ''}`}>
+        <div className={`flex items-center gap-2 ${isMobile ? 'justify-center' : 'justify-self-start'}`}>
           <span className={`font-medium text-foreground ${isMobile ? 'text-sm' : 'text-base'}`}>
             {welcomeMessage}, {firstName}!
           </span>
         </div>
 
-        {/* Time and Date with Chronometer */}
-        <div className={`flex items-center gap-4 ${isMobile ? 'justify-center text-sm' : ''} relative`}>
+        {/* Time and Date with Chronometer - Always Centered */}
+        <div className={`flex items-center gap-4 ${isMobile ? 'justify-center text-sm' : 'justify-self-center'} relative`}>
           <div className="flex items-center gap-2 relative">
             <button 
               onClick={handleClockClick}
@@ -276,7 +276,7 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
         </div>
 
         {/* Weather Widget */}
-        <div className={`flex items-center gap-2 ${isMobile ? 'justify-center' : ''}`}>
+        <div className={`flex items-center gap-2 ${isMobile ? 'justify-center' : 'justify-self-end'}`}>
           {isLoadingWeather ? (
             <div className="flex items-center gap-2">
               <Thermometer className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-muted-foreground animate-pulse`} />
