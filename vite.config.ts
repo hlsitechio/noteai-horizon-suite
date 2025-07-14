@@ -60,23 +60,22 @@ export default defineConfig(({ mode }) => ({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Core framework
-          vendor: ['react', 'react-dom'],
-          // UI components
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs', '@radix-ui/react-select', '@radix-ui/react-popover'],
-          // Utilities and helpers
-          utils: ['clsx', 'tailwind-merge', 'date-fns', 'lodash.debounce', 'lodash.throttle'],
-          // Rich text editor
-          editor: ['slate', 'slate-react', 'slate-history', 'slate-dom'],
-          // Monitoring and analytics
-          monitoring: ['@hyperdx/browser'],
-          // Backend services
-          supabase: ['@supabase/supabase-js'],
-          // Charts and visualization
-          charts: ['recharts'],
-          // Animation and motion
-          animation: ['framer-motion'],
+        manualChunks: (id) => {
+          // Group all node_modules into vendor chunk
+          if (id.includes('node_modules')) {
+            // Large libraries get their own chunks
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor';
+            }
+            if (id.includes('@supabase')) {
+              return 'supabase';
+            }
+            if (id.includes('framer-motion')) {
+              return 'animation';
+            }
+            // Everything else goes to libs
+            return 'libs';
+          }
         },
       },
     },

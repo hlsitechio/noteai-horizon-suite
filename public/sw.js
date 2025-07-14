@@ -36,39 +36,15 @@ const SKIP_ROUTES = [
   'fonts.gstatic.com'
 ];
 
-// Install event - cache static assets
+// Install event - simplified to avoid cache errors
 self.addEventListener('install', (event) => {
   // Development logging only
   if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
     console.log('[SW] Installing service worker...');
   }
   
-  event.waitUntil(
-    Promise.all([
-      caches.open(STATIC_CACHE_NAME).then((cache) => {
-        // Development logging only
-        if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
-          console.log('[SW] Caching static assets');
-        }
-        return cache.addAll(STATIC_ASSETS).catch((error) => {
-          // Development logging only
-          if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
-            console.warn('[SW] Failed to cache some assets:', error);
-          }
-          // Cache individual assets that work
-          return Promise.allSettled(
-            STATIC_ASSETS.map(url => cache.add(url).catch(err => {
-              // Development logging only
-              if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
-                console.warn(`Failed to cache asset:`, err);
-              }
-            }))
-          );
-        });
-      }),
-      self.skipWaiting()
-    ])
-  );
+  // Skip caching temporarily to avoid cache storage errors
+  event.waitUntil(self.skipWaiting());
 });
 
 // Activate event - clean up old caches
