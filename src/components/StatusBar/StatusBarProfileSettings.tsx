@@ -6,34 +6,52 @@ import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { useStatusBar } from '@/hooks/useStatusBar';
 import { StatusBarEmojiPicker } from './StatusBarEmojiPicker';
-import { ScrollText, Zap } from 'lucide-react';
+import { ScrollText, Zap, Save } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
 
 const StatusBarProfileSettings: React.FC = () => {
   const { message, isEnabled, scrollSpeed, updateMessage, toggleEnabled, updateScrollSpeed } = useStatusBar();
   const [tempMessage, setTempMessage] = useState(message);
+  const [tempScrollSpeed, setTempScrollSpeed] = useState(scrollSpeed);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     setTempMessage(message);
-  }, [message]);
+    setTempScrollSpeed(scrollSpeed);
+  }, [message, scrollSpeed]);
 
   const handleMessageChange = (value: string) => {
     setTempMessage(value);
-    updateMessage(value);
   };
 
   const handleEmojiSelect = (emoji: string) => {
     const newMessage = tempMessage + emoji;
     setTempMessage(newMessage);
-    updateMessage(newMessage);
   };
 
   const handleSpeedChange = (value: number[]) => {
-    updateScrollSpeed(value[0]);
-    toast({
-      title: "Scroll speed updated",
-      description: `Speed set to ${value[0]}/10`,
-    });
+    setTempScrollSpeed(value[0]);
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      updateMessage(tempMessage);
+      updateScrollSpeed(tempScrollSpeed);
+      toast({
+        title: "Settings saved",
+        description: "Your status bar settings have been updated successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save settings. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const getSpeedLabel = (speed: number) => {
@@ -41,6 +59,8 @@ const StatusBarProfileSettings: React.FC = () => {
     if (speed <= 7) return 'Medium';
     return 'Fast';
   };
+
+  const hasChanges = tempMessage !== message || tempScrollSpeed !== scrollSpeed;
 
   return (
     <Card className="overflow-hidden">
@@ -92,12 +112,12 @@ const StatusBarProfileSettings: React.FC = () => {
               Scroll Speed
             </Label>
             <span className="text-sm font-medium text-muted-foreground">
-              {getSpeedLabel(scrollSpeed)} ({scrollSpeed}/10)
+              {getSpeedLabel(tempScrollSpeed)} ({tempScrollSpeed}/10)
             </span>
           </div>
           <div className="px-2">
             <Slider
-              value={[scrollSpeed]}
+              value={[tempScrollSpeed]}
               onValueChange={handleSpeedChange}
               max={10}
               min={1}
@@ -120,7 +140,7 @@ const StatusBarProfileSettings: React.FC = () => {
                 <div 
                   className="whitespace-nowrap text-sm font-medium text-foreground/90 py-2"
                   style={{
-                    animation: `scroll-left ${33 - (scrollSpeed * 3)}s linear infinite`
+                    animation: `scroll-left ${33 - (tempScrollSpeed * 3)}s linear infinite`
                   }}
                 >
                   {tempMessage || "Enter a message to see preview..."}
@@ -138,6 +158,27 @@ const StatusBarProfileSettings: React.FC = () => {
               }
             `}</style>
           </div>
+        </div>
+
+        {/* Save Button */}
+        <div className="flex justify-end">
+          <Button 
+            onClick={handleSave} 
+            disabled={!hasChanges || isSaving}
+            className="flex items-center gap-2"
+          >
+            {isSaving ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4" />
+                Save Changes
+              </>
+            )}
+          </Button>
         </div>
       </CardContent>
     </Card>
