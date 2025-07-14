@@ -73,10 +73,23 @@ const SecurityDashboard: React.FC = () => {
   useEffect(() => {
     refreshStats();
     
-    // Refresh stats every 30 seconds
-    const interval = setInterval(refreshStats, 30000);
-    
-    return () => clearInterval(interval);
+    // Refresh stats every 30 seconds using optimized scheduling
+    import('@/utils/scheduler').then(({ scheduleIdleCallback, cancelIdleCallback }) => {
+      let timeoutId: number;
+      
+      const scheduleNext = () => {
+        timeoutId = scheduleIdleCallback(() => {
+          refreshStats();
+          scheduleNext();
+        }, 30000);
+      };
+      
+      scheduleNext();
+      
+      return () => {
+        if (timeoutId) cancelIdleCallback(timeoutId);
+      };
+    });
   }, []);
 
   const getSecurityScore = (): { score: number; status: string; color: string } => {

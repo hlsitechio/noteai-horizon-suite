@@ -105,8 +105,24 @@ export const APMDashboard: React.FC<APMDashboardProps> = ({ className }) => {
     };
 
     loadData();
-    const interval = setInterval(loadData, 30000);
-    return () => clearInterval(interval);
+    
+    // Use optimized scheduling for data refresh
+    import('@/utils/scheduler').then(({ scheduleIdleCallback, cancelIdleCallback }) => {
+      let timeoutId: number;
+      
+      const scheduleNext = () => {
+        timeoutId = scheduleIdleCallback(() => {
+          loadData();
+          scheduleNext();
+        }, 30000);
+      };
+      
+      scheduleNext();
+      
+      return () => {
+        if (timeoutId) cancelIdleCallback(timeoutId);
+      };
+    });
   }, [timeRange, includeFiltered]);
 
   // Process data for charts

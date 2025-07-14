@@ -74,15 +74,35 @@ const DashboardDemo = ({ isOpen, onClose }: DashboardDemoProps) => {
       })));
     };
 
-    const interval = setInterval(animateParticles, 50);
-    return () => clearInterval(interval);
+    import('@/utils/scheduler').then(({ rafThrottle }) => {
+      const throttledAnimate = rafThrottle(animateParticles);
+      const animate = () => {
+        throttledAnimate();
+        requestAnimationFrame(animate);
+      };
+      requestAnimationFrame(animate);
+    });
+    
+    return () => {}; // Animation stops automatically when component unmounts
   }, [isOpen, particles.length]);
 
   // Real-time clock
   useEffect(() => {
     if (!isOpen) return;
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
+    import('@/utils/scheduler').then(({ scheduleIdleCallback, cancelIdleCallback }) => {
+      let timeoutId: number;
+      
+      const updateTime = () => {
+        setCurrentTime(new Date());
+        timeoutId = scheduleIdleCallback(updateTime, 1000);
+      };
+      
+      timeoutId = scheduleIdleCallback(updateTime, 1000);
+      
+      return () => {
+        if (timeoutId) cancelIdleCallback(timeoutId);
+      };
+    });
   }, [isOpen]);
 
   // Enhanced animation sequence
@@ -127,10 +147,20 @@ const DashboardDemo = ({ isOpen, onClose }: DashboardDemoProps) => {
   // Activity pulse effect
   useEffect(() => {
     if (!isOpen) return;
-    const pulse = setInterval(() => {
-      setActivityPulse(prev => (prev + 1) % 3);
-    }, 2000);
-    return () => clearInterval(pulse);
+    import('@/utils/scheduler').then(({ scheduleIdleCallback, cancelIdleCallback }) => {
+      let timeoutId: number;
+      
+      const updatePulse = () => {
+        setActivityPulse(prev => (prev + 1) % 3);
+        timeoutId = scheduleIdleCallback(updatePulse, 2000);
+      };
+      
+      timeoutId = scheduleIdleCallback(updatePulse, 2000);
+      
+      return () => {
+        if (timeoutId) cancelIdleCallback(timeoutId);
+      };
+    });
   }, [isOpen]);
 
   const recentNotes = [

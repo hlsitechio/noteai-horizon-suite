@@ -23,10 +23,16 @@ const throttledSentryCapture = throttle((message: string, options: any) => {
 const sentMessages = new Set<string>();
 const MESSAGE_CLEANUP_INTERVAL = 60000; // Clear sent messages every minute
 
-// Clean up sent messages periodically
-setInterval(() => {
-  sentMessages.clear();
-}, MESSAGE_CLEANUP_INTERVAL);
+// Clean up sent messages periodically using scheduleIdleCallback
+import { scheduleIdleCallback } from './scheduler';
+
+const scheduleCleanup = () => {
+  scheduleIdleCallback(() => {
+    sentMessages.clear();
+    scheduleCleanup(); // Schedule next cleanup
+  }, MESSAGE_CLEANUP_INTERVAL);
+};
+scheduleCleanup();
 
 /**
  * Initialize performance monitoring

@@ -100,13 +100,22 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
     };
   }, []);
 
-  // Update clock every second
+  // Update clock every second using optimized scheduling
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(timer);
+    import('@/utils/scheduler').then(({ scheduleIdleCallback, cancelIdleCallback }) => {
+      let timeoutId: number;
+      
+      const updateClock = () => {
+        setCurrentTime(new Date());
+        timeoutId = scheduleIdleCallback(updateClock, 1000);
+      };
+      
+      timeoutId = scheduleIdleCallback(updateClock, 1000);
+      
+      return () => {
+        if (timeoutId) cancelIdleCallback(timeoutId);
+      };
+    });
   }, []);
 
   // Fetch weather data from edge function
