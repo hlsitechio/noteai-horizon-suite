@@ -59,7 +59,8 @@ export const useDashboardLayout = () => {
       
       // First, check if this component type already exists in another panel and remove it
       const layoutConfig = layout.panel_configurations as any;
-      const panelConfigs = layoutConfig?.components || {};
+      // Ensure panelConfigs is always an object, not an array
+      const panelConfigs = Array.isArray(layoutConfig?.components) ? {} : (layoutConfig?.components || {});
       console.log('Current panel configs:', panelConfigs);
       
       // Find and clear any existing panels with the same component type

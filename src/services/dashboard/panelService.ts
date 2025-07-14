@@ -25,7 +25,8 @@ export class DashboardPanelService {
       console.log('Current layout from DB:', layout);
 
       const currentConfig = layout.layout_config as any || {};
-      const components = currentConfig.components || {};
+      // Ensure components is always an object, not an array
+      const components = Array.isArray(currentConfig.components) ? {} : (currentConfig.components || {});
       
       components[panelKey] = configuration;
 
