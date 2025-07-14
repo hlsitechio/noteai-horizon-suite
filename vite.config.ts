@@ -51,6 +51,9 @@ export default defineConfig(({ mode }) => ({
         drop_console: mode === 'production',
         drop_debugger: mode === 'production',
         pure_funcs: mode === 'production' ? ['console.log', 'console.debug'] : [],
+        // Remove HMR-related code in production
+        dead_code: true,
+        side_effects: false,
       },
       mangle: {
         safari10: true,
@@ -87,8 +90,8 @@ export default defineConfig(({ mode }) => ({
   define: {
     // Remove development code in production
     __DEV__: mode === 'development',
-    // Ensure HMR is completely disabled in production
-    'import.meta.hot': mode === 'development' ? 'import.meta.hot' : 'false',
+    // Explicitly disable HMR in production
+    'process.env.NODE_ENV': JSON.stringify(mode),
   },
   // Vite 6: Enhanced dependency optimization
   optimizeDeps: {
@@ -104,7 +107,8 @@ export default defineConfig(({ mode }) => ({
       'framer-motion',
     ],
     exclude: ['@vite/client', '@vite/env'],
-    force: mode === 'development',
+    // Only force optimization in development
+    ...(mode === 'development' && { force: true }),
   },
   // Vite 6: Improved performance settings
   esbuild: {
