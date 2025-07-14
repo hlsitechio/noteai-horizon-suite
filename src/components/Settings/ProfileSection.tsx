@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Camera, Upload, User, Mail, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDebounce } from 'use-debounce';
+import StatusBarProfileSettings from '@/components/StatusBar/StatusBarProfileSettings';
 
 const ProfileSection: React.FC = () => {
   const { user, refreshUser } = useAuth();
@@ -186,13 +187,14 @@ const ProfileSection: React.FC = () => {
   };
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-xl font-semibold flex items-center gap-2">
-          <User className="w-5 h-5" />
-          Profile Information
-        </CardTitle>
-      </CardHeader>
+    <div className="space-y-6">
+      <Card className="overflow-hidden">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl font-semibold flex items-center gap-2">
+            <User className="w-5 h-5" />
+            Profile Information
+          </CardTitle>
+        </CardHeader>
       <CardContent className="space-y-6">
         {/* Avatar Section - Centered */}
         <div className="flex flex-col items-center space-y-4">
@@ -298,6 +300,9 @@ const ProfileSection: React.FC = () => {
         </div>
       </CardContent>
     </Card>
+    
+    <StatusBarProfileSettings />
+    </div>
   );
 };
 

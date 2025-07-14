@@ -12,7 +12,7 @@ import { useStatusBar } from '@/hooks/useStatusBar';
 const BannerLayout: React.FC = () => {
   const isMobile = useIsMobile();
   const { isDashboardEditMode } = useEditMode();
-  const { message: statusMessage, isEnabled: statusBarEnabled } = useStatusBar();
+  const { message: statusMessage, isEnabled: statusBarEnabled, scrollSpeed } = useStatusBar();
   const { 
     workspace, 
     getPanelSizes, 
@@ -67,7 +67,7 @@ const BannerLayout: React.FC = () => {
         
         {/* Status Bar */}
         {statusBarEnabled && (
-          <StatusBar message={statusMessage} />
+          <StatusBar message={statusMessage} scrollSpeed={scrollSpeed} />
         )}
         
         {/* Main Content */}
@@ -119,7 +119,7 @@ const BannerLayout: React.FC = () => {
         >
           {/* Status Bar */}
           {statusBarEnabled && (
-            <StatusBar message={statusMessage} />
+            <StatusBar message={statusMessage} scrollSpeed={scrollSpeed} />
           )}
           
           <div className="flex-1 overflow-auto">

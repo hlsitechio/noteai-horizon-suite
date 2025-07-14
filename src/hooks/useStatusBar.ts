@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 interface StatusBarState {
   message: string;
   isEnabled: boolean;
+  scrollSpeed: number; // 1-10 scale (1 = slow, 10 = fast)
 }
 
 const DEFAULT_MESSAGE = "Important reminder: Check your notifications for updates";
@@ -11,6 +12,7 @@ export const useStatusBar = () => {
   const [statusBar, setStatusBar] = useState<StatusBarState>({
     message: DEFAULT_MESSAGE,
     isEnabled: true,
+    scrollSpeed: 5, // Medium speed by default
   });
 
   // Load from localStorage on mount
@@ -43,11 +45,17 @@ export const useStatusBar = () => {
     setStatusBar(prev => ({ ...prev, isEnabled }));
   };
 
+  const updateScrollSpeed = (scrollSpeed: number) => {
+    setStatusBar(prev => ({ ...prev, scrollSpeed }));
+  };
+
   return {
     message: statusBar.message,
     isEnabled: statusBar.isEnabled,
+    scrollSpeed: statusBar.scrollSpeed,
     updateMessage,
     toggleEnabled,
     setEnabled,
+    updateScrollSpeed,
   };
 };

@@ -6,14 +6,19 @@ import { cn } from '@/lib/utils';
 interface StatusBarProps {
   message?: string;
   className?: string;
+  scrollSpeed?: number; // 1-10 scale
 }
 
 const StatusBar: React.FC<StatusBarProps> = ({ 
   message = "Important reminder: Check your notifications for updates",
-  className 
+  className,
+  scrollSpeed = 5
 }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [animationKey, setAnimationKey] = useState(0);
+  
+  // Convert scroll speed (1-10) to animation duration (30s-3s)
+  const animationDuration = 33 - (scrollSpeed * 3); // 30s at speed 1, 3s at speed 10
 
   // Reset animation when message changes
   useEffect(() => {
@@ -48,7 +53,7 @@ const StatusBar: React.FC<StatusBarProps> = ({
             key={animationKey}
             className="whitespace-nowrap text-sm font-medium text-foreground/90 py-2"
             style={{
-              animation: 'scroll-left 20s linear infinite'
+              animation: `scroll-left ${animationDuration}s linear infinite`
             }}
           >
             {message}
