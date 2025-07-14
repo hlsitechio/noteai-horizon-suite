@@ -6,10 +6,10 @@ import { DynamicAccentProvider } from '../contexts/DynamicAccentContext';
 import { composeProviders } from '../utils/composeProviders';
 
 /**
- * Default theme providers for when Router context is not available
- * This provides a fallback public theme system
+ * Theme and styling providers for PUBLIC pages only
+ * Used when Router context is not available
  */
-export const ThemeAccentProviders = composeProviders(
+export const PublicThemeProviders = composeProviders(
   PublicThemeProvider,
   TooltipProvider,
   AccentColorProvider,
