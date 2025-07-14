@@ -139,12 +139,16 @@ export const DocumentImport: React.FC<DocumentImportProps> = ({
 
   const uploadFile = async (fileUpload: FileUpload): Promise<void> => {
     const { file } = fileUpload;
+    console.log('Starting upload for:', file.name);
+    
     const user = (await supabase.auth.getUser()).data.user;
     
     if (!user) {
+      console.error('User not authenticated');
       throw new Error('User not authenticated');
     }
 
+    console.log('User authenticated:', user.id);
     // Update status to uploading
     updateFileInfo(fileUpload.id, { status: 'uploading', progress: 0 });
 
@@ -156,43 +160,61 @@ export const DocumentImport: React.FC<DocumentImportProps> = ({
       const fileName = `${timestamp}_${randomSuffix}.${fileExtension}`;
       const filePath = `${user.id}/${fileName}`;
 
+      console.log('Created file path:', filePath);
       // Update progress to show upload starting
       updateFileInfo(fileUpload.id, { progress: 10 });
 
       // Upload to Supabase Storage
+      console.log('Starting storage upload...');
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('documents')
         .upload(filePath, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Storage upload error:', uploadError);
+        throw uploadError;
+      }
 
+      console.log('Storage upload successful:', uploadData);
       // Update progress to show upload completed
       updateFileInfo(fileUpload.id, { progress: 90 });
 
       // Get public URL
+      console.log('Getting public URL...');
       const { data: urlData } = supabase.storage
         .from('documents')
         .getPublicUrl(filePath);
 
+      console.log('Public URL:', urlData.publicUrl);
+
       // Save document metadata to database
+      console.log('Saving to database...');
+      const documentData = {
+        user_id: user.id,
+        file_name: fileName,
+        original_name: file.name,
+        file_type: getFileExtension(file.name),
+        file_size: file.size,
+        mime_type: file.type,
+        storage_path: filePath,
+        file_url: urlData.publicUrl,
+        description: fileUpload.description || null,
+        tags: fileUpload.tags || [],
+        is_public: false
+      };
+      
+      console.log('Document data to insert:', documentData);
+      
       const { error: dbError } = await supabase
         .from('documents')
-        .insert({
-          user_id: user.id,
-          file_name: fileName,
-          original_name: file.name,
-          file_type: getFileExtension(file.name),
-          file_size: file.size,
-          mime_type: file.type,
-          storage_path: filePath,
-          file_url: urlData.publicUrl,
-          description: fileUpload.description || null,
-          tags: fileUpload.tags || [],
-          is_public: false
-        });
+        .insert(documentData);
 
-      if (dbError) throw dbError;
+      if (dbError) {
+        console.error('Database error:', dbError);
+        throw dbError;
+      }
 
+      console.log('Database save successful');
       // Update status to completed
       updateFileInfo(fileUpload.id, { 
         status: 'completed', 
