@@ -215,6 +215,28 @@ class EnhancedRateLimiter {
       suspiciousPatterns: this.suspiciousPatterns.size,
     };
   }
+
+  getSecurityReport() {
+    return {
+      blockedIPs: Array.from(this.blockedIPs).map(ip => ({
+        ip,
+        reason: 'Rate limit violations',
+        blockedUntil: Date.now() + 60000
+      })),
+      topSuspiciousPatterns: Array.from(this.suspiciousPatterns.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .map(([pattern, count]) => ({
+          pattern,
+          count,
+          severity: count > 10 ? 'high' : 'medium'
+        })),
+      recentViolations: Array.from(this.limits.values())
+        .filter(limit => limit.violations > 0).length,
+      activeViolations: Array.from(this.limits.values())
+        .reduce((sum, limit) => sum + limit.violations, 0)
+    };
+  }
 }
 
 export const rateLimiter = new EnhancedRateLimiter();

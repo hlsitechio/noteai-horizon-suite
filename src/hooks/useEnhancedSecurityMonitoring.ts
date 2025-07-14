@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import { advancedThreatDetectionService } from '@/services/security/advancedThreatDetection';
+import { advancedThreatDetection } from '@/services/security/advancedThreatDetection';
 import { dataProtectionService } from '@/services/security/dataProtection';
 import { enhancedSessionSecurityService } from '@/services/security/sessionSecurity';
 import { securityHeadersService } from '@/services/security';
@@ -24,7 +24,7 @@ interface SecurityMetrics {
 export const useEnhancedSecurityMonitoring = () => {
   const logSecurityEvent = useCallback((event: SecurityEvent) => {
     // Enhanced logging with threat detection
-    advancedThreatDetectionService.logThreatDetection({
+    advancedThreatDetection.logThreatDetection({
       type: event.type,
       severity: event.severity,
       details: event.details,
@@ -50,7 +50,7 @@ export const useEnhancedSecurityMonitoring = () => {
 
   const analyzePayloadSecurity = useCallback((payload: string) => {
     // Threat detection analysis
-    const threatAnalysis = advancedThreatDetectionService.analyzePayload(payload);
+    const threatAnalysis = advancedThreatDetection.analyzePayload(payload);
     
     if (threatAnalysis.threats.length > 0) {
       logSecurityEvent({
@@ -175,7 +175,7 @@ export const useEnhancedSecurityMonitoring = () => {
     // Monitor for potential XSS attacks via error events
     const handleError = (event: ErrorEvent) => {
       if (event.message && event.message.includes('script')) {
-        const analysis = advancedThreatDetectionService.analyzePayload(event.message);
+        const analysis = advancedThreatDetection.analyzePayload(event.message);
         
         if (analysis.riskScore > 30) {
           logSecurityEvent({
@@ -202,7 +202,7 @@ export const useEnhancedSecurityMonitoring = () => {
       const url = typeof args[0] === 'string' ? args[0] : (args[0] as Request).url;
       
       // Analyze request for threats
-      const analysis = advancedThreatDetectionService.analyzeRequestBehavior({
+      const analysis = advancedThreatDetection.analyzeRequestBehavior({
         endpoint: url,
         method: args[1]?.method || 'GET',
         payloadSize: JSON.stringify(args[1]?.body || '').length,
