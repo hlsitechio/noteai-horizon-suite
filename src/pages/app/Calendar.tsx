@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { isSameDay } from 'date-fns';
 import { Plus, Users, FileText, Calendar as CalendarIcon } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { CalendarGrid } from '@/components/Calendar/CalendarGrid';
 import { CalendarEventFormInline } from '@/components/Calendar/CalendarEventFormInline';
 import { CalendarDateDetails } from '@/components/Calendar/CalendarDateDetails';
 import { CalendarNoteFormInline } from '@/components/Calendar/CalendarNoteFormInline';
+import { CalendarTaskCreator } from '@/components/Calendar/CalendarTaskCreator';
 import { CalendarEvent } from '@/types/calendar';
 import { useCalendarEvents } from '@/hooks/useCalendarEvents';
 import { useNotes } from '@/contexts/NotesContext';
@@ -17,6 +18,8 @@ const Calendar: React.FC = () => {
   const [viewDate, setViewDate] = useState(new Date());
   const [isEventFormOpen, setIsEventFormOpen] = useState(false);
   const [isNoteFormOpen, setIsNoteFormOpen] = useState(false);
+  const [isTaskCreatorOpen, setIsTaskCreatorOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const {
     events,
     addEvent
@@ -28,6 +31,17 @@ const Calendar: React.FC = () => {
   } = useNotes();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+
+  // Check if we should open task creator from URL params
+  useEffect(() => {
+    if (searchParams.get('createTask') === 'true') {
+      setIsTaskCreatorOpen(true);
+      // Remove the parameter from URL without navigation
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.delete('createTask');
+      setSearchParams(newSearchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
   const getEventsForDate = (date: Date) => {
     return events.filter(event => isSameDay(new Date(event.date), date));
   };
@@ -75,6 +89,13 @@ const Calendar: React.FC = () => {
     setSelectedDate(date);
     setIsNoteFormOpen(true);
   };
+
+  const handleTaskSubmit = (taskData: any) => {
+    // For now, we'll just log the task data
+    // In a real app, you'd save this to your task management system
+    console.log('New task created:', taskData);
+    setIsTaskCreatorOpen(false);
+  };
   const getEventTypeIcon = (type: CalendarEvent['type']) => {
     switch (type) {
       case 'meeting':
@@ -98,6 +119,11 @@ const Calendar: React.FC = () => {
             <Plus className="w-4 h-4" />
             Add Note
           </Button>
+
+          <Button onClick={() => setIsTaskCreatorOpen(!isTaskCreatorOpen)} variant={isTaskCreatorOpen ? "secondary" : "outline"} className="gap-2" size={isMobile ? "default" : "default"}>
+            <Plus className="w-4 h-4" />
+            Add Task
+          </Button>
         </div>
       </div>
 
@@ -111,6 +137,9 @@ const Calendar: React.FC = () => {
         <div className="space-y-4">
           {/* Create New Event Form */}
           <CalendarEventFormInline isOpen={isEventFormOpen} onClose={() => setIsEventFormOpen(false)} onSubmit={handleEventSubmit} selectedDate={selectedDate} />
+
+          {/* Task Creator */}
+          <CalendarTaskCreator isOpen={isTaskCreatorOpen} onClose={() => setIsTaskCreatorOpen(false)} onSubmit={handleTaskSubmit} selectedDate={selectedDate} />
 
           <CalendarDateDetails selectedDate={selectedDate} events={selectedDateEvents} notes={selectedDateNotes} onNoteClick={handleNoteClick} getEventTypeIcon={getEventTypeIcon} />
         </div>

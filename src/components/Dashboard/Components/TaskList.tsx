@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -65,6 +66,7 @@ const priorityColors = {
 
 export function TaskList() {
   const [taskList, setTaskList] = useState(tasks);
+  const navigate = useNavigate();
   
   const completedTasks = taskList.filter(task => task.completed).length;
   const totalTasks = taskList.length;
@@ -88,7 +90,12 @@ export function TaskList() {
             <Badge variant="secondary" className="text-xs">
               {completedTasks}/{totalTasks}
             </Badge>
-            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-6 w-6 p-0"
+              onClick={() => navigate('/app/calendar?createTask=true')}
+            >
               <Plus className="h-3 w-3" />
             </Button>
           </div>
@@ -181,7 +188,12 @@ export function TaskList() {
         </div>
 
         <div className="pt-2 border-t">
-          <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="w-full text-xs text-muted-foreground"
+            onClick={() => navigate('/app/calendar?createTask=true')}
+          >
             <CheckSquare className="h-3 w-3 mr-1" />
             Add New Task
           </Button>
