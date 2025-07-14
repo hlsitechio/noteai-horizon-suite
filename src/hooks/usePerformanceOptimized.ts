@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useLayoutEffect, startTransition, useDeferredValue } from 'react';
 import { rafThrottle, scheduleIdleCallback, processInBatches } from '@/utils/scheduler';
-import { markPerformance, measurePerformance } from '@/utils/perfMonitor';
+import { markPerformance, measurePerformance } from '@/utils/performance';
 import debounce from 'lodash.debounce';
 import throttle from 'lodash.throttle';
 

@@ -6,7 +6,7 @@ import './index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import { AppInitializationService } from './services/appInitializationService';
-import { initPerfMonitor } from './utils/perfMonitor';
+import { initPerfMonitor } from './utils/performance';
 
 // Initialize app with performance monitoring
 AppInitializationService.initialize();
