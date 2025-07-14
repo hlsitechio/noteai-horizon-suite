@@ -5,37 +5,13 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(() => ({
   server: {
     host: "0.0.0.0",
     port: 8080,
-    headers: {
-      // Development-friendly security headers
-      'X-Content-Type-Options': 'nosniff',
-      'X-XSS-Protection': '1; mode=block',
-      'Referrer-Policy': 'strict-origin-when-cross-origin',
-    },
-    // Only enable HMR in development mode
-    ...(mode === 'development' && {
-      hmr: {
-        port: 8080,
-        clientPort: 8080,
-        host: 'localhost',
-        protocol: 'ws',
-      },
-    }),
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
-    // Bundle analyzer - only in analyze mode
-    process.env.ANALYZE && require('rollup-plugin-visualizer').visualizer({
-      filename: 'dist/stats.html',
-      open: true,
-      gzipSize: true,
-      brotliSize: true
-    })
   ].filter(Boolean),
   resolve: {
     alias: {
@@ -43,35 +19,21 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Disable all optimization to isolate the build issue
+    // Ultra-minimal build to fix corruption
     target: 'es2020',
-    minify: false,  // Disable minification completely
+    minify: false,
     sourcemap: true,
-    // Disable manual chunking completely
     rollupOptions: {
       output: {
-        manualChunks: undefined,
+        // Single chunk to eliminate chunk loading errors
+        manualChunks: () => 'index',
       },
     },
-    chunkSizeWarningLimit: 5000,
   },
   define: {
-    // Remove development code in production
-    __DEV__: mode === 'development',
-    // Explicitly disable HMR in production
-    'process.env.NODE_ENV': JSON.stringify(mode),
+    'process.env.NODE_ENV': '"development"',
   },
-  // Simplified dependency optimization
   optimizeDeps: {
-    include: [
-      'react',
-      'react-dom',
-      'react/jsx-runtime',
-    ],
-    exclude: ['@vite/client', '@vite/env'],
-  },
-  // Simplified esbuild settings
-  esbuild: {
-    target: 'es2020',
+    include: ['react', 'react-dom'],
   },
 }));
