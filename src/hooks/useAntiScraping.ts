@@ -277,13 +277,13 @@ export const useAntiScraping = () => {
       }
     };
 
-    // Listen for page visibility changes and navigation
+    // Listen for page visibility changes and navigation using modern events
     document.addEventListener('visibilitychange', handleNavigation);
-    window.addEventListener('beforeunload', handleNavigation);
+    window.addEventListener('pagehide', handleNavigation);
 
     return () => {
       document.removeEventListener('visibilitychange', handleNavigation);
-      window.removeEventListener('beforeunload', handleNavigation);
+      window.removeEventListener('pagehide', handleNavigation);
     };
   }, [logSecurityEvent]);
 

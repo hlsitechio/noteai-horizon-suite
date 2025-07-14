@@ -106,7 +106,7 @@ const widgetCode = `
     trackTimeOnPage: function(startTime) {
       var self = this;
       
-      window.addEventListener('beforeunload', function() {
+      window.addEventListener('pagehide', function() {
         var timeOnPage = Math.round((Date.now() - startTime) / 1000);
         var data = {
           websiteDomain: self.config.domain,

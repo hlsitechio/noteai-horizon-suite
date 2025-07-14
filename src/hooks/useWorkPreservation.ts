@@ -124,7 +124,7 @@ export const useWorkPreservation = (options: UseWorkPreservationOptions) => {
     }
   }, [storageKey]);
 
-  // Set up beforeunload handler to save work
+  // Set up modern page exit handlers with work preservation
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       // Save current work immediately
@@ -138,9 +138,20 @@ export const useWorkPreservation = (options: UseWorkPreservationOptions) => {
       }
     };
 
+    const handlePageHide = () => {
+      // Save work when page is being hidden/unloaded
+      if (Object.keys(workDataRef.current).length > 0) {
+        saveWork(workDataRef.current, true);
+      }
+    };
+
+    // Use pagehide for reliable work saving
+    window.addEventListener('pagehide', handlePageHide);
+    // Keep beforeunload for user confirmation
     window.addEventListener('beforeunload', handleBeforeUnload);
     
     return () => {
+      window.removeEventListener('pagehide', handlePageHide);
       window.removeEventListener('beforeunload', handleBeforeUnload);
       
       if (autoSaveTimeoutRef.current) {

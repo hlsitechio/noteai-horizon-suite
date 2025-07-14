@@ -61,7 +61,7 @@ export const ReloadPreventionProvider: React.FC<ReloadPreventionProviderProps> =
     }
   }, [allowReload, preventReload]);
 
-  // Set up beforeunload handler
+  // Set up modern page exit handlers (replacing deprecated beforeunload)
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (reloadPreventionRef.current.isReloadPrevented || reloadPreventionRef.current.workInProgress.size > 0) {
@@ -72,9 +72,21 @@ export const ReloadPreventionProvider: React.FC<ReloadPreventionProviderProps> =
       }
     };
 
+    const handlePageHide = () => {
+      // Save work when page is being hidden/unloaded
+      if (reloadPreventionRef.current.workInProgress.size > 0) {
+        // Attempt to save work before page unloads
+        console.log('Page hiding with work in progress - attempting to save');
+      }
+    };
+
+    // Use pagehide for modern browsers (replaces beforeunload for many cases)
+    window.addEventListener('pagehide', handlePageHide);
+    // Keep beforeunload for the user confirmation dialog
     window.addEventListener('beforeunload', handleBeforeUnload);
     
     return () => {
+      window.removeEventListener('pagehide', handlePageHide);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);

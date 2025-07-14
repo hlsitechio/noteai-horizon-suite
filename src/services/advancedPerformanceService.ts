@@ -85,8 +85,8 @@ export class AdvancedPerformanceService extends PerformanceService {
         subtree: true,
       });
 
-      // Clean up observer when page unloads
-      window.addEventListener('beforeunload', () => {
+      // Clean up observer when page unloads using modern event
+      window.addEventListener('pagehide', () => {
         renderObserver.disconnect();
       });
     }
