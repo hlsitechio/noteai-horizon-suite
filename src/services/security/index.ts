@@ -1,152 +1,28 @@
 /**
- * Security services index - Enhanced security infrastructure
+ * Security Services Public API
  */
-export { rateLimitingService } from './rateLimitingService';
-export { payloadValidationService } from './payloadValidationService';
-export { userAgentAnalysisService } from './userAgentAnalysisService';
-export { sessionSecurityService } from './sessionSecurityService';
-export { auditLogService } from './auditLogService';
-export { apiKeySecurityService } from './apiKeySecurityService';
-export { threatDetectionService } from './threatDetectionService';
-export { incidentResponseService } from './incidentResponseService';
-export { antiScrapingService } from './antiScrapingService';
-export type { SecurityContext, SecurityResult } from './payloadValidationService';
-export type { AuditEvent } from './auditLogService';
 
-import { rateLimitingService } from './rateLimitingService';
-import { payloadValidationService } from './payloadValidationService';
-import { userAgentAnalysisService } from './userAgentAnalysisService';
-import { antiScrapingService } from './antiScrapingService';
-import { logger } from '@/utils/logger';
-import type { SecurityContext, SecurityResult } from './payloadValidationService';
+export { SecurityHeadersService } from './securityHeadersService';
+export { CSPService } from './cspService';
+export { HSTSService } from './hstsService';
+export { PermissionsPolicyService } from './permissionsPolicyService';
+export { UnifiedSecurityService, unifiedSecurityService, withSecurity } from './unifiedSecurityService';
 
-/**
- * Unified Security Service that orchestrates all security checks
- */
-export class UnifiedSecurityService {
-  /**
-   * Comprehensive security check for incoming requests
-   */
-  async checkRequest(context: SecurityContext, payload?: any): Promise<SecurityResult> {
-    const { userId, ipAddress, userAgent, endpoint, method } = context;
+export type {
+  SecurityHeadersConfig,
+  CSPConfig,
+  HSTSConfig,
+  CSPViolation,
+  SecurityScore
+} from './types';
 
-    // 1. Rate limiting check
-    const rateLimitKey = userId ? `user:${userId}` : `ip:${ipAddress}`;
-    if (!rateLimitingService.checkGlobalLimits(userId, ipAddress)) {
-      return {
-        allowed: false,
-        reason: 'Rate limit exceeded',
-        action: 'block',
-      };
-    }
+export type {
+  SecurityContext,
+  SecurityResult
+} from './payloadValidationService';
 
-    // 2. User agent analysis
-    if (userAgent) {
-      const userAgentResult = userAgentAnalysisService.analyzeUserAgent(userAgent, context);
-      if (!userAgentResult.allowed) {
-        return userAgentResult;
-      }
-    }
+export * from './utils';
 
-    // 3. Anti-scraping analysis
-    const antiScrapingResult = await antiScrapingService.checkForScraping(context, undefined, payload);
-    if (!antiScrapingResult.allowed) {
-      return antiScrapingResult;
-    }
-
-    // 4. Payload validation
-    if (payload) {
-      const payloadResult = payloadValidationService.validatePayload(payload, context);
-      if (!payloadResult.allowed) {
-        return payloadResult;
-      }
-    }
-
-    // 5. Endpoint-specific checks
-    const endpointResult = this.checkEndpointSecurity(endpoint, method, context);
-    if (!endpointResult.allowed) {
-      return endpointResult;
-    }
-
-    return { allowed: true };
-  }
-
-  private checkEndpointSecurity(
-    endpoint: string,
-    method: string,
-    context: SecurityContext
-  ): SecurityResult {
-    // Admin endpoint protection
-    if (endpoint.includes('/admin') && !context.userId) {
-      this.logSecurityEvent('unauthorized_admin_access', {
-        context,
-        endpoint,
-      });
-
-      return {
-        allowed: false,
-        reason: 'Authentication required for admin endpoints',
-        action: 'block',
-      };
-    }
-
-    // Sensitive endpoint protection
-    const sensitiveEndpoints = ['/api/users', '/api/settings', '/api/admin'];
-    if (sensitiveEndpoints.some(se => endpoint.includes(se)) && method !== 'GET' && !context.userId) {
-      this.logSecurityEvent('unauthorized_sensitive_access', {
-        context,
-        endpoint,
-        method,
-      });
-
-      return {
-        allowed: false,
-        reason: 'Authentication required for sensitive endpoints',
-        action: 'block',
-      };
-    }
-
-    return { allowed: true };
-  }
-
-  /**
-   * Get comprehensive security statistics
-   */
-  getStats() {
-    return {
-      rateLimiting: rateLimitingService.getStats(),
-      userAgent: userAgentAnalysisService.getStats(),
-      antiScraping: antiScrapingService.getStats(),
-      timestamp: new Date().toISOString(),
-      service: 'UnifiedSecurityService',
-    };
-  }
-
-  private logSecurityEvent(eventType: string, details: any): void {
-    logger.warn('SECURITY', eventType, details);
-  }
-}
-
-export const unifiedSecurityService = new UnifiedSecurityService();
-
-/**
- * Security wrapper for API calls - simplified interface
- */
-export const withSecurity = async <T>(
-  context: SecurityContext,
-  operation: () => Promise<T>,
-  payload?: any
-): Promise<T> => {
-  const securityCheck = await unifiedSecurityService.checkRequest(context, payload);
-
-  if (!securityCheck.allowed) {
-    throw new Error(`Security check failed: ${securityCheck.reason}`);
-  }
-
-  try {
-    return await operation();
-  } catch (error) {
-    logger.error('SECURITY', 'Operation failed:', error);
-    throw error;
-  }
-};
+// Create and export the singleton instance
+import { SecurityHeadersService } from './securityHeadersService';
+export const securityHeadersService = new SecurityHeadersService();

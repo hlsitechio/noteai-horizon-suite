@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { advancedThreatDetectionService } from '@/services/security/advancedThreatDetection';
 import { dataProtectionService } from '@/services/security/dataProtection';
 import { enhancedSessionSecurityService } from '@/services/security/sessionSecurity';
-import { securityHeadersService } from '@/services/security/securityHeaders';
+import { securityHeadersService } from '@/services/security';
 import { logger } from '@/utils/logger';
 
 interface SecurityEvent {
