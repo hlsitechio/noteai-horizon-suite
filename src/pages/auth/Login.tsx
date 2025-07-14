@@ -128,7 +128,7 @@ const Login: React.FC = () => {
 
             <div className="mt-4">
               <Link
-                to="/"
+                to="/public/landing"
                 className="flex items-center justify-center text-sm text-gray-400 hover:text-gray-300"
               >
                 <ArrowLeft className="h-4 w-4 mr-1" />
