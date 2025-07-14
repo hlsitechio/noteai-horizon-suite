@@ -1,5 +1,4 @@
-import React from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { AppThemeProviders } from '../contexts/AppThemeProviders';
 import { PublicThemeProviders } from '../contexts/PublicThemeProviders';
 
@@ -9,13 +8,31 @@ type ConditionalThemeWrapperProps = {
 
 /**
  * Component that wraps routes with appropriate theme providers
- * Must be used INSIDE Router context
+ * Uses window.location to avoid router context dependency
  */
 export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperProps) {
-  const location = useLocation();
+  const [isAppRoute, setIsAppRoute] = useState(false);
   
-  // Determine if we're on an app route (authenticated area)
-  const isAppRoute = location.pathname.startsWith('/app');
+  useEffect(() => {
+    // Check if we're on an app route without using useLocation
+    const checkRoute = () => {
+      setIsAppRoute(window.location.pathname.startsWith('/app'));
+    };
+    
+    // Initial check
+    checkRoute();
+    
+    // Listen for navigation changes
+    const handleNavigation = () => {
+      checkRoute();
+    };
+    
+    window.addEventListener('popstate', handleNavigation);
+    
+    return () => {
+      window.removeEventListener('popstate', handleNavigation);
+    };
+  }, []);
   
   // For app routes, use the full theme provider with user settings
   if (isAppRoute) {
