@@ -15,13 +15,15 @@ export default defineConfig(({ mode }) => ({
       'X-XSS-Protection': '1; mode=block',
       'Referrer-Policy': 'strict-origin-when-cross-origin',
     },
-    // Vite 6: Enhanced WebSocket configuration
-    hmr: {
-      port: 8080,
-      clientPort: 8080,
-      host: 'localhost',
-      protocol: 'ws',
-    },
+    // Only enable HMR in development mode
+    ...(mode === 'development' && {
+      hmr: {
+        port: 8080,
+        clientPort: 8080,
+        host: 'localhost',
+        protocol: 'ws',
+      },
+    }),
   },
   plugins: [
     react(),
@@ -85,8 +87,8 @@ export default defineConfig(({ mode }) => ({
   define: {
     // Remove development code in production
     __DEV__: mode === 'development',
-    // Vite 6: Define WebSocket token for HMR
-    __WS_TOKEN__: JSON.stringify(''),
+    // Ensure HMR is completely disabled in production
+    'import.meta.hot': mode === 'development' ? 'import.meta.hot' : 'false',
   },
   // Vite 6: Enhanced dependency optimization
   optimizeDeps: {
