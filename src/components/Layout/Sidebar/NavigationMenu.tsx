@@ -91,8 +91,8 @@ const NavigationMenu: React.FC = () => {
               variant="ghost"
               size="sm"
               onClick={toggleCollapse}
-              className={`w-full h-10 px-3 flex items-center transition-all duration-200 group ${
-                isCollapsed ? 'justify-center' : 'justify-start'
+              className={`w-full h-10 px-0 flex items-center justify-center transition-all duration-200 group ${
+                isCollapsed ? 'justify-center' : 'justify-center'
               } hover:bg-sidebar-accent/50`}
             >
               {isCollapsed ? (
@@ -124,7 +124,7 @@ const NavigationMenu: React.FC = () => {
               isMobile 
                 ? 'justify-center px-2 h-10' 
                 : isCollapsed 
-                  ? 'justify-center px-2 h-12' // Center the icon when collapsed
+                  ? 'justify-center px-0 h-12 flex items-center' // Better centering when collapsed
                   : 'justify-start px-3 h-12'
             } ${
               isActive 
@@ -133,7 +133,7 @@ const NavigationMenu: React.FC = () => {
             }`}
           >
             <i className={`${item.icon} text-sm transition-transform duration-200 ${
-              isMobile || isCollapsed ? '' : 'mr-3'
+              isMobile || isCollapsed ? 'mx-auto' : 'mr-3'  // Center icon when collapsed/mobile
             } ${
               isActive ? 'text-sidebar-accent-foreground' : 'group-hover:scale-110'
             }`}></i>

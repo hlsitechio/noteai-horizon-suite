@@ -4,12 +4,14 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Bell, Moon, Sun, Settings, LogOut } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNotifications } from '../../../contexts/NotificationsContext';
 import { useTheme } from '@/providers/ThemeProvider';
+import { useSidebarCollapse } from '@/contexts/SidebarContext';
 import { toggleTheme, isDarkMode } from '@/utils/themeUtils';
 import { useNavigate } from 'react-router-dom';
 
@@ -72,23 +74,31 @@ export function SidebarActions({ onNotificationsClick, isExpanded = true }: Side
 
 export function SidebarSignOutButton({ isExpanded = true, isMobile = false }: { isExpanded?: boolean; isMobile?: boolean }) {
   const { logout } = useAuth();
-
-  if (!isExpanded) {
-    return null;
-  }
+  const { isCollapsed } = useSidebarCollapse();
 
   return (
     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-      <Button
-        variant="ghost"
-        onClick={logout}
-        className="w-full justify-start h-10 text-muted-foreground hover:text-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-      >
-        <div className="flex items-center gap-3">
-          <LogOut className="w-5 h-5" />
-          <span>Sign Out</span>
-        </div>
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            onClick={logout}
+            className={`w-full h-10 text-muted-foreground hover:text-foreground hover:bg-destructive/10 hover:text-destructive transition-colors ${
+              isCollapsed || isMobile ? 'justify-center px-0' : 'justify-start px-3'
+            }`}
+          >
+            <div className={`flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-3'}`}>
+              <LogOut className="w-5 h-5" />
+              {!isCollapsed && !isMobile && <span>Sign Out</span>}
+            </div>
+          </Button>
+        </TooltipTrigger>
+        {(isCollapsed || isMobile) && (
+          <TooltipContent side="right">
+            <p>Sign Out</p>
+          </TooltipContent>
+        )}
+      </Tooltip>
     </motion.div>
   );
 }
