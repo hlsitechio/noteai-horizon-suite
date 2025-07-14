@@ -64,12 +64,11 @@ const SocialProof: React.FC<SocialProofProps> = ({
   ];
 
   const companyLogos = [
-    { name: 'Google', logo: '/api/placeholder/120/40' },
-    { name: 'Microsoft', logo: '/api/placeholder/120/40' },
-    { name: 'Apple', logo: '/api/placeholder/120/40' },
-    { name: 'Amazon', logo: '/api/placeholder/120/40' },
-    { name: 'Meta', logo: '/api/placeholder/120/40' },
-    { name: 'Tesla', logo: '/api/placeholder/120/40' }
+    { name: 'Supabase', logo: 'https://supabase.com/brand-assets/supabase-logo-wordmark--light.svg' },
+    { name: 'OpenRouter', logo: 'https://openrouter.ai/static/logo.svg' },
+    { name: 'OpenAI', logo: 'https://cdn.brandfetch.io/idZAIlTurY/idCxnTLjy1/theme/dark/symbol.svg?k=bfHSJFAPEG' },
+    { name: 'React', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
+    { name: 'Node.js', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' }
   ];
 
   const handleTestimonialView = (testimonialId: string) => {
