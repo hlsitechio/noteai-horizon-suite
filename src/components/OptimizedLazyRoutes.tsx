@@ -54,6 +54,7 @@ const NotFound = lazyWithRetry(() => import('../pages/public/NotFound'));
 const Login = lazyWithRetry(() => import('../pages/auth/Login'));
 const Register = lazyWithRetry(() => import('../pages/auth/Register'));
 const ResetPassword = lazyWithRetry(() => import('../pages/auth/ResetPassword'));
+const Logout = lazyWithRetry(() => import('../pages/auth/Logout'));
 
 // SETUP PAGES
 const InitialOnboarding = lazyWithRetry(() => import('../pages/setup/InitialOnboarding'));
@@ -141,6 +142,7 @@ export const OptimizedLazyRoutes: React.FC = () => {
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/register" element={<Register />} />
         <Route path="/auth/reset-password" element={<ResetPassword />} />
+        <Route path="/auth/logout" element={<Logout />} />
 
         {/* Legacy auth route redirects */}
         <Route path="/login" element={<Navigate to="/auth/login" replace />} />
