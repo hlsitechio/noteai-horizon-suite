@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,36 +11,60 @@ import {
   MapPin,
   Plus
 } from 'lucide-react';
-
-const upcomingEvents = [
-  {
-    id: '1',
-    title: 'Team Meeting',
-    time: '10:00 AM',
-    date: 'Today',
-    location: 'Conference Room A',
-    type: 'meeting'
-  },
-  {
-    id: '2',
-    title: 'Project Review',
-    time: '2:30 PM',
-    date: 'Today',
-    location: 'Virtual',
-    type: 'review'
-  },
-  {
-    id: '3',
-    title: 'Client Call',
-    time: '9:00 AM',
-    date: 'Tomorrow',
-    location: 'Phone',
-    type: 'call'
-  }
-];
+import { useCalendarEvents } from '@/hooks/useCalendarEvents';
+import { format, isToday, isTomorrow, isFuture, parseISO } from 'date-fns';
 
 export function CalendarWidget() {
   const [currentDate] = useState(new Date());
+  const navigate = useNavigate();
+  const { events } = useCalendarEvents();
+
+  // Filter and format upcoming events
+  const upcomingEvents = useMemo(() => {
+    const now = new Date();
+    
+    return events
+      .filter(event => {
+        try {
+          const eventDate = parseISO(event.date);
+          return isFuture(eventDate) || isToday(eventDate);
+        } catch {
+          return false;
+        }
+      })
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(0, 3)
+      .map(event => {
+        try {
+          const eventDate = parseISO(event.date);
+          let dateLabel = 'Today';
+          
+          if (isToday(eventDate)) {
+            dateLabel = 'Today';
+          } else if (isTomorrow(eventDate)) {
+            dateLabel = 'Tomorrow';
+          } else {
+            dateLabel = format(eventDate, 'MMM dd');
+          }
+
+          return {
+            id: event.id,
+            title: event.title,
+            time: event.time || 'All day',
+            date: dateLabel,
+            location: event.description || 'No location',
+            type: event.type
+          };
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean);
+  }, [events]);
+
+  const handleOpenFullCalendar = () => {
+    navigate('/app/calendar');
+  };
   
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -122,33 +147,44 @@ export function CalendarWidget() {
         <div className="space-y-2 pt-2 border-t">
           <span className="text-xs font-medium text-muted-foreground">Upcoming Events</span>
           <div className="space-y-2 max-h-32 overflow-y-auto">
-            {upcomingEvents.map((event) => (
-              <div key={event.id} className="space-y-1 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 cursor-pointer">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-foreground truncate">
-                    {event.title}
-                  </span>
-                  <Badge variant="outline" className="text-xs">
-                    {event.date}
-                  </Badge>
-                </div>
-                <div className="flex items-center space-x-3 text-xs text-muted-foreground">
-                  <div className="flex items-center space-x-1">
-                    <Clock className="h-3 w-3" />
-                    <span>{event.time}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <MapPin className="h-3 w-3" />
-                    <span>{event.location}</span>
-                  </div>
-                </div>
+            {upcomingEvents.length === 0 ? (
+              <div className="text-center py-4">
+                <p className="text-sm text-muted-foreground">No upcoming events</p>
               </div>
-            ))}
+            ) : (
+              upcomingEvents.map((event) => (
+                <div key={event.id} className="space-y-1 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 cursor-pointer">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-foreground truncate">
+                      {event.title}
+                    </span>
+                    <Badge variant="outline" className="text-xs">
+                      {event.date}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center space-x-3 text-xs text-muted-foreground">
+                    <div className="flex items-center space-x-1">
+                      <Clock className="h-3 w-3" />
+                      <span>{event.time}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <MapPin className="h-3 w-3" />
+                      <span>{event.location}</span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
         <div className="pt-2 border-t">
-          <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="w-full text-xs text-muted-foreground"
+            onClick={handleOpenFullCalendar}
+          >
             <CalendarIcon className="h-3 w-3 mr-1" />
             Open Full Calendar
           </Button>
