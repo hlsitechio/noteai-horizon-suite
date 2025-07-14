@@ -27,7 +27,7 @@ const MobileProjects: React.FC = () => {
   };
 
   return (
-    <div className="h-full w-full bg-background mobile-page">
+    <div className="h-full w-full bg-background">
       <DynamicMobileHeader 
         title="Mobile/Projects"
         rightActions={
@@ -38,8 +38,8 @@ const MobileProjects: React.FC = () => {
         }
       />
       
-      <div className="h-full mobile-content">
-        <div className="p-3 space-y-3 pb-20">
+      <div className="h-full overflow-y-auto">
+        <div className="p-3 space-y-3 pb-24">
         {/* Filter Tabs */}
         <div className="flex space-x-1 bg-muted p-1 rounded-lg">
           {['all', 'active', 'archived'].map((tab) => (

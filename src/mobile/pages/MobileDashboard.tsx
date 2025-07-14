@@ -82,10 +82,10 @@ const MobileDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="h-full w-full bg-background mobile-page">
+    <div className="h-full w-full bg-background">
       <DynamicMobileHeader title="Mobile/Dashboard" />
       
-      <div className="h-full mobile-content">
+      <div className="h-full overflow-y-auto">
         <div className="p-3 space-y-4">
         {/* Welcome Section with Profile Picture */}
         <div className="text-center py-4">

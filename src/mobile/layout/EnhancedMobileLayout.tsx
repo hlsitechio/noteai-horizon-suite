@@ -54,7 +54,7 @@ const EnhancedMobileLayout: React.FC = () => {
       )}
       
       {/* Main Content - Account for fixed bottom nav */}
-      <main className={`flex-1 min-h-0 w-full overflow-hidden ${isEditor ? 'h-full' : 'pb-[64px]'}`}>
+      <main className={`flex-1 min-h-0 w-full ${isEditor ? 'h-full' : 'pb-[72px]'}`}>
         <Outlet />
       </main>
       

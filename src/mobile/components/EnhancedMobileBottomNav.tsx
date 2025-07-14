@@ -16,7 +16,7 @@ const EnhancedMobileBottomNav: React.FC = () => {
   ];
 
   return (
-    <nav className="bg-background/95 backdrop-blur-md border-t border-border/50 px-2 py-2 shadow-lg w-full h-[64px]">
+    <nav className="bg-background/95 backdrop-blur-md border-t border-border/50 px-2 py-2 shadow-lg w-full h-[72px]">
       <div className="flex justify-around items-center max-w-full h-full">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -26,7 +26,7 @@ const EnhancedMobileBottomNav: React.FC = () => {
             <Link key={item.path} to={item.path} className="flex-1 max-w-[60px]">
               <Button
                 variant="ghost"
-                className={`w-full flex flex-col items-center gap-0.5 h-auto py-1.5 px-1 transition-all duration-200 ${
+                className={`w-full flex flex-col items-center gap-0.5 h-auto py-2 px-1 transition-all duration-200 ${
                   isActive 
                     ? 'text-primary bg-primary/10 scale-105' 
                     : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
