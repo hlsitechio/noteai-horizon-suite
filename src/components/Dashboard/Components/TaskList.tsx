@@ -1,62 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
   CheckSquare, 
-  Square, 
   Plus, 
-  Clock, 
   AlertCircle,
   Calendar,
   MoreHorizontal
 } from 'lucide-react';
-
-const tasks = [
-  {
-    id: '1',
-    title: 'Complete project proposal',
-    completed: false,
-    priority: 'high',
-    dueDate: 'Today',
-    category: 'Work'
-  },
-  {
-    id: '2',
-    title: 'Review team feedback',
-    completed: true,
-    priority: 'medium',
-    dueDate: 'Yesterday',
-    category: 'Work'
-  },
-  {
-    id: '3',
-    title: 'Update documentation',
-    completed: false,
-    priority: 'low',
-    dueDate: 'Tomorrow',
-    category: 'Work'
-  },
-  {
-    id: '4',
-    title: 'Schedule dentist appointment',
-    completed: false,
-    priority: 'medium',
-    dueDate: 'This week',
-    category: 'Personal'
-  },
-  {
-    id: '5',
-    title: 'Buy groceries',
-    completed: true,
-    priority: 'low',
-    dueDate: 'Today',
-    category: 'Personal'
-  }
-];
+import { useTasks } from '@/hooks/useTasks';
+import { format, isToday, isTomorrow, isYesterday } from 'date-fns';
 
 const priorityColors = {
   high: 'bg-red-500',
@@ -64,22 +22,50 @@ const priorityColors = {
   low: 'bg-green-500'
 };
 
+const formatDueDate = (dateString: string) => {
+  const date = new Date(dateString);
+  
+  if (isToday(date)) return 'Today';
+  if (isTomorrow(date)) return 'Tomorrow';
+  if (isYesterday(date)) return 'Yesterday';
+  
+  return format(date, 'MMM d');
+};
+
 export function TaskList() {
-  const [taskList, setTaskList] = useState(tasks);
+  const { tasks, loading, toggleTaskCompletion } = useTasks();
   const navigate = useNavigate();
   
-  const completedTasks = taskList.filter(task => task.completed).length;
-  const totalTasks = taskList.length;
+  const completedTasks = tasks.filter(task => task.completed).length;
+  const totalTasks = tasks.length;
   const progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
-  const toggleTask = (taskId: string) => {
-    setTaskList(prev => prev.map(task => 
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    ));
-  };
+  const incompleteTasks = tasks.filter(task => !task.completed);
+  const completedTasksList = tasks.filter(task => task.completed);
 
-  const incompleteTasks = taskList.filter(task => !task.completed);
-  const completedTasksList = taskList.filter(task => task.completed);
+  if (loading) {
+    return (
+      <Card className="h-full">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base font-medium">Task List</CardTitle>
+            <Skeleton className="h-6 w-12" />
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-2 w-full" />
+          </div>
+          <div className="space-y-2">
+            {[1, 2, 3].map(i => (
+              <Skeleton key={i} className="h-12 w-full" />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="h-full">
@@ -122,7 +108,7 @@ export function TaskList() {
                 <div key={task.id} className="flex items-start space-x-3 p-2 rounded-lg hover:bg-muted/30">
                   <Checkbox
                     checked={task.completed}
-                    onCheckedChange={() => toggleTask(task.id)}
+                    onCheckedChange={() => toggleTaskCompletion(task.id)}
                     className="mt-0.5"
                   />
                   <div className="flex-1 min-w-0 space-y-1">
@@ -140,9 +126,9 @@ export function TaskList() {
                       </Badge>
                       <div className="flex items-center space-x-1">
                         <Calendar className="h-3 w-3" />
-                        <span>{task.dueDate}</span>
+                        <span>{formatDueDate(task.due_date)}</span>
                       </div>
-                      {task.dueDate === 'Today' && !task.completed && (
+                      {isToday(new Date(task.due_date)) && !task.completed && (
                         <AlertCircle className="h-3 w-3 text-orange-500" />
                       )}
                     </div>
@@ -167,7 +153,7 @@ export function TaskList() {
                 <div key={task.id} className="flex items-start space-x-3 p-2 rounded-lg hover:bg-muted/30 opacity-60">
                   <Checkbox
                     checked={task.completed}
-                    onCheckedChange={() => toggleTask(task.id)}
+                    onCheckedChange={() => toggleTaskCompletion(task.id)}
                     className="mt-0.5"
                   />
                   <div className="flex-1 min-w-0 space-y-1">
@@ -178,7 +164,7 @@ export function TaskList() {
                       <Badge variant="outline" className="text-xs opacity-60">
                         {task.category}
                       </Badge>
-                      <span>{task.dueDate}</span>
+                      <span>{formatDueDate(task.due_date)}</span>
                     </div>
                   </div>
                 </div>

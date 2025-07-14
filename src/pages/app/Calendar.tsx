@@ -12,6 +12,7 @@ import { CalendarTaskCreator } from '@/components/Calendar/CalendarTaskCreator';
 import { CalendarEvent } from '@/types/calendar';
 import { useCalendarEvents } from '@/hooks/useCalendarEvents';
 import { useNotes } from '@/contexts/NotesContext';
+import { useTasks } from '@/hooks/useTasks';
 
 const Calendar: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -29,6 +30,7 @@ const Calendar: React.FC = () => {
     createNote,
     setCurrentNote
   } = useNotes();
+  const { createTask } = useTasks();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
@@ -90,26 +92,37 @@ const Calendar: React.FC = () => {
     setIsNoteFormOpen(true);
   };
 
-  const handleTaskSubmit = (taskData: any) => {
-    // Create a task-like event that will appear on the calendar on the specified due date
-    const taskEvent: Omit<CalendarEvent, 'id'> = {
-      title: `Task: ${taskData.title}`,
-      description: taskData.description || `${taskData.category} - Priority: ${taskData.priority}`,
-      date: taskData.dueDate, // Use the due date from the form, not the selected date
-      time: '', // Tasks don't have specific times
-      type: 'note', // We'll use 'note' type for tasks to distinguish them
-      priority: taskData.priority as 'low' | 'medium' | 'high',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+  const handleTaskSubmit = async (taskData: any) => {
+    // Create the task in Supabase
+    const newTask = await createTask({
+      title: taskData.title,
+      description: taskData.description,
+      priority: taskData.priority,
+      due_date: taskData.dueDate,
+      category: taskData.category
+    });
+
+    if (newTask) {
+      // Also create a calendar event for the task
+      const taskEvent: Omit<CalendarEvent, 'id'> = {
+        title: `Task: ${taskData.title}`,
+        description: taskData.description || `${taskData.category} - Priority: ${taskData.priority}`,
+        date: taskData.dueDate,
+        time: '',
+        type: 'note',
+        priority: taskData.priority as 'low' | 'medium' | 'high',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      addEvent(taskEvent);
+      
+      // Update the view to show the month containing the task's due date
+      const taskDate = new Date(taskData.dueDate);
+      setViewDate(taskDate);
+    }
     
-    // Add the task as an event to the calendar
-    addEvent(taskEvent);
     setIsTaskCreatorOpen(false);
-    
-    // Update the view to show the month containing the task's due date
-    const taskDate = new Date(taskData.dueDate);
-    setViewDate(taskDate);
   };
   const getEventTypeIcon = (type: CalendarEvent['type']) => {
     switch (type) {
