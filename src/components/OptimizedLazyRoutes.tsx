@@ -5,6 +5,7 @@ import Layout from './Layout/Layout';
 import HomeRedirect from './HomeRedirect';
 import { Card } from './ui/card';
 import ComponentLibraryPage from '../pages/ComponentLibraryPage';
+import { DeviceRouter } from './DeviceRouter';
 
 // Lazy load components with error handling for missing chunks
 const lazyWithRetry = (importFn: () => Promise<any>) => {
@@ -113,8 +114,9 @@ const DashboardLoadingFallback = () => (
 
 export const OptimizedLazyRoutes: React.FC = () => {
   return (
-    <Suspense fallback={<LoadingFallback />}>
-      <Routes>
+    <DeviceRouter>
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
         {/* ========== PUBLIC ROUTES ========== */}
         <Route path="/" element={<Landing />} />
         <Route path="/public/landing" element={<Landing />} />
@@ -290,5 +292,6 @@ export const OptimizedLazyRoutes: React.FC = () => {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
+  </DeviceRouter>
   );
 };
