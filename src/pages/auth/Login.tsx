@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Mail, Lock, ArrowLeft } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Login: React.FC = () => {
   // Ensure clean theme for public auth page
@@ -16,8 +16,15 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, isAuthenticated, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/app/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,25 +34,18 @@ const Login: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        console.error('Login error:', error);
-        toast.error(error.message || 'Failed to login');
-      } else {
+      const success = await login(email, password);
+      
+      if (success) {
         toast.success('Login successful!');
-        navigate('/app/dashboard');
+        // Navigation will be handled by the useEffect above when isAuthenticated becomes true
+      } else {
+        toast.error('Invalid email or password');
       }
     } catch (error) {
-      console.error('Unexpected error:', error);
+      console.error('Login error:', error);
       toast.error('An unexpected error occurred');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -110,10 +110,10 @@ const Login: React.FC = () => {
 
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={authLoading}
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white"
               >
-                {isLoading ? 'Signing in...' : 'Sign in'}
+                {authLoading ? 'Signing in...' : 'Sign in'}
               </Button>
             </form>
 
