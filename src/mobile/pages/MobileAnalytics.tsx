@@ -65,7 +65,7 @@ const MobileAnalytics: React.FC = () => {
     <div className="h-full w-full bg-background">
       <DynamicMobileHeader title="Mobile/Analytics" />
       
-      <div className="h-full overflow-y-auto">
+      <div className="flex-1 overflow-y-auto">
         <div className="p-4 space-y-6">
         {/* Overview Stats */}
         <div className="grid grid-cols-2 gap-3">
