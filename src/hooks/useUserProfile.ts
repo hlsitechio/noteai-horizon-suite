@@ -12,12 +12,13 @@ export interface UserProfile {
 }
 
 export const useUserProfile = () => {
-  const { user } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProfile = useCallback(async () => {
-    if (!user) {
+    // Don't fetch if auth is still loading or user is not authenticated
+    if (authLoading || !isAuthenticated || !user) {
       setProfile(null);
       setIsLoading(false);
       return;
@@ -66,7 +67,7 @@ export const useUserProfile = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [user]);
+  }, [user, isAuthenticated, authLoading]);
 
   const updateProfile = useCallback(async (updates: Partial<Pick<UserProfile, 'display_name' | 'avatar_url'>>) => {
     if (!user || !profile) return false;

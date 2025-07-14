@@ -103,7 +103,7 @@ export function CalendarWidget() {
             ))}
             {days.map((day, index) => (
               <div 
-                key={`day-${day}`} 
+                key={`day-${index}`} 
                 className={`text-xs p-1 rounded ${
                   day === today 
                     ? 'bg-primary text-primary-foreground font-medium' 
