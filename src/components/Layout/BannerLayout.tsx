@@ -6,10 +6,13 @@ import { BannerWithTopNav } from '@/components/Dashboard/BannerWithTopNav';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useDashboardWorkspace } from '@/hooks/useDashboardWorkspace';
 import { useEditMode } from '@/contexts/EditModeContext';
+import StatusBar from '@/components/StatusBar/StatusBar';
+import { useStatusBar } from '@/hooks/useStatusBar';
 
 const BannerLayout: React.FC = () => {
   const isMobile = useIsMobile();
   const { isDashboardEditMode } = useEditMode();
+  const { message: statusMessage, isEnabled: statusBarEnabled } = useStatusBar();
   const { 
     workspace, 
     getPanelSizes, 
@@ -62,6 +65,11 @@ const BannerLayout: React.FC = () => {
           />
         </div>
         
+        {/* Status Bar */}
+        {statusBarEnabled && (
+          <StatusBar message={statusMessage} />
+        )}
+        
         {/* Main Content */}
         <div className="flex-1 min-h-0 overflow-auto">
           <Outlet />
@@ -109,7 +117,12 @@ const BannerLayout: React.FC = () => {
           id="content-panel"
           className="flex flex-col min-h-0"
         >
-          <div className="h-full w-full overflow-auto">
+          {/* Status Bar */}
+          {statusBarEnabled && (
+            <StatusBar message={statusMessage} />
+          )}
+          
+          <div className="flex-1 overflow-auto">
             <Outlet />
           </div>
         </Panel>
