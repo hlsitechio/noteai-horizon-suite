@@ -22,22 +22,26 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
     navigate('/app/settings');
   };
 
+  const handleProfileClick = () => {
+    navigate('/app/settings?tab=profile');
+  };
+
   return (
     <div className="space-y-2">
-      {/* User Profile Section */}
-      <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors">
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold text-sm text-foreground truncate">
-            {user?.name || 'User'}
-          </p>
-          <p className="text-xs text-muted-foreground truncate">
-            {user?.email || 'user@example.com'}
-          </p>
-        </div>
-      </div>
-
       {/* Action Buttons */}
       <div className="space-y-1">
+        {/* Profile Button */}
+        <Button
+          variant="ghost"
+          onClick={handleProfileClick}
+          className="w-full justify-start h-10 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <User className="w-5 h-5" />
+            <span>Profile</span>
+          </div>
+        </Button>
+
         {/* Notifications Button */}
         <Button
           variant="ghost"
