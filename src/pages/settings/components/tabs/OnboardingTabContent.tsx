@@ -1,5 +1,4 @@
 import React from 'react';
-import { TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -13,18 +12,18 @@ export function OnboardingTabContent() {
 
   if (onboarding.isLoading) {
     return (
-      <TabsContent value="onboarding" className="mt-6">
+      <div className="mt-6">
         <div className="flex items-center justify-center h-32">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
-      </TabsContent>
+      </div>
     );
   }
 
   const totalSteps = 6;
 
   return (
-    <TabsContent value="onboarding" className="mt-6">
+    <div className="mt-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -163,6 +162,6 @@ export function OnboardingTabContent() {
           </div>
         </CardContent>
       </Card>
-    </TabsContent>
+    </div>
   );
 }

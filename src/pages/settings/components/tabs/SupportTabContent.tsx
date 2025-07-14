@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -149,7 +148,7 @@ export const SupportTabContent: React.FC = () => {
   };
 
   return (
-    <TabsContent value="support" className="space-y-6">
+    <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium">Support Center</h3>
         <p className="text-sm text-muted-foreground">
@@ -313,6 +312,6 @@ export const SupportTabContent: React.FC = () => {
           </p>
         </CardContent>
       </Card>
-    </TabsContent>
+    </div>
   );
 };
