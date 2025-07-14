@@ -151,7 +151,7 @@ export const useAPMMonitoring = () => {
     };
 
     loadStats();
-    const interval = setInterval(loadStats, 30000); // Update every 30 seconds
+    const interval = setInterval(loadStats, 60000); // Reduced frequency from 30s to 60s
 
     return () => clearInterval(interval);
   }, [isEnabled, user?.id]);

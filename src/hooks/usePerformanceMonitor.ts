@@ -63,7 +63,7 @@ export const usePerformanceMonitor = () => {
     if (isMonitoring) return;
     
     setIsMonitoring(true);
-    const interval = setInterval(updateMetrics, 2000);
+    const interval = setInterval(updateMetrics, 5000); // Reduced frequency from 2s to 5s
     
     return () => {
       clearInterval(interval);

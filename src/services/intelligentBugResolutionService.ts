@@ -381,7 +381,7 @@ export class IntelligentBugResolutionService {
     // Run analysis every 5 minutes
     setInterval(() => {
       this.runPeriodicHealthCheck();
-    }, 5 * 60 * 1000);
+    }, 10 * 60 * 1000); // Reduced frequency from 5min to 10min
   }
 
   private async runPeriodicHealthCheck() {
