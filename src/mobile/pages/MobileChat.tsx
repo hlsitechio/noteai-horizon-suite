@@ -78,11 +78,12 @@ const MobileChat: React.FC = () => {
   ];
 
   return (
-    <div className="h-full flex flex-col bg-background">
+    <div className="h-full w-full flex flex-col bg-background">
       <DynamicMobileHeader title="Mobile/Chat" />
       
       {/* Messages */}
-      <ScrollArea className="flex-1 p-4">
+      <div className="flex-1 min-h-0">
+        <ScrollArea className="h-full p-4">
         <div className="space-y-4">
           {messages.length === 0 ? (
             <div className="text-center text-muted-foreground py-8">
@@ -166,8 +167,12 @@ const MobileChat: React.FC = () => {
               </Card>
             </div>
           )}
+          
+          {/* Bottom spacing for fixed nav */}
+          <div className="h-4" />
         </div>
-      </ScrollArea>
+        </ScrollArea>
+      </div>
 
       {/* Quick Prompts */}
       {messages.length === 0 && (

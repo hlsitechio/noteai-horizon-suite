@@ -62,10 +62,11 @@ const MobileAnalytics: React.FC = () => {
   ];
 
   return (
-    <div className="h-full overflow-y-auto bg-background">
+    <div className="h-full w-full bg-background">
       <DynamicMobileHeader title="Mobile/Analytics" />
       
-      <div className="p-4 space-y-6">
+      <div className="h-full overflow-y-auto">
+        <div className="p-4 space-y-6">
         {/* Overview Stats */}
         <div className="grid grid-cols-2 gap-3">
           {statsCards.map((stat) => {
@@ -185,8 +186,9 @@ const MobileAnalytics: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Bottom spacing */}
-        <div className="h-20" />
+          {/* Bottom spacing */}
+          <div className="h-20" />
+        </div>
       </div>
     </div>
   );

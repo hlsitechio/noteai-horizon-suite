@@ -34,7 +34,7 @@ const EnhancedMobileLayout: React.FC = () => {
   };
 
   return (
-    <div className="h-full w-full flex flex-col bg-background overflow-hidden">
+    <div className="h-full w-full flex flex-col bg-background overflow-hidden relative">
       {/* Banner Section - Only show on non-editor pages */}
       {!isEditor && (
         <div className="flex-shrink-0 h-[30vh] min-h-[180px] max-h-[250px]">
@@ -49,16 +49,14 @@ const EnhancedMobileLayout: React.FC = () => {
         </div>
       )}
       
-      {/* Main Content */}
-      <main className={`flex-1 min-h-0 w-full overflow-hidden relative ${isEditor ? 'h-full' : 'pb-16'}`}>
-        <div className="h-full w-full overflow-auto">
-          <Outlet />
-        </div>
+      {/* Main Content - Account for fixed bottom nav */}
+      <main className={`flex-1 min-h-0 w-full overflow-hidden ${isEditor ? 'h-full' : 'pb-[64px]'}`}>
+        <Outlet />
       </main>
       
-      {/* Enhanced Bottom Navigation - hidden in editor */}
+      {/* Enhanced Bottom Navigation - Fixed at bottom */}
       {!isEditor && (
-        <div className="absolute bottom-0 left-0 right-0">
+        <div className="fixed bottom-0 left-0 right-0 z-50">
           <EnhancedMobileBottomNav />
         </div>
       )}

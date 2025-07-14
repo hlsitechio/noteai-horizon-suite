@@ -82,10 +82,11 @@ const MobileDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="h-full overflow-y-auto bg-background">
+    <div className="h-full w-full bg-background">
       <DynamicMobileHeader title="Mobile/Dashboard" />
       
-      <div className="p-3 space-y-4">
+      <div className="h-full overflow-y-auto">
+        <div className="p-3 space-y-4">
         {/* Welcome Section with Profile Picture */}
         <div className="text-center py-4">
           <div className="flex items-center justify-center gap-3 mb-2">
@@ -172,8 +173,9 @@ const MobileDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom spacing for nav */}
-        <div className="h-16" />
+          {/* Bottom spacing for nav */}
+          <div className="h-20" />
+        </div>
       </div>
     </div>
   );

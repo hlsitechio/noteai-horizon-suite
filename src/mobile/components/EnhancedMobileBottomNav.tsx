@@ -16,8 +16,8 @@ const EnhancedMobileBottomNav: React.FC = () => {
   ];
 
   return (
-    <nav className="bg-background/95 backdrop-blur-md border-t border-border/50 px-2 py-1 shadow-lg relative z-[10006] w-full">
-      <div className="flex justify-around items-center max-w-full">
+    <nav className="bg-background/95 backdrop-blur-md border-t border-border/50 px-2 py-2 shadow-lg w-full h-[64px]">
+      <div className="flex justify-around items-center max-w-full h-full">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
