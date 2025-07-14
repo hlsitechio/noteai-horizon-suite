@@ -27,6 +27,13 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === 'development' &&
     componentTagger(),
+    // Bundle analyzer - only in analyze mode
+    process.env.ANALYZE && require('rollup-plugin-visualizer').visualizer({
+      filename: 'dist/stats.html',
+      open: true,
+      gzipSize: true,
+      brotliSize: true
+    })
   ].filter(Boolean),
   resolve: {
     alias: {

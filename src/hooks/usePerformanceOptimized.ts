@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useLayoutEffect, startTransition, useDeferredValue } from 'react';
 import { rafThrottle, scheduleIdleCallback, processInBatches } from '@/utils/scheduler';
-import { markPerformance, measurePerformance } from '@/utils/performance';
+import { performanceMonitor } from '@/utils/performance';
 import debounce from 'lodash.debounce';
 import throttle from 'lodash.throttle';
 
@@ -101,14 +101,12 @@ export function useBatchProcessor<T>() {
     processor: (item: T, index: number) => void,
     batchSize = 50
   ) => {
-    markPerformance('batch-processing-start');
+    const start = performance.now();
     
     await processInBatches(items, processor, batchSize);
     
-    const duration = measurePerformance(
-      'batch-processing', 
-      'batch-processing-start'
-    );
+    const duration = performance.now() - start;
+    performanceMonitor.recordMetric('batch-processing', duration);
     
     if (duration && duration > 100) {
       console.warn(`Batch processing took ${duration}ms for ${items.length} items`);
@@ -137,15 +135,13 @@ export function usePerformanceMonitor(componentName: string) {
   
   useLayoutEffect(() => {
     renderCountRef.current += 1;
-    markPerformance(`${componentName}-render-${renderCountRef.current}`);
+    const start = performance.now();
     
     return () => {
-      const duration = measurePerformance(
-        `${componentName}-render-duration`,
-        `${componentName}-render-${renderCountRef.current}`
-      );
+      const duration = performance.now() - start;
+      performanceMonitor.recordMetric(`${componentName}-render-duration`, duration);
       
-      if (duration && duration > 16.67) { // More than one frame
+      if (duration > 16.67) { // More than one frame
         console.warn(`${componentName} render took ${duration}ms`);
       }
     };
