@@ -56,6 +56,8 @@ class SecurityHeadersService {
         ],
         'connect-src': [
           "'self'",
+          'ws://localhost:8080',
+          'wss://localhost:8080',
           'https://ubxtmbgvibtjtjggjnjm.supabase.co',
           'wss://ubxtmbgvibtjtjggjnjm.supabase.co',
           'https://api.openai.com',
