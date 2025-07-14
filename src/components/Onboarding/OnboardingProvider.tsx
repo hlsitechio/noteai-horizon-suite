@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { OnboardingTooltip } from './OnboardingTooltip';
@@ -36,8 +36,12 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
   // Check if onboarding should show on current page
   const shouldShowOnCurrentPage = onboarding.shouldShowOnboarding(currentPage);
 
-  // Debug logging (development only)
-  if (import.meta.env.DEV) {
+  // Debug logging (development only) - reduced frequency
+  const debugLogRef = useRef<string>('');
+  const currentDebugKey = `${location.pathname}-${shouldShowOnCurrentPage}`;
+  
+  if (import.meta.env.DEV && debugLogRef.current !== currentDebugKey) {
+    debugLogRef.current = currentDebugKey;
     console.log('Current pathname:', location.pathname, 'Detected page:', currentPage);
     console.log('Should show onboarding on', currentPage, ':', shouldShowOnCurrentPage);
   }
