@@ -64,11 +64,10 @@ const SocialProof: React.FC<SocialProofProps> = ({
   ];
 
   const companyLogos = [
-    { name: 'Supabase', logo: 'https://supabase.com/_next/image?url=%2Fimages%2Flogo%2Fsupabase-logo-wordmark--light.png&w=256&q=75' },
-    { name: 'OpenRouter', logo: 'https://openrouter.ai/static/logo.svg' },
-    { name: 'OpenAI', logo: 'https://cdn.brandfetch.io/idZAIlTurY/idCxnTLjy1/theme/dark/symbol.svg?k=bfHSJFAPEG' },
     { name: 'React', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
-    { name: 'Node.js', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' }
+    { name: 'TypeScript', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
+    { name: 'Node.js', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+    { name: 'Tailwind CSS', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg' }
   ];
 
   const handleTestimonialView = (testimonialId: string) => {
