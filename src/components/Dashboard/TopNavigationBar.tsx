@@ -198,7 +198,10 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
 
   const handleClockClick = () => {
     if (!activeTimer) {
+      console.log('Clock clicked, toggling dropdown:', !showChronoDropdown);
       setShowChronoDropdown(!showChronoDropdown);
+    } else {
+      console.log('Clock clicked but timer is active');
     }
   };
 
@@ -235,10 +238,11 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
 
         {/* Time and Date with Chronometer */}
         <div className={`flex items-center gap-4 ${isMobile ? 'justify-center text-sm' : ''} relative`}>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 relative">
             <button 
               onClick={handleClockClick}
-              className="p-1 rounded hover:bg-muted transition-colors"
+              className="p-1 rounded hover:bg-muted transition-colors cursor-pointer"
+              type="button"
             >
               <Clock className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-muted-foreground hover:text-foreground`} />
             </button>
@@ -250,6 +254,13 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
                 {formatDate(currentTime)}
               </div>
             </div>
+            
+            {/* Chronometer Dropdown */}
+            <ChronoDropdown
+              isOpen={showChronoDropdown}
+              onClose={() => setShowChronoDropdown(false)}
+              onStartTimer={handleStartTimer}
+            />
           </div>
 
           {/* Active Timer Display */}
@@ -262,13 +273,6 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
               className={isMobile ? 'text-xs' : ''}
             />
           )}
-
-          {/* Chronometer Dropdown */}
-          <ChronoDropdown
-            isOpen={showChronoDropdown}
-            onClose={() => setShowChronoDropdown(false)}
-            onStartTimer={handleStartTimer}
-          />
         </div>
 
         {/* Weather Widget */}
