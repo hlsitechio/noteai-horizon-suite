@@ -118,11 +118,11 @@ export const SimpleCalculator: React.FC = () => {
     onClick 
   }) => (
     <Button
-      variant="secondary"
+      variant="default"
       size="lg"
       onClick={onClick}
-      className={`h-14 text-lg font-semibold transition-all duration-200 hover:scale-105 ${
-        operation === op ? 'bg-primary text-primary-foreground' : 'hover:bg-secondary/80'
+      className={`h-14 text-lg font-semibold transition-all duration-200 hover:scale-105 bg-blue-600 hover:bg-blue-700 text-white ${
+        operation === op ? 'bg-blue-700 ring-2 ring-blue-400' : ''
       }`}
     >
       {op}
@@ -204,7 +204,7 @@ export const SimpleCalculator: React.FC = () => {
             variant="default"
             size="lg"
             onClick={performCalculation}
-            className="col-span-2 h-14 text-lg font-semibold transition-all duration-200 hover:scale-105 bg-primary hover:bg-primary/90"
+            className="col-span-2 h-14 text-lg font-semibold transition-all duration-200 hover:scale-105 bg-green-600 hover:bg-green-700 text-white"
           >
             =
           </Button>
