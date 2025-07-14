@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Home, FolderOpen, Cloud, HardDrive, Upload, Download, Search, MoreHorizontal, Grid3X3, List, ArrowUp, RefreshCw, X } from 'lucide-react';
+import { Plus, Home, FolderOpen, Cloud, HardDrive, Upload, Download, Search, MoreHorizontal, Grid3X3, List, ArrowUp, RefreshCw, X, FileText, File, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -7,9 +7,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
+import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { GoogleDriveService } from '@/services/googleDriveService';
 import { useToast } from '@/hooks/use-toast';
+import { useDocuments } from '@/hooks/useDocuments';
+import { DocumentImportDialog } from '@/components/Explorer/DocumentImportDialog';
 import { cn } from '@/lib/utils';
 
 interface FileItem {
@@ -44,7 +47,9 @@ const Explorer: React.FC = () => {
   const [currentRightPath, setCurrentRightPath] = useState('/');
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
+  const [activePanel, setActivePanel] = useState<'storage' | 'documents'>('storage');
   const { toast } = useToast();
+  const { documents, isLoading: documentsLoading, fetchDocuments, deleteDocument, downloadDocument } = useDocuments();
 
   // Load files from Supabase buckets
   const loadSupabaseFiles = async () => {
@@ -200,11 +205,30 @@ const Explorer: React.FC = () => {
     );
   };
 
+  // Filter documents based on search
+  const getFilteredDocuments = () => {
+    if (!searchTerm) return documents;
+    return documents.filter(doc => 
+      doc.original_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  };
+
   // File icon based on type and source
   const getFileIcon = (file: FileItem) => {
     if (file.type === 'folder') return FolderOpen;
     if (file.source === 'google-drive') return Cloud;
     return HardDrive;
+  };
+
+  // Document icon based on mime type
+  const getDocumentIcon = (mimeType: string) => {
+    if (mimeType === 'application/pdf') return FileText;
+    if (mimeType.includes('word') || mimeType.includes('document')) return FileText;
+    if (mimeType.includes('sheet') || mimeType.includes('excel')) return File;
+    if (mimeType.includes('presentation') || mimeType.includes('powerpoint')) return File;
+    return File;
   };
 
   // Format file size
@@ -273,6 +297,129 @@ const Explorer: React.FC = () => {
     );
   };
 
+  // Render document item
+  const renderDocumentItem = (document: any) => {
+    const Icon = getDocumentIcon(document.mime_type);
+    const isSelected = selectedFiles.has(document.id);
+    
+    return (
+      <div
+        key={document.id}
+        onClick={() => {
+          if (isSelected) {
+            setSelectedFiles(prev => {
+              const newSet = new Set(prev);
+              newSet.delete(document.id);
+              return newSet;
+            });
+          } else {
+            setSelectedFiles(prev => new Set(prev).add(document.id));
+          }
+        }}
+        className={cn(
+          "group p-3 rounded-lg border cursor-pointer transition-all duration-200",
+          "hover:shadow-md hover:border-primary/20",
+          isSelected ? "bg-primary/10 border-primary" : "bg-card border-border",
+          viewMode === 'grid' ? "min-h-[120px]" : "flex items-center space-x-3 min-h-[60px]"
+        )}
+      >
+        <div className={cn(
+          "flex items-center",
+          viewMode === 'grid' ? "flex-col space-y-2 h-full" : "space-x-3 flex-1"
+        )}>
+          <Icon className={cn(
+            "text-blue-600",
+            viewMode === 'grid' ? "w-8 h-8" : "w-6 h-6"
+          )} />
+          
+          <div className={cn(
+            viewMode === 'grid' ? "text-center flex-1 flex flex-col" : "flex-1"
+          )}>
+            <p className="font-medium text-sm truncate max-w-[120px]" title={document.original_name}>
+              {document.original_name}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {(document.file_size / 1024 / 1024).toFixed(2)} MB
+            </p>
+            {viewMode === 'list' && (
+              <p className="text-xs text-muted-foreground">
+                {new Date(document.updated_at).toLocaleDateString()}
+              </p>
+            )}
+            
+            {document.tags && document.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-1">
+                {document.tags.slice(0, 2).map((tag: string) => (
+                  <Badge key={tag} variant="secondary" className="text-xs">
+                    {tag}
+                  </Badge>
+                ))}
+                {document.tags.length > 2 && (
+                  <Badge variant="outline" className="text-xs">
+                    +{document.tags.length - 2}
+                  </Badge>
+                )}
+              </div>
+            )}
+            
+            {viewMode === 'grid' && (
+              <div className="mt-auto flex justify-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    downloadDocument(document);
+                  }}
+                  className="h-7 px-2"
+                >
+                  <Download className="w-3 h-3" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteDocument(document.id);
+                  }}
+                  className="h-7 px-2 text-red-600 hover:text-red-700"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+              </div>
+            )}
+          </div>
+          
+          {viewMode === 'list' && (
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  downloadDocument(document);
+                }}
+              >
+                <Download className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteDocument(document.id);
+                }}
+                className="text-red-600 hover:text-red-700"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="h-full flex flex-col bg-background">
       {/* Top Navigation Bar */}
@@ -331,10 +478,13 @@ const Explorer: React.FC = () => {
             
             <Separator orientation="vertical" className="h-6" />
             
-            <Button size="sm" variant="ghost">
-              <Upload className="w-4 h-4 mr-2" />
-              Upload
-            </Button>
+            <DocumentImportDialog onImportComplete={fetchDocuments}>
+              <Button size="sm" variant="ghost">
+                <Upload className="w-4 h-4 mr-2" />
+                Import Documents
+              </Button>
+            </DocumentImportDialog>
+            
             <Button size="sm" variant="ghost">
               <Download className="w-4 h-4 mr-2" />
               Download
@@ -385,7 +535,16 @@ const Explorer: React.FC = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-hidden">
-        <ResizablePanelGroup direction="horizontal" className="h-full">
+        <Tabs value={activePanel} onValueChange={(value) => setActivePanel(value as 'storage' | 'documents')}>
+          <div className="border-b px-4">
+            <TabsList className="grid w-64 grid-cols-2">
+              <TabsTrigger value="storage">Storage Files</TabsTrigger>
+              <TabsTrigger value="documents">Documents</TabsTrigger>
+            </TabsList>
+          </div>
+          
+          <TabsContent value="storage" className="h-[calc(100%-60px)] mt-0">
+            <ResizablePanelGroup direction="horizontal" className="h-full">
           {/* Left Panel */}
           <ResizablePanel defaultSize={50} minSize={30}>
             <div 
@@ -456,15 +615,75 @@ const Explorer: React.FC = () => {
                 )}
               </ScrollArea>
             </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </TabsContent>
+        
+        <TabsContent value="documents" className="h-[calc(100%-60px)] mt-0">
+          <div className="h-full p-4">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="font-semibold text-lg flex items-center">
+                <FileText className="w-5 h-5 mr-2" />
+                Imported Documents ({documents.length} items)
+              </h3>
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant="outline" onClick={fetchDocuments}>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Refresh
+                </Button>
+                <DocumentImportDialog onImportComplete={fetchDocuments}>
+                  <Button size="sm">
+                    <Upload className="w-4 h-4 mr-2" />
+                    Import More
+                  </Button>
+                </DocumentImportDialog>
+              </div>
+            </div>
+            
+            <ScrollArea className="h-[calc(100%-80px)]">
+              {documentsLoading ? (
+                <div className="text-center text-muted-foreground mt-8">
+                  Loading documents...
+                </div>
+              ) : getFilteredDocuments().length === 0 ? (
+                <div className="text-center text-muted-foreground mt-8">
+                  <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p className="text-lg font-medium mb-2">No documents found</p>
+                  <p className="text-sm mb-4">Import your first document to get started</p>
+                  <DocumentImportDialog onImportComplete={fetchDocuments}>
+                    <Button>
+                      <Upload className="w-4 h-4 mr-2" />
+                      Import Documents
+                    </Button>
+                  </DocumentImportDialog>
+                </div>
+              ) : (
+                <div className={cn(
+                  "gap-3",
+                  viewMode === 'grid' 
+                    ? "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5" 
+                    : "space-y-2"
+                )}>
+                  {getFilteredDocuments().map(document => 
+                    renderDocumentItem(document)
+                  )}
+                </div>
+              )}
+            </ScrollArea>
+          </div>
+        </TabsContent>
+      </Tabs>
       </div>
 
       {/* Status Bar */}
       <div className="border-t bg-card/50 px-4 py-2 text-xs text-muted-foreground">
         <div className="flex justify-between items-center">
           <span>
-            {selectedFiles.size} selected • {leftPanelFiles.length + rightPanelFiles.length} total items
+            {selectedFiles.size} selected • {
+              activePanel === 'storage' 
+                ? `${leftPanelFiles.length + rightPanelFiles.length} storage items`
+                : `${documents.length} documents`
+            }
           </span>
           <span>
             Ready

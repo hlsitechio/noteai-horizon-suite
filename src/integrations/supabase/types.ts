@@ -421,6 +421,60 @@ export type Database = {
         }
         Relationships: []
       }
+      documents: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_name: string
+          file_size: number
+          file_type: string
+          file_url: string
+          folder_id: string | null
+          id: string
+          is_public: boolean
+          mime_type: string
+          original_name: string
+          storage_path: string
+          tags: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_name: string
+          file_size: number
+          file_type: string
+          file_url: string
+          folder_id?: string | null
+          id?: string
+          is_public?: boolean
+          mime_type: string
+          original_name: string
+          storage_path: string
+          tags?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_name?: string
+          file_size?: number
+          file_type?: string
+          file_url?: string
+          folder_id?: string | null
+          id?: string
+          is_public?: boolean
+          mime_type?: string
+          original_name?: string
+          storage_path?: string
+          tags?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       folders: {
         Row: {
           created_at: string
