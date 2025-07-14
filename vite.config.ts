@@ -44,16 +44,15 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     // Vite 6 optimized build configuration
-    target: 'esnext',
+    target: 'es2020',
     minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: mode === 'production',
         drop_debugger: mode === 'production',
         pure_funcs: mode === 'production' ? ['console.log', 'console.debug'] : [],
-        // Remove HMR-related code in production
+        // Keep side effects to prevent removing necessary code
         dead_code: true,
-        side_effects: false,
       },
       mangle: {
         safari10: true,
@@ -107,12 +106,12 @@ export default defineConfig(({ mode }) => ({
       'framer-motion',
     ],
     exclude: ['@vite/client', '@vite/env'],
-    // Only force optimization in development
-    ...(mode === 'development' && { force: true }),
+    // Force optimization only in development
+    force: mode === 'development',
   },
   // Vite 6: Improved performance settings
   esbuild: {
-    target: 'esnext',
+    target: 'es2020',
     platform: 'browser',
     format: 'esm',
   },
