@@ -1,6 +1,6 @@
 import React from 'react';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Layout, Palette, Settings as SettingsIcon, Cloud, Sliders, Download, Monitor, Info, HardDrive, GraduationCap, MessageSquare } from 'lucide-react';
+import { User, Layout, Cloud, Cpu, HelpCircle } from 'lucide-react';
 
 interface SettingsTabsProps {
   activeTab: string;
@@ -12,55 +12,28 @@ export const SettingsTabs: React.FC<SettingsTabsProps> = ({ activeTab, onTabChan
   if (import.meta.env.DEV) {
     console.log('SettingsTabs rendered with activeTab:', activeTab);
   }
+  
   return (
-    <TabsList className="grid w-full grid-cols-12">
-      <TabsTrigger value="profile" className="flex items-center gap-2">
+    <TabsList className="grid w-full grid-cols-5">
+      <TabsTrigger value="account" className="flex items-center gap-2">
         <User className="h-4 w-4" />
-        Profile
+        Account & Profile
       </TabsTrigger>
-      <TabsTrigger value="layout" className="flex items-center gap-2">
+      <TabsTrigger value="appearance" className="flex items-center gap-2">
         <Layout className="h-4 w-4" />
-        Layout
+        Appearance & Layout
       </TabsTrigger>
-      <TabsTrigger value="themes" className="flex items-center gap-2">
-        <Palette className="h-4 w-4" />
-        Themes
-      </TabsTrigger>
-      <TabsTrigger value="preferences" className="flex items-center gap-2">
-        <SettingsIcon className="h-4 w-4" />
-        Preferences
-      </TabsTrigger>
-      <TabsTrigger value="weather" className="flex items-center gap-2">
+      <TabsTrigger value="integrations" className="flex items-center gap-2">
         <Cloud className="h-4 w-4" />
-        Weather
+        Integrations & Data
       </TabsTrigger>
-      <TabsTrigger value="ai" className="flex items-center gap-2">
-        <Sliders className="h-4 w-4" />
-        AI Settings
+      <TabsTrigger value="system" className="flex items-center gap-2">
+        <Cpu className="h-4 w-4" />
+        System & Apps
       </TabsTrigger>
-      <TabsTrigger value="drive" className="flex items-center gap-2">
-        <HardDrive className="h-4 w-4" />
-        Google Drive
-      </TabsTrigger>
-      <TabsTrigger value="data" className="flex items-center gap-2">
-        <Download className="h-4 w-4" />
-        Data Export
-      </TabsTrigger>
-      <TabsTrigger value="download" className="flex items-center gap-2">
-        <Monitor className="h-4 w-4" />
-        Desktop App
-      </TabsTrigger>
-      <TabsTrigger value="onboarding" className="flex items-center gap-2">
-        <GraduationCap className="h-4 w-4" />
-        Onboarding
-      </TabsTrigger>
-      <TabsTrigger value="support" className="flex items-center gap-2">
-        <MessageSquare className="h-4 w-4" />
-        Support
-      </TabsTrigger>
-      <TabsTrigger value="about" className="flex items-center gap-2">
-        <Info className="h-4 w-4" />
-        About
+      <TabsTrigger value="help" className="flex items-center gap-2">
+        <HelpCircle className="h-4 w-4" />
+        Help & Support
       </TabsTrigger>
     </TabsList>
   );

@@ -7,12 +7,12 @@ import { SettingsContent } from '../settings/components/SettingsContent';
 
 const Settings: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState('account');
   
   // Check for tab parameter in URL
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab && ['profile', 'layout', 'themes', 'preferences', 'weather', 'ai', 'data', 'download', 'onboarding', 'support', 'about'].includes(tab)) {
+    if (tab && ['account', 'appearance', 'integrations', 'system', 'help'].includes(tab)) {
       setActiveTab(tab);
     }
   }, [searchParams]);
