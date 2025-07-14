@@ -16,6 +16,7 @@ import { StatsCard } from '@/components/Dashboard/Components/StatsCard';
 import { SocialMediaCard } from '@/components/Dashboard/Components/SocialMediaCard';
 import { ProjectCard } from '@/components/Dashboard/Components/ProjectCard';
 import { PerformanceCard } from '@/components/Dashboard/Components/PerformanceCard';
+import { SimpleCalculator } from '@/components/Calculator/SimpleCalculator';
 
 // Using our standalone components - no need for wrapper components
 
@@ -44,6 +45,7 @@ const componentRegistry: Record<string, React.ComponentType> = {
   'performance-memory': () => <PerformanceCard variant="memory" />,
   'performance-network': () => <PerformanceCard variant="network" />,
   'performance-storage': () => <PerformanceCard variant="storage" />,
+  'simple-calculator': SimpleCalculator,
 };
 
 // Default fallback component

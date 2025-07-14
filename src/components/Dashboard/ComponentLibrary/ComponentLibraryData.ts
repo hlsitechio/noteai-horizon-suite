@@ -9,7 +9,8 @@ import {
   Zap,
   Share2,
   Folder,
-  TrendingUp
+  TrendingUp,
+  Calculator
 } from 'lucide-react';
 
 export interface ComponentLibraryItem {
@@ -131,7 +132,16 @@ export const componentLibraryItems: ComponentLibraryItem[] = [
     icon: Folder,
     componentKey: 'project-active',
     tags: ['projects', 'progress', 'team']
+  },
+  {
+    id: 'simple-calculator',
+    name: 'Simple Calculator',
+    description: 'Basic calculator with colorful number effects',
+    category: 'Tools',
+    icon: Calculator,
+    componentKey: 'simple-calculator',
+    tags: ['calculator', 'math', 'tools', 'numbers']
   }
 ];
 
-export const categories = ['All', 'Analytics', 'Actions', 'Activity', 'Time', 'Content', 'System', 'Productivity', 'Info', 'Social', 'Projects'];
+export const categories = ['All', 'Analytics', 'Actions', 'Activity', 'Time', 'Content', 'System', 'Productivity', 'Info', 'Social', 'Projects', 'Tools'];
