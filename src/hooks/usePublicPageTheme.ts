@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 
 /**
  * Hook to ensure public pages have clean default themes
- * Removes any user-specific theme classes that might be applied
+ * Now mostly redundant due to ConditionalThemeProvider
+ * but kept for additional safety and backwards compatibility
  */
 export const usePublicPageTheme = () => {
   useEffect(() => {
@@ -20,6 +21,11 @@ export const usePublicPageTheme = () => {
     ];
     
     html.classList.remove(...themeClasses);
+    
+    // Ensure we're using system theme only
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    html.classList.remove('light', 'dark');
+    html.classList.add(systemTheme);
     
     // Cleanup function to remove theme classes when component unmounts
     return () => {
