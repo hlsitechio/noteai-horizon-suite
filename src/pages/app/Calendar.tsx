@@ -91,10 +91,25 @@ const Calendar: React.FC = () => {
   };
 
   const handleTaskSubmit = (taskData: any) => {
-    // For now, we'll just log the task data
-    // In a real app, you'd save this to your task management system
-    console.log('New task created:', taskData);
+    // Create a task-like event that will appear on the calendar on the specified due date
+    const taskEvent: Omit<CalendarEvent, 'id'> = {
+      title: `Task: ${taskData.title}`,
+      description: taskData.description || `${taskData.category} - Priority: ${taskData.priority}`,
+      date: taskData.dueDate, // Use the due date from the form, not the selected date
+      time: '', // Tasks don't have specific times
+      type: 'note', // We'll use 'note' type for tasks to distinguish them
+      priority: taskData.priority as 'low' | 'medium' | 'high',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    // Add the task as an event to the calendar
+    addEvent(taskEvent);
     setIsTaskCreatorOpen(false);
+    
+    // Update the view to show the month containing the task's due date
+    const taskDate = new Date(taskData.dueDate);
+    setViewDate(taskDate);
   };
   const getEventTypeIcon = (type: CalendarEvent['type']) => {
     switch (type) {
@@ -105,6 +120,11 @@ const Calendar: React.FC = () => {
       default:
         return <CalendarIcon className="w-3 h-3" />;
     }
+  };
+
+  // Enhanced function to determine if an event is a task
+  const isTaskEvent = (event: CalendarEvent) => {
+    return event.title.startsWith('Task:') || event.type === 'note';
   };
   return <div className={`space-y-6 ${isMobile ? 'p-3' : 'p-6'}`}>
       <div className={`flex ${isMobile ? 'flex-col gap-4' : 'items-center justify-between'}`}>
