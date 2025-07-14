@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Star, Rocket, Globe } from 'lucide-react';
+import { Star, Rocket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import DashboardDemo from './DashboardDemo';
 const Hero = () => {
   const navigate = useNavigate();
   const sentence = {
@@ -38,7 +37,7 @@ const Hero = () => {
 
     return () => clearInterval(interval);
   }, [animatedTexts.length]);
-  const [isDemoOpen, setIsDemoOpen] = useState(false);
+  
   return <section className="relative min-h-screen flex items-center justify-center px-4 pt-20 overflow-hidden">
       {/* Dynamic Background with Quantum Gradient */}
       <div className="absolute inset-0">
@@ -120,32 +119,20 @@ const Hero = () => {
             </AnimatePresence>
           </div>
 
-          {/* Enhanced Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8 px-4">
-            <motion.div className="relative group w-full sm:w-auto" whileHover={{
+          {/* Enhanced Action Button */}
+          <div className="flex justify-center items-center pt-8 px-4">
+            <motion.div className="relative group" whileHover={{
             scale: 1.02
           }} whileTap={{
             scale: 0.98
           }}>
-              <Button onClick={() => navigate('/register')} size="lg" className="relative w-full sm:w-auto bg-gradient-to-r from-primary via-accent to-secondary hover:from-primary/90 hover:via-accent/90 hover:to-secondary/90 text-primary-foreground px-10 py-6 text-xl font-bold rounded-2xl shadow-premium hover:shadow-glow transition-all duration-500 border-0 overflow-hidden">
+              <Button onClick={() => navigate('/register')} size="lg" className="relative bg-gradient-to-r from-primary via-accent to-secondary hover:from-primary/90 hover:via-accent/90 hover:to-secondary/90 text-primary-foreground px-10 py-6 text-xl font-bold rounded-2xl shadow-premium hover:shadow-glow transition-all duration-500 border-0 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
                 <Rocket className="mr-3 w-6 h-6 relative z-10 animate-float" />
                 <span className="relative z-10">Start Free Trial</span>
               </Button>
               <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-2xl blur-xl opacity-0 group-hover:opacity-60 transition-opacity duration-500 -z-10" />
-            </motion.div>
-            
-            <motion.div whileHover={{
-            scale: 1.02
-          }} whileTap={{
-            scale: 0.98
-          }}>
-              <Button variant="outline" size="lg" onClick={() => setIsDemoOpen(true)} className="relative w-full sm:w-auto px-10 py-6 text-xl font-semibold rounded-2xl border-primary/30 text-foreground hover:bg-primary/10 hover:border-primary/50 backdrop-blur-xl transition-all duration-300 group overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <Globe className="mr-3 w-6 h-6 relative z-10 group-hover:text-primary transition-colors duration-300" />
-                <span className="relative z-10">Watch Demo</span>
-              </Button>
             </motion.div>
           </div>
 
@@ -189,9 +176,7 @@ const Hero = () => {
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Dashboard Demo Modal */}
-      <DashboardDemo isOpen={isDemoOpen} onClose={() => setIsDemoOpen(false)} />
     </section>;
 };
+
 export default Hero;
