@@ -5,10 +5,14 @@ import EnhancedMobileBottomNav from '../components/EnhancedMobileBottomNav';
 import MobileDesktopViewButton from '../components/MobileDesktopViewButton';
 import { BannerWithTopNav } from '@/components/Dashboard/BannerWithTopNav';
 import { useDashboardWorkspace } from '@/hooks/useDashboardWorkspace';
+import { useMobileViewport } from '@/hooks/useMobileViewport';
 
 const EnhancedMobileLayout: React.FC = () => {
   const location = useLocation();
   const isEditor = location.pathname === '/mobile/editor';
+  
+  // Handle mobile viewport changes
+  useMobileViewport();
   
   const { 
     getBannerSettings,
@@ -34,7 +38,7 @@ const EnhancedMobileLayout: React.FC = () => {
   };
 
   return (
-    <div className="h-full w-full flex flex-col bg-background overflow-hidden relative">
+    <div className="h-full w-full flex flex-col bg-background overflow-hidden relative mobile-layout">
       {/* Banner Section - Only show on non-editor pages */}
       {!isEditor && (
         <div className="flex-shrink-0 h-[30vh] min-h-[180px] max-h-[250px]">
