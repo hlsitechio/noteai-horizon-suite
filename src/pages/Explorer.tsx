@@ -13,6 +13,7 @@ import { GoogleDriveService } from '@/services/googleDriveService';
 import { useToast } from '@/hooks/use-toast';
 import { useDocuments } from '@/hooks/useDocuments';
 import { DocumentImportDialog } from '@/components/Explorer/DocumentImportDialog';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
 interface FileItem {
@@ -35,6 +36,7 @@ interface ExplorerTab {
 }
 
 const Explorer: React.FC = () => {
+  const isMobile = useIsMobile();
   const [tabs, setTabs] = useState<ExplorerTab[]>([
     { id: '1', title: 'Explorer', path: '/', isActive: true }
   ]);
@@ -50,6 +52,9 @@ const Explorer: React.FC = () => {
   const [activePanel, setActivePanel] = useState<'storage' | 'documents'>('storage');
   const { toast } = useToast();
   const { documents, isLoading: documentsLoading, fetchDocuments, deleteDocument, downloadDocument } = useDocuments();
+
+  // Combine all files for mobile view
+  const allFiles = [...leftPanelFiles, ...rightPanelFiles];
 
   // Load files from Supabase buckets
   const loadSupabaseFiles = async () => {
@@ -424,111 +429,132 @@ const Explorer: React.FC = () => {
     <div className="h-full flex flex-col bg-background">
       {/* Top Navigation Bar */}
       <div className="border-b bg-card/50 backdrop-blur-sm">
-        {/* Tab Bar */}
-        <div className="flex items-center space-x-1 px-4 pt-2">
-          {tabs.map((tab) => (
-            <div
-              key={tab.id}
-              className={cn(
-                "flex items-center space-x-2 px-3 py-1.5 rounded-t-lg cursor-pointer",
-                "border-t border-l border-r",
-                activeTab === tab.id 
-                  ? "bg-background border-border" 
-                  : "bg-muted/50 border-muted text-muted-foreground hover:bg-muted"
-              )}
-              onClick={() => setActiveTab(tab.id)}
+        {/* Tab Bar - Hidden on mobile */}
+        {!isMobile && (
+          <div className="flex items-center space-x-1 px-4 pt-2">
+            {tabs.map((tab) => (
+              <div
+                key={tab.id}
+                className={cn(
+                  "flex items-center space-x-2 px-3 py-1.5 rounded-t-lg cursor-pointer",
+                  "border-t border-l border-r",
+                  activeTab === tab.id 
+                    ? "bg-background border-border" 
+                    : "bg-muted/50 border-muted text-muted-foreground hover:bg-muted"
+                )}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <Home className="w-4 h-4" />
+                <span className="text-sm">{tab.title}</span>
+                {tabs.length > 1 && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="w-4 h-4 p-0 hover:bg-destructive/20"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      closeTab(tab.id);
+                    }}
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                )}
+              </div>
+            ))}
+            
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={addTab}
+              className="w-8 h-8 p-0 rounded-full"
             >
-              <Home className="w-4 h-4" />
-              <span className="text-sm">{tab.title}</span>
-              {tabs.length > 1 && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="w-4 h-4 p-0 hover:bg-destructive/20"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    closeTab(tab.id);
-                  }}
-                >
-                  <X className="w-3 h-3" />
-                </Button>
-              )}
-            </div>
-          ))}
-          
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={addTab}
-            className="w-8 h-8 p-0 rounded-full"
-          >
-            <Plus className="w-4 h-4" />
-          </Button>
-        </div>
-
-        {/* Toolbar */}
-        <div className="flex items-center justify-between px-4 py-2">
-          <div className="flex items-center space-x-2">
-            <Button size="sm" variant="ghost">
-              <ArrowUp className="w-4 h-4" />
-            </Button>
-            <Button size="sm" variant="ghost" onClick={loadFiles}>
-              <RefreshCw className="w-4 h-4" />
-            </Button>
-            
-            <Separator orientation="vertical" className="h-6" />
-            
-            <DocumentImportDialog onImportComplete={fetchDocuments}>
-              <Button size="sm" variant="ghost">
-                <Upload className="w-4 h-4 mr-2" />
-                Import Documents
-              </Button>
-            </DocumentImportDialog>
-            
-            <Button size="sm" variant="ghost">
-              <Download className="w-4 h-4 mr-2" />
-              Download
+              <Plus className="w-4 h-4" />
             </Button>
           </div>
+        )}
 
-          <div className="flex items-center space-x-2">
-            <div className="relative">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search files..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 w-64"
-              />
-            </div>
-            
-            <Button
-              size="sm"
-              variant={viewMode === 'grid' ? 'default' : 'ghost'}
-              onClick={() => setViewMode('grid')}
-            >
-              <Grid3X3 className="w-4 h-4" />
-            </Button>
-            <Button
-              size="sm"
-              variant={viewMode === 'list' ? 'default' : 'ghost'}
-              onClick={() => setViewMode('list')}
-            >
-              <List className="w-4 h-4" />
-            </Button>
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+        {/* Toolbar - Mobile optimized */}
+        <div className={cn(
+          "px-4 py-2",
+          isMobile ? "flex flex-col space-y-2" : "flex items-center justify-between"
+        )}>
+          {/* Navigation Controls */}
+          <div className={cn(
+            "flex items-center",
+            isMobile ? "justify-between w-full" : "space-x-2"
+          )}>
+            <div className="flex items-center space-x-1">
+              {!isMobile && (
+                <>
+                  <Button size="sm" variant="ghost">
+                    <ArrowUp className="w-4 h-4" />
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={loadFiles}>
+                    <RefreshCw className="w-4 h-4" />
+                  </Button>
+                  <Separator orientation="vertical" className="h-6" />
+                </>
+              )}
+              
+              <DocumentImportDialog onImportComplete={fetchDocuments}>
                 <Button size="sm" variant="ghost">
-                  <MoreHorizontal className="w-4 h-4" />
+                  <Upload className="w-4 h-4" />
+                  {!isMobile && <span className="ml-2">Import</span>}
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>Sort by name</DropdownMenuItem>
-                <DropdownMenuItem>Sort by date</DropdownMenuItem>
-                <DropdownMenuItem>Sort by size</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </DocumentImportDialog>
+              
+              {!isMobile && (
+                <Button size="sm" variant="ghost">
+                  <Download className="w-4 h-4 mr-2" />
+                  Download
+                </Button>
+              )}
+            </div>
+
+            {/* View Mode Controls */}
+            <div className="flex items-center space-x-1">
+              <Button
+                size="sm"
+                variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                onClick={() => setViewMode('grid')}
+              >
+                <Grid3X3 className="w-4 h-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant={viewMode === 'list' ? 'default' : 'ghost'}
+                onClick={() => setViewMode('list')}
+              >
+                <List className="w-4 h-4" />
+              </Button>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="ghost">
+                    <MoreHorizontal className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem>Sort by name</DropdownMenuItem>
+                  <DropdownMenuItem>Sort by date</DropdownMenuItem>
+                  <DropdownMenuItem>Sort by size</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+
+          {/* Search Bar */}
+          <div className={cn(
+            "relative",
+            isMobile ? "w-full" : "flex items-center space-x-2"
+          )}>
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search files..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={cn("pl-8", isMobile ? "w-full" : "w-64")}
+            />
           </div>
         </div>
       </div>
@@ -544,79 +570,111 @@ const Explorer: React.FC = () => {
           </div>
           
           <TabsContent value="storage" className="h-[calc(100%-60px)] mt-0">
-            <ResizablePanelGroup direction="horizontal" className="h-full">
-          {/* Left Panel */}
-          <ResizablePanel defaultSize={50} minSize={30}>
-            <div 
-              className="h-full border-r bg-background"
-              onDrop={(e) => handleDrop(e, 'left')}
-              onDragOver={handleDragOver}
-            >
-              <div className="p-4 border-b bg-muted/30">
-                <h3 className="font-semibold text-sm flex items-center">
-                  <HardDrive className="w-4 h-4 mr-2" />
-                  Local Storage ({leftPanelFiles.length} items)
-                </h3>
+            {isMobile ? (
+              // Mobile: Single panel with all files
+              <div className="h-full bg-background">
+                <div className="p-4 border-b bg-muted/30">
+                  <h3 className="font-semibold text-sm flex items-center">
+                    <HardDrive className="w-4 h-4 mr-2" />
+                    All Storage ({allFiles.length} items)
+                  </h3>
+                </div>
+                
+                <ScrollArea className="h-[calc(100%-60px)] p-4">
+                  {isLoading ? (
+                    <div className="text-center text-muted-foreground mt-8">
+                      Loading files...
+                    </div>
+                  ) : (
+                    <div className={cn(
+                      "gap-3",
+                      viewMode === 'grid' 
+                        ? "grid grid-cols-2 sm:grid-cols-3" 
+                        : "space-y-2"
+                    )}>
+                      {getFilteredFiles(allFiles).map(file => 
+                        renderFileItem(file, 'left')
+                      )}
+                    </div>
+                  )}
+                </ScrollArea>
               </div>
-              
-              <ScrollArea className="h-[calc(100%-60px)] p-4">
-                {isLoading ? (
-                  <div className="text-center text-muted-foreground mt-8">
-                    Loading files...
+            ) : (
+              // Desktop: Dual panel layout
+              <ResizablePanelGroup direction="horizontal" className="h-full">
+                {/* Left Panel */}
+                <ResizablePanel defaultSize={50} minSize={30}>
+                  <div 
+                    className="h-full border-r bg-background"
+                    onDrop={(e) => handleDrop(e, 'left')}
+                    onDragOver={handleDragOver}
+                  >
+                    <div className="p-4 border-b bg-muted/30">
+                      <h3 className="font-semibold text-sm flex items-center">
+                        <HardDrive className="w-4 h-4 mr-2" />
+                        Local Storage ({leftPanelFiles.length} items)
+                      </h3>
+                    </div>
+                    
+                    <ScrollArea className="h-[calc(100%-60px)] p-4">
+                      {isLoading ? (
+                        <div className="text-center text-muted-foreground mt-8">
+                          Loading files...
+                        </div>
+                      ) : (
+                        <div className={cn(
+                          "gap-3",
+                          viewMode === 'grid' 
+                            ? "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
+                            : "space-y-2"
+                        )}>
+                          {getFilteredFiles(leftPanelFiles).map(file => 
+                            renderFileItem(file, 'left')
+                          )}
+                        </div>
+                      )}
+                    </ScrollArea>
                   </div>
-                ) : (
-                  <div className={cn(
-                    "gap-3",
-                    viewMode === 'grid' 
-                      ? "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
-                      : "space-y-2"
-                  )}>
-                    {getFilteredFiles(leftPanelFiles).map(file => 
-                      renderFileItem(file, 'left')
-                    )}
-                  </div>
-                )}
-              </ScrollArea>
-            </div>
-          </ResizablePanel>
+                </ResizablePanel>
 
-          <ResizableHandle withHandle />
+                <ResizableHandle withHandle />
 
-          {/* Right Panel */}
-          <ResizablePanel defaultSize={50} minSize={30}>
-            <div 
-              className="h-full bg-background"
-              onDrop={(e) => handleDrop(e, 'right')}
-              onDragOver={handleDragOver}
-            >
-              <div className="p-4 border-b bg-muted/30">
-                <h3 className="font-semibold text-sm flex items-center">
-                  <Cloud className="w-4 h-4 mr-2" />
-                  Cloud Storage ({rightPanelFiles.length} items)
-                </h3>
-              </div>
-              
-              <ScrollArea className="h-[calc(100%-60px)] p-4">
-                {isLoading ? (
-                  <div className="text-center text-muted-foreground mt-8">
-                    Loading files...
+                {/* Right Panel */}
+                <ResizablePanel defaultSize={50} minSize={30}>
+                  <div 
+                    className="h-full bg-background"
+                    onDrop={(e) => handleDrop(e, 'right')}
+                    onDragOver={handleDragOver}
+                  >
+                    <div className="p-4 border-b bg-muted/30">
+                      <h3 className="font-semibold text-sm flex items-center">
+                        <Cloud className="w-4 h-4 mr-2" />
+                        Cloud Storage ({rightPanelFiles.length} items)
+                      </h3>
+                    </div>
+                    
+                    <ScrollArea className="h-[calc(100%-60px)] p-4">
+                      {isLoading ? (
+                        <div className="text-center text-muted-foreground mt-8">
+                          Loading files...
+                        </div>
+                      ) : (
+                        <div className={cn(
+                          "gap-3",
+                          viewMode === 'grid' 
+                            ? "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
+                            : "space-y-2"
+                        )}>
+                          {getFilteredFiles(rightPanelFiles).map(file => 
+                            renderFileItem(file, 'right')
+                          )}
+                        </div>
+                      )}
+                    </ScrollArea>
                   </div>
-                ) : (
-                  <div className={cn(
-                    "gap-3",
-                    viewMode === 'grid' 
-                      ? "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
-                      : "space-y-2"
-                  )}>
-                    {getFilteredFiles(rightPanelFiles).map(file => 
-                      renderFileItem(file, 'right')
-                    )}
-                  </div>
-                )}
-              </ScrollArea>
-            </div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            )}
         </TabsContent>
         
         <TabsContent value="documents" className="h-[calc(100%-60px)] mt-0">
@@ -661,7 +719,9 @@ const Explorer: React.FC = () => {
                 <div className={cn(
                   "gap-3",
                   viewMode === 'grid' 
-                    ? "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5" 
+                    ? isMobile 
+                      ? "grid grid-cols-2 sm:grid-cols-3" 
+                      : "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
                     : "space-y-2"
                 )}>
                   {getFilteredDocuments().map(document => 
