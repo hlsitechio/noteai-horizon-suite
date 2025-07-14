@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { ArrowRight, User, Palette, BarChart3, Code, PenTool, GraduationCap, MoreHorizontal } from 'lucide-react';
+import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
 type UserRole = 'developer' | 'designer' | 'product_manager' | 'analyst' | 'content_creator' | 'student' | 'other';
 
@@ -63,6 +64,9 @@ const roleOptions: RoleOption[] = [
 ];
 
 const InitialOnboarding: React.FC = () => {
+  // Ensure clean theme for onboarding page
+  usePublicPageTheme();
+  
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();

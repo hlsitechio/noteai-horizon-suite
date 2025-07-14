@@ -7,8 +7,12 @@ import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
 const Register: React.FC = () => {
+  // Ensure clean theme for public auth page
+  usePublicPageTheme();
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');

@@ -3,8 +3,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { NewUserWelcome } from '@/components/Dashboard/NewUserWelcome';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
+import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
 const DashboardOnboarding: React.FC = () => {
+  // Ensure clean theme for dashboard onboarding
+  usePublicPageTheme();
+  
   const { user } = useAuth();
   const navigate = useNavigate();
 

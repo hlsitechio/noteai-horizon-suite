@@ -4,8 +4,12 @@ import { Check, X, Sparkles, Zap, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import SpotlightCard from '@/components/ui/spotlight-card';
+import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
 const Pricing: React.FC = () => {
+  // Ensure clean theme for public pricing page
+  usePublicPageTheme();
+  
   const [isYearly, setIsYearly] = useState(false);
 
   const plans = [

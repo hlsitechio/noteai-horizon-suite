@@ -1,8 +1,12 @@
 
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { usePublicPageTheme } from "@/hooks/usePublicPageTheme";
 
 const NotFound = () => {
+  // Ensure clean theme for public 404 page
+  usePublicPageTheme();
+  
   const location = useLocation();
 
   useEffect(() => {

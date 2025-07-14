@@ -10,10 +10,14 @@ import NewsletterSignup from '@/components/Marketing/NewsletterSignup';
 import SocialProof from '@/components/Marketing/SocialProof';
 import MarketingCTA from '@/components/Marketing/MarketingCTA';
 import SEOOptimizer from '@/components/Marketing/SEOOptimizer';
+import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
 import { AnalyticsService } from '@/services/analyticsService';
 
 const Landing: React.FC = () => {
+  // Ensure clean theme for public landing page
+  usePublicPageTheme();
+  
   const [isScrolled, setIsScrolled] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 

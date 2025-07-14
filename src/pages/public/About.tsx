@@ -1,9 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Target, Users, Lightbulb } from 'lucide-react';
+import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
 
 const About: React.FC = () => {
+  // Ensure clean theme for public about page
+  usePublicPageTheme();
+  
   const values = [
     {
       icon: Target,

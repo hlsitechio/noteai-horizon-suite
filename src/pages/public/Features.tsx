@@ -2,9 +2,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Brain, Lock, Zap, Globe, Users } from 'lucide-react';
 import DynamicSEOOptimizer from '@/components/SEO/DynamicSEOOptimizer';
+import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
 
 const Features: React.FC = () => {
+  // Ensure clean theme for public features page
+  usePublicPageTheme();
+  
   const features = [
     {
       icon: Brain,

@@ -8,9 +8,13 @@ import { SidebarCollapseProvider } from '@/contexts/SidebarContext';
 import { PWAWrapper } from '../PWA/PWAWrapper';
 import BannerLayout from './BannerLayout';
 import FloatingNotesContainer from '../FloatingNotes/FloatingNotesContainer';
+import { useThemeManager } from '@/hooks/useThemeManager';
 
 const Layout: React.FC = () => {
   const { isSidebarEditMode } = useEditMode();
+  
+  // Apply user themes only in the authenticated dashboard area
+  useThemeManager();
   
   return (
     <PWAWrapper>

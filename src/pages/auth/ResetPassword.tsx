@@ -7,8 +7,12 @@ import { Label } from '@/components/ui/label';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
 const ResetPassword: React.FC = () => {
+  // Ensure clean theme for public auth page
+  usePublicPageTheme();
+  
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
