@@ -5,6 +5,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
 import { WeatherIcon } from '@/components/Weather/WeatherIcon';
+import { ChronoDropdown } from './ChronoDropdown';
+import { ChronoDisplay } from './ChronoDisplay';
+import { toast } from 'sonner';
 
 interface WeatherData {
   temperature: number;
@@ -29,6 +32,10 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   const [isLoadingWeather, setIsLoadingWeather] = useState(false);
   const [weatherUnits, setWeatherUnits] = useState<'celsius' | 'fahrenheit'>('celsius');
   const [savedWeatherCity, setSavedWeatherCity] = useState<string>('New York');
+
+  // Chronometer states
+  const [showChronoDropdown, setShowChronoDropdown] = useState(false);
+  const [activeTimer, setActiveTimer] = useState<{minutes: number, seconds: number} | null>(null);
 
   // Load weather settings from localStorage
   useEffect(() => {
@@ -172,6 +179,29 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
     }
   }, [savedWeatherCity, weatherUnits]); // Re-fetch when city or units change
 
+  // Chronometer handlers
+  const handleStartTimer = (minutes: number, seconds: number) => {
+    setActiveTimer({ minutes, seconds });
+    toast.success(`Timer started for ${minutes}:${seconds.toString().padStart(2, '0')}`);
+  };
+
+  const handleTimerComplete = () => {
+    toast.success('Timer completed!', {
+      duration: 5000,
+    });
+  };
+
+  const handleStopTimer = () => {
+    setActiveTimer(null);
+    toast.info('Timer stopped');
+  };
+
+  const handleClockClick = () => {
+    if (!activeTimer) {
+      setShowChronoDropdown(!showChronoDropdown);
+    }
+  };
+
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
       hour: '2-digit',
@@ -203,10 +233,15 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
           </span>
         </div>
 
-        {/* Time and Date */}
-        <div className={`flex items-center gap-4 ${isMobile ? 'justify-center text-sm' : ''}`}>
+        {/* Time and Date with Chronometer */}
+        <div className={`flex items-center gap-4 ${isMobile ? 'justify-center text-sm' : ''} relative`}>
           <div className="flex items-center gap-2">
-            <Clock className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-muted-foreground`} />
+            <button 
+              onClick={handleClockClick}
+              className="p-1 rounded hover:bg-muted transition-colors"
+            >
+              <Clock className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-muted-foreground hover:text-foreground`} />
+            </button>
             <div className="text-center">
               <div className={`font-mono font-semibold text-foreground ${isMobile ? 'text-sm' : 'text-lg'}`}>
                 {formatTime(currentTime)}
@@ -216,6 +251,24 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Active Timer Display */}
+          {activeTimer && (
+            <ChronoDisplay
+              initialMinutes={activeTimer.minutes}
+              initialSeconds={activeTimer.seconds}
+              onComplete={handleTimerComplete}
+              onStop={handleStopTimer}
+              className={isMobile ? 'text-xs' : ''}
+            />
+          )}
+
+          {/* Chronometer Dropdown */}
+          <ChronoDropdown
+            isOpen={showChronoDropdown}
+            onClose={() => setShowChronoDropdown(false)}
+            onStartTimer={handleStartTimer}
+          />
         </div>
 
         {/* Weather Widget */}
