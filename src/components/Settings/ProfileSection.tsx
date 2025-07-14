@@ -56,8 +56,9 @@ const ProfileSection: React.FC = () => {
 
   // Effect for real-time name updates
   useEffect(() => {
-    if (debouncedName && debouncedName !== user?.name && user && debouncedName.trim()) {
-      updateProfileRealTime({ display_name: debouncedName });
+    if (debouncedName !== user?.name && user) {
+      // Allow empty names - update even if debouncedName is empty
+      updateProfileRealTime({ display_name: debouncedName.trim() });
     }
   }, [debouncedName, user?.name, updateProfileRealTime, user]);
 
