@@ -2,12 +2,12 @@ import React from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendarEvent } from '../../types/calendar';
+import { CreateCalendarEventData } from '../../types/calendar';
 
 interface CalendarEventFormInlineProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (eventData: Omit<CalendarEvent, 'id'>) => void;
+  onSubmit: (eventData: CreateCalendarEventData) => void;
   selectedDate: Date;
 }
 
@@ -22,19 +22,14 @@ export const CalendarEventFormInline: React.FC<CalendarEventFormInlineProps> = (
   const handleSubmit = () => {
     const title = (document.getElementById('inline-event-title') as HTMLInputElement).value;
     const description = (document.getElementById('inline-event-desc') as HTMLTextAreaElement).value;
-    const type = (document.getElementById('inline-event-type') as HTMLSelectElement).value as CalendarEvent['type'];
     const time = (document.getElementById('inline-event-time') as HTMLInputElement).value;
 
     if (title.trim()) {
-      const eventData: Omit<CalendarEvent, 'id'> = {
+      const eventData: CreateCalendarEventData = {
         title,
         description,
-        date: selectedDate.toISOString(),
-        time,
-        type,
-        priority: 'medium',
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        start_date: selectedDate.toISOString(),
+        is_all_day: !time,
       };
       onSubmit(eventData);
       
@@ -82,23 +77,13 @@ export const CalendarEventFormInline: React.FC<CalendarEventFormInlineProps> = (
               placeholder="Event description"
             />
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-muted-foreground">Type</label>
-              <select id="inline-event-type" className="w-full px-2 py-1.5 text-sm border rounded-md bg-background/50">
-                <option value="event">Event</option>
-                <option value="meeting">Meeting</option>
-                <option value="note">Important Note</option>
-              </select>
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-muted-foreground">Time</label>
-              <input
-                id="inline-event-time"
-                type="time"
-                className="w-full px-2 py-1.5 text-sm border rounded-md bg-background/50"
-              />
-            </div>
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted-foreground">Time</label>
+            <input
+              id="inline-event-time"
+              type="time"
+              className="w-full px-2 py-1.5 text-sm border rounded-md bg-background/50"
+            />
           </div>
           <Button 
             onClick={handleSubmit}

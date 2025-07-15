@@ -15,7 +15,7 @@ interface CalendarGridProps {
   onAddEvent: (date: Date) => void;
   onAddNote: (date: Date) => void;
   onNoteClick: (note: any) => void;
-  getEventTypeIcon: (type: CalendarEvent['type']) => React.ReactNode;
+  getEventTypeIcon: () => React.ReactNode;
 }
 
 export const CalendarGrid: React.FC<CalendarGridProps> = ({
@@ -35,7 +35,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
   const calendarDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
   const getEventsForDate = (date: Date) => {
-    return events.filter(event => isSameDay(new Date(event.date), date));
+    return events.filter(event => isSameDay(new Date(event.start_date), date));
   };
 
   const getNotesForDate = (date: Date) => {
@@ -102,7 +102,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
                       key={event.id}
                       className="flex items-center gap-1 p-1 rounded text-xs bg-white/10 backdrop-blur-sm"
                     >
-                      {getEventTypeIcon(event.type)}
+                      {getEventTypeIcon()}
                       <span className="truncate">{event.title}</span>
                     </div>
                   ))}

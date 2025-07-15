@@ -9,7 +9,7 @@ import { CalendarEventFormInline } from '@/components/Calendar/CalendarEventForm
 import { CalendarDateDetails } from '@/components/Calendar/CalendarDateDetails';
 import { CalendarNoteFormInline } from '@/components/Calendar/CalendarNoteFormInline';
 import { CalendarTaskCreator } from '@/components/Calendar/CalendarTaskCreator';
-import { CalendarEvent } from '@/types/calendar';
+import { CalendarEvent, CreateCalendarEventData } from '@/types/calendar';
 import { useCalendarEvents } from '@/hooks/useCalendarEvents';
 import { useNotes } from '@/contexts/NotesContext';
 import { useTasks } from '@/hooks/useTasks';
@@ -23,6 +23,7 @@ const Calendar: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const {
     events,
+    loading,
     addEvent
   } = useCalendarEvents();
   const {
@@ -45,7 +46,7 @@ const Calendar: React.FC = () => {
     }
   }, [searchParams, setSearchParams]);
   const getEventsForDate = (date: Date) => {
-    return events.filter(event => isSameDay(new Date(event.date), date));
+    return events.filter(event => isSameDay(new Date(event.start_date), date));
   };
   const getNotesForDate = (date: Date) => {
     return notes.filter(note => isSameDay(new Date(note.createdAt), date));
@@ -61,8 +62,8 @@ const Calendar: React.FC = () => {
     }
     setViewDate(newDate);
   };
-  const handleEventSubmit = (eventData: Omit<CalendarEvent, 'id'>) => {
-    addEvent(eventData);
+  const handleEventSubmit = async (eventData: CreateCalendarEventData) => {
+    await addEvent(eventData);
     setIsEventFormOpen(false);
   };
   const handleNoteSubmit = async (noteData: {
@@ -104,18 +105,14 @@ const Calendar: React.FC = () => {
 
     if (newTask) {
       // Also create a calendar event for the task
-      const taskEvent: Omit<CalendarEvent, 'id'> = {
+      const taskEvent: CreateCalendarEventData = {
         title: `Task: ${taskData.title}`,
         description: taskData.description || `${taskData.category} - Priority: ${taskData.priority}`,
-        date: taskData.dueDate,
-        time: '',
-        type: 'note',
-        priority: taskData.priority as 'low' | 'medium' | 'high',
-        createdAt: new Date(),
-        updatedAt: new Date()
+        start_date: taskData.dueDate,
+        is_all_day: true
       };
       
-      addEvent(taskEvent);
+      await addEvent(taskEvent);
       
       // Update the view to show the month containing the task's due date
       const taskDate = new Date(taskData.dueDate);
@@ -124,20 +121,13 @@ const Calendar: React.FC = () => {
     
     setIsTaskCreatorOpen(false);
   };
-  const getEventTypeIcon = (type: CalendarEvent['type']) => {
-    switch (type) {
-      case 'meeting':
-        return <Users className="w-3 h-3" />;
-      case 'note':
-        return <FileText className="w-3 h-3" />;
-      default:
-        return <CalendarIcon className="w-3 h-3" />;
-    }
+  const getEventTypeIcon = () => {
+    return <CalendarIcon className="w-3 h-3" />;
   };
 
   // Enhanced function to determine if an event is a task
   const isTaskEvent = (event: CalendarEvent) => {
-    return event.title.startsWith('Task:') || event.type === 'note';
+    return event.title.startsWith('Task:');
   };
   return <div className={`space-y-6 ${isMobile ? 'p-3' : 'p-6'}`}>
       <div className={`flex ${isMobile ? 'flex-col gap-4' : 'items-center justify-between'}`}>

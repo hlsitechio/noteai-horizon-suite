@@ -26,17 +26,17 @@ export function CalendarWidget() {
     return events
       .filter(event => {
         try {
-          const eventDate = parseISO(event.date);
+          const eventDate = parseISO(event.start_date);
           return isFuture(eventDate) || isToday(eventDate);
         } catch {
           return false;
         }
       })
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime())
       .slice(0, 3)
       .map(event => {
         try {
-          const eventDate = parseISO(event.date);
+          const eventDate = parseISO(event.start_date);
           let dateLabel = 'Today';
           
           if (isToday(eventDate)) {
@@ -50,10 +50,10 @@ export function CalendarWidget() {
           return {
             id: event.id,
             title: event.title,
-            time: event.time || 'All day',
+            time: event.is_all_day ? 'All day' : format(eventDate, 'HH:mm'),
             date: dateLabel,
-            location: event.description || 'No location',
-            type: event.type
+            location: event.location || event.description || 'No location',
+            type: 'event'
           };
         } catch {
           return null;

@@ -11,7 +11,7 @@ interface CalendarDateDetailsProps {
   events: CalendarEvent[];
   notes: any[];
   onNoteClick: (note: any) => void;
-  getEventTypeIcon: (type: CalendarEvent['type']) => React.ReactNode;
+  getEventTypeIcon: () => React.ReactNode;
 }
 
 export const CalendarDateDetails: React.FC<CalendarDateDetailsProps> = ({
@@ -43,16 +43,16 @@ export const CalendarDateDetails: React.FC<CalendarDateDetailsProps> = ({
               events.map((event) => (
                 <div key={event.id} className="p-2 border rounded-lg space-y-1.5 bg-accent/5">
                   <div className="flex items-center gap-2">
-                    {getEventTypeIcon(event.type)}
+                    {getEventTypeIcon()}
                     <span className="font-medium text-sm">{event.title}</span>
                     <Badge variant="secondary" className="ml-auto text-xs">
-                      {event.type}
+                      Event
                     </Badge>
                   </div>
-                  {event.time && (
+                  {!event.is_all_day && (
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Clock className="w-3 h-3" />
-                      {event.time}
+                      {new Date(event.start_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </div>
                   )}
                   {event.description && (

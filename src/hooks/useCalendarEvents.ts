@@ -1,29 +1,39 @@
 
-import React, { useState, useEffect } from 'react';
-import { CalendarEvent } from '../types/calendar';
-import { CalendarEventService } from '../services/calendarEventService';
+import { useState, useEffect } from 'react';
+import { CalendarEvent, CreateCalendarEventData } from '../types/calendar';
+import { CalendarEventsService } from '../services/calendarEventsService';
 
 export const useCalendarEvents = () => {
-  console.log('useCalendarEvents hook called', { React });
   const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadEvents = () => {
-      const savedEvents = CalendarEventService.getAllEvents();
-      setEvents(savedEvents);
+    const loadEvents = async () => {
+      setLoading(true);
+      try {
+        const savedEvents = await CalendarEventsService.getAllEvents();
+        setEvents(savedEvents);
+      } catch (error) {
+        console.error('Error loading events:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadEvents();
   }, []);
 
-  const addEvent = (eventData: Omit<CalendarEvent, 'id'>) => {
-    const newEvent = CalendarEventService.saveEvent(eventData);
-    setEvents(prev => [...prev, newEvent]);
-    return newEvent;
+  const addEvent = async (eventData: CreateCalendarEventData) => {
+    const newEvent = await CalendarEventsService.createEvent(eventData);
+    if (newEvent) {
+      setEvents(prev => [...prev, newEvent]);
+      return newEvent;
+    }
+    return null;
   };
 
-  const updateEvent = (id: string, updates: Partial<Omit<CalendarEvent, 'id' | 'createdAt'>>) => {
-    const updatedEvent = CalendarEventService.updateEvent(id, updates);
+  const updateEvent = async (id: string, updates: Partial<CreateCalendarEventData>) => {
+    const updatedEvent = await CalendarEventsService.updateEvent(id, updates);
     if (updatedEvent) {
       setEvents(prev => prev.map(event => event.id === id ? updatedEvent : event));
       return updatedEvent;
@@ -31,8 +41,8 @@ export const useCalendarEvents = () => {
     return null;
   };
 
-  const deleteEvent = (id: string) => {
-    const deleted = CalendarEventService.deleteEvent(id);
+  const deleteEvent = async (id: string) => {
+    const deleted = await CalendarEventsService.deleteEvent(id);
     if (deleted) {
       setEvents(prev => prev.filter(event => event.id !== id));
     }
@@ -41,6 +51,7 @@ export const useCalendarEvents = () => {
 
   return {
     events,
+    loading,
     addEvent,
     updateEvent,
     deleteEvent,
