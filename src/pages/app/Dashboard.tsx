@@ -4,7 +4,7 @@ import {
   MainDashboardContent,
   EditLayoutModal 
 } from '@/components/Dashboard';
-console.log('Dashboard components imported successfully:', { DashboardControls, MainDashboardContent, EditLayoutModal });
+
 import { Button } from '@/components/ui/button';
 import { LayoutDashboard, BarChart3, Settings } from 'lucide-react';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
