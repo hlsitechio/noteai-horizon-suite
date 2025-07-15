@@ -26,13 +26,7 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent 
-        className="max-w-md"
-        onOpenAutoFocus={(e) => {
-          // Prevent auto-focus to avoid aria-hidden conflicts
-          e.preventDefault();
-        }}
-      >
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />

@@ -32,7 +32,11 @@ const ResizableSidebarPanel: React.FC<ResizableSidebarPanelProps> = ({
     >
       <div className="h-full w-full">
         {(topPanelContent || middlePanelContent || bottomPanelContent) ? (
-          <PanelGroup direction="vertical" className="h-full">
+          <PanelGroup 
+            direction="vertical" 
+            className="h-full"
+            id="sidebar-vertical-panels"
+          >
             {/* Top Panel */}
             <Panel defaultSize={40} minSize={25} maxSize={60}>
               <div className="h-full overflow-y-auto">

@@ -99,6 +99,7 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
       className="w-full h-full"
       onLayout={handleLayout}
       storage={createStorageHandler()}
+      id="sidebar-horizontal-layout"
     >
       {/* Sidebar Panel */}
       <ResizableSidebarPanel
@@ -120,10 +121,11 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
         ))}
       </ResizableSidebarPanel>
       
-      {/* Vertical Resize Handle - Conditionally rendered */}
-      {isEditMode && !isCollapsed && (
-        <ResizableSidebarHandle isEditMode={isEditMode} />
-      )}
+      {/* Vertical Resize Handle - Always present but hidden when not needed */}
+      <ResizableSidebarHandle 
+        isEditMode={isEditMode} 
+        className={!isEditMode || isCollapsed ? "opacity-0 pointer-events-none w-1" : ""} 
+      />
       
       {/* Main Content Panel */}
       <ResizableSidebarContent>
