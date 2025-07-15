@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import type { Particle } from '@/types';
 
 interface SimpleParticleFieldProps {
   mousePosition: { x: number; y: number };
@@ -11,7 +12,7 @@ const SimpleParticleField: React.FC<SimpleParticleFieldProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
-  const particlesRef = useRef<any[]>([]);
+  const particlesRef = useRef<Particle[]>([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createComponentLogger } from '@/utils/productionLogger';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -7,6 +8,8 @@ import { AlertCircle, CheckCircle, Loader2, Rocket, Settings, Database, FolderPl
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+
+const componentLogger = createComponentLogger('InitializeDashboardButton');
 
 interface InitializationStep {
   id: string;
@@ -149,13 +152,14 @@ export const InitializeDashboardButton: React.FC<InitializeDashboardButtonProps>
       // Call the callback if provided
       onInitialized?.();
 
-    } catch (error: any) {
-      console.error('Dashboard initialization error:', error);
-      setError(error.message || 'An unexpected error occurred');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      componentLogger.error('Dashboard initialization error:', error);
+      setError(errorMessage);
       
       toast({
         title: "Initialization Failed",
-        description: error.message || "Failed to initialize dashboard. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {

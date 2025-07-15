@@ -1,5 +1,6 @@
 
 import React from 'react';
+import type { Note, AnalyticsData, TooltipData } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, TrendingUp, Calendar, Target } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -11,7 +12,7 @@ interface AnalyticsOverviewProps {
   favoriteNotes: number;
   categoryCounts: Record<string, number>;
   weeklyNotes: number;
-  notes: any[];
+  notes: Note[];
 }
 
 const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({

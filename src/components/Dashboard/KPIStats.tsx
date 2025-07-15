@@ -1,5 +1,6 @@
 
 import React from 'react';
+import type { Note } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
@@ -10,7 +11,7 @@ interface KPIStatsProps {
   favoriteNotes: number;
   categoryCounts: Record<string, number>;
   weeklyNotes: number;
-  notes?: any[];
+  notes?: Note[];
 }
 
 const KPIStats: React.FC<KPIStatsProps> = ({ 
