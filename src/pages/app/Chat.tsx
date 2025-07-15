@@ -23,20 +23,18 @@ const Chat: React.FC = () => {
   
   const { 
     messages, 
-    sendMessageWithActions, 
-    clearCurrentChat, 
-    isLoading,
-    sessions,
-    currentSessionId,
-    createNewSession,
-    loadSession,
-    deleteSession,
-    renameSession
-  } = useEnhancedAIChatWithSessions();
+    sendMessage, 
+    clearConversation, 
+    isProcessing,
+    currentAgent,
+    availableAgents,
+    currentMode,
+    setMode
+  } = useAIAgents();
 
   const {
     isRecording,
-    isProcessing,
+    isProcessing: isSpeechProcessing,
     startRecording,
     stopRecording,
   } = useSpeechToText();
@@ -52,31 +50,43 @@ const Chat: React.FC = () => {
     extractNoteFromActionResult
   } = useNotePreview();
 
+  // Convert AIMessage format to EnhancedChatMessage format for compatibility
+  const adaptedMessages = messages.map(msg => ({
+    id: msg.id,
+    content: msg.content,
+    isUser: msg.role === 'user',
+    timestamp: msg.timestamp,
+    actions: msg.metadata?.actions as any, // Type cast to avoid conflicts
+    actionResults: msg.metadata?.actionResults
+  }));
+
   // Monitor messages for note creation to show in preview
   useEffect(() => {
-    // Find the most recent AI message with actionResults (not just the last message)
-    const aiMessagesWithResults = messages.filter(msg => 
-      !msg.isUser && msg.actionResults && msg.actionResults.length > 0
+    // Find the most recent AI message with action metadata (not just the last message)
+    const aiMessagesWithResults = adaptedMessages.filter(msg => 
+      !msg.isUser && msg.actions && msg.actions.length > 0
     );
     
     if (aiMessagesWithResults.length > 0) {
       const latestAiMessage = aiMessagesWithResults[aiMessagesWithResults.length - 1];
       
       // Look for created notes in action results
-      latestAiMessage.actionResults!.forEach((result, index) => {
-        if (result.success && result.data && latestAiMessage.actions?.[index]?.type === 'create_note') {
-          const note = extractNoteFromActionResult(result);
-          if (note) {
-            showNote(note);
+      if (latestAiMessage.actionResults) {
+        latestAiMessage.actionResults.forEach((result: any, index: number) => {
+          if (result.success && result.data && latestAiMessage.actions?.[index]?.type === 'create_note') {
+            const note = extractNoteFromActionResult(result);
+            if (note) {
+              showNote(note);
+            }
           }
-        }
-      });
+        });
+      }
     }
-  }, [messages, extractNoteFromActionResult, showNote]);
+  }, [adaptedMessages, extractNoteFromActionResult, showNote]);
 
   const handleSend = async () => {
-    if (message.trim() && !isLoading) {
-      await sendMessageWithActions(message);
+    if (message.trim() && !isProcessing) {
+      await sendMessage(message, { autoDetectMode: true });
       setMessage('');
     }
   };
@@ -109,16 +119,12 @@ const Chat: React.FC = () => {
       {/* Chat History Panel - Hidden on mobile */}
       {!isMobile && (
         <div className="flex-shrink-0">
-          <ChatHistoryPanel
-            sessions={sessions}
-            currentSessionId={currentSessionId}
-            onSessionSelect={loadSession}
-            onNewSession={createNewSession}
-            onDeleteSession={deleteSession}
-            onRenameSession={renameSession}
-            isCollapsed={isHistoryCollapsed}
-            onToggleCollapse={() => setIsHistoryCollapsed(!isHistoryCollapsed)}
-          />
+          {/* AI Agents Panel - Temporarily disabled for now */}
+          <div className="w-64 h-full bg-card/30 border rounded-lg p-4 backdrop-blur-sm">
+            <h3 className="text-sm font-medium mb-2">AI Assistant</h3>
+            <p className="text-xs text-muted-foreground mb-2">Current: {currentAgent.name}</p>
+            <p className="text-xs text-muted-foreground">Mode: {currentMode}</p>
+          </div>
         </div>
       )}
 
@@ -130,16 +136,16 @@ const Chat: React.FC = () => {
           <ChatHeader
             profile={profile}
             profileLoading={profileLoading}
-            messagesLength={messages.length}
-            onClearChat={clearCurrentChat}
+            messagesLength={adaptedMessages.length}
+            onClearChat={clearConversation}
           />
 
           <div className="flex-1 flex flex-col min-h-0">
             <Card className="flex-1 flex flex-col border-0 shadow-xl bg-gradient-to-br from-card/50 to-card backdrop-blur-sm">
               <CardContent className={`flex-1 flex flex-col ${isMobile ? 'p-3' : 'p-6'}`}>
                 <ChatMessages
-                  messages={messages}
-                  isLoading={isLoading}
+                  messages={adaptedMessages}
+                  isLoading={isProcessing}
                   onQuickActionSelect={setMessage}
                   profile={profile}
                   profileLoading={profileLoading}
@@ -151,9 +157,9 @@ const Chat: React.FC = () => {
                   onSend={handleSend}
                   onKeyPress={handleKeyPress}
                   onVoiceInput={handleVoiceInput}
-          isLoading={isProcessing}
+                  isLoading={isProcessing}
                   isRecording={isRecording}
-                  isProcessing={isProcessing}
+                  isProcessing={isSpeechProcessing}
                 />
               </CardContent>
             </Card>
