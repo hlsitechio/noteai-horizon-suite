@@ -14,7 +14,10 @@ import SEOOptimizer from '@/components/Marketing/SEOOptimizer';
 import ContentHub from '@/components/Marketing/ContentHub';
 import TrustSignals from '@/components/Marketing/TrustSignals';
 import LeadCapturePopup from '@/components/Marketing/LeadCapturePopup';
+import MobileOptimizedCTA from '@/components/Mobile/MobileOptimizedCTA';
+import { LazyContentHub, LazySocialProof, LazyPricing } from '@/components/Performance/LazyComponents';
 import { useExitIntent, useScrollDepth, useTimeOnPage } from '@/hooks/useConversionTracking';
+import { usePerformanceTracking, useViewportTracking } from '@/hooks/usePerformanceOptimization';
 import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
 import { AnalyticsService } from '@/services/analyticsService';
@@ -26,6 +29,11 @@ const Landing: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [showLeadCapture, setShowLeadCapture] = useState(false);
+  const [showMobileCTA, setShowMobileCTA] = useState(true);
+
+  // Performance and viewport tracking
+  const performanceMetrics = usePerformanceTracking();
+  const viewport = useViewportTracking();
 
   // Advanced conversion tracking
   useExitIntent({
@@ -110,12 +118,12 @@ const Landing: React.FC = () => {
         <Hero />
         
         {/* Social Proof Section */}
-        <SocialProof variant="logos" className="py-12" />
+        <LazySocialProof variant="logos" className="py-12" />
         
         <Features />
         
         {/* Testimonials */}
-        <SocialProof variant="testimonials" />
+        <LazySocialProof variant="testimonials" />
         
         {/* Newsletter Signup */}
         <section className="py-16 px-6 lg:px-8">
@@ -125,12 +133,12 @@ const Landing: React.FC = () => {
         </section>
         
         {/* Stats */}
-        <SocialProof variant="stats" />
+        <LazySocialProof variant="stats" />
         
-        <Pricing />
+        <LazyPricing />
         
         {/* Content Hub - Resources Section */}
-        <ContentHub />
+        <LazyContentHub />
         
         {/* Trust Signals */}
         <TrustSignals variant="compact" className="py-8" />
@@ -153,6 +161,12 @@ const Landing: React.FC = () => {
           trigger="exit_intent"
         />
       </AnimatePresence>
+      
+      {/* Mobile Optimized CTA */}
+      <MobileOptimizedCTA 
+        isVisible={showMobileCTA && viewport.deviceType !== 'desktop'}
+        onClose={() => setShowMobileCTA(false)}
+      />
     </>
   );
 };
