@@ -6,7 +6,8 @@ export interface RealtimeSyncConfig {
   onContentChange?: (content: string) => void;
   onUserJoined?: (userId: string) => void;
   onUserLeft?: (userId: string) => void;
-  onConnectionStatusChange?: (connected: boolean) => void;
+  onConnectionStatusChange?: (connected: boolean, connecting?: boolean) => void;
+  onError?: (error: string) => void;
 }
 
 // Global connection registry to prevent multiple connections to same document
@@ -17,12 +18,14 @@ export class RealtimeSyncService {
   private provider: WebSocket | null = null;
   private config: RealtimeSyncConfig;
   private connected = false;
+  private connecting = false;
   private reconnectAttempts = 0;
-  private maxReconnectAttempts = 3; // Reduced from 5
-  private reconnectDelay = 2000; // Increased base delay
+  private maxReconnectAttempts = 3;
+  private reconnectDelay = 2000;
   private connectionKey: string;
   private isDestroyed = false;
   private reconnectTimeout: number | null = null;
+  private lastError: string | null = null;
 
   constructor(config: RealtimeSyncConfig) {
     this.config = config;
@@ -60,20 +63,34 @@ export class RealtimeSyncService {
   }
 
   private connect() {
-    if (this.isDestroyed) {
+    if (this.isDestroyed || this.connecting) {
       return;
     }
+
+    this.connecting = true;
+    this.config.onConnectionStatusChange?.(false, true);
 
     try {
       const wsUrl = `wss://ubxtmbgvibtjtjggjnjm.supabase.co/functions/v1/realtime-collaboration?documentId=${this.config.documentId}&userId=${this.config.userId}`;
       
       this.provider = new WebSocket(wsUrl);
       
+      // Set a connection timeout
+      const connectionTimeout = setTimeout(() => {
+        if (this.connecting) {
+          this.provider?.close();
+          this.handleConnectionError('Connection timeout');
+        }
+      }, 10000);
+      
       this.provider.onopen = () => {
+        clearTimeout(connectionTimeout);
         console.log('Connected to realtime sync');
         this.connected = true;
+        this.connecting = false;
         this.reconnectAttempts = 0;
-        this.config.onConnectionStatusChange?.(true);
+        this.lastError = null;
+        this.config.onConnectionStatusChange?.(true, false);
       };
 
       this.provider.onmessage = (event) => {
@@ -82,24 +99,46 @@ export class RealtimeSyncService {
           this.handleMessage(message);
         } catch (error) {
           console.error('Error parsing message:', error);
+          this.config.onError?.('Failed to parse server message');
         }
       };
 
-      this.provider.onclose = () => {
-        console.log('Disconnected from realtime sync');
+      this.provider.onclose = (event) => {
+        clearTimeout(connectionTimeout);
+        console.log('Disconnected from realtime sync', event.code, event.reason);
         this.connected = false;
-        this.config.onConnectionStatusChange?.(false);
-        this.attemptReconnect();
+        this.connecting = false;
+        
+        const reason = event.reason || `Connection closed (code: ${event.code})`;
+        this.lastError = reason;
+        
+        this.config.onConnectionStatusChange?.(false, false);
+        
+        // Don't auto-reconnect on certain error codes
+        if (event.code !== 1000 && event.code !== 1001) {
+          this.attemptReconnect();
+        }
       };
 
       this.provider.onerror = (error) => {
+        clearTimeout(connectionTimeout);
         console.error('WebSocket error:', error);
+        this.handleConnectionError('WebSocket connection failed');
       };
 
     } catch (error) {
       console.error('Failed to connect to realtime sync:', error);
-      this.attemptReconnect();
+      this.handleConnectionError(`Connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
+  }
+
+  private handleConnectionError(errorMessage: string) {
+    this.connecting = false;
+    this.connected = false;
+    this.lastError = errorMessage;
+    this.config.onConnectionStatusChange?.(false, false);
+    this.config.onError?.(errorMessage);
+    this.attemptReconnect();
   }
 
   private handleMessage(message: any) {
@@ -188,6 +227,21 @@ export class RealtimeSyncService {
 
   public isConnected(): boolean {
     return this.connected;
+  }
+
+  public isConnecting(): boolean {
+    return this.connecting;
+  }
+
+  public getLastError(): string | null {
+    return this.lastError;
+  }
+
+  public retry() {
+    if (!this.connected && !this.connecting) {
+      this.reconnectAttempts = 0;
+      this.connect();
+    }
   }
 
   public disconnect() {

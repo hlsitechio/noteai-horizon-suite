@@ -109,17 +109,17 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
                   
                   {/* Notes section */}
                   {dayNotes.slice(0, 1).map((note) => (
-                    <button
+                    <div
                       key={note.id}
                       onClick={(e) => {
                         e.stopPropagation();
                         onNoteClick(note);
                       }}
-                      className="flex items-center gap-1 p-1 rounded text-xs bg-orange-500/20 backdrop-blur-sm hover:bg-orange-500/30 transition-colors w-full text-left"
+                      className="flex items-center gap-1 p-1 rounded text-xs bg-orange-500/20 backdrop-blur-sm hover:bg-orange-500/30 transition-colors w-full text-left cursor-pointer"
                     >
                       <FileText className="w-3 h-3" />
                       <span className="truncate">{note.title}</span>
-                    </button>
+                    </div>
                   ))}
                   
                   {/* Show count if more items */}
@@ -132,26 +132,26 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
                 
                 {/* Quick action buttons */}
                 <div className="flex gap-1 mt-2">
-                  <button
+                  <div
                     onClick={(e) => {
                       e.stopPropagation();
                       onAddEvent(day);
                     }}
-                    className="p-1 rounded bg-blue-500/20 hover:bg-blue-500/30 transition-colors"
+                    className="p-1 rounded bg-blue-500/20 hover:bg-blue-500/30 transition-colors cursor-pointer"
                     title="Add Event"
                   >
                     <CalendarIcon className="w-3 h-3" />
-                  </button>
-                  <button
+                  </div>
+                  <div
                     onClick={(e) => {
                       e.stopPropagation();
                       onAddNote(day);
                     }}
-                    className="p-1 rounded bg-green-500/20 hover:bg-green-500/30 transition-colors"
+                    className="p-1 rounded bg-green-500/20 hover:bg-green-500/30 transition-colors cursor-pointer"
                     title="Add Note"
                   >
                     <FileText className="w-3 h-3" />
-                  </button>
+                  </div>
                 </div>
               </button>
             );
