@@ -70,7 +70,7 @@ export const useAIAgents = () => {
         currentAgent: coordinatorRef.current!.getCurrentAgent()
       }));
     }
-  }, [loadConversation]);
+  }, []); // Remove loadConversation dependency to prevent recreation
 
   const sendMessage = useCallback(async (
     message: string, 
