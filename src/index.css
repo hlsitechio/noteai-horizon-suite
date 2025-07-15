@@ -622,6 +622,252 @@
 }
 
 /* ========================================
+   WHITE THEME PRESETS - ULTRA VISUAL APPEALING
+   ======================================== */
+
+@layer base {
+  /* Pristine White - Clean and minimal */
+  .theme-pristine {
+    --background: 0 0% 100%;
+    --foreground: 220 20% 10%;
+    --card: 0 0% 99%;
+    --card-foreground: 220 20% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 10%;
+    --primary: 220 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 20% 96%;
+    --secondary-foreground: 220 20% 20%;
+    --muted: 220 15% 95%;
+    --muted-foreground: 220 20% 50%;
+    --accent: 220 40% 92%;
+    --accent-foreground: 220 20% 20%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 20% 88%;
+    --input: 220 20% 94%;
+    --ring: 220 100% 50%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 220 20% 15%;
+    --sidebar-primary: 220 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 20% 94%;
+    --sidebar-accent-foreground: 220 20% 20%;
+    --sidebar-border: 220 20% 85%;
+    --sidebar-ring: 220 100% 50%;
+
+    /* Pristine gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(220 100% 60% / 0.1), hsl(200 100% 60% / 0.05));
+    --gradient-secondary: linear-gradient(135deg, hsl(220 20% 96%), hsl(220 40% 92%));
+    --gradient-hero: linear-gradient(135deg, hsl(220 100% 60% / 0.03), hsl(200 100% 60% / 0.01));
+    --shadow-premium: 0 20px 40px -10px hsl(220 100% 50% / 0.1);
+    --shadow-elegant: 0 10px 25px -5px hsl(220 20% 20% / 0.05);
+    --shadow-glow: 0 0 50px hsl(220 100% 50% / 0.15);
+  }
+
+  /* Pearl Elegance - Soft pearl tones */
+  .theme-pearl {
+    --background: 0 0% 100%;
+    --foreground: 210 15% 12%;
+    --card: 210 10% 98%;
+    --card-foreground: 210 15% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 15% 12%;
+    --primary: 210 80% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 25% 93%;
+    --secondary-foreground: 210 15% 20%;
+    --muted: 210 20% 94%;
+    --muted-foreground: 210 15% 45%;
+    --accent: 210 35% 90%;
+    --accent-foreground: 210 15% 20%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 20% 85%;
+    --input: 210 25% 92%;
+    --ring: 210 80% 55%;
+
+    --sidebar-background: 210 15% 97%;
+    --sidebar-foreground: 210 15% 15%;
+    --sidebar-primary: 210 80% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 25% 91%;
+    --sidebar-accent-foreground: 210 15% 20%;
+    --sidebar-border: 210 20% 82%;
+    --sidebar-ring: 210 80% 55%;
+
+    /* Pearl gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(210 80% 65% / 0.12), hsl(190 70% 70% / 0.08));
+    --gradient-secondary: linear-gradient(135deg, hsl(210 25% 93%), hsl(210 35% 90%));
+    --gradient-hero: linear-gradient(135deg, hsl(210 80% 65% / 0.04), hsl(190 70% 70% / 0.02));
+    --shadow-premium: 0 25px 50px -12px hsl(210 80% 55% / 0.12);
+    --shadow-elegant: 0 12px 30px -6px hsl(210 15% 20% / 0.06);
+    --shadow-glow: 0 0 60px hsl(210 80% 55% / 0.18);
+  }
+
+  /* Crystal Clear - Ultra clean crystal theme */
+  .theme-crystal {
+    --background: 0 0% 100%;
+    --foreground: 200 20% 8%;
+    --card: 200 15% 99%;
+    --card-foreground: 200 20% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 200 20% 8%;
+    --primary: 200 100% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 200 25% 95%;
+    --secondary-foreground: 200 20% 15%;
+    --muted: 200 20% 96%;
+    --muted-foreground: 200 20% 40%;
+    --accent: 200 30% 92%;
+    --accent-foreground: 200 20% 15%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 200 25% 87%;
+    --input: 200 25% 94%;
+    --ring: 200 100% 45%;
+
+    --sidebar-background: 200 20% 98%;
+    --sidebar-foreground: 200 20% 12%;
+    --sidebar-primary: 200 100% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 200 25% 93%;
+    --sidebar-accent-foreground: 200 20% 15%;
+    --sidebar-border: 200 25% 84%;
+    --sidebar-ring: 200 100% 45%;
+
+    /* Crystal gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(200 100% 55% / 0.1), hsl(180 80% 60% / 0.06));
+    --gradient-secondary: linear-gradient(135deg, hsl(200 25% 95%), hsl(200 30% 92%));
+    --gradient-hero: linear-gradient(135deg, hsl(200 100% 55% / 0.03), hsl(180 80% 60% / 0.02));
+    --shadow-premium: 0 20px 45px -10px hsl(200 100% 45% / 0.12);
+    --shadow-elegant: 0 10px 28px -5px hsl(200 20% 15% / 0.05);
+    --shadow-glow: 0 0 55px hsl(200 100% 45% / 0.16);
+  }
+
+  /* Lavender Breeze - Soft purple whites */
+  .theme-lavender {
+    --background: 0 0% 100%;
+    --foreground: 260 15% 10%;
+    --card: 260 12% 99%;
+    --card-foreground: 260 15% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 260 15% 10%;
+    --primary: 260 60% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 260 20% 94%;
+    --secondary-foreground: 260 15% 18%;
+    --muted: 260 18% 95%;
+    --muted-foreground: 260 15% 42%;
+    --accent: 260 25% 91%;
+    --accent-foreground: 260 15% 18%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 260 20% 86%;
+    --input: 260 20% 93%;
+    --ring: 260 60% 55%;
+
+    --sidebar-background: 260 15% 98%;
+    --sidebar-foreground: 260 15% 13%;
+    --sidebar-primary: 260 60% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 260 20% 92%;
+    --sidebar-accent-foreground: 260 15% 18%;
+    --sidebar-border: 260 20% 83%;
+    --sidebar-ring: 260 60% 55%;
+
+    /* Lavender gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(260 60% 65% / 0.1), hsl(280 50% 70% / 0.06));
+    --gradient-secondary: linear-gradient(135deg, hsl(260 20% 94%), hsl(260 25% 91%));
+    --gradient-hero: linear-gradient(135deg, hsl(260 60% 65% / 0.03), hsl(280 50% 70% / 0.02));
+    --shadow-premium: 0 22px 44px -10px hsl(260 60% 55% / 0.11);
+    --shadow-elegant: 0 11px 26px -5px hsl(260 15% 18% / 0.05);
+    --shadow-glow: 0 0 52px hsl(260 60% 55% / 0.15);
+  }
+
+  /* Rose Quartz - Warm pink whites */
+  .theme-rose {
+    --background: 0 0% 100%;
+    --foreground: 340 18% 10%;
+    --card: 340 15% 99%;
+    --card-foreground: 340 18% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 340 18% 10%;
+    --primary: 340 75% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 340 22% 94%;
+    --secondary-foreground: 340 18% 16%;
+    --muted: 340 20% 95%;
+    --muted-foreground: 340 18% 44%;
+    --accent: 340 28% 91%;
+    --accent-foreground: 340 18% 16%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 340 22% 86%;
+    --input: 340 22% 93%;
+    --ring: 340 75% 55%;
+
+    --sidebar-background: 340 18% 98%;
+    --sidebar-foreground: 340 18% 12%;
+    --sidebar-primary: 340 75% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 340 22% 92%;
+    --sidebar-accent-foreground: 340 18% 16%;
+    --sidebar-border: 340 22% 83%;
+    --sidebar-ring: 340 75% 55%;
+
+    /* Rose gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(340 75% 65% / 0.1), hsl(320 60% 70% / 0.06));
+    --gradient-secondary: linear-gradient(135deg, hsl(340 22% 94%), hsl(340 28% 91%));
+    --gradient-hero: linear-gradient(135deg, hsl(340 75% 65% / 0.03), hsl(320 60% 70% / 0.02));
+    --shadow-premium: 0 24px 48px -12px hsl(340 75% 55% / 0.12);
+    --shadow-elegant: 0 12px 28px -6px hsl(340 18% 16% / 0.05);
+    --shadow-glow: 0 0 56px hsl(340 75% 55% / 0.16);
+  }
+
+  /* Mint Fresh - Cool mint whites */
+  .theme-mint {
+    --background: 0 0% 100%;
+    --foreground: 160 18% 10%;
+    --card: 160 15% 99%;
+    --card-foreground: 160 18% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 160 18% 10%;
+    --primary: 160 70% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 22% 94%;
+    --secondary-foreground: 160 18% 16%;
+    --muted: 160 20% 95%;
+    --muted-foreground: 160 18% 44%;
+    --accent: 160 28% 91%;
+    --accent-foreground: 160 18% 16%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 160 22% 86%;
+    --input: 160 22% 93%;
+    --ring: 160 70% 45%;
+
+    --sidebar-background: 160 18% 98%;
+    --sidebar-foreground: 160 18% 12%;
+    --sidebar-primary: 160 70% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 160 22% 92%;
+    --sidebar-accent-foreground: 160 18% 16%;
+    --sidebar-border: 160 22% 83%;
+    --sidebar-ring: 160 70% 45%;
+
+    /* Mint gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(160 70% 55% / 0.1), hsl(140 60% 60% / 0.06));
+    --gradient-secondary: linear-gradient(135deg, hsl(160 22% 94%), hsl(160 28% 91%));
+    --gradient-hero: linear-gradient(135deg, hsl(160 70% 55% / 0.03), hsl(140 60% 60% / 0.02));
+    --shadow-premium: 0 20px 42px -10px hsl(160 70% 45% / 0.11);
+    --shadow-elegant: 0 10px 25px -5px hsl(160 18% 16% / 0.05);
+    --shadow-glow: 0 0 50px hsl(160 70% 45% / 0.15);
+  }
+}
+
+/* ========================================
    GLOBAL STYLES & UTILITIES
    ======================================== */
 

@@ -79,6 +79,12 @@ const NavigationMenu: React.FC = () => {
       path: '/app/activity',
       description: 'Track your actions and history'
     },
+    { 
+      icon: 'bx bx-palette', 
+      label: 'Themes', 
+      path: '/app/themes',
+      description: 'Beautiful theme gallery'
+    },
   ];
 
   return (
