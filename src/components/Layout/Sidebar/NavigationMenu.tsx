@@ -91,7 +91,7 @@ const NavigationMenu: React.FC = () => {
     <div className="space-y-1">
       {/* Collapse Button */}
       <div className="px-2 mb-2">
-        <Tooltip delayDuration={300}>
+        <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
@@ -113,12 +113,8 @@ const NavigationMenu: React.FC = () => {
               )}
             </Button>
           </TooltipTrigger>
-          <TooltipContent 
-            side="right" 
-            className="bg-popover border border-border shadow-md z-50"
-            sideOffset={12}
-          >
-            <p className="text-sm font-medium">{isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}</p>
+          <TooltipContent side="right" sideOffset={8}>
+            <p>{isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}</p>
           </TooltipContent>
         </Tooltip>
       </div>
@@ -166,18 +162,14 @@ const NavigationMenu: React.FC = () => {
         return (
           <Link key={item.path} to={item.path} className="block">
             {isMobile || isCollapsed ? (
-              <Tooltip delayDuration={300}>
+              <Tooltip>
                 <TooltipTrigger asChild>
                   {buttonContent}
                 </TooltipTrigger>
-                <TooltipContent 
-                  side="right" 
-                  className="animate-fade-in bg-popover border border-border shadow-md z-50"
-                  sideOffset={12}
-                >
-                  <div className="px-2 py-1">
-                    <p className="font-medium text-sm">{item.label}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
+                <TooltipContent side="right" sideOffset={8}>
+                  <div>
+                    <p className="font-medium">{item.label}</p>
+                    <p className="text-xs text-muted-foreground">{item.description}</p>
                   </div>
                 </TooltipContent>
               </Tooltip>

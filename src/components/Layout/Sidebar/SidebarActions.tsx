@@ -78,7 +78,7 @@ export function SidebarSignOutButton({ isExpanded = true, isMobile = false }: { 
 
   return (
     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-      <Tooltip delayDuration={300}>
+      <Tooltip>
         <TooltipTrigger asChild>
           <Button
             variant="ghost"
@@ -94,12 +94,8 @@ export function SidebarSignOutButton({ isExpanded = true, isMobile = false }: { 
           </Button>
         </TooltipTrigger>
         {(isCollapsed || isMobile) && (
-          <TooltipContent 
-            side="right" 
-            className="bg-popover border border-border shadow-md z-50"
-            sideOffset={12}
-          >
-            <p className="text-sm font-medium">Sign Out</p>
+          <TooltipContent side="right" sideOffset={8}>
+            <p>Sign Out</p>
           </TooltipContent>
         )}
       </Tooltip>
