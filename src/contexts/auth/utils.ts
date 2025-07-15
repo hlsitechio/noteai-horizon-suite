@@ -55,25 +55,48 @@ export const transformUser = async (supabaseUser: SupabaseUser): Promise<User> =
 export const clearCorruptedSession = async () => {
   console.log('Clearing potentially corrupted session data');
   try {
-    // Clear all possible session storage keys
+    // Clear all possible session storage keys including project-specific ones
     const authKeys = [
       'supabase.auth.token',
+      'sb-ubxtmbgvibtjtjggjnjm-auth-token', // Project-specific key
       'sb-qrdulwzjgbfgaplazgsh-auth-token',
       'supabase-auth-token',
       'sb-auth-token'
     ];
     
+    // Clear localStorage
     authKeys.forEach(key => {
       localStorage.removeItem(key);
       sessionStorage.removeItem(key);
     });
     
+    // Clear all supabase-related keys with wildcard pattern
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && (key.includes('supabase') || key.includes('sb-'))) {
+        localStorage.removeItem(key);
+      }
+    }
+    
+    // Clear sessionStorage as well
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i);
+      if (key && (key.includes('supabase') || key.includes('sb-'))) {
+        sessionStorage.removeItem(key);
+      }
+    }
+    
     // Force sign out without waiting for response to avoid hanging
-    supabase.auth.signOut({ scope: 'local' });
+    await supabase.auth.signOut({ scope: 'local' });
     
     console.log('Session data cleared successfully');
+    
+    // Force reload to ensure clean state
+    window.location.reload();
   } catch (error) {
     console.error('Error clearing session:', error);
+    // Force reload even if clearing fails
+    window.location.reload();
   }
 };
 
