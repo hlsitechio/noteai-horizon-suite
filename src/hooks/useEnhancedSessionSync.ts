@@ -20,7 +20,7 @@ export function useEnhancedSessionSync({
 
   const syncSession = useCallback(async () => {
     try {
-      console.log('Syncing session...');
+      // Syncing session
       const { data, error } = await supabase.auth.getSession();
       
       if (error) {
@@ -31,7 +31,7 @@ export function useEnhancedSessionSync({
       }
       
       setSession(data?.session || null);
-      console.log('Session synced successfully:', !!data?.session);
+      // Session synced successfully
     } catch (error) {
       const sessionError = error instanceof Error ? error : new Error('Unknown session sync error');
       console.error('Session sync failed:', sessionError);
@@ -51,29 +51,25 @@ export function useEnhancedSessionSync({
       async (event, session) => {
         if (!mounted) return;
         
-        console.log('Auth state changed:', event, !!session);
+        // Handle auth state changes without logging sensitive data
         
         try {
           // Handle different auth events
           switch (event) {
             case 'SIGNED_IN':
-              console.log('User signed in');
               setSession(session);
               break;
             case 'SIGNED_OUT':
-              console.log('User signed out');
               setSession(null);
               break;
             case 'TOKEN_REFRESHED':
-              console.log('Token refreshed');
               setSession(session);
               break;
             case 'USER_UPDATED':
-              console.log('User updated');
               setSession(session);
               break;
             case 'PASSWORD_RECOVERY':
-              console.log('Password recovery initiated');
+              // Password recovery initiated
               break;
             default:
               setSession(session);
@@ -97,7 +93,7 @@ export function useEnhancedSessionSync({
 
     // Cleanup function
     return () => {
-      console.log('Cleaning up enhanced session sync');
+      // Cleaning up enhanced session sync
       mounted = false;
       subscription?.unsubscribe();
     };

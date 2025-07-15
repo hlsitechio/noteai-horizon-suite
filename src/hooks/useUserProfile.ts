@@ -26,7 +26,7 @@ export const useUserProfile = () => {
 
     try {
       setIsLoading(true);
-      console.log('Fetching user profile via edge function...');
+      // Fetching user profile via edge function
 
       // Get the current session to pass the auth token
       const { data: sessionData } = await supabase.auth.getSession();
@@ -37,7 +37,7 @@ export const useUserProfile = () => {
         return;
       }
 
-      console.log('Session found, calling edge function with auth token');
+      // Session found, calling edge function with auth token
       
       const { data, error } = await supabase.functions.invoke('get-user-profile', {
         headers: {

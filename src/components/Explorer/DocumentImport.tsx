@@ -148,7 +148,7 @@ export const DocumentImport: React.FC<DocumentImportProps> = ({
       throw new Error('User not authenticated');
     }
 
-    console.log('User authenticated:', user.id);
+    // User authenticated, proceed with upload
     // Update status to uploading
     updateFileInfo(fileUpload.id, { status: 'uploading', progress: 0 });
 

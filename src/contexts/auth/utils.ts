@@ -84,7 +84,7 @@ export const handleRefreshTokenError = async (error: Error) => {
       errorMessage.includes('refresh token not found') ||
       errorMessage.includes('jwt') ||
       errorMessage.includes('expired')) {
-    console.log('Authentication error detected, clearing session:', error.message);
+    // Authentication error detected, clearing session
     await clearCorruptedSession();
     return true;
   }

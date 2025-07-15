@@ -71,7 +71,7 @@ export const useOptimizedAuth = (): UseOptimizedAuthReturn => {
       (event, session) => {
         if (!mountedRef.current) return;
         
-        console.log('Auth state changed:', event);
+        // Handle auth state change without logging
         
         // Handle auth events synchronously to prevent deadlocks
         handleAuthChange(session);
