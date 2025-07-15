@@ -131,108 +131,18 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     let isSetupInProgress = false;
     
     const setupRealtimeSubscription = async () => {
-      // Prevent concurrent setups
-      if (isSetupInProgress) {
-        console.log('Real-time setup already in progress, skipping');
-        return;
+      // Real-time subscription disabled to prevent connection errors
+      console.warn('NotesContext: Real-time subscription disabled');
+      
+      // Still do initial load
+      if (user && !authLoading) {
+        await refreshNotes();
       }
       
-      isSetupInProgress = true;
-
-      // Clean up any existing subscription first
-      cleanupSubscription();
-
-      // Wait for auth to be ready and ensure user is authenticated
-      if (authLoading || !user) {
-        // Development logging only
-        if (import.meta.env.DEV) {
-          console.log('Auth not ready or no user, skipping real-time setup');
-        }
-        setIsLoading(false);
-        isSetupInProgress = false;
-        return;
-      }
-
-      // Check if user changed - if so, we need to set up a new subscription
-      const userChanged = currentUserIdRef.current !== user.id;
-      currentUserIdRef.current = user.id;
-
-      // Prevent multiple subscriptions for the same user
-      if (hasSubscribedRef.current && !userChanged) {
-        // Development logging only
-        if (import.meta.env.DEV) {
-          console.log('Real-time subscription already exists for current user, skipping setup');
-        }
-        isSetupInProgress = false;
-        return;
-      }
-
-      try {
-        // Development logging only
-        if (import.meta.env.DEV) {
-          console.log('Setting up real-time subscription');
-        }
-        
-        // Initial load
-        await refreshNotes();
-
-        // Set up VERY conservative real-time subscription to prevent performance issues
-        // Heavily debounced to prevent query flooding
-        const channel = SupabaseNotesService.subscribeToNoteChanges(
-          user.id,
-          // onInsert - heavily debounced and throttled
-          debounce((newNote: Note) => {
-            setNotes(prev => {
-              // Check if note already exists to avoid duplicates
-              const exists = prev.find(note => note.id === newNote.id);
-              if (exists) return prev;
-              
-              return [newNote, ...prev];
-            });
-          }, 2000), // 2 second debounce to prevent rapid-fire updates
-          // onUpdate - heavily debounced and throttled
-          debounce((updatedNote: Note) => {
-            setNotes(prev => prev.map(note => 
-              note.id === updatedNote.id ? updatedNote : note
-            ));
-            
-            // Update current note if it's the one being edited
-            if (currentNote?.id === updatedNote.id) {
-              setCurrentNote(updatedNote);
-            }
-            if (selectedNote?.id === updatedNote.id) {
-              setSelectedNote(updatedNote);
-            }
-          }, 2000), // 2 second debounce
-          // onDelete - heavily debounced
-          debounce((deletedNoteId: string) => {
-            setNotes(prev => prev.filter(note => note.id !== deletedNoteId));
-            
-            // Clear current note if it was deleted
-            if (currentNote?.id === deletedNoteId) {
-              setCurrentNote(null);
-            }
-            if (selectedNote?.id === deletedNoteId) {
-              setSelectedNote(null);
-            }
-          }, 1000) // 1 second debounce for deletes
-        );
-
-        // Store the channel reference and mark as subscribed
-        subscriptionRef.current = channel;
-        hasSubscribedRef.current = true;
-        setSyncStatus('connected');
-        
-        if (import.meta.env.DEV) {
-          console.log('Real-time subscription setup completed');
-        }
-      } catch (error) {
-        console.error('Error setting up real-time subscription:', error);
-        setSyncStatus('disconnected');
-        hasSubscribedRef.current = false;
-      } finally {
-        isSetupInProgress = false;
-      }
+      hasSubscribedRef.current = false;
+      setSyncStatus('disconnected');
+      isSetupInProgress = false;
+      return;
     };
 
     // Reduced debounce to minimize violations

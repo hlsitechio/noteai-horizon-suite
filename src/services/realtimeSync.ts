@@ -124,89 +124,12 @@ export class RealtimeSyncService {
       return;
     }
 
-    this.connecting = true;
-    this.config.onConnectionStatusChange?.(false, true);
-
-    try {
-      // Use the correct Supabase Edge Function WebSocket URL
-      const wsUrl = `wss://ubxtmbgvibtjtjggjnjm.supabase.co/functions/v1/realtime-collaboration?documentId=${encodeURIComponent(this.config.documentId)}&userId=${encodeURIComponent(this.config.userId)}`;
-      
-      console.log('Attempting WebSocket connection to:', wsUrl);
-      this.provider = new WebSocket(wsUrl);
-      
-      // Set a connection timeout
-      const connectionTimeout = setTimeout(() => {
-        if (this.connecting) {
-          this.provider?.close();
-          this.handleConnectionError('Connection timeout');
-        }
-      }, 10000);
-      
-      this.provider.onopen = () => {
-        clearTimeout(connectionTimeout);
-        console.log('Connected to realtime sync');
-        this.connected = true;
-        this.connecting = false;
-        this.reconnectAttempts = 0;
-        this.lastError = null;
-        this.config.onConnectionStatusChange?.(true, false);
-        
-        // Send initial awareness state
-        const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(
-          this.awareness,
-          [this.awareness.clientID]
-        );
-        this.provider.send(JSON.stringify({
-          type: 'awareness',
-          data: Array.from(awarenessUpdate)
-        }));
-      };
-
-      this.provider.onmessage = (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          this.handleMessage(message);
-        } catch (error) {
-          console.error('Error parsing message:', error);
-          this.config.onError?.('Failed to parse server message');
-        }
-      };
-
-      this.provider.onclose = (event) => {
-        clearTimeout(connectionTimeout);
-        console.log('Disconnected from realtime sync', event.code, event.reason);
-        this.connected = false;
-        this.connecting = false;
-        
-        const reason = event.reason || `Connection closed (code: ${event.code})`;
-        this.lastError = reason;
-        
-        this.config.onConnectionStatusChange?.(false, false);
-        
-        // Mark all remote clients as offline when connection is lost
-        const remoteClients = Array.from(this.awareness.getStates().keys())
-          .filter(clientId => clientId !== this.awareness.clientID);
-        
-        if (remoteClients.length > 0) {
-          awarenessProtocol.removeAwarenessStates(this.awareness, remoteClients, 'connection-closed');
-        }
-        
-        // Don't auto-reconnect on certain error codes
-        if (event.code !== 1000 && event.code !== 1001) {
-          this.attemptReconnect();
-        }
-      };
-
-      this.provider.onerror = (error) => {
-        clearTimeout(connectionTimeout);
-        console.error('WebSocket error:', error);
-        this.handleConnectionError('WebSocket connection failed');
-      };
-
-    } catch (error) {
-      console.error('Failed to connect to realtime sync:', error);
-      this.handleConnectionError(`Connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+    // WebSocket connections disabled to prevent CSP violations and connection errors
+    console.warn('RealtimeSyncService: WebSocket connections disabled');
+    this.connecting = false;
+    this.config.onConnectionStatusChange?.(false, false);
+    this.config.onError?.('WebSocket connections disabled');
+    return;
   }
 
   private handleConnectionError(errorMessage: string) {

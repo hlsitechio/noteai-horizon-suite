@@ -139,38 +139,11 @@ export const useTasks = () => {
     }
   };
 
-  // Set up real-time subscription
+  // Set up real-time subscription - disabled to prevent connection errors
   useEffect(() => {
     fetchTasks();
-
-    const channel = supabase
-      .channel('tasks-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'tasks'
-        },
-        (payload) => {
-          console.log('Task change received:', payload);
-          
-          if (payload.eventType === 'INSERT') {
-            setTasks(prev => [...prev, payload.new as Task]);
-          } else if (payload.eventType === 'UPDATE') {
-            setTasks(prev => prev.map(task => 
-              task.id === payload.new.id ? payload.new as Task : task
-            ));
-          } else if (payload.eventType === 'DELETE') {
-            setTasks(prev => prev.filter(task => task.id !== payload.old.id));
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    // Real-time subscription disabled
+    console.warn('Tasks real-time subscription disabled');
   }, []);
 
   return {

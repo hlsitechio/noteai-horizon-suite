@@ -59,133 +59,11 @@ export const useOptimizedRealtime = ({
       return;
     }
 
-    if (subscriptionActiveRef.current && channelRef.current) {
-      logger.realtime.debug('Realtime subscription already active');
-      return;
-    }
-
-    cleanup(); // Clean up any existing subscription
-
-    try {
-      logger.realtime.debug('Setting up optimized realtime subscription for user:', user.id);
-
-      const channel = supabase
-        .channel(`notes-${user.id}-${Date.now()}`, {
-          config: {
-            broadcast: { self: false },
-            presence: { key: user.id }
-          }
-        })
-        .on(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'notes_v2',
-            filter: `user_id=eq.${user.id}`
-          },
-          (payload) => {
-            const { onInsert: currentOnInsert } = callbacksRef.current;
-            if (currentOnInsert && payload.new) {
-              throttleEvent('insert', () => {
-                try {
-                  const note: Note = {
-                    id: payload.new.id,
-                    title: payload.new.title,
-                    content: payload.new.content,
-                    category: payload.new.content_type || 'general',
-                    tags: payload.new.tags || [],
-                    createdAt: payload.new.created_at,
-                    updatedAt: payload.new.updated_at,
-                    isFavorite: payload.new.is_public || false,
-                    folder_id: payload.new.folder_id,
-                    reminder_date: payload.new.reminder_date,
-                    reminder_status: (payload.new.reminder_status || 'none') as any,
-                    reminder_frequency: (payload.new.reminder_frequency || 'once') as any,
-                    reminder_enabled: payload.new.reminder_enabled || false,
-                  };
-                  currentOnInsert(note);
-                } catch (error) {
-                  logger.realtime.error('Error processing INSERT event:', error);
-                }
-              });
-            }
-          }
-        )
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'notes_v2',
-            filter: `user_id=eq.${user.id}`
-          },
-          (payload) => {
-            const { onUpdate: currentOnUpdate } = callbacksRef.current;
-            if (currentOnUpdate && payload.new) {
-              throttleEvent('update', () => {
-                try {
-                  const note: Note = {
-                    id: payload.new.id,
-                    title: payload.new.title,
-                    content: payload.new.content,
-                    category: payload.new.content_type || 'general',
-                    tags: payload.new.tags || [],
-                    createdAt: payload.new.created_at,
-                    updatedAt: payload.new.updated_at,
-                    isFavorite: payload.new.is_public || false,
-                    folder_id: payload.new.folder_id,
-                    reminder_date: payload.new.reminder_date,
-                    reminder_status: (payload.new.reminder_status || 'none') as any,
-                    reminder_frequency: (payload.new.reminder_frequency || 'once') as any,
-                    reminder_enabled: payload.new.reminder_enabled || false,
-                  };
-                  currentOnUpdate(note);
-                } catch (error) {
-                  logger.realtime.error('Error processing UPDATE event:', error);
-                }
-              });
-            }
-          }
-        )
-        .on(
-          'postgres_changes',
-          {
-            event: 'DELETE',
-            schema: 'public',
-            table: 'notes_v2',
-            filter: `user_id=eq.${user.id}`
-          },
-          (payload) => {
-            const { onDelete: currentOnDelete } = callbacksRef.current;
-            if (currentOnDelete && payload.old) {
-              throttleEvent('delete', () => {
-                try {
-                  currentOnDelete(payload.old.id);
-                } catch (error) {
-                  logger.realtime.error('Error processing DELETE event:', error);
-                }
-              });
-            }
-          }
-        );
-
-      channel.subscribe((status) => {
-        logger.realtime.debug(`Realtime subscription status: ${status}`);
-        if (status === 'SUBSCRIBED') {
-          subscriptionActiveRef.current = true;
-        } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
-          subscriptionActiveRef.current = false;
-        }
-      });
-
-      channelRef.current = channel;
-      logger.realtime.debug('Optimized realtime subscription setup completed');
-    } catch (error) {
-      logger.realtime.error('Error setting up realtime subscription:', error);
-      subscriptionActiveRef.current = false;
-    }
-  }, [enabled, isAuthenticated, user?.id, throttleEvent, cleanup]);
+    // Realtime connections disabled to prevent connection errors
+    logger.realtime.debug('Realtime connections disabled');
+    subscriptionActiveRef.current = false;
+    return;
+  }, [enabled, isAuthenticated, user?.id]);
 
   useEffect(() => {
     setupRealtime();
@@ -193,7 +71,7 @@ export const useOptimizedRealtime = ({
   }, [setupRealtime, cleanup]);
 
   return {
-    isConnected: subscriptionActiveRef.current,
+    isConnected: false, // Always false since realtime is disabled
     reconnect: setupRealtime,
     disconnect: cleanup,
   };

@@ -60,13 +60,10 @@ export const useRealtimeSync = ({
       onConnectionStatusChange: handleConnectionChange
     };
 
-    try {
-      syncServiceRef.current = new RealtimeSyncService(config);
-    } catch (error) {
-      console.warn('Failed to create RealtimeSyncService, connection may already exist:', error);
-      // If connection already exists, that's fine - just continue without creating a new one
-      return;
-    }
+    // RealtimeSyncService disabled to prevent WebSocket connection errors
+    console.warn('RealtimeSyncService disabled - WebSocket connections not available');
+    setConnected(false);
+    return;
 
     return () => {
       if (syncServiceRef.current) {
