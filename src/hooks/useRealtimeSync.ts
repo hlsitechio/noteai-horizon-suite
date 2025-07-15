@@ -19,6 +19,7 @@ export const useRealtimeSync = ({
   const [activeUsers, setActiveUsers] = useState<string[]>([]);
   const syncServiceRef = useRef<RealtimeSyncService | null>(null);
   const { toast } = useToast();
+  const lastConnectionToastRef = useRef<string | null>(null);
 
   const handleUserJoined = useCallback((joinedUserId: string) => {
     setActiveUsers(prev => [...prev.filter(id => id !== joinedUserId), joinedUserId]);
@@ -32,10 +33,18 @@ export const useRealtimeSync = ({
 
   const handleConnectionChange = useCallback((isConnected: boolean) => {
     setConnected(isConnected);
-    if (isConnected) {
-      toast.success('Connected to real-time sync');
-    } else {
-      toast.error('Disconnected from real-time sync');
+    
+    // Prevent spam notifications by tracking the last toast type
+    const currentToastType = isConnected ? 'connected' : 'disconnected';
+    
+    if (lastConnectionToastRef.current !== currentToastType) {
+      if (isConnected) {
+        toast.success('Connected to real-time sync');
+        lastConnectionToastRef.current = 'connected';
+      } else {
+        toast.error('Disconnected from real-time sync');
+        lastConnectionToastRef.current = 'disconnected';
+      }
     }
   }, [toast]);
 
@@ -51,7 +60,13 @@ export const useRealtimeSync = ({
       onConnectionStatusChange: handleConnectionChange
     };
 
-    syncServiceRef.current = new RealtimeSyncService(config);
+    try {
+      syncServiceRef.current = new RealtimeSyncService(config);
+    } catch (error) {
+      console.warn('Failed to create RealtimeSyncService, connection may already exist:', error);
+      // If connection already exists, that's fine - just continue without creating a new one
+      return;
+    }
 
     return () => {
       if (syncServiceRef.current) {

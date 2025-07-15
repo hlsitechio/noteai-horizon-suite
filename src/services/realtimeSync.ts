@@ -9,20 +9,43 @@ export interface RealtimeSyncConfig {
   onConnectionStatusChange?: (connected: boolean) => void;
 }
 
+// Global connection registry to prevent multiple connections to same document
+const connectionRegistry = new Map<string, RealtimeSyncService>();
+
 export class RealtimeSyncService {
   private doc: Y.Doc;
   private provider: WebSocket | null = null;
   private config: RealtimeSyncConfig;
   private connected = false;
   private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
-  private reconnectDelay = 1000;
+  private maxReconnectAttempts = 3; // Reduced from 5
+  private reconnectDelay = 2000; // Increased base delay
+  private connectionKey: string;
+  private isDestroyed = false;
+  private reconnectTimeout: number | null = null;
 
   constructor(config: RealtimeSyncConfig) {
     this.config = config;
+    this.connectionKey = `${config.documentId}-${config.userId}`;
+    
+    // Check if connection already exists for this document/user
+    const existingConnection = connectionRegistry.get(this.connectionKey);
+    if (existingConnection && !existingConnection.isDestroyed) {
+      throw new Error(`Connection already exists for document ${config.documentId} and user ${config.userId}`);
+    }
+    
     this.doc = new Y.Doc();
     this.setupDocument();
-    this.connect();
+    
+    // Register this connection
+    connectionRegistry.set(this.connectionKey, this);
+    
+    // Connect after a short delay to prevent immediate resource exhaustion
+    setTimeout(() => {
+      if (!this.isDestroyed) {
+        this.connect();
+      }
+    }, 100);
   }
 
   private setupDocument() {
@@ -99,17 +122,31 @@ export class RealtimeSyncService {
   }
 
   private attemptReconnect() {
+    if (this.isDestroyed) {
+      return;
+    }
+
+    // Clear any existing reconnect timeout
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
+    }
+
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
+      const delay = Math.min(this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1), 30000); // Cap at 30 seconds
       
       console.log(`Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts})`);
       
-      setTimeout(() => {
-        this.connect();
+      this.reconnectTimeout = window.setTimeout(() => {
+        if (!this.isDestroyed) {
+          this.connect();
+        }
       }, delay);
     } else {
-      console.error('Max reconnection attempts reached');
+      console.error('Max reconnection attempts reached for document', this.config.documentId);
+      // Stop trying to reconnect
+      this.config.onConnectionStatusChange?.(false);
     }
   }
 
@@ -150,10 +187,23 @@ export class RealtimeSyncService {
   }
 
   public disconnect() {
+    this.isDestroyed = true;
+    
+    // Clear any pending reconnect timeout
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
+    }
+    
+    // Remove from connection registry
+    connectionRegistry.delete(this.connectionKey);
+    
     if (this.provider) {
       this.provider.close();
       this.provider = null;
     }
+    
+    this.connected = false;
     this.doc.destroy();
   }
 }
