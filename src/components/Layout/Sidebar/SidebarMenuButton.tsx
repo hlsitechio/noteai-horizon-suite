@@ -26,7 +26,9 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
   const isCurrentlyDark = isDarkMode(theme);
 
   const handleThemeToggle = () => {
+    console.log('Theme toggle clicked. Current theme:', theme);
     const newTheme = toggleTheme(theme);
+    console.log('New theme will be:', newTheme);
     setTheme(newTheme);
   };
 
