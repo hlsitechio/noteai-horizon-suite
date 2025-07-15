@@ -60,11 +60,9 @@ export class RealtimeSyncService {
   }
 
   private connect() {
-    // Temporary: Disable WebSocket connections to prevent resource issues
-    console.log('Real-time sync temporarily disabled due to WebSocket issues');
-    this.connected = false;
-    this.config.onConnectionStatusChange?.(false);
-    return;
+    if (this.isDestroyed) {
+      return;
+    }
 
     try {
       const wsUrl = `wss://ubxtmbgvibtjtjggjnjm.supabase.co/functions/v1/realtime-collaboration?documentId=${this.config.documentId}&userId=${this.config.userId}`;
