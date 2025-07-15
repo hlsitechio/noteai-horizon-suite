@@ -18,7 +18,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, model = "moonshotai/kimi-k2", response_format } = await req.json();
+    const { messages, model = "moonshotai/kimi-k2:free", response_format } = await req.json();
 
     console.log('Chat request received:', { 
       messagesCount: messages.length, 

@@ -29,7 +29,7 @@ export const useAIChat = () => {
       const { data, error } = await supabase.functions.invoke('chat-openrouter', {
         body: { 
           messages: openAIMessages,
-          model: 'moonshotai/kimi-k2'
+          model: 'moonshotai/kimi-k2:free'
         }
       });
 

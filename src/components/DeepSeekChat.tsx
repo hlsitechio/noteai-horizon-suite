@@ -26,7 +26,7 @@ const DeepSeekChat: React.FC = () => {
               content: input
             }
           ],
-          model: 'moonshotai/kimi-k2'
+          model: 'moonshotai/kimi-k2:free'
         }
       });
 
