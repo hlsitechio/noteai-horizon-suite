@@ -13,6 +13,8 @@ const connections = new Map<string, Set<WebSocket>>();
 
 serve(async (req) => {
   try {
+    console.log('Realtime collaboration function called', req.method, req.url);
+    
     const { headers } = req;
     const upgradeHeader = headers.get("upgrade") || "";
 
@@ -21,6 +23,7 @@ serve(async (req) => {
     }
 
     if (upgradeHeader.toLowerCase() !== "websocket") {
+      console.log('Invalid upgrade header:', upgradeHeader);
       return new Response("Expected WebSocket connection", { 
         status: 400,
         headers: corsHeaders 
@@ -38,10 +41,13 @@ serve(async (req) => {
       headers: corsHeaders
     });
     
+    console.log('WebSocket upgrade successful');
+    
     // Get or create Y.js document
     if (!documents.has(documentId)) {
       documents.set(documentId, new Y.Doc());
       connections.set(documentId, new Set());
+      console.log(`Created new document: ${documentId}`);
     }
 
     const doc = documents.get(documentId)!;
@@ -51,21 +57,26 @@ serve(async (req) => {
       console.log(`WebSocket opened for document: ${documentId}, user: ${userId}`);
       documentConnections.add(socket);
 
-      // Send current document state to new client
-      const state = Y.encodeStateAsUpdate(doc);
-      if (state.length > 0) {
-        socket.send(JSON.stringify({
-          type: 'sync',
-          data: Array.from(state)
-        }));
-      }
+      try {
+        // Send current document state to new client
+        const state = Y.encodeStateAsUpdate(doc);
+        if (state.length > 0) {
+          socket.send(JSON.stringify({
+            type: 'sync',
+            data: Array.from(state)
+          }));
+          console.log(`Sent initial state to user ${userId}`);
+        }
 
-      // Notify other clients about new connection
-      broadcastToOthers(documentId, socket, {
-        type: 'user-joined',
-        userId: userId,
-        timestamp: Date.now()
-      });
+        // Notify other clients about new connection
+        broadcastToOthers(documentId, socket, {
+          type: 'user-joined',
+          userId: userId,
+          timestamp: Date.now()
+        });
+      } catch (error) {
+        console.error('Error in onopen handler:', error);
+      }
     };
 
     socket.onmessage = (event) => {
@@ -104,6 +115,7 @@ serve(async (req) => {
         }
       } catch (error) {
         console.error('Error processing message:', error);
+        console.error('Message data:', event.data);
       }
     };
 
@@ -115,13 +127,18 @@ serve(async (req) => {
       if (documentConnections.size === 0) {
         documents.delete(documentId);
         connections.delete(documentId);
+        console.log(`Cleaned up document: ${documentId}`);
       } else {
         // Notify other clients about disconnection
-        broadcastToOthers(documentId, socket, {
-          type: 'user-left',
-          userId: userId,
-          timestamp: Date.now()
-        });
+        try {
+          broadcastToOthers(documentId, socket, {
+            type: 'user-left',
+            userId: userId,
+            timestamp: Date.now()
+          });
+        } catch (error) {
+          console.error('Error broadcasting user left:', error);
+        }
       }
     };
 
@@ -133,6 +150,7 @@ serve(async (req) => {
     
   } catch (error) {
     console.error('Error in WebSocket handler:', error);
+    console.error('Error stack:', error.stack);
     return new Response(`WebSocket error: ${error.message}`, { 
       status: 500,
       headers: corsHeaders 
@@ -142,9 +160,13 @@ serve(async (req) => {
 
 function broadcastToOthers(documentId: string, sender: WebSocket, message: any) {
   const documentConnections = connections.get(documentId);
-  if (!documentConnections) return;
+  if (!documentConnections) {
+    console.log(`No connections found for document: ${documentId}`);
+    return;
+  }
 
   const messageStr = JSON.stringify(message);
+  console.log(`Broadcasting to ${documentConnections.size - 1} clients for document: ${documentId}`);
   
   for (const socket of documentConnections) {
     if (socket !== sender && socket.readyState === WebSocket.OPEN) {
