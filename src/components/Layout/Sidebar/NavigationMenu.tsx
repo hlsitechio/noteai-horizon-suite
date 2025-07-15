@@ -7,26 +7,36 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useSidebarCollapse } from '@/contexts/SidebarContext';
 import { useAccentColor } from '@/contexts/AccentColorContext';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { NavigationItem, SidebarContextError } from './types';
 import 'boxicons/css/boxicons.min.css';
 
-const NavigationMenu: React.FC = () => {
+interface NavigationMenuProps {
+  onNavigate?: (path: string) => void;
+}
+
+const NavigationMenu: React.FC<NavigationMenuProps> = ({ onNavigate }) => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const { accentColorHsl } = useAccentColor();
   
-  // Add error handling for the context
+  // Enhanced error handling with proper typing
   let isCollapsed = false;
-  let toggleCollapse = () => {};
+  let toggleCollapse: () => void = () => {};
   
   try {
     const sidebarContext = useSidebarCollapse();
     isCollapsed = sidebarContext.isCollapsed;
     toggleCollapse = sidebarContext.toggleCollapse;
   } catch (error) {
-    console.error('SidebarContext not available:', error);
+    const contextError: SidebarContextError = {
+      message: 'SidebarContext not available',
+      context: 'SidebarContext',
+      fallback: { isCollapsed: false, toggleCollapse: () => {} }
+    };
+    console.error('Navigation context error:', contextError);
   }
 
-  const navigationItems = [
+  const navigationItems: NavigationItem[] = [
     { 
       icon: 'bx bx-grid-alt', 
       label: 'Dashboard', 
@@ -130,7 +140,7 @@ const NavigationMenu: React.FC = () => {
       </div>
       
       <nav className="space-y-1">
-        {navigationItems.map((item, index) => {
+        {navigationItems.map((item: NavigationItem) => {
         const isActive = location.pathname === item.path;
         
         const buttonContent = (
@@ -182,11 +192,11 @@ const NavigationMenu: React.FC = () => {
             {isMobile || isCollapsed ? (
               <Tooltip delayDuration={200}>
                 <TooltipTrigger asChild>
-                  <Link 
-                    to={item.path} 
-                    className="block"
-                    onMouseEnter={() => console.log('Hovering over:', item.label)}
-                  >
+                   <Link 
+                     to={item.path} 
+                     className="block"
+                     onClick={() => onNavigate?.(item.path)}
+                   >
                     {buttonContent}
                   </Link>
                 </TooltipTrigger>
@@ -198,7 +208,11 @@ const NavigationMenu: React.FC = () => {
                 </TooltipContent>
               </Tooltip>
             ) : (
-              <Link to={item.path} className="block">
+              <Link 
+                to={item.path} 
+                className="block"
+                onClick={() => onNavigate?.(item.path)}
+              >
                 {buttonContent}
               </Link>
             )}

@@ -4,6 +4,50 @@ import { LucideIcon } from 'lucide-react';
 import { Note } from '../../../types/note';
 import { Folder } from '../../../types/folder';
 
+// Navigation Types
+export interface NavigationItem {
+  icon: string; // Boxicon class name
+  label: string;
+  path: string;
+  description: string;
+  badge?: number | string;
+  isActive?: boolean;
+}
+
+// Quick Action Types
+export interface QuickAction {
+  icon: LucideIcon;
+  label: string;
+  description: string;
+  action: () => void;
+  color: string;
+  'data-onboarding'?: string;
+}
+
+// Event Handler Types
+export type NavigationClickHandler = (path: string) => void;
+export type QuickActionClickHandler = (action: () => void) => void;
+export type SidebarToggleHandler = () => void;
+
+// Context Error Types
+export interface SidebarContextError {
+  message: string;
+  context: 'SidebarContext' | 'AccentColorContext';
+  fallback?: any;
+}
+
+// Component Error Boundary Types
+export interface SidebarErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+  errorInfo?: React.ErrorInfo;
+}
+
+export interface SidebarErrorFallbackProps {
+  error: Error;
+  resetError: () => void;
+}
+
 export interface SidebarActionItem {
   icon: LucideIcon;
   label: string;

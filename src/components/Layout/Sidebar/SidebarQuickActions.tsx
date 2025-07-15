@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Plus, Search, Settings, Bookmark, Archive } from 'lucide-react';
 import { useSidebarCollapse } from '@/contexts/SidebarContext';
 import { useNavigate } from 'react-router-dom';
+import { QuickAction, QuickActionClickHandler } from './types';
 
 const quickActionVariants = {
   visible: {
@@ -44,11 +45,19 @@ const actionItemVariants = {
   }
 };
 
-export function SidebarQuickActions() {
+interface SidebarQuickActionsProps {
+  onActionClick?: QuickActionClickHandler;
+  maxCollapsedActions?: number;
+}
+
+export function SidebarQuickActions({ 
+  onActionClick, 
+  maxCollapsedActions = 3 
+}: SidebarQuickActionsProps = {}) {
   const { isCollapsed } = useSidebarCollapse();
   const navigate = useNavigate();
 
-  const quickActions = [
+  const quickActions: QuickAction[] = [
     {
       icon: Plus,
       label: 'New Note',
@@ -95,7 +104,7 @@ export function SidebarQuickActions() {
         initial="hidden"
         animate="visible"
       >
-        {quickActions.slice(0, 3).map((action) => {
+        {quickActions.slice(0, maxCollapsedActions).map((action: QuickAction) => {
           const IconComponent = action.icon;
           return (
             <motion.div key={action.label} variants={actionItemVariants}>
@@ -105,7 +114,10 @@ export function SidebarQuickActions() {
                     variant="ghost"
                     size="sm"
                     className="h-9 w-9 p-0 rounded-lg hover:bg-sidebar-accent hover:scale-110 transition-all duration-200 group"
-                    onClick={action.action}
+                    onClick={() => {
+                      action.action();
+                      onActionClick?.(action.action);
+                    }}
                   >
                     <IconComponent className={`w-4 h-4 ${action.color} group-hover:scale-110 transition-transform duration-200`} />
                   </Button>
@@ -136,7 +148,7 @@ export function SidebarQuickActions() {
           Quick Actions
         </h4>
       </div>
-      {quickActions.map((action) => {
+      {quickActions.map((action: QuickAction) => {
         const IconComponent = action.icon;
         return (
           <motion.div key={action.label} variants={actionItemVariants}>
@@ -144,7 +156,10 @@ export function SidebarQuickActions() {
               variant="ghost"
               size="sm"
               className="w-full h-9 justify-start px-3 rounded-lg hover:bg-sidebar-accent hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 group"
-              onClick={action.action}
+              onClick={() => {
+                action.action();
+                onActionClick?.(action.action);
+              }}
             >
               <IconComponent className={`w-4 h-4 mr-3 ${action.color} group-hover:scale-110 transition-transform duration-200`} />
               <span className="text-sm group-hover:text-sidebar-accent-foreground transition-colors duration-200">
