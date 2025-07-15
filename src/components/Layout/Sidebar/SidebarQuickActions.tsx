@@ -113,13 +113,19 @@ export function SidebarQuickActions({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-9 w-9 p-0 rounded-lg hover:bg-sidebar-accent hover:scale-110 transition-all duration-200 group"
+                    className="h-9 w-9 p-0 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:scale-110 transition-all duration-200 group"
                     onClick={() => {
                       action.action();
                       onActionClick?.(action.action);
                     }}
                   >
-                    <IconComponent className={`w-4 h-4 ${action.color} group-hover:scale-110 transition-transform duration-200`} />
+                    <IconComponent className={`w-4 h-4 transition-transform duration-200 group-hover:scale-110 ${
+                      action.color.includes('green') ? 'text-success' :
+                      action.color.includes('blue') ? 'text-info' :
+                      action.color.includes('yellow') ? 'text-warning' :
+                      action.color.includes('purple') ? 'text-accent' :
+                      'text-sidebar-foreground'
+                    }`} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="right" className="animate-fade-in">
@@ -155,13 +161,19 @@ export function SidebarQuickActions({
             <Button
               variant="ghost"
               size="sm"
-              className="w-full h-9 justify-start px-3 rounded-lg hover:bg-sidebar-accent hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 group"
+              className="w-full h-9 justify-start px-3 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 group"
               onClick={() => {
                 action.action();
                 onActionClick?.(action.action);
               }}
             >
-              <IconComponent className={`w-4 h-4 mr-3 ${action.color} group-hover:scale-110 transition-transform duration-200`} />
+              <IconComponent className={`w-4 h-4 mr-3 transition-transform duration-200 group-hover:scale-110 ${
+                action.color.includes('green') ? 'text-success' :
+                action.color.includes('blue') ? 'text-info' :
+                action.color.includes('yellow') ? 'text-warning' :
+                action.color.includes('purple') ? 'text-accent' :
+                'text-sidebar-foreground'
+              }`} />
               <span className="text-sm group-hover:text-sidebar-accent-foreground transition-colors duration-200">
                 {action.label}
               </span>
