@@ -97,19 +97,21 @@ const NavigationMenu: React.FC = () => {
               variant="ghost"
               size="sm"
               onClick={toggleCollapse}
-              className={`w-full h-10 px-0 flex items-center justify-center transition-all duration-200 group ${
-                isCollapsed ? 'justify-center' : 'justify-center'
-              } hover:bg-sidebar-accent/50`}
+              className={`w-full h-10 flex items-center transition-all duration-200 group hover:bg-sidebar-accent/50 ${
+                isCollapsed ? 'justify-center px-0' : 'justify-start px-3'
+              }`}
             >
               {isCollapsed ? (
                 <PanelLeftOpen className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
               ) : (
-                <PanelLeftClose className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
-              )}
-              {!isCollapsed && !isMobile && (
-                <span className="ml-3 text-sm group-hover:text-sidebar-accent-foreground transition-colors duration-200">
-                  Collapse
-                </span>
+                <>
+                  <PanelLeftClose className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
+                  {!isMobile && (
+                    <span className="ml-3 text-sm group-hover:text-sidebar-accent-foreground transition-colors duration-200">
+                      Collapse
+                    </span>
+                  )}
+                </>
               )}
             </Button>
           </TooltipTrigger>
