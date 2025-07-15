@@ -160,11 +160,13 @@ const NavigationMenu: React.FC = () => {
         );
 
         return (
-          <Link key={item.path} to={item.path} className="block">
+          <div key={item.path}>
             {isMobile || isCollapsed ? (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  {buttonContent}
+                  <Link to={item.path} className="block">
+                    {buttonContent}
+                  </Link>
                 </TooltipTrigger>
                 <TooltipContent side="right" sideOffset={8}>
                   <div>
@@ -174,9 +176,11 @@ const NavigationMenu: React.FC = () => {
                 </TooltipContent>
               </Tooltip>
             ) : (
-              buttonContent
+              <Link to={item.path} className="block">
+                {buttonContent}
+              </Link>
             )}
-          </Link>
+          </div>
         );
         })}
       </nav>
