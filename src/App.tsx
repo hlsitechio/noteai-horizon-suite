@@ -39,7 +39,6 @@ function App() {
             <ConditionalThemeWrapper>
               <OnboardingProvider>
                 <OptimizedLazyRoutes />
-                <ReminderManager />
                 <Toaster />
                 <Sonner />
               </OnboardingProvider>

@@ -9,6 +9,7 @@ import { PWAWrapper } from '../PWA/PWAWrapper';
 import BannerLayout from './BannerLayout';
 import FloatingNotesContainer from '../FloatingNotes/FloatingNotesContainer';
 import { useThemeManager } from '@/hooks/useThemeManager';
+import { ReminderManager } from '../ReminderManager';
 
 const Layout: React.FC = () => {
   const { isSidebarEditMode } = useEditMode();
@@ -34,6 +35,7 @@ const Layout: React.FC = () => {
           />
           <Toaster />
           <FloatingNotesContainer />
+          <ReminderManager />
         </div>
       </SidebarCollapseProvider>
     </PWAWrapper>
