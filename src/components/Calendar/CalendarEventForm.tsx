@@ -8,28 +8,29 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
-import { CalendarEvent } from '../../types/calendar';
+import { CreateCalendarEventData } from '../../types/calendar';
 
 const eventSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
-  date: z.date({
+  start_date: z.date({
     required_error: 'Date is required',
   }),
-  time: z.string().optional(),
-  type: z.enum(['event', 'meeting', 'note']),
-  priority: z.enum(['low', 'medium', 'high']),
+  end_date: z.date().optional(),
+  is_all_day: z.boolean().default(false),
+  location: z.string().optional(),
+  reminder_minutes: z.number().optional(),
 });
 
 type EventFormData = z.infer<typeof eventSchema>;
 
 interface CalendarEventFormProps {
-  onSubmit: (data: Omit<CalendarEvent, 'id'>) => void;
-  initialData?: Partial<CalendarEvent>;
+  onSubmit: (data: CreateCalendarEventData) => void;
+  initialData?: Partial<CreateCalendarEventData>;
 }
 
 export const CalendarEventForm: React.FC<CalendarEventFormProps> = ({
@@ -47,27 +48,27 @@ export const CalendarEventForm: React.FC<CalendarEventFormProps> = ({
     defaultValues: {
       title: initialData?.title || '',
       description: initialData?.description || '',
-      date: initialData?.date ? new Date(initialData.date) : new Date(),
-      time: initialData?.time || '',
-      type: initialData?.type || 'event',
-      priority: initialData?.priority || 'medium',
+      start_date: initialData?.start_date ? new Date(initialData.start_date) : new Date(),
+      end_date: initialData?.end_date ? new Date(initialData.end_date) : undefined,
+      is_all_day: initialData?.is_all_day || false,
+      location: initialData?.location || '',
+      reminder_minutes: initialData?.reminder_minutes || undefined,
     },
   });
 
-  const selectedDate = watch('date');
-  const selectedType = watch('type');
-  const selectedPriority = watch('priority');
+  const selectedStartDate = watch('start_date');
+  const selectedEndDate = watch('end_date');
+  const isAllDay = watch('is_all_day');
 
   const handleFormSubmit = (data: EventFormData) => {
-    const eventData: Omit<CalendarEvent, 'id'> = {
+    const eventData: CreateCalendarEventData = {
       title: data.title,
       description: data.description,
-      date: data.date.toISOString(),
-      time: data.time,
-      type: data.type,
-      priority: data.priority,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      start_date: data.start_date.toISOString(),
+      end_date: data.end_date?.toISOString(),
+      is_all_day: data.is_all_day,
+      location: data.location,
+      reminder_minutes: data.reminder_minutes,
     };
     onSubmit(eventData);
   };
@@ -96,85 +97,114 @@ export const CalendarEventForm: React.FC<CalendarEventFormProps> = ({
         />
       </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="location">Location</Label>
+        <Input
+          id="location"
+          {...register('location')}
+          placeholder="Enter event location (optional)"
+        />
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="is_all_day"
+          checked={isAllDay}
+          onCheckedChange={(checked) => setValue('is_all_day', checked as boolean)}
+        />
+        <Label htmlFor="is_all_day">All day event</Label>
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label>Date</Label>
+          <Label>Start Date</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
                 className={cn(
                   'w-full justify-start text-left font-normal',
-                  !selectedDate && 'text-muted-foreground'
+                  !selectedStartDate && 'text-muted-foreground'
                 )}
               >
                 <Calendar className="mr-2 h-4 w-4" />
-                {selectedDate ? format(selectedDate, 'PPP') : 'Pick a date'}
+                {selectedStartDate ? format(selectedStartDate, 'PPP') : 'Pick a date'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
               <CalendarComponent
                 mode="single"
-                selected={selectedDate}
-                onSelect={(date) => date && setValue('date', date)}
+                selected={selectedStartDate}
+                onSelect={(date) => date && setValue('start_date', date)}
                 initialFocus
                 className="p-3 pointer-events-auto"
               />
             </PopoverContent>
           </Popover>
-          {errors.date && (
-            <p className="text-sm text-destructive">{errors.date.message}</p>
+          {errors.start_date && (
+            <p className="text-sm text-destructive">{errors.start_date.message}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="time">Time (optional)</Label>
+          <Label>End Date (optional)</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  'w-full justify-start text-left font-normal',
+                  !selectedEndDate && 'text-muted-foreground'
+                )}
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                {selectedEndDate ? format(selectedEndDate, 'PPP') : 'Pick a date'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <CalendarComponent
+                mode="single"
+                selected={selectedEndDate}
+                onSelect={(date) => setValue('end_date', date)}
+                initialFocus
+                className="p-3 pointer-events-auto"
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+
+      {!isAllDay && (
+        <div className="space-y-2">
+          <Label htmlFor="time">Time</Label>
           <div className="relative">
             <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               id="time"
               type="time"
-              {...register('time')}
               className="pl-10"
+              onChange={(e) => {
+                if (e.target.value && selectedStartDate) {
+                  const [hours, minutes] = e.target.value.split(':');
+                  const newDate = new Date(selectedStartDate);
+                  newDate.setHours(parseInt(hours), parseInt(minutes));
+                  setValue('start_date', newDate);
+                }
+              }}
             />
           </div>
         </div>
-      </div>
+      )}
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label>Type</Label>
-          <Select
-            value={selectedType}
-            onValueChange={(value: CalendarEvent['type']) => setValue('type', value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="event">Event</SelectItem>
-              <SelectItem value="meeting">Meeting</SelectItem>
-              <SelectItem value="note">Important Note</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label>Priority</Label>
-          <Select
-            value={selectedPriority}
-            onValueChange={(value: CalendarEvent['priority']) => setValue('priority', value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select priority" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="low">Low</SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="high">High</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="reminder">Reminder (minutes before)</Label>
+        <Input
+          id="reminder"
+          type="number"
+          {...register('reminder_minutes', { valueAsNumber: true })}
+          placeholder="15"
+          min="0"
+        />
       </div>
 
       <Button type="submit" className="w-full">
