@@ -1,6 +1,6 @@
 
 import React from 'react';
-import type { Note } from '@/types';
+import type { Note } from '@/types/note';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';

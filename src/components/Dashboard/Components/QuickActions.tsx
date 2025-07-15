@@ -1,4 +1,5 @@
 import React from 'react';
+import { createNoteObject } from '@/utils/noteHelpers';
 import {
   Card,
   CardHeader,

@@ -2,12 +2,18 @@
 export interface Note {
   id: string;
   title: string;
-  content: string;
+  content: string | null;
+  content_type?: string | null;
   category: string;
   tags: string[];
-  createdAt: string;
-  updatedAt: string;
-  isFavorite: boolean;
+  // Support both naming conventions - all optional for compatibility
+  createdAt?: string;
+  created_at?: string;
+  updatedAt?: string;
+  updated_at?: string;
+  isFavorite?: boolean;
+  is_favorite?: boolean | null;
+  user_id?: string;
   folder_id?: string | null;
   color?: string;
   reminder_date?: string | null;

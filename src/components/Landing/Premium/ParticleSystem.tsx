@@ -1,5 +1,18 @@
 import React, { useEffect, useRef } from 'react';
 
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  opacity: number;
+  color: string;
+  phase?: number;
+  pulsePhase?: number;
+  connectionDistance?: number;
+}
+
 interface ParticleSystemProps {
   density?: number;
   speed?: number;

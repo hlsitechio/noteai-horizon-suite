@@ -64,7 +64,7 @@ const NotesExplorer: React.FC = () => {
       type: 'folder' | 'note';
       displayName: string;
       modifiedDate: Date;
-      createdAt: Date | string;
+      createdAt?: Date | string; // Made optional to match Note interface
       [key: string]: any;
     };
 
