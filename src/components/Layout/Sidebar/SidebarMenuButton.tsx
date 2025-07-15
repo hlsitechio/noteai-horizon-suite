@@ -29,7 +29,14 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
     console.log('Theme toggle clicked. Current theme:', theme);
     const newTheme = toggleTheme(theme);
     console.log('New theme will be:', newTheme);
+    console.log('Calling setTheme with:', newTheme);
     setTheme(newTheme);
+    
+    // Force verify after a short delay
+    setTimeout(() => {
+      const stored = localStorage.getItem('online-note-ai-theme');
+      console.log('Theme after toggle - stored:', stored, 'current:', theme);
+    }, 100);
   };
 
   const handleSettingsClick = () => {

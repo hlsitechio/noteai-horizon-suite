@@ -37,13 +37,16 @@ export function ThemeProvider({
     applyThemeToDocument(theme);
   }, [theme]);
 
-  const value = {
+  const setThemeValue = React.useCallback((newTheme: Theme) => {
+    console.log('ThemeProvider: Setting theme from', theme, 'to', newTheme);
+    localStorage.setItem(storageKey, newTheme);
+    setTheme(newTheme);
+  }, [storageKey, theme]);
+
+  const value = React.useMemo(() => ({
     theme,
-    setTheme: (newTheme: Theme) => {
-      localStorage.setItem(storageKey, newTheme);
-      setTheme(newTheme);
-    },
-  };
+    setTheme: setThemeValue,
+  }), [theme, setThemeValue]);
 
   return (
     <ThemeProviderContext.Provider value={value}>
