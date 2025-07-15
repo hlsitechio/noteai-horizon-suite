@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-// Page banner service removed - functionality disabled
+import { useAuth } from '@/contexts/AuthContext';
+import { PageBannerService } from '@/services/pageBannerService';
 import { useToast } from '@/hooks/use-toast';
 
 export interface PageBannerSettings {
@@ -15,6 +16,7 @@ export interface PageBannerSettings {
 
 export const usePageBannerSettings = () => {
   const location = useLocation();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [settings, setSettings] = useState<PageBannerSettings>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -24,22 +26,34 @@ export const usePageBannerSettings = () => {
 
   // Load settings for current page
   useEffect(() => {
-    // Development logging only
-    if (import.meta.env.DEV) {
-      console.log('usePageBannerSettings: Loading settings for page:', pagePath);
+    if (user?.id) {
+      loadPageSettings();
     }
-    loadPageSettings();
-  }, [pagePath]);
+  }, [pagePath, user?.id]);
 
   const loadPageSettings = async () => {
+    if (!user?.id) {
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      // Development logging only
-      if (import.meta.env.DEV) {
-        console.log('usePageBannerSettings: Page banner service disabled');
-      }
       setIsLoading(true);
-      // Page banner service disabled - banners table missing from database schema
-      setSettings({});
+      const pageSettings = await PageBannerService.getPageSettings(user.id, pagePath);
+      
+      if (pageSettings) {
+        setSettings({
+          bannerUrl: pageSettings.banner_url,
+          bannerType: pageSettings.banner_type,
+          bannerHeight: pageSettings.banner_height || 100,
+          bannerPositionX: pageSettings.banner_position_x || 0,
+          bannerPositionY: pageSettings.banner_position_y || 0,
+          bannerWidth: pageSettings.banner_width || 100,
+          isEnabled: pageSettings.is_enabled ?? true,
+        });
+      } else {
+        setSettings({});
+      }
     } catch (error) {
       console.error('Failed to load page banner settings:', error);
       setSettings({});
@@ -49,9 +63,28 @@ export const usePageBannerSettings = () => {
   };
 
   const updateBannerSettings = async (updates: Partial<PageBannerSettings>) => {
-    // Page banner service disabled - banners table missing from database schema
-    console.warn('Page banner service disabled - banners table missing from database schema');
-    return false;
+    if (!user?.id) return false;
+
+    try {
+      const success = await PageBannerService.updatePageSettings(user.id, pagePath, {
+        banner_url: updates.bannerUrl,
+        banner_type: updates.bannerType,
+        banner_height: updates.bannerHeight,
+        banner_position_x: updates.bannerPositionX,
+        banner_position_y: updates.bannerPositionY,
+        banner_width: updates.bannerWidth,
+        is_enabled: updates.isEnabled,
+      });
+
+      if (success) {
+        setSettings(prev => ({ ...prev, ...updates }));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to update banner settings:', error);
+      return false;
+    }
   };
 
   const updateBannerSelection = async (bannerUrl: string | null, bannerType?: string) => {
@@ -70,39 +103,105 @@ export const usePageBannerSettings = () => {
   };
 
   const resetPageSettings = async () => {
-    // Page banner service disabled - banners table missing from database schema
-    console.warn('Page banner service disabled - banners table missing from database schema');
-    return false;
+    if (!user?.id) return false;
+
+    try {
+      const success = await PageBannerService.deletePageSettings(user.id, pagePath);
+      if (success) {
+        setSettings({});
+        toast({
+          title: "Settings Reset",
+          description: `Banner settings reset for ${pagePath} page.`,
+        });
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to reset page settings:', error);
+      return false;
+    }
   };
 
   const handleImageUpload = async (file: File) => {
-    // Page banner service disabled - banners table missing from database schema
-    console.warn('Page banner service disabled - banners table missing from database schema');
-    toast({
-      title: "Upload Disabled",
-      description: "Banner upload is currently disabled.",
-      variant: "destructive",
-    });
+    if (!user?.id) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to upload banners.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // TODO: Implement file upload to Supabase storage
+      // For now, show a message that this feature needs implementation
+      toast({
+        title: "Upload Feature",
+        description: "Banner upload feature will be implemented next.",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('Failed to upload image:', error);
+      toast({
+        title: "Upload Failed",
+        description: "Failed to upload banner. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleVideoUpload = async (file: File) => {
-    // Page banner service disabled - banners table missing from database schema
-    console.warn('Page banner service disabled - banners table missing from database schema');
-    toast({
-      title: "Upload Disabled",
-      description: "Video banner upload is currently disabled.",
-      variant: "destructive",
-    });
+    if (!user?.id) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to upload videos.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // TODO: Implement video upload to Supabase storage
+      toast({
+        title: "Upload Feature",
+        description: "Video upload feature will be implemented next.",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('Failed to upload video:', error);
+      toast({
+        title: "Upload Failed",
+        description: "Failed to upload video. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleAIGenerate = async (prompt: string) => {
-    // Page banner service disabled - banners table missing from database schema
-    console.warn('Page banner service disabled - banners table missing from database schema');
-    toast({
-      title: "Generation Disabled",
-      description: "AI banner generation is currently disabled.",
-      variant: "destructive",
-    });
+    if (!user?.id) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to generate banners.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // TODO: Implement AI banner generation
+      toast({
+        title: "AI Generation",
+        description: "AI banner generation will be implemented next.",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('Failed to generate banner:', error);
+      toast({
+        title: "Generation Failed",
+        description: "Failed to generate banner. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleImageSelect = async (imageUrl: string) => {

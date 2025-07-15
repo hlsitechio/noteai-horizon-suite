@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -13,6 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Settings, Monitor, Smartphone, Tablet } from 'lucide-react';
+import { useBannerDisplaySettings } from '@/hooks/useBannerDisplaySettings';
 
 interface BannerSettingsModalProps {
   open: boolean;
@@ -23,7 +24,14 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
   open,
   onOpenChange
 }) => {
-  const [settings, setSettings] = useState({
+  const { 
+    settings: bannerSettings, 
+    isLoading, 
+    isSaving, 
+    updateSettings 
+  } = useBannerDisplaySettings();
+
+  const [localSettings, setLocalSettings] = useState({
     autoplay: true,
     loop: true,
     muted: true,
@@ -36,9 +44,46 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
     borderRadius: [8],
   });
 
+  // Sync with banner settings when they load
+  useEffect(() => {
+    if (!isLoading && bannerSettings) {
+      setLocalSettings({
+        autoplay: bannerSettings.autoplay,
+        loop: bannerSettings.loop,
+        muted: bannerSettings.muted,
+        showControls: bannerSettings.showControls,
+        aspectRatio: bannerSettings.aspectRatio,
+        quality: bannerSettings.quality,
+        parallaxEffect: bannerSettings.parallaxEffect,
+        blurBackground: bannerSettings.blurBackground,
+        opacity: [bannerSettings.opacity],
+        borderRadius: [bannerSettings.borderRadius],
+      });
+    }
+  }, [isLoading, bannerSettings]);
+
   const handleSettingChange = React.useCallback((key: string, value: any) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
+    setLocalSettings(prev => ({ ...prev, [key]: value }));
   }, []);
+
+  const handleSave = async () => {
+    const success = await updateSettings({
+      autoplay: localSettings.autoplay,
+      loop: localSettings.loop,
+      muted: localSettings.muted,
+      showControls: localSettings.showControls,
+      aspectRatio: localSettings.aspectRatio,
+      quality: localSettings.quality,
+      parallaxEffect: localSettings.parallaxEffect,
+      blurBackground: localSettings.blurBackground,
+      opacity: localSettings.opacity[0],
+      borderRadius: localSettings.borderRadius[0],
+    });
+
+    if (success) {
+      onOpenChange(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -70,7 +115,7 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
                 <Label htmlFor="autoplay">Autoplay</Label>
                 <Switch
                   id="autoplay"
-                  checked={settings.autoplay}
+                  checked={localSettings.autoplay}
                   onCheckedChange={(checked) => handleSettingChange('autoplay', checked)}
                 />
               </div>
@@ -79,7 +124,7 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
                 <Label htmlFor="loop">Loop Video</Label>
                 <Switch
                   id="loop"
-                  checked={settings.loop}
+                  checked={localSettings.loop}
                   onCheckedChange={(checked) => handleSettingChange('loop', checked)}
                 />
               </div>
@@ -88,7 +133,7 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
                 <Label htmlFor="muted">Start Muted</Label>
                 <Switch
                   id="muted"
-                  checked={settings.muted}
+                  checked={localSettings.muted}
                   onCheckedChange={(checked) => handleSettingChange('muted', checked)}
                 />
               </div>
@@ -97,7 +142,7 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
                 <Label htmlFor="controls">Show Controls</Label>
                 <Switch
                   id="controls"
-                  checked={settings.showControls}
+                  checked={localSettings.showControls}
                   onCheckedChange={(checked) => handleSettingChange('showControls', checked)}
                 />
               </div>
@@ -113,7 +158,7 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
               <div className="space-y-2">
                 <Label>Aspect Ratio</Label>
                 <Select
-                  value={settings.aspectRatio}
+                  value={localSettings.aspectRatio}
                   onValueChange={(value) => handleSettingChange('aspectRatio', value)}
                 >
                   <SelectTrigger>
@@ -132,7 +177,7 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
               <div className="space-y-2">
                 <Label>Quality</Label>
                 <Select
-                  value={settings.quality}
+                  value={localSettings.quality}
                   onValueChange={(value) => handleSettingChange('quality', value)}
                 >
                   <SelectTrigger>
@@ -148,9 +193,9 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
               </div>
 
               <div className="space-y-2">
-                <Label>Opacity: {settings.opacity[0]}%</Label>
+                <Label>Opacity: {localSettings.opacity[0]}%</Label>
                 <Slider
-                  value={settings.opacity}
+                  value={localSettings.opacity}
                   onValueChange={(value) => handleSettingChange('opacity', value)}
                   max={100}
                   min={10}
@@ -160,9 +205,9 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
               </div>
 
               <div className="space-y-2">
-                <Label>Border Radius: {settings.borderRadius[0]}px</Label>
+                <Label>Border Radius: {localSettings.borderRadius[0]}px</Label>
                 <Slider
-                  value={settings.borderRadius}
+                  value={localSettings.borderRadius}
                   onValueChange={(value) => handleSettingChange('borderRadius', value)}
                   max={24}
                   min={0}
@@ -183,7 +228,7 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
                 <Label htmlFor="parallax">Parallax Effect</Label>
                 <Switch
                   id="parallax"
-                  checked={settings.parallaxEffect}
+                  checked={localSettings.parallaxEffect}
                   onCheckedChange={(checked) => handleSettingChange('parallaxEffect', checked)}
                 />
               </div>
@@ -192,7 +237,7 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
                 <Label htmlFor="blur">Blur Background</Label>
                 <Switch
                   id="blur"
-                  checked={settings.blurBackground}
+                  checked={localSettings.blurBackground}
                   onCheckedChange={(checked) => handleSettingChange('blurBackground', checked)}
                 />
               </div>
@@ -227,8 +272,8 @@ const BannerSettingsModal: React.FC<BannerSettingsModalProps> = ({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={() => onOpenChange(false)}>
-            Save Settings
+          <Button onClick={handleSave} disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Save Settings'}
           </Button>
         </div>
       </DialogContent>

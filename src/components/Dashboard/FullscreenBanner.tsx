@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Maximize, Minimize } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useBannerDisplaySettings } from '@/hooks/useBannerDisplaySettings';
 
 interface FullscreenBannerProps {
   bannerData: {url: string, type: 'image' | 'video'} | null;
@@ -15,6 +16,7 @@ const FullscreenBanner: React.FC<FullscreenBannerProps> = ({
   onClose 
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const { settings: displaySettings } = useBannerDisplaySettings();
 
   useEffect(() => {
     if (isOpen) {
@@ -73,14 +75,20 @@ const FullscreenBanner: React.FC<FullscreenBannerProps> = ({
       </div>
 
       {/* Fullscreen content */}
-      <div className="w-full h-full flex items-center justify-center">
+      <div 
+        className="w-full h-full flex items-center justify-center"
+        style={{
+          filter: displaySettings.blurBackground ? 'blur(2px)' : undefined
+        }}
+      >
         {bannerData.type === 'video' ? (
           <video
             src={bannerData.url}
             className="w-full h-full object-cover"
-            autoPlay
-            loop
-            muted
+            autoPlay={displaySettings.autoplay}
+            loop={displaySettings.loop}
+            muted={displaySettings.muted}
+            controls={displaySettings.showControls}
             playsInline
             onLoadedData={handleMediaLoad}
             onCanPlay={handleMediaLoad}
@@ -89,6 +97,10 @@ const FullscreenBanner: React.FC<FullscreenBannerProps> = ({
               maxHeight: '100vh',
               width: 'auto',
               height: 'auto',
+              opacity: displaySettings.opacity / 100,
+              borderRadius: `${displaySettings.borderRadius}px`,
+              aspectRatio: displaySettings.aspectRatio === 'auto' ? undefined : displaySettings.aspectRatio.replace(':', '/'),
+              objectFit: displaySettings.aspectRatio === 'auto' ? 'contain' : 'cover',
             }}
           />
         ) : (
@@ -102,6 +114,10 @@ const FullscreenBanner: React.FC<FullscreenBannerProps> = ({
               height: 'auto',
               maxWidth: '100vw',
               maxHeight: '100vh',
+              opacity: displaySettings.opacity / 100,
+              borderRadius: `${displaySettings.borderRadius}px`,
+              aspectRatio: displaySettings.aspectRatio === 'auto' ? undefined : displaySettings.aspectRatio.replace(':', '/'),
+              objectFit: displaySettings.aspectRatio === 'auto' ? 'contain' : 'cover',
             }}
           />
         )}
