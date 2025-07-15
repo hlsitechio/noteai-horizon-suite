@@ -99,15 +99,17 @@ export function PWAWrapper({
         }
       });
 
-      // Add message listener for service worker communications
-      navigator.serviceWorker.addEventListener('message', (event) => {
+      // Add optimized message listener for service worker communications
+      const handleMessage = (event: MessageEvent) => {
         if (event.data?.type === 'SW_ERROR') {
           // Development logging only
           if (import.meta.env.DEV) {
             console.warn('Service Worker reported error:', event.data.error);
           }
         }
-      });
+      };
+      
+      navigator.serviceWorker.addEventListener('message', handleMessage, { passive: true });
     }
 
     return () => {

@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useLayoutEffect, startTransition, useDeferredValue } from 'react';
 import { rafThrottle, scheduleIdleCallback, processInBatches } from '@/utils/scheduler';
-import { performanceMonitor } from '@/utils/performance';
+import { ConsolidatedAnalyticsService } from '@/services/consolidatedAnalyticsService';
 import debounce from 'lodash.debounce';
 import throttle from 'lodash.throttle';
 
@@ -106,7 +106,7 @@ export function useBatchProcessor<T>() {
     await processInBatches(items, processor, batchSize);
     
     const duration = performance.now() - start;
-    performanceMonitor.recordMetric('batch-processing', duration);
+    ConsolidatedAnalyticsService.trackEvent('batch_processing', { duration, itemCount: items.length });
     
     if (duration && duration > 100) {
       console.warn(`Batch processing took ${duration}ms for ${items.length} items`);
@@ -139,7 +139,11 @@ export function usePerformanceMonitor(componentName: string) {
     
     return () => {
       const duration = performance.now() - start;
-      performanceMonitor.recordMetric(`${componentName}-render-duration`, duration);
+      ConsolidatedAnalyticsService.trackEvent('component_render', { 
+        component: componentName, 
+        duration, 
+        renderCount: renderCountRef.current 
+      });
       
       if (duration > 16.67) { // More than one frame
         console.warn(`${componentName} render took ${duration}ms`);

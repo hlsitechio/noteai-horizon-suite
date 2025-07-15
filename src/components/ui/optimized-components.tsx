@@ -241,7 +241,10 @@ export function VirtualizedList<T>({
   const visibleItems = items.slice(startIndex, endIndex);
   
   const handleScroll = React.useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    setScrollTop(e.currentTarget.scrollTop);
+    // Use requestAnimationFrame to prevent forced reflows
+    requestAnimationFrame(() => {
+      setScrollTop(e.currentTarget.scrollTop);
+    });
   }, []);
   
   return (

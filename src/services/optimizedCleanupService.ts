@@ -1,4 +1,5 @@
 import { logger } from '../utils/logger';
+import { OptimizedMessageService } from '../utils/optimizedMessageService';
 
 interface CleanupTask {
   id: string;
@@ -15,6 +16,9 @@ export class OptimizedCleanupService {
     if (this.isInitialized) return;
 
     try {
+      // Initialize optimized message service
+      OptimizedMessageService.initialize();
+      
       // Minimal, targeted cleanup only for critical issues
       this.preventCriticalErrors();
       this.setupPageUnloadCleanup();
@@ -126,6 +130,9 @@ export class OptimizedCleanupService {
   }
 
   static cleanup() {
+    // Cleanup message service
+    OptimizedMessageService.cleanup();
+    
     // Restore original methods
     for (const [method, original] of this.originalMethods) {
       if (method === 'close' && typeof window !== 'undefined') {

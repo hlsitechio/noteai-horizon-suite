@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { LayoutUtils } from "@/utils/optimizedLayoutUtils";
 import { cn } from "@/lib/utils";
 
 interface Position {
@@ -24,8 +25,9 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
   const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = (e) => {
     if (!divRef.current || isFocused) return;
 
-    const rect = divRef.current.getBoundingClientRect();
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    // Use optimized layout calculation to prevent forced reflows
+    const position = LayoutUtils.getRelativeMousePosition(e, divRef.current, 'spotlight-card');
+    setPosition(position);
   };
 
   const handleFocus = () => {
