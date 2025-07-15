@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { User } from '@/contexts/auth/types';
 import { supabase } from '@/integrations/supabase/client';
-import { transformUser } from '@/contexts/auth/utils';
+import { transformUser, handleRefreshTokenError, clearCorruptedSession } from '@/contexts/auth/utils';
 import { logger } from '@/utils/logger';
 // Sentry removed
 
@@ -90,12 +90,30 @@ export const useStableAuth = (): UseStableAuthReturn => {
       const { data: { session }, error } = await supabase.auth.getSession();
       
       if (error) {
+        // Handle refresh token errors specifically in retry
+        if (await handleRefreshTokenError(error)) {
+          logger.auth.info('Corrupted session cleared during retry');
+          setSession(null);
+          setUser(null);
+          setAuthError(null);
+          return;
+        }
         throw error;
       }
       
       handleAuthChange(session);
     } catch (error) {
       logger.auth.error('Auth retry failed:', error);
+      
+      // Handle refresh token errors specifically in catch
+      if (error instanceof Error && await handleRefreshTokenError(error)) {
+        logger.auth.info('Corrupted session cleared during retry catch');
+        setSession(null);
+        setUser(null);
+        setAuthError(null);
+        return;
+      }
+      
       setAuthError(error instanceof Error ? error.message : 'Authentication retry failed');
       // Sentry removed
     }
@@ -112,6 +130,14 @@ export const useStableAuth = (): UseStableAuthReturn => {
       if (!mountedRef.current) return;
       
       if (error) {
+        // Handle refresh token errors specifically
+        if (await handleRefreshTokenError(error)) {
+          logger.auth.info('Corrupted session cleared, user needs to sign in again');
+          setSession(null);
+          setUser(null);
+          setAuthError(null);
+          return;
+        }
         throw error;
       }
 
@@ -119,6 +145,16 @@ export const useStableAuth = (): UseStableAuthReturn => {
       logger.auth.debug('Auth initialized successfully');
     } catch (error) {
       logger.auth.error('Error initializing auth:', error);
+      
+      // Handle refresh token errors specifically
+      if (error instanceof Error && await handleRefreshTokenError(error)) {
+        logger.auth.info('Corrupted session cleared during initialization');
+        setSession(null);
+        setUser(null);
+        setAuthError(null);
+        return;
+      }
+      
       setAuthError(error instanceof Error ? error.message : 'Failed to initialize authentication');
       // Sentry removed
       
