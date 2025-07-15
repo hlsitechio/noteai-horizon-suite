@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { DashboardComponentRenderer } from './ComponentRegistry';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 import { cn } from '@/lib/utils';
@@ -58,24 +59,38 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
               </span>
             </div>
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  navigate(`/app/components?targetPanel=${panelKey}`);
-                }}
-                className="text-xs px-2 py-1 h-auto"
-              >
-                Change
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleRemoveComponent}
-                className="text-xs px-2 py-1 h-auto text-destructive hover:text-destructive"
-              >
-                <X className="w-3 h-3" />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      navigate(`/app/components?targetPanel=${panelKey}`);
+                    }}
+                    className="text-xs px-2 py-1 h-auto"
+                  >
+                    Change
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>Browse and select a different component</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleRemoveComponent}
+                    className="text-xs px-2 py-1 h-auto text-destructive hover:text-destructive"
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>Remove component from this panel</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
           <div className="h-[calc(100%-48px)]">
@@ -104,16 +119,23 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
                   Add a component from the library
                 </p>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  navigate(`/app/components?targetPanel=${panelKey}`);
-                }}
-                className="border-primary/30 text-primary hover:bg-primary/10"
-              >
-                Browse Components
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigate(`/app/components?targetPanel=${panelKey}`);
+                    }}
+                    className="border-primary/30 text-primary hover:bg-primary/10"
+                  >
+                    Browse Components
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>Add a component to this panel from the component library</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </CardContent>
         </Card>

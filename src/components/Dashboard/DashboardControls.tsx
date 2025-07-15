@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Edit3, Settings, Save, CheckCircle, Lock } from 'lucide-react';
 import DashboardSettings from './DashboardSettings';
 import { useEditMode } from '@/contexts/EditModeContext';
@@ -101,15 +102,22 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
               Resize your panels as needed, then save your layout
             </p>
             <div className="flex gap-2">
-              <Button 
-                onClick={handleSaveAndLockDashboard}
-                disabled={isLocking}
-                className="w-full gap-2 bg-primary hover:bg-primary/90"
-                size="sm"
-              >
-                <Save className="h-4 w-4" />
-                {isLocking ? 'Saving & Locking...' : 'Save & Lock Layout'}
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    onClick={handleSaveAndLockDashboard}
+                    disabled={isLocking}
+                    className="w-full gap-2 bg-primary hover:bg-primary/90"
+                    size="sm"
+                  >
+                    <Save className="h-4 w-4" />
+                    {isLocking ? 'Saving & Locking...' : 'Save & Lock Layout'}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="left" className="max-w-xs">
+                  <p>Save your current layout and disable further editing</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
         </div>

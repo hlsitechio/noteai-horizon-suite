@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
 import 'boxicons/css/boxicons.min.css';
 
@@ -138,7 +139,9 @@ const KPIStats: React.FC<KPIStatsProps> = ({
             transition={{ delay: index * 0.1 }}
             className="w-full"
           >
-            <Card className="border border-border/10 shadow-premium bg-card/80 backdrop-blur-xl hover:shadow-large transition-all duration-300 h-full group hover:border-accent/20">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Card className="border border-border/10 shadow-premium bg-card/80 backdrop-blur-xl hover:shadow-large transition-all duration-300 h-full group hover:border-accent/20 cursor-pointer">
               <CardContent className="p-3 sm:p-4">
                 <div className="flex items-start justify-between mb-2">
                   <div className={`p-2 bg-gradient-to-br ${stat.color} rounded-lg border border-white/10`}>
@@ -161,6 +164,14 @@ const KPIStats: React.FC<KPIStatsProps> = ({
                 </div>
               </CardContent>
             </Card>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-xs">
+            <div>
+              <p className="font-medium">{stat.label}</p>
+              <p className="text-xs text-muted-foreground">{stat.change}</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
           </motion.div>
         );
       })}
