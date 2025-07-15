@@ -147,14 +147,14 @@ const Hero = () => {
           delay: 0.8
         }} className="grid grid-cols-3 gap-6 sm:gap-12 pt-16 sm:pt-20 max-w-3xl mx-auto px-4">
             {[{
-            number: '50K+',
-            label: 'Active Users'
+            number: '10K+',
+            label: 'Notes Created'
           }, {
-            number: '99.9%',
-            label: 'Uptime'
+            number: '150+',
+            label: 'AI Enhancements'
           }, {
-            number: '24/7',
-            label: 'Support'
+            number: '95%',
+            label: 'Time Saved'
           }].map((stat, index) => <motion.div key={stat.label} className="text-center group" initial={{
             opacity: 0,
             y: 20
