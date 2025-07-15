@@ -1,5 +1,6 @@
 import { BaseAgent } from './BaseAgent';
 import { AIAgent, AgentResponse, ChatMode } from '../types';
+import { supabase } from '@/integrations/supabase/client';
 
 export class GeneralAgent extends BaseAgent {
   constructor() {
@@ -81,42 +82,111 @@ PERSONALITY TRAITS:
     const systemPrompt = this.buildSystemPrompt(mode);
     const userIntent = this.analyzeUserIntent(message, this.context?.conversationHistory || []);
     
-    // Analyze if this should be delegated to a specialized agent
-    const specializedAgentRecommendation = this.analyzeForSpecializedAgent(message, userIntent);
-    
-    let responseMessage = '';
-    let confidence = 0.7;
-    let actions = [];
-    
-    if (specializedAgentRecommendation.shouldDelegate) {
-      responseMessage = this.generateDelegationResponse(message, specializedAgentRecommendation, mode);
-      confidence = 0.8;
-      actions = [{
-        type: 'delegate_to_agent',
-        data: {
-          agent_id: specializedAgentRecommendation.recommendedAgent,
-          reason: specializedAgentRecommendation.reason,
-          original_message: message
+    try {
+      // Get the current session for authentication
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // Make API call to unified chat endpoint with context
+      const response = await fetch('https://ubxtmbgvibtjtjggjnjm.supabase.co/functions/v1/ai-chat-with-context', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token || ''}`,
         },
-        message: `Delegating to ${specializedAgentRecommendation.recommendedAgent}`,
-        priority: 'high'
-      }];
-    } else {
-      responseMessage = this.generateGeneralResponse(message, userIntent, mode);
-      actions = this.suggestGeneralActions(message, userIntent);
+        body: JSON.stringify({
+          messages: [
+            {
+              role: 'system',
+              content: systemPrompt
+            },
+            ...this.context?.conversationHistory?.slice(-6).map(msg => ({
+              role: msg.role,
+              content: msg.content
+            })) || [],
+            {
+              role: 'user',
+              content: message
+            }
+          ],
+          model: 'deepseek/deepseek-chat-v3-0324:free', // Consistent model across platform
+          include_user_context: true
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API call failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Analyze if this should be delegated to a specialized agent
+      const specializedAgentRecommendation = this.analyzeForSpecializedAgent(message, userIntent);
+      
+      let actions = [];
+      if (specializedAgentRecommendation.shouldDelegate) {
+        actions = [{
+          type: 'delegate_to_agent',
+          data: {
+            agent_id: specializedAgentRecommendation.recommendedAgent,
+            reason: specializedAgentRecommendation.reason,
+            original_message: message
+          },
+          message: `Delegating to ${specializedAgentRecommendation.recommendedAgent}`,
+          priority: 'high'
+        }];
+      } else {
+        actions = this.suggestGeneralActions(message, userIntent);
+      }
+
+      const suggestedFollowUps = this.generateGeneralFollowUps(userIntent.intent, specializedAgentRecommendation);
+
+      return {
+        message: data.message,
+        actions: actions.length > 0 ? actions : undefined,
+        confidence: 0.8,
+        reasoning: `AI response via ${data.model}`,
+        suggestedFollowUps
+      };
+
+    } catch (error) {
+      console.error('Error in GeneralAgent API call:', error);
+      
+      // Fallback to mock response
+      const specializedAgentRecommendation = this.analyzeForSpecializedAgent(message, userIntent);
+      let responseMessage = '';
+      let confidence = 0.7;
+      let actions = [];
+      
+      if (specializedAgentRecommendation.shouldDelegate) {
+        responseMessage = this.generateDelegationResponse(message, specializedAgentRecommendation, mode);
+        confidence = 0.8;
+        actions = [{
+          type: 'delegate_to_agent',
+          data: {
+            agent_id: specializedAgentRecommendation.recommendedAgent,
+            reason: specializedAgentRecommendation.reason,
+            original_message: message
+          },
+          message: `Delegating to ${specializedAgentRecommendation.recommendedAgent}`,
+          priority: 'high'
+        }];
+      } else {
+        responseMessage = this.generateGeneralResponse(message, userIntent, mode);
+        actions = this.suggestGeneralActions(message, userIntent);
+      }
+
+      const suggestedFollowUps = this.generateGeneralFollowUps(userIntent.intent, specializedAgentRecommendation);
+
+      return {
+        message: responseMessage,
+        actions: actions.length > 0 ? actions : undefined,
+        confidence,
+        reasoning: specializedAgentRecommendation.shouldDelegate 
+          ? `Recommending ${specializedAgentRecommendation.recommendedAgent} for specialized handling`
+          : `Handling as general conversation with ${userIntent.intent} intent`,
+        suggestedFollowUps
+      };
     }
-
-    const suggestedFollowUps = this.generateGeneralFollowUps(userIntent.intent, specializedAgentRecommendation);
-
-    return {
-      message: responseMessage,
-      actions: actions.length > 0 ? actions : undefined,
-      confidence,
-      reasoning: specializedAgentRecommendation.shouldDelegate 
-        ? `Recommending ${specializedAgentRecommendation.recommendedAgent} for specialized handling`
-        : `Handling as general conversation with ${userIntent.intent} intent`,
-      suggestedFollowUps
-    };
   }
 
   private analyzeForSpecializedAgent(message: string, userIntent: any): {
