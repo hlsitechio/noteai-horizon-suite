@@ -32,8 +32,10 @@ export const ThemeCard: React.FC<ThemeCardProps> = ({
           style={{ background: theme.preview }}
         >
           {isSelected && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-              <Check className="w-6 h-6 text-white" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <Check className="w-4 h-4 text-white" />
+              </div>
             </div>
           )}
         </div>

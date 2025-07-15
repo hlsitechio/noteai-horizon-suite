@@ -337,9 +337,9 @@ export const ThemeGallery: React.FC<ThemeGalleryProps> = ({
                             <motion.div
                               initial={{ scale: 0 }}
                               animate={{ scale: 1 }}
-                              className="w-8 h-8 bg-primary rounded-full flex items-center justify-center"
+                              className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center"
                             >
-                              <Check className="w-4 h-4 text-primary-foreground" />
+                              <Check className="w-4 h-4 text-white" />
                             </motion.div>
                           )}
                         </div>
