@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import * as Y from "https://esm.sh/yjs@13.6.27";
+import * as awarenessProtocol from "https://esm.sh/y-protocols@1.0.5/awareness.js";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,8 +8,9 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE',
 };
 
-// Store for Y.js documents
+// Store for Y.js documents and awareness
 const documents = new Map<string, Y.Doc>();
+const awareness = new Map<string, any>();
 const connections = new Map<string, Set<WebSocket>>();
 
 serve(async (req) => {
@@ -43,14 +45,16 @@ serve(async (req) => {
     
     console.log('WebSocket upgrade successful');
     
-    // Get or create Y.js document
+    // Get or create Y.js document and awareness
     if (!documents.has(documentId)) {
       documents.set(documentId, new Y.Doc());
+      awareness.set(documentId, new awarenessProtocol.Awareness(documents.get(documentId)));
       connections.set(documentId, new Set());
-      console.log(`Created new document: ${documentId}`);
+      console.log(`Created new document and awareness: ${documentId}`);
     }
 
     const doc = documents.get(documentId)!;
+    const docAwareness = awareness.get(documentId)!;
     const documentConnections = connections.get(documentId)!;
 
     socket.onopen = () => {
@@ -66,6 +70,19 @@ serve(async (req) => {
             data: Array.from(state)
           }));
           console.log(`Sent initial state to user ${userId}`);
+        }
+
+        // Send current awareness state to new client
+        const awarenessState = awarenessProtocol.encodeAwarenessUpdate(
+          docAwareness,
+          Array.from(docAwareness.getStates().keys())
+        );
+        if (awarenessState.length > 0) {
+          socket.send(JSON.stringify({
+            type: 'awareness',
+            data: Array.from(awarenessState)
+          }));
+          console.log(`Sent initial awareness state to user ${userId}`);
         }
 
         // Notify other clients about new connection
@@ -95,9 +112,14 @@ serve(async (req) => {
             break;
 
           case 'awareness':
-            // Broadcast awareness information (cursor position, selection, etc.)
+            // Apply awareness update to local awareness instance
+            const awarenessUpdate = new Uint8Array(message.data);
+            awarenessProtocol.applyAwarenessUpdate(docAwareness, awarenessUpdate, 'remote');
+            
+            // Broadcast awareness update to all other clients
             broadcastToOthers(documentId, socket, message);
             break;
+
 
           case 'note-update':
             // Handle note content updates
@@ -125,9 +147,14 @@ serve(async (req) => {
       
       // Clean up document if no connections remain
       if (documentConnections.size === 0) {
+        // Clean up awareness states for this document
+        if (docAwareness) {
+          docAwareness.destroy();
+          awareness.delete(documentId);
+        }
         documents.delete(documentId);
         connections.delete(documentId);
-        console.log(`Cleaned up document: ${documentId}`);
+        console.log(`Cleaned up document and awareness: ${documentId}`);
       } else {
         // Notify other clients about disconnection
         try {

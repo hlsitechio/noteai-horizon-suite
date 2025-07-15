@@ -1,13 +1,18 @@
 import * as Y from 'yjs';
+import * as awarenessProtocol from 'y-protocols/awareness.js';
 
 export interface RealtimeSyncConfig {
   documentId: string;
   userId: string;
+  userName?: string;
+  userColor?: string;
   onContentChange?: (content: string) => void;
   onUserJoined?: (userId: string) => void;
   onUserLeft?: (userId: string) => void;
   onConnectionStatusChange?: (connected: boolean, connecting?: boolean) => void;
   onError?: (error: string) => void;
+  onAwarenessChange?: (states: Map<number, any>) => void;
+  onCursorChange?: (cursors: Array<{ clientId: number, user: any, cursor: any }>) => void;
 }
 
 // Global connection registry to prevent multiple connections to same document
@@ -15,6 +20,7 @@ const connectionRegistry = new Map<string, RealtimeSyncService>();
 
 export class RealtimeSyncService {
   private doc: Y.Doc;
+  private awareness: awarenessProtocol.Awareness;
   private provider: WebSocket | null = null;
   private config: RealtimeSyncConfig;
   private connected = false;
@@ -38,10 +44,21 @@ export class RealtimeSyncService {
     }
     
     this.doc = new Y.Doc();
+    this.awareness = new awarenessProtocol.Awareness(this.doc);
     this.setupDocument();
+    this.setupAwareness();
     
     // Register this connection
     connectionRegistry.set(this.connectionKey, this);
+    
+    // Set initial user state
+    this.setUserState({
+      user: {
+        id: config.userId,
+        name: config.userName || 'Anonymous',
+        color: config.userColor || this.generateUserColor()
+      }
+    });
     
     // Connect after a short delay to prevent immediate resource exhaustion
     setTimeout(() => {
@@ -60,6 +77,46 @@ export class RealtimeSyncService {
       const content = sharedText.toString();
       this.config.onContentChange?.(content);
     });
+  }
+
+  private setupAwareness() {
+    // Listen for awareness changes
+    this.awareness.on('change', ({ added, updated, removed }) => {
+      console.log('Awareness changed:', { added, updated, removed });
+      this.config.onAwarenessChange?.(this.awareness.getStates());
+      
+      // Extract cursor information
+      const cursors = Array.from(this.awareness.getStates().entries())
+        .filter(([clientId]) => clientId !== this.awareness.clientID)
+        .map(([clientId, state]) => ({
+          clientId,
+          user: state.user,
+          cursor: state.cursor
+        }));
+      
+      this.config.onCursorChange?.(cursors);
+    });
+
+    // Broadcast awareness updates
+    this.awareness.on('update', ({ added, updated, removed }) => {
+      if (this.provider && this.connected) {
+        const changedClients = added.concat(updated).concat(removed);
+        const update = awarenessProtocol.encodeAwarenessUpdate(this.awareness, changedClients);
+        
+        this.provider.send(JSON.stringify({
+          type: 'awareness',
+          data: Array.from(update)
+        }));
+      }
+    });
+  }
+
+  private generateUserColor(): string {
+    const colors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+      '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9'
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
   }
 
   private connect() {
@@ -91,6 +148,16 @@ export class RealtimeSyncService {
         this.reconnectAttempts = 0;
         this.lastError = null;
         this.config.onConnectionStatusChange?.(true, false);
+        
+        // Send initial awareness state
+        const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(
+          this.awareness,
+          [this.awareness.clientID]
+        );
+        this.provider.send(JSON.stringify({
+          type: 'awareness',
+          data: Array.from(awarenessUpdate)
+        }));
       };
 
       this.provider.onmessage = (event) => {
@@ -113,6 +180,14 @@ export class RealtimeSyncService {
         this.lastError = reason;
         
         this.config.onConnectionStatusChange?.(false, false);
+        
+        // Mark all remote clients as offline when connection is lost
+        const remoteClients = Array.from(this.awareness.getStates().keys())
+          .filter(clientId => clientId !== this.awareness.clientID);
+        
+        if (remoteClients.length > 0) {
+          awarenessProtocol.removeAwarenessStates(this.awareness, remoteClients, 'connection-closed');
+        }
         
         // Don't auto-reconnect on certain error codes
         if (event.code !== 1000 && event.code !== 1001) {
@@ -149,12 +224,22 @@ export class RealtimeSyncService {
         Y.applyUpdate(this.doc, update);
         break;
 
+      case 'awareness':
+        // Apply awareness update
+        const awarenessUpdate = new Uint8Array(message.data);
+        awarenessProtocol.applyAwarenessUpdate(this.awareness, awarenessUpdate, 'remote');
+        break;
+
       case 'user-joined':
         this.config.onUserJoined?.(message.userId);
         break;
 
       case 'user-left':
         this.config.onUserLeft?.(message.userId);
+        // Remove awareness state for disconnected user
+        if (message.clientId) {
+          awarenessProtocol.removeAwarenessStates(this.awareness, [message.clientId], 'user-left');
+        }
         break;
 
       case 'note-update':
@@ -244,6 +329,30 @@ export class RealtimeSyncService {
     }
   }
 
+  public setUserState(state: any) {
+    this.awareness.setLocalState(state);
+  }
+
+  public setCursor(position: any) {
+    const currentState = this.awareness.getLocalState();
+    this.awareness.setLocalState({
+      ...currentState,
+      cursor: position
+    });
+  }
+
+  public setSelection(selection: any) {
+    const currentState = this.awareness.getLocalState();
+    this.awareness.setLocalState({
+      ...currentState,
+      selection: selection
+    });
+  }
+
+  public getAwarenessStates(): Map<number, any> {
+    return this.awareness.getStates();
+  }
+
   public disconnect() {
     this.isDestroyed = true;
     
@@ -251,6 +360,16 @@ export class RealtimeSyncService {
     if (this.reconnectTimeout) {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = null;
+    }
+    
+    // Mark local client as offline before disconnecting
+    if (this.awareness) {
+      awarenessProtocol.removeAwarenessStates(
+        this.awareness,
+        [this.awareness.clientID],
+        'disconnect'
+      );
+      this.awareness.destroy();
     }
     
     // Remove from connection registry
