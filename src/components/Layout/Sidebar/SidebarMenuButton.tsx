@@ -43,7 +43,7 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
       {/* Action Buttons */}
       <div className="space-y-1">
         {/* Profile Button */}
-        <Tooltip>
+        <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
@@ -59,14 +59,18 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
             </Button>
           </TooltipTrigger>
           {(isCollapsed || isMobile) && (
-            <TooltipContent side="right">
-              <p>Profile</p>
+            <TooltipContent 
+              side="right" 
+              className="bg-popover border border-border shadow-md z-50"
+              sideOffset={12}
+            >
+              <p className="text-sm font-medium">Profile</p>
             </TooltipContent>
           )}
         </Tooltip>
 
         {/* Notifications Button */}
-        <Tooltip>
+        <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
@@ -93,8 +97,12 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
             </Button>
           </TooltipTrigger>
           {(isCollapsed || isMobile) && (
-            <TooltipContent side="right">
-              <p>Notifications {unreadCount > 0 && `(${unreadCount})`}</p>
+            <TooltipContent 
+              side="right" 
+              className="bg-popover border border-border shadow-md z-50"
+              sideOffset={12}
+            >
+              <p className="text-sm font-medium">Notifications {unreadCount > 0 && `(${unreadCount})`}</p>
             </TooltipContent>
           )}
         </Tooltip>
@@ -107,7 +115,7 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
         )}
 
         {/* Theme Toggle Button */}
-        <Tooltip>
+        <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
@@ -129,14 +137,18 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
             </Button>
           </TooltipTrigger>
           {(isCollapsed || isMobile) && (
-            <TooltipContent side="right">
-              <p>{isCurrentlyDark ? 'Light Mode' : 'Dark Mode'}</p>
+            <TooltipContent 
+              side="right" 
+              className="bg-popover border border-border shadow-md z-50"
+              sideOffset={12}
+            >
+              <p className="text-sm font-medium">{isCurrentlyDark ? 'Light Mode' : 'Dark Mode'}</p>
             </TooltipContent>
           )}
         </Tooltip>
 
         {/* Settings Button */}
-        <Tooltip>
+        <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
@@ -152,8 +164,12 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
             </Button>
           </TooltipTrigger>
           {(isCollapsed || isMobile) && (
-            <TooltipContent side="right">
-              <p>Settings</p>
+            <TooltipContent 
+              side="right" 
+              className="bg-popover border border-border shadow-md z-50"
+              sideOffset={12}
+            >
+              <p className="text-sm font-medium">Settings</p>
             </TooltipContent>
           )}
         </Tooltip>
