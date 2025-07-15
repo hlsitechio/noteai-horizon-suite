@@ -11,6 +11,7 @@ import SocialProof from '@/components/Marketing/SocialProof';
 import MarketingCTA from '@/components/Marketing/MarketingCTA';
 import SEOOptimizer from '@/components/Marketing/SEOOptimizer';
 import ContentHub from '@/components/Marketing/ContentHub';
+import TrustSignals from '@/components/Marketing/TrustSignals';
 import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
 import { AnalyticsService } from '@/services/analyticsService';
@@ -102,6 +103,9 @@ const Landing: React.FC = () => {
         
         {/* Content Hub - Resources Section */}
         <ContentHub />
+        
+        {/* Trust Signals */}
+        <TrustSignals variant="compact" className="py-8" />
         
         {/* Marketing CTA */}
         <section className="py-16 px-6 lg:px-8">
