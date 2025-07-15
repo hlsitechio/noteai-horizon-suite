@@ -9,6 +9,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { useNotifications } from '../../../contexts/NotificationsContext';
 import { useSidebarCollapse } from '@/contexts/SidebarContext';
 import { useTheme } from '@/providers/ThemeProvider';
+import { useAccentColor } from '@/contexts/AccentColorContext';
 import { toggleTheme, isDarkMode } from '@/utils/themeUtils';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,8 +23,16 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
   const { unreadCount } = useNotifications();
   const { isCollapsed } = useSidebarCollapse();
   const { theme, setTheme } = useTheme();
+  const { accentColorHsl } = useAccentColor();
   const navigate = useNavigate();
   const isCurrentlyDark = isDarkMode(theme);
+
+  // Enhanced hover styles with accent color
+  const getButtonHoverStyles = () => {
+    return `w-full h-10 text-muted-foreground transition-all duration-200 hover:text-white hover:shadow-md group relative overflow-hidden ${
+      isCollapsed || isMobile ? 'justify-center px-0' : 'justify-start px-3'
+    }`;
+  };
 
   const handleThemeToggle = () => {
     console.log('Theme toggle clicked. Current theme:', theme);
@@ -57,14 +66,16 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
             <Button
               variant="ghost"
               onClick={handleProfileClick}
-              className={`w-full h-10 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors ${
-                isCollapsed || isMobile ? 'justify-center px-0' : 'justify-start px-3'
-              }`}
+              className={getButtonHoverStyles()}
+              style={{
+                '--hover-bg': `hsl(${accentColorHsl})`,
+              } as React.CSSProperties}
             >
-              <div className={`flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-3'}`}>
+              <div className={`flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-3'} relative z-10`}>
                 <User className="w-5 h-5" />
                 {!isCollapsed && !isMobile && <span>Profile</span>}
               </div>
+              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-md" />
             </Button>
           </TooltipTrigger>
           {(isCollapsed || isMobile) && (
@@ -80,11 +91,12 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
             <Button
               variant="ghost"
               onClick={onNotificationsClick}
-              className={`w-full h-10 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors ${
-                isCollapsed || isMobile ? 'justify-center px-0' : 'justify-start px-3'
-              }`}
+              className={getButtonHoverStyles()}
+              style={{
+                '--hover-bg': `hsl(${accentColorHsl})`,
+              } as React.CSSProperties}
             >
-              <div className={`relative flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-3'}`}>
+              <div className={`relative flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-3'} relative z-10`}>
                 <Bell className="w-5 h-5" />
                 {!isCollapsed && !isMobile && <span>Notifications</span>}
                 {unreadCount > 0 && !isCollapsed && !isMobile && (
@@ -99,6 +111,7 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
                   <div className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full" />
                 )}
               </div>
+              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-md" />
             </Button>
           </TooltipTrigger>
           {(isCollapsed || isMobile) && (
@@ -121,11 +134,12 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
             <Button
               variant="ghost"
               onClick={handleThemeToggle}
-              className={`w-full h-10 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors ${
-                isCollapsed || isMobile ? 'justify-center px-0' : 'justify-start px-3'
-              }`}
+              className={getButtonHoverStyles()}
+              style={{
+                '--hover-bg': `hsl(${accentColorHsl})`,
+              } as React.CSSProperties}
             >
-              <div className={`flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-3'}`}>
+              <div className={`flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-3'} relative z-10`}>
                 {isCurrentlyDark ? (
                   <Sun className="w-5 h-5" />
                 ) : (
@@ -135,6 +149,7 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
                   <span>{isCurrentlyDark ? 'Light Mode' : 'Dark Mode'}</span>
                 )}
               </div>
+              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-md" />
             </Button>
           </TooltipTrigger>
           {(isCollapsed || isMobile) && (
@@ -150,14 +165,16 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
             <Button
               variant="ghost"
               onClick={handleSettingsClick}
-              className={`w-full h-10 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors ${
-                isCollapsed || isMobile ? 'justify-center px-0' : 'justify-start px-3'
-              }`}
+              className={getButtonHoverStyles()}
+              style={{
+                '--hover-bg': `hsl(${accentColorHsl})`,
+              } as React.CSSProperties}
             >
-              <div className={`flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-3'}`}>
+              <div className={`flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-3'} relative z-10`}>
                 <Settings className="w-5 h-5" />
                 {!isCollapsed && !isMobile && <span>Settings</span>}
               </div>
+              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-md" />
             </Button>
           </TooltipTrigger>
           {(isCollapsed || isMobile) && (
