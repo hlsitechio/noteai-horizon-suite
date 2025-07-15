@@ -6,11 +6,8 @@ import './index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import { AppInitializationService } from './services/appInitializationService';
-import { performanceMonitor } from './utils/performance';
-
-// Initialize app with performance monitoring
+// Initialize app with optimized services
 AppInitializationService.initialize();
-// Performance monitor is auto-initialized
 
 const queryClient = new QueryClient({
   defaultOptions: {

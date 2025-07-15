@@ -1,7 +1,7 @@
 
-import { AnalyticsService } from './analyticsService';
-import { PerformanceService } from './performanceService';
-import { CleanupService } from './cleanupService';
+import { ConsolidatedAnalyticsService } from './consolidatedAnalyticsService';
+import { OptimizedPerformanceService } from './optimizedPerformanceService';
+import { OptimizedCleanupService } from './optimizedCleanupService';
 import { logger } from '../utils/logger';
 
 export class AppInitializationService {
@@ -11,25 +11,19 @@ export class AppInitializationService {
     if (this.isInitialized) return;
 
     try {
-      // Initialize cleanup service first to prevent issues
-      CleanupService.initialize();
-
-      // Initialize performance monitoring (lightweight)
-      PerformanceService.initialize();
-
-      // Skip analytics initialization to prevent 429 errors
-      // AnalyticsService.initialize();
+      // Initialize optimized services with minimal performance impact
+      OptimizedCleanupService.initialize();
+      OptimizedPerformanceService.initialize();
+      ConsolidatedAnalyticsService.initialize();
 
       // Set up minimal global error handlers
       this.setupGlobalErrorHandlers();
 
       this.isInitialized = true;
-      
-      // App initialized successfully
+      logger.debug('✅ App initialized successfully with optimized services');
 
     } catch (error) {
       logger.error('❌ Failed to initialize application:', error);
-      // Sentry removed
     }
   }
 
@@ -60,8 +54,9 @@ export class AppInitializationService {
   }
 
   static cleanup() {
-    PerformanceService.cleanup();
-    CleanupService.cleanup();
+    OptimizedPerformanceService.cleanup();
+    OptimizedCleanupService.cleanup();
+    ConsolidatedAnalyticsService.cleanup();
     this.isInitialized = false;
   }
 }
