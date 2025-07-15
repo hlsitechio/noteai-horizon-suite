@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
+import { OptimizedDOMUtils } from '@/utils/optimizedDOMUtils';
 
 export const useMobileViewport = () => {
   useEffect(() => {
     const handleViewportChange = () => {
-      // Set CSS custom property for mobile viewport height
+      // Use optimized DOM utils to set CSS custom property for mobile viewport height
       const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--mobile-vh', `${vh}px`);
+      OptimizedDOMUtils.setDocumentStyle('--mobile-vh', `${vh}px`);
     };
 
     // Set initial value

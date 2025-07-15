@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { OptimizedDOMUtils } from '@/utils/optimizedDOMUtils';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -17,15 +18,15 @@ const FullscreenBanner: React.FC<FullscreenBannerProps> = ({
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    // Use optimized DOM utils to batch style changes
+    OptimizedDOMUtils.manageBodyOverflow(isOpen);
+    
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
       setIsLoaded(false);
-    } else {
-      document.body.style.overflow = 'unset';
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
+      OptimizedDOMUtils.manageBodyOverflow(false);
     };
   }, [isOpen]);
 

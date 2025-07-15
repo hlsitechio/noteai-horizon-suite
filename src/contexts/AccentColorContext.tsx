@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { OptimizedDOMUtils } from '@/utils/optimizedDOMUtils';
 import { DynamicAccentProvider } from './DynamicAccentContext';
 
 interface AccentColorContextType {
@@ -30,13 +31,15 @@ export const AccentColorProvider: React.FC<AccentColorProviderProps> = ({ childr
   }, []);
 
   const applyAccentColor = (hsl: string) => {
-    // Update CSS custom properties
-    document.documentElement.style.setProperty('--accent', hsl);
-    document.documentElement.style.setProperty('--primary', hsl);
-    document.documentElement.style.setProperty('--sidebar-primary', hsl);
-    document.documentElement.style.setProperty('--sidebar-ring', hsl);
-    document.documentElement.style.setProperty('--ring', hsl);
-    document.documentElement.style.setProperty('--info', hsl);
+    // Batch CSS custom property updates to prevent forced reflows
+    OptimizedDOMUtils.batchCSSProperties({
+      '--accent': hsl,
+      '--primary': hsl,
+      '--sidebar-primary': hsl,
+      '--sidebar-ring': hsl,
+      '--ring': hsl,
+      '--info': hsl
+    });
   };
 
   const setAccentColor = (color: string, hsl: string) => {

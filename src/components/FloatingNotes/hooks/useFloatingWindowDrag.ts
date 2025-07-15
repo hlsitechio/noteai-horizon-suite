@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { OptimizedDOMUtils } from '@/utils/optimizedDOMUtils';
 
 interface FloatingWindowPosition {
   x: number;
@@ -102,26 +103,23 @@ export const useFloatingWindowDrag = ({
   // Prevent text selection and other interactions during drag
   useEffect(() => {
     if (isDragging) {
-      document.body.style.userSelect = 'none';
-      document.body.style.webkitUserSelect = 'none';
-      document.body.style.cursor = 'move';
+      OptimizedDOMUtils.manageUserSelect(true);
+      OptimizedDOMUtils.manageCursor('move');
       
       // Prevent default drag behavior in desktop environments
       document.addEventListener('dragstart', (e) => e.preventDefault());
       document.addEventListener('selectstart', (e) => e.preventDefault());
     } else {
-      document.body.style.userSelect = '';
-      document.body.style.webkitUserSelect = '';
-      document.body.style.cursor = '';
+      OptimizedDOMUtils.manageUserSelect(false);
+      OptimizedDOMUtils.manageCursor('');
       
       document.removeEventListener('dragstart', (e) => e.preventDefault());
       document.removeEventListener('selectstart', (e) => e.preventDefault());
     }
 
     return () => {
-      document.body.style.userSelect = '';
-      document.body.style.webkitUserSelect = '';
-      document.body.style.cursor = '';
+      OptimizedDOMUtils.manageUserSelect(false);
+      OptimizedDOMUtils.manageCursor('');
     };
   }, [isDragging]);
 

@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { OptimizedDOMUtils } from '@/utils/optimizedDOMUtils';
 
 interface FloatingWindowSize {
   width: number;
@@ -67,14 +68,10 @@ export const useFloatingWindowResize = ({
 
   // Prevent text selection during resize
   useEffect(() => {
-    if (isResizing) {
-      document.body.style.userSelect = 'none';
-    } else {
-      document.body.style.userSelect = '';
-    }
+    OptimizedDOMUtils.manageUserSelect(isResizing);
 
     return () => {
-      document.body.style.userSelect = '';
+      OptimizedDOMUtils.manageUserSelect(false);
     };
   }, [isResizing]);
 

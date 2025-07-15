@@ -1,5 +1,6 @@
 import { logger } from '../utils/logger';
 import { OptimizedMessageService } from '../utils/optimizedMessageService';
+import { OptimizedDOMUtils } from '../utils/optimizedDOMUtils';
 
 interface CleanupTask {
   id: string;
@@ -130,8 +131,9 @@ export class OptimizedCleanupService {
   }
 
   static cleanup() {
-    // Cleanup message service
+    // Cleanup services
     OptimizedMessageService.cleanup();
+    OptimizedDOMUtils.cleanup();
     
     // Restore original methods
     for (const [method, original] of this.originalMethods) {
