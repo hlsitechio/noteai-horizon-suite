@@ -10,6 +10,7 @@ import MobileChat from '@/mobile/pages/MobileChat';
 import MobileProjects from '@/mobile/pages/MobileProjects';
 import MobileAnalytics from '@/mobile/pages/MobileAnalytics';
 import EnhancedMobileSettings from '@/mobile/pages/EnhancedMobileSettings';
+import MobileThemeGallery from '@/mobile/pages/MobileThemeGallery';
 import { useNotes } from '@/contexts/NotesContext';
 
 const MobileApp: React.FC = () => {
@@ -41,6 +42,7 @@ const MobileApp: React.FC = () => {
           <Route path="projects" element={<MobileProjects />} />
           <Route path="analytics" element={<MobileAnalytics />} />
           <Route path="settings" element={<EnhancedMobileSettings />} />
+          <Route path="themes" element={<MobileThemeGallery />} />
         </Route>
       </Routes>
     </div>

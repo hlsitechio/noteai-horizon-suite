@@ -18,7 +18,8 @@ const MobileDesktopViewButton: React.FC = () => {
       '/mobile/chat': '/app/chat',
       '/mobile/projects': '/app/projects',
       '/mobile/analytics': '/app/analytics',
-      '/mobile/settings': '/app/settings'
+      '/mobile/settings': '/app/settings',
+      '/mobile/themes': '/app/themes'
     };
 
     const noteParam = searchParams.get('note');

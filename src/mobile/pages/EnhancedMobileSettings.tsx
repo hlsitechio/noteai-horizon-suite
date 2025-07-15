@@ -49,13 +49,19 @@ const EnhancedMobileSettings: React.FC = () => {
       title: 'Appearance',
       icon: Palette,
       items: [
-        {
-          label: 'Dark Mode',
-          value: theme === 'dark',
-          type: 'toggle',
-          onChange: (checked: boolean) => setTheme(checked ? 'dark' : 'light'),
-          icon: theme === 'dark' ? Moon : Sun
-        }
+         {
+           label: 'Dark Mode',
+           value: theme === 'dark',
+           type: 'toggle',
+           onChange: (checked: boolean) => setTheme(checked ? 'dark' : 'light'),
+           icon: theme === 'dark' ? Moon : Sun
+         },
+         {
+           label: 'Theme Gallery',
+           value: 'Browse beautiful themes',
+           type: 'action',
+           onClick: () => navigate('/mobile/themes')
+         }
       ]
     },
     {

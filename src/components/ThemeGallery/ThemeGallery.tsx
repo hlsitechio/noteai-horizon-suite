@@ -19,6 +19,7 @@ import {
   Eye
 } from 'lucide-react';
 import { useTheme } from '@/providers/ThemeProvider';
+import { applyCustomTheme } from '@/utils/themeUtils';
 import { toast } from '@/hooks/use-toast';
 
 interface Theme {
@@ -217,22 +218,16 @@ export const ThemeGallery: React.FC<ThemeGalleryProps> = ({
     const selectedThemeData = themes.find(t => t.id === themeId);
     if (!selectedThemeData) return;
 
-    // Apply theme class to document
-    const root = document.documentElement;
-    
-    // Remove existing theme classes
-    themes.forEach(t => root.classList.remove(t.id));
-    
-    // Add new theme class
-    if (themeId !== 'dark') {
-      root.classList.add(themeId);
-    }
-
-    // Set theme mode
-    if (selectedThemeData.category === 'dark') {
+    // Apply custom theme using new utility function
+    if (themeId === 'dark') {
+      // Handle default dark theme
       setTheme('dark');
+      const root = document.documentElement;
+      root.classList.remove(...themes.filter(t => t.id !== 'dark').map(t => t.id));
     } else {
-      setTheme('light');
+      // Apply custom theme class
+      applyCustomTheme(themeId, selectedThemeData.category);
+      setTheme(selectedThemeData.category);
     }
 
     setSelectedTheme(themeId);
