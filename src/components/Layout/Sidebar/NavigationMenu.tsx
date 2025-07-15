@@ -162,15 +162,19 @@ const NavigationMenu: React.FC = () => {
         return (
           <div key={item.path}>
             {isMobile || isCollapsed ? (
-              <Tooltip>
+              <Tooltip delayDuration={200}>
                 <TooltipTrigger asChild>
-                  <Link to={item.path} className="block">
+                  <Link 
+                    to={item.path} 
+                    className="block"
+                    onMouseEnter={() => console.log('Hovering over:', item.label)}
+                  >
                     {buttonContent}
                   </Link>
                 </TooltipTrigger>
-                <TooltipContent side="right" sideOffset={8}>
+                <TooltipContent side="right" sideOffset={12} className="bg-popover border border-border shadow-lg">
                   <div>
-                    <p className="font-medium">{item.label}</p>
+                    <p className="font-medium text-popover-foreground">{item.label}</p>
                     <p className="text-xs text-muted-foreground">{item.description}</p>
                   </div>
                 </TooltipContent>
