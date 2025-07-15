@@ -128,8 +128,10 @@ export class RealtimeSyncService {
     this.config.onConnectionStatusChange?.(false, true);
 
     try {
-      const wsUrl = `wss://ubxtmbgvibtjtjggjnjm.supabase.co/functions/v1/realtime-collaboration?documentId=${this.config.documentId}&userId=${this.config.userId}`;
+      // Use the correct Supabase Edge Function WebSocket URL
+      const wsUrl = `wss://ubxtmbgvibtjtjggjnjm.supabase.co/functions/v1/realtime-collaboration?documentId=${encodeURIComponent(this.config.documentId)}&userId=${encodeURIComponent(this.config.userId)}`;
       
+      console.log('Attempting WebSocket connection to:', wsUrl);
       this.provider = new WebSocket(wsUrl);
       
       // Set a connection timeout
