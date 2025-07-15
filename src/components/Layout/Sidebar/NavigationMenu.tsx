@@ -5,12 +5,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useSidebarCollapse } from '@/contexts/SidebarContext';
+import { useAccentColor } from '@/contexts/AccentColorContext';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import 'boxicons/css/boxicons.min.css';
 
 const NavigationMenu: React.FC = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { accentColorHsl } = useAccentColor();
   
   // Add error handling for the context
   let isCollapsed = false;
@@ -97,22 +99,28 @@ const NavigationMenu: React.FC = () => {
               variant="ghost"
               size="sm"
               onClick={toggleCollapse}
-              className={`w-full h-10 flex items-center transition-all duration-200 group hover:bg-sidebar-accent/50 ${
+              className={`w-full h-10 flex items-center transition-all duration-200 group relative overflow-hidden hover:text-white ${
                 isCollapsed ? 'justify-center px-0' : 'justify-start px-3'
               }`}
+              style={{
+                '--hover-bg': `hsl(${accentColorHsl})`,
+              } as React.CSSProperties}
             >
-              {isCollapsed ? (
-                <PanelLeftOpen className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
-              ) : (
-                <>
-                  <PanelLeftClose className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
-                  {!isMobile && (
-                    <span className="ml-3 text-sm group-hover:text-sidebar-accent-foreground transition-colors duration-200">
-                      Collapse
-                    </span>
-                  )}
-                </>
-              )}
+              <div className={`relative z-10 flex items-center ${isCollapsed ? 'justify-center' : ''}`}>
+                {isCollapsed ? (
+                  <PanelLeftOpen className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
+                ) : (
+                  <>
+                    <PanelLeftClose className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
+                    {!isMobile && (
+                      <span className="ml-3 text-sm transition-colors duration-200">
+                        Collapse
+                      </span>
+                    )}
+                  </>
+                )}
+              </div>
+              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-30 transition-opacity duration-200 rounded-md" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right" sideOffset={8}>
@@ -128,7 +136,7 @@ const NavigationMenu: React.FC = () => {
         const buttonContent = (
           <Button
             variant={isActive ? "secondary" : "ghost"}
-            className={`w-full transition-all duration-300 group ${
+            className={`w-full transition-all duration-300 group relative overflow-hidden ${
               isMobile 
                 ? 'justify-center px-2 h-10' 
                 : isCollapsed 
@@ -137,26 +145,34 @@ const NavigationMenu: React.FC = () => {
             } ${
               isActive 
                 ? 'bg-sidebar-accent text-sidebar-accent-foreground shadow-sm' 
-                : 'hover:bg-sidebar-accent/50 hover:scale-[1.02] active:scale-[0.98]'
+                : 'hover:text-white hover:scale-[1.02] active:scale-[0.98]'
             }`}
+            style={!isActive ? {
+              '--hover-bg': `hsl(${accentColorHsl})`,
+            } as React.CSSProperties : undefined}
           >
-            <i className={`${item.icon} text-sm transition-transform duration-200 ${
-              isMobile || isCollapsed ? 'mx-auto' : 'mr-3'  // Center icon when collapsed/mobile
-            } ${
-              isActive ? 'text-sidebar-accent-foreground' : 'group-hover:scale-110'
-            }`}></i>
-            {!isMobile && !isCollapsed && (
-              <div className="flex flex-col items-start transition-all duration-200">
-                <span className="text-sm font-medium group-hover:text-sidebar-accent-foreground">
-                  {item.label}
-                </span>
-                <span className="text-xs text-sidebar-foreground/60 group-hover:text-sidebar-foreground/80">
-                  {item.description}
-                </span>
-              </div>
-            )}
-            {isActive && !isCollapsed && !isMobile && (
-              <div className="ml-auto w-1 h-6 bg-sidebar-accent-foreground rounded-full opacity-80" />
+            <div className="relative z-10 flex items-center w-full">
+              <i className={`${item.icon} text-sm transition-transform duration-200 ${
+                isMobile || isCollapsed ? 'mx-auto' : 'mr-3'  // Center icon when collapsed/mobile
+              } ${
+                isActive ? 'text-sidebar-accent-foreground' : 'group-hover:scale-110'
+              }`}></i>
+              {!isMobile && !isCollapsed && (
+                <div className="flex flex-col items-start transition-all duration-200">
+                  <span className="text-sm font-medium">
+                    {item.label}
+                  </span>
+                  <span className="text-xs text-sidebar-foreground/60">
+                    {item.description}
+                  </span>
+                </div>
+              )}
+              {isActive && !isCollapsed && !isMobile && (
+                <div className="ml-auto w-1 h-6 bg-sidebar-accent-foreground rounded-full opacity-80" />
+              )}
+            </div>
+            {!isActive && (
+              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-30 transition-opacity duration-200 rounded-md" />
             )}
           </Button>
         );
