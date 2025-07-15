@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Star, Eye, MoreVertical } from 'lucide-react';
+import { ArrowLeft, Star, Eye, MoreVertical, Wifi, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -27,6 +27,9 @@ interface EditorHeaderProps {
   isMobile: boolean;
   isTablet: boolean;
   canSave: boolean;
+  // Real-time sync props
+  syncConnected?: boolean;
+  activeUsers?: string[];
 }
 
 const categories = [
@@ -55,7 +58,9 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
   onCollapseAllBars,
   isMobile,
   isTablet,
-  canSave
+  canSave,
+  syncConnected,
+  activeUsers
 }) => {
   const navigate = useNavigate();
 
@@ -101,6 +106,20 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
           <ArrowLeft className="w-4 h-4" />
           Back
         </Button>
+        
+        {/* Sync Status */}
+        <div className="flex items-center gap-2">
+          {syncConnected ? (
+            <Wifi className="h-4 w-4 text-green-500" />
+          ) : (
+            <WifiOff className="h-4 w-4 text-red-500" />
+          )}
+          {activeUsers && activeUsers.length > 1 && (
+            <Badge variant="secondary" className="text-xs">
+              {activeUsers.length} users
+            </Badge>
+          )}
+        </div>
         
         <EditorActions
           onFocusModeToggle={onFocusModeToggle}

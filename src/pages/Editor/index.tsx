@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useOptimizedNotes } from '../../contexts/OptimizedNotesContext';
 import { useFolders } from '../../contexts/FoldersContext';
+import { useRealtimeSync } from '../../hooks/useRealtimeSync';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useEditor } from './hooks/useEditor';
 import { useEditorResponsive } from './hooks/useEditorResponsive';
@@ -14,6 +16,16 @@ const Editor: React.FC = () => {
   const navigate = useNavigate();
   const { notes, currentNote, setCurrentNote, createNote, updateNote, toggleFavorite } = useOptimizedNotes();
   const { folders } = useFolders();
+  const [userId, setUserId] = useState<string>('');
+  
+  // Get current user for sync
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUserId(user?.id || 'anonymous');
+    };
+    getUser();
+  }, []);
   
   // Responsive hook to determine mobile/desktop behavior
   const { isMobile, isTablet } = useEditorResponsive();
@@ -60,6 +72,19 @@ const Editor: React.FC = () => {
     updateNote,
     toggleFavorite,
     navigate
+  });
+
+  // Real-time sync hook
+  const { connected, activeUsers, updateContent: updateSyncContent, sendNoteUpdate } = useRealtimeSync({
+    documentId: noteId || 'new-note',
+    userId,
+    enabled: !!noteId && noteId !== 'new', // Only enable sync for existing notes
+    onContentChange: (syncedContent) => {
+      if (syncedContent !== content) {
+        setContent(syncedContent);
+        toast.success("Content updated from another device");
+      }
+    }
   });
 
   // Load note if noteId is provided
@@ -112,6 +137,9 @@ const Editor: React.FC = () => {
               isMobile={isMobile}
               isTablet={isTablet}
               canSave={title.trim().length > 0}
+              // Real-time sync props
+              syncConnected={connected}
+              activeUsers={activeUsers}
             />
           </div>
         )}
@@ -122,7 +150,13 @@ const Editor: React.FC = () => {
             title={title}
             content={content}
             onTitleChange={setTitle}
-            onContentChange={setContent}
+            onContentChange={(newContent) => {
+              setContent(newContent);
+              // Send real-time update to other devices
+              if (noteId && noteId !== 'new') {
+                sendNoteUpdate(noteId, newContent);
+              }
+            }}
             onSave={handleSave}
             isSaving={isSaving}
             isMobile={isMobile}

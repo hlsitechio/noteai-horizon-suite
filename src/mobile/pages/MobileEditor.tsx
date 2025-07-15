@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Save, Share, MoreHorizontal } from 'lucide-react';
+import { ArrowLeft, Save, Share, MoreHorizontal, Wifi, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useNotes } from '@/contexts/NotesContext';
+import { useRealtimeSync } from '@/hooks/useRealtimeSync';
 import MobileEditorToolbar from '../components/MobileEditorToolbar';
+import { supabase } from '@/integrations/supabase/client';
 
 const MobileEditor: React.FC = () => {
   const navigate = useNavigate();
@@ -23,6 +25,32 @@ const MobileEditor: React.FC = () => {
   const [tags, setTags] = useState<string[]>(existingNote?.tags || []);
   const [isChanged, setIsChanged] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [userId, setUserId] = useState<string>('');
+
+  // Get current user for sync
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUserId(user?.id || 'anonymous');
+    };
+    getUser();
+  }, []);
+
+  // Real-time sync hook
+  const { connected, activeUsers, updateContent: updateSyncContent, sendNoteUpdate } = useRealtimeSync({
+    documentId: noteId || 'new-note',
+    userId,
+    enabled: !!noteId, // Only enable sync for existing notes
+    onContentChange: (syncedContent) => {
+      if (syncedContent !== content) {
+        setContent(syncedContent);
+        toast({
+          title: "Content updated",
+          description: "Note was updated from another device",
+        });
+      }
+    }
+  });
   
   useEffect(() => {
     const hasChanges = title !== (existingNote?.title || '') || 
@@ -132,7 +160,20 @@ const MobileEditor: React.FC = () => {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-lg font-semibold text-foreground">Mobile/Editor</h1>
+            <h1 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              Mobile Editor
+              {/* Sync status indicator */}
+              {connected ? (
+                <Wifi className="h-4 w-4 text-green-500" aria-label="Connected to real-time sync" />
+              ) : (
+                <WifiOff className="h-4 w-4 text-red-500" aria-label="Disconnected from real-time sync" />
+              )}
+              {activeUsers.length > 1 && (
+                <Badge variant="secondary" className="text-xs">
+                  {activeUsers.length} users
+                </Badge>
+              )}
+            </h1>
           </div>
           
           <div className="flex items-center gap-2">
@@ -192,7 +233,13 @@ const MobileEditor: React.FC = () => {
         <Textarea
           placeholder="Start writing your note..."
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => {
+            setContent(e.target.value);
+            // Send real-time update to other devices
+            if (noteId) {
+              sendNoteUpdate(noteId, e.target.value);
+            }
+          }}
           className="min-h-[60vh] border-none p-0 resize-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
         />
 
