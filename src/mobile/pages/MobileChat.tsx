@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, Bot, User, Sparkles, Clock, FileText, Search, Trash2, Mic, MicOff, PenTool, Languages, Zap, BookOpen, Filter, Type } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,29 +7,42 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import DynamicMobileHeader from '../components/DynamicMobileHeader';
-import { useEnhancedAIChatWithActions, EnhancedChatMessage } from '../../hooks/useEnhancedAIChatWithActions';
+import { useAIAgents } from '../../ai/hooks/useAIAgents';
 import { useSpeechToText } from '../../hooks/useSpeechToText';
 
 const MobileChat: React.FC = () => {
   const [input, setInput] = useState('');
   const { 
     messages, 
-    sendMessageWithActions, 
-    isLoading 
-  } = useEnhancedAIChatWithActions();
+    sendMessage, 
+    isProcessing,
+    clearConversation,
+    currentAgent,
+    currentMode
+  } = useAIAgents();
   
   const {
     isRecording,
-    isProcessing,
+    isProcessing: isSpeechProcessing,
     startRecording,
     stopRecording,
     cancelRecording,
   } = useSpeechToText();
 
+  // Convert AIMessage format to compatible format for mobile display
+  const adaptedMessages = messages.map(msg => ({
+    id: msg.id,
+    content: msg.content,
+    isUser: msg.role === 'user',
+    timestamp: msg.timestamp,
+    actions: msg.metadata?.actions as any,
+    actionResults: msg.metadata?.actionResults
+  }));
+
   const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isProcessing) return;
     
-    await sendMessageWithActions(input);
+    await sendMessage(input, { autoDetectMode: true });
     setInput('');
   };
 
@@ -85,13 +98,14 @@ const MobileChat: React.FC = () => {
       <div className="flex-1 min-h-0">
         <ScrollArea className="h-full p-4">
         <div className="space-y-4">
-          {messages.length === 0 ? (
+          {adaptedMessages.length === 0 ? (
             <div className="text-center text-muted-foreground py-8">
               <Sparkles className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p className="mb-4">I can help you create notes, set reminders, organize your thoughts, and assist with writing tasks!</p>
+              <p className="text-xs text-muted-foreground">Current Agent: {currentAgent.name} | Mode: {currentMode}</p>
             </div>
           ) : (
-            messages.map((message: EnhancedChatMessage) => (
+            adaptedMessages.map((message) => (
               <div
                 key={message.id}
                 className={`flex gap-3 ${
@@ -152,7 +166,7 @@ const MobileChat: React.FC = () => {
             ))
           )}
           
-          {isLoading && (
+          {isProcessing && (
             <div className="flex gap-3 justify-start">
               <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
                 <Bot className="w-4 h-4 text-primary-foreground" />
@@ -172,7 +186,7 @@ const MobileChat: React.FC = () => {
       </div>
 
       {/* Quick Prompts */}
-      {messages.length === 0 && (
+      {adaptedMessages.length === 0 && (
         <div className="p-4 border-t">
           <p className="text-sm text-muted-foreground mb-3">Try these prompts:</p>
           <div className="grid grid-cols-1 gap-2">
@@ -201,7 +215,7 @@ const MobileChat: React.FC = () => {
             placeholder={isRecording ? "Listening..." : "Ask me to create notes, set reminders, improve text, summarize content..."}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             className="flex-1"
-            disabled={isLoading || isRecording}
+            disabled={isProcessing || isRecording}
           />
           
           {/* Voice Input Button */}
@@ -209,10 +223,10 @@ const MobileChat: React.FC = () => {
             variant={isRecording ? "destructive" : "outline"}
             size="sm"
             onClick={handleVoiceInput}
-            disabled={isLoading || isProcessing}
+            disabled={isProcessing || isSpeechProcessing}
             className={`${isRecording ? 'animate-pulse' : ''}`}
           >
-            {isProcessing ? (
+            {isSpeechProcessing ? (
               <Sparkles className="w-4 h-4 animate-spin" />
             ) : isRecording ? (
               <MicOff className="w-4 h-4" />
@@ -224,9 +238,9 @@ const MobileChat: React.FC = () => {
           {/* Send Button */}
           <Button 
             onClick={handleSend} 
-            disabled={!input.trim() || isLoading || isRecording}
+            disabled={!input.trim() || isProcessing || isRecording}
           >
-            {isLoading ? (
+            {isProcessing ? (
               <Sparkles className="w-4 h-4 animate-spin" />
             ) : (
               <Send className="w-4 h-4" />
