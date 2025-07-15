@@ -30,7 +30,7 @@ const EnhancedSecurityHeaders = () => {
       // Only apply strict headers in production, with relaxed COOP policy
       ...(import.meta.env.PROD ? [
         { name: 'Content-Security-Policy', content: csp },
-        { name: 'Permissions-Policy', content: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()' },
+        { name: 'Permissions-Policy', content: 'camera=(), microphone=(), geolocation=(self), payment=(), fullscreen=(self)' },
         { name: 'X-Frame-Options', content: 'SAMEORIGIN' },
         { name: 'Cross-Origin-Opener-Policy', content: 'same-origin-allow-popups' }, // More permissive
         { name: 'Cross-Origin-Embedder-Policy', content: 'require-corp' },
