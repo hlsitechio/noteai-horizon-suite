@@ -8,19 +8,31 @@ export const useCalendarEvents = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const loadEvents = async () => {
+      if (!isMounted) return;
+      
       setLoading(true);
       try {
         const savedEvents = await CalendarEventsService.getAllEvents();
-        setEvents(savedEvents);
+        if (isMounted) {
+          setEvents(savedEvents);
+        }
       } catch (error) {
         console.error('Error loading events:', error);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     loadEvents();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const addEvent = async (eventData: CreateCalendarEventData) => {

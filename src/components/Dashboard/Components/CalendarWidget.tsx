@@ -17,11 +17,11 @@ import { format, isToday, isTomorrow, isFuture, parseISO } from 'date-fns';
 export function CalendarWidget() {
   const [currentDate] = useState(new Date());
   const navigate = useNavigate();
-  const { events } = useCalendarEvents();
+  const { events, loading } = useCalendarEvents();
 
   // Filter and format upcoming events
   const upcomingEvents = useMemo(() => {
-    const now = new Date();
+    if (!events || events.length === 0) return [];
     
     return events
       .filter(event => {
@@ -147,7 +147,11 @@ export function CalendarWidget() {
         <div className="space-y-2 pt-2 border-t">
           <span className="text-xs font-medium text-muted-foreground">Upcoming Events</span>
           <div className="space-y-2 max-h-32 overflow-y-auto">
-            {upcomingEvents.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-4">
+                <p className="text-sm text-muted-foreground">Loading events...</p>
+              </div>
+            ) : upcomingEvents.length === 0 ? (
               <div className="text-center py-4">
                 <p className="text-sm text-muted-foreground">No upcoming events</p>
               </div>
