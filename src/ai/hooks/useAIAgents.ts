@@ -12,6 +12,8 @@ export interface AIAgentsState {
   error: string | null;
 }
 
+const STORAGE_KEY = 'ai_agents_conversation';
+
 export const useAIAgents = () => {
   const [state, setState] = useState<AIAgentsState>({
     messages: [],
@@ -25,19 +27,50 @@ export const useAIAgents = () => {
   const coordinatorRef = useRef<AgentCoordinator | null>(null);
   const { toast } = useToast();
 
+  // Load conversation from localStorage
+  const loadConversation = useCallback(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const messages: AIMessage[] = JSON.parse(stored);
+        return messages;
+      }
+    } catch (error) {
+      console.warn('Failed to load conversation from localStorage:', error);
+    }
+    return [];
+  }, []);
+
+  // Save conversation to localStorage
+  const saveConversation = useCallback((messages: AIMessage[]) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    } catch (error) {
+      console.warn('Failed to save conversation to localStorage:', error);
+    }
+  }, []);
+
   // Initialize the coordinator
   useEffect(() => {
     if (!coordinatorRef.current) {
       coordinatorRef.current = new AgentCoordinator();
       
-      // Update available agents
+      // Load existing conversation
+      const savedMessages = loadConversation();
+      if (savedMessages.length > 0) {
+        // Restore conversation history in the coordinator
+        coordinatorRef.current.restoreConversationHistory(savedMessages);
+      }
+      
+      // Update available agents and messages
       setState(prev => ({
         ...prev,
+        messages: savedMessages,
         availableAgents: coordinatorRef.current!.getAvailableAgents(),
         currentAgent: coordinatorRef.current!.getCurrentAgent()
       }));
     }
-  }, []);
+  }, [loadConversation]);
 
   const sendMessage = useCallback(async (
     message: string, 
@@ -69,6 +102,9 @@ export const useAIAgents = () => {
 
       // Update conversation history
       const history = coordinatorRef.current.getConversationHistory();
+      
+      // Save to localStorage
+      saveConversation(history);
       
       setState(prev => ({
         ...prev,
@@ -145,6 +181,10 @@ export const useAIAgents = () => {
     if (!coordinatorRef.current) return;
     
     coordinatorRef.current.clearConversationHistory();
+    
+    // Clear from localStorage
+    localStorage.removeItem(STORAGE_KEY);
+    
     setState(prev => ({
       ...prev,
       messages: []

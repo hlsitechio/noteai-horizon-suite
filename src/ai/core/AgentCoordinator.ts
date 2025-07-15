@@ -183,6 +183,10 @@ export class AgentCoordinator {
     this.currentContext.conversationHistory = [];
   }
 
+  public restoreConversationHistory(messages: AIMessage[]): void {
+    this.currentContext.conversationHistory = [...messages];
+  }
+
   public getSharedKnowledge() {
     return this.knowledgeManager.getSharedKnowledge();
   }
