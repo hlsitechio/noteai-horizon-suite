@@ -27,9 +27,9 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
   const navigate = useNavigate();
   const isCurrentlyDark = isDarkMode(theme);
 
-  // Enhanced hover styles with accent color
+  // Enhanced hover styles with accent color (more transparent)
   const getButtonHoverStyles = () => {
-    return `w-full h-10 text-muted-foreground transition-all duration-200 hover:text-white hover:shadow-md group relative overflow-hidden ${
+    return `w-full h-10 text-muted-foreground transition-all duration-200 hover:text-white hover:shadow-sm group relative overflow-hidden ${
       isCollapsed || isMobile ? 'justify-center px-0' : 'justify-start px-3'
     }`;
   };
@@ -75,7 +75,7 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
                 <User className="w-5 h-5" />
                 {!isCollapsed && !isMobile && <span>Profile</span>}
               </div>
-              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-md" />
+              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-30 transition-opacity duration-200 rounded-md" />
             </Button>
           </TooltipTrigger>
           {(isCollapsed || isMobile) && (
@@ -111,7 +111,7 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
                   <div className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full" />
                 )}
               </div>
-              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-md" />
+              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-30 transition-opacity duration-200 rounded-md" />
             </Button>
           </TooltipTrigger>
           {(isCollapsed || isMobile) && (
@@ -149,7 +149,7 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
                   <span>{isCurrentlyDark ? 'Light Mode' : 'Dark Mode'}</span>
                 )}
               </div>
-              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-md" />
+              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-30 transition-opacity duration-200 rounded-md" />
             </Button>
           </TooltipTrigger>
           {(isCollapsed || isMobile) && (
@@ -174,7 +174,7 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
                 <Settings className="w-5 h-5" />
                 {!isCollapsed && !isMobile && <span>Settings</span>}
               </div>
-              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-md" />
+              <div className="absolute inset-0 bg-[var(--hover-bg)] opacity-0 group-hover:opacity-30 transition-opacity duration-200 rounded-md" />
             </Button>
           </TooltipTrigger>
           {(isCollapsed || isMobile) && (
