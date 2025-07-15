@@ -10,6 +10,7 @@ import NewsletterSignup from '@/components/Marketing/NewsletterSignup';
 import SocialProof from '@/components/Marketing/SocialProof';
 import MarketingCTA from '@/components/Marketing/MarketingCTA';
 import SEOOptimizer from '@/components/Marketing/SEOOptimizer';
+import ContentHub from '@/components/Marketing/ContentHub';
 import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
 import { AnalyticsService } from '@/services/analyticsService';
@@ -69,9 +70,10 @@ const Landing: React.FC = () => {
   return (
     <>
       <SEOOptimizer 
-        title="Online Note AI - Smart Note-Taking with AI"
-        description="Transform your productivity with AI-powered note-taking. Organize, search, and collaborate smarter with intelligent suggestions and automated insights."
-        keywords={['ai notes', 'smart note taking', 'productivity', 'ai assistant', 'note organization', 'collaboration']}
+        title="OnlineNote.ai - AI-Powered Note-Taking That Actually Works | Smart Productivity Tools"
+        description="Join 50,000+ professionals using OnlineNote.ai's intelligent note-taking system. AI-powered organization, instant search, real-time collaboration, and automated insights that transform how you capture and manage knowledge."
+        keywords={['ai note taking app', 'smart note organization', 'ai productivity tools', 'intelligent note system', 'collaborative note taking', 'ai writing assistant', 'knowledge management ai', 'digital note taking', 'ai powered notes', 'smart productivity app']}
+        canonicalUrl="https://onlinenote.ai"
       />
       <EnhancedSecurityHeaders />
       <div className="min-h-screen bg-background">
@@ -97,6 +99,9 @@ const Landing: React.FC = () => {
         <SocialProof variant="stats" />
         
         <Pricing />
+        
+        {/* Content Hub - Resources Section */}
+        <ContentHub />
         
         {/* Marketing CTA */}
         <section className="py-16 px-6 lg:px-8">

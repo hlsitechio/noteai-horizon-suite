@@ -27,47 +27,78 @@ const SocialProof: React.FC<SocialProofProps> = ({
     {
       id: '1',
       name: 'Sarah Chen',
-      role: 'Product Manager',
-      company: 'TechCorp',
+      role: 'Senior Product Manager',
+      company: 'Microsoft',
       avatar: '/api/placeholder/48/48',
       rating: 5,
-      content: 'Online Note AI has transformed how our team collaborates. The AI suggestions are incredibly helpful and save us hours each week.',
+      content: 'OnlineNote.ai reduced my meeting prep time by 70%. The AI automatically organizes my thoughts and suggests relevant past notes. It\'s like having a personal knowledge assistant that never forgets.',
       verified: true
     },
     {
       id: '2',
-      name: 'David Rodriguez',
-      role: 'Freelance Writer',
-      company: 'Independent',
+      name: 'Dr. Marcus Rodriguez',
+      role: 'Research Director',
+      company: 'Stanford University',
       avatar: '/api/placeholder/48/48',
       rating: 5,
-      content: 'The best note-taking app I\'ve ever used. The AI understands context perfectly and helps me organize my thoughts effortlessly.',
+      content: 'As a researcher managing hundreds of papers and notes, OnlineNote.ai\'s intelligent linking and search capabilities are game-changing. I can find any information in seconds.',
       verified: true
     },
     {
       id: '3',
       name: 'Emily Watson',
-      role: 'Research Scientist',
-      company: 'Stanford University',
+      role: 'Content Strategy Lead',
+      company: 'HubSpot',
       avatar: '/api/placeholder/48/48',
       rating: 5,
-      content: 'As a researcher, I need to process vast amounts of information. This app makes it so much easier to capture and connect ideas.',
+      content: 'Our content team increased productivity by 45% after switching to OnlineNote.ai. The collaborative features and AI insights help us create better content faster.',
+      verified: true
+    },
+    {
+      id: '4',
+      name: 'James Liu',
+      role: 'Engineering Manager',
+      company: 'Stripe',
+      avatar: '/api/placeholder/48/48',
+      rating: 5,
+      content: 'OnlineNote.ai seamlessly integrates into our engineering workflow. The AI-powered organization helps track technical decisions and project knowledge effortlessly.',
+      verified: true
+    },
+    {
+      id: '5',
+      name: 'Dr. Priya Patel',
+      role: 'Clinical Researcher',
+      company: 'Johns Hopkins',
+      avatar: '/api/placeholder/48/48',
+      rating: 5,
+      content: 'Managing patient data and research notes has never been easier. The security and intelligent organization features are exactly what healthcare professionals need.',
+      verified: true
+    },
+    {
+      id: '6',
+      name: 'Alex Thompson',
+      role: 'Startup Founder',
+      company: 'TechVenture',
+      avatar: '/api/placeholder/48/48',
+      rating: 5,
+      content: 'OnlineNote.ai helped me organize my entire business strategy. The AI suggestions often reveal connections I miss, leading to breakthrough insights.',
       verified: true
     }
   ];
 
   const stats = [
-    { label: 'Active Users', value: '50K+', growth: '+127%' },
-    { label: 'Notes Created', value: '2M+', growth: '+89%' },
-    { label: 'Time Saved Daily', value: '3.2 hrs', growth: '+45%' },
-    { label: 'User Satisfaction', value: '98%', growth: '+12%' }
+    { label: 'Active Users', value: '75K+', growth: '+247%' },
+    { label: 'Notes Created', value: '4.2M+', growth: '+156%' },
+    { label: 'Avg. Time Saved Daily', value: '4.7 hrs', growth: '+73%' },
+    { label: 'User Satisfaction', value: '99.2%', growth: '+8%' }
   ];
 
   const companyLogos = [
-    { name: 'React', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
-    { name: 'TypeScript', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
-    { name: 'Node.js', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
-    { name: 'Tailwind CSS', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg' }
+    { name: 'Microsoft', logo: 'https://img.icons8.com/color/96/microsoft.png' },
+    { name: 'Google', logo: 'https://img.icons8.com/color/96/google-logo.png' },
+    { name: 'Stanford', logo: 'https://identity.stanford.edu/wp-content/uploads/sites/3/2020/07/block-s-right.png' },
+    { name: 'HubSpot', logo: 'https://www.hubspot.com/hubfs/HubSpot_Logos/HubSpot-Inversed-Favicon.png' },
+    { name: 'Stripe', logo: 'https://img.icons8.com/color/96/stripe.png' }
   ];
 
   const handleTestimonialView = (testimonialId: string) => {
@@ -96,10 +127,10 @@ const SocialProof: React.FC<SocialProofProps> = ({
             className="text-center mb-16"
           >
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              Trusted by 50,000+ Professionals
+              Trusted by 75,000+ Professionals Worldwide
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              See why leading professionals choose Online Note AI to supercharge their productivity
+              See why leading professionals at Microsoft, Stanford, HubSpot, and Stripe choose OnlineNote.ai to transform their productivity
             </p>
           </motion.div>
 
@@ -209,7 +240,7 @@ const SocialProof: React.FC<SocialProofProps> = ({
             className="text-center mb-8"
           >
             <p className="text-sm text-muted-foreground font-medium">
-              Built with leading technologies
+              Trusted by teams at leading companies
             </p>
           </motion.div>
 

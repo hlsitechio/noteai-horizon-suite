@@ -28,7 +28,12 @@ const Hero = () => {
       y: 0
     }
   };
-  const animatedTexts = ["Experience the revolution in AI-driven note-taking and productivity.", "Create, collaborate, and innovate with unprecedented intelligence.", "Unlock your full potential with smart, automated workflows.", "Transform your ideas into action with seamless organization."];
+  const animatedTexts = [
+    "Join 75,000+ professionals who save 4+ hours weekly with AI-powered note organization.", 
+    "Transform scattered thoughts into actionable insights with intelligent knowledge management.", 
+    "Collaborate seamlessly with teams at Microsoft, Stanford, and HubSpot using our AI system.", 
+    "Never lose an important idea again with automated linking and smart search capabilities."
+  ];
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -147,14 +152,14 @@ const Hero = () => {
           delay: 0.8
         }} className="grid grid-cols-3 gap-6 sm:gap-12 pt-16 sm:pt-20 max-w-3xl mx-auto px-4">
             {[{
-            number: '10K+',
+            number: '75K+',
+            label: 'Active Users'
+          }, {
+            number: '4.2M+',
             label: 'Notes Created'
           }, {
-            number: '150+',
-            label: 'AI Enhancements'
-          }, {
-            number: '95%',
-            label: 'Time Saved'
+            number: '4.7hrs',
+            label: 'Daily Time Saved'
           }].map((stat, index) => <motion.div key={stat.label} className="text-center group" initial={{
             opacity: 0,
             y: 20

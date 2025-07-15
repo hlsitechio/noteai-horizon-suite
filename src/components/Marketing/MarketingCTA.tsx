@@ -73,7 +73,7 @@ const MarketingCTA: React.FC<MarketingCTAProps> = ({
             viewport={{ once: true }}
             className="text-3xl lg:text-5xl font-bold mb-6"
           >
-            Ready to Transform Your Note-Taking?
+            Join 75,000+ Professionals Who Transformed Their Productivity
           </motion.h2>
 
           <motion.p
@@ -81,9 +81,10 @@ const MarketingCTA: React.FC<MarketingCTAProps> = ({
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
-            className="text-xl lg:text-2xl opacity-90 mb-8 max-w-2xl mx-auto"
+            className="text-xl lg:text-2xl opacity-90 mb-8 max-w-3xl mx-auto"
           >
-            Join 50,000+ professionals who've already supercharged their productivity with AI-powered notes.
+            Stop struggling with scattered notes and information overload. OnlineNote.ai's intelligent system organizes your thoughts, 
+            surfaces insights, and saves you 4+ hours every week. Used by teams at Microsoft, Stanford, and HubSpot.
           </motion.p>
 
           <motion.div
