@@ -1,4 +1,5 @@
 import { PresetTheme, ThemeColors } from './types';
+import { whiteThemes } from './whiteThemes';
 import { natureThemes } from './natureThemes';
 import { warmThemes } from './warmThemes';
 import { softThemes } from './softThemes';
@@ -10,6 +11,7 @@ export type { ThemeColors, PresetTheme };
 
 // Combine all theme categories into a single array
 export const presetThemes: PresetTheme[] = [
+  ...whiteThemes,
   ...natureThemes,
   ...warmThemes,
   ...softThemes,
