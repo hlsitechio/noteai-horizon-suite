@@ -8,9 +8,11 @@ export const useDashboardStatus = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasResetCompleted, setHasResetCompleted] = useState(false);
 
+  
   useEffect(() => {
     const checkDashboardStatus = async () => {
       if (!user) {
+        setIsDashboardInitialized(false);
         setIsLoading(false);
         return;
       }

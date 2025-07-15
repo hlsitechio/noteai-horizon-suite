@@ -5,7 +5,9 @@ import { useReminderManager } from './useReminderManager';
 // Global hook to manage reminders across the entire app
 export const useGlobalReminderManager = () => {
   const { user } = useAuth();
-  const reminderManager = useReminderManager();
+  
+  // Only initialize reminder manager if user exists
+  const reminderManager = user ? useReminderManager() : null;
 
   useEffect(() => {
     if (!user) return;
