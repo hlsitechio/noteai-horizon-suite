@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import Navigation from '@/components/Landing/Navigation';
 import Hero from '@/components/Landing/Hero';
 import Features from '@/components/Landing/Features';
@@ -12,6 +13,8 @@ import MarketingCTA from '@/components/Marketing/MarketingCTA';
 import SEOOptimizer from '@/components/Marketing/SEOOptimizer';
 import ContentHub from '@/components/Marketing/ContentHub';
 import TrustSignals from '@/components/Marketing/TrustSignals';
+import LeadCapturePopup from '@/components/Marketing/LeadCapturePopup';
+import { useExitIntent, useScrollDepth, useTimeOnPage } from '@/hooks/useConversionTracking';
 import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
 import { AnalyticsService } from '@/services/analyticsService';
@@ -22,6 +25,31 @@ const Landing: React.FC = () => {
   
   const [isScrolled, setIsScrolled] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [showLeadCapture, setShowLeadCapture] = useState(false);
+
+  // Advanced conversion tracking
+  useExitIntent({
+    onExitIntent: () => setShowLeadCapture(true),
+    enabled: !showLeadCapture
+  });
+
+  useScrollDepth({
+    onScrollDepth: (depth) => {
+      if (depth === 75 && !showLeadCapture) {
+        // Show popup after significant scroll engagement
+        setTimeout(() => setShowLeadCapture(true), 2000);
+      }
+    }
+  });
+
+  useTimeOnPage({
+    onTimeThreshold: (seconds) => {
+      if (seconds === 120 && !showLeadCapture) {
+        // Show popup after 2 minutes of engagement
+        setShowLeadCapture(true);
+      }
+    }
+  });
 
   useEffect(() => {
     // Track page view
@@ -116,6 +144,15 @@ const Landing: React.FC = () => {
         
         <Footer />
       </div>
+      
+      {/* Advanced Lead Capture Popup */}
+      <AnimatePresence>
+        <LeadCapturePopup 
+          isOpen={showLeadCapture}
+          onClose={() => setShowLeadCapture(false)}
+          trigger="exit_intent"
+        />
+      </AnimatePresence>
     </>
   );
 };
