@@ -1,6 +1,6 @@
 import React from 'react';
 import { CollaborativeEditorContent } from './components/CollaborativeEditorContent';
-import EditorContent from './components/EditorContent';
+import { SimpleEditorContent } from './components/SimpleEditorContent';
 
 interface SmartEditorProps {
   value: string;
@@ -26,5 +26,5 @@ export const SmartEditor: React.FC<SmartEditorProps> = ({
   }
 
   // Fall back to regular editor
-  return <EditorContent value={props.value} onChange={props.onChange} />;
+  return <SimpleEditorContent value={props.value} onChange={props.onChange} placeholder={props.placeholder} className={props.className} />;
 };
