@@ -31,9 +31,14 @@ export const useUserProfile = () => {
       // Get the current session to pass the auth token
       const { data: sessionData } = await supabase.auth.getSession();
       if (!sessionData.session) {
-        throw new Error('No valid session found');
+        console.error('No valid session found');
+        setProfile(null);
+        setIsLoading(false);
+        return;
       }
 
+      console.log('Session found, calling edge function with auth token');
+      
       const { data, error } = await supabase.functions.invoke('get-user-profile', {
         headers: {
           Authorization: `Bearer ${sessionData.session.access_token}`,
