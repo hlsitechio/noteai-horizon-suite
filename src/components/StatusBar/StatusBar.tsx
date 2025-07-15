@@ -47,10 +47,14 @@ const StatusBar: React.FC<StatusBarProps> = ({
       className
     )}>
       <div className="flex items-center justify-between min-h-[40px] pr-4">
-        {/* Static text container */}
-        <div className="flex-1 px-4">
+        {/* Scrolling text container */}
+        <div className="flex-1 overflow-hidden relative">
           <div 
-            className="text-sm font-medium text-foreground/90 py-2"
+            key={animationKey}
+            className="whitespace-nowrap text-sm font-medium text-foreground/90 py-2"
+            style={{
+              animation: `scroll-left ${animationDuration}s linear infinite`
+            }}
           >
             {message}
           </div>
@@ -69,6 +73,16 @@ const StatusBar: React.FC<StatusBarProps> = ({
         </div>
       </div>
 
+      <style>{`
+        @keyframes scroll-left {
+          0% {
+            transform: translateX(100%);
+          }
+          100% {
+            transform: translateX(-100%);
+          }
+        }
+      `}</style>
     </div>
   );
 };
