@@ -74,53 +74,8 @@ export class PageBannerService {
     }
   }
 
-  static async updateBannerDisplaySettings(
-    userId: string,
-    pagePath: string,
-    displaySettings: BannerDisplaySettings
-  ): Promise<boolean> {
-    try {
-      // First check if settings exist
-      const existing = await this.getPageSettings(userId, pagePath);
-      
-      const settingsData = {
-        user_id: userId,
-        page_path: pagePath,
-        banner_settings: displaySettings,
-        updated_at: new Date().toISOString()
-      };
-
-      if (existing) {
-        const { error } = await supabase
-          .from('page_banner_settings')
-          .update(settingsData)
-          .eq('user_id', userId)
-          .eq('page_path', pagePath);
-
-        if (error) {
-          console.error('Error updating banner display settings:', error);
-          return false;
-        }
-      } else {
-        const { error } = await supabase
-          .from('page_banner_settings')
-          .insert({
-            ...settingsData,
-            is_enabled: true
-          });
-
-        if (error) {
-          console.error('Error creating banner display settings:', error);
-          return false;
-        }
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error in updateBannerDisplaySettings:', error);
-      return false;
-    }
-  }
+  // updateBannerDisplaySettings method removed as it's no longer needed
+  // since BannerDisplaySettings interface is now empty
 
   static async deletePageSettings(userId: string, pagePath: string): Promise<boolean> {
     try {
