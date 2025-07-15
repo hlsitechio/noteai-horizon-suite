@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+const openRouterApiKey = Deno.env.get('OPENROUTER_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,9 +18,9 @@ serve(async (req) => {
   try {
     console.log('AI Writing Assistant request received');
 
-    if (!openAIApiKey) {
-      console.error('OPENAI_API_KEY not configured');
-      throw new Error('OpenAI API key not configured');
+    if (!openRouterApiKey) {
+      console.error('OPENROUTER_API_KEY not configured');
+      throw new Error('OpenRouter API key not configured');
     }
 
     const { action, text, targetLanguage, tone, length } = await req.json();
@@ -80,14 +80,16 @@ Return the keywords as a comma-separated list.`
       throw new Error(`Unknown action: ${action}`);
     }
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
+        'Authorization': `Bearer ${openRouterApiKey}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://lovable.dev',
+        'X-Title': 'Lovable Notes App',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'moonshotai/kimi-k2:free',
         messages: [
           {
             role: 'system',
@@ -103,12 +105,12 @@ Return the keywords as a comma-separated list.`
       }),
     });
 
-    console.log('OpenAI response status:', response.status);
+    console.log('OpenRouter response status:', response.status);
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenAI API error:', errorText);
-      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+      console.error('OpenRouter API error:', errorText);
+      throw new Error(`OpenRouter API error: ${response.status} - ${errorText}`);
     }
 
     const result = await response.json();
