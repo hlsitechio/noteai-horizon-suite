@@ -61,7 +61,7 @@ const DashboardScreenshot = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
-    }, 1000);
+    }, 5000); // Reduced frequency from 1000ms to 5000ms for better performance
 
     return () => clearInterval(timer);
   }, []);

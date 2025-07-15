@@ -32,7 +32,7 @@ const SecurityDemo = () => {
     setEncryptionProgress(0);
     setShowOriginalText(true);
     
-    // Animate encryption process
+    // Animate encryption process with better performance
     const interval = setInterval(() => {
       setEncryptionProgress(prev => {
         if (prev >= 100) {
@@ -40,9 +40,9 @@ const SecurityDemo = () => {
           setShowOriginalText(false);
           return 100;
         }
-        return prev + 3;
+        return prev + 5; // Increased step size to reduce frequency
       });
-    }, 50);
+    }, 80); // Increased from 50ms to 80ms for better performance
   };
 
   const startSecurityDemo = () => {

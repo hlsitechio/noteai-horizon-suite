@@ -35,7 +35,7 @@ export const SecurityAuditDashboard: React.FC<SecurityAuditProps> = ({ className
     };
 
     loadSecurityData();
-    const interval = setInterval(loadSecurityData, 30000); // Update every 30 seconds
+    const interval = setInterval(loadSecurityData, 60000); // Increased from 30s to 60s for better performance
 
     return () => clearInterval(interval);
   }, []);

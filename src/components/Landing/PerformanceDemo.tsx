@@ -27,16 +27,16 @@ const PerformanceDemo = () => {
     setSyncProgress(0);
     setDevices(prev => prev.map(d => ({ ...d, synced: false })));
     
-    // Animate sync progress
+    // Animate sync progress with better performance
     const interval = setInterval(() => {
       setSyncProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
           return 100;
         }
-        return prev + 2;
+        return prev + 4; // Increased step size to reduce frequency
       });
-    }, 30);
+    }, 60); // Increased from 30ms to 60ms for better performance
 
     // Sync devices with delays
     devices.forEach((device, index) => {

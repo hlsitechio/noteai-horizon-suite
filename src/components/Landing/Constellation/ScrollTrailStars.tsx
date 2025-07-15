@@ -103,7 +103,7 @@ const ScrollTrailStars: React.FC<ScrollTrailStarsProps> = ({ mousePosition }) =>
       setStars(prevStars => 
         prevStars.filter(star => Date.now() - star.timestamp < 3000)
       );
-    }, 1000);
+    }, 2000); // Increased from 1000ms to 2000ms for better performance
 
     return () => clearInterval(cleanupInterval);
   }, []);
