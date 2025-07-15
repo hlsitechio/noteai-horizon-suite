@@ -26,7 +26,7 @@ const DeepSeekChat: React.FC = () => {
               content: input
             }
           ],
-          model: 'deepseek/deepseek-chat-v3-0324:free' // This is now the default, but we can still specify it
+          model: 'moonshotai/kimi-k2'
         }
       });
 
@@ -48,8 +48,8 @@ const DeepSeekChat: React.FC = () => {
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <span>DeepSeek Chat v3</span>
-          <span className="text-sm text-muted-foreground">(Free)</span>
+          <span>Kimi AI Chat</span>
+          <span className="text-sm text-muted-foreground">(K2 Model)</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -57,7 +57,7 @@ const DeepSeekChat: React.FC = () => {
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask DeepSeek anything..."
+            placeholder="Ask Kimi anything..."
             className="min-h-[100px]"
             disabled={isLoading}
           />
