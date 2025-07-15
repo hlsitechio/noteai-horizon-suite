@@ -1,17 +1,9 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
 
+// Legacy interface - deprecated, kept for backward compatibility only
 export interface BannerDisplaySettings {
-  autoplay: boolean;
-  loop: boolean;
-  muted: boolean;
-  showControls: boolean;
-  aspectRatio: string;
-  quality: string;
-  parallaxEffect: boolean;
-  blurBackground: boolean;
-  opacity: number;
-  borderRadius: number;
+  // All display settings have been removed
 }
 
 export interface PageBannerSettings {
@@ -151,17 +143,6 @@ export class PageBannerService {
   }
 
   static getDefaultDisplaySettings(): BannerDisplaySettings {
-    return {
-      autoplay: true,
-      loop: true,
-      muted: true,
-      showControls: false,
-      aspectRatio: 'auto',
-      quality: 'high',
-      parallaxEffect: false,
-      blurBackground: false,
-      opacity: 100,
-      borderRadius: 8
-    };
+    return {}; // Empty object since all display settings have been removed
   }
 }
