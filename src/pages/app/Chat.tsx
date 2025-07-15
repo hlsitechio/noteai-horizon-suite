@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { useEnhancedAIChatWithSessions } from '@/hooks/useEnhancedAIChatWithSessions';
+import { useAIAgents } from '@/ai/hooks/useAIAgents';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import { useNotePreview } from '@/hooks/useNotePreview';
 import { useUserProfile } from '@/hooks/useUserProfile';
@@ -151,7 +151,7 @@ const Chat: React.FC = () => {
                   onSend={handleSend}
                   onKeyPress={handleKeyPress}
                   onVoiceInput={handleVoiceInput}
-                  isLoading={isLoading}
+          isLoading={isProcessing}
                   isRecording={isRecording}
                   isProcessing={isProcessing}
                 />
