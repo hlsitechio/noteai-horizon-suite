@@ -19,7 +19,8 @@ const Settings: React.FC = () => {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    setSearchParams({ tab: value });
+    // Use replace instead of setting to prevent page reload
+    setSearchParams({ tab: value }, { replace: true });
   };
 
   return (

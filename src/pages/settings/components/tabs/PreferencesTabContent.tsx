@@ -1,10 +1,10 @@
 import React from 'react';
-import PreferencesSection from '@/components/Settings/PreferencesSection';
+import EnhancedPreferencesSection from '@/components/Settings/EnhancedPreferencesSection';
 
 export const PreferencesTabContent: React.FC = () => {
   return (
     <div className="space-y-6">
-      <PreferencesSection />
+      <EnhancedPreferencesSection />
     </div>
   );
 };
