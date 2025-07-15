@@ -49,18 +49,7 @@ export const useRealtimeSync = ({
   }, [toast]);
 
   useEffect(() => {
-    if (!enabled || !documentId) return;
-
-    const config: RealtimeSyncConfig = {
-      documentId,
-      userId,
-      onContentChange,
-      onUserJoined: handleUserJoined,
-      onUserLeft: handleUserLeft,
-      onConnectionStatusChange: handleConnectionChange
-    };
-
-    // RealtimeSyncService disabled to prevent WebSocket connection errors
+    // RealtimeSyncService completely disabled - no service instantiation
     console.warn('RealtimeSyncService disabled - WebSocket connections not available');
     setConnected(false);
     return;

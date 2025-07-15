@@ -54,16 +54,11 @@ export const useOptimizedRealtime = ({
   }, []);
 
   const setupRealtime = useCallback(async () => {
-    if (!enabled || !isAuthenticated || !user) {
-      logger.realtime.debug('Realtime disabled or user not authenticated');
-      return;
-    }
-
-    // Realtime connections disabled to prevent connection errors
-    logger.realtime.debug('Realtime connections disabled');
+    // Realtime connections completely disabled
+    logger.realtime.debug('Realtime connections disabled - no connection attempts will be made');
     subscriptionActiveRef.current = false;
     return;
-  }, [enabled, isAuthenticated, user?.id]);
+  }, []);
 
   useEffect(() => {
     setupRealtime();
