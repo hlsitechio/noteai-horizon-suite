@@ -20,6 +20,8 @@ import MobileOptimizedCTA from '@/components/Mobile/MobileOptimizedCTA';
 import { LazyContentHub, LazySocialProof, LazyPricing } from '@/components/Performance/LazyComponents';
 import { LandingThemeGallery } from '@/components/landing/LandingThemeGallery';
 import { LandingFeatureShowcase } from '@/components/landing/LandingFeatureShowcase';
+import ThemeShowcase from '@/components/Marketing/ThemeShowcase';
+import { DynamicThemeStyles } from '@/components/Marketing/DynamicThemeStyles';
 import { useExitIntent, useScrollDepth, useTimeOnPage } from '@/hooks/useConversionTracking';
 import { usePerformanceTracking, useViewportTracking } from '@/hooks/usePerformanceOptimization';
 import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
@@ -110,6 +112,7 @@ const Landing: React.FC = () => {
 
   return (
     <>
+      <DynamicThemeStyles />
       <SEOOptimizer 
         title="OnlineNote.ai - AI-Powered Note-Taking That Actually Works | Smart Productivity Tools"
         description="Join 50,000+ professionals using OnlineNote.ai's intelligent note-taking system. AI-powered organization, instant search, real-time collaboration, and automated insights that transform how you capture and manage knowledge."
@@ -139,6 +142,9 @@ const Landing: React.FC = () => {
         
         {/* Feature Showcase Section */}
         <LandingFeatureShowcase />
+        
+        {/* Interactive Theme Showcase */}
+        <ThemeShowcase />
         
         {/* Theme Gallery Section */}
         <LandingThemeGallery />

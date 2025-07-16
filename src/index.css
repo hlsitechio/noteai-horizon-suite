@@ -44,6 +44,19 @@
     opacity: 1;
   }
 }
+
+/* ========================================
+   LANDING PAGE THEME VARIABLES
+   ======================================== */
+
+/* Landing page theme variables that can be dynamically updated */
+:root {
+  --landing-primary: 142 100% 50%;
+  --landing-secondary: 60 100% 50%;
+  --landing-accent: 300 100% 50%;
+  --landing-muted: 180 100% 50%;
+  --landing-gradient: linear-gradient(135deg, hsl(142 100% 15%) 0%, hsl(300 100% 15%) 50%, hsl(60 100% 15%) 100%);
+}
  
 /* ========================================
    THEME PRESET 1: PROFESSIONAL DARK (Default)
