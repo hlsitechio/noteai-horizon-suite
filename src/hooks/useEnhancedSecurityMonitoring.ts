@@ -4,6 +4,7 @@ import { dataProtectionService } from '@/services/security/dataProtection';
 import { enhancedSessionSecurityService } from '@/services/security/sessionSecurity';
 import { securityHeadersService } from '@/services/security';
 import { logger } from '@/utils/logger';
+import { useCSPMonitoring } from './useCSPMonitoring';
 
 interface SecurityEvent {
   type: 'threat_detected' | 'data_breach' | 'suspicious_activity' | 'compliance_violation' | 'session_anomaly';
@@ -22,6 +23,9 @@ interface SecurityMetrics {
 }
 
 export const useEnhancedSecurityMonitoring = () => {
+  // Initialize CSP monitoring
+  const { enableReportOnlyMode, disableReportOnlyMode } = useCSPMonitoring();
+  
   const logSecurityEvent = useCallback((event: SecurityEvent) => {
     // Enhanced logging with threat detection
     advancedThreatDetection.logThreatDetection({
@@ -265,6 +269,8 @@ export const useEnhancedSecurityMonitoring = () => {
     analyzePayloadSecurity,
     monitorSessionSecurity,
     validateContentSecurity,
-    getSecurityMetrics
+    getSecurityMetrics,
+    enableCSPReportMode: enableReportOnlyMode,
+    disableCSPReportMode: disableReportOnlyMode
   };
 };

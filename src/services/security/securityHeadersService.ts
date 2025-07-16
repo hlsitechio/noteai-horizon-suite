@@ -18,25 +18,43 @@ export class SecurityHeadersService {
     this.config = {
       csp: {
         enabled: true,
+        reportOnly: false,
         directives: {
-          'default-src': ["'self'"],
+          'default-src': ["'none'"], // Deny all by default - strict security
           'script-src': [
             "'self'",
-            "'unsafe-inline'", // Required for some React functionality
-            'https://ubxtmbgvibtjtjggjnjm.supabase.co',
+            "'unsafe-inline'", // Required for Vite in development
+            "'unsafe-eval'", // Required for development and some libraries
+            "'wasm-unsafe-eval'", // Required for WebAssembly
+            'https://*.supabase.co',
+            'https://cdn.jsdelivr.net',
+            'https://unpkg.com',
+            'https://cdnjs.cloudflare.com',
             'https://js.stripe.com',
             'https://www.google.com',
             'https://www.gstatic.com'
           ],
+          'script-src-elem': [
+            "'self'",
+            'https://*.supabase.co',
+            'https://cdn.jsdelivr.net',
+            'https://unpkg.com',
+            'https://js.stripe.com'
+          ],
           'style-src': [
             "'self'",
-            "'unsafe-inline'", // Required for styled-components and Tailwind
+            "'unsafe-inline'", // Required for CSS-in-JS and Tailwind
+            'https://fonts.googleapis.com'
+          ],
+          'style-src-elem': [
+            "'self'",
+            "'unsafe-inline'",
             'https://fonts.googleapis.com'
           ],
           'font-src': [
             "'self'",
-            'https://fonts.gstatic.com',
-            'data:'
+            'data:',
+            'https://fonts.gstatic.com'
           ],
           'img-src': [
             "'self'",
@@ -44,29 +62,44 @@ export class SecurityHeadersService {
             'blob:',
             'https://*.supabase.co',
             'https://*.githubusercontent.com',
-            'https://images.unsplash.com'
+            'https://images.unsplash.com',
+            'https://api.dicebear.com',
+            'https://via.placeholder.com'
           ],
           'connect-src': [
             "'self'",
-            'https://ubxtmbgvibtjtjggjnjm.supabase.co',
-            'wss://ubxtmbgvibtjtjggjnjm.supabase.co',
+            'https://*.supabase.co',
+            'wss://*.supabase.co',
             'https://api.openai.com',
+            'https://openrouter.ai',
             'https://api.stripe.com'
+          ],
+          'media-src': [
+            "'self'",
+            'blob:',
+            'https://*.supabase.co'
           ],
           'frame-src': [
             "'self'",
             'https://js.stripe.com',
             'https://www.google.com'
           ],
+          'child-src': [
+            "'self'",
+            'blob:'
+          ],
           'worker-src': [
             "'self'",
             'blob:'
           ],
+          'manifest-src': ["'self'"],
+          'prefetch-src': ["'self'"],
           'object-src': ["'none'"],
           'base-uri': ["'self'"],
           'form-action': ["'self'"],
           'frame-ancestors': ["'none'"],
-          'upgrade-insecure-requests': []
+          'upgrade-insecure-requests': [],
+          'block-all-mixed-content': []
         },
         reportUri: '/api/csp-report'
       },

@@ -1,41 +1,24 @@
 
 import { useEffect } from 'react';
+import { SecurityHeadersService } from '@/services/security/securityHeadersService';
 
 const EnhancedSecurityHeaders = () => {
   useEffect(() => {
-    // Enhanced Content Security Policy - allow Lovable scripts
-    const csp = [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://cdn.gpteng.co",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: https: blob:",
-      "media-src 'self' data: blob:",
-      "connect-src 'self' https://ubxtmbgvibtjtjggjnjm.supabase.co https://www.google-analytics.com https://api.openai.com https://api.openrouter.ai wss://ubxtmbgvibtjtjggjnjm.supabase.co ws://localhost:* wss://localhost:* ws://0.0.0.0:* ws://127.0.0.1:* *.lovable.app *.lovableproject.com *.cloudflareinsights.com https://lovable-api.com",
-      "referrer no-referrer-when-downgrade",
-      "frame-src 'self'",
-      "frame-ancestors 'self'",
-      "object-src 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "upgrade-insecure-requests",
-      "block-all-mixed-content",
-    ].join('; ');
+    // Get enhanced security headers from service
+    const securityService = new SecurityHeadersService();
+    const allSecurityHeaders = securityService.getAllSecurityHeaders();
 
-    // Development-friendly security headers with relaxed Cross-Origin-Opener-Policy
-    const securityHeaders = [
-      { name: 'X-Content-Type-Options', content: 'nosniff' },
-      { name: 'X-XSS-Protection', content: '1; mode=block' },
-      { name: 'Referrer-Policy', content: 'strict-origin-when-cross-origin' },
-      // Only apply strict headers in production, with relaxed COOP policy
-      ...(import.meta.env.PROD ? [
-        { name: 'Content-Security-Policy', content: csp },
-        { name: 'Permissions-Policy', content: 'camera=(), microphone=(), geolocation=(self), payment=(), fullscreen=(self)' },
-        { name: 'X-Frame-Options', content: 'SAMEORIGIN' },
-        { name: 'Cross-Origin-Opener-Policy', content: 'same-origin-allow-popups' }, // More permissive
-        { name: 'Cross-Origin-Embedder-Policy', content: 'require-corp' },
-      ] : [])
-    ];
+    // Convert headers to meta tag format
+    const securityHeaders = Object.entries(allSecurityHeaders).map(([name, content]) => ({
+      name,
+      content
+    }));
+
+    // Add additional development-friendly headers
+    securityHeaders.push(
+      { name: 'Cross-Origin-Opener-Policy', content: import.meta.env.PROD ? 'same-origin' : 'same-origin-allow-popups' },
+      { name: 'Cross-Origin-Embedder-Policy', content: 'require-corp' }
+    );
 
     // Set meta tags for security headers
     securityHeaders.forEach(({ name, content }) => {
