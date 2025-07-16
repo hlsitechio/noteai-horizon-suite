@@ -9,19 +9,33 @@ const WhimsicalHero = () => {
       <div className="container mx-auto px-4">
         {/* Main Hero Content */}
         <div className="text-center space-y-8 mb-16">
+          {/* Hero Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1 }}
+            className="mb-8"
+          >
+            <img 
+              src="/lovable-uploads/51f2dbe2-5bcb-4eb9-9f51-8722ef49ea3d.png" 
+              alt="OnlineNote AI - Futuristic Note Taking Platform"
+              className="mx-auto max-w-4xl w-full h-auto object-contain"
+            />
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
             className="space-y-6"
           >
-            <h1 className="text-5xl lg:text-7xl font-bold tracking-tight">
+            <h1 className="text-3xl lg:text-5xl font-bold tracking-tight">
               The all-in-one{' '}
-              <span className="gradient-text">workspace</span>{' '}
+              <span className="gradient-text">AI-powered workspace</span>{' '}
               you'll love
             </h1>
             <p className="text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto">
-              Think it. Plan it. Build it. Without switching apps.
+              Think it. Plan it. Build it. Without switching apps. Enhanced with AI intelligence.
             </p>
           </motion.div>
 
