@@ -18,9 +18,8 @@ import TrustSignals from '@/components/Marketing/TrustSignals';
 import LeadCapturePopup from '@/components/Marketing/LeadCapturePopup';
 import MobileOptimizedCTA from '@/components/Mobile/MobileOptimizedCTA';
 import { LazyContentHub, LazySocialProof, LazyPricing } from '@/components/Performance/LazyComponents';
-import { LandingThemeGallery } from '@/components/landing/LandingThemeGallery';
 import { LandingFeatureShowcase } from '@/components/landing/LandingFeatureShowcase';
-import ThemeShowcase from '@/components/Marketing/ThemeShowcase';
+import ConsolidatedThemeShowcase from '@/components/Marketing/ConsolidatedThemeShowcase';
 import { DynamicThemeStyles } from '@/components/Marketing/DynamicThemeStyles';
 import { useExitIntent, useScrollDepth, useTimeOnPage } from '@/hooks/useConversionTracking';
 import { usePerformanceTracking, useViewportTracking } from '@/hooks/usePerformanceOptimization';
@@ -143,11 +142,8 @@ const Landing: React.FC = () => {
         {/* Feature Showcase Section */}
         <LandingFeatureShowcase />
         
-        {/* Interactive Theme Showcase */}
-        <ThemeShowcase />
-        
-        {/* Theme Gallery Section */}
-        <LandingThemeGallery />
+        {/* Consolidated Interactive Theme Showcase */}
+        <ConsolidatedThemeShowcase />
         
         {/* Social Proof Section */}
         <LazySocialProof variant="logos" className="py-12" />
