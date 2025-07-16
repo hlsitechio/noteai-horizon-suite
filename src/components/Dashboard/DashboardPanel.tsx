@@ -20,7 +20,7 @@ interface DashboardPanelProps {
 
 export const DashboardPanel: React.FC<DashboardPanelProps> = ({
   panelKey,
-  className = 'p-6 h-full'
+  className = 'p-3 h-full' // Reduced default padding from p-6 to p-3
 }) => {
   const navigate = useNavigate();
   const { getPanelConfiguration, updatePanelConfiguration } = useDashboardLayout();
@@ -51,9 +51,9 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
       {isEnabled ? (
         <div className="h-full relative">
           {/* Panel Header with Label and Action Buttons */}
-          <div className="flex items-center justify-between p-3 border-b bg-muted/5">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary"></div>
+          <div className="flex items-center justify-between p-2 border-b bg-muted/5"> {/* Reduced padding from p-3 to p-2 */}
+            <div className="flex items-center gap-1.5"> {/* Reduced gap from gap-2 to gap-1.5 */}
+              <div className="w-1.5 h-1.5 rounded-full bg-primary"></div> {/* Reduced size from w-2 h-2 to w-1.5 h-1.5 */}
               <span className="text-xs font-medium text-muted-foreground">
                 {formatPanelName(panelKey)}
               </span>
@@ -93,7 +93,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
               </Tooltip>
             </div>
           </div>
-          <div className="h-[calc(100%-48px)]">
+          <div className="h-[calc(100%-40px)]"> {/* Adjusted for smaller header */}
             <DashboardComponentRenderer
               componentKey={componentKey}
               props={config?.props || {}}
@@ -102,16 +102,16 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
         </div>
       ) : (
         <Card className="h-full border-dashed border-primary/30 border-2 bg-primary/5 hover:bg-primary/10 transition-colors">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-primary">
-              <Settings2 className="w-4 h-4" />
+          <CardHeader className="pb-2"> {/* Reduced padding from pb-3 to pb-2 */}
+            <CardTitle className="flex items-center gap-1.5 text-primary text-sm"> {/* Reduced gap and font size */}
+              <Settings2 className="w-3 h-3" /> {/* Reduced icon size from w-4 h-4 to w-3 h-3 */}
               {formatPanelName(panelKey)}
             </CardTitle>
           </CardHeader>
           <CardContent className="h-full">
-            <div className="flex flex-col items-center justify-center h-full text-center gap-4">
-              <div className="w-16 h-16 rounded-lg border-2 border-dashed border-primary/30 flex items-center justify-center">
-                <Settings2 className="w-8 h-8 text-primary/50" />
+            <div className="flex flex-col items-center justify-center h-full text-center gap-3"> {/* Reduced gap from gap-4 to gap-3 */}
+              <div className="w-12 h-12 rounded-lg border-2 border-dashed border-primary/30 flex items-center justify-center"> {/* Reduced size from w-16 h-16 to w-12 h-12 */}
+                <Settings2 className="w-6 h-6 text-primary/50" /> {/* Reduced icon size from w-8 h-8 to w-6 h-6 */}
               </div>
               <div>
                 <p className="text-sm font-medium text-foreground mb-1">No Component</p>

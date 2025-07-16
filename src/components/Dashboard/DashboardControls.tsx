@@ -89,10 +89,10 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
 
       {/* Edit Mode Indicator & Save Button */}
       {hasActiveEditMode && (
-        <div className="absolute top-16 right-4 z-40 animate-fade-in">
-          <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 space-y-3">
-            <div className="flex items-center gap-2 text-sm text-primary">
-              <CheckCircle className="h-4 w-4" />
+        <div className="absolute top-14 right-3 z-40 animate-fade-in">
+          <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 space-y-2">
+            <div className="flex items-center gap-1.5 text-sm text-primary">
+              <CheckCircle className="h-3 w-3" />
               <span className="font-medium">
                 {isDashboardEditMode && isSidebarEditMode ? 'Dashboard & Sidebar editing active' :
                  isDashboardEditMode ? 'Dashboard editing active' : 'Sidebar editing active'}
@@ -101,16 +101,16 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
             <p className="text-xs text-muted-foreground">
               Resize your panels as needed, then save your layout
             </p>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button 
                     onClick={handleSaveAndLockDashboard}
                     disabled={isLocking}
-                    className="w-full gap-2 bg-primary hover:bg-primary/90"
+                    className="w-full gap-1.5 bg-primary hover:bg-primary/90 text-xs"
                     size="sm"
                   >
-                    <Save className="h-4 w-4" />
+                    <Save className="h-3 w-3" />
                     {isLocking ? 'Saving & Locking...' : 'Save & Lock Layout'}
                   </Button>
                 </TooltipTrigger>

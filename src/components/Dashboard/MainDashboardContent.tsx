@@ -144,7 +144,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
         >
           <div className="h-full">
             <ScrollArea className="h-full">
-              <div className="p-3 md:p-4">{/* Reduced padding from p-6 to p-4 */}
+              <div className="p-2 md:p-3">{/* Reduced padding from p-4 to p-3 */}
                 <KPIStats
                   totalNotes={totalNotes}
                   favoriteNotes={favoriteNotes}
@@ -214,7 +214,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
         >
           <div className="h-full">
             <ScrollArea className="h-full">
-              <div className="p-3 md:p-4">
+              <div className="p-2 md:p-3">
                 <SelectedComponentsArea />
               </div>
             </ScrollArea>
@@ -223,9 +223,9 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
       </PanelGroup>
       ) : (
         /* Normal scrollable layout when not in edit mode */
-        <div className="space-y-6">
+        <div className="space-y-4"> {/* Reduced from space-y-6 to space-y-4 */}
           {/* KPI Stats */}
-          <div className="p-3 md:p-4">
+          <div className="p-2 md:p-3"> {/* Reduced padding */}
             <KPIStats
               totalNotes={totalNotes}
               favoriteNotes={favoriteNotes}
@@ -236,11 +236,11 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           </div>
           
           {/* Dashboard Grid */}
-          <DashboardGrid className="space-y-6" />
+          <DashboardGrid className="space-y-4" /> {/* Reduced from space-y-6 to space-y-4 */}
 
           {/* Selected Components Area */}
-          <div className="px-3 md:px-4 pb-6">
-            <SelectedComponentsArea className="min-h-[300px]" />
+          <div className="px-2 md:px-3 pb-4"> {/* Reduced padding */}
+            <SelectedComponentsArea className="min-h-[250px]" /> {/* Reduced from 300px to 250px */}
           </div>
         </div>
       )}

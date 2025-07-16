@@ -130,7 +130,7 @@ const KPIStats: React.FC<KPIStatsProps> = ({
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 w-full">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 w-full"> {/* Reduced gap from gap-3 to gap-2 */}
       {stats.map((stat, index) => {
         return (
           <motion.div
@@ -143,16 +143,16 @@ const KPIStats: React.FC<KPIStatsProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Card className="border border-border/10 shadow-premium bg-card/80 backdrop-blur-xl hover:shadow-large transition-all duration-300 h-full group hover:border-accent/20 cursor-pointer">
-              <CardContent className="p-3 sm:p-4">
-                <div className="flex items-start justify-between mb-2">
-                  <div className={`p-2 bg-gradient-to-br ${stat.color} rounded-lg border border-white/10`}>
-                    <i className={`${stat.icon} text-base ${stat.iconColor}`}></i>
+              <CardContent className="p-2 sm:p-3"> {/* Reduced padding from p-4 to p-3 */}
+                <div className="flex items-start justify-between mb-1.5"> {/* Reduced margin from mb-2 to mb-1.5 */}
+                  <div className={`p-1.5 bg-gradient-to-br ${stat.color} rounded-lg border border-white/10`}> {/* Reduced padding from p-2 to p-1.5 */}
+                    <i className={`${stat.icon} text-sm ${stat.iconColor}`}></i> {/* Reduced font size from text-base to text-sm */}
                   </div>
                 </div>
                 
                 <div className="space-y-0.5">
                   <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide truncate">{stat.label}</p>
-                  <p className="text-lg sm:text-xl font-bold text-foreground leading-none group-hover:text-accent transition-colors">
+                  <p className="text-lg sm:text-lg font-bold text-foreground leading-none group-hover:text-accent transition-colors"> {/* Reduced font size from xl to lg */}
                     {stat.value}
                   </p>
                   <p className={`text-xs leading-tight truncate ${
