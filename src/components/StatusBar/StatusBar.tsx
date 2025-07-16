@@ -10,7 +10,7 @@ interface StatusBarProps {
 }
 
 const StatusBar: React.FC<StatusBarProps> = ({ 
-  message = "Important reminder: Check your notifications for updates",
+  message,
   className,
   scrollSpeed = 5
 }) => {
