@@ -11,9 +11,20 @@ export const DynamicThemeStyles: React.FC = () => {
          ======================================== */
 
       /* Global Background Gradient */
-      .min-h-screen {
-        background: ${currentTheme.backgroundGradient};
-        transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      body, .min-h-screen, .landing-page, [class*="min-h-screen"] {
+        background: ${currentTheme.backgroundGradient} !important;
+        transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      }
+
+      /* Main container background override */
+      .particle-bg, .whimsical-gradient-radial {
+        background: ${currentTheme.backgroundGradient} !important;
+        opacity: 1 !important;
+      }
+
+      /* Landing page specific background */
+      .landing-background, .page-background {
+        background: ${currentTheme.backgroundGradient} !important;
       }
 
       /* Font Family Overrides */
