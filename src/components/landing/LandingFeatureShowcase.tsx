@@ -71,6 +71,20 @@ const features: FeatureCard[] = [
   },
   // Analytics Features
   {
+    id: 'enhanced-analytics',
+    name: 'Enhanced Analytics',
+    description: 'Advanced data visualization with interactive charts and real-time insights',
+    icon: BarChart3,
+    featured: true,
+    category: 'analytics',
+    benefits: [
+      'Interactive line charts',
+      'Pie chart distribution',
+      'Area chart trends',
+      'Real-time data updates'
+    ]
+  },
+  {
     id: 'analytics-dashboard',
     name: 'Analytics Dashboard',
     description: 'Comprehensive analytics with productivity insights and performance metrics',
@@ -271,6 +285,65 @@ const MockupPreview: React.FC<{ feature: FeatureCard }> = ({ feature }) => {
             <div className="w-full bg-muted/30 rounded-full h-2">
               <div className="bg-gradient-to-r from-green-400 to-green-500 h-2 rounded-full" style={{ width: '95%' }}></div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {feature.id === 'enhanced-analytics' && (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: 'Line Chart', value: '90', color: 'text-blue-400' },
+              { label: 'Pie Chart', value: '65%', color: 'text-purple-400' },
+              { label: 'Area Chart', value: '940', color: 'text-green-400' },
+              { label: 'Live Data', value: '2.1K', color: 'text-orange-400' }
+            ].map((metric, i) => (
+              <div key={i} className="bg-card/40 rounded-lg p-3 border border-border/30">
+                <div className="text-xs text-muted-foreground mb-1">{metric.label}</div>
+                <div className={`text-lg font-bold ${metric.color}`}>{metric.value}</div>
+              </div>
+            ))}
+          </div>
+          <div className="bg-card/30 rounded-lg p-4 border border-border/30">
+            <div className="text-sm font-medium mb-3">Performance Trend</div>
+            <div className="flex items-end gap-1 h-12 mb-2">
+              {[65, 78, 90, 81, 56, 75, 82].map((value, i) => (
+                <div 
+                  key={i} 
+                  className="bg-gradient-to-t from-primary to-accent flex-1 rounded-sm"
+                  style={{ height: `${(value / 90) * 100}%` }}
+                ></div>
+              ))}
+            </div>
+            <div className="text-xs text-muted-foreground flex justify-between">
+              <span>Jan</span>
+              <span>Jul</span>
+            </div>
+          </div>
+          <div className="bg-card/30 rounded-lg p-3 border border-border/30">
+            <div className="text-sm font-medium mb-2">Traffic Sources</div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <div className="w-4 h-4 bg-background rounded-full"></div>
+              </div>
+              <div className="flex-1">
+                <div className="text-xs text-muted-foreground">Desktop 65%</div>
+                <div className="h-1.5 bg-muted/30 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-primary to-accent w-2/3"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4">
+            <a 
+              href="/demo/analytics" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            >
+              View Full Demo
+              <ArrowRight className="w-4 h-4" />
+            </a>
           </div>
         </div>
       )}

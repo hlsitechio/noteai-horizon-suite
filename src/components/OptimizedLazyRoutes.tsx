@@ -82,6 +82,7 @@ const SEODashboard = lazyWithRetry(() => import('../pages/seo'));
 const APMPage = lazyWithRetry(() => import('../pages/APMPage').then(module => ({ default: module.APMPage })));
 const UnifiedThemePage = lazyWithRetry(() => import('../pages/app/UnifiedThemePage'));
 const AIFeatures = lazyWithRetry(() => import('../pages/AIFeatures'));
+const AnalyticsDemo = lazyWithRetry(() => import('../pages/AnalyticsDemo'));
 
 // MOBILE PAGES
 const MobileApp = lazyWithRetry(() => import('../pages/mobile/MobileApp'));
@@ -169,6 +170,11 @@ export const OptimizedLazyRoutes: React.FC = () => {
         <Route path="/public/referral" element={
           <PublicPageWrapper>
             <ReferralPage />
+          </PublicPageWrapper>
+        } />
+        <Route path="/demo/analytics" element={
+          <PublicPageWrapper>
+            <AnalyticsDemo />
           </PublicPageWrapper>
         } />
 
