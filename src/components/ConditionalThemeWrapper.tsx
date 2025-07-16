@@ -17,7 +17,7 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
   const getIsAppRoute = () => {
     if (typeof window === 'undefined') return false;
     const path = window.location.pathname;
-    return path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile');
+    return path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile') || path.startsWith('/auth');
   };
   
   const [isAppRoute, setIsAppRoute] = useState(getIsAppRoute);
@@ -26,7 +26,7 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
     // Listen for navigation changes only
     const handleNavigation = () => {
       const path = window.location.pathname;
-      setIsAppRoute(path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile'));
+      setIsAppRoute(path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile') || path.startsWith('/auth'));
     };
     
     window.addEventListener('popstate', handleNavigation);
