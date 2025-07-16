@@ -135,16 +135,31 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
         console.log(`Fetching weather for: ${city}`);
       }
       
-      const { data, error } = await supabase.functions.invoke('weather-api', {
+      // Add timeout to prevent blocking page load
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Weather request timeout')), 5000)
+      );
+      
+      const weatherPromise = supabase.functions.invoke('weather-api', {
         body: { 
           city: city.trim(),
           units: weatherUnits === 'celsius' ? 'metric' : 'imperial'
         }
       });
+      
+      const { data, error } = await Promise.race([weatherPromise, timeoutPromise]) as any;
 
       if (error) {
-        console.error('Weather API error:', error);
-        onWeatherError?.(`Failed to fetch weather: ${error.message}`);
+        if (import.meta.env.DEV) {
+          console.warn('Weather API error (non-blocking):', error.message);
+        }
+        // Don't call onWeatherError to avoid showing error toast on every page load
+        setWeather({
+          temperature: '--',
+          city: city,
+          condition: 'Unavailable',
+          icon: '1000' // Default sunny icon
+        } as any);
         return;
       }
 
@@ -163,8 +178,16 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
         onWeatherError?.('Invalid weather data received');
       }
     } catch (error) {
-      console.error('Failed to fetch weather:', error);
-      onWeatherError?.('Failed to connect to weather service');
+      if (import.meta.env.DEV) {
+        console.warn('Weather fetch error (non-blocking):', error instanceof Error ? error.message : 'Unknown error');
+      }
+      // Set fallback weather data instead of showing error
+      setWeather({
+        temperature: '--',
+        city: city,
+        condition: 'Unavailable',
+        icon: '1000' // Default sunny icon
+      } as any);
     } finally {
       setIsLoadingWeather(false);
     }
