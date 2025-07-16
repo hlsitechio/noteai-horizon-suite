@@ -127,7 +127,7 @@ const themes: Theme[] = [
     gradient: 'linear-gradient(135deg, #DC143C 0%, #8B0000 100%)'
   },
 
-  // White/Light Themes - Enhanced contrast and vibrant colors
+  // White/Light Themes - Enhanced contrast and diverse colors
   {
     id: 'theme-pristine',
     name: 'Pristine White',
@@ -135,12 +135,12 @@ const themes: Theme[] = [
     icon: Snowflake,
     category: 'light',
     preview: {
-      primary: '#1D4ED8',        // Stronger blue
-      secondary: '#3B82F6',      // Vibrant blue accent
-      accent: '#60A5FA',         // Light blue
-      background: '#F8FAFC'      // Off-white background
+      primary: '#374151',        // Neutral dark gray
+      secondary: '#6B7280',      // Medium gray
+      accent: '#9CA3AF',         // Light gray
+      background: '#F9FAFB'      // Clean white background
     },
-    gradient: 'linear-gradient(135deg, #1D4ED8 0%, #3B82F6 100%)',
+    gradient: 'linear-gradient(135deg, #374151 0%, #6B7280 100%)',
     featured: true
   },
   {
@@ -150,12 +150,12 @@ const themes: Theme[] = [
     icon: Gem,
     category: 'light',
     preview: {
-      primary: '#1E40AF',        // Deep blue
-      secondary: '#3B82F6',      // Bright blue
-      accent: '#93C5FD',         // Light blue
-      background: '#F1F5F9'      // Pearl background
+      primary: '#64748B',        // Slate gray
+      secondary: '#94A3B8',      // Pearl silver
+      accent: '#CBD5E1',         // Light pearl
+      background: '#F8FAFC'      // Pearl background
     },
-    gradient: 'linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%)'
+    gradient: 'linear-gradient(135deg, #64748B 0%, #94A3B8 100%)'
   },
   {
     id: 'theme-crystal',
