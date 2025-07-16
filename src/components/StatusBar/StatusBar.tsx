@@ -48,10 +48,10 @@ const StatusBar: React.FC<StatusBarProps> = ({
     )}>
       <div className="flex items-center justify-between min-h-[40px] pr-4">
         {/* Scrolling text container */}
-        <div className="flex-1 overflow-hidden relative">
+        <div className="flex-1 relative h-full flex items-center">
           <div 
             key={animationKey}
-            className="whitespace-nowrap text-sm font-medium text-foreground/90 py-2"
+            className="whitespace-nowrap text-sm font-medium text-foreground/90 absolute inset-0 flex items-center"
             style={{
               animation: `scroll-left ${animationDuration}s linear infinite`
             }}
