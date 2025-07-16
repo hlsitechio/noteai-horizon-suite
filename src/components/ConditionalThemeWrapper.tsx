@@ -11,20 +11,18 @@ type ConditionalThemeWrapperProps = {
  * Uses window.location to avoid router context dependency
  */
 export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperProps) {
-  const [isAppRoute, setIsAppRoute] = useState(false);
+  // Determine route synchronously to prevent flashing
+  const getIsAppRoute = () => {
+    if (typeof window === 'undefined') return false;
+    return window.location.pathname.startsWith('/app');
+  };
+  
+  const [isAppRoute, setIsAppRoute] = useState(getIsAppRoute);
   
   useEffect(() => {
-    // Check if we're on an app route without using useLocation
-    const checkRoute = () => {
-      setIsAppRoute(window.location.pathname.startsWith('/app'));
-    };
-    
-    // Initial check
-    checkRoute();
-    
-    // Listen for navigation changes
+    // Listen for navigation changes only
     const handleNavigation = () => {
-      checkRoute();
+      setIsAppRoute(window.location.pathname.startsWith('/app'));
     };
     
     window.addEventListener('popstate', handleNavigation);
