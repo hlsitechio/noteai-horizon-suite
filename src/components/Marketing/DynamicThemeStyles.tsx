@@ -18,40 +18,35 @@ export const DynamicThemeStyles: React.FC = () => {
         transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
       }
 
-      /* Override all background classes that conflict */
+      /* Force background gradient on main landing container */
+      .particle-bg {
+        background: ${currentTheme.backgroundGradient} !important;
+        background-attachment: fixed !important;
+      }
+
+      /* Override all conflicting background classes */
       .bg-background, .min-h-screen, .landing-page, [class*="min-h-screen"] {
         background: transparent !important;
         background-color: transparent !important;
       }
 
-      /* Remove conflicting overlays */
-      .particle-bg {
-        background: transparent !important;
-        background-color: transparent !important;
-      }
-
+      /* Remove conflicting overlays that interfere with gradient */
       .whimsical-gradient-radial {
         background: transparent !important;
-        opacity: 0.1 !important;
-      }
-
-      /* Ensure the main container uses theme background */
-      .particle-bg::before {
-        content: '';
-        position: fixed !important;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: ${currentTheme.backgroundGradient} !important;
-        z-index: -10 !important;
-        pointer-events: none !important;
+        opacity: 0 !important;
+        display: none !important;
       }
 
       /* Override specific landing page background */
       div[class*="min-h-screen bg-background"] {
-        background: transparent !important;
-        background-color: transparent !important;
+        background: ${currentTheme.backgroundGradient} !important;
+        background-attachment: fixed !important;
+      }
+
+      /* Ensure all containers with background classes use theme gradient */
+      div[class*="bg-background"] {
+        background: ${currentTheme.backgroundGradient} !important;
+        background-attachment: fixed !important;
       }
 
       /* ========================================
