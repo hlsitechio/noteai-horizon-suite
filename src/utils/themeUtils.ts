@@ -31,12 +31,13 @@ export const applyThemeToDocument = (theme: Theme) => {
   const root = window.document.documentElement;
   const resolvedTheme = getResolvedTheme(theme);
   
-  // Remove existing theme classes (both basic and custom)
-  root.classList.remove('light', 'dark', ...THEME_CLASSES);
+  // Only remove basic light/dark classes, preserve custom theme classes
+  root.classList.remove('light', 'dark');
   
   // Apply the resolved theme
   root.classList.add(resolvedTheme);
   
+  console.log(`Applied theme: ${resolvedTheme}, classes now:`, Array.from(root.classList));
   return resolvedTheme;
 };
 

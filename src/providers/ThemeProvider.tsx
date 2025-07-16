@@ -23,11 +23,11 @@ const ThemeProviderContext = React.createContext<ThemeProviderState>(initialStat
 export function ThemeProvider({
   children,
   defaultTheme = 'system',
-  storageKey = 'vite-ui-theme',
+  storageKey = 'online-note-ai-theme',
 }: ThemeProviderProps) {
   const [theme, setTheme] = React.useState<Theme>(() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(storageKey) as Theme;
+    const stored = localStorage.getItem(storageKey) as Theme;
       return stored || defaultTheme;
     }
     return defaultTheme;

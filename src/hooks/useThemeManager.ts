@@ -30,7 +30,7 @@ export const useThemeManager = () => {
           'theme-pure-black'
         );
 
-        // Apply the selected theme
+        // Apply the selected theme (only custom color themes, NOT light/dark)
         if (theme !== 'default') {
           html.classList.add(`theme-${theme}`);
         }
@@ -40,6 +40,9 @@ export const useThemeManager = () => {
           // Remove any existing theme classes and apply clean default
           html.classList.add('theme-clean-default');
         }
+
+        // Ensure light/dark mode classes are preserved and not affected by custom themes
+        // The basic ThemeProvider handles 'light'/'dark' classes separately
 
       } catch (error) {
         console.error('Error applying theme:', error);
