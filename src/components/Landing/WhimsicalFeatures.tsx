@@ -1,134 +1,87 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { 
-  FileText, 
-  Layout, 
-  FolderOpen, 
-  MessageSquare,
-  ArrowRight,
-  Check,
-  X,
-  Zap,
-  Shield,
-  Users,
-  Sparkles
-} from 'lucide-react';
-
+import { FileText, Layout, FolderOpen, MessageSquare, ArrowRight, Check, X, Zap, Shield, Users, Sparkles } from 'lucide-react';
 const WhimsicalFeatures = () => {
   const [activeTab, setActiveTab] = useState(0);
-
-  const features = [
-    {
-      id: 0,
-      icon: FileText,
-      title: "Smart Notes",
-      description: "AI-powered note-taking with intelligent organization and instant search.",
-      details: [
-        "AI-powered content suggestions",
-        "Smart categorization and tagging",
-        "Real-time collaboration",
-        "Advanced search and filtering"
-      ],
-      mockupColor: "from-purple-500 to-pink-500"
-    },
-    {
-      id: 1,
-      icon: Layout,
-      title: "Workspaces",
-      description: "Organize your projects with customizable workspaces and layouts.",
-      details: [
-        "Customizable dashboard layouts",
-        "Multiple workspace templates",
-        "Drag-and-drop organization",
-        "Personal and team spaces"
-      ],
-      mockupColor: "from-blue-500 to-cyan-500"
-    },
-    {
-      id: 2,
-      icon: FolderOpen,
-      title: "File Management",
-      description: "Seamless file organization with cloud storage and version control.",
-      details: [
-        "Cloud storage integration",
-        "Version history tracking",
-        "File sharing and permissions",
-        "Automatic backup and sync"
-      ],
-      mockupColor: "from-green-500 to-emerald-500"
-    },
-    {
-      id: 3,
-      icon: MessageSquare,
-      title: "Team Communication",
-      description: "Built-in communication tools to keep your team connected.",
-      details: [
-        "Real-time messaging",
-        "Comment and feedback system",
-        "Team announcements",
-        "Integration with popular tools"
-      ],
-      mockupColor: "from-orange-500 to-red-500"
-    }
-  ];
-
-  const problemSolutions = [
-    {
-      problem: "Time wasted switching between apps",
-      solution: "One place for ideas, notes, and projects"
-    },
-    {
-      problem: "Scattered conversations and decisions",
-      solution: "Centralized communication and collaboration"
-    },
-    {
-      problem: "Can't find important info or files",
-      solution: "AI-powered search and organization"
-    },
-    {
-      problem: "Too many notifications everywhere",
-      solution: "Focused notifications in one place"
-    },
-    {
-      problem: "Work feels chaotic and unfocused",
-      solution: "Clean, organized workspace design"
-    },
-    {
-      problem: "Paying for multiple tools",
-      solution: "All-in-one solution saves money"
-    }
-  ];
-
-  return (
-    <div className="py-20 lg:py-32">
+  const features = [{
+    id: 0,
+    icon: FileText,
+    title: "Smart Notes",
+    description: "AI-powered note-taking with intelligent organization and instant search.",
+    details: ["AI-powered content suggestions", "Smart categorization and tagging", "Real-time collaboration", "Advanced search and filtering"],
+    mockupColor: "from-purple-500 to-pink-500"
+  }, {
+    id: 1,
+    icon: Layout,
+    title: "Workspaces",
+    description: "Organize your projects with customizable workspaces and layouts.",
+    details: ["Customizable dashboard layouts", "Multiple workspace templates", "Drag-and-drop organization", "Personal and team spaces"],
+    mockupColor: "from-blue-500 to-cyan-500"
+  }, {
+    id: 2,
+    icon: FolderOpen,
+    title: "File Management",
+    description: "Seamless file organization with cloud storage and version control.",
+    details: ["Cloud storage integration", "Version history tracking", "File sharing and permissions", "Automatic backup and sync"],
+    mockupColor: "from-green-500 to-emerald-500"
+  }, {
+    id: 3,
+    icon: MessageSquare,
+    title: "Team Communication",
+    description: "Built-in communication tools to keep your team connected.",
+    details: ["Real-time messaging", "Comment and feedback system", "Team announcements", "Integration with popular tools"],
+    mockupColor: "from-orange-500 to-red-500"
+  }];
+  const problemSolutions = [{
+    problem: "Time wasted switching between apps",
+    solution: "One place for ideas, notes, and projects"
+  }, {
+    problem: "Scattered conversations and decisions",
+    solution: "Centralized communication and collaboration"
+  }, {
+    problem: "Can't find important info or files",
+    solution: "AI-powered search and organization"
+  }, {
+    problem: "Too many notifications everywhere",
+    solution: "Focused notifications in one place"
+  }, {
+    problem: "Work feels chaotic and unfocused",
+    solution: "Clean, organized workspace design"
+  }, {
+    problem: "Paying for multiple tools",
+    solution: "All-in-one solution saves money"
+  }];
+  return <div className="py-20 lg:py-32">
       <div className="container mx-auto px-4">
         {/* Trust Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-20"
-        >
-          <h2 className="text-2xl font-semibold text-muted-foreground mb-8">
-            Trusted by millions
-          </h2>
-          <div className="flex justify-center items-center space-x-8 opacity-60">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="w-24 h-8 bg-gradient-to-r from-muted to-muted/50 rounded"></div>
-            ))}
-          </div>
+        <motion.div initial={{
+        opacity: 0,
+        y: 30
+      }} whileInView={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.8
+      }} viewport={{
+        once: true
+      }} className="text-center mb-20">
+          
+          
         </motion.div>
 
         {/* Problem vs Solution Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="mb-20"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: 50
+      }} whileInView={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.8
+      }} viewport={{
+        once: true
+      }} className="mb-20">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold mb-4">
               Escape the <span className="gradient-text">clutter</span>
@@ -141,19 +94,21 @@ const WhimsicalFeatures = () => {
               <h3 className="text-2xl font-bold text-center mb-8 text-red-400">
                 The old way of working
               </h3>
-              {problemSolutions.map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="flex items-center space-x-3 p-4 rounded-lg bg-red-500/10 border border-red-500/20"
-                >
+              {problemSolutions.map((item, index) => <motion.div key={index} initial={{
+              opacity: 0,
+              x: -30
+            }} whileInView={{
+              opacity: 1,
+              x: 0
+            }} transition={{
+              duration: 0.6,
+              delay: index * 0.1
+            }} viewport={{
+              once: true
+            }} className="flex items-center space-x-3 p-4 rounded-lg bg-red-500/10 border border-red-500/20">
                   <X className="h-5 w-5 text-red-400 flex-shrink-0" />
                   <span className="text-muted-foreground">{item.problem}</span>
-                </motion.div>
-              ))}
+                </motion.div>)}
             </div>
 
             {/* The Whimsical Way */}
@@ -161,31 +116,37 @@ const WhimsicalFeatures = () => {
               <h3 className="text-2xl font-bold text-center mb-8 gradient-text">
                 The Whimsical Way
               </h3>
-              {problemSolutions.map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: 30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="flex items-center space-x-3 p-4 rounded-lg glass-card"
-                >
+              {problemSolutions.map((item, index) => <motion.div key={index} initial={{
+              opacity: 0,
+              x: 30
+            }} whileInView={{
+              opacity: 1,
+              x: 0
+            }} transition={{
+              duration: 0.6,
+              delay: index * 0.1
+            }} viewport={{
+              once: true
+            }} className="flex items-center space-x-3 p-4 rounded-lg glass-card">
                   <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
                   <span className="text-foreground">{item.solution}</span>
-                </motion.div>
-              ))}
+                </motion.div>)}
             </div>
           </div>
         </motion.div>
 
         {/* Feature Showcase */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="mb-20"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: 50
+      }} whileInView={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.8
+      }} viewport={{
+        once: true
+      }} className="mb-20">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold mb-6">
               Why use multiple apps when{' '}
@@ -199,29 +160,26 @@ const WhimsicalFeatures = () => {
 
           {/* Feature Tabs */}
           <div className="flex flex-wrap justify-center gap-4 mb-12">
-            {features.map((feature, index) => (
-              <Button
-                key={feature.id}
-                variant={activeTab === index ? "default" : "outline"}
-                onClick={() => setActiveTab(index)}
-                className="h-12 px-6"
-              >
+            {features.map((feature, index) => <Button key={feature.id} variant={activeTab === index ? "default" : "outline"} onClick={() => setActiveTab(index)} className="h-12 px-6">
                 <feature.icon className="mr-2 h-4 w-4" />
                 {feature.title}
-              </Button>
-            ))}
+              </Button>)}
           </div>
 
           {/* Feature Content */}
           <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto"
-            >
+            <motion.div key={activeTab} initial={{
+            opacity: 0,
+            y: 30
+          }} animate={{
+            opacity: 1,
+            y: 0
+          }} exit={{
+            opacity: 0,
+            y: -30
+          }} transition={{
+            duration: 0.5
+          }} className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
               {/* Feature Description */}
               <div className="space-y-6">
                 <div>
@@ -234,18 +192,19 @@ const WhimsicalFeatures = () => {
                 </div>
                 
                 <ul className="space-y-4">
-                  {features[activeTab].details.map((detail, index) => (
-                    <motion.li
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                      className="flex items-center space-x-3"
-                    >
+                  {features[activeTab].details.map((detail, index) => <motion.li key={index} initial={{
+                  opacity: 0,
+                  x: -20
+                }} animate={{
+                  opacity: 1,
+                  x: 0
+                }} transition={{
+                  duration: 0.4,
+                  delay: index * 0.1
+                }} className="flex items-center space-x-3">
                       <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${features[activeTab].mockupColor}`}></div>
                       <span className="text-foreground">{detail}</span>
-                    </motion.li>
-                  ))}
+                    </motion.li>)}
                 </ul>
 
                 <Button size="lg" className="group">
@@ -270,15 +229,13 @@ const WhimsicalFeatures = () => {
                   </div>
                   
                   <div className="space-y-4">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="flex items-center space-x-3">
+                    {[1, 2, 3, 4].map(i => <div key={i} className="flex items-center space-x-3">
                         <div className={`w-8 h-8 rounded bg-gradient-to-r ${features[activeTab].mockupColor} opacity-80`}></div>
                         <div className="flex-1 space-y-2">
                           <div className={`h-3 bg-gradient-to-r ${features[activeTab].mockupColor} opacity-40 rounded w-full`}></div>
                           <div className={`h-2 bg-gradient-to-r ${features[activeTab].mockupColor} opacity-20 rounded w-2/3`}></div>
                         </div>
-                      </div>
-                    ))}
+                      </div>)}
                   </div>
                 </div>
               </div>
@@ -287,13 +244,17 @@ const WhimsicalFeatures = () => {
         </motion.div>
 
         {/* Final CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center max-w-4xl mx-auto"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        y: 50
+      }} whileInView={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.8
+      }} viewport={{
+        once: true
+      }} className="text-center max-w-4xl mx-auto">
           <div className="glass-card p-12">
             <h2 className="text-4xl lg:text-5xl font-bold mb-6">
               Ready to transform your workflow?
@@ -309,8 +270,6 @@ const WhimsicalFeatures = () => {
           </div>
         </motion.div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default WhimsicalFeatures;
