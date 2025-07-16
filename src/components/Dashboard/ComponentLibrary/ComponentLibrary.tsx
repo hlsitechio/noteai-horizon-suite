@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, Sparkles } from 'lucide-react';
 import { ComponentCard } from './ComponentCard';
 import { useComponentLibrary } from './useComponentLibrary';
 
@@ -62,8 +62,17 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
                 variant={selectedCategory === category ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedCategory(category)}
-                className="whitespace-nowrap"
+                className={`whitespace-nowrap ${
+                  category === 'New' 
+                    ? selectedCategory === category 
+                      ? 'bg-green-500 hover:bg-green-600 border-green-500' 
+                      : 'border-green-500 text-green-600 hover:bg-green-50 dark:hover:bg-green-950'
+                    : ''
+                }`}
               >
+                {category === 'New' && (
+                  <Sparkles className="h-3 w-3 mr-1" />
+                )}
                 {category}
               </Button>
             ))}

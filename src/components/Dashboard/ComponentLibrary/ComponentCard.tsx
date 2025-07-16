@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Sparkles } from 'lucide-react';
 import { 
   Dialog, 
   DialogContent, 
@@ -64,6 +65,15 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
     return panelNames[panelKey] || panelKey.replace(/([A-Z])/g, ' $1').trim();
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  };
+
   return (
     <Card className="group hover:shadow-lg transition-shadow">
       <CardHeader className="pb-3">
@@ -73,10 +83,23 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
               <Icon className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-base">{component.name}</CardTitle>
-              <Badge variant="secondary" className="text-xs">
-                {component.category}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-base">{component.name}</CardTitle>
+                {component.isNew && (
+                  <Badge variant="default" className="text-xs bg-green-500 hover:bg-green-600 flex items-center gap-1">
+                    <Sparkles className="h-3 w-3" />
+                    New
+                  </Badge>
+                )}
+              </div>
+              <div className="flex items-center gap-2 mt-1">
+                <Badge variant="secondary" className="text-xs">
+                  {component.category}
+                </Badge>
+                <span className="text-xs text-muted-foreground">
+                  Added {formatDate(component.createdAt)}
+                </span>
+              </div>
             </div>
           </div>
         </div>

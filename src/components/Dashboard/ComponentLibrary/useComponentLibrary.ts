@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { componentLibraryItems, categories } from './ComponentLibraryData';
+import { processedComponentLibraryItems, categories } from './ComponentLibraryData';
 import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 import { useSelectedComponents } from '@/hooks/useSelectedComponents';
 import { toast } from 'sonner';
@@ -11,12 +11,14 @@ export const useComponentLibrary = (availablePanels: string[]) => {
   const { addComponent } = useSelectedComponents();
 
   const filteredComponents = useMemo(() => {
-    return componentLibraryItems.filter(component => {
+    return processedComponentLibraryItems.filter(component => {
       const matchesSearch = component.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            component.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            component.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
       
-      const matchesCategory = selectedCategory === 'All' || component.category === selectedCategory;
+      const matchesCategory = selectedCategory === 'All' || 
+                             (selectedCategory === 'New' && component.isNew) ||
+                             component.category === selectedCategory;
       
       return matchesSearch && matchesCategory;
     });
@@ -50,7 +52,7 @@ export const useComponentLibrary = (availablePanels: string[]) => {
   const handleAddToSelectedComponents = async (componentKey: string) => {
     try {
       // Find component details
-      const component = componentLibraryItems.find(item => item.componentKey === componentKey);
+      const component = processedComponentLibraryItems.find(item => item.componentKey === componentKey);
       if (!component) {
         throw new Error('Component not found');
       }
