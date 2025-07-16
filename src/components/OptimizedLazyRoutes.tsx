@@ -184,26 +184,10 @@ export const OptimizedLazyRoutes: React.FC = () => {
         <Route path="/referral" element={<Navigate to="/public/referral" replace />} />
 
         {/* ========== AUTH ROUTES ========== */}
-        <Route path="/auth/login" element={
-          <PublicPageWrapper>
-            <Login />
-          </PublicPageWrapper>
-        } />
-        <Route path="/auth/register" element={
-          <PublicPageWrapper>
-            <Register />
-          </PublicPageWrapper>
-        } />
-        <Route path="/auth/reset-password" element={
-          <PublicPageWrapper>
-            <ResetPassword />
-          </PublicPageWrapper>
-        } />
-        <Route path="/auth/logout" element={
-          <PublicPageWrapper>
-            <Logout />
-          </PublicPageWrapper>
-        } />
+        <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
+        <Route path="/auth/reset-password" element={<ResetPassword />} />
+        <Route path="/auth/logout" element={<Logout />} />
 
         {/* Legacy auth route redirects */}
         <Route path="/login" element={<Navigate to="/auth/login" replace />} />
