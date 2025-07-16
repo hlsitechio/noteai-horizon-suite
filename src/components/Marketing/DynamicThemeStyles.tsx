@@ -10,25 +10,32 @@ export const DynamicThemeStyles: React.FC = () => {
          COMPLETE WEBSITE THEME TRANSFORMATION
          ======================================== */
 
-      /* Global Background Gradient - Fixed Implementation */
-      html, body {
+      /* Global Background Gradient - Complete Override */
+      html, body, #root {
         background: ${currentTheme.backgroundGradient} !important;
         background-attachment: fixed !important;
         min-height: 100vh !important;
         transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
       }
 
-      .min-h-screen, .landing-page, [class*="min-h-screen"] {
+      /* Override all background classes that conflict */
+      .bg-background, .min-h-screen, .landing-page, [class*="min-h-screen"] {
         background: transparent !important;
-        backdrop-filter: none !important;
+        background-color: transparent !important;
       }
 
-      /* Main container background override */
-      .particle-bg, .whimsical-gradient-radial {
+      /* Remove conflicting overlays */
+      .particle-bg {
         background: transparent !important;
-        position: relative !important;
+        background-color: transparent !important;
       }
 
+      .whimsical-gradient-radial {
+        background: transparent !important;
+        opacity: 0.1 !important;
+      }
+
+      /* Ensure the main container uses theme background */
       .particle-bg::before {
         content: '';
         position: fixed !important;
@@ -37,8 +44,14 @@ export const DynamicThemeStyles: React.FC = () => {
         right: 0;
         bottom: 0;
         background: ${currentTheme.backgroundGradient} !important;
-        z-index: -1 !important;
+        z-index: -10 !important;
         pointer-events: none !important;
+      }
+
+      /* Override specific landing page background */
+      div[class*="min-h-screen bg-background"] {
+        background: transparent !important;
+        background-color: transparent !important;
       }
 
       /* Font Family Overrides */
