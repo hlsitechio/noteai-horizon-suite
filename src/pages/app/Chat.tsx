@@ -1,17 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { useAIAgents } from '@/ai/hooks/useAIAgents';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import { useNotePreview } from '@/hooks/useNotePreview';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useIsMobile } from '@/hooks/use-mobile';
-import ChatHistoryPanel from '@/components/Chat/ChatHistoryPanel';
+import { PremiumChatContainer } from '@/components/Chat/PremiumChatContainer';
+import { PremiumChatHeader } from '@/components/Chat/PremiumChatHeader';
+import { PremiumChatMessages } from '@/components/Chat/PremiumChatMessages';
+import { PremiumChatInput } from '@/components/Chat/PremiumChatInput';
 import { NotePreviewPanel } from '@/components/Chat/NotePreviewPanel';
 import { CanvasDrawingPanel } from '@/components/Chat/CanvasDrawingPanel';
-import ChatHeader from '@/components/Chat/ChatHeader';
-import ChatMessages from '@/components/Chat/ChatMessages';
-import ChatInput from '@/components/Chat/ChatInput';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Chat: React.FC = () => {
   const [message, setMessage] = useState('');
@@ -115,103 +115,180 @@ const Chat: React.FC = () => {
   };
 
   return (
-    <div className={`h-full flex ${isMobile ? 'flex-col gap-3 p-3' : 'gap-6 p-6'} bg-gradient-to-br from-background via-background to-muted/30`}>
-      {/* Chat History Panel - Hidden on mobile */}
-      {!isMobile && (
-        <div className="flex-shrink-0">
-          {/* AI Agents Panel - Temporarily disabled for now */}
-          <div className="w-64 h-full bg-card/30 border rounded-lg p-4 backdrop-blur-sm">
-            <h3 className="text-sm font-medium mb-2">AI Assistant</h3>
-            <p className="text-xs text-muted-foreground mb-2">Current: {currentAgent.name}</p>
-            <p className="text-xs text-muted-foreground">Mode: {currentMode}</p>
-          </div>
-        </div>
-      )}
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/10 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-primary/20 to-accent/20 rounded-full blur-3xl animate-float opacity-20" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-accent/20 to-secondary/20 rounded-full blur-3xl animate-float-gentle opacity-15" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-quantum opacity-5 rounded-full blur-3xl animate-gradient-mesh" />
+      </div>
 
-      {/* Main Content Area with Chat and Preview */}
-      <div className={`flex-1 flex ${isMobile ? 'flex-col gap-3' : 'gap-6'} min-w-0`}>
-        {/* Chat Messages Area */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Enhanced Header */}
-          <ChatHeader
-            profile={profile}
-            profileLoading={profileLoading}
-            messagesLength={adaptedMessages.length}
-            onClearChat={clearConversation}
-          />
-
-          <div className="flex-1 flex flex-col min-h-0">
-            <Card className="flex-1 flex flex-col border-0 shadow-xl bg-gradient-to-br from-card/50 to-card backdrop-blur-sm">
-              <CardContent className={`flex-1 flex flex-col ${isMobile ? 'p-3' : 'p-6'}`}>
-                <ChatMessages
-                  messages={adaptedMessages}
-                  isLoading={isProcessing}
-                  onQuickActionSelect={setMessage}
-                  profile={profile}
-                  profileLoading={profileLoading}
-                />
-
-                <ChatInput
-                  message={message}
-                  setMessage={setMessage}
-                  onSend={handleSend}
-                  onKeyPress={handleKeyPress}
-                  onVoiceInput={handleVoiceInput}
-                  isLoading={isProcessing}
-                  isRecording={isRecording}
-                  isProcessing={isSpeechProcessing}
-                />
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Enhanced Canva Panel - Switch between Notes and Drawing Canvas */}
+      <div className="relative z-10 flex flex-col lg:flex-row h-screen">
+        {/* Desktop: Left sidebar with chat history */}
         {!isMobile && (
-          <div className="flex-shrink-0 flex flex-col">
-            {/* Panel Switcher */}
-            <div className="h-12 border-l border-border/30 bg-muted/10 flex items-center justify-center gap-2 px-4">
+          <div className="w-80 relative">
+            <PremiumChatContainer className="h-full rounded-l-none border-r border-l-0">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  AI Assistant
+                </h3>
+                <div className="space-y-4">
+                  <div className="p-4 rounded-xl bg-gradient-glass border border-border/20">
+                    <div className="text-sm font-medium text-foreground mb-2">
+                      Current Agent: {currentAgent.name}
+                    </div>
+                    <div className="text-xs text-muted-foreground mb-2">
+                      Mode: {currentMode}
+                    </div>
+                    <div className="text-xs text-success">
+                      ● Online & Ready
+                    </div>
+                  </div>
+                  
+                  {adaptedMessages.length > 0 && (
+                    <div className="p-3 rounded-xl bg-gradient-glass border border-border/20 hover:border-primary/20 transition-all duration-300 cursor-pointer">
+                      <div className="text-sm font-medium text-foreground truncate mb-1">
+                        Current Session
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {adaptedMessages.length} messages • Active
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </PremiumChatContainer>
+          </div>
+        )}
+
+        {/* Main chat area */}
+        <div className="flex-1 flex flex-col min-w-0">
+          <div className="h-full flex flex-col p-6 max-w-5xl mx-auto w-full">
+            <PremiumChatContainer className="flex-1 flex flex-col">
+              <PremiumChatHeader
+                profile={profile}
+                profileLoading={profileLoading}
+                messagesLength={adaptedMessages.length}
+                onClearChat={clearConversation}
+              />
+
+              <PremiumChatMessages
+                messages={adaptedMessages}
+                isLoading={isProcessing}
+                onQuickActionSelect={setMessage}
+                profile={profile}
+                profileLoading={profileLoading}
+              />
+            </PremiumChatContainer>
+
+            <div className="mt-6">
+              <PremiumChatInput
+                message={message}
+                setMessage={setMessage}
+                onSend={handleSend}
+                onKeyPress={handleKeyPress}
+                onVoiceInput={handleVoiceInput}
+                isLoading={isProcessing}
+                isRecording={isRecording}
+                isProcessing={isSpeechProcessing}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop: Right sidebar with notes and canvas */}
+        {!isMobile && (
+          <div className="w-80 relative">
+            <PremiumChatContainer className="h-full rounded-r-none border-l border-r-0">
+              <Tabs defaultValue="notes" className="flex-1 flex flex-col h-full">
+                <div className="px-6 pt-6">
+                  <TabsList className="grid w-full grid-cols-2 bg-gradient-glass border border-border/20">
+                    <TabsTrigger 
+                      value="notes"
+                      className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/20 data-[state=active]:to-accent/20 data-[state=active]:text-primary"
+                    >
+                      Notes
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="canvas"
+                      className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/20 data-[state=active]:to-accent/20 data-[state=active]:text-primary"
+                    >
+                      Drawing
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+                
+                <TabsContent value="notes" className="flex-1 mt-4 px-6 pb-6 overflow-hidden">
+                  <div className="h-full bg-gradient-glass backdrop-blur-sm border border-border/20 rounded-xl">
+                    <NotePreviewPanel
+                      note={currentNote}
+                      isVisible={isPreviewVisible}
+                      onToggleVisibility={toggleVisibility}
+                      onNoteUpdate={updateNote}
+                      onRequestModification={requestModification}
+                      isModifying={isModifying}
+                      className="w-full h-full"
+                    />
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="canvas" className="flex-1 mt-4 px-6 pb-6 overflow-hidden">
+                  <div className="h-full bg-gradient-glass backdrop-blur-sm border border-border/20 rounded-xl">
+                    <CanvasDrawingPanel
+                      isVisible={isPreviewVisible}
+                      onToggleVisibility={toggleVisibility}
+                      className="w-full h-full"
+                    />
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </PremiumChatContainer>
+          </div>
+        )}
+
+        {/* Mobile: Panel switcher */}
+        {isMobile && activePanel === 'canvas' && (
+          <div className="fixed inset-0 bg-background z-50">
+            <PremiumChatContainer className="h-full rounded-none border-0">
+              <div className="flex items-center justify-between p-6 border-b border-border/20">
+                <h2 className="text-xl font-semibold capitalize bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  Drawing
+                </h2>
+                <button
+                  onClick={() => setActivePanel('notes')}
+                  className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+                >
+                  Back to Chat
+                </button>
+              </div>
+              
+              <div className="flex-1 p-6">
+                <CanvasDrawingPanel
+                  isVisible={isPreviewVisible}
+                  onToggleVisibility={toggleVisibility}
+                  className="w-full h-full"
+                />
+              </div>
+            </PremiumChatContainer>
+          </div>
+        )}
+
+        {/* Mobile: Bottom navigation */}
+        {isMobile && (
+          <div className="border-t border-border/20 bg-gradient-glass backdrop-blur-xl p-4">
+            <div className="flex justify-center gap-4">
               <button
                 onClick={() => setActivePanel('notes')}
-                className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 ${
-                  activePanel === 'notes' 
-                    ? 'bg-primary text-primary-foreground shadow-sm' 
-                    : 'bg-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                }`}
+                className="px-6 py-3 text-sm rounded-xl bg-gradient-glass border border-border/20 text-muted-foreground hover:text-foreground hover:border-primary/20 transition-all duration-300"
               >
                 Notes
               </button>
               <button
                 onClick={() => setActivePanel('canvas')}
-                className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 ${
-                  activePanel === 'canvas' 
-                    ? 'bg-primary text-primary-foreground shadow-sm' 
-                    : 'bg-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                }`}
+                className="px-6 py-3 text-sm rounded-xl bg-gradient-glass border border-border/20 text-muted-foreground hover:text-foreground hover:border-primary/20 transition-all duration-300"
               >
                 Drawing
               </button>
-            </div>
-            
-            {/* Panel Content */}
-            <div className="flex-1">
-              {activePanel === 'notes' ? (
-                <NotePreviewPanel
-                  note={currentNote}
-                  isVisible={isPreviewVisible}
-                  onToggleVisibility={toggleVisibility}
-                  onNoteUpdate={updateNote}
-                  onRequestModification={requestModification}
-                  isModifying={isModifying}
-                  className="w-96 h-full"
-                />
-              ) : (
-                <CanvasDrawingPanel
-                  isVisible={isPreviewVisible}
-                  onToggleVisibility={toggleVisibility}
-                  className="w-96 h-full"
-                />
-              )}
             </div>
           </div>
         )}
