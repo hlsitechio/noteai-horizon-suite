@@ -25,9 +25,6 @@ import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 import { AnalyticsService } from '@/services/analyticsService';
 
 const Landing: React.FC = () => {
-  // DEBUG: Track component initialization timing
-  console.time('Landing component init');
-  
   // Ensure clean theme for public landing page
   usePublicPageTheme();
   
@@ -37,10 +34,8 @@ const Landing: React.FC = () => {
   const [showMobileCTA, setShowMobileCTA] = useState(true);
 
   // Performance and viewport tracking
-  console.time('Performance hooks init');
   const performanceMetrics = usePerformanceTracking();
   const viewport = useViewportTracking();
-  console.timeEnd('Performance hooks init');
 
   // Advanced conversion tracking
   useExitIntent({
@@ -109,7 +104,6 @@ const Landing: React.FC = () => {
       window.removeEventListener('click', handleUserInteraction);
       window.removeEventListener('keydown', handleUserInteraction);
     };
-    console.timeEnd('Landing component init');
   }, [isScrolled]);
 
   return (
