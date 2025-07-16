@@ -703,6 +703,7 @@ export type Database = {
       security_audit_logs: {
         Row: {
           created_at: string | null
+          csp_report_uri: string | null
           event_data: Json | null
           event_type: string
           id: string
@@ -713,6 +714,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          csp_report_uri?: string | null
           event_data?: Json | null
           event_type: string
           id?: string
@@ -723,6 +725,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          csp_report_uri?: string | null
           event_data?: Json | null
           event_type?: string
           id?: string
@@ -1632,7 +1635,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cleanup_old_security_logs: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       user_role_type:
