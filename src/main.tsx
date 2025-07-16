@@ -1,11 +1,16 @@
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { blockExternalTracking } from './utils/blockExternalTracking';
 import App from './App.tsx';
 import './index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import { AppInitializationService } from './services/appInitializationService';
+
+// Block external tracking injection before app initialization
+blockExternalTracking();
+
 // Initialize app with optimized services
 AppInitializationService.initialize();
 
