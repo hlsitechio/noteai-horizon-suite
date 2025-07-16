@@ -86,7 +86,7 @@
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.75rem;
     
-    /* Whimsical-inspired gradient colors */
+    /* Smart gradient colors */
     --gradient-start: 280 80% 70%;
     --gradient-middle: 260 70% 60%;
     --gradient-end: 240 60% 50%;
@@ -124,7 +124,7 @@
     --gradient-mesh: conic-gradient(from 180deg at 50% 50%, hsl(217 91% 60% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 0deg, hsl(258 90% 66% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 120deg, hsl(160 84% 50% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 240deg, hsl(217 91% 60% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 360deg);
     --gradient-glass: linear-gradient(135deg, hsl(var(--background) / calc(var(--gradient-intensity) * 0.7)), hsl(var(--background) / calc(var(--gradient-intensity) * 0.3)));
     
-/* Whimsical-inspired gradients */
+/* Smart gradients */
 .whimsical-gradient {
   background: linear-gradient(
     135deg,
@@ -245,7 +245,7 @@
   }
 
   .dark {
-    /* Enhanced dark theme with Whimsical inspiration */
+    /* Enhanced dark theme */
     --background: 220 25% 6%;
     --foreground: 220 10% 96%;
     --card: 220 20% 8%;

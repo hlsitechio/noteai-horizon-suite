@@ -114,7 +114,7 @@ const WhimsicalFeatures = () => {
             {/* The Whimsical Way */}
             <div className="space-y-6">
               <h3 className="text-2xl font-bold text-center mb-8 gradient-text">
-                The Whimsical Way
+                The Smart Way
               </h3>
               {problemSolutions.map((item, index) => <motion.div key={index} initial={{
               opacity: 0,

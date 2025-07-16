@@ -100,7 +100,7 @@ const Landing: React.FC = () => {
         className="min-h-screen bg-background relative overflow-hidden particle-bg"
         onMouseMove={(e) => setMousePosition({ x: e.clientX, y: e.clientY })}
       >
-        {/* Whimsical-inspired background */}
+        {/* Smart gradient background */}
         <div className="absolute inset-0 whimsical-gradient-radial" />
         
         {/* Animated gradient overlay */}
