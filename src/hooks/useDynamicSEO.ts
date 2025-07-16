@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
 import { SEOService, SEOPageSettings } from '@/services/seoService';
+
+// Safe hook to use auth only when available
+const useSafeAuth = () => {
+  try {
+    const { useAuth } = require('@/contexts/AuthContext');
+    return useAuth();
+  } catch {
+    // Return null when AuthProvider is not available (e.g., on public pages)
+    return { user: null };
+  }
+};
 
 export interface DynamicSEOData {
   title: string;
@@ -13,7 +23,7 @@ export interface DynamicSEOData {
 }
 
 export const useDynamicSEO = (pagePath: string): DynamicSEOData => {
-  const { user } = useAuth();
+  const { user } = useSafeAuth();
   const [seoData, setSeoData] = useState<DynamicSEOData>(() => {
     // Get default values immediately
     const defaults = SEOService.getDefaultSEOSettings(pagePath);
@@ -37,7 +47,7 @@ export const useDynamicSEO = (pagePath: string): DynamicSEOData => {
 };
 
 export const useUpdateSEO = () => {
-  const { user } = useAuth();
+  const { user } = useSafeAuth();
 
   const updatePageSEO = async (pagePath: string, settings: Partial<SEOPageSettings>) => {
     if (!user) throw new Error('User not authenticated');
