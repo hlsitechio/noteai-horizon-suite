@@ -15,13 +15,13 @@ import MarketingCTA from '@/components/Marketing/MarketingCTA';
 import SEOOptimizer from '@/components/Marketing/SEOOptimizer';
 import ContentHub from '@/components/Marketing/ContentHub';
 import TrustSignals from '@/components/Marketing/TrustSignals';
-import LeadCapturePopup from '@/components/Marketing/LeadCapturePopup';
+
 import MobileOptimizedCTA from '@/components/Mobile/MobileOptimizedCTA';
 import { LazyContentHub, LazySocialProof, LazyPricing } from '@/components/Performance/LazyComponents';
 import { LandingFeatureShowcase } from '@/components/landing/LandingFeatureShowcase';
 import ConsolidatedThemeShowcase from '@/components/Marketing/ConsolidatedThemeShowcase';
 import { DynamicThemeStyles } from '@/components/Marketing/DynamicThemeStyles';
-import { useExitIntent, useScrollDepth, useTimeOnPage } from '@/hooks/useConversionTracking';
+
 import { usePerformanceTracking, useViewportTracking } from '@/hooks/usePerformanceOptimization';
 import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
@@ -33,36 +33,13 @@ const Landing: React.FC = () => {
   
   const [isScrolled, setIsScrolled] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [showLeadCapture, setShowLeadCapture] = useState(false);
+  
   const [showMobileCTA, setShowMobileCTA] = useState(true);
 
   // Performance and viewport tracking
   const performanceMetrics = usePerformanceTracking();
   const viewport = useViewportTracking();
 
-  // Advanced conversion tracking
-  useExitIntent({
-    onExitIntent: () => setShowLeadCapture(true),
-    enabled: !showLeadCapture
-  });
-
-  useScrollDepth({
-    onScrollDepth: (depth) => {
-      if (depth === 75 && !showLeadCapture) {
-        // Show popup after significant scroll engagement
-        setTimeout(() => setShowLeadCapture(true), 2000);
-      }
-    }
-  });
-
-  useTimeOnPage({
-    onTimeThreshold: (seconds) => {
-      if (seconds === 120 && !showLeadCapture) {
-        // Show popup after 2 minutes of engagement
-        setShowLeadCapture(true);
-      }
-    }
-  });
 
   useEffect(() => {
     // Track page view
@@ -163,14 +140,6 @@ const Landing: React.FC = () => {
         <Footer />
       </div>
       
-      {/* Advanced Lead Capture Popup */}
-      <AnimatePresence>
-        <LeadCapturePopup 
-          isOpen={showLeadCapture}
-          onClose={() => setShowLeadCapture(false)}
-          trigger="exit_intent"
-        />
-      </AnimatePresence>
       
       {/* Mobile Optimized CTA */}
       <MobileOptimizedCTA 
