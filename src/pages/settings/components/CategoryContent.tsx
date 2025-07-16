@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAccentColor } from '@/contexts/AccentColorContext';
+import { useNavigate } from 'react-router-dom';
 
 // Import existing tab components
 import { ProfileTabContent } from './tabs/ProfileTabContent';
@@ -47,7 +48,15 @@ type SubTab = {
 
 export const CategoryContent: React.FC<CategoryContentProps> = ({ activeTab }) => {
   const { accentColor, setAccentColor } = useAccentColor();
+  const navigate = useNavigate();
   const [activeSubTab, setActiveSubTab] = useState<string>('');
+
+  // Redirect appearance tab to unified theme page
+  useEffect(() => {
+    if (activeTab === 'appearance') {
+      navigate('/app/themes', { replace: true });
+    }
+  }, [activeTab, navigate]);
 
   const handleColorChange = (color: { name: string; value: string; hsl: string }) => {
     setAccentColor(color.value, color.hsl);

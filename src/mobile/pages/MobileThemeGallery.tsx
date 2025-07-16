@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import ThemeGallery from '@/components/ThemeGallery/ThemeGallery';
+import UnifiedThemePage from '@/pages/app/UnifiedThemePage';
 
 const MobileThemeGallery: React.FC = () => {
   const navigate = useNavigate();
@@ -31,19 +31,9 @@ const MobileThemeGallery: React.FC = () => {
       </motion.div>
 
       {/* Content */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="pb-20" // Extra padding for mobile navigation
-      >
-        <ThemeGallery 
-          onThemeSelect={(themeId) => {
-            console.log('Mobile theme selected:', themeId);
-          }}
-          className="px-4"
-        />
-      </motion.div>
+      <div className="pb-20">
+        <UnifiedThemePage />
+      </div>
     </div>
   );
 };

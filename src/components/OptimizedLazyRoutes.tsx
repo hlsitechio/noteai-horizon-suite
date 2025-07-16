@@ -80,7 +80,7 @@ const ActivityPage = lazyWithRetry(() => import('../pages/ActivityPage'));
 const ReferralPage = lazyWithRetry(() => import('../pages/ReferralPage'));
 const SEODashboard = lazyWithRetry(() => import('../pages/seo'));
 const APMPage = lazyWithRetry(() => import('../pages/APMPage').then(module => ({ default: module.APMPage })));
-const ThemeGalleryPage = lazyWithRetry(() => import('../pages/app/ThemeGalleryPage'));
+const UnifiedThemePage = lazyWithRetry(() => import('../pages/app/UnifiedThemePage'));
 const AIFeatures = lazyWithRetry(() => import('../pages/AIFeatures'));
 
 // MOBILE PAGES
@@ -323,7 +323,7 @@ export const OptimizedLazyRoutes: React.FC = () => {
           
           <Route path="themes" element={
             <Suspense fallback={<DashboardLoadingFallback />}>
-              <ThemeGalleryPage />
+              <UnifiedThemePage />
             </Suspense>
           } />
           
