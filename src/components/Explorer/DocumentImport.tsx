@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, FileText, File, X, Check, AlertCircle } from 'lucide-react';
+import { Upload, FileText, File, X, Check, AlertCircle, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -39,6 +39,7 @@ export const DocumentImport: React.FC<DocumentImportProps> = ({
 
   // Supported file types
   const supportedTypes = [
+    // Documents
     'application/pdf',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
     'application/msword', // .doc
@@ -52,12 +53,20 @@ export const DocumentImport: React.FC<DocumentImportProps> = ({
     'text/markdown',
     'application/json',
     'application/xml',
-    'text/xml'
+    'text/xml',
+    // Images
+    'image/png',
+    'image/jpeg',
+    'image/jpg',
+    'image/webp',
+    'image/gif',
+    'image/svg+xml'
   ];
 
   const maxFileSize = 50 * 1024 * 1024; // 50MB
 
   const getFileIcon = (mimeType: string) => {
+    if (mimeType.startsWith('image/')) return Image;
     if (mimeType === 'application/pdf') return FileText;
     if (mimeType.includes('word') || mimeType.includes('document')) return FileText;
     if (mimeType.includes('sheet') || mimeType.includes('excel')) return File;
@@ -302,7 +311,7 @@ export const DocumentImport: React.FC<DocumentImportProps> = ({
               Drop files here or click to browse
             </p>
             <p className="text-sm text-muted-foreground">
-              Supports PDF, DOCX, TXT, XLSX, PPTX and more (max 50MB each)
+              Supports documents (PDF, DOCX, TXT, etc.) and images (PNG, JPG, WEBP) - max 50MB each
             </p>
           </div>
           
@@ -319,7 +328,7 @@ export const DocumentImport: React.FC<DocumentImportProps> = ({
         {/* Supported File Types */}
         <div className="flex flex-wrap gap-2">
           <Label className="text-sm font-medium">Supported formats:</Label>
-          {['PDF', 'DOCX', 'TXT', 'XLSX', 'PPTX', 'CSV', 'RTF', 'MD'].map(type => (
+          {['PDF', 'DOCX', 'TXT', 'XLSX', 'PPTX', 'CSV', 'PNG', 'JPG', 'WEBP'].map(type => (
             <Badge key={type} variant="outline" className="text-xs">
               {type}
             </Badge>
