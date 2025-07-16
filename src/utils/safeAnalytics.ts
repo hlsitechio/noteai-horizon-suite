@@ -5,21 +5,8 @@
 
 // Marketing analytics events for tracking user engagement and conversion
 export function safeSendAnalyticsEvent(eventName: string, eventParams?: Record<string, any>) {
-  try {
-    // In a real implementation, you would integrate with analytics providers like:
-    // - Google Analytics 4
-    // - Mixpanel
-    // - Amplitude
-    // - PostHog
-    // Analytics logging removed to reduce console noise
-    
-    // Example integration patterns:
-    // gtag('event', eventName, eventParams);
-    // mixpanel.track(eventName, eventParams);
-    // amplitude.track(eventName, eventParams);
-  } catch (error) {
-    // Analytics warning removed to reduce console noise
-  }
+  // Analytics completely paused - no events sent
+  return;
 }
 
 export function safeSetAnalyticsUserId(userId: string) {

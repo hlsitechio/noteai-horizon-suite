@@ -29,30 +29,8 @@ export const useDynamicSEO = (pagePath: string): DynamicSEOData => {
   });
 
   useEffect(() => {
-    const fetchSEOSettings = async () => {
-      if (!user) return;
-
-      try {
-        const settings = await SEOService.getPageSEOSettings(user.id, pagePath);
-        
-        if (settings) {
-          setSeoData({
-            title: settings.meta_title || seoData.title,
-            description: settings.meta_description || seoData.description,
-            keywords: settings.meta_keywords || seoData.keywords,
-            ogTitle: settings.og_title || settings.meta_title,
-            ogDescription: settings.og_description || settings.meta_description,
-            ogImage: settings.og_image,
-            canonicalUrl: settings.canonical_url,
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching dynamic SEO settings:', error);
-        // Keep default values on error
-      }
-    };
-
-    fetchSEOSettings();
+    // Dynamic SEO paused - using only default values
+    return;
   }, [user, pagePath]);
 
   return seoData;

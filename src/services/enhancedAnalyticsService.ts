@@ -21,16 +21,10 @@ export class EnhancedAnalyticsService {
   private static isInitialized = false;
 
   static initialize() {
-    if (this.isInitialized || typeof window === 'undefined') return;
-
-    try {
-      // Initialize Google Analytics
-      this.loadGoogleAnalytics();
-      this.isInitialized = true;
-      console.log('Enhanced Analytics service initialized successfully');
-    } catch (error) {
-      console.error('Failed to initialize enhanced analytics:', error);
-    }
+    // Enhanced Analytics service paused - no initialization
+    this.isInitialized = false;
+    console.log('📴 Enhanced Analytics service paused - no tracking active');
+    return;
   }
 
   private static loadGoogleAnalytics() {

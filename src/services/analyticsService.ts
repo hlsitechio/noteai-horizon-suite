@@ -14,21 +14,10 @@ export class AnalyticsService {
   private static isInitialized = false;
 
   static initialize() {
-    if (this.isInitialized || typeof window === 'undefined') return;
-
-    try {
-      // Completely disable GA loading to prevent CSP violations
-      // Only enable when a real GA measurement ID is provided
-      if (this.GA_MEASUREMENT_ID && this.GA_MEASUREMENT_ID !== 'G-XXXXXXXXXX' && !import.meta.env.DEV) {
-        this.loadGoogleAnalytics();
-        logger.info('Analytics service initialized with GA');
-      } else {
-        logger.info('Analytics service initialized (GA disabled - no valid ID provided)');
-      }
-      this.isInitialized = true;
-    } catch (error) {
-      logger.error('Failed to initialize analytics:', error);
-    }
+    // Analytics service paused - no Google Analytics loading
+    this.isInitialized = false;
+    logger.debug('📴 Analytics service paused - no Google Analytics tracking');
+    return;
   }
 
   private static loadGoogleAnalytics() {

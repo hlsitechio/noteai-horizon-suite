@@ -11,22 +11,8 @@ declare global {
 }
 
 export function safeSendAnalyticsEvent(eventName: string, eventParams?: Record<string, any>) {
-  try {
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('event', eventName, {
-        event_category: 'engagement',
-        event_label: eventParams?.label || '',
-        value: eventParams?.value || 0,
-        ...eventParams,
-      });
-      // Analytics event logging removed to reduce console noise
-    } else {
-      // Google Analytics availability logging removed to reduce console noise
-    }
-  } catch (error) {
-    // Analytics tracking failure logging removed to reduce console noise
-    // Don't throw error, just log it
-  }
+  // Enhanced Analytics completely paused - no events sent
+  return;
 }
 
 export function safeSetAnalyticsUserId(userId: string) {

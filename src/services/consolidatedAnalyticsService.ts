@@ -14,19 +14,10 @@ export class ConsolidatedAnalyticsService {
   private static readonly MAX_QUEUE_SIZE = 100;
 
   static initialize() {
-    if (this.isInitialized || typeof window === 'undefined') return;
-
-    try {
-      // Only initialize in production to reduce development noise
-      if (import.meta.env.PROD) {
-        this.setupPeriodicFlush();
-      }
-      
-      this.isInitialized = true;
-      logger.debug('✅ Consolidated analytics service initialized');
-    } catch (error) {
-      logger.error('Failed to initialize analytics:', error);
-    }
+    // Analytics service paused - no initialization
+    this.isInitialized = false;
+    logger.debug('📴 Consolidated analytics service paused - no tracking active');
+    return;
   }
 
   private static setupPeriodicFlush() {
@@ -36,23 +27,8 @@ export class ConsolidatedAnalyticsService {
   }
 
   static trackEvent(name: string, properties?: Record<string, any>) {
-    if (!this.isInitialized) return;
-
-    // Prevent queue overflow
-    if (this.eventQueue.length >= this.MAX_QUEUE_SIZE) {
-      this.eventQueue.shift(); // Remove oldest event
-    }
-
-    this.eventQueue.push({
-      name,
-      properties,
-      timestamp: Date.now()
-    });
-
-    // Immediate flush for critical events
-    if (name.includes('error') || name.includes('crash')) {
-      this.flushEvents();
-    }
+    // Analytics tracking paused - no events tracked
+    return;
   }
 
   static trackPageView(path: string, title?: string) {

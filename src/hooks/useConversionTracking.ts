@@ -21,7 +21,7 @@ export const useExitIntent = ({
       // Check if mouse is moving towards the top of the viewport
       if (e.clientY <= sensitivity && e.movementY < 0) {
         setHasTriggered(true);
-        safeSendAnalyticsEvent('exit_intent_triggered');
+        // Analytics paused - no tracking
         onExitIntent();
       }
     };
@@ -56,7 +56,7 @@ export const useScrollDepth = ({
       thresholds.forEach(threshold => {
         if (scrollPercent >= threshold && !triggeredDepths.has(threshold)) {
           setTriggeredDepths(prev => new Set([...prev, threshold]));
-          safeSendAnalyticsEvent('scroll_depth_reached', { depth: threshold });
+          // Analytics paused - no tracking
           onScrollDepth(threshold);
         }
       });
@@ -92,7 +92,7 @@ export const useTimeOnPage = ({
       thresholds.forEach(threshold => {
         if (secondsOnPage >= threshold && !triggeredTimes.has(threshold)) {
           setTriggeredTimes(prev => new Set([...prev, threshold]));
-          safeSendAnalyticsEvent('time_on_page_threshold', { seconds: threshold });
+          // Analytics paused - no tracking
           onTimeThreshold(threshold);
         }
       });
