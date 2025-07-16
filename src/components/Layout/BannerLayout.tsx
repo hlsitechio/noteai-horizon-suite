@@ -65,13 +65,12 @@ const BannerLayout: React.FC = () => {
           />
         </div>
         
-        {/* Status Bar */}
-        {statusBarEnabled && (
-          <StatusBar message={statusMessage} scrollSpeed={scrollSpeed} />
-        )}
-        
         {/* Main Content */}
         <div className="flex-1 min-h-0 overflow-auto">
+          {/* Status Bar */}
+          {statusBarEnabled && (
+            <StatusBar message={statusMessage} scrollSpeed={scrollSpeed} />
+          )}
           <Outlet />
         </div>
       </div>
@@ -117,12 +116,11 @@ const BannerLayout: React.FC = () => {
           id="content-panel"
           className="flex flex-col min-h-0"
         >
-          {/* Status Bar */}
-          {statusBarEnabled && (
-            <StatusBar message={statusMessage} scrollSpeed={scrollSpeed} />
-          )}
-          
           <div className="flex-1 overflow-auto">
+            {/* Status Bar */}
+            {statusBarEnabled && (
+              <StatusBar message={statusMessage} scrollSpeed={scrollSpeed} />
+            )}
             <Outlet />
           </div>
         </Panel>
