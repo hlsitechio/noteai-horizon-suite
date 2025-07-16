@@ -140,7 +140,7 @@ const StatusBarProfileSettings: React.FC = () => {
                 <div 
                   className="whitespace-nowrap text-sm font-medium text-foreground/90 py-2"
                   style={{
-                    animation: `scroll-left ${33 - (tempScrollSpeed * 3)}s linear infinite`
+                    animation: `scroll-left ${11 - tempScrollSpeed}s linear infinite`
                   }}
                 >
                   {tempMessage || "Enter a message to see preview..."}

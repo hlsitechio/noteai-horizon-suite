@@ -17,8 +17,8 @@ const StatusBar: React.FC<StatusBarProps> = ({
   const [isVisible, setIsVisible] = useState(true);
   const [animationKey, setAnimationKey] = useState(0);
   
-  // Convert scroll speed (1-10) to animation duration (10s-2s for better visibility)
-  const animationDuration = 12 - scrollSpeed; // 10s at speed 1, 2s at speed 10
+  // Convert scroll speed (1-10) to animation duration (faster = shorter duration)
+  const animationDuration = 11 - scrollSpeed; // 10s at speed 1, 1s at speed 10
 
   // Reset animation when message changes
   useEffect(() => {
