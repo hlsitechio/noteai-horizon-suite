@@ -16,6 +16,7 @@ export const TimerWidget: React.FC<TimerWidgetProps> = ({
   const [time, setTime] = useState(0); // in seconds
   const [isRunning, setIsRunning] = useState(false);
   const [initialTime, setInitialTime] = useState(0);
+  const [inputHours, setInputHours] = useState('0');
   const [inputMinutes, setInputMinutes] = useState('5');
   const [inputSeconds, setInputSeconds] = useState('0');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -63,7 +64,7 @@ export const TimerWidget: React.FC<TimerWidgetProps> = ({
 
   const handleStart = () => {
     if (mode === 'timer' && time === 0) {
-      const totalSeconds = parseInt(inputMinutes) * 60 + parseInt(inputSeconds);
+      const totalSeconds = parseInt(inputHours) * 3600 + parseInt(inputMinutes) * 60 + parseInt(inputSeconds);
       setTime(totalSeconds);
       setInitialTime(totalSeconds);
     }
@@ -90,7 +91,7 @@ export const TimerWidget: React.FC<TimerWidgetProps> = ({
   };
 
   const handleSetTimer = () => {
-    const totalSeconds = parseInt(inputMinutes || '0') * 60 + parseInt(inputSeconds || '0');
+    const totalSeconds = parseInt(inputHours || '0') * 3600 + parseInt(inputMinutes || '0') * 60 + parseInt(inputSeconds || '0');
     setTime(totalSeconds);
     setInitialTime(totalSeconds);
     setIsRunning(false);
@@ -132,6 +133,18 @@ export const TimerWidget: React.FC<TimerWidgetProps> = ({
         {mode === 'timer' && !isRunning && time === 0 && (
           <div className="space-y-2">
             <div className="flex gap-2 items-center justify-center">
+              <div className="flex items-center gap-1">
+                <Input
+                  type="number"
+                  min="0"
+                  max="23"
+                  value={inputHours}
+                  onChange={(e) => setInputHours(e.target.value)}
+                  className="w-16 text-center"
+                  placeholder="HH"
+                />
+                <span className="text-sm text-muted-foreground">hr</span>
+              </div>
               <div className="flex items-center gap-1">
                 <Input
                   type="number"
