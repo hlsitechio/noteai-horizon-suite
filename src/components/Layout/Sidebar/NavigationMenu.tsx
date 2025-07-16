@@ -134,17 +134,19 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ onNavigate }) => {
             variant={isActive ? "secondary" : "ghost"}
             className={`w-full transition-all duration-300 group relative overflow-hidden ${
               isMobile 
-                ? 'justify-center px-2 h-12' 
+                ? 'justify-center px-2 h-9' 
                 : isCollapsed 
-                  ? 'justify-center px-0 h-12' 
-                  : 'justify-center px-3 h-12'
+                  ? 'justify-center px-0 h-9' 
+                  : 'justify-start px-3 h-9'
             } ${
               isActive 
                 ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm' 
                 : 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:scale-[1.02] active:scale-[0.98]'
             }`}
           >
-            <div className="relative z-10 flex items-center justify-center w-full gap-3">
+            <div className={`relative z-10 flex items-center w-full ${
+              isMobile || isCollapsed ? 'justify-center' : 'justify-start gap-3'
+            }`}>
               <i className={`${item.icon} text-lg transition-transform duration-200 ${
                 isActive ? 'text-sidebar-primary-foreground' : 'group-hover:scale-110'
               }`}></i>
