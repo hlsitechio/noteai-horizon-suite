@@ -1,37 +1,110 @@
-// Project Realms service - DISABLED
-// The project_realms table doesn't exist in the current database schema
-
+import { supabase } from '@/integrations/supabase/client';
 import { ProjectRealm, ProjectAgent, ProjectFilters } from '../types/project';
 
 export class ProjectRealmsService {
   static async getAllProjects(): Promise<ProjectRealm[]> {
-    console.warn('Project Realms service disabled - project_realms table missing from database schema');
-    return [];
+    try {
+      const { data, error } = await supabase
+        .from('project_realms')
+        .select('*')
+        .order('updated_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+      return [];
+    }
   }
 
   static async createProject(project: Omit<ProjectRealm, 'id' | 'created_at' | 'updated_at' | 'last_activity_at' | 'creator_id'>): Promise<ProjectRealm | null> {
-    console.warn('Project Realms service disabled - project_realms table missing from database schema');
-    return null;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const { data, error } = await supabase
+        .from('project_realms')
+        .insert({
+          ...project,
+          user_id: user.id,
+          creator_id: user.id
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error creating project:', error);
+      return null;
+    }
   }
 
   static async updateProject(id: string, updates: Partial<ProjectRealm>): Promise<ProjectRealm | null> {
-    console.warn('Project Realms service disabled - project_realms table missing from database schema');
-    return null;
+    try {
+      const { data, error } = await supabase
+        .from('project_realms')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error updating project:', error);
+      return null;
+    }
   }
 
   static async deleteProject(id: string): Promise<boolean> {
-    console.warn('Project Realms service disabled - project_realms table missing from database schema');
-    return false;
+    try {
+      const { error } = await supabase
+        .from('project_realms')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      return false;
+    }
   }
 
   static async getProjectAgents(projectId: string): Promise<ProjectAgent[]> {
-    console.warn('Project Realms service disabled - project_agents table missing from database schema');
-    return [];
+    try {
+      const { data, error } = await supabase
+        .from('project_agents')
+        .select('*')
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching project agents:', error);
+      return [];
+    }
   }
 
   static async createAgent(agent: Omit<ProjectAgent, 'id' | 'created_at' | 'updated_at'>): Promise<ProjectAgent | null> {
-    console.warn('Project Realms service disabled - project_agents table missing from database schema');
-    return null;
+    try {
+      const { data, error } = await supabase
+        .from('project_agents')
+        .insert(agent)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error creating agent:', error);
+      return null;
+    }
   }
 
   static filterProjects(projects: ProjectRealm[], filters: ProjectFilters): ProjectRealm[] {
