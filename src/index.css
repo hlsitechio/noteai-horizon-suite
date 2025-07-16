@@ -7,6 +7,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ========================================
+   SMOOTH THEME TRANSITION SYSTEM
+   ======================================== */
+
+/* Global theme transition - applies to all elements during theme change */
+.theme-transitioning,
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+  transition: 
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Prevent flash during theme change */
+.theme-transitioning {
+  animation: themeTransition 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes themeTransition {
+  0% {
+    opacity: 1;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  50% {
+    opacity: 0.98;
+  }
+  100% {
+    opacity: 1;
+  }
+}
  
 /* ========================================
    THEME PRESET 1: PROFESSIONAL DARK (Default)

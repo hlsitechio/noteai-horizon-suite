@@ -31,13 +31,25 @@ export const applyThemeToDocument = (theme: Theme) => {
   const root = window.document.documentElement;
   const resolvedTheme = getResolvedTheme(theme);
   
-  // Only remove basic light/dark classes, preserve custom theme classes
-  root.classList.remove('light', 'dark');
+  // Add transition class for smooth theme change
+  root.classList.add('theme-transitioning');
   
-  // Apply the resolved theme
-  root.classList.add(resolvedTheme);
+  // Add a small delay to start the fade effect
+  setTimeout(() => {
+    // Only remove basic light/dark classes, preserve custom theme classes
+    root.classList.remove('light', 'dark');
+    
+    // Apply the resolved theme
+    root.classList.add(resolvedTheme);
+    
+    console.log(`Applied theme: ${resolvedTheme}, classes now:`, Array.from(root.classList));
+    
+    // Remove transition class after animation completes
+    setTimeout(() => {
+      root.classList.remove('theme-transitioning');
+    }, 400); // Match CSS transition duration
+  }, 50); // Small delay for smooth start
   
-  console.log(`Applied theme: ${resolvedTheme}, classes now:`, Array.from(root.classList));
   return resolvedTheme;
 };
 

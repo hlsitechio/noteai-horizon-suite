@@ -34,12 +34,17 @@ export function ThemeProvider({
   });
 
   React.useEffect(() => {
+    // Apply theme with smooth transition
     applyThemeToDocument(theme);
   }, [theme]);
 
   const setThemeValue = React.useCallback((newTheme: Theme) => {
     console.log('ThemeProvider: Setting theme from', theme, 'to', newTheme);
+    
+    // Store the new theme immediately
     localStorage.setItem(storageKey, newTheme);
+    
+    // Set theme state (this will trigger the useEffect above)
     setTheme(newTheme);
   }, [storageKey, theme]);
 
