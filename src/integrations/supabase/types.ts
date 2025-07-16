@@ -697,30 +697,36 @@ export type Database = {
       }
       project_agents: {
         Row: {
+          agent_type: string
           config: Json | null
           created_at: string
           id: string
+          is_active: boolean | null
           name: string
           project_id: string
-          type: string
+          prompt_template: string | null
           updated_at: string
         }
         Insert: {
+          agent_type?: string
           config?: Json | null
           created_at?: string
           id?: string
+          is_active?: boolean | null
           name: string
           project_id: string
-          type?: string
+          prompt_template?: string | null
           updated_at?: string
         }
         Update: {
+          agent_type?: string
           config?: Json | null
           created_at?: string
           id?: string
+          is_active?: boolean | null
           name?: string
           project_id?: string
-          type?: string
+          prompt_template?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -735,6 +741,7 @@ export type Database = {
       }
       project_realms: {
         Row: {
+          ai_config: Json | null
           created_at: string
           creator_id: string | null
           description: string | null
@@ -747,6 +754,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          ai_config?: Json | null
           created_at?: string
           creator_id?: string | null
           description?: string | null
@@ -759,6 +767,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          ai_config?: Json | null
           created_at?: string
           creator_id?: string | null
           description?: string | null

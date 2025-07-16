@@ -10,7 +10,7 @@ export class ProjectRealmsService {
         .order('updated_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as unknown as ProjectRealm[];
     } catch (error) {
       console.error('Error fetching projects:', error);
       return [];
@@ -33,7 +33,7 @@ export class ProjectRealmsService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as unknown as ProjectRealm;
     } catch (error) {
       console.error('Error creating project:', error);
       return null;
@@ -53,7 +53,7 @@ export class ProjectRealmsService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as unknown as ProjectRealm;
     } catch (error) {
       console.error('Error updating project:', error);
       return null;
@@ -79,12 +79,12 @@ export class ProjectRealmsService {
     try {
       const { data, error } = await supabase
         .from('project_agents')
-        .select('*')
+        .select('id, project_id, agent_type, name, prompt_template, config, is_active, created_at, updated_at')
         .eq('project_id', projectId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as unknown as ProjectAgent[];
     } catch (error) {
       console.error('Error fetching project agents:', error);
       return [];
@@ -100,7 +100,7 @@ export class ProjectRealmsService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as unknown as ProjectAgent;
     } catch (error) {
       console.error('Error creating agent:', error);
       return null;
