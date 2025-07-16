@@ -54,170 +54,233 @@ export const DynamicThemeStyles: React.FC = () => {
         background-color: transparent !important;
       }
 
-      /* Font Family Overrides */
+      /* ========================================
+         COMPLETE WEBSITE COLOR TRANSFORMATION
+         ======================================== */
+
+      /* Override ALL text colors globally */
       h1, h2, h3, h4, h5, h6 {
-        font-family: ${currentTheme.fonts.heading}, sans-serif !important;
-        transition: font-family 0.3s ease;
-      }
-
-      body, p, span, div {
-        font-family: ${currentTheme.fonts.body}, sans-serif !important;
-        transition: font-family 0.3s ease;
-      }
-
-      code, pre, .font-mono {
-        font-family: ${currentTheme.fonts.mono}, monospace !important;
-      }
-
-      /* ========================================
-         NAVIGATION THEMING
-         ======================================== */
-      .nav-accent, .navigation-brand {
         color: hsl(${currentTheme.colors.primary}) !important;
-        transition: color 0.6s ease;
+        font-family: ${currentTheme.fonts.heading}, sans-serif !important;
       }
 
-      .nav-link:hover {
-        color: hsl(${currentTheme.colors.accent}) !important;
+      p, span, div, a {
+        color: hsl(${currentTheme.colors.primary} / 0.8) !important;
+        font-family: ${currentTheme.fonts.body}, sans-serif !important;
+      }
+
+      /* Global text color adjustments */
+      .text-foreground, .text-primary {
+        color: hsl(${currentTheme.colors.primary}) !important;
+      }
+
+      .text-muted-foreground, .text-secondary {
+        color: hsl(${currentTheme.colors.primary} / 0.6) !important;
       }
 
       /* ========================================
-         HERO SECTION THEMING
+         NAVIGATION COMPLETE THEMING
          ======================================== */
-      .hero-gradient, .whimsical-hero-bg {
-        background: ${currentTheme.gradient} !important;
-        opacity: 0.15;
-        transition: background 0.8s ease;
+      nav, .navigation, header {
+        background: linear-gradient(135deg, hsl(${currentTheme.colors.primary} / 0.1), hsl(${currentTheme.colors.accent} / 0.1)) !important;
+        border-bottom: 1px solid hsl(${currentTheme.colors.primary} / 0.2) !important;
       }
 
-      .hero-title {
+      .nav-link, .navigation a {
+        color: hsl(${currentTheme.colors.primary}) !important;
+        font-family: ${currentTheme.fonts.body}, sans-serif !important;
+      }
+
+      .nav-link:hover, .navigation a:hover {
+        color: hsl(${currentTheme.colors.accent}) !important;
+        text-shadow: 0 0 10px hsl(${currentTheme.colors.accent} / 0.5) !important;
+      }
+
+      /* ========================================
+         HERO SECTION COMPLETE TRANSFORMATION
+         ======================================== */
+      .hero, .hero-section, .whimsical-hero {
+        background: linear-gradient(135deg, hsl(${currentTheme.colors.primary} / 0.05), hsl(${currentTheme.colors.accent} / 0.05)) !important;
+      }
+
+      .hero h1, .hero-title, .hero h2 {
         background: linear-gradient(135deg, hsl(${currentTheme.colors.primary}), hsl(${currentTheme.colors.accent})) !important;
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
         background-clip: text !important;
+        font-family: ${currentTheme.fonts.heading}, sans-serif !important;
       }
 
-      .hero-accent {
-        color: hsl(${currentTheme.colors.primary}) !important;
+      .hero p, .hero-description {
+        color: hsl(${currentTheme.colors.primary} / 0.7) !important;
+        font-family: ${currentTheme.fonts.body}, sans-serif !important;
       }
 
       /* ========================================
-         BUTTON THEMING
+         BUTTON COMPLETE TRANSFORMATION
          ======================================== */
-      .btn-primary, .btn-primary-themed, .button-primary {
+      button, .btn, [role="button"] {
         background: linear-gradient(135deg, hsl(${currentTheme.colors.primary}), hsl(${currentTheme.colors.secondary})) !important;
-        border: none !important;
         color: white !important;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid hsl(${currentTheme.colors.primary}) !important;
+        font-family: ${currentTheme.fonts.body}, sans-serif !important;
+        transition: all 0.3s ease !important;
       }
 
-      .btn-primary:hover, .btn-primary-themed:hover, .button-primary:hover {
+      button:hover, .btn:hover, [role="button"]:hover {
         background: linear-gradient(135deg, hsl(${currentTheme.colors.primary} / 0.9), hsl(${currentTheme.colors.secondary} / 0.9)) !important;
-        transform: translateY(-2px);
+        transform: translateY(-2px) !important;
         box-shadow: 0 8px 25px hsl(${currentTheme.colors.primary} / 0.4) !important;
       }
 
-      .btn-secondary {
-        border-color: hsl(${currentTheme.colors.primary}) !important;
+      /* Secondary buttons */
+      .btn-secondary, .btn-outline {
+        background: transparent !important;
         color: hsl(${currentTheme.colors.primary}) !important;
+        border: 2px solid hsl(${currentTheme.colors.primary}) !important;
       }
 
-      .btn-secondary:hover {
+      .btn-secondary:hover, .btn-outline:hover {
         background: hsl(${currentTheme.colors.primary}) !important;
         color: white !important;
       }
 
       /* ========================================
-         FEATURE CARDS THEMING
+         CARD ELEMENTS TRANSFORMATION
          ======================================== */
-      .feature-card, .feature-card-accent {
-        background: linear-gradient(135deg, hsl(${currentTheme.colors.primary} / 0.05), hsl(${currentTheme.colors.accent} / 0.05)) !important;
-        border-color: hsl(${currentTheme.colors.primary} / 0.15) !important;
-        transition: all 0.6s ease;
+      .card, .feature-card, [class*="card"] {
+        background: linear-gradient(135deg, hsl(${currentTheme.colors.primary} / 0.03), hsl(${currentTheme.colors.accent} / 0.03)) !important;
+        border: 1px solid hsl(${currentTheme.colors.primary} / 0.15) !important;
+        backdrop-filter: blur(10px) !important;
       }
 
-      .feature-card:hover {
+      .card:hover, .feature-card:hover {
         border-color: hsl(${currentTheme.colors.primary} / 0.3) !important;
         box-shadow: 0 10px 30px hsl(${currentTheme.colors.primary} / 0.15) !important;
+        transform: translateY(-5px) !important;
       }
 
-      .feature-icon {
+      .card h3, .card h4, .feature-title {
         color: hsl(${currentTheme.colors.primary}) !important;
+        font-family: ${currentTheme.fonts.heading}, sans-serif !important;
       }
 
-      .feature-title {
-        color: hsl(${currentTheme.colors.primary}) !important;
+      .card p, .card span {
+        color: hsl(${currentTheme.colors.primary} / 0.7) !important;
+        font-family: ${currentTheme.fonts.body}, sans-serif !important;
       }
 
       /* ========================================
-         PRICING SECTION THEMING
+         ICON TRANSFORMATION
          ======================================== */
-      .pricing-card-featured {
+      svg, .icon, [class*="icon"] {
+        color: hsl(${currentTheme.colors.primary}) !important;
+        fill: hsl(${currentTheme.colors.primary}) !important;
+      }
+
+      .feature-icon, .icon-primary {
+        color: hsl(${currentTheme.colors.accent}) !important;
+        filter: drop-shadow(0 0 10px hsl(${currentTheme.colors.accent} / 0.3)) !important;
+      }
+
+      /* ========================================
+         FORM ELEMENTS TRANSFORMATION
+         ======================================== */
+      input, textarea, select {
+        border: 2px solid hsl(${currentTheme.colors.primary} / 0.3) !important;
+        background: hsl(${currentTheme.colors.primary} / 0.02) !important;
+        color: hsl(${currentTheme.colors.primary}) !important;
+        font-family: ${currentTheme.fonts.body}, sans-serif !important;
+      }
+
+      input:focus, textarea:focus, select:focus {
+        border-color: hsl(${currentTheme.colors.primary}) !important;
+        box-shadow: 0 0 0 3px hsl(${currentTheme.colors.primary} / 0.1) !important;
+        outline: none !important;
+      }
+
+      label {
+        color: hsl(${currentTheme.colors.primary}) !important;
+        font-family: ${currentTheme.fonts.body}, sans-serif !important;
+      }
+
+      /* ========================================
+         PRICING SECTION TRANSFORMATION
+         ======================================== */
+      .pricing-card {
+        background: linear-gradient(135deg, hsl(${currentTheme.colors.primary} / 0.03), hsl(${currentTheme.colors.accent} / 0.03)) !important;
+        border: 1px solid hsl(${currentTheme.colors.primary} / 0.15) !important;
+      }
+
+      .pricing-card.featured, .pricing-card-featured {
         border-color: hsl(${currentTheme.colors.primary}) !important;
         box-shadow: 0 0 40px hsl(${currentTheme.colors.primary} / 0.2) !important;
-        background: linear-gradient(135deg, hsl(${currentTheme.colors.primary} / 0.03), hsl(${currentTheme.colors.accent} / 0.03)) !important;
+        background: linear-gradient(135deg, hsl(${currentTheme.colors.primary} / 0.05), hsl(${currentTheme.colors.accent} / 0.05)) !important;
       }
 
-      .pricing-highlight {
-        background: linear-gradient(135deg, hsl(${currentTheme.colors.primary}), hsl(${currentTheme.colors.secondary})) !important;
-        color: white !important;
-      }
-
-      .pricing-accent {
+      .price, .pricing-amount {
         color: hsl(${currentTheme.colors.primary}) !important;
+        font-family: ${currentTheme.fonts.heading}, sans-serif !important;
       }
 
       /* ========================================
-         SOCIAL PROOF THEMING
+         FOOTER TRANSFORMATION
          ======================================== */
-      .social-proof-accent, .testimonial-accent {
-        color: hsl(${currentTheme.colors.primary}) !important;
+      footer {
+        background: linear-gradient(135deg, hsl(${currentTheme.colors.primary} / 0.05), hsl(${currentTheme.colors.accent} / 0.05)) !important;
+        border-top: 1px solid hsl(${currentTheme.colors.primary} / 0.2) !important;
       }
 
-      .testimonial-card:hover {
-        border-color: hsl(${currentTheme.colors.primary} / 0.2) !important;
+      footer h3, footer h4 {
+        color: hsl(${currentTheme.colors.primary}) !important;
+        font-family: ${currentTheme.fonts.heading}, sans-serif !important;
+      }
+
+      footer p, footer a, footer span {
+        color: hsl(${currentTheme.colors.primary} / 0.7) !important;
+        font-family: ${currentTheme.fonts.body}, sans-serif !important;
+      }
+
+      footer a:hover {
+        color: hsl(${currentTheme.colors.accent}) !important;
+        text-decoration: underline !important;
+      }
+
+      /* ========================================
+         TESTIMONIALS TRANSFORMATION
+         ======================================== */
+      .testimonial, .testimonial-card {
+        background: linear-gradient(135deg, hsl(${currentTheme.colors.primary} / 0.03), hsl(${currentTheme.colors.accent} / 0.03)) !important;
+        border: 1px solid hsl(${currentTheme.colors.primary} / 0.15) !important;
+      }
+
+      .testimonial:hover {
+        border-color: hsl(${currentTheme.colors.primary} / 0.3) !important;
         box-shadow: 0 8px 25px hsl(${currentTheme.colors.primary} / 0.1) !important;
       }
 
-      .rating-star {
-        color: hsl(${currentTheme.colors.secondary}) !important;
+      .testimonial-name {
+        color: hsl(${currentTheme.colors.primary}) !important;
+        font-family: ${currentTheme.fonts.heading}, sans-serif !important;
+      }
+
+      .testimonial-role, .testimonial-company {
+        color: hsl(${currentTheme.colors.primary} / 0.6) !important;
+        font-family: ${currentTheme.fonts.body}, sans-serif !important;
       }
 
       /* ========================================
-         FOOTER THEMING
+         ACCENT ELEMENTS & HIGHLIGHTS
          ======================================== */
-      .footer-accent, .footer-link:hover {
-        color: hsl(${currentTheme.colors.accent}) !important;
-      }
-
-      .footer-separator {
-        background: linear-gradient(90deg, transparent, hsl(${currentTheme.colors.primary} / 0.3), transparent) !important;
-      }
-
-      /* ========================================
-         FORM ELEMENTS THEMING
-         ======================================== */
-      .form-input:focus {
-        border-color: hsl(${currentTheme.colors.primary}) !important;
-        box-shadow: 0 0 0 3px hsl(${currentTheme.colors.primary} / 0.1) !important;
-      }
-
-      .form-accent {
+      .accent, .highlight, .primary-accent {
         color: hsl(${currentTheme.colors.primary}) !important;
       }
 
-      /* ========================================
-         ACCENT ELEMENTS
-         ======================================== */
-      .accent-primary {
-        color: hsl(${currentTheme.colors.primary}) !important;
-      }
-
-      .accent-secondary {
+      .secondary-accent {
         color: hsl(${currentTheme.colors.secondary}) !important;
       }
 
-      .accent-gradient {
+      .gradient-accent {
         background: ${currentTheme.gradient} !important;
       }
 
@@ -230,7 +293,7 @@ export const DynamicThemeStyles: React.FC = () => {
       }
 
       /* ========================================
-         LOADING STATES
+         LOADING & INTERACTIVE STATES
          ======================================== */
       .loading-spinner {
         border-top-color: hsl(${currentTheme.colors.primary}) !important;
@@ -240,78 +303,57 @@ export const DynamicThemeStyles: React.FC = () => {
         background: linear-gradient(90deg, hsl(${currentTheme.colors.primary}), hsl(${currentTheme.colors.secondary})) !important;
       }
 
-      /* ========================================
-         INTERACTIVE ELEMENTS
-         ======================================== */
       .hover-accent:hover {
         color: hsl(${currentTheme.colors.primary}) !important;
-        transform: translateY(-1px);
-      }
-
-      .link-underline::after {
-        background: hsl(${currentTheme.colors.primary}) !important;
+        transform: translateY(-1px) !important;
       }
 
       /* ========================================
-         ANIMATIONS & TRANSITIONS
+         SCROLLBAR THEMING
          ======================================== */
-      .pulse-accent {
-        animation: pulse-custom 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, hsl(${currentTheme.colors.primary}), hsl(${currentTheme.colors.secondary})) !important;
       }
 
-      @keyframes pulse-custom {
-        0%, 100% {
-          box-shadow: 0 0 20px hsl(${currentTheme.colors.primary} / 0.4);
-        }
-        50% {
-          box-shadow: 0 0 40px hsl(${currentTheme.colors.primary} / 0.8);
-        }
+      ::-webkit-scrollbar-track {
+        background: hsl(${currentTheme.colors.primary} / 0.1) !important;
       }
 
       /* ========================================
-         RESPONSIVE GLOW EFFECTS
+         FIX DISAPPEARING SECTIONS ON SCROLL
          ======================================== */
-      @media (min-width: 768px) {
-        .desktop-glow {
-          filter: drop-shadow(0 0 20px hsl(${currentTheme.colors.primary} / 0.3));
-        }
+      section, .section {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        position: relative !important;
+        z-index: 1 !important;
       }
 
-       /* ========================================
-          FIX DISAPPEARING SECTIONS ON SCROLL
-          ======================================== */
-       section, .section {
-         opacity: 1 !important;
-         visibility: visible !important;
-         transform: none !important;
-         position: relative !important;
-         z-index: 1 !important;
-       }
+      /* Prevent scroll animation conflicts */
+      [data-scroll] {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+      }
 
-       /* Prevent scroll animation conflicts */
-       [data-scroll] {
-         opacity: 1 !important;
-         transform: translateY(0) !important;
-       }
+      /* Fix for motion components */
+      [data-projection-id] {
+        opacity: 1 !important;
+        will-change: auto !important;
+      }
 
-       /* Fix for motion components */
-       [data-projection-id] {
-         opacity: 1 !important;
-         will-change: auto !important;
-       }
-
-       /* ========================================
-          SMOOTH TRANSITIONS FOR ALL ELEMENTS
-          ======================================== */
-       * {
-         transition: 
-           color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-           background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-           border-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-           box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-           transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-           font-family 0.3s ease;
-       }
+      /* ========================================
+         SMOOTH TRANSITIONS FOR ALL ELEMENTS
+         ======================================== */
+      * {
+        transition: 
+          color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+          background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+          border-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+          box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+          transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          font-family 0.3s ease;
+      }
     `}</style>
   );
 };
