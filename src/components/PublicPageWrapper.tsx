@@ -11,12 +11,6 @@ interface PublicPageWrapperProps {
  * Avoids heavy app providers that aren't needed for landing/auth pages
  */
 export const PublicPageWrapper: React.FC<PublicPageWrapperProps> = ({ children }) => {
-  console.time('PublicPageWrapper init');
-  
-  React.useEffect(() => {
-    console.timeEnd('PublicPageWrapper init');
-  }, []);
-
   return (
     <PublicThemeProvider>
       <TooltipProvider>

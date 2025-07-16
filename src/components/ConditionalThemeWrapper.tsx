@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppThemeProviders } from '../contexts/AppThemeProviders';
 import { PublicThemeProviders } from '../contexts/PublicThemeProviders';
+import { AppProviders } from './AppProviders';
 
 type ConditionalThemeWrapperProps = {
   children: React.ReactNode;
@@ -14,7 +15,8 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
   // Determine route synchronously to prevent flashing
   const getIsAppRoute = () => {
     if (typeof window === 'undefined') return false;
-    return window.location.pathname.startsWith('/app');
+    const path = window.location.pathname;
+    return path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile');
   };
   
   const [isAppRoute, setIsAppRoute] = useState(getIsAppRoute);
@@ -22,7 +24,8 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
   useEffect(() => {
     // Listen for navigation changes only
     const handleNavigation = () => {
-      setIsAppRoute(window.location.pathname.startsWith('/app'));
+      const path = window.location.pathname;
+      setIsAppRoute(path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile'));
     };
     
     window.addEventListener('popstate', handleNavigation);
@@ -32,12 +35,14 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
     };
   }, []);
   
-  // For app routes, use the full theme provider with user settings
+  // For app routes, use the full theme provider with user settings AND AppProviders
   if (isAppRoute) {
     return (
-      <AppThemeProviders>
-        {children}
-      </AppThemeProviders>
+      <AppProviders>
+        <AppThemeProviders>
+          {children}
+        </AppThemeProviders>
+      </AppProviders>
     );
   }
   
