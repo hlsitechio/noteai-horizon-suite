@@ -17,7 +17,10 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
   const getIsAppRoute = () => {
     if (typeof window === 'undefined') return false;
     const path = window.location.pathname;
-    return path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile') || path.startsWith('/auth');
+    console.log('ConditionalThemeWrapper: Current path:', path);
+    const isApp = path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile') || path.startsWith('/auth');
+    console.log('ConditionalThemeWrapper: Is app route:', isApp);
+    return isApp;
   };
   
   const [isAppRoute, setIsAppRoute] = useState(getIsAppRoute);
@@ -26,18 +29,38 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
     // Listen for navigation changes only
     const handleNavigation = () => {
       const path = window.location.pathname;
-      setIsAppRoute(path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile') || path.startsWith('/auth'));
+      console.log('ConditionalThemeWrapper: Navigation to:', path);
+      const isApp = path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile') || path.startsWith('/auth');
+      console.log('ConditionalThemeWrapper: Setting isAppRoute to:', isApp);
+      setIsAppRoute(isApp);
+    };
+    
+    // Also listen for pushstate and replacestate events for React Router navigation
+    const originalPushState = window.history.pushState;
+    const originalReplaceState = window.history.replaceState;
+    
+    window.history.pushState = function(...args) {
+      originalPushState.apply(window.history, args);
+      setTimeout(handleNavigation, 0);
+    };
+    
+    window.history.replaceState = function(...args) {
+      originalReplaceState.apply(window.history, args);
+      setTimeout(handleNavigation, 0);
     };
     
     window.addEventListener('popstate', handleNavigation);
     
     return () => {
       window.removeEventListener('popstate', handleNavigation);
+      window.history.pushState = originalPushState;
+      window.history.replaceState = originalReplaceState;
     };
   }, []);
   
   // For app routes, use the full theme provider with user settings AND AppProviders
   if (isAppRoute) {
+    console.log('ConditionalThemeWrapper: Rendering with AppProviders (includes AuthProvider)');
     return (
       <AppProviders>
         <AppThemeProviders>
@@ -50,6 +73,7 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
   }
   
   // For public routes, use the minimal public theme provider
+  console.log('ConditionalThemeWrapper: Rendering with PublicThemeProviders (no AuthProvider)');
   return (
     <PublicThemeProviders>
       {children}
