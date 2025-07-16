@@ -139,11 +139,29 @@ export const useTasks = () => {
     }
   };
 
-  // Set up real-time subscription - disabled to prevent connection errors
+  // Set up real-time subscription
   useEffect(() => {
     fetchTasks();
-    // Real-time subscription disabled
-    console.warn('Tasks real-time subscription disabled');
+
+    // Set up real-time subscription for tasks
+    const channel = supabase
+      .channel('tasks-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'tasks'
+        },
+        () => {
+          fetchTasks(); // Refetch tasks when changes occur
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return {
