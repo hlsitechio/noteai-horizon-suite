@@ -49,12 +49,8 @@ export class SmartErrorBoundary extends Component<Props, State> {
       errorInfo
     });
 
-    // Log error details
-    logger.error('Error boundary caught error:', error, errorInfo);
+    // Error logging removed to reduce console noise
     
-    // Send to Sentry with additional context
-    // Sentry removed
-
     // Preserve work if enabled
     if (this.props.preserveWork) {
       this.preserveCurrentWork();
@@ -72,9 +68,9 @@ export class SmartErrorBoundary extends Component<Props, State> {
       };
       
       localStorage.setItem(this.workPreservationKey, JSON.stringify(workData));
-      logger.debug('Work preserved before error recovery');
+      // Work preservation logging removed to reduce console noise
     } catch (error) {
-      logger.error('Failed to preserve work:', error);
+      // Error logging removed to reduce console noise
     }
   };
 
@@ -82,11 +78,11 @@ export class SmartErrorBoundary extends Component<Props, State> {
     const newRetryCount = this.state.retryCount + 1;
     
     if (newRetryCount > this.maxRetries) {
-      logger.warn('Max retries exceeded, not attempting retry');
+      // Max retries logging removed to reduce console noise
       return;
     }
 
-    logger.debug(`Retrying error recovery (attempt ${newRetryCount}/${this.maxRetries})`);
+    // Retry logging removed to reduce console noise
     
     this.setState({
       hasError: false,

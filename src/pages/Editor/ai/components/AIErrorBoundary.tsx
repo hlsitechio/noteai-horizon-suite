@@ -24,7 +24,7 @@ class AIErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('AI Component Error:', error, errorInfo);
+    // Error logging removed to reduce console noise
   }
 
   handleRetry = () => {

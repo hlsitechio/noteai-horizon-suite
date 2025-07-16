@@ -19,7 +19,7 @@ class SidebarErrorBoundary extends Component<SidebarErrorBoundaryProps, SidebarE
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Sidebar Error Boundary caught an error:', error, errorInfo);
+    // Error logging removed to reduce console noise
     this.setState({
       hasError: true,
       error,
