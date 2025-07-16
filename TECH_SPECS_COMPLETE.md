@@ -956,6 +956,181 @@ supabase/
 
 ---
 
+## 🤖 **GenAI & Multimodal AI Stack**
+
+### **AI Models & Providers**
+- **OpenAI GPT-4.1-2025-04-14** - Latest flagship model for text generation
+- **OpenAI o3-2025-04-16** - Advanced reasoning model for complex problem-solving
+- **OpenAI o4-mini-2025-04-16** - Fast reasoning model for efficient processing
+- **OpenAI DALL-E 3** - Advanced image generation and editing
+- **OpenAI Whisper** - State-of-the-art speech-to-text processing
+- **Claude Opus & Sonnet** - Anthropic's advanced reasoning models
+- **Hugging Face Transformers** - Local model processing and fine-tuning
+
+### **AI Agent Architecture**
+- **AgentCoordinator** - Central orchestration system for multiple AI agents
+- **BaseAgent** - Core agent functionality with prompt management
+- **GeneralAgent** - Multi-purpose conversational AI with context awareness
+- **ProductivityAgent** - Task optimization and workflow automation
+- **WritingAgent** - Content creation, editing, and style enhancement
+- **Context Management** - Advanced conversation memory and knowledge persistence
+
+### **Multimodal Capabilities**
+- **Vision Processing** - Image analysis and understanding
+- **Voice Processing** - Real-time speech recognition and synthesis
+- **Document Processing** - OCR, PDF analysis, and content extraction
+- **Code Analysis** - Programming language understanding and generation
+- **Structured Data Processing** - JSON, CSV, and database content analysis
+
+### **AI Integration Features**
+- **Function Calling** - Structured AI responses and tool integration
+- **Streaming Responses** - Real-time AI output processing
+- **Context Preservation** - Conversation history and user preferences
+- **Multi-turn Conversations** - Advanced dialogue management
+- **Auto-tagging** - AI-powered content categorization
+- **Smart Suggestions** - Predictive content recommendations
+
+---
+
+## ⚡ **Supabase Edge Functions**
+
+### **Core Edge Functions**
+- **ai-chat-with-context** - Advanced AI conversation with memory persistence
+- **ai-copilot-enhanced** - Intelligent AI assistance with context awareness
+- **ai-writing-assistant** - Content generation and optimization
+- **advanced-text-to-speech** - High-quality voice synthesis
+- **realtime-voice-chat** - Live voice communication processing
+- **generate-note-tags** - AI-powered automatic tagging
+- **banner-storage-upload** - File management and storage operations
+- **visitor-widget** - Analytics and tracking functionality
+
+### **Function Architecture**
+- **CORS Support** - Cross-origin resource sharing for web applications
+- **Authentication Integration** - Secure function access with JWT validation
+- **Error Handling** - Comprehensive error management and logging
+- **Background Tasks** - Asynchronous processing with EdgeRuntime.waitUntil()
+- **Streaming Support** - Real-time data streaming capabilities
+- **Rate Limiting** - API abuse prevention and throttling
+
+### **Security Features**
+- **Row Level Security (RLS)** - Database-level access control
+- **API Key Management** - Secure secret storage and rotation
+- **Request Validation** - Input sanitization and type checking
+- **Audit Logging** - Complete function execution tracking
+- **Content Security Policy** - XSS and injection attack prevention
+
+### **Performance Optimization**
+- **Cold Start Optimization** - Minimal function initialization time
+- **Memory Management** - Efficient resource usage and cleanup
+- **Caching Strategies** - Response caching and data optimization
+- **Bundle Size Optimization** - Minimal function package sizes
+- **Database Connection Pooling** - Efficient database access
+
+---
+
+## 🎨 **UX Details & Design Philosophy**
+
+### **Design Principles**
+- **AI-First Design** - Every interaction optimized for AI assistance
+- **Contextual Intelligence** - UI adapts based on user behavior and AI insights
+- **Minimalist Aesthetic** - Clean, distraction-free interface design
+- **Progressive Disclosure** - Complex features revealed gradually
+- **Accessibility-First** - WCAG 2.1 compliance and inclusive design
+
+### **User Interface Components**
+- **Premium Chat Interface** - Advanced conversational UI with typing indicators
+- **Adaptive Sidebars** - Contextual panels for notes and drawing
+- **Smart Navigation** - AI-powered menu organization and shortcuts
+- **Dynamic Layouts** - Responsive grid system with intelligent component placement
+- **Interactive Animations** - Smooth transitions with Framer Motion
+- **3D Visual Elements** - Three.js integration for immersive experiences
+
+### **User Experience Flows**
+- **Onboarding Journey** - Guided setup with progressive feature introduction
+- **AI Conversation Flow** - Natural dialogue patterns with context preservation
+- **Content Creation Workflow** - Seamless note creation with AI assistance
+- **Collaboration Experience** - Real-time editing with conflict resolution
+- **Voice Interaction Design** - Hands-free operation with voice commands
+- **Mobile-First Experience** - Touch-optimized interface with gesture support
+
+### **Personalization Features**
+- **Adaptive UI** - Interface learns from user preferences and behavior
+- **Theme Customization** - Advanced theming with CSS custom properties
+- **Layout Preferences** - Customizable workspace arrangements
+- **AI Personality Settings** - Configurable AI assistant behavior
+- **Workflow Automation** - Custom shortcuts and automated actions
+- **Context-Aware Suggestions** - Intelligent content and action recommendations
+
+### **Accessibility Implementation**
+- **Screen Reader Support** - Complete ARIA compliance
+- **Keyboard Navigation** - Full keyboard accessibility with logical tab order
+- **High Contrast Modes** - Enhanced visibility options
+- **Focus Management** - Clear focus indicators and logical flow
+- **Voice Control** - Speech recognition for accessibility
+- **Cognitive Accessibility** - Simple language and clear instructions
+
+---
+
+## 🔐 **Security, Privacy, and Compliance**
+
+### **Authentication & Authorization**
+- **Multi-Factor Authentication (MFA)** - Enhanced account security
+- **JWT Token Management** - Secure session handling with refresh tokens
+- **Row Level Security (RLS)** - Database-level access control
+- **API Key Management** - Secure secret storage and rotation
+- **OAuth Integration** - Third-party authentication support
+- **Session Security** - Advanced session monitoring and anomaly detection
+
+### **Data Protection**
+- **End-to-End Encryption** - Data encrypted in transit and at rest
+- **PII Detection** - Automatic personally identifiable information scanning
+- **Data Anonymization** - User data protection in analytics and logs
+- **Secure File Storage** - Protected file uploads with virus scanning
+- **Backup Encryption** - Encrypted backups with secure key management
+- **Data Retention Policies** - Automated data lifecycle management
+
+### **Security Monitoring**
+- **Real-time Threat Detection** - Advanced security event monitoring
+- **Security Audit Logs** - Comprehensive security event tracking
+- **Anomaly Detection** - AI-powered suspicious activity identification
+- **Rate Limiting** - API abuse prevention and DDoS protection
+- **Content Security Policy (CSP)** - XSS and injection attack prevention
+- **Security Headers** - Comprehensive HTTP security header implementation
+
+### **Privacy Compliance**
+- **GDPR Compliance** - European data protection regulation adherence
+- **CCPA Compliance** - California consumer privacy act implementation
+- **Data Minimization** - Collection of only necessary user data
+- **Consent Management** - Granular user consent tracking
+- **Right to Deletion** - User data removal capabilities
+- **Data Portability** - User data export functionality
+
+### **Vulnerability Management**
+- **Dependency Scanning** - Automated vulnerability detection in packages
+- **Penetration Testing** - Regular security assessments
+- **Security Code Review** - Manual code security auditing
+- **Incident Response** - Documented security incident procedures
+- **Security Updates** - Automated security patch management
+- **Bug Bounty Program** - Community-driven vulnerability discovery
+
+### **AI Ethics & Safety**
+- **AI Content Filtering** - Harmful content detection and prevention
+- **Bias Detection** - AI model bias monitoring and mitigation
+- **Transparency** - Clear AI decision-making explanations
+- **User Control** - Granular AI behavior customization
+- **Data Usage Consent** - Explicit consent for AI training data
+- **AI Audit Trails** - Complete AI decision logging and review
+
+### **Compliance Certifications**
+- **SOC 2 Type II** - Security, availability, and confidentiality controls
+- **ISO 27001** - Information security management standards
+- **HIPAA Compliance** - Healthcare data protection (where applicable)
+- **PCI DSS** - Payment card industry data security standards
+- **Regular Audits** - Third-party security and compliance assessments
+- **Compliance Documentation** - Comprehensive policy and procedure documentation
+
+---
+
 ## 📞 **Support & Maintenance**
 
 ### **Error Handling**
