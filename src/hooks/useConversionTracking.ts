@@ -96,7 +96,7 @@ export const useTimeOnPage = ({
           onTimeThreshold(threshold);
         }
       });
-    }, 1000);
+    }, 5000); // Changed from 1000ms to 5000ms to reduce frequency
 
     return () => clearInterval(interval);
   }, [onTimeThreshold, thresholds, triggeredTimes, startTime]);

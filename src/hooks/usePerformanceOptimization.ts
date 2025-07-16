@@ -13,52 +13,55 @@ export const usePerformanceTracking = () => {
   const [metrics, setMetrics] = useState<PerformanceMetrics | null>(null);
 
   useEffect(() => {
+    let hasRun = false;
+    
     // Track Core Web Vitals
     const measurePerformance = () => {
-      if ('performance' in window) {
-        const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-        
-        const loadTime = navigation.loadEventEnd - navigation.fetchStart;
-        
-        const newMetrics: PerformanceMetrics = {
-          loadTime: Math.round(loadTime)
-        };
+      if (hasRun || !('performance' in window)) return;
+      hasRun = true;
+      
+      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      
+      const loadTime = navigation.loadEventEnd - navigation.fetchStart;
+      
+      const newMetrics: PerformanceMetrics = {
+        loadTime: Math.round(loadTime)
+      };
 
-        // Get FCP if available
-        const paintEntries = performance.getEntriesByType('paint');
-        const fcpEntry = paintEntries.find(entry => entry.name === 'first-contentful-paint');
-        if (fcpEntry) {
-          newMetrics.firstContentfulPaint = Math.round(fcpEntry.startTime);
-        }
+      // Get FCP if available
+      const paintEntries = performance.getEntriesByType('paint');
+      const fcpEntry = paintEntries.find(entry => entry.name === 'first-contentful-paint');
+      if (fcpEntry) {
+        newMetrics.firstContentfulPaint = Math.round(fcpEntry.startTime);
+      }
 
-        setMetrics(newMetrics);
+      setMetrics(newMetrics);
 
-        // Track performance metrics
-        safeSendAnalyticsEvent('performance_metrics', {
-          load_time: newMetrics.loadTime,
-          fcp: newMetrics.firstContentfulPaint,
-          user_agent: navigator.userAgent,
-          connection: (navigator as any).connection?.effectiveType || 'unknown'
-        });
+      // Track performance metrics (only once)
+      safeSendAnalyticsEvent('performance_metrics', {
+        load_time: newMetrics.loadTime,
+        fcp: newMetrics.firstContentfulPaint,
+        user_agent: navigator.userAgent,
+        connection: (navigator as any).connection?.effectiveType || 'unknown'
+      });
 
-        // Performance warnings
-        if (newMetrics.loadTime > 3000) {
-          console.warn('Slow page load detected:', newMetrics.loadTime + 'ms');
-        }
+      // Performance warnings
+      if (newMetrics.loadTime > 3000) {
+        console.warn('Slow page load detected:', newMetrics.loadTime + 'ms');
       }
     };
 
-    // Measure on load
+    // Measure on load with delay to avoid multiple calls
     if (document.readyState === 'complete') {
-      measurePerformance();
+      setTimeout(measurePerformance, 100);
     } else {
-      window.addEventListener('load', measurePerformance);
+      window.addEventListener('load', measurePerformance, { once: true });
     }
 
     return () => {
       window.removeEventListener('load', measurePerformance);
     };
-  }, []);
+  }, []); // Removed dependencies to prevent re-runs
 
   return metrics;
 };
@@ -71,28 +74,38 @@ export const useViewportTracking = () => {
   });
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
     const updateViewport = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      // Debounce viewport updates to prevent excessive analytics calls
+      clearTimeout(timeoutId);
       
-      let deviceType: 'mobile' | 'tablet' | 'desktop' = 'desktop';
-      if (width < 768) deviceType = 'mobile';
-      else if (width < 1024) deviceType = 'tablet';
+      timeoutId = setTimeout(() => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        let deviceType: 'mobile' | 'tablet' | 'desktop' = 'desktop';
+        if (width < 768) deviceType = 'mobile';
+        else if (width < 1024) deviceType = 'tablet';
 
-      setViewport({ width, height, deviceType });
+        setViewport({ width, height, deviceType });
 
-      // Track viewport changes for responsive optimization
-      safeSendAnalyticsEvent('viewport_change', {
-        width,
-        height,
-        device_type: deviceType
-      });
+        // Track viewport changes for responsive optimization (debounced)
+        safeSendAnalyticsEvent('viewport_change', {
+          width,
+          height,
+          device_type: deviceType
+        });
+      }, 250); // 250ms debounce
     };
 
     updateViewport();
     window.addEventListener('resize', updateViewport);
     
-    return () => window.removeEventListener('resize', updateViewport);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', updateViewport);
+    };
   }, []);
 
   return viewport;
