@@ -127,7 +127,7 @@ const themes: Theme[] = [
     gradient: 'linear-gradient(135deg, #DC143C 0%, #8B0000 100%)'
   },
 
-  // White/Light Themes
+  // White/Light Themes - Enhanced contrast and vibrant colors
   {
     id: 'theme-pristine',
     name: 'Pristine White',
@@ -135,12 +135,12 @@ const themes: Theme[] = [
     icon: Snowflake,
     category: 'light',
     preview: {
-      primary: '#3B82F6',
-      secondary: '#E5E7EB',
-      accent: '#F3F4F6',
-      background: '#FFFFFF'
+      primary: '#1D4ED8',        // Stronger blue
+      secondary: '#3B82F6',      // Vibrant blue accent
+      accent: '#60A5FA',         // Light blue
+      background: '#F8FAFC'      // Off-white background
     },
-    gradient: 'linear-gradient(135deg, #3B82F6 0%, #E5E7EB 100%)',
+    gradient: 'linear-gradient(135deg, #1D4ED8 0%, #3B82F6 100%)',
     featured: true
   },
   {
@@ -150,12 +150,12 @@ const themes: Theme[] = [
     icon: Gem,
     category: 'light',
     preview: {
-      primary: '#4285F4',
-      secondary: '#E8EBF0',
-      accent: '#F0F2F5',
-      background: '#FFFFFF'
+      primary: '#1E40AF',        // Deep blue
+      secondary: '#3B82F6',      // Bright blue
+      accent: '#93C5FD',         // Light blue
+      background: '#F1F5F9'      // Pearl background
     },
-    gradient: 'linear-gradient(135deg, #4285F4 0%, #E8EBF0 100%)'
+    gradient: 'linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%)'
   },
   {
     id: 'theme-crystal',
@@ -164,12 +164,12 @@ const themes: Theme[] = [
     icon: Droplets,
     category: 'light',
     preview: {
-      primary: '#0EA5E9',
-      secondary: '#E0F2FE',
-      accent: '#F0F9FF',
-      background: '#FFFFFF'
+      primary: '#0369A1',        // Strong cyan-blue
+      secondary: '#0EA5E9',      // Bright sky blue
+      accent: '#38BDF8',         // Light cyan
+      background: '#F0F9FF'      // Crystal background
     },
-    gradient: 'linear-gradient(135deg, #0EA5E9 0%, #E0F2FE 100%)'
+    gradient: 'linear-gradient(135deg, #0369A1 0%, #0EA5E9 100%)'
   },
   {
     id: 'theme-lavender',
@@ -178,12 +178,12 @@ const themes: Theme[] = [
     icon: Flower2,
     category: 'light',
     preview: {
-      primary: '#8B5CF6',
-      secondary: '#EDE9FE',
-      accent: '#F3F0FF',
-      background: '#FFFFFF'
+      primary: '#7C3AED',        // Strong purple
+      secondary: '#8B5CF6',      // Bright purple
+      accent: '#A78BFA',         // Light purple
+      background: '#FAF5FF'      // Lavender background
     },
-    gradient: 'linear-gradient(135deg, #8B5CF6 0%, #EDE9FE 100%)'
+    gradient: 'linear-gradient(135deg, #7C3AED 0%, #8B5CF6 100%)'
   },
   {
     id: 'theme-rose',
@@ -192,12 +192,12 @@ const themes: Theme[] = [
     icon: Heart,
     category: 'light',
     preview: {
-      primary: '#EC4899',
-      secondary: '#FCE7F3',
-      accent: '#FDF2F8',
-      background: '#FFFFFF'
+      primary: '#BE185D',        // Strong rose
+      secondary: '#EC4899',      // Bright pink
+      accent: '#F472B6',         // Light pink
+      background: '#FDF2F8'      // Rose background
     },
-    gradient: 'linear-gradient(135deg, #EC4899 0%, #FCE7F3 100%)'
+    gradient: 'linear-gradient(135deg, #BE185D 0%, #EC4899 100%)'
   },
   {
     id: 'theme-mint',
@@ -206,12 +206,12 @@ const themes: Theme[] = [
     icon: Droplets,
     category: 'light',
     preview: {
-      primary: '#059669',
-      secondary: '#D1FAE5',
-      accent: '#ECFDF5',
-      background: '#FFFFFF'
+      primary: '#047857',        // Strong emerald
+      secondary: '#10B981',      // Bright green
+      accent: '#34D399',         // Light mint
+      background: '#F0FDF4'      // Mint background
     },
-    gradient: 'linear-gradient(135deg, #059669 0%, #D1FAE5 100%)'
+    gradient: 'linear-gradient(135deg, #047857 0%, #10B981 100%)'
   }
 ];
 
