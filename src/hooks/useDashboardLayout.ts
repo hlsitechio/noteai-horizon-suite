@@ -85,30 +85,16 @@ export const useDashboardLayout = () => {
 
       console.log('Updated configs to save:', updatedConfigs);
 
-      // Make database update with the main panel configuration
-      await DashboardPanelService.updatePanelConfiguration(layout.id, panelKey, {
-        component_key: componentKey,
-        enabled,
-        props: {}
+      // OPTIMIZED: Single database call to update entire layout config
+      // Instead of multiple calls, update the complete layout configuration at once
+      const newLayoutConfig = { ...layoutConfig, components: updatedConfigs };
+      
+      await DashboardLayoutService.updateLayout(layout.id, {
+        panel_configurations: newLayoutConfig
       });
-
-      // Update all affected panels in the database
-      for (const [key, config] of Object.entries(updatedConfigs)) {
-        const typedConfig = config as PanelConfiguration;
-        const existingConfig = panelConfigs[key] as PanelConfiguration;
-        if (key !== panelKey && existingConfig?.component_key !== typedConfig.component_key) {
-          console.log(`Updating panel ${key} with config:`, config);
-          await DashboardPanelService.updatePanelConfiguration(layout.id, key, {
-            component_key: typedConfig.component_key,
-            enabled: typedConfig.enabled,
-            props: typedConfig.props as any
-          });
-        }
-      }
 
       // Update local state
       const updatedLayout = { ...layout };
-      const newLayoutConfig = { ...layoutConfig, components: updatedConfigs };
       updatedLayout.panel_configurations = newLayoutConfig as any;
       
       console.log('Setting updated layout:', updatedLayout);
@@ -163,10 +149,16 @@ export const useDashboardLayout = () => {
   };
 
   useEffect(() => {
-    if (user) {
+    let isMounted = true;
+    
+    if (user && isMounted) {
       loadLayout();
       loadAvailableComponents();
     }
+    
+    return () => {
+      isMounted = false;
+    };
   }, [user]);
 
   return {
