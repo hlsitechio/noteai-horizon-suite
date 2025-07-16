@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Brain, Lock, Zap, Globe, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import DynamicSEOOptimizer from '@/components/SEO/DynamicSEOOptimizer';
 import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 
@@ -68,10 +69,10 @@ const Features: React.FC = () => {
             </span>
           </div>
           <div className="flex items-center space-x-6">
-            <a href="/landing" className="text-gray-300 hover:text-white transition-colors">Back to Home</a>
-            <a href="/login" className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white px-6 py-2 rounded-xl hover:shadow-lg transition-all">
+            <Link to="/landing" className="text-gray-300 hover:text-white transition-colors">Back to Home</Link>
+            <Link to="/login" className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white px-6 py-2 rounded-xl hover:shadow-lg transition-all">
               Get Started
-            </a>
+            </Link>
           </div>
         </div>
       </nav>

@@ -18,7 +18,7 @@ export class SecurityHeadersService {
     this.config = {
       csp: {
         enabled: true,
-        reportOnly: false,
+        reportOnly: true, // Temporarily enable report-only mode to test
         directives: {
           'default-src': ["'none'"], // Deny all by default - strict security
           'script-src': [

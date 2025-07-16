@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mail, Check, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -132,9 +133,9 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
 
         <p className="text-xs text-muted-foreground text-center">
           No spam. Unsubscribe at any time. Read our{' '}
-          <a href="/privacy" className="text-primary hover:underline">
+          <Link to="/privacy" className="text-primary hover:underline">
             privacy policy
-          </a>
+          </Link>
           .
         </p>
       </form>
