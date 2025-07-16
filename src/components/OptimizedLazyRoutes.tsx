@@ -263,6 +263,12 @@ export const OptimizedLazyRoutes: React.FC = () => {
             </Suspense>
           } />
           
+          <Route path="explorer/:folderId" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <NotesExplorer />
+            </Suspense>
+          } />
+          
           <Route path="files" element={
             <Suspense fallback={<DashboardLoadingFallback />}>
               <Explorer />

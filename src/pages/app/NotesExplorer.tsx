@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Grid3X3, List, MoreHorizontal, SortAsc, Filter, Star, Clock, FileText, Folder, Plus, ArrowLeft, ArrowRight, ChevronDown, Eye, EyeOff, Calendar, Heart, Upload } from 'lucide-react';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useFolders } from '@/contexts/FoldersContext';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -27,6 +27,7 @@ type SortBy = 'name' | 'modified' | 'created' | 'size' | 'category';
 type SortOrder = 'asc' | 'desc';
 
 const NotesExplorer: React.FC = () => {
+  const { folderId } = useParams<{ folderId: string }>();
   const { filteredNotes, filters, notes, selectedNote } = useOptimizedNotes();
   const { folders } = useFolders();
   const isMobile = useIsMobile();
@@ -41,7 +42,12 @@ const NotesExplorer: React.FC = () => {
   const [previewVisible, setPreviewVisible] = useState(true);
   const [treeVisible, setTreeVisible] = useState(true);
   const [currentPath, setCurrentPath] = useState('/');
-  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(folderId || null);
+
+  // Update selectedFolderId when URL parameter changes
+  useEffect(() => {
+    setSelectedFolderId(folderId || null);
+  }, [folderId]);
 
   useQuantumAIIntegration({
     page: '/app/explorer',
@@ -162,7 +168,7 @@ const NotesExplorer: React.FC = () => {
 
   const handleItemDoubleClick = (item: any) => {
     if (item.type === 'folder') {
-      navigate(`/app/folders/${item.id}`);
+      navigate(`/app/explorer/${item.id}`);
     } else {
       navigate(`/app/editor/${item.id}`);
     }
@@ -243,9 +249,9 @@ const NotesExplorer: React.FC = () => {
                 "transition-colors",
                 item.type === 'folder' ? "text-blue-500" : "text-foreground",
                 item.isFavorite && "text-yellow-500",
-                viewMode === 'extra-large' ? "w-12 h-12" :
-                viewMode === 'large' ? "w-10 h-10" :
-                viewMode === 'medium' ? "w-8 h-8" : "w-6 h-6"
+                viewMode === 'extra-large' ? "w-8 h-8" :
+                viewMode === 'large' ? "w-6 h-6" :
+                viewMode === 'medium' ? "w-5 h-5" : "w-4 h-4"
               )} />
               {item.type === 'note' && item.isFavorite && (
                 <Star className="absolute -top-1 -right-1 w-4 h-4 text-yellow-500 fill-current" />
@@ -324,7 +330,7 @@ const NotesExplorer: React.FC = () => {
         }}
       >
         <Icon className={cn(
-          "flex-shrink-0 w-6 h-6",
+          "flex-shrink-0 w-4 h-4",
           item.type === 'folder' ? "text-blue-500" : "text-foreground",
           item.isFavorite && "text-yellow-500"
         )} />
@@ -428,7 +434,10 @@ const NotesExplorer: React.FC = () => {
               <div className="flex items-center gap-2 mb-2 text-sm text-muted-foreground">
                 <span 
                   className="hover:text-foreground cursor-pointer"
-                  onClick={() => setSelectedFolderId(null)}
+                  onClick={() => {
+                    setSelectedFolderId(null);
+                    navigate('/app/explorer');
+                  }}
                 >
                   All Notes
                 </span>

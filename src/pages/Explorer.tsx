@@ -278,7 +278,7 @@ const Explorer: React.FC = () => {
         )}>
           <Icon className={cn(
             "text-muted-foreground",
-            viewMode === 'grid' ? "w-8 h-8" : "w-6 h-6",
+            viewMode === 'grid' ? "w-5 h-5" : "w-4 h-4",
             file.source === 'google-drive' ? "text-blue-500" : "text-green-500"
           )} />
           
@@ -334,7 +334,7 @@ const Explorer: React.FC = () => {
         )}>
           <Icon className={cn(
             "text-blue-600",
-            viewMode === 'grid' ? "w-8 h-8" : "w-6 h-6"
+            viewMode === 'grid' ? "w-5 h-5" : "w-4 h-4"
           )} />
           
           <div className={cn(
@@ -378,7 +378,7 @@ const Explorer: React.FC = () => {
                   }}
                   className="h-7 px-2"
                 >
-                  <Download className="w-3 h-3" />
+                  <Download className="w-2.5 h-2.5" />
                 </Button>
                 <Button
                   variant="ghost"
@@ -389,7 +389,7 @@ const Explorer: React.FC = () => {
                   }}
                   className="h-7 px-2 text-red-600 hover:text-red-700"
                 >
-                  <Trash2 className="w-3 h-3" />
+                  <Trash2 className="w-2.5 h-2.5" />
                 </Button>
               </div>
             )}

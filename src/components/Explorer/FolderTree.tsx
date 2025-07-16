@@ -78,7 +78,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({ onFolderSelect, selected
 
   const handleFolderClick = (folder: FolderTreeNode) => {
     onFolderSelect?.(folder.id);
-    navigate(`/app/folders/${folder.id}`);
+    navigate(`/app/explorer/${folder.id}`);
   };
 
   const handleFolderDoubleClick = (folder: FolderTreeNode) => {
@@ -157,7 +157,7 @@ export const FolderTree: React.FC<FolderTreeProps> = ({ onFolderSelect, selected
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem onClick={() => navigate(`/app/folders/${folder.id}`)}>
+                <DropdownMenuItem onClick={() => navigate(`/app/explorer/${folder.id}`)}>
                   Open Folder
                 </DropdownMenuItem>
                 <CreateItemDialog type="note" onSuccess={() => {}}>
