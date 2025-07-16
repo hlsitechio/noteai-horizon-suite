@@ -6,6 +6,7 @@ import HomeRedirect from './HomeRedirect';
 import { Card } from './ui/card';
 import ComponentLibraryPage from '../pages/ComponentLibraryPage';
 import { DeviceRouter } from './DeviceRouter';
+import { PublicPageWrapper } from './PublicPageWrapper';
 
 // Lazy load components with error handling for missing chunks
 const lazyWithRetry = (importFn: () => Promise<any>) => {
@@ -120,16 +121,56 @@ export const OptimizedLazyRoutes: React.FC = () => {
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
         {/* ========== PUBLIC ROUTES ========== */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/public/landing" element={<Landing />} />
-        <Route path="/public/features" element={<Features />} />
-        <Route path="/public/pricing" element={<Pricing />} />
-        <Route path="/public/about" element={<About />} />
-        <Route path="/public/privacy" element={<Privacy />} />
-        <Route path="/public/terms" element={<Terms />} />
-        <Route path="/public/contact" element={<Contact />} />
-        <Route path="/public/sitemap" element={<Sitemap />} />
-        <Route path="/public/referral" element={<ReferralPage />} />
+        <Route path="/" element={
+          <PublicPageWrapper>
+            <Landing />
+          </PublicPageWrapper>
+        } />
+        <Route path="/public/landing" element={
+          <PublicPageWrapper>
+            <Landing />
+          </PublicPageWrapper>
+        } />
+        <Route path="/public/features" element={
+          <PublicPageWrapper>
+            <Features />
+          </PublicPageWrapper>
+        } />
+        <Route path="/public/pricing" element={
+          <PublicPageWrapper>
+            <Pricing />
+          </PublicPageWrapper>
+        } />
+        <Route path="/public/about" element={
+          <PublicPageWrapper>
+            <About />
+          </PublicPageWrapper>
+        } />
+        <Route path="/public/privacy" element={
+          <PublicPageWrapper>
+            <Privacy />
+          </PublicPageWrapper>
+        } />
+        <Route path="/public/terms" element={
+          <PublicPageWrapper>
+            <Terms />
+          </PublicPageWrapper>
+        } />
+        <Route path="/public/contact" element={
+          <PublicPageWrapper>
+            <Contact />
+          </PublicPageWrapper>
+        } />
+        <Route path="/public/sitemap" element={
+          <PublicPageWrapper>
+            <Sitemap />
+          </PublicPageWrapper>
+        } />
+        <Route path="/public/referral" element={
+          <PublicPageWrapper>
+            <ReferralPage />
+          </PublicPageWrapper>
+        } />
 
         {/* Legacy public route redirects */}
         <Route path="/landing" element={<Navigate to="/public/landing" replace />} />
@@ -143,10 +184,26 @@ export const OptimizedLazyRoutes: React.FC = () => {
         <Route path="/referral" element={<Navigate to="/public/referral" replace />} />
 
         {/* ========== AUTH ROUTES ========== */}
-        <Route path="/auth/login" element={<Login />} />
-        <Route path="/auth/register" element={<Register />} />
-        <Route path="/auth/reset-password" element={<ResetPassword />} />
-        <Route path="/auth/logout" element={<Logout />} />
+        <Route path="/auth/login" element={
+          <PublicPageWrapper>
+            <Login />
+          </PublicPageWrapper>
+        } />
+        <Route path="/auth/register" element={
+          <PublicPageWrapper>
+            <Register />
+          </PublicPageWrapper>
+        } />
+        <Route path="/auth/reset-password" element={
+          <PublicPageWrapper>
+            <ResetPassword />
+          </PublicPageWrapper>
+        } />
+        <Route path="/auth/logout" element={
+          <PublicPageWrapper>
+            <Logout />
+          </PublicPageWrapper>
+        } />
 
         {/* Legacy auth route redirects */}
         <Route path="/login" element={<Navigate to="/auth/login" replace />} />
@@ -303,7 +360,11 @@ export const OptimizedLazyRoutes: React.FC = () => {
         <Route path="/components" element={<Navigate to="/app/components" replace />} />
 
         {/* ========== CATCH ALL ========== */}
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={
+          <PublicPageWrapper>
+            <NotFound />
+          </PublicPageWrapper>
+        } />
       </Routes>
     </Suspense>
   </DeviceRouter>
