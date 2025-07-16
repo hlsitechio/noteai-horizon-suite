@@ -424,15 +424,6 @@ export const LandingFeatureShowcase: React.FC = () => {
                     ))}
                   </div>
 
-                  {/* Try Feature Button */}
-                  <Button
-                    onClick={() => handleTryFeature(feature.id)}
-                    variant="outline"
-                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200"
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    Try Feature
-                  </Button>
                 </div>
 
                 {/* Hover Glow Effect */}
@@ -479,16 +470,6 @@ export const LandingFeatureShowcase: React.FC = () => {
               >
                 <MockupPreview feature={feature} />
                 
-                {/* Overlay with CTA */}
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
-                  <Button 
-                    onClick={() => handleTryFeature(feature.id)}
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                  >
-                    Try {feature.name}
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </div>
               </motion.div>
             ))}
           </div>
