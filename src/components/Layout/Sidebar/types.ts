@@ -9,7 +9,7 @@ export interface NavigationItem {
   icon: string; // Boxicon class name
   label: string;
   path: string;
-  description: string;
+  description?: string;
   badge?: number | string;
   isActive?: boolean;
 }

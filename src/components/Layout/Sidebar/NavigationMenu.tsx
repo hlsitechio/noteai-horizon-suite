@@ -40,62 +40,52 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ onNavigate }) => {
     { 
       icon: 'bx bx-grid-alt', 
       label: 'Dashboard', 
-      path: '/app/dashboard',
-      description: 'Overview and analytics'
+      path: '/app/dashboard'
     },
     { 
       icon: 'bx bx-folder-open', 
       label: 'Explorer', 
-      path: '/app/explorer',
-      description: 'File manager and explorer'
+      path: '/app/explorer'
     },
     { 
       icon: 'bx bx-folder', 
       label: 'Projects', 
-      path: '/app/projects',
-      description: 'Project workspaces'
+      path: '/app/projects'
     },
     { 
       icon: 'bx bx-edit', 
       label: 'Editor', 
-      path: '/app/editor',
-      description: 'Write and edit notes'
+      path: '/app/editor'
     },
     { 
       icon: 'bx bx-message-rounded', 
       label: 'AI Chat', 
-      path: '/app/chat',
-      description: 'AI-powered conversations'
+      path: '/app/chat'
     },
     { 
       icon: 'bx bx-calendar', 
       label: 'Calendar', 
-      path: '/app/calendar',
-      description: 'Schedule and manage events'
+      path: '/app/calendar'
     },
     { 
       icon: 'bx bx-bar-chart', 
       label: 'Analytics', 
-      path: '/app/analytics',
-      description: 'Writing insights and stats'
+      path: '/app/analytics'
     },
     { 
       icon: 'bx bx-search-alt', 
       label: 'SEO', 
-      path: '/app/seo',
-      description: 'SEO optimization and analysis'
+      path: '/app/seo'
     },
     { 
       icon: 'bx bx-list-ul', 
       label: 'Activity', 
-      path: '/app/activity',
-      description: 'Track your actions and history'
+      path: '/app/activity'
     },
     { 
       icon: 'bx bx-palette', 
       label: 'Themes', 
-      path: '/app/themes',
-      description: 'Beautiful theme gallery'
+      path: '/app/themes'
     },
   ];
 
@@ -144,31 +134,24 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ onNavigate }) => {
             variant={isActive ? "secondary" : "ghost"}
             className={`w-full transition-all duration-300 group relative overflow-hidden ${
               isMobile 
-                ? 'justify-center px-2 h-10' 
+                ? 'justify-center px-2 h-12' 
                 : isCollapsed 
-                  ? 'justify-center px-0 h-12 flex items-center' 
-                  : 'justify-start px-3 h-12'
+                  ? 'justify-center px-0 h-12' 
+                  : 'justify-center px-3 h-12'
             } ${
               isActive 
                 ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm' 
                 : 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:scale-[1.02] active:scale-[0.98]'
             }`}
           >
-            <div className="relative z-10 flex items-center w-full">
-              <i className={`${item.icon} text-sm transition-transform duration-200 ${
-                isMobile || isCollapsed ? 'mx-auto' : 'mr-3'  
-              } ${
+            <div className="relative z-10 flex items-center justify-center w-full gap-3">
+              <i className={`${item.icon} text-lg transition-transform duration-200 ${
                 isActive ? 'text-sidebar-primary-foreground' : 'group-hover:scale-110'
               }`}></i>
               {!isMobile && !isCollapsed && (
-                <div className="flex flex-col items-start transition-all duration-200">
-                  <span className="text-sm font-medium">
-                    {item.label}
-                  </span>
-                  <span className="text-xs text-sidebar-foreground/60">
-                    {item.description}
-                  </span>
-                </div>
+                <span className="text-sm font-medium">
+                  {item.label}
+                </span>
               )}
               {isActive && !isCollapsed && !isMobile && (
                 <div className="ml-auto w-1 h-6 bg-sidebar-primary-foreground rounded-full opacity-80" />
@@ -191,10 +174,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ onNavigate }) => {
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent side="right" sideOffset={12} className="bg-popover border border-border shadow-lg">
-                  <div>
-                    <p className="font-medium text-popover-foreground">{item.label}</p>
-                    <p className="text-xs text-muted-foreground">{item.description}</p>
-                  </div>
+                  <p className="font-medium text-popover-foreground">{item.label}</p>
                 </TooltipContent>
               </Tooltip>
             ) : (
