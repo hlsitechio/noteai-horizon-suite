@@ -14,27 +14,37 @@
  
 @layer base {
   :root {
-    /* Light mode fallback */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    /* Dark theme base colors inspired by Whimsical */
+    --background: 220 20% 8%;
+    --foreground: 220 10% 95%;
+    --card: 220 20% 10%;
+    --card-foreground: 220 10% 95%;
+    --popover: 220 20% 12%;
+    --popover-foreground: 220 10% 95%;
+    --primary: 260 60% 65%;
+    --primary-foreground: 220 20% 8%;
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 220 10% 90%;
+    --muted: 220 15% 12%;
+    --muted-foreground: 220 8% 60%;
+    --accent: 280 50% 55%;
+    --accent-foreground: 220 20% 8%;
+    --destructive: 0 72% 60%;
+    --destructive-foreground: 220 20% 8%;
+    --border: 220 15% 20%;
+    --input: 220 15% 15%;
+    --ring: 260 60% 65%;
     --radius: 0.75rem;
+    
+    /* Whimsical-inspired gradient colors */
+    --gradient-start: 280 80% 70%;
+    --gradient-middle: 260 70% 60%;
+    --gradient-end: 240 60% 50%;
+    --gradient-accent: 320 50% 60%;
+    
+    /* Glass morphism effects */
+    --glass-bg: 220 20% 12% / 0.8;
+    --glass-border: 220 15% 25% / 0.3;
     
     /* Light mode sidebar */
     --sidebar-background: 0 0% 98%;
@@ -64,14 +74,94 @@
     --gradient-mesh: conic-gradient(from 180deg at 50% 50%, hsl(217 91% 60% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 0deg, hsl(258 90% 66% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 120deg, hsl(160 84% 50% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 240deg, hsl(217 91% 60% / calc(var(--gradient-intensity) * var(--gradient-opacity-multiplier))) 360deg);
     --gradient-glass: linear-gradient(135deg, hsl(var(--background) / calc(var(--gradient-intensity) * 0.7)), hsl(var(--background) / calc(var(--gradient-intensity) * 0.3)));
     
-    /* Premium shadows with intensity control */
-    --glow-intensity: 1;
-    --shadow-premium: 0 calc(25px * var(--glow-intensity)) calc(50px * var(--glow-intensity)) calc(-12px * var(--glow-intensity)) hsl(var(--primary) / calc(0.3 * var(--glow-intensity)));
-    --shadow-elegant: 0 calc(15px * var(--glow-intensity)) calc(35px * var(--glow-intensity)) calc(-5px * var(--glow-intensity)) hsl(var(--foreground) / calc(0.12 * var(--glow-intensity)));
-    --shadow-glow: 0 0 calc(60px * var(--glow-intensity)) hsl(var(--primary) / calc(0.4 * var(--glow-intensity)));
-    --shadow-soft: 0 calc(4px * var(--glow-intensity)) calc(20px * var(--glow-intensity)) hsl(var(--foreground) / calc(0.08 * var(--glow-intensity)));
-    --shadow-inner: inset 0 calc(2px * var(--glow-intensity)) calc(10px * var(--glow-intensity)) hsl(var(--foreground) / calc(0.1 * var(--glow-intensity)));
-    --shadow-primary-glow: 0 0 calc(40px * var(--glow-intensity)) hsl(var(--primary) / calc(0.5 * var(--glow-intensity)));
+/* Whimsical-inspired gradients */
+.whimsical-gradient {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--gradient-start)) 0%,
+    hsl(var(--gradient-middle)) 50%,
+    hsl(var(--gradient-end)) 100%
+  );
+}
+
+.whimsical-gradient-radial {
+  background: radial-gradient(
+    ellipse at center,
+    hsl(var(--gradient-start) / 0.8) 0%,
+    hsl(var(--gradient-middle) / 0.6) 40%,
+    hsl(var(--gradient-end) / 0.4) 70%,
+    hsl(var(--background)) 100%
+  );
+}
+
+/* Glass morphism cards */
+.glass-card {
+  backdrop-filter: blur(20px);
+  background: hsl(var(--glass-bg));
+  border: 1px solid hsl(var(--glass-border));
+  border-radius: var(--radius);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 25px 50px hsl(var(--gradient-start) / 0.15),
+    0 0 0 1px hsl(var(--glass-border));
+}
+
+/* Feature showcase animations */
+.feature-showcase {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(1deg); }
+}
+
+/* Animated gradient text */
+.gradient-text {
+  background: linear-gradient(
+    45deg,
+    hsl(var(--gradient-start)),
+    hsl(var(--gradient-middle)),
+    hsl(var(--gradient-end)),
+    hsl(var(--gradient-accent))
+  );
+  background-size: 400% 400%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 8s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Subtle particle effect */
+.particle-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 20%, hsl(var(--gradient-start) / 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, hsl(var(--gradient-middle) / 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 60%, hsl(var(--gradient-end) / 0.1) 0%, transparent 50%);
+  animation: particles 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes particles {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-20px) rotate(120deg); }
+  66% { transform: translateY(20px) rotate(240deg); }
+}
     
     /* Premium typography */
     --font-size-hero: clamp(3rem, 8vw, 6rem);
@@ -105,26 +195,36 @@
   }
 
   .dark {
-    /* Quantum Aurora Theme - Our Original Color Scheme */
-    --background: 220 30% 2%;
-    --foreground: 45 100% 95%;
-    --card: 220 25% 4%;
-    --card-foreground: 45 90% 92%;
-    --popover: 220 25% 4%;
-    --popover-foreground: 45 90% 92%;
-    --primary: 165 100% 65%;
-    --primary-foreground: 220 30% 2%;
-    --secondary: 45 100% 70%;
-    --secondary-foreground: 220 30% 2%;
-    --muted: 220 20% 8%;
-    --muted-foreground: 45 40% 75%;
-    --accent: 290 100% 75%;
-    --accent-foreground: 220 30% 2%;
-    --destructive: 0 100% 65%;
-    --destructive-foreground: 45 100% 95%;
-    --border: 220 25% 15%;
-    --input: 220 20% 8%;
-    --ring: 165 100% 65%;
+    /* Enhanced dark theme with Whimsical inspiration */
+    --background: 220 25% 6%;
+    --foreground: 220 10% 96%;
+    --card: 220 20% 8%;
+    --card-foreground: 220 10% 96%;
+    --popover: 220 20% 10%;
+    --popover-foreground: 220 10% 96%;
+    --primary: 270 70% 75%;
+    --primary-foreground: 220 25% 6%;
+    --secondary: 220 18% 12%;
+    --secondary-foreground: 220 10% 92%;
+    --muted: 220 15% 10%;
+    --muted-foreground: 220 8% 65%;
+    --accent: 290 60% 65%;
+    --accent-foreground: 220 25% 6%;
+    --destructive: 0 72% 65%;
+    --destructive-foreground: 220 25% 6%;
+    --border: 220 15% 18%;
+    --input: 220 15% 12%;
+    --ring: 270 70% 75%;
+    
+    /* Enhanced gradient colors for dark mode */
+    --gradient-start: 290 85% 75%;
+    --gradient-middle: 270 75% 65%;
+    --gradient-end: 250 65% 55%;
+    --gradient-accent: 310 55% 65%;
+    
+    /* Enhanced glass effects for dark mode */
+    --glass-bg: 220 20% 8% / 0.9;
+    --glass-border: 220 15% 30% / 0.4;
     
     /* Professional Dark Sidebar */
     --sidebar-background: 220 13% 7%;

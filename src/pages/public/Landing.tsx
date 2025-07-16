@@ -4,6 +4,8 @@ import { AnimatePresence } from 'framer-motion';
 import Navigation from '@/components/Landing/Navigation';
 import Hero from '@/components/Landing/Hero';
 import Features from '@/components/Landing/Features';
+import WhimsicalHero from '@/components/Landing/WhimsicalHero';
+import WhimsicalFeatures from '@/components/Landing/WhimsicalFeatures';
 import Pricing from '@/components/Landing/Pricing';
 import Footer from '@/components/Landing/Footer';
 import EnhancedSecurityHeaders from '@/components/Security/EnhancedSecurityHeaders';
@@ -113,17 +115,30 @@ const Landing: React.FC = () => {
         canonicalUrl="https://onlinenote.ai"
       />
       <EnhancedSecurityHeaders />
-      <div className="min-h-screen bg-background">
+      <div 
+        className="min-h-screen bg-background relative overflow-hidden particle-bg"
+        onMouseMove={(e) => setMousePosition({ x: e.clientX, y: e.clientY })}
+      >
+        {/* Whimsical-inspired background */}
+        <div className="absolute inset-0 whimsical-gradient-radial" />
+        
+        {/* Animated gradient overlay */}
+        <div 
+          className="absolute inset-0 opacity-30 transition-transform duration-1000"
+          style={{ 
+            background: `radial-gradient(circle at ${mousePosition.x * 0.1}% ${mousePosition.y * 0.1}%, hsl(var(--gradient-accent) / 0.3) 0%, transparent 50%)`,
+            transform: `translate(${mousePosition.x * 0.01}px, ${mousePosition.y * 0.01}px)` 
+          }}
+        />
+        
         <Navigation isScrolled={isScrolled} mousePosition={mousePosition} />
-        <Hero />
+        <WhimsicalHero />
+        <WhimsicalFeatures />
         
         {/* Social Proof Section */}
         <LazySocialProof variant="logos" className="py-12" />
         
-        <Features />
-        
-        {/* Testimonials */}
-        <LazySocialProof variant="testimonials" />
+        <LazyPricing />
         
         {/* Newsletter Signup */}
         <section className="py-16 px-6 lg:px-8">
@@ -132,23 +147,8 @@ const Landing: React.FC = () => {
           </div>
         </section>
         
-        {/* Stats */}
-        <LazySocialProof variant="stats" />
-        
-        <LazyPricing />
-        
-        {/* Content Hub - Resources Section */}
-        <LazyContentHub />
-        
         {/* Trust Signals */}
         <TrustSignals variant="compact" className="py-8" />
-        
-        {/* Marketing CTA */}
-        <section className="py-16 px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
-            <MarketingCTA variant="primary" size="lg" placement="landing_page" />
-          </div>
-        </section>
         
         <Footer />
       </div>
