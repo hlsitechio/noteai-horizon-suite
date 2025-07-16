@@ -10,21 +10,35 @@ export const DynamicThemeStyles: React.FC = () => {
          COMPLETE WEBSITE THEME TRANSFORMATION
          ======================================== */
 
-      /* Global Background Gradient */
-      body, .min-h-screen, .landing-page, [class*="min-h-screen"] {
+      /* Global Background Gradient - Fixed Implementation */
+      html, body {
         background: ${currentTheme.backgroundGradient} !important;
+        background-attachment: fixed !important;
+        min-height: 100vh !important;
         transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      }
+
+      .min-h-screen, .landing-page, [class*="min-h-screen"] {
+        background: transparent !important;
+        backdrop-filter: none !important;
       }
 
       /* Main container background override */
       .particle-bg, .whimsical-gradient-radial {
-        background: ${currentTheme.backgroundGradient} !important;
-        opacity: 1 !important;
+        background: transparent !important;
+        position: relative !important;
       }
 
-      /* Landing page specific background */
-      .landing-background, .page-background {
+      .particle-bg::before {
+        content: '';
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         background: ${currentTheme.backgroundGradient} !important;
+        z-index: -1 !important;
+        pointer-events: none !important;
       }
 
       /* Font Family Overrides */
@@ -250,19 +264,41 @@ export const DynamicThemeStyles: React.FC = () => {
         }
       }
 
-      /* ========================================
-         SMOOTH TRANSITIONS FOR ALL ELEMENTS
-         ======================================== */
-      * {
-        transition: 
-          color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-          background 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-          background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-          border-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-          box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-          transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-          font-family 0.3s ease;
-      }
+       /* ========================================
+          FIX DISAPPEARING SECTIONS ON SCROLL
+          ======================================== */
+       section, .section {
+         opacity: 1 !important;
+         visibility: visible !important;
+         transform: none !important;
+         position: relative !important;
+         z-index: 1 !important;
+       }
+
+       /* Prevent scroll animation conflicts */
+       [data-scroll] {
+         opacity: 1 !important;
+         transform: translateY(0) !important;
+       }
+
+       /* Fix for motion components */
+       [data-projection-id] {
+         opacity: 1 !important;
+         will-change: auto !important;
+       }
+
+       /* ========================================
+          SMOOTH TRANSITIONS FOR ALL ELEMENTS
+          ======================================== */
+       * {
+         transition: 
+           color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+           background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+           border-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+           box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+           transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+           font-family 0.3s ease;
+       }
     `}</style>
   );
 };

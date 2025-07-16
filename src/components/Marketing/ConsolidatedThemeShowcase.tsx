@@ -48,7 +48,7 @@ const ConsolidatedThemeShowcase: React.FC = () => {
             className="text-4xl lg:text-6xl font-bold mb-6"
             style={{ 
               fontFamily: `var(--landing-font-heading), sans-serif`,
-              background: `linear-gradient(135deg, hsl(${currentTheme.colors.primary}), hsl(${currentTheme.colors.accent}))`,
+              backgroundImage: `linear-gradient(135deg, hsl(${currentTheme.colors.primary}), hsl(${currentTheme.colors.accent}))`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text'
