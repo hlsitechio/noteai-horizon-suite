@@ -18,6 +18,15 @@ import { ProjectCard } from '@/components/Dashboard/Components/ProjectCard';
 import { PerformanceCard } from '@/components/Dashboard/Components/PerformanceCard';
 import { SimpleCalculator } from '@/components/Calculator/SimpleCalculator';
 
+// Import new chart and utility widgets
+import { LineChart } from './widgets/ChartWidgets/LineChart';
+import { PieChart } from './widgets/ChartWidgets/PieChart';
+import { AreaChart } from './widgets/ChartWidgets/AreaChart';
+import { FileUploadWidget } from './widgets/FileUploadWidget';
+import { SearchFilterWidget } from './widgets/SearchFilterWidget';
+import { TimerWidget } from './widgets/TimerWidget';
+import { UnitConverterWidget } from './widgets/UnitConverterWidget';
+
 // Using our standalone components - no need for wrapper components
 
 // Component registry using our standalone components
@@ -46,6 +55,16 @@ const componentRegistry: Record<string, React.ComponentType> = {
   'performance-network': () => <PerformanceCard variant="network" />,
   'performance-storage': () => <PerformanceCard variant="storage" />,
   'simple-calculator': SimpleCalculator,
+  // Chart widgets
+  'line-chart': LineChart,
+  'pie-chart': PieChart,
+  'area-chart': AreaChart,
+  // Utility widgets  
+  'file-upload': FileUploadWidget,
+  'search-filter': SearchFilterWidget,
+  'timer-stopwatch': () => <TimerWidget mode="stopwatch" />,
+  'timer-countdown': () => <TimerWidget mode="timer" />,
+  'unit-converter': UnitConverterWidget,
 };
 
 // Default fallback component

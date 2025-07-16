@@ -10,7 +10,13 @@ import {
   Share2,
   Folder,
   TrendingUp,
-  Calculator
+  Calculator,
+  LineChart,
+  PieChart,
+  Upload,
+  Search,
+  Timer,
+  ArrowRightLeft
 } from 'lucide-react';
 
 export interface ComponentLibraryItem {
@@ -141,7 +147,81 @@ export const componentLibraryItems: ComponentLibraryItem[] = [
     icon: Calculator,
     componentKey: 'simple-calculator',
     tags: ['calculator', 'math', 'tools', 'numbers']
+  },
+  // Chart Widgets
+  {
+    id: 'line-chart',
+    name: 'Line Chart',
+    description: 'Display trends and data over time with line visualization',
+    category: 'Charts',
+    icon: LineChart,
+    componentKey: 'line-chart',
+    tags: ['chart', 'line', 'trends', 'data', 'visualization']
+  },
+  {
+    id: 'pie-chart',
+    name: 'Pie Chart',
+    description: 'Show data distribution with circular pie chart',
+    category: 'Charts',
+    icon: PieChart,
+    componentKey: 'pie-chart',
+    tags: ['chart', 'pie', 'distribution', 'circular', 'percentage']
+  },
+  {
+    id: 'area-chart',
+    name: 'Area Chart',
+    description: 'Visualize data trends with filled area under the curve',
+    category: 'Charts',
+    icon: Activity,
+    componentKey: 'area-chart',
+    tags: ['chart', 'area', 'trends', 'filled', 'volume']
+  },
+  // Utility Widgets
+  {
+    id: 'file-upload',
+    name: 'File Upload',
+    description: 'Drag and drop file upload with progress tracking',
+    category: 'Utilities',
+    icon: Upload,
+    componentKey: 'file-upload',
+    tags: ['upload', 'files', 'drag', 'drop', 'storage']
+  },
+  {
+    id: 'search-filter',
+    name: 'Search & Filter',
+    description: 'Advanced search and filtering interface for data',
+    category: 'Utilities',
+    icon: Search,
+    componentKey: 'search-filter',
+    tags: ['search', 'filter', 'data', 'interface', 'query']
+  },
+  {
+    id: 'timer-stopwatch',
+    name: 'Stopwatch',
+    description: 'Precision stopwatch for timing activities',
+    category: 'Utilities',
+    icon: Timer,
+    componentKey: 'timer-stopwatch',
+    tags: ['timer', 'stopwatch', 'time', 'measure', 'precision']
+  },
+  {
+    id: 'timer-countdown',
+    name: 'Countdown Timer',
+    description: 'Set countdown timers with visual progress',
+    category: 'Utilities',
+    icon: Timer,
+    componentKey: 'timer-countdown',
+    tags: ['timer', 'countdown', 'alarm', 'reminder', 'progress']
+  },
+  {
+    id: 'unit-converter',
+    name: 'Unit Converter',
+    description: 'Convert between different units of measurement',
+    category: 'Utilities',
+    icon: ArrowRightLeft,
+    componentKey: 'unit-converter',
+    tags: ['converter', 'units', 'measurement', 'calculator', 'tools']
   }
 ];
 
-export const categories = ['All', 'Analytics', 'Actions', 'Activity', 'Time', 'Content', 'System', 'Productivity', 'Info', 'Social', 'Projects', 'Tools'];
+export const categories = ['All', 'Analytics', 'Actions', 'Activity', 'Time', 'Content', 'System', 'Productivity', 'Info', 'Social', 'Projects', 'Tools', 'Charts', 'Utilities'];
