@@ -11,14 +11,14 @@ export function safeSendAnalyticsEvent(eventName: string, eventParams?: Record<s
     // - Mixpanel
     // - Amplitude
     // - PostHog
-    console.log('Analytics Event:', eventName, eventParams);
+    // Analytics logging removed to reduce console noise
     
     // Example integration patterns:
     // gtag('event', eventName, eventParams);
     // mixpanel.track(eventName, eventParams);
     // amplitude.track(eventName, eventParams);
   } catch (error) {
-    console.warn('Analytics tracking failed:', error);
+    // Analytics warning removed to reduce console noise
   }
 }
 
@@ -26,39 +26,39 @@ export function safeSetAnalyticsUserId(userId: string) {
   try {
     // Development logging only
     if (import.meta.env.DEV) {
-      console.log('Analytics User ID set');
+      // Analytics user ID logging removed to reduce console noise
     }
     // gtag('config', 'GA_MEASUREMENT_ID', { user_id: userId });
     // mixpanel.identify(userId);
   } catch (error) {
-    console.warn('Analytics user ID setting failed:', error);
+    // Analytics warning removed to reduce console noise
   }
 }
 
 export function safeTrackPageView(pagePath: string, pageTitle?: string) {
   try {
-    console.log('Analytics Page View:', pagePath, pageTitle);
+    // Analytics page view logging removed to reduce console noise
     // gtag('config', 'GA_MEASUREMENT_ID', { page_path: pagePath, page_title: pageTitle });
   } catch (error) {
-    console.warn('Analytics page view tracking failed:', error);
+    // Analytics warning removed to reduce console noise
   }
 }
 
 export function enableAnalyticsDebugMode() {
   try {
-    console.log('Analytics Debug Mode enabled');
+    // Analytics debug mode logging removed to reduce console noise
     // window.gtag('config', 'GA_MEASUREMENT_ID', { debug_mode: true });
   } catch (error) {
-    console.warn('Analytics debug mode failed:', error);
+    // Analytics warning removed to reduce console noise
   }
 }
 
 export function safeTrackError(error: Error, context?: string) {
   try {
-    console.log('Analytics Error tracked:', error.message, context);
+    // Analytics error logging removed to reduce console noise
     // gtag('event', 'exception', { description: error.message, fatal: false });
   } catch (trackingError) {
-    console.warn('Analytics error tracking failed:', trackingError);
+    // Analytics warning removed to reduce console noise
   }
 }
 

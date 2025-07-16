@@ -19,12 +19,12 @@ export function safeSendAnalyticsEvent(eventName: string, eventParams?: Record<s
         value: eventParams?.value || 0,
         ...eventParams,
       });
-      console.log('Analytics event sent:', eventName, eventParams);
+      // Analytics event logging removed to reduce console noise
     } else {
-      console.warn('Google Analytics not available');
+      // Google Analytics availability logging removed to reduce console noise
     }
   } catch (error) {
-    console.warn('Analytics tracking failed:', error);
+    // Analytics tracking failure logging removed to reduce console noise
     // Don't throw error, just log it
   }
 }
@@ -37,11 +37,11 @@ export function safeSetAnalyticsUserId(userId: string) {
       });
       // Development logging only
       if (import.meta.env.DEV) {
-        console.log('Analytics user ID set');
+        // Analytics user ID logging removed to reduce console noise
       }
     }
   } catch (error) {
-    console.warn('Failed to set analytics user ID:', error);
+    // Analytics user ID failure logging removed to reduce console noise
   }
 }
 
@@ -52,10 +52,10 @@ export function safeTrackPageView(pagePath: string, pageTitle?: string) {
         page_path: pagePath,
         page_title: pageTitle || document.title,
       });
-      console.log('Page view tracked:', pagePath, pageTitle);
+      // Page view tracking logging removed to reduce console noise
     }
   } catch (error) {
-    console.warn('Failed to track page view:', error);
+    // Page view tracking failure logging removed to reduce console noise
   }
 }
 
@@ -65,10 +65,10 @@ export function enableAnalyticsDebugMode() {
       window.gtag('config', 'GA_MEASUREMENT_ID', {
         debug_mode: true,
       });
-      console.log('Analytics debug mode enabled');
+      // Analytics debug mode logging removed to reduce console noise
     }
   } catch (error) {
-    console.warn('Failed to enable analytics debug mode:', error);
+    // Debug mode failure logging removed to reduce console noise
   }
 }
 
@@ -81,7 +81,7 @@ export function safeTrackError(error: Error, context?: string) {
       stack: error.stack,
     });
   } catch (trackingError) {
-    console.warn('Failed to track error to analytics:', trackingError);
+    // Error tracking failure logging removed to reduce console noise
   }
 }
 
@@ -94,7 +94,7 @@ export function safeTrackTiming(category: string, variable: string, value: numbe
       event_label: label,
     });
   } catch (error) {
-    console.warn('Failed to track timing:', error);
+    // Timing tracking failure logging removed to reduce console noise
   }
 }
 
@@ -106,6 +106,6 @@ export function safeTrackCustomMetric(metricName: string, value: number, dimensi
       ...dimensions,
     });
   } catch (error) {
-    console.warn('Failed to track custom metric:', error);
+    // Custom metric tracking failure logging removed to reduce console noise
   }
 }

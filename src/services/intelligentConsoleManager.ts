@@ -140,12 +140,12 @@ class IntelligentConsoleManager {
       }
     };
 
-    logger.info('Intelligent Console Manager initialized');
+    // Initialization logging removed to reduce console noise
   }
 
   private restoreOriginalConsole() {
     Object.assign(console, this.originalConsole);
-    logger.info('Original console restored');
+    // Console restoration logging removed to reduce console noise
   }
 
   private formatMessage(args: any[]): string {

@@ -51,10 +51,7 @@
     <!-- Simple welcome message -->
     <!-- Development welcome message only -->
     <script>
-      // Only log in development (check for localhost or dev domains)
-      if (window.location.hostname === 'localhost' || window.location.hostname.includes('lovable.app')) {
-        console.log('🚀 Welcome to Online Note AI!');
-      }
+      // Welcome message removed to reduce console noise
       
       // Prevent Firebase errors by ensuring no Firebase globals exist
       if (typeof window !== 'undefined') {
