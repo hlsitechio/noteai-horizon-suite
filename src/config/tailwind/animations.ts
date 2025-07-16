@@ -87,6 +87,26 @@ export const keyframesConfig = {
     '50%': {
       opacity: '0.8'
     }
+  },
+  'slide-in-from-left': {
+    '0%': {
+      transform: 'translateX(-100%)',
+      opacity: '0'
+    },
+    '100%': {
+      transform: 'translateX(0)',
+      opacity: '1'
+    }
+  },
+  'fade-in-place': {
+    '0%': {
+      opacity: '0',
+      transform: 'scale(0.95)'
+    },
+    '100%': {
+      opacity: '1',
+      transform: 'scale(1)'
+    }
   }
 };
 
@@ -101,4 +121,6 @@ export const animationConfig = {
   'slide-out-right': 'slide-out-right 0.3s ease-out',
   'shimmer': 'shimmer 2s linear infinite',
   'pulse-soft': 'pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+  'slide-in-from-left': 'slide-in-from-left 0.4s ease-out',
+  'fade-in-place': 'fade-in-place 0.3s ease-out',
 };

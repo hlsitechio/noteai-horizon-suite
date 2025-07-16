@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, Variants } from 'framer-motion';
 import { PanelGroup, Panel } from 'react-resizable-panels';
 import { ResizableHandle as HorizontalResizableHandle } from '@/components/ui/resizable';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -45,6 +46,17 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
   const { user } = useAuth();
   const navigate = useNavigate();
   const { isDashboardInitialized, isLoading } = useDashboardStatus();
+  const [isInitialLoad, setIsInitialLoad] = React.useState(true);
+
+  // Set initial load to false after a short delay to trigger animations
+  React.useEffect(() => {
+    if (!isLoading && isDashboardInitialized) {
+      const timer = setTimeout(() => {
+        setIsInitialLoad(false);
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, isDashboardInitialized]);
   
   // Calculate stats for KPIStats
   const totalNotes = notes.length;
@@ -123,8 +135,45 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
     );
   }
 
+  // Animation variants for dashboard components
+  const dashboardVariants: Variants = {
+    initial: { 
+      opacity: 0, 
+      scale: 0.95 
+    },
+    animate: { 
+      opacity: 1, 
+      scale: 1,
+      transition: {
+        duration: 0.3,
+        ease: "easeOut",
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const componentVariants: Variants = {
+    initial: { 
+      opacity: 0, 
+      scale: 0.95 
+    },
+    animate: { 
+      opacity: 1, 
+      scale: 1,
+      transition: {
+        duration: 0.3,
+        ease: "easeOut"
+      }
+    }
+  };
+
   return (
-    <div className="min-h-full overflow-auto">
+    <motion.div 
+      className="min-h-full overflow-auto"
+      variants={dashboardVariants}
+      initial="initial"
+      animate={isInitialLoad ? "initial" : "animate"}
+    >
       {/* When in edit mode, use resizable panels */}
       {isDashboardEditMode ? (
         <PanelGroup 
@@ -142,7 +191,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           minSize={isDashboardEditMode ? 20 : undefined} 
           maxSize={isDashboardEditMode ? 50 : undefined}
         >
-          <div className="h-full">
+          <motion.div className="h-full" variants={componentVariants}>
             <ScrollArea className="h-full">
               <div className="p-2 md:p-3">{/* Reduced padding from p-4 to p-3 */}
                 <KPIStats
@@ -154,7 +203,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
                 />
               </div>
             </ScrollArea>
-          </div>
+          </motion.div>
         </Panel>
         
         {/* Only show resize handle when in edit mode - Always present */}
@@ -212,20 +261,25 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
           minSize={isDashboardEditMode ? 15 : undefined}
           maxSize={isDashboardEditMode ? 40 : undefined}
         >
-          <div className="h-full">
+          <motion.div className="h-full" variants={componentVariants}>
             <ScrollArea className="h-full">
               <div className="p-2 md:p-3">
                 <SelectedComponentsArea />
               </div>
             </ScrollArea>
-          </div>
+          </motion.div>
         </Panel>
       </PanelGroup>
       ) : (
         /* Normal scrollable layout when not in edit mode */
-        <div className="space-y-4"> {/* Reduced from space-y-6 to space-y-4 */}
+        <motion.div 
+          className="space-y-4"
+          variants={dashboardVariants}
+          initial="initial"
+          animate={isInitialLoad ? "initial" : "animate"}
+        > {/* Reduced from space-y-6 to space-y-4 */}
           {/* KPI Stats */}
-          <div className="p-2 md:p-3"> {/* Reduced padding */}
+          <motion.div className="p-2 md:p-3" variants={componentVariants}> {/* Reduced padding */}
             <KPIStats
               totalNotes={totalNotes}
               favoriteNotes={favoriteNotes}
@@ -233,17 +287,19 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
               weeklyNotes={weeklyNotes}
               notes={notes}
             />
-          </div>
+          </motion.div>
           
           {/* Dashboard Grid */}
-          <DashboardGrid className="space-y-4" /> {/* Reduced from space-y-6 to space-y-4 */}
+          <motion.div variants={componentVariants}>
+            <DashboardGrid className="space-y-4" /> {/* Reduced from space-y-6 to space-y-4 */}
+          </motion.div>
 
           {/* Selected Components Area */}
-          <div className="px-2 md:px-3 pb-4"> {/* Reduced padding */}
+          <motion.div className="px-2 md:px-3 pb-4" variants={componentVariants}> {/* Reduced padding */}
             <SelectedComponentsArea className="min-h-[250px]" /> {/* Reduced from 300px to 250px */}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
