@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AppThemeProviders } from '../contexts/AppThemeProviders';
 import { PublicThemeProviders } from '../contexts/PublicThemeProviders';
 import { AppProviders } from './AppProviders';
+import { OnboardingProvider } from './Onboarding/OnboardingProvider';
 
 type ConditionalThemeWrapperProps = {
   children: React.ReactNode;
@@ -40,7 +41,9 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
     return (
       <AppProviders>
         <AppThemeProviders>
-          {children}
+          <OnboardingProvider>
+            {children}
+          </OnboardingProvider>
         </AppThemeProviders>
       </AppProviders>
     );
