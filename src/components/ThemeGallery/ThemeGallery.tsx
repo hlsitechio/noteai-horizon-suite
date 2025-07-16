@@ -16,7 +16,8 @@ import {
   Flower2,
   Snowflake,
   Check,
-  Eye
+  Eye,
+  Flame
 } from 'lucide-react';
 import { useTheme } from '@/providers/ThemeProvider';
 import { applyCustomTheme } from '@/utils/themeUtils';
@@ -110,6 +111,20 @@ const themes: Theme[] = [
       background: '#451A03'
     },
     gradient: 'linear-gradient(135deg, #F97316 0%, #DC2626 100%)'
+  },
+  {
+    id: 'theme-crimson',
+    name: 'Crimson Shadow',
+    description: 'Deep crimson reds with shadowy elegance',
+    icon: Flame,
+    category: 'dark',
+    preview: {
+      primary: '#DC143C',
+      secondary: '#8B0000',
+      accent: '#FF1744',
+      background: '#2D0A0A'
+    },
+    gradient: 'linear-gradient(135deg, #DC143C 0%, #8B0000 100%)'
   },
 
   // White/Light Themes
