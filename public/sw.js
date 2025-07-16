@@ -112,26 +112,29 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Circuit breaker - prevent infinite loops
+  // Circuit breaker - prevent infinite loops with improved logic
   const requestKey = `sw_request_${url.pathname}`;
-  const requestCount = parseInt(self.globalThis[requestKey] || '0');
+  const now = Date.now();
+  const requestData = self.globalThis[requestKey] || { count: 0, windowStart: now };
   
-  // Only trigger circuit breaker for excessive requests
-  if (requestCount > 10) {
-    // Development logging only - DO NOT expose full URLs in production
-    if (self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) {
-      console.warn('[SW] Circuit breaker triggered for request');
+  // Reset counter if window has expired (5 seconds)
+  if (now - requestData.windowStart > 5000) {
+    requestData.count = 0;
+    requestData.windowStart = now;
+  }
+  
+  // Only trigger circuit breaker for excessive requests in short time window
+  if (requestData.count > 20) {
+    // Development logging only - reduce noise
+    if ((self.location.hostname.includes('localhost') || self.location.hostname.includes('lovable')) && requestData.count === 21) {
+      console.warn('[SW] Circuit breaker triggered - too many requests to', url.pathname);
     }
     return;
   }
   
   // Increment request counter
-  self.globalThis[requestKey] = String(requestCount + 1);
-  
-  // Reset counter after a delay
-  setTimeout(() => {
-    delete self.globalThis[requestKey];
-  }, 10000); // Increased timeout
+  requestData.count++;
+  self.globalThis[requestKey] = requestData;
 
   // Determine caching strategy based on URL
   if (isNetworkFirst(url.href)) {
