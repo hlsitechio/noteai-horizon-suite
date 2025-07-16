@@ -18,6 +18,7 @@ import TrustSignals from '@/components/Marketing/TrustSignals';
 import LeadCapturePopup from '@/components/Marketing/LeadCapturePopup';
 import MobileOptimizedCTA from '@/components/Mobile/MobileOptimizedCTA';
 import { LazyContentHub, LazySocialProof, LazyPricing } from '@/components/Performance/LazyComponents';
+import { LandingThemeGallery } from '@/components/landing/LandingThemeGallery';
 import { useExitIntent, useScrollDepth, useTimeOnPage } from '@/hooks/useConversionTracking';
 import { usePerformanceTracking, useViewportTracking } from '@/hooks/usePerformanceOptimization';
 import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
@@ -134,6 +135,9 @@ const Landing: React.FC = () => {
         <Navigation isScrolled={isScrolled} mousePosition={mousePosition} />
         <WhimsicalHero />
         <WhimsicalFeatures />
+        
+        {/* Theme Gallery Section */}
+        <LandingThemeGallery />
         
         {/* Social Proof Section */}
         <LazySocialProof variant="logos" className="py-12" />
