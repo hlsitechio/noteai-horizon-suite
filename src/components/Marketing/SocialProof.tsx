@@ -247,7 +247,22 @@ const SocialProof: React.FC<SocialProofProps> = ({
           </motion.div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center opacity-60">
-            {companyLogos.map((company, index) => {})}
+            {companyLogos.map((company, index) => (
+              <motion.div
+                key={company.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="flex items-center justify-center"
+              >
+                <img
+                  src={company.logo}
+                  alt={`${company.name} logo`}
+                  className="h-8 w-auto grayscale hover:grayscale-0 transition-all duration-300"
+                />
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>;
