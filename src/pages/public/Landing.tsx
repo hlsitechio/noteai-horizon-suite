@@ -19,7 +19,7 @@ import LeadCapturePopup from '@/components/Marketing/LeadCapturePopup';
 import MobileOptimizedCTA from '@/components/Mobile/MobileOptimizedCTA';
 import { LazyContentHub, LazySocialProof, LazyPricing } from '@/components/Performance/LazyComponents';
 import { LandingThemeGallery } from '@/components/landing/LandingThemeGallery';
-import { FeatureShowcase } from '@/components/landing/FeatureShowcase';
+import { LandingFeatureShowcase } from '@/components/landing/LandingFeatureShowcase';
 import { useExitIntent, useScrollDepth, useTimeOnPage } from '@/hooks/useConversionTracking';
 import { usePerformanceTracking, useViewportTracking } from '@/hooks/usePerformanceOptimization';
 import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
@@ -138,7 +138,7 @@ const Landing: React.FC = () => {
         <WhimsicalFeatures />
         
         {/* Feature Showcase Section */}
-        <FeatureShowcase />
+        <LandingFeatureShowcase />
         
         {/* Theme Gallery Section */}
         <LandingThemeGallery />
