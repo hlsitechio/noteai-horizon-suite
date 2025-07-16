@@ -32,10 +32,10 @@ export const landingThemes: LandingTheme[] = [
     featured: true,
     category: 'dark',
     colors: {
-      primary: '142 100% 50%', // bright green
-      secondary: '60 100% 50%', // yellow
-      accent: '300 100% 50%', // magenta
-      muted: '180 100% 50%', // cyan
+      primary: '142 70% 60%', // softer green for better readability
+      secondary: '60 80% 65%', // softer yellow
+      accent: '300 60% 70%', // softer magenta
+      muted: '180 40% 70%', // muted cyan
     },
     gradient: 'linear-gradient(135deg, hsl(142 100% 15%) 0%, hsl(300 100% 15%) 50%, hsl(60 100% 15%) 100%)',
     buttonStyle: 'bg-gradient-to-r from-green-500 to-yellow-500 hover:from-green-600 hover:to-yellow-600',
@@ -44,7 +44,7 @@ export const landingThemes: LandingTheme[] = [
       body: 'Exo 2',
       mono: 'JetBrains Mono'
     },
-    backgroundGradient: 'radial-gradient(ellipse at top, hsl(142 100% 5%) 0%, hsl(0 0% 0%) 50%)'
+    backgroundGradient: 'linear-gradient(135deg, hsl(142 15% 8%) 0%, hsl(0 0% 5%) 50%, hsl(300 10% 8%) 100%)'
   },
   {
     id: 'midnight-blue',
@@ -53,19 +53,19 @@ export const landingThemes: LandingTheme[] = [
     icon: '🌊',
     category: 'dark',
     colors: {
-      primary: '220 100% 50%', // bright blue
-      secondary: '200 100% 60%', // light blue
-      accent: '240 100% 70%', // lighter blue
-      muted: '210 50% 80%', // very light blue
+      primary: '220 80% 65%', // softer blue
+      secondary: '200 70% 70%', // lighter, softer blue
+      accent: '240 60% 75%', // accessible light blue
+      muted: '210 30% 75%', // good contrast gray-blue
     },
-    gradient: 'linear-gradient(135deg, hsl(220 100% 15%) 0%, hsl(240 80% 20%) 50%, hsl(200 60% 25%) 100%)',
+    gradient: 'linear-gradient(135deg, hsl(220 40% 15%) 0%, hsl(240 30% 18%) 50%, hsl(200 30% 20%) 100%)',
     buttonStyle: 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700',
     fonts: {
       heading: 'Inter',
       body: 'Inter',
       mono: 'JetBrains Mono'
     },
-    backgroundGradient: 'radial-gradient(ellipse at top, hsl(220 100% 5%) 0%, hsl(0 0% 0%) 50%)'
+    backgroundGradient: 'linear-gradient(135deg, hsl(220 40% 8%) 0%, hsl(0 0% 5%) 50%, hsl(240 20% 10%) 100%)'
   },
   {
     id: 'emerald-forest',
@@ -74,19 +74,19 @@ export const landingThemes: LandingTheme[] = [
     icon: '🌲',
     category: 'dark',
     colors: {
-      primary: '120 100% 40%', // forest green
-      secondary: '140 80% 50%', // emerald
-      accent: '160 60% 60%', // light green
-      muted: '120 30% 70%', // muted green
+      primary: '120 60% 55%', // accessible forest green
+      secondary: '140 50% 60%', // softer emerald
+      accent: '160 40% 65%', // muted light green
+      muted: '120 20% 70%', // good contrast muted green
     },
-    gradient: 'linear-gradient(135deg, hsl(120 100% 10%) 0%, hsl(140 80% 15%) 50%, hsl(160 60% 20%) 100%)',
+    gradient: 'linear-gradient(135deg, hsl(120 30% 12%) 0%, hsl(140 25% 15%) 50%, hsl(160 20% 18%) 100%)',
     buttonStyle: 'bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600',
     fonts: {
       heading: 'Exo 2',
       body: 'Inter',
       mono: 'JetBrains Mono'
     },
-    backgroundGradient: 'radial-gradient(ellipse at top, hsl(120 100% 5%) 0%, hsl(0 0% 0%) 50%)'
+    backgroundGradient: 'linear-gradient(135deg, hsl(120 30% 8%) 0%, hsl(0 0% 5%) 50%, hsl(140 15% 10%) 100%)'
   },
   {
     id: 'violet-storm',
@@ -95,19 +95,19 @@ export const landingThemes: LandingTheme[] = [
     icon: '⚡',
     category: 'dark',
     colors: {
-      primary: '270 100% 50%', // bright purple
-      secondary: '280 80% 60%', // light purple
-      accent: '260 90% 70%', // lighter purple
-      muted: '270 40% 80%', // very light purple
+      primary: '270 70% 65%', // accessible purple
+      secondary: '280 60% 70%', // softer light purple
+      accent: '260 50% 75%', // good contrast lighter purple
+      muted: '270 25% 75%', // accessible light purple-gray
     },
-    gradient: 'linear-gradient(135deg, hsl(270 100% 15%) 0%, hsl(280 80% 20%) 50%, hsl(260 60% 25%) 100%)',
+    gradient: 'linear-gradient(135deg, hsl(270 35% 15%) 0%, hsl(280 30% 18%) 50%, hsl(260 25% 20%) 100%)',
     buttonStyle: 'bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700',
     fonts: {
       heading: 'Orbitron',
-      body: 'Exo 2',
+      body: 'Inter',
       mono: 'JetBrains Mono'
     },
-    backgroundGradient: 'radial-gradient(ellipse at top, hsl(270 100% 5%) 0%, hsl(0 0% 0%) 50%)'
+    backgroundGradient: 'linear-gradient(135deg, hsl(270 35% 8%) 0%, hsl(0 0% 5%) 50%, hsl(280 20% 10%) 100%)'
   },
   {
     id: 'orange-sunset',
@@ -116,19 +116,19 @@ export const landingThemes: LandingTheme[] = [
     icon: '🌅',
     category: 'dark',
     colors: {
-      primary: '30 100% 50%', // bright orange
-      secondary: '45 100% 60%', // yellow-orange
-      accent: '15 90% 70%', // light orange
-      muted: '30 50% 80%', // very light orange
+      primary: '30 80% 60%', // accessible orange
+      secondary: '45 70% 65%', // softer yellow-orange
+      accent: '15 60% 70%', // good contrast light orange
+      muted: '30 30% 75%', // accessible light orange-gray
     },
-    gradient: 'linear-gradient(135deg, hsl(30 100% 15%) 0%, hsl(45 80% 20%) 50%, hsl(15 60% 25%) 100%)',
+    gradient: 'linear-gradient(135deg, hsl(30 40% 15%) 0%, hsl(45 30% 18%) 50%, hsl(15 25% 20%) 100%)',
     buttonStyle: 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600',
     fonts: {
       heading: 'Exo 2',
       body: 'Inter',
       mono: 'JetBrains Mono'
     },
-    backgroundGradient: 'radial-gradient(ellipse at top, hsl(30 100% 5%) 0%, hsl(0 0% 0%) 50%)'
+    backgroundGradient: 'linear-gradient(135deg, hsl(30 40% 8%) 0%, hsl(0 0% 5%) 50%, hsl(45 25% 10%) 100%)'
   },
   {
     id: 'crimson-shadow',
@@ -137,19 +137,19 @@ export const landingThemes: LandingTheme[] = [
     icon: '🔥',
     category: 'dark',
     colors: {
-      primary: '0 100% 50%', // bright red
-      secondary: '350 80% 60%', // pink-red
-      accent: '10 90% 70%', // light red
-      muted: '0 40% 80%', // very light red
+      primary: '0 70% 60%', // accessible red
+      secondary: '350 60% 65%', // softer pink-red
+      accent: '10 50% 70%', // good contrast light red
+      muted: '0 25% 75%', // accessible light red-gray
     },
-    gradient: 'linear-gradient(135deg, hsl(0 100% 15%) 0%, hsl(350 80% 20%) 50%, hsl(10 60% 25%) 100%)',
+    gradient: 'linear-gradient(135deg, hsl(0 40% 15%) 0%, hsl(350 30% 18%) 50%, hsl(10 25% 20%) 100%)',
     buttonStyle: 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700',
     fonts: {
       heading: 'Orbitron',
-      body: 'Exo 2',
+      body: 'Inter',
       mono: 'JetBrains Mono'
     },
-    backgroundGradient: 'radial-gradient(ellipse at top, hsl(0 100% 5%) 0%, hsl(0 0% 0%) 50%)'
+    backgroundGradient: 'linear-gradient(135deg, hsl(0 40% 8%) 0%, hsl(0 0% 5%) 50%, hsl(350 20% 10%) 100%)'
   },
   // Light Themes
   {
