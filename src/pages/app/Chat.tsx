@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useAIAgents } from '@/ai/hooks/useAIAgents';
+import { useEnhancedAIChatWithActions } from '@/hooks/useEnhancedAIChatWithActions';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import { useNotePreview } from '@/hooks/useNotePreview';
 import { useUserProfile } from '@/hooks/useUserProfile';
@@ -23,14 +23,10 @@ const Chat: React.FC = () => {
   
   const { 
     messages, 
-    sendMessage, 
-    clearConversation, 
-    isProcessing,
-    currentAgent,
-    availableAgents,
-    currentMode,
-    setMode
-  } = useAIAgents();
+    sendMessageWithActions, 
+    clearChat, 
+    isLoading: isProcessing
+  } = useEnhancedAIChatWithActions();
 
   const {
     isRecording,
@@ -50,15 +46,8 @@ const Chat: React.FC = () => {
     extractNoteFromActionResult
   } = useNotePreview();
 
-  // Convert AIMessage format to EnhancedChatMessage format for compatibility
-  const adaptedMessages = messages.map(msg => ({
-    id: msg.id,
-    content: msg.content,
-    isUser: msg.role === 'user',
-    timestamp: msg.timestamp,
-    actions: msg.metadata?.actions as any, // Type cast to avoid conflicts
-    actionResults: msg.metadata?.actionResults
-  }));
+  // Use the messages directly since they're already in EnhancedChatMessage format
+  const adaptedMessages = messages;
 
   // Monitor messages for note creation to show in preview
   useEffect(() => {
@@ -86,7 +75,7 @@ const Chat: React.FC = () => {
 
   const handleSend = async () => {
     if (message.trim() && !isProcessing) {
-      await sendMessage(message, { autoDetectMode: true });
+      await sendMessageWithActions(message);
       setMessage('');
     }
   };
@@ -135,10 +124,10 @@ const Chat: React.FC = () => {
                 <div className="space-y-4">
                   <div className="p-4 rounded-xl bg-gradient-glass border border-border/20">
                     <div className="text-sm font-medium text-foreground mb-2">
-                      Current Agent: {currentAgent.name}
+                      AI Assistant
                     </div>
                     <div className="text-xs text-muted-foreground mb-2">
-                      Mode: {currentMode}
+                      Can create notes, set reminders, and more
                     </div>
                     <div className="text-xs text-success">
                       ● Online & Ready
@@ -169,7 +158,7 @@ const Chat: React.FC = () => {
                 profile={profile}
                 profileLoading={profileLoading}
                 messagesLength={adaptedMessages.length}
-                onClearChat={clearConversation}
+                onClearChat={clearChat}
               />
 
               <PremiumChatMessages
