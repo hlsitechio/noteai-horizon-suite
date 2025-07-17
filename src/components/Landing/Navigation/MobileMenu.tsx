@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
 const navigationItems = [
-  { name: 'Features', href: '/features' },
-  { name: 'Pricing', href: '/pricing' },
-  { name: 'About', href: '/about' },
-  { name: 'Contact', href: '/contact' },
+  { name: 'Dashboard', href: '/dashboard' },
+  { name: 'Explorer', href: '/explorer' },
+  { name: 'Editor', href: '/editor' },
+  { name: 'AI Chat', href: '/ai-chat' },
 ];
 
 interface MobileMenuProps {
