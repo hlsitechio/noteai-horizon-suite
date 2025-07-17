@@ -6,12 +6,9 @@ import {
   FolderOpen, 
   MessageSquare, 
   Sparkles, 
-  Search, 
-  Users, 
-  Filter,
-  Zap,
-  Share2,
-  Lock,
+  Activity, 
+  Bell, 
+  Download,
   Cloud
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,65 +21,65 @@ interface Feature {
   icon: React.ElementType;
   category: string;
   benefits: string[];
-  mockupType: 'notes' | 'workspace' | 'files' | 'chat';
+  mockupType: 'notes' | 'workspace' | 'files' | 'chat' | 'activity' | 'notifications';
 }
 
 const features: Feature[] = [
   {
-    id: 'smart-notes',
-    name: 'Smart Notes',
-    description: 'AI-powered note-taking with intelligent organization and instant search.',
-    icon: FileText,
-    category: 'productivity',
+    id: 'activity-log',
+    name: 'Activity Log',
+    description: 'Track every action and change across your workspace with detailed activity logs.',
+    icon: Activity,
+    category: 'monitoring',
     benefits: [
-      'AI-powered content suggestions',
-      'Smart categorization and tagging',
-      'Real-time collaboration',
-      'Advanced search and filtering'
+      'Real-time activity tracking',
+      'Detailed action history',
+      'User behavior insights',
+      'Audit trail for compliance'
     ],
-    mockupType: 'notes'
+    mockupType: 'activity'
   },
   {
-    id: 'workspaces',
-    name: 'Workspaces',
-    description: 'Organize your projects in dedicated workspaces with customizable layouts.',
-    icon: Layout,
-    category: 'organization',
+    id: 'notification-center',
+    name: 'Notification Center',
+    description: 'Stay informed with smart notifications and alerts for all important updates.',
+    icon: Bell,
+    category: 'communication',
     benefits: [
-      'Customizable dashboard layouts',
-      'Project-specific organization',
-      'Team workspace sharing',
-      'Visual progress tracking'
+      'Real-time push notifications',
+      'Smart notification filtering',
+      'Customizable alert preferences',
+      'Multi-channel delivery'
     ],
-    mockupType: 'workspace'
+    mockupType: 'notifications'
   },
   {
-    id: 'file-management',
-    name: 'File Management',
-    description: 'Seamlessly manage documents, images, and files with smart categorization.',
-    icon: FolderOpen,
-    category: 'storage',
+    id: 'google-drive-integration',
+    name: 'Google Drive Integration',
+    description: 'Seamlessly sync and access your Google Drive files directly within the platform.',
+    icon: Cloud,
+    category: 'integration',
     benefits: [
-      'Drag & drop file uploads',
-      'Smart file categorization',
-      'Version control & history',
-      'Cloud storage integration'
+      'Two-way sync with Google Drive',
+      'Direct file access in workspace',
+      'Automatic backup and sync',
+      'Collaborative editing support'
     ],
     mockupType: 'files'
   },
   {
-    id: 'team-communication',
-    name: 'Team Communication',
-    description: 'Built-in messaging and collaboration tools for seamless teamwork.',
-    icon: MessageSquare,
-    category: 'collaboration',
+    id: 'data-export',
+    name: 'Data Export',
+    description: 'Export your data in multiple formats for backup, migration, or analysis.',
+    icon: Download,
+    category: 'utility',
     benefits: [
-      'Real-time messaging',
-      'Comment threads on notes',
-      '@mentions and notifications',
-      'Video call integration'
+      'Multiple export formats (JSON, CSV, PDF)',
+      'Bulk data export capabilities',
+      'Scheduled automated exports',
+      'Data portability guarantee'
     ],
-    mockupType: 'chat'
+    mockupType: 'workspace'
   }
 ];
 
@@ -168,31 +165,53 @@ const MockupContent: React.FC<{ type: string }> = ({ type }) => {
         </div>
       );
     
-    case 'chat':
+    case 'activity':
       return (
         <div className={cn(baseClasses, "min-h-[300px]")}>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-3 h-3 rounded-full bg-red-500"></div>
             <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
             <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            <span className="ml-2 text-sm font-medium text-foreground">Team Chat</span>
+            <span className="ml-2 text-sm font-medium text-foreground">Activity Log</span>
           </div>
           <div className="space-y-3">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className={cn("flex gap-2", i % 2 === 0 ? "justify-start" : "justify-end")}>
-                {i % 2 === 0 && (
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-accent"></div>
-                )}
-                <div className={cn(
-                  "max-w-[180px] rounded-lg p-2 space-y-1",
-                  i % 2 === 0 ? "bg-muted/40" : "bg-primary/20"
-                )}>
-                  <div className="h-2 bg-current/40 rounded-full w-full"></div>
-                  <div className="h-2 bg-current/30 rounded-full w-3/4"></div>
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex items-center gap-3 p-2 rounded-md bg-muted/10">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                  <Activity className="w-4 h-4 text-primary" />
                 </div>
-                {i % 2 === 1 && (
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-secondary to-accent/60"></div>
-                )}
+                <div className="flex-1">
+                  <div className="h-2.5 bg-muted/60 rounded-full w-full max-w-[160px] mb-1"></div>
+                  <div className="h-1.5 bg-muted/30 rounded-full w-20"></div>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  <div className="h-1.5 bg-muted/40 rounded-full w-8"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    
+    case 'notifications':
+      return (
+        <div className={cn(baseClasses, "min-h-[300px]")}>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-3 h-3 rounded-full bg-red-500"></div>
+            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            <span className="ml-2 text-sm font-medium text-foreground">Notifications</span>
+          </div>
+          <div className="space-y-2">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-card/30 border border-border/20">
+                <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                <div className="flex-1 space-y-1">
+                  <div className="h-3 bg-gradient-to-r from-primary/60 to-primary/30 rounded-full w-full max-w-[140px]"></div>
+                  <div className="h-2 bg-muted/50 rounded-full w-full"></div>
+                  <div className="h-2 bg-muted/30 rounded-full w-3/4"></div>
+                </div>
+                <Bell className="w-3 h-3 text-muted-foreground mt-1" />
               </div>
             ))}
           </div>
@@ -205,7 +224,7 @@ const MockupContent: React.FC<{ type: string }> = ({ type }) => {
 };
 
 export const FeatureShowcase: React.FC = () => {
-  const [activeFeature, setActiveFeature] = useState<string>('smart-notes');
+  const [activeFeature, setActiveFeature] = useState<string>('activity-log');
   
   const currentFeature = features.find(f => f.id === activeFeature) || features[0];
 
