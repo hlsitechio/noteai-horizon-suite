@@ -521,7 +521,7 @@ export const LandingFeatureShowcase: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <div 
-            className="inline-flex bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg p-1"
+            className="inline-flex items-center space-x-4"
             onMouseLeave={() => setHoveredFeature(null)}
           >
             {Object.entries(categoryLabels).map(([key, label]) => (
