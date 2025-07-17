@@ -525,34 +525,6 @@ export const LandingFeatureShowcase: React.FC = () => {
           </motion.div>
         </AnimatePresence>
 
-        {/* Featured Demo Section */}
-        <motion.div
-          className="mt-16"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold text-foreground mb-2">See It In Action</h3>
-            <p className="text-muted-foreground">Experience our most popular features with interactive previews</p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.filter(f => f.featured).map((feature, index) => (
-              <motion.div
-                key={feature.id}
-                className="relative group"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <MockupPreview feature={feature} />
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
       </div>
     </section>
   );
