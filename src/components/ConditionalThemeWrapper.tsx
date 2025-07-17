@@ -18,7 +18,7 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
     if (typeof window === 'undefined') return false;
     const path = window.location.pathname;
     console.log('ConditionalThemeWrapper: Current path:', path);
-    const isApp = path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile') || path.startsWith('/auth');
+    const isApp = path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile') || path.startsWith('/auth') || path === '/';
     console.log('ConditionalThemeWrapper: Is app route:', isApp);
     return isApp;
   };
@@ -30,7 +30,7 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
     const handleNavigation = () => {
       const path = window.location.pathname;
       console.log('ConditionalThemeWrapper: Navigation to:', path);
-      const isApp = path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile') || path.startsWith('/auth');
+      const isApp = path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile') || path.startsWith('/auth') || path === '/';
       console.log('ConditionalThemeWrapper: Setting isAppRoute to:', isApp);
       setIsAppRoute(isApp);
     };

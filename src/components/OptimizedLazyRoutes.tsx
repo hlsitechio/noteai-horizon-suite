@@ -124,12 +124,8 @@ export const OptimizedLazyRoutes: React.FC = () => {
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
         {/* ========== PUBLIC ROUTES ========== */}
-        <Route path="/" element={
-          <PublicPageWrapper>
-            <Landing />
-          </PublicPageWrapper>
-        } />
-        <Route path="/public/landing" element={
+        <Route path="/" element={<HomeRedirect />} />
+        <Route path="/landing" element={
           <PublicPageWrapper>
             <Landing />
           </PublicPageWrapper>
@@ -186,7 +182,7 @@ export const OptimizedLazyRoutes: React.FC = () => {
         } />
 
         {/* Legacy public route redirects */}
-        <Route path="/landing" element={<Navigate to="/public/landing" replace />} />
+        <Route path="/public/landing" element={<Navigate to="/landing" replace />} />
         <Route path="/features" element={<Navigate to="/public/features" replace />} />
         <Route path="/pricing" element={<Navigate to="/public/pricing" replace />} />
         <Route path="/about" element={<Navigate to="/public/about" replace />} />
