@@ -17,9 +17,7 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
   const getIsAppRoute = () => {
     if (typeof window === 'undefined') return false;
     const path = window.location.pathname;
-    console.log('ConditionalThemeWrapper: Current path:', path);
     const isApp = path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile') || path.startsWith('/auth') || path === '/';
-    console.log('ConditionalThemeWrapper: Is app route:', isApp);
     return isApp;
   };
   
@@ -29,9 +27,7 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
     // Listen for navigation changes only
     const handleNavigation = () => {
       const path = window.location.pathname;
-      console.log('ConditionalThemeWrapper: Navigation to:', path);
       const isApp = path.startsWith('/app') || path.startsWith('/setup') || path.startsWith('/mobile') || path.startsWith('/auth') || path === '/';
-      console.log('ConditionalThemeWrapper: Setting isAppRoute to:', isApp);
       setIsAppRoute(isApp);
     };
     
@@ -60,7 +56,6 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
   
   // For app routes, use the full theme provider with user settings AND AppProviders
   if (isAppRoute) {
-    console.log('ConditionalThemeWrapper: Rendering with AppProviders (includes AuthProvider)');
     return (
       <AppProviders>
         <AppThemeProviders>
@@ -73,7 +68,6 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
   }
   
   // For public routes, use the minimal public theme provider
-  console.log('ConditionalThemeWrapper: Rendering with PublicThemeProviders (no AuthProvider)');
   return (
     <PublicThemeProviders>
       {children}

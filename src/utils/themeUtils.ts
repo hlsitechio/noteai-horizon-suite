@@ -42,8 +42,6 @@ export const applyThemeToDocument = (theme: Theme) => {
     // Apply the resolved theme
     root.classList.add(resolvedTheme);
     
-    console.log(`Applied theme: ${resolvedTheme}, classes now:`, Array.from(root.classList));
-    
     // Remove transition class after animation completes
     setTimeout(() => {
       root.classList.remove('theme-transitioning');
