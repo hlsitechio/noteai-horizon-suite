@@ -15,7 +15,7 @@ import MarketingCTA from '@/components/Marketing/MarketingCTA';
 import SEOOptimizer from '@/components/Marketing/SEOOptimizer';
 import ContentHub from '@/components/Marketing/ContentHub';
 import TrustSignals from '@/components/Marketing/TrustSignals';
-import { DotsBackground } from '@/components/ui/DotsBackground';
+import { WavyDotsBackground } from '@/components/ui/WavyDotsBackground';
 
 import MobileOptimizedCTA from '@/components/Mobile/MobileOptimizedCTA';
 import { LazyContentHub, LazySocialProof, LazyPricing } from '@/components/Performance/LazyComponents';
@@ -102,7 +102,7 @@ const Landing: React.FC = () => {
         onMouseMove={(e) => setMousePosition({ x: e.clientX, y: e.clientY })}
       >
         {/* Animated Dots Background */}
-        <DotsBackground variant="normal" />
+        <WavyDotsBackground variant="organic" intensity="medium" />
         
         {/* Smart gradient background */}
         <div className="absolute inset-0 whimsical-gradient-radial opacity-50" />
