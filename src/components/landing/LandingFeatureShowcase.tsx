@@ -530,29 +530,19 @@ export const LandingFeatureShowcase: React.FC = () => {
                   onClick={() => setActiveCategory(key as typeof activeCategory)}
                   onMouseEnter={() => setHoveredFeature(key)}
                   className={cn(
-                    "relative flex items-center gap-2 px-6 py-3 rounded-md text-sm font-medium transition-all duration-300 border bg-transparent",
+                    "relative flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-500 backdrop-blur-sm border",
                     activeCategory === key 
-                      ? "text-white font-semibold border-white/20" 
-                      : "text-muted-foreground hover:text-white border-transparent hover:border-white/10"
+                      ? "bg-white/10 border-white/30 text-white shadow-[0_0_20px_rgba(255,255,255,0.3)]" 
+                      : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/8 hover:border-white/20 hover:text-white"
                   )}
+                  style={{
+                    boxShadow: activeCategory === key 
+                      ? '0 0 30px rgba(255,255,255,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' 
+                      : 'inset 0 1px 0 rgba(255,255,255,0.05)'
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  {/* Active glow effect - only external glow, no background */}
-                  {activeCategory === key && (
-                    <motion.div
-                      layoutId="active-category-glow"
-                      className="absolute inset-0 rounded-md border border-white/10"
-                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    />
-                  )}
-                  {/* Hover glow effect for inactive buttons */}
-                  {hoveredFeature === key && activeCategory !== key && (
-                    <motion.div
-                      layoutId="hover-category-glow"
-                      className="absolute inset-0 bg-white/5 rounded-md border border-white/10"
-                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    />
-                  )}
-                  
                   <span className="relative z-10 flex items-center gap-2">
                     {key === 'productivity' && <Calendar className="w-4 h-4" />}
                     {key === 'analytics' && <BarChart3 className="w-4 h-4" />}
