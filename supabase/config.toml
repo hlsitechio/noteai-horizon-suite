@@ -1,3 +1,4 @@
+
 project_id = "ubxtmbgvibtjtjggjnjm"
 
 [api]
@@ -98,3 +99,6 @@ verify_jwt = true
 
 [functions.realtime-collaboration]
 verify_jwt = false
+
+[functions.wasabi-storage]
+verify_jwt = true
