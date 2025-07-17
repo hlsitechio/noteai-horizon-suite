@@ -105,6 +105,7 @@ const Pricing = () => {
               checked={isYearly}
               onCheckedChange={setIsYearly}
               className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-cyan-500 data-[state=checked]:to-blue-500"
+              aria-label="Switch between monthly and yearly billing"
             />
             <span className={`text-lg ${isYearly ? 'text-white' : 'text-gray-400'}`}>Yearly</span>
             {isYearly && (
