@@ -74,10 +74,10 @@ We're building the future of collaborative productivity and **looking for sponso
 
 ## 📞 **Connect With Us**
 
-- 💬 **Discord**: [Join our community](https://discord.gg/your-invite)
-- 📧 **Email**: hello@your-domain.com
-- 🐦 **Twitter**: [@OnlineNoteAI](https://twitter.com/your-handle)
-- 🐛 **Issues**: [GitHub Issues](https://github.com/yourusername/online-note-ai/issues)
+- 🐦 **X**: [@Online_Note_AI](https://x.com/Online_Note_AI)
+- 📸 **Instagram**: [@onlinenoteai](https://www.instagram.com/onlinenoteai/)
+- 🌤️ **Bluesky**: [@onlinenoteai](https://bsky.app/profile/onlinenoteai.bsky.social)
+- 📧 **Email**: info@onlinenote.ai | onlinenoteai@gmail.com
 
 ---
 
