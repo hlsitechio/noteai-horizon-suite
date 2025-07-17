@@ -166,9 +166,11 @@ export const OptimizedLazyRoutes: React.FC = () => {
           </PublicPageWrapper>
         } />
         <Route path="/public/referral" element={
-          <ProtectedRoute>
-            <ReferralPage />
-          </ProtectedRoute>
+          <PublicPageWrapper>
+            <ProtectedRoute>
+              <ReferralPage />
+            </ProtectedRoute>
+          </PublicPageWrapper>
         } />
         <Route path="/demo/analytics" element={
           <PublicPageWrapper>
