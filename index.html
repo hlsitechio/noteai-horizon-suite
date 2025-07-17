@@ -16,7 +16,7 @@
     <!-- More permissive COOP policy to prevent window operation errors -->
     <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups" />
     <!-- Fixed CSP with all necessary domains including Lovable -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co https://*.supabase.co; connect-src 'self' https: wss: *.supabase.co *.lovable.app *.sentry.io; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https://fonts.gstatic.com; worker-src 'self' blob:;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co https://*.supabase.co; connect-src 'self' https: wss: *.supabase.co *.lovable.app *.sentry.io; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self' blob:;" />
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
