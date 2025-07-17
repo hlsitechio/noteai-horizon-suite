@@ -1418,17 +1418,18 @@
   }
   
   /* Premium Glass Morphism */
+  /* Glass effect with proper vendor prefix order */
   .glass {
     background: var(--gradient-glass);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px); /* Safari */
+    backdrop-filter: blur(16px); /* Standard */
     border: 1px solid hsl(var(--border) / 0.2);
   }
   
   .glass-strong {
     background: hsl(var(--background) / 0.8);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px); /* Safari */
+    backdrop-filter: blur(24px); /* Standard */
     border: 1px solid hsl(var(--border) / 0.3);
   }
   
@@ -2009,18 +2010,18 @@
     background: transparent;
   }
   
-  /* Hide scrollbar for Firefox */
+  /* Hide scrollbar for Firefox - Safari compatibility */
   * {
-    scrollbar-width: none;
     -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
   
-  /* Optimize scroll containers */
+  /* Optimize scroll containers - Safari compatibility */
   .mobile-scroll-container {
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
-    scrollbar-width: none;
     -ms-overflow-style: none;
+    scrollbar-width: none; /* Firefox */
   }
   
   .mobile-scroll-container::-webkit-scrollbar {
@@ -2034,14 +2035,14 @@
     user-select: none;
   }
   
-  /* Smooth momentum scrolling */
+  /* Smooth momentum scrolling - Safari compatibility */
   .mobile-content {
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
-    scrollbar-width: none;
     -ms-overflow-style: none;
+    scrollbar-width: none; /* Firefox */
   }
   
   .mobile-content::-webkit-scrollbar {
@@ -2068,10 +2069,10 @@
 
 /* Prevent browser UI from showing on scroll up */
 @media (max-width: 768px) {
-  /* Prevent pull-to-refresh only */
+  /* Prevent pull-to-refresh with overscroll behavior */
   body {
-    overscroll-behavior-y: contain;
-    -webkit-overscroll-behavior-y: contain;
+    -webkit-overscroll-behavior-y: contain; /* Safari */
+    overscroll-behavior-y: contain; /* Standard */
   }
   
   /* Use CSS custom properties for viewport height */

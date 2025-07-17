@@ -44,6 +44,9 @@ const Navigation = ({ isScrolled, mousePosition }: NavigationProps) => {
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                   className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+                  aria-label={mobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
+                  aria-expanded={mobileMenuOpen}
+                  aria-controls="mobile-menu"
                 >
                   {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </button>

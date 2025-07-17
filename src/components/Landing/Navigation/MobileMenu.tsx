@@ -31,6 +31,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
           className="md:hidden bg-black/95 backdrop-blur-2xl"
+          id="mobile-menu"
         >
           <div className="px-4 py-6 space-y-4">
             {navigationItems.map((item) => (
