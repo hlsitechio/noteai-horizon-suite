@@ -257,18 +257,22 @@ export const DocumentImport: React.FC<DocumentImportProps> = ({
 
       // Wait a bit for state updates to complete
       setTimeout(() => {
-        const completedCount = files.filter(f => f.status === 'completed').length;
-        const errorCount = files.filter(f => f.status === 'error').length;
+        setFiles(currentFiles => {
+          const completedCount = currentFiles.filter(f => f.status === 'completed').length;
+          const errorCount = currentFiles.filter(f => f.status === 'error').length;
 
-        toast({
-          title: "Import completed",
-          description: `${completedCount} files uploaded successfully${errorCount > 0 ? `, ${errorCount} failed` : ''}`,
-          variant: completedCount > 0 ? "default" : "destructive"
+          toast({
+            title: "Import completed",
+            description: `${completedCount} files uploaded successfully${errorCount > 0 ? `, ${errorCount} failed` : ''}`,
+            variant: completedCount > 0 ? "default" : "destructive"
+          });
+
+          if (onImportComplete && completedCount > 0) {
+            onImportComplete();
+          }
+
+          return currentFiles; // Return unchanged files
         });
-
-        if (onImportComplete && completedCount > 0) {
-          onImportComplete();
-        }
       }, 500);
 
     } catch (error) {
