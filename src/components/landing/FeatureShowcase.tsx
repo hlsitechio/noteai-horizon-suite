@@ -9,10 +9,12 @@ import {
   Activity, 
   Bell, 
   Download,
-  Cloud
+  Cloud,
+  Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { ExplorerShowcase } from '@/components/showcase/ExplorerShowcase';
 
 interface Feature {
   id: string;
@@ -21,10 +23,24 @@ interface Feature {
   icon: React.ElementType;
   category: string;
   benefits: string[];
-  mockupType: 'notes' | 'workspace' | 'files' | 'chat' | 'activity' | 'notifications';
+  mockupType: 'notes' | 'workspace' | 'files' | 'chat' | 'activity' | 'notifications' | 'explorer';
 }
 
 const features: Feature[] = [
+  {
+    id: 'file-explorer',
+    name: 'File Explorer',
+    description: 'Powerful file and folder management with advanced search and organization features.',
+    icon: Search,
+    category: 'organization',
+    benefits: [
+      'Hierarchical folder structure',
+      'Advanced search and filtering',
+      'Grid and list view modes',
+      'Real-time file preview'
+    ],
+    mockupType: 'explorer'
+  },
   {
     id: 'activity-log',
     name: 'Activity Log',
@@ -218,13 +234,20 @@ const MockupContent: React.FC<{ type: string }> = ({ type }) => {
         </div>
       );
     
+    case 'explorer':
+      return (
+        <div className="w-full">
+          <ExplorerShowcase />
+        </div>
+      );
+    
     default:
       return <div className={baseClasses}>Feature preview</div>;
   }
 };
 
 export const FeatureShowcase: React.FC = () => {
-  const [activeFeature, setActiveFeature] = useState<string>('activity-log');
+  const [activeFeature, setActiveFeature] = useState<string>('file-explorer');
   
   const currentFeature = features.find(f => f.id === activeFeature) || features[0];
 
