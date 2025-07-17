@@ -525,41 +525,47 @@ export const LandingFeatureShowcase: React.FC = () => {
             onMouseLeave={() => setHoveredFeature(null)}
           >
             {Object.entries(categoryLabels).map(([key, label]) => (
-              <motion.button
-                key={key}
-                onClick={() => setActiveCategory(key as typeof activeCategory)}
-                onMouseEnter={() => setHoveredFeature(key)}
-                className={cn(
-                  "relative flex items-center gap-2 px-6 py-3 rounded-md text-sm font-medium transition-all duration-300",
-                  activeCategory === key 
-                    ? "text-white font-semibold" 
-                    : "text-muted-foreground hover:text-white"
-                )}
-              >
-                {/* Active/hover background with glow effect */}
-                {activeCategory === key && (
-                  <motion.div
-                    layoutId="active-category-pill"
-                    className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-md shadow-[0_0_30px_rgba(59,130,246,0.3)]"
-                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  />
-                )}
-                {/* Hover effect for inactive buttons */}
-                {hoveredFeature === key && activeCategory !== key && (
-                  <motion.div
-                    layoutId="hover-category-pill"
-                    className="absolute inset-0 bg-white/10 rounded-md"
-                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  />
-                )}
+              <div key={key} className="relative group">
+                <motion.button
+                  onClick={() => setActiveCategory(key as typeof activeCategory)}
+                  onMouseEnter={() => setHoveredFeature(key)}
+                  className={cn(
+                    "relative flex items-center gap-2 px-6 py-3 rounded-md text-sm font-medium transition-all duration-300 border",
+                    activeCategory === key 
+                      ? "text-white font-semibold bg-transparent border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.4)]" 
+                      : "text-muted-foreground hover:text-white bg-transparent border-transparent hover:border-white/20 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                  )}
+                >
+                  {/* Active glow effect */}
+                  {activeCategory === key && (
+                    <motion.div
+                      layoutId="active-category-glow"
+                      className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-600/10 rounded-md border border-cyan-500/30"
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                  {/* Hover glow effect for inactive buttons */}
+                  {hoveredFeature === key && activeCategory !== key && (
+                    <motion.div
+                      layoutId="hover-category-glow"
+                      className="absolute inset-0 bg-white/5 rounded-md border border-white/20"
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                  
+                  <span className="relative z-10 flex items-center gap-2">
+                    {key === 'productivity' && <Calendar className="w-4 h-4" />}
+                    {key === 'analytics' && <BarChart3 className="w-4 h-4" />}
+                    {key === 'management' && <Settings className="w-4 h-4" />}
+                    {label}
+                  </span>
+                </motion.button>
                 
-                <span className="relative z-10 flex items-center gap-2">
-                  {key === 'productivity' && <Calendar className="w-4 h-4" />}
-                  {key === 'analytics' && <BarChart3 className="w-4 h-4" />}
-                  {key === 'management' && <Settings className="w-4 h-4" />}
-                  {label}
-                </span>
-              </motion.button>
+                {/* External glow effect for active button */}
+                {activeCategory === key && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-md blur-lg opacity-20 -z-10" />
+                )}
+              </div>
             ))}
           </div>
         </motion.div>
