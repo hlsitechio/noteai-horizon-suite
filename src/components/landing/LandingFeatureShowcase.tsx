@@ -520,23 +520,46 @@ export const LandingFeatureShowcase: React.FC = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="inline-flex bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg p-1">
+          <div 
+            className="inline-flex bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg p-1"
+            onMouseLeave={() => setHoveredFeature(null)}
+          >
             {Object.entries(categoryLabels).map(([key, label]) => (
-              <button
+              <motion.button
                 key={key}
                 onClick={() => setActiveCategory(key as typeof activeCategory)}
+                onMouseEnter={() => setHoveredFeature(key)}
                 className={cn(
-                  "flex items-center gap-2 px-6 py-3 rounded-md text-sm font-medium transition-all duration-200",
+                  "relative flex items-center gap-2 px-6 py-3 rounded-md text-sm font-medium transition-all duration-300",
                   activeCategory === key 
-                    ? "bg-background text-foreground shadow-sm" 
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "text-white font-semibold" 
+                    : "text-muted-foreground hover:text-white"
                 )}
               >
-                {key === 'productivity' && <Calendar className="w-4 h-4" />}
-                {key === 'analytics' && <BarChart3 className="w-4 h-4" />}
-                {key === 'management' && <Settings className="w-4 h-4" />}
-                {label}
-              </button>
+                {/* Active/hover background with glow effect */}
+                {activeCategory === key && (
+                  <motion.div
+                    layoutId="active-category-pill"
+                    className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-md shadow-[0_0_30px_rgba(59,130,246,0.3)]"
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  />
+                )}
+                {/* Hover effect for inactive buttons */}
+                {hoveredFeature === key && activeCategory !== key && (
+                  <motion.div
+                    layoutId="hover-category-pill"
+                    className="absolute inset-0 bg-white/10 rounded-md"
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  />
+                )}
+                
+                <span className="relative z-10 flex items-center gap-2">
+                  {key === 'productivity' && <Calendar className="w-4 h-4" />}
+                  {key === 'analytics' && <BarChart3 className="w-4 h-4" />}
+                  {key === 'management' && <Settings className="w-4 h-4" />}
+                  {label}
+                </span>
+              </motion.button>
             ))}
           </div>
         </motion.div>
