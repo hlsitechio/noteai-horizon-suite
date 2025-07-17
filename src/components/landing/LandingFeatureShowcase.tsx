@@ -390,24 +390,12 @@ export const LandingFeatureShowcase: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         {/* Section Title */}
         <div className="text-center mb-16">
-          <motion.h2 
-            className="text-4xl lg:text-5xl font-bold text-foreground mb-6"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
             Powerful Features
-          </motion.h2>
-          <motion.p 
-            className="text-lg text-muted-foreground max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
+          </h2>
+          <p className="text-lg text-gray-300 max-w-3xl mx-auto">
             Experience the full potential of our platform with advanced tools designed for modern professionals
-          </motion.p>
+          </p>
         </div>
 
         {/* Category Toggle */}
