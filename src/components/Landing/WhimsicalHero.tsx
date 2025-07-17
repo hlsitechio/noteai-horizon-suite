@@ -9,18 +9,20 @@ const WhimsicalHero = () => {
       <div className="container mx-auto px-4">
         {/* Main Hero Content */}
         <div className="text-center space-y-8 mb-16">
-          {/* Hero Image */}
+          {/* Hero Image with Black Background */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1 }}
             className="mb-8"
           >
-            <img 
-              src="/lovable-uploads/51f2dbe2-5bcb-4eb9-9f51-8722ef49ea3d.png" 
-              alt="OnlineNote AI - Futuristic Note Taking Platform"
-              className="mx-auto max-w-4xl w-full h-auto object-contain"
-            />
+            <div className="bg-black rounded-xl p-8 mx-auto max-w-4xl">
+              <img 
+                src="/lovable-uploads/a7a417fa-e49a-4e8d-ad62-c20f8d2cb1f9.png" 
+                alt="OnlineNote AI - Futuristic Note Taking Platform"
+                className="mx-auto w-full h-auto object-contain"
+              />
+            </div>
           </motion.div>
 
           <motion.div
