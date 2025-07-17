@@ -255,18 +255,21 @@ export const DocumentImport: React.FC<DocumentImportProps> = ({
         await Promise.all(chunk.map(uploadFile));
       }
 
-      const completedCount = files.filter(f => f.status === 'completed').length;
-      const errorCount = files.filter(f => f.status === 'error').length;
+      // Wait a bit for state updates to complete
+      setTimeout(() => {
+        const completedCount = files.filter(f => f.status === 'completed').length;
+        const errorCount = files.filter(f => f.status === 'error').length;
 
-      toast({
-        title: "Import completed",
-        description: `${completedCount} files uploaded successfully${errorCount > 0 ? `, ${errorCount} failed` : ''}`,
-        variant: completedCount > 0 ? "default" : "destructive"
-      });
+        toast({
+          title: "Import completed",
+          description: `${completedCount} files uploaded successfully${errorCount > 0 ? `, ${errorCount} failed` : ''}`,
+          variant: completedCount > 0 ? "default" : "destructive"
+        });
 
-      if (onImportComplete && completedCount > 0) {
-        onImportComplete();
-      }
+        if (onImportComplete && completedCount > 0) {
+          onImportComplete();
+        }
+      }, 500);
 
     } catch (error) {
       toast({
