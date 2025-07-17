@@ -49,28 +49,56 @@ const WhimsicalFeatures = () => {
           className="mb-20"
         >
           {/* Navigation Buttons */}
-          <div className="relative flex flex-wrap gap-3 mb-12 justify-center bg-muted/30 p-2 rounded-2xl max-w-fit mx-auto">
+          <div className="relative flex flex-wrap gap-4 mb-12 justify-center">
             {features.map((feature, index) => (
               <motion.button
                 key={feature.id}
                 onClick={() => setActiveTab(index)}
-                className={`relative px-6 py-3 rounded-xl font-medium transition-all duration-300 z-10 ${
+                className={`relative px-8 py-4 rounded-2xl font-medium transition-all duration-500 backdrop-blur-sm border ${
                   activeTab === index
-                    ? 'text-white'
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? 'bg-white/10 border-white/30 text-white shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                    : 'bg-white/5 border-white/10 text-muted-foreground hover:bg-white/8 hover:border-white/20 hover:text-white'
                 }`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                style={{
+                  boxShadow: activeTab === index 
+                    ? '0 0 30px rgba(255,255,255,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' 
+                    : 'inset 0 1px 0 rgba(255,255,255,0.05)'
+                }}
               >
-                <feature.icon className="mr-2 h-4 w-4 inline" />
-                {feature.title}
+                <div className="relative z-10 flex items-center">
+                  <feature.icon className="mr-3 h-5 w-5" />
+                  {feature.title}
+                </div>
                 
-                {/* Active indicator with slide animation */}
+                {/* Animated breathing glow for active button */}
                 {activeTab === index && (
                   <motion.div
-                    layoutId="activeTab"
-                    className={`absolute inset-0 bg-gradient-to-r ${features[activeTab].mockupColor} rounded-xl shadow-lg`}
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    className="absolute inset-0 rounded-2xl"
+                    style={{
+                      background: 'radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%)',
+                      boxShadow: '0 0 40px rgba(255,255,255,0.4)',
+                    }}
+                    animate={{
+                      opacity: [0.5, 1, 0.5],
+                      scale: [1, 1.02, 1],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                )}
+                
+                {/* Static glow for inactive buttons */}
+                {activeTab !== index && (
+                  <div 
+                    className="absolute inset-0 rounded-2xl opacity-0 hover:opacity-100 transition-opacity duration-300"
+                    style={{
+                      boxShadow: '0 0 20px rgba(255,255,255,0.1)',
+                    }}
                   />
                 )}
               </motion.button>
@@ -126,8 +154,27 @@ const WhimsicalFeatures = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.4 }}
-                className="bg-card border border-border rounded-xl p-6"
+                className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6"
+                style={{
+                  boxShadow: '0 0 30px rgba(255,255,255,0.1), inset 0 1px 0 rgba(255,255,255,0.1)'
+                }}
               >
+                {/* Subtle breathing glow */}
+                <motion.div
+                  className="absolute inset-0 rounded-2xl"
+                  style={{
+                    background: 'radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%)',
+                    boxShadow: '0 0 60px rgba(255,255,255,0.1)',
+                  }}
+                  animate={{
+                    opacity: [0.3, 0.6, 0.3],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
                 <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-4 border border-slate-700 min-h-[300px]">
                   {/* Header */}
                   <div className="flex items-center justify-between mb-4">
