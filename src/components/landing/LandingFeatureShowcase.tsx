@@ -388,7 +388,7 @@ export const LandingFeatureShowcase: React.FC = () => {
   return (
     <section className="py-24 px-6 lg:px-8 relative">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* Section Title */}
         <div className="text-center mb-16">
           <motion.h2 
             className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-6"
@@ -397,7 +397,7 @@ export const LandingFeatureShowcase: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            Feature Showcase
+            Powerful Features
           </motion.h2>
           <motion.p 
             className="text-lg text-muted-foreground max-w-3xl mx-auto"
@@ -406,8 +406,7 @@ export const LandingFeatureShowcase: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            Discover powerful features designed to enhance your productivity and provide 
-            comprehensive insights into your work patterns.
+            Experience the full potential of our platform with advanced tools designed for modern professionals
           </motion.p>
         </div>
 
