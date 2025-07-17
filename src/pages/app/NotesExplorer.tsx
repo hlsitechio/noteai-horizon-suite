@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Grid3X3, List, MoreHorizontal, SortAsc, Filter, Star, Clock, FileText, Folder, Plus, ArrowLeft, ArrowRight, ChevronDown, Eye, EyeOff, Calendar, Heart, Upload } from 'lucide-react';
+import { Search, Grid3X3, List, MoreHorizontal, SortAsc, Filter, Star, Clock, FileText, Folder, Plus, ArrowLeft, ArrowRight, ChevronDown, Eye, EyeOff, Calendar, Heart, Upload, Database } from 'lucide-react';
 import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useFolders } from '@/contexts/FoldersContext';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
@@ -21,6 +21,7 @@ import { DocumentImportDialog } from '@/components/Explorer/DocumentImportDialog
 import { PreviewPanel } from '@/components/Explorer/PreviewPanel';
 import { FolderTree } from '@/components/Explorer/FolderTree';
 import { NotesSection } from '@/components/Layout/Sidebar/NotesSection';
+import { StorageIndicator } from '@/components/Storage/StorageIndicator';
 
 type ViewMode = 'extra-large' | 'large' | 'medium' | 'small' | 'list' | 'details';
 type SortBy = 'name' | 'modified' | 'created' | 'size' | 'category';
@@ -478,6 +479,16 @@ const NotesExplorer: React.FC = () => {
               {previewVisible ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
               Preview
             </Button>
+
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => window.open('/app/settings?tab=integrations', '_blank')}
+              title="Storage Management"
+            >
+              <Database className="w-4 h-4 mr-1" />
+              Storage
+            </Button>
             
             <Separator orientation="vertical" className="h-6" />
             
@@ -542,9 +553,14 @@ const NotesExplorer: React.FC = () => {
           {treeVisible && (
             <>
               <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
-                <div className="h-full border-r bg-background">
-                  <div className="h-full">
+                <div className="h-full border-r bg-background flex flex-col">
+                  <div className="flex-1 overflow-hidden">
                     <NotesSection onFolderSelect={(folderId) => setSelectedItems(new Set([folderId]))} />
+                  </div>
+                  
+                  {/* Storage Indicator at bottom of sidebar */}
+                  <div className="p-4 border-t bg-card/50">
+                    <StorageIndicator variant="compact" showUpgrade={true} />
                   </div>
                 </div>
               </ResizablePanel>

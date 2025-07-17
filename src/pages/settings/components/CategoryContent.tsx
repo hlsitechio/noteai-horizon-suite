@@ -14,6 +14,7 @@ import { WeatherTabContent } from './tabs/WeatherTabContent';
 import { AITabContent } from './tabs/AITabContent';
 import { GoogleDriveTabContent } from './tabs/GoogleDriveTabContent';
 import { DataTabContent } from './tabs/DataTabContent';
+import { StorageTabContent } from './tabs/StorageTabContent';
 import { DownloadTabContent } from './tabs/DownloadTabContent';
 import { AboutTabContent } from './tabs/AboutTabContent';
 import { OnboardingTabContent } from './tabs/OnboardingTabContent';
@@ -28,6 +29,7 @@ import {
   Cloud, 
   Sliders, 
   HardDrive, 
+  Database,
   Download, 
   Monitor, 
   GraduationCap, 
@@ -120,6 +122,12 @@ export const CategoryContent: React.FC<CategoryContentProps> = ({ activeTab }) =
           label: 'Google Drive',
           icon: HardDrive,
           component: <GoogleDriveTabContent />
+        },
+        {
+          id: 'storage',
+          label: 'Cloud Storage',
+          icon: Database,
+          component: <StorageTabContent />
         },
         {
           id: 'data',
