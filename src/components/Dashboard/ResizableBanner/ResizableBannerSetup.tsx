@@ -47,13 +47,13 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
   // Use page-specific banner URL if no prop is provided
   const effectiveSelectedImageUrl = selectedImageUrl || pageSelectedBannerUrl;
 
-  // Debug logging
+  // Debug logging - only log when actual URLs change
   React.useEffect(() => {
     // Development logging only
     if (import.meta.env.DEV) {
       console.log('ResizableBannerSetup: Banner URL changed');
     }
-  }, [selectedImageUrl, pageSelectedBannerUrl, effectiveSelectedImageUrl]);
+  }, [selectedImageUrl, pageSelectedBannerUrl]);
 
   // Banner positioning and sizing states - initialize from page settings
   const [bannerPosition, setBannerPosition] = useState(pageBannerPosition);
