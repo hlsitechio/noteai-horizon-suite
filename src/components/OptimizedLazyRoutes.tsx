@@ -7,6 +7,7 @@ import { Card } from './ui/card';
 import ComponentLibraryPage from '../pages/ComponentLibraryPage';
 import { DeviceRouter } from './DeviceRouter';
 import { PublicPageWrapper } from './PublicPageWrapper';
+import Landing from '../pages/public/Landing';
 
 // Lazy load components with error handling for missing chunks
 const lazyWithRetry = (importFn: () => Promise<any>) => {
@@ -42,7 +43,7 @@ const lazyWithRetry = (importFn: () => Promise<any>) => {
 };
 
 // PUBLIC PAGES
-const Landing = lazyWithRetry(() => import('../pages/public/Landing'));
+// Landing is imported directly to avoid loading animation on main entry point
 const Features = lazyWithRetry(() => import('../pages/public/Features'));
 const Pricing = lazyWithRetry(() => import('../pages/public/Pricing'));
 const About = lazyWithRetry(() => import('../pages/public/About'));
