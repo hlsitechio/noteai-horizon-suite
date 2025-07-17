@@ -15,6 +15,7 @@ import MarketingCTA from '@/components/Marketing/MarketingCTA';
 import SEOOptimizer from '@/components/Marketing/SEOOptimizer';
 import ContentHub from '@/components/Marketing/ContentHub';
 import TrustSignals from '@/components/Marketing/TrustSignals';
+import { DotsBackground } from '@/components/ui/DotsBackground';
 
 import MobileOptimizedCTA from '@/components/Mobile/MobileOptimizedCTA';
 import { LazyContentHub, LazySocialProof, LazyPricing } from '@/components/Performance/LazyComponents';
@@ -100,8 +101,11 @@ const Landing: React.FC = () => {
         className="min-h-screen bg-background relative overflow-hidden particle-bg"
         onMouseMove={(e) => setMousePosition({ x: e.clientX, y: e.clientY })}
       >
+        {/* Animated Dots Background */}
+        <DotsBackground variant="normal" />
+        
         {/* Smart gradient background */}
-        <div className="absolute inset-0 whimsical-gradient-radial" />
+        <div className="absolute inset-0 whimsical-gradient-radial opacity-50" />
         
         {/* Animated gradient overlay */}
         <div 
