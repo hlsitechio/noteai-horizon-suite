@@ -117,7 +117,7 @@
   ],
   "protocol_handlers": [
     {
-      "protocol": "noteai",
+      "protocol": "web+noteai",
       "url": "/?action=open&url=%s"
     }
   ],

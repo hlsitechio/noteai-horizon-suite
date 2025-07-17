@@ -145,6 +145,7 @@
 
 /* Glass morphism cards */
 .glass-card {
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   background: hsl(var(--glass-bg));
   border: 1px solid hsl(var(--glass-border));
@@ -1792,6 +1793,7 @@
   /* Holographic Cards */
   .card-holographic {
     background: var(--gradient-glass);
+    -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     border: 1px solid hsl(var(--primary) / 0.3);
     border-radius: 20px;

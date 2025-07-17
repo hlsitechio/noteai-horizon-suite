@@ -22,51 +22,32 @@ export const DotsBackground: React.FC<DotsBackgroundProps> = ({
       variantStyles[variant],
       className
     )}>
-      {/* Animated gradient waves */}
-      <div className="absolute inset-0 animate-pulse">
+      {/* Static gradient pattern - no animations for better performance */}
+      <div className="absolute inset-0">
         <div 
-          className="absolute inset-0 animate-wave-slow"
+          className="absolute inset-0"
           style={{
             backgroundImage: `
-              radial-gradient(circle at 25% 25%, hsl(280 70% 60% / 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 75% 25%, hsl(200 70% 60% / 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 25% 75%, hsl(160 70% 60% / 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 75% 75%, hsl(320 70% 60% / 0.15) 0%, transparent 50%)
+              radial-gradient(circle at 25% 25%, hsl(280 70% 60% / 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 75% 25%, hsl(200 70% 60% / 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 25% 75%, hsl(160 70% 60% / 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 75% 75%, hsl(320 70% 60% / 0.08) 0%, transparent 40%)
             `,
-            backgroundSize: '400% 400%',
-            animation: 'wave-motion 20s ease-in-out infinite'
+            backgroundSize: '400% 400%'
           }}
         />
       </div>
 
-      {/* Dots pattern */}
-      <div 
-        className="absolute inset-0 animate-dots-wave"
-        style={{
-          backgroundImage: `
-            radial-gradient(circle at 50% 50%, hsl(280 60% 70% / 0.4) 1px, transparent 1px),
-            radial-gradient(circle at 50% 50%, hsl(200 60% 70% / 0.3) 1px, transparent 1px),
-            radial-gradient(circle at 50% 50%, hsl(160 60% 70% / 0.3) 1px, transparent 1px)
-          `,
-          backgroundSize: '20px 20px, 30px 30px, 40px 40px',
-          backgroundPosition: '0 0, 10px 10px, 20px 20px',
-          animation: 'dots-float 15s linear infinite'
-        }}
-      />
-
-      {/* Wave effect overlay */}
+      {/* Static dots pattern */}
       <div 
         className="absolute inset-0"
         style={{
           backgroundImage: `
-            linear-gradient(45deg, hsl(280 70% 60% / 0.1) 25%, transparent 25%),
-            linear-gradient(-45deg, hsl(200 70% 60% / 0.1) 25%, transparent 25%),
-            linear-gradient(45deg, transparent 75%, hsl(160 70% 60% / 0.1) 75%),
-            linear-gradient(-45deg, transparent 75%, hsl(320 70% 60% / 0.1) 75%)
+            radial-gradient(circle at 50% 50%, hsl(280 60% 70% / 0.15) 1px, transparent 1px),
+            radial-gradient(circle at 50% 50%, hsl(200 60% 70% / 0.1) 1px, transparent 1px)
           `,
-          backgroundSize: '60px 60px',
-          backgroundPosition: '0 0, 0 30px, 30px -30px, -30px 0px',
-          animation: 'wave-pattern 25s ease-in-out infinite'
+          backgroundSize: '20px 20px, 30px 30px',
+          backgroundPosition: '0 0, 10px 10px'
         }}
       />
 
