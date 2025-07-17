@@ -1,14 +1,18 @@
-// Client-side WebAuthn/Passkey functions
+// Updated client with direct edge function calls instead of RPC
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/utils/logger';
 
 // Helper function to make API requests
 async function sendRequest(url: string, data?: any) {
+  const { data: { session } } = await supabase.auth.getSession();
+  const authHeader = session?.access_token ? `Bearer ${session.access_token}` : '';
+
   const response = await fetch(url, {
-    method: 'POST',
+    method: data ? 'POST' : 'GET',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': authHeader,
     },
     body: data ? JSON.stringify(data) : undefined,
   });
@@ -35,13 +39,13 @@ export async function createPasskey(): Promise<any> {
     logger.auth.info('Starting passkey registration for user:', user.id);
 
     // Step 1: Get registration options from server
-    const options = await sendRequest('/api/passkeys/register/start');
+    const options = await sendRequest('/functions/v1/passkey-register');
     
     // Step 2: Create passkey using WebAuthn API
     const credential = await startRegistration(options);
     
     // Step 3: Send credential to server for verification and storage
-    const newPasskey = await sendRequest('/api/passkeys/register/finish', credential);
+    const newPasskey = await sendRequest('/functions/v1/passkey-register', credential);
     
     logger.auth.info('Passkey registration successful');
     return newPasskey;
@@ -59,13 +63,13 @@ export async function authenticateWithPasskey(): Promise<{ verified: boolean }> 
     logger.auth.info('Starting passkey authentication');
 
     // Step 1: Get authentication options from server
-    const options = await sendRequest('/api/passkeys/authenticate/start');
+    const options = await sendRequest('/functions/v1/passkey-authenticate');
     
     // Step 2: Get assertion using WebAuthn API
     const assertion = await startAuthentication(options);
     
     // Step 3: Send assertion to server for verification
-    const result = await sendRequest('/api/passkeys/authenticate/finish', assertion);
+    const result = await sendRequest('/functions/v1/passkey-authenticate', assertion);
     
     logger.auth.info('Passkey authentication successful');
     return result;
@@ -87,17 +91,22 @@ export function isPasskeySupported(): boolean {
 }
 
 /**
- * Get user's existing passkeys
+ * Get user's existing passkeys using edge function
  */
 export async function getUserPasskeys(): Promise<any[]> {
   try {
-    // Use RPC call since webauthn schema isn't in generated types
-    const { data: credentials, error } = await supabase.rpc('get_user_passkeys');
+    const { data: { session } } = await supabase.auth.getSession();
+    const authHeader = session?.access_token ? `Bearer ${session.access_token}` : '';
 
-    if (error) {
-      throw error;
+    const response = await fetch('/functions/v1/passkey-manage', {
+      headers: {
+        'Authorization': authHeader,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch passkeys');
     }
-
+    const credentials = await response.json();
     return credentials || [];
   } catch (error) {
     logger.auth.error('Failed to fetch user passkeys:', error);
@@ -106,17 +115,24 @@ export async function getUserPasskeys(): Promise<any[]> {
 }
 
 /**
- * Delete a passkey
+ * Delete a passkey using edge function
  */
 export async function deletePasskey(credentialId: string): Promise<void> {
   try {
-    // Use RPC call since webauthn schema isn't in generated types
-    const { error } = await supabase.rpc('delete_user_passkey', { 
-      credential_id: credentialId 
+    const { data: { session } } = await supabase.auth.getSession();
+    const authHeader = session?.access_token ? `Bearer ${session.access_token}` : '';
+
+    const response = await fetch('/functions/v1/passkey-manage', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': authHeader,
+      },
+      body: JSON.stringify({ credentialId }),
     });
 
-    if (error) {
-      throw error;
+    if (!response.ok) {
+      throw new Error('Failed to delete passkey');
     }
 
     logger.auth.info('Passkey deleted successfully');

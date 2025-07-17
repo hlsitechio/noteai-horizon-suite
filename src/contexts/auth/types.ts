@@ -18,6 +18,8 @@ export interface AuthContextType {
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   authError?: string | null;
+  showPasskeySetup: boolean;
+  setShowPasskeySetup: (show: boolean) => void;
 }
 
 export interface AuthState {

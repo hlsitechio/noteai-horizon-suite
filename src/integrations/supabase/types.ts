@@ -1803,6 +1803,23 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      delete_user_passkey: {
+        Args: { credential_id: string }
+        Returns: undefined
+      }
+      get_user_passkeys: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          friendly_name: string
+          credential_type: "public-key"
+          device_type: "single_device" | "multi_device"
+          backup_state: "not_backed_up" | "backed_up"
+          created_at: string
+          updated_at: string
+          last_used_at: string
+        }[]
+      }
     }
     Enums: {
       user_role_type:
