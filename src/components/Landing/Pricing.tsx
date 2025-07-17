@@ -61,9 +61,7 @@ const Pricing = () => {
         'Everything in Pro',
         'Project Realms',
         'Team collaboration',
-        '500 GB storage',
         'Custom AI models',
-        'API access',
         'Enterprise security',
         'Dedicated support'
       ],
