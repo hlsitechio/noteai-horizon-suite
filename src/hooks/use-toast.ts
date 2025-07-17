@@ -169,6 +169,15 @@ function toast({ ...props }: Toast) {
 }
 
 function useToast() {
+  if (!React || !React.useState) {
+    console.error('React is not available in useToast');
+    return {
+      toasts: [],
+      toast: () => ({ id: '', dismiss: () => {}, update: () => {} }),
+      dismiss: () => {},
+    };
+  }
+  
   const [state, setState] = React.useState<State>(memoryState)
 
   React.useEffect(() => {
