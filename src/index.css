@@ -180,8 +180,8 @@
     hsl(var(--gradient-accent))
   );
   background-size: 400% 400%;
-  background-clip: text;
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: gradient-shift 8s ease infinite;
 }
@@ -1725,8 +1725,8 @@
   .text-holographic {
     background: var(--gradient-holographic);
     background-size: 300% 300%;
-    background-clip: text;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: holographic-shift 4s ease-in-out infinite;
     text-shadow: 0 0 30px hsl(280 100% 70% / 0.5);
