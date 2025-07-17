@@ -530,17 +530,17 @@ export const LandingFeatureShowcase: React.FC = () => {
                   onClick={() => setActiveCategory(key as typeof activeCategory)}
                   onMouseEnter={() => setHoveredFeature(key)}
                   className={cn(
-                    "relative flex items-center gap-2 px-6 py-3 rounded-md text-sm font-medium transition-all duration-300 border",
+                    "relative flex items-center gap-2 px-6 py-3 rounded-md text-sm font-medium transition-all duration-300 border bg-transparent",
                     activeCategory === key 
-                      ? "text-white font-semibold bg-transparent border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.4)]" 
-                      : "text-muted-foreground hover:text-white bg-transparent border-transparent hover:border-white/20 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                      ? "text-white font-semibold border-white/20" 
+                      : "text-muted-foreground hover:text-white border-transparent hover:border-white/10"
                   )}
                 >
-                  {/* Active glow effect */}
+                  {/* Active glow effect - only external glow, no background */}
                   {activeCategory === key && (
                     <motion.div
                       layoutId="active-category-glow"
-                      className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-600/10 rounded-md border border-cyan-500/30"
+                      className="absolute inset-0 rounded-md border border-white/10"
                       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     />
                   )}
@@ -548,7 +548,7 @@ export const LandingFeatureShowcase: React.FC = () => {
                   {hoveredFeature === key && activeCategory !== key && (
                     <motion.div
                       layoutId="hover-category-glow"
-                      className="absolute inset-0 bg-white/5 rounded-md border border-white/20"
+                      className="absolute inset-0 bg-white/5 rounded-md border border-white/10"
                       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     />
                   )}
@@ -560,11 +560,6 @@ export const LandingFeatureShowcase: React.FC = () => {
                     {label}
                   </span>
                 </motion.button>
-                
-                {/* External glow effect for active button */}
-                {activeCategory === key && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-md blur-lg opacity-20 -z-10" />
-                )}
               </div>
             ))}
           </div>
