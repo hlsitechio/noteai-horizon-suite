@@ -90,7 +90,7 @@ export const WavyDotsBackground: React.FC<WavyDotsBackgroundProps> = ({
           y: layer2Y,
           transform: useTransform(
             [waveAmplitude, waveFrequency, mouseX, mouseY],
-            ([amp, freq, mx, my]) => 
+            ([amp, freq, mx, my]: [number, number, number, number]) => 
               `perspective(1000px) rotateX(${(my - 500) * 0.02}deg) rotateY(${(mx - 500) * 0.02}deg) translateZ(-100px)`
           ),
         }}
@@ -117,7 +117,7 @@ export const WavyDotsBackground: React.FC<WavyDotsBackgroundProps> = ({
           y: layer1Y,
           transform: useTransform(
             [waveAmplitude, waveFrequency, mouseX, mouseY],
-            ([amp, freq, mx, my]) => {
+            ([amp, freq, mx, my]: [number, number, number, number]) => {
               const waveX = Math.sin((my * freq) / 100) * amp;
               const waveY = Math.cos((mx * freq) / 100) * amp;
               return `translate(${waveX}px, ${waveY}px) perspective(800px) rotateX(${(my - 500) * 0.01}deg) rotateY(${(mx - 500) * 0.01}deg)`;
