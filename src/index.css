@@ -7,6 +7,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Browser compatibility fixes */
+@layer base {
+  html,
+  :host {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%; /* Standard property for modern browsers */
+  }
+}
+
 /* ========================================
    SMOOTH THEME TRANSITION SYSTEM
    ======================================== */
