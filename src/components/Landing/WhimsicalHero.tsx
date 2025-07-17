@@ -31,12 +31,11 @@ const WhimsicalHero = () => {
           delay: 0.3
         }} className="space-y-6">
             <h1 className="text-3xl lg:text-5xl font-bold tracking-tight">
-              The all-in-one{' '}
-              <span className="gradient-text">AI-powered workspace</span>{' '}
-              you'll love
+              It's Not Just a Workspace.{' '}
+              <span className="gradient-text">It's a Vibe OS with AI Brains.</span>
             </h1>
             <p className="text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto">
-              Think it. Plan it. Build it. Without switching apps. Enhanced with AI intelligence.
+              Because you deserve tools as smart as your ideas.
             </p>
           </motion.div>
 
