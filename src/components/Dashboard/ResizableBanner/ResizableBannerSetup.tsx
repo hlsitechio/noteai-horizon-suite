@@ -216,11 +216,11 @@ const ResizableBannerSetup: React.FC<ResizableBannerSetupProps> = ({
         // Show Selected Banner Image - Full Size
         <>
               <motion.div className="absolute inset-0 w-full h-full" variants={itemVariants}>
-                <div ref={bannerRef} className="w-full relative transition-all duration-200 ease-out" style={{
+                <div ref={bannerRef} className="w-full relative" style={{
               height: `${bannerHeight}vh`,
-              // Dynamic height based on drag
               transform: `translate(${bannerPosition.x}px, ${bannerPosition.y}px)`,
-              cursor: isDragging ? 'grabbing' : 'grab'
+              cursor: isDragging ? 'grabbing' : 'grab',
+              transition: isDragging ? 'none' : 'transform 0.2s ease-out'
             }}>
                   <img src={effectiveSelectedImageUrl} alt="Selected banner" className={`w-full h-full ${isMobile ? 'object-cover object-center' : 'object-cover'}`} />
                 </div>
