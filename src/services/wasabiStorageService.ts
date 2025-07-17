@@ -41,6 +41,52 @@ export class WasabiStorageService {
     return { isValid: true };
   }
 
+  // Initialize user's Wasabi storage on first use
+  static async initializeUserStorage(): Promise<{ success: boolean; bucketName?: string; error?: string }> {
+    try {
+      const response = await supabase.functions.invoke('wasabi-storage', {
+        body: JSON.stringify({
+          action: 'create-bucket'
+        })
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to initialize user storage:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      };
+    }
+  }
+
+  // Check user's storage quota
+  static async checkStorageQuota(): Promise<{ success: boolean; quota?: any; error?: string }> {
+    try {
+      const response = await supabase.functions.invoke('wasabi-storage', {
+        body: JSON.stringify({
+          action: 'check-quota'
+        })
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Failed to check storage quota:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      };
+    }
+  }
+
   static async uploadFile(
     file: File, 
     bucketPath: string = 'uploads',

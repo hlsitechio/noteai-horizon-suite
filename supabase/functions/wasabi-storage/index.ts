@@ -1,6 +1,5 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,266 +13,462 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-    )
-
-    // Get authorization header
+    // Get the Authorization header from the request
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: 'No authorization header' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
-      )
+      throw new Error('No authorization header')
     }
 
-    // Get user from auth header
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    )
+    // Create Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabase = createClient(supabaseUrl, supabaseKey)
 
+    // Get the user from the JWT token
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    
     if (authError || !user) {
-      console.error('[wasabi-storage] Auth error:', authError)
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
-      )
+      throw new Error('Invalid authorization token')
     }
 
-    const { action, fileData, fileName, fileType, bucketPath } = await req.json()
+    console.log('Authenticated user:', user.id)
 
-    const wasabiConfig = {
-      accessKeyId: Deno.env.get('WASABI_ACCESS_KEY_ID'),
-      secretAccessKey: Deno.env.get('WASABI_SECRET_ACCESS_KEY'),
-      endpoint: Deno.env.get('WASABI_ENDPOINT'),
-      bucketName: Deno.env.get('WASABI_BUCKET_NAME'),
+    const requestBody = await req.json()
+    const { action, fileData, fileName, fileType, bucketPath } = requestBody
+
+    // Get Wasabi configuration
+    const wasabiAccessKeyId = Deno.env.get('WASABI_ACCESS_KEY_ID')!
+    const wasabiSecretAccessKey = Deno.env.get('WASABI_SECRET_ACCESS_KEY')!
+    const wasabiEndpoint = Deno.env.get('WASABI_ENDPOINT')!
+    const wasabiRegion = Deno.env.get('WASABI_REGION') || 'us-east-1'
+
+    if (!wasabiAccessKeyId || !wasabiSecretAccessKey || !wasabiEndpoint) {
+      throw new Error('Missing Wasabi configuration')
     }
 
-    if (!wasabiConfig.accessKeyId || !wasabiConfig.secretAccessKey || !wasabiConfig.endpoint || !wasabiConfig.bucketName) {
-      return new Response(
-        JSON.stringify({ error: 'Wasabi configuration missing' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      )
+    console.log('Wasabi config loaded, endpoint:', wasabiEndpoint)
+
+    // User-specific bucket name
+    const userBucketName = `user-${user.id}-storage`
+
+    if (action === 'create-bucket') {
+      console.log('Creating user bucket:', userBucketName)
+      
+      try {
+        const bucketCreated = await createWasabiBucket(userBucketName, wasabiAccessKeyId, wasabiSecretAccessKey, wasabiEndpoint, wasabiRegion)
+        
+        if (bucketCreated) {
+          // Initialize storage quota tracking
+          const { error: quotaError } = await supabase
+            .from('user_storage_quotas')
+            .upsert({
+              user_id: user.id,
+              total_quota_mb: 1024, // 1GB default quota
+              used_storage_mb: 0,
+              bucket_name: userBucketName
+            })
+
+          if (quotaError) {
+            console.error('Failed to initialize storage quota:', quotaError)
+          }
+
+          return new Response(JSON.stringify({
+            success: true,
+            bucketName: userBucketName,
+            message: 'User bucket created successfully'
+          }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          })
+        } else {
+          throw new Error('Failed to create bucket')
+        }
+      } catch (error) {
+        console.error('Bucket creation failed:', error)
+        return new Response(JSON.stringify({
+          success: false,
+          error: error.message
+        }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
     }
 
-    console.log(`[wasabi-storage] Processing ${action} for user ${user.id}`)
+    if (action === 'check-quota') {
+      const { data: quota } = await supabase
+        .from('user_storage_quotas')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      return new Response(JSON.stringify({
+        success: true,
+        quota: quota || { total_quota_mb: 1024, used_storage_mb: 0 }
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
     if (action === 'upload') {
       if (!fileData || !fileName) {
-        return new Response(
-          JSON.stringify({ error: 'File data and name are required for upload' }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-        )
+        throw new Error('Missing file data or filename')
       }
 
-      // Convert base64 to blob
-      let fileBlob: Blob
-      try {
-        if (fileData.startsWith('data:')) {
-          const base64Data = fileData.split(',')[1]
-          const byteCharacters = atob(base64Data)
-          const byteNumbers = new Array(byteCharacters.length)
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i)
-          }
-          const byteArray = new Uint8Array(byteNumbers)
-          fileBlob = new Blob([byteArray], { type: fileType || 'application/octet-stream' })
-        } else {
-          const byteCharacters = atob(fileData)
-          const byteNumbers = new Array(byteCharacters.length)
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i)
-          }
-          const byteArray = new Uint8Array(byteNumbers)
-          fileBlob = new Blob([byteArray], { type: fileType || 'application/octet-stream' })
-        }
-      } catch (decodeError) {
-        console.error('[wasabi-storage] Error decoding file data:', decodeError)
-        return new Response(
-          JSON.stringify({ error: 'Invalid file data format' }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-        )
+      console.log('Processing upload for file:', fileName)
+
+      // Check storage quota first
+      const { data: quota } = await supabase
+        .from('user_storage_quotas')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      const fileBuffer = Uint8Array.from(atob(fileData), c => c.charCodeAt(0))
+      const fileSizeMB = fileBuffer.length / (1024 * 1024)
+      
+      if (quota && (quota.used_storage_mb + fileSizeMB) > quota.total_quota_mb) {
+        throw new Error(`Storage quota exceeded. Used: ${quota.used_storage_mb.toFixed(2)}MB, Available: ${quota.total_quota_mb}MB, Trying to upload: ${fileSizeMB.toFixed(2)}MB`)
       }
 
-      // Create unique file path
-      const timestamp = Date.now()
-      const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_')
-      const filePath = `${user.id}/${bucketPath || 'uploads'}/${timestamp}-${sanitizedFileName}`
+      // Decode base64 file data
+      const blob = new Blob([fileBuffer], { type: fileType || 'application/octet-stream' })
 
-      try {
-        // Create AWS signature for upload
-        const date = new Date()
-        const dateString = date.toISOString().slice(0, 10).replace(/-/g, '')
-        const amzDate = date.toISOString().replace(/[:-]|\.\d{3}/g, '')
-        
-        const region = 'us-east-1' // Wasabi uses us-east-1 for most endpoints
-        const service = 's3'
-        
-        // Create canonical request
-        const method = 'PUT'
-        const canonicalUri = `/${filePath}`
-        const canonicalQueryString = ''
-        const canonicalHeaders = `host:${wasabiConfig.endpoint.replace('https://', '')}\nx-amz-content-sha256:UNSIGNED-PAYLOAD\nx-amz-date:${amzDate}\n`
-        const signedHeaders = 'host;x-amz-content-sha256;x-amz-date'
-        const payloadHash = 'UNSIGNED-PAYLOAD'
-        
-        const canonicalRequest = `${method}\n${canonicalUri}\n${canonicalQueryString}\n${canonicalHeaders}\n${signedHeaders}\n${payloadHash}`
-        
-        // Create string to sign
-        const algorithm = 'AWS4-HMAC-SHA256'
-        const credentialScope = `${dateString}/${region}/${service}/aws4_request`
-        const stringToSign = `${algorithm}\n${amzDate}\n${credentialScope}\n${await sha256(canonicalRequest)}`
-        
-        // Calculate signature
-        const signingKey = await getSignatureKey(wasabiConfig.secretAccessKey!, dateString, region, service)
-        const signature = await hmacSha256(signingKey, stringToSign)
-        
-        // Create authorization header
-        const authorizationHeader = `${algorithm} Credential=${wasabiConfig.accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`
-        
-        // Upload to Wasabi
-        const uploadResponse = await fetch(`${wasabiConfig.endpoint}/${wasabiConfig.bucketName}/${filePath}`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': authorizationHeader,
-            'x-amz-content-sha256': payloadHash,
-            'x-amz-date': amzDate,
-            'Content-Type': fileType || 'application/octet-stream'
-          },
-          body: fileBlob
+      // Create a unique file path
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+      const uniqueFileName = `${timestamp}-${fileName}`
+      const fullPath = bucketPath ? `${bucketPath}/${uniqueFileName}` : uniqueFileName
+
+      console.log('Full path for upload:', fullPath)
+
+      // Upload to user-specific bucket
+      const uploadResult = await uploadToWasabi(
+        userBucketName,
+        fullPath,
+        blob,
+        fileType || 'application/octet-stream',
+        wasabiAccessKeyId,
+        wasabiSecretAccessKey,
+        wasabiEndpoint,
+        wasabiRegion
+      )
+
+      if (!uploadResult.success) {
+        throw new Error(uploadResult.error)
+      }
+
+      console.log('File uploaded successfully')
+
+      const fileUrl = `${wasabiEndpoint}/${userBucketName}/${fullPath}`
+
+      // Save file metadata to Supabase
+      const { error: insertError } = await supabase
+        .from('user_gallery')
+        .insert({
+          user_id: user.id,
+          file_name: uniqueFileName,
+          file_url: fileUrl,
+          file_type: fileType || 'application/octet-stream',
+          file_size: blob.size,
+          storage_path: fullPath
         })
 
-        if (!uploadResponse.ok) {
-          const errorText = await uploadResponse.text()
-          console.error('[wasabi-storage] Upload failed:', errorText)
-          throw new Error(`Upload failed: ${uploadResponse.status} ${uploadResponse.statusText}`)
-        }
-
-        const publicUrl = `${wasabiConfig.endpoint}/${wasabiConfig.bucketName}/${filePath}`
-        
-        console.log(`[wasabi-storage] File uploaded successfully: ${publicUrl}`)
-
-        // Save to user gallery for tracking
-        try {
-          await supabaseClient
-            .from('user_gallery')
-            .insert({
-              user_id: user.id,
-              file_name: fileName,
-              file_url: publicUrl,
-              storage_path: filePath,
-              file_type: fileType || 'application/octet-stream',
-              file_size: fileBlob.size,
-              title: `Wasabi Upload: ${fileName}`,
-              description: `File uploaded to Wasabi cloud storage`,
-              tags: ['wasabi', 'cloud-storage', bucketPath || 'uploads']
-            })
-
-          console.log('[wasabi-storage] File saved to gallery')
-        } catch (galleryError) {
-          console.warn('[wasabi-storage] Failed to save to gallery:', galleryError)
-        }
-
-        return new Response(
-          JSON.stringify({ 
-            success: true,
-            url: publicUrl,
-            path: filePath,
-            fileName: fileName,
-            fileType: fileType
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-
-      } catch (uploadError) {
-        console.error('[wasabi-storage] Upload error:', uploadError)
-        return new Response(
-          JSON.stringify({ error: 'Failed to upload to Wasabi', details: uploadError.message }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-        )
+      if (insertError) {
+        console.error('Failed to save metadata:', insertError)
+        throw new Error(`Failed to save file metadata: ${insertError.message}`)
       }
+
+      // Update storage quota
+      if (quota) {
+        const { error: quotaUpdateError } = await supabase
+          .from('user_storage_quotas')
+          .update({
+            used_storage_mb: quota.used_storage_mb + fileSizeMB
+          })
+          .eq('user_id', user.id)
+
+        if (quotaUpdateError) {
+          console.error('Failed to update storage quota:', quotaUpdateError)
+        }
+      }
+
+      console.log('Metadata saved successfully')
+
+      return new Response(JSON.stringify({
+        success: true,
+        url: fileUrl,
+        path: fullPath,
+        fileName: uniqueFileName,
+        fileType: fileType || 'application/octet-stream',
+        quotaUsed: quota ? quota.used_storage_mb + fileSizeMB : fileSizeMB
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+
+    } else if (action === 'list') {
+      console.log('Listing files from user bucket:', userBucketName)
+      
+      const listResult = await listWasabiFiles(
+        userBucketName,
+        bucketPath || '',
+        wasabiAccessKeyId,
+        wasabiSecretAccessKey,
+        wasabiEndpoint,
+        wasabiRegion
+      )
+
+      if (!listResult.success) {
+        throw new Error(listResult.error)
+      }
+
+      console.log('Files listed successfully')
+
+      return new Response(JSON.stringify({
+        success: true,
+        data: listResult.data
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
-    if (action === 'list') {
-      try {
-        const prefix = `${user.id}/${bucketPath || ''}`
-        
-        // Create AWS signature for list operation
-        const date = new Date()
-        const dateString = date.toISOString().slice(0, 10).replace(/-/g, '')
-        const amzDate = date.toISOString().replace(/[:-]|\.\d{3}/g, '')
-        
-        const region = 'us-east-1'
-        const service = 's3'
-        
-        const queryParams = new URLSearchParams({
-          'list-type': '2',
-          'prefix': prefix
-        })
-        
-        const canonicalRequest = `GET\n/\n${queryParams.toString()}\nhost:${wasabiConfig.endpoint.replace('https://', '')}\nx-amz-content-sha256:UNSIGNED-PAYLOAD\nx-amz-date:${amzDate}\n\nhost;x-amz-content-sha256;x-amz-date\nUNSIGNED-PAYLOAD`
-        
-        const algorithm = 'AWS4-HMAC-SHA256'
-        const credentialScope = `${dateString}/${region}/${service}/aws4_request`
-        const stringToSign = `${algorithm}\n${amzDate}\n${credentialScope}\n${await sha256(canonicalRequest)}`
-        
-        const signingKey = await getSignatureKey(wasabiConfig.secretAccessKey!, dateString, region, service)
-        const signature = await hmacSha256(signingKey, stringToSign)
-        
-        const authorizationHeader = `${algorithm} Credential=${wasabiConfig.accessKeyId}/${credentialScope}, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=${signature}`
-        
-        const listResponse = await fetch(`${wasabiConfig.endpoint}/${wasabiConfig.bucketName}?${queryParams.toString()}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': authorizationHeader,
-            'x-amz-content-sha256': 'UNSIGNED-PAYLOAD',
-            'x-amz-date': amzDate
-          }
-        })
-
-        if (!listResponse.ok) {
-          throw new Error(`List failed: ${listResponse.status}`)
-        }
-
-        const listXml = await listResponse.text()
-        console.log('[wasabi-storage] Files listed successfully')
-
-        return new Response(
-          JSON.stringify({ 
-            success: true,
-            files: listXml
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-
-      } catch (listError) {
-        console.error('[wasabi-storage] List error:', listError)
-        return new Response(
-          JSON.stringify({ error: 'Failed to list files', details: listError.message }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-        )
-      }
-    }
-
-    return new Response(
-      JSON.stringify({ error: 'Invalid action' }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-    )
+    throw new Error('Invalid action')
 
   } catch (error) {
-    console.error('[wasabi-storage] Unexpected error:', error)
-    return new Response(
-      JSON.stringify({ 
-        error: 'Internal server error', 
-        details: error.message 
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-    )
+    console.error('Error:', error.message)
+    return new Response(JSON.stringify({
+      success: false,
+      error: error.message
+    }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
 })
 
-// Helper functions for AWS signature
+// Create Wasabi bucket with proper configuration
+async function createWasabiBucket(
+  bucketName: string,
+  accessKeyId: string,
+  secretAccessKey: string,
+  endpoint: string,
+  region: string
+): Promise<boolean> {
+  try {
+    console.log(`Creating bucket: ${bucketName}`)
+    
+    const host = new URL(endpoint).hostname
+    const now = new Date()
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '')
+    const timeStr = now.toISOString().slice(0, 19).replace(/[-:]/g, '') + 'Z'
+    
+    const method = 'PUT'
+    const canonicalUri = `/${bucketName}`
+    const canonicalQueryString = ''
+    
+    const canonicalHeaders = [
+      `host:${host}`,
+      `x-amz-date:${timeStr}`
+    ].join('\n') + '\n'
+    
+    const signedHeaders = 'host;x-amz-date'
+    const payloadHash = await sha256('')
+    
+    const canonicalRequest = [
+      method,
+      canonicalUri,
+      canonicalQueryString,
+      canonicalHeaders,
+      signedHeaders,
+      payloadHash
+    ].join('\n')
+
+    const credentialScope = `${dateStr}/${region}/s3/aws4_request`
+    const stringToSign = [
+      'AWS4-HMAC-SHA256',
+      timeStr,
+      credentialScope,
+      await sha256(canonicalRequest)
+    ].join('\n')
+
+    const signingKey = await getSignatureKey(secretAccessKey, dateStr, region, 's3')
+    const signature = await hmacSha256(signingKey, stringToSign)
+    const authorization = `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`
+
+    const createUrl = `${endpoint}/${bucketName}`
+    
+    const response = await fetch(createUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': authorization,
+        'X-Amz-Date': timeStr,
+        'Content-Length': '0'
+      }
+    })
+
+    if (response.ok || response.status === 409) { // 409 means bucket already exists
+      console.log('Bucket created or already exists')
+      return true
+    } else {
+      const errorText = await response.text()
+      console.error('Bucket creation failed:', response.status, errorText)
+      return false
+    }
+  } catch (error) {
+    console.error('Error creating bucket:', error)
+    return false
+  }
+}
+
+// Upload file to Wasabi
+async function uploadToWasabi(
+  bucketName: string,
+  filePath: string,
+  blob: Blob,
+  contentType: string,
+  accessKeyId: string,
+  secretAccessKey: string,
+  endpoint: string,
+  region: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const host = new URL(endpoint).hostname
+    const now = new Date()
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '')
+    const timeStr = now.toISOString().slice(0, 19).replace(/[-:]/g, '') + 'Z'
+    
+    const method = 'PUT'
+    const canonicalUri = `/${bucketName}/${filePath}`
+    const canonicalQueryString = ''
+    
+    const canonicalHeaders = [
+      `host:${host}`,
+      `x-amz-content-sha256:UNSIGNED-PAYLOAD`,
+      `x-amz-date:${timeStr}`
+    ].join('\n') + '\n'
+    
+    const signedHeaders = 'host;x-amz-content-sha256;x-amz-date'
+    const payloadHash = 'UNSIGNED-PAYLOAD'
+    
+    const canonicalRequest = [
+      method,
+      canonicalUri,
+      canonicalQueryString,
+      canonicalHeaders,
+      signedHeaders,
+      payloadHash
+    ].join('\n')
+
+    const credentialScope = `${dateStr}/${region}/s3/aws4_request`
+    const stringToSign = [
+      'AWS4-HMAC-SHA256',
+      timeStr,
+      credentialScope,
+      await sha256(canonicalRequest)
+    ].join('\n')
+
+    const signingKey = await getSignatureKey(secretAccessKey, dateStr, region, 's3')
+    const signature = await hmacSha256(signingKey, stringToSign)
+    const authorization = `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`
+
+    const uploadUrl = `${endpoint}/${bucketName}/${filePath}`
+    
+    const uploadResponse = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': authorization,
+        'X-Amz-Date': timeStr,
+        'X-Amz-Content-Sha256': payloadHash,
+        'Content-Type': contentType
+      },
+      body: blob
+    })
+
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text()
+      console.error('Upload failed:', uploadResponse.status, errorText)
+      return { success: false, error: `Upload failed: ${uploadResponse.status} ${errorText}` }
+    }
+
+    return { success: true }
+  } catch (error) {
+    console.error('Upload error:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+// List files from Wasabi bucket
+async function listWasabiFiles(
+  bucketName: string,
+  prefix: string,
+  accessKeyId: string,
+  secretAccessKey: string,
+  endpoint: string,
+  region: string
+): Promise<{ success: boolean; data?: string; error?: string }> {
+  try {
+    const host = new URL(endpoint).hostname
+    const now = new Date()
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '')
+    const timeStr = now.toISOString().slice(0, 19).replace(/[-:]/g, '') + 'Z'
+    
+    const method = 'GET'
+    const canonicalUri = `/${bucketName}/`
+    const canonicalQueryString = prefix ? `prefix=${encodeURIComponent(prefix)}` : ''
+    
+    const canonicalHeaders = [
+      `host:${host}`,
+      `x-amz-date:${timeStr}`
+    ].join('\n') + '\n'
+    
+    const signedHeaders = 'host;x-amz-date'
+    const payloadHash = await sha256('')
+    
+    const canonicalRequest = [
+      method,
+      canonicalUri,
+      canonicalQueryString,
+      canonicalHeaders,
+      signedHeaders,
+      payloadHash
+    ].join('\n')
+
+    const credentialScope = `${dateStr}/${region}/s3/aws4_request`
+    const stringToSign = [
+      'AWS4-HMAC-SHA256',
+      timeStr,
+      credentialScope,
+      await sha256(canonicalRequest)
+    ].join('\n')
+
+    const signingKey = await getSignatureKey(secretAccessKey, dateStr, region, 's3')
+    const signature = await hmacSha256(signingKey, stringToSign)
+    const authorization = `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`
+
+    const listUrl = `${endpoint}/${bucketName}/${canonicalQueryString ? '?' + canonicalQueryString : ''}`
+    
+    const listResponse = await fetch(listUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': authorization,
+        'X-Amz-Date': timeStr
+      }
+    })
+
+    if (!listResponse.ok) {
+      const errorText = await listResponse.text()
+      console.error('List failed:', listResponse.status, errorText)
+      return { success: false, error: `Failed to list files: ${listResponse.status} ${errorText}` }
+    }
+
+    const xmlData = await listResponse.text()
+    return { success: true, data: xmlData }
+  } catch (error) {
+    console.error('List error:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+// Helper functions for AWS Signature Version 4
 async function sha256(message: string): Promise<string> {
   const msgBuffer = new TextEncoder().encode(message)
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer)
@@ -291,8 +486,8 @@ async function hmacSha256(key: ArrayBuffer, message: string): Promise<string> {
   )
   
   const signature = await crypto.subtle.sign('HMAC', cryptoKey, new TextEncoder().encode(message))
-  const hashArray = Array.from(new Uint8Array(signature))
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  const signatureArray = Array.from(new Uint8Array(signature))
+  return signatureArray.map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
 async function getSignatureKey(key: string, dateStamp: string, regionName: string, serviceName: string): Promise<ArrayBuffer> {

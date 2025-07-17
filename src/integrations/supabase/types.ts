@@ -1794,6 +1794,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_storage_quotas: {
+        Row: {
+          bucket_name: string
+          created_at: string | null
+          id: string
+          last_quota_check: string | null
+          total_quota_mb: number
+          updated_at: string | null
+          used_storage_mb: number
+          user_id: string
+        }
+        Insert: {
+          bucket_name: string
+          created_at?: string | null
+          id?: string
+          last_quota_check?: string | null
+          total_quota_mb?: number
+          updated_at?: string | null
+          used_storage_mb?: number
+          user_id: string
+        }
+        Update: {
+          bucket_name?: string
+          created_at?: string | null
+          id?: string
+          last_quota_check?: string | null
+          total_quota_mb?: number
+          updated_at?: string | null
+          used_storage_mb?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

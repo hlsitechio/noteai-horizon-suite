@@ -79,7 +79,11 @@ serve(async (req) => {
       }
     }
 
-    // 3. Initialize default dashboard settings
+    // 3. Create user-specific Wasabi bucket and initialize storage quota
+    const wasabiInitialized = await initializeWasabiStorage(user.id, supabase);
+    console.log('Wasabi storage initialization:', wasabiInitialized ? 'Success' : 'Failed');
+
+    // 4. Initialize default dashboard settings
     const { error: dashboardError } = await supabase
       .from('dashboard_settings')
       .upsert({
@@ -101,7 +105,7 @@ serve(async (req) => {
       console.log('Dashboard settings initialized');
     }
 
-    // 4. Create default user preferences
+    // 5. Create default user preferences
     const { error: preferencesError } = await supabase
       .from('user_preferences')
       .upsert({
@@ -123,7 +127,7 @@ serve(async (req) => {
       console.log('User preferences initialized');
     }
 
-    // 5. Create a default "Getting Started" folder
+    // 6. Create a default "Getting Started" folder
     const { error: folderError } = await supabase
       .from('folders')
       .insert({
@@ -138,7 +142,7 @@ serve(async (req) => {
       console.log('Default folder created');
     }
 
-    // 6. Create a welcome note
+    // 7. Create a welcome note
     const { error: noteError } = await supabase
       .from('notes_v2')
       .insert({
@@ -150,6 +154,7 @@ Congratulations! Your dashboard has been successfully initialized. Here's what h
 
 ## 🗂️ Storage & Organization
 - **Personal storage buckets** for your banners and attachments
+- **Personal Wasabi cloud storage** with 1GB quota for file uploads
 - **Default folder structure** to keep your notes organized
 - **Smart tagging system** to help you find content quickly
 
@@ -163,12 +168,14 @@ Congratulations! Your dashboard has been successfully initialized. Here's what h
 2. **Customize your banner** in the layout settings
 3. **Explore AI features** for smart note assistance
 4. **Set up folders** to organize your content
+5. **Upload files** to your personal cloud storage
 
 ## 💡 Pro Tips
 - Use the search function to quickly find any note
 - Try the AI-powered suggestions for better organization
 - Customize your dashboard layout to fit your needs
 - Enable notifications for important reminders
+- Your cloud storage quota resets monthly
 
 Ready to boost your productivity? Start creating amazing content!`,
         content_type: 'rich_text',
@@ -181,7 +188,7 @@ Ready to boost your productivity? Start creating amazing content!`,
       console.log('Welcome note created');
     }
 
-    // 7. Initialize user activity tracking
+    // 8. Initialize user activity tracking
     const { error: activityError } = await supabase
       .from('user_activities')
       .insert({
@@ -192,6 +199,7 @@ Ready to boost your productivity? Start creating amazing content!`,
         metadata: {
           timestamp: new Date().toISOString(),
           buckets_created: [bannerBucketName, attachmentsBucketName],
+          wasabi_storage_initialized: wasabiInitialized,
           settings_initialized: true
         }
       });
@@ -206,6 +214,7 @@ Ready to boost your productivity? Start creating amazing content!`,
       data: {
         user_id: user.id,
         buckets_created: [bannerBucketName, attachmentsBucketName],
+        wasabi_storage_initialized: wasabiInitialized,
         settings_initialized: true,
         welcome_note_created: !noteError,
         timestamp: new Date().toISOString()
@@ -231,3 +240,172 @@ Ready to boost your productivity? Start creating amazing content!`,
     });
   }
 });
+
+// Initialize Wasabi storage for user
+async function initializeWasabiStorage(userId: string, supabase: any): Promise<boolean> {
+  try {
+    // Get Wasabi configuration
+    const wasabiAccessKeyId = Deno.env.get('WASABI_ACCESS_KEY_ID');
+    const wasabiSecretAccessKey = Deno.env.get('WASABI_SECRET_ACCESS_KEY');
+    const wasabiEndpoint = Deno.env.get('WASABI_ENDPOINT');
+    const wasabiRegion = Deno.env.get('WASABI_REGION') || 'us-east-1';
+
+    if (!wasabiAccessKeyId || !wasabiSecretAccessKey || !wasabiEndpoint) {
+      console.error('Missing Wasabi configuration');
+      return false;
+    }
+
+    const userBucketName = `user-${userId}-storage`;
+
+    // Create Wasabi bucket
+    const bucketCreated = await createWasabiBucket(
+      userBucketName,
+      wasabiAccessKeyId,
+      wasabiSecretAccessKey,
+      wasabiEndpoint,
+      wasabiRegion
+    );
+
+    if (!bucketCreated) {
+      console.error('Failed to create Wasabi bucket');
+      return false;
+    }
+
+    // Initialize storage quota tracking
+    const { error: quotaError } = await supabase
+      .from('user_storage_quotas')
+      .upsert({
+        user_id: userId,
+        total_quota_mb: 1024, // 1GB default quota
+        used_storage_mb: 0,
+        bucket_name: userBucketName
+      });
+
+    if (quotaError) {
+      console.error('Failed to initialize storage quota:', quotaError);
+      return false;
+    }
+
+    console.log(`Wasabi storage initialized for user: ${userId}, bucket: ${userBucketName}`);
+    return true;
+  } catch (error) {
+    console.error('Error initializing Wasabi storage:', error);
+    return false;
+  }
+}
+
+// Create Wasabi bucket with proper configuration
+async function createWasabiBucket(
+  bucketName: string,
+  accessKeyId: string,
+  secretAccessKey: string,
+  endpoint: string,
+  region: string
+): Promise<boolean> {
+  try {
+    console.log(`Creating Wasabi bucket: ${bucketName}`);
+    
+    const host = new URL(endpoint).hostname;
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+    const timeStr = now.toISOString().slice(0, 19).replace(/[-:]/g, '') + 'Z';
+    
+    const method = 'PUT';
+    const canonicalUri = `/${bucketName}`;
+    const canonicalQueryString = '';
+    
+    const canonicalHeaders = [
+      `host:${host}`,
+      `x-amz-date:${timeStr}`
+    ].join('\n') + '\n';
+    
+    const signedHeaders = 'host;x-amz-date';
+    const payloadHash = await sha256('');
+    
+    const canonicalRequest = [
+      method,
+      canonicalUri,
+      canonicalQueryString,
+      canonicalHeaders,
+      signedHeaders,
+      payloadHash
+    ].join('\n');
+
+    const credentialScope = `${dateStr}/${region}/s3/aws4_request`;
+    const stringToSign = [
+      'AWS4-HMAC-SHA256',
+      timeStr,
+      credentialScope,
+      await sha256(canonicalRequest)
+    ].join('\n');
+
+    const signingKey = await getSignatureKey(secretAccessKey, dateStr, region, 's3');
+    const signature = await hmacSha256(signingKey, stringToSign);
+    const authorization = `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+    const createUrl = `${endpoint}/${bucketName}`;
+    
+    const response = await fetch(createUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': authorization,
+        'X-Amz-Date': timeStr,
+        'Content-Length': '0'
+      }
+    });
+
+    if (response.ok || response.status === 409) { // 409 means bucket already exists
+      console.log('Wasabi bucket created or already exists');
+      return true;
+    } else {
+      const errorText = await response.text();
+      console.error('Wasabi bucket creation failed:', response.status, errorText);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error creating Wasabi bucket:', error);
+    return false;
+  }
+}
+
+// Helper functions for AWS Signature Version 4
+async function sha256(message: string): Promise<string> {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function hmacSha256(key: ArrayBuffer, message: string): Promise<string> {
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    key,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  
+  const signature = await crypto.subtle.sign('HMAC', cryptoKey, new TextEncoder().encode(message));
+  const signatureArray = Array.from(new Uint8Array(signature));
+  return signatureArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function getSignatureKey(key: string, dateStamp: string, regionName: string, serviceName: string): Promise<ArrayBuffer> {
+  const kDate = await hmacSha256ArrayBuffer(new TextEncoder().encode('AWS4' + key), dateStamp);
+  const kRegion = await hmacSha256ArrayBuffer(kDate, regionName);
+  const kService = await hmacSha256ArrayBuffer(kRegion, serviceName);
+  const kSigning = await hmacSha256ArrayBuffer(kService, 'aws4_request');
+  return kSigning;
+}
+
+async function hmacSha256ArrayBuffer(key: ArrayBuffer, message: string): Promise<ArrayBuffer> {
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    key,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  
+  return await crypto.subtle.sign('HMAC', cryptoKey, new TextEncoder().encode(message));
+}
