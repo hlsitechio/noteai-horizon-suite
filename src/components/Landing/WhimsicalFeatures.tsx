@@ -39,6 +39,16 @@ const WhimsicalFeatures = () => {
   }];
   return <div className="py-20 bg-background">
       <div className="container mx-auto px-4 max-w-7xl">
+        
+        {/* Section Title */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+            See It In Action
+          </h2>
+          <p className="text-lg text-gray-300 max-w-3xl mx-auto">
+            Experience our most popular features with interactive previews
+          </p>
+        </div>
 
         {/* Smart Notes Section */}
         <motion.div 
