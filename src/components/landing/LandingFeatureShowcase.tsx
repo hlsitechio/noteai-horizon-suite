@@ -12,7 +12,11 @@ import {
   ArrowRight,
   Eye,
   Cloud,
-  Download
+  Download,
+  Mic,
+  Image,
+  ScanText,
+  FolderOpen
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -23,7 +27,7 @@ interface FeatureCard {
   description: string;
   icon: React.ElementType;
   featured?: boolean;
-  category: 'productivity' | 'analytics' | 'management';
+  category: 'productivity' | 'analytics' | 'management' | 'projects';
   benefits: string[];
   mockupUrl?: string;
 }
@@ -42,19 +46,6 @@ const features: FeatureCard[] = [
       'Integrated task management',
       'Smart reminders & notifications',
       'Seamless calendar sync'
-    ]
-  },
-  {
-    id: 'activity-tracking',
-    name: 'Activity Log',
-    description: 'Comprehensive activity tracking with detailed insights and filtering',
-    icon: Activity,
-    category: 'management',
-    benefits: [
-      'Real-time activity monitoring',
-      'Advanced search & filtering',
-      'Detailed action history',
-      'Performance insights'
     ]
   },
   {
@@ -115,6 +106,19 @@ const features: FeatureCard[] = [
   },
   // Management Features
   {
+    id: 'activity-tracking',
+    name: 'Activity Log',
+    description: 'Comprehensive activity tracking with detailed insights and filtering',
+    icon: Activity,
+    category: 'management',
+    benefits: [
+      'Real-time activity monitoring',
+      'Advanced search & filtering',
+      'Detailed action history',
+      'Performance insights'
+    ]
+  },
+  {
     id: 'google-drive-integration',
     name: 'Google Drive Integration',
     description: 'Seamlessly sync and access your Google Drive files directly within the platform',
@@ -153,13 +157,69 @@ const features: FeatureCard[] = [
       'Integration settings',
       'Security controls'
     ]
+  },
+  // Projects Features
+  {
+    id: 'voice-recording',
+    name: 'Voice Notes',
+    description: 'Record audio notes with AI-powered transcription and smart organization',
+    icon: Mic,
+    featured: true,
+    category: 'projects',
+    benefits: [
+      'One-click voice recording',
+      'AI-powered transcription',
+      'Smart note organization',
+      'Playback and editing tools'
+    ]
+  },
+  {
+    id: 'clipboard-screenshots',
+    name: 'Clipboard Integration',
+    description: 'Seamlessly paste and organize screenshots from your clipboard',
+    icon: Image,
+    category: 'projects',
+    benefits: [
+      'Instant clipboard paste',
+      'Automatic image optimization',
+      'Smart categorization',
+      'Quick annotation tools'
+    ]
+  },
+  {
+    id: 'screen-ocr',
+    name: 'Screen OCR',
+    description: 'Extract text from screenshots and images with advanced OCR technology',
+    icon: ScanText,
+    featured: true,
+    category: 'projects',
+    benefits: [
+      'High-accuracy text extraction',
+      'Multi-language support',
+      'Batch processing',
+      'Editable text output'
+    ]
+  },
+  {
+    id: 'project-management',
+    name: 'Project Organization',
+    description: 'Organize your work into projects with smart categorization and workflows',
+    icon: FolderOpen,
+    category: 'projects',
+    benefits: [
+      'Smart project templates',
+      'Automated workflows',
+      'Progress tracking',
+      'Team collaboration'
+    ]
   }
 ];
 
 const categoryLabels = {
   productivity: 'Productivity',
   analytics: 'Analytics',
-  management: 'Management'
+  management: 'Management',
+  projects: 'Projects'
 };
 
 const MockupPreview: React.FC<{ feature: FeatureCard }> = ({ feature }) => {
@@ -176,292 +236,132 @@ const MockupPreview: React.FC<{ feature: FeatureCard }> = ({ feature }) => {
       </div>
 
       {/* Feature-specific content */}
-      {feature.id === 'smart-calendar' && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-7 gap-1 mb-4">
-            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-              <div key={i} className="text-xs text-center text-muted-foreground p-1">{day}</div>
-            ))}
-            {Array.from({ length: 35 }, (_, i) => (
-              <div key={i} className="aspect-square border border-border/30 rounded text-xs flex items-center justify-center relative">
-                {i + 1 <= 31 && (
-                  <>
-                    <span className="text-muted-foreground">{i + 1}</span>
-                    {[3, 7, 15, 22].includes(i + 1) && (
-                      <div className="absolute bottom-0.5 left-0.5 right-0.5 h-1 bg-gradient-to-r from-primary to-accent rounded-full opacity-80"></div>
-                    )}
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="bg-card/50 rounded-lg p-3 border border-border/30">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-2 h-2 rounded-full bg-primary"></div>
-              <span className="text-sm font-medium">Create New Task</span>
-            </div>
-            <div className="space-y-2">
-              <div className="h-2 bg-muted/60 rounded-full w-full"></div>
-              <div className="h-2 bg-muted/40 rounded-full w-3/4"></div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {feature.id === 'activity-tracking' && (
-        <div className="space-y-3">
-          {Array.from({ length: 5 }, (_, i) => (
-            <div key={i} className="flex items-center gap-3 p-3 bg-card/30 rounded-lg border border-border/20">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center">
-                <Activity className="w-4 h-4 text-primary" />
-              </div>
-              <div className="flex-1 space-y-1">
-                <div className="h-3 bg-foreground/80 rounded-full w-full max-w-[180px]"></div>
-                <div className="h-2 bg-muted-foreground/60 rounded-full w-24"></div>
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {['10:19 AM', '9:45 AM', '8:58 AM', '8:26 AM', '7:15 AM'][i]}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {feature.id === 'rich-editor' && (
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 p-2 bg-card/50 rounded border border-border/30">
-            <div className="flex gap-1">
-              {['B', 'I', 'U'].map((letter, i) => (
-                <div key={i} className="w-6 h-6 rounded bg-muted/40 flex items-center justify-center text-xs">
-                  {letter}
-                </div>
-              ))}
-            </div>
-            <div className="h-4 w-px bg-border"></div>
-            <div className="flex gap-1">
-              <div className="w-6 h-6 rounded bg-primary/20 flex items-center justify-center">
-                <Sparkles className="w-3 h-3 text-primary" />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="h-3 bg-foreground/80 rounded-full w-full"></div>
-            <div className="h-3 bg-muted-foreground/60 rounded-full w-5/6"></div>
-            <div className="h-3 bg-muted-foreground/40 rounded-full w-4/6"></div>
-          </div>
-          <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg p-3 border border-primary/20">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">AI Assistant</span>
-            </div>
-            <div className="space-y-1">
-              <div className="h-2 bg-primary/40 rounded-full w-full"></div>
-              <div className="h-2 bg-primary/30 rounded-full w-3/4"></div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {feature.id === 'analytics-dashboard' && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { label: 'Total Notes', value: '6', color: 'from-blue-400 to-blue-600' },
-              { label: 'Words Written', value: '1.2K', color: 'from-green-400 to-green-600' },
-              { label: 'This Week', value: '6', color: 'from-purple-400 to-purple-600' },
-              { label: 'Favorites', value: '2', color: 'from-red-400 to-red-600' }
-            ].map((stat, i) => (
-              <div key={i} className="bg-card/40 rounded-lg p-3 border border-border/30">
-                <div className="text-xs text-muted-foreground mb-1">{stat.label}</div>
-                <div className={`text-lg font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
-                  {stat.value}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="bg-card/30 rounded-lg p-3 border border-border/30">
-            <div className="text-sm font-medium mb-2">Peak Hours</div>
-            <div className="flex items-end gap-1 h-16">
-              {Array.from({ length: 12 }, (_, i) => (
-                <div 
-                  key={i} 
-                  className="bg-gradient-to-t from-primary to-accent flex-1 rounded-sm"
-                  style={{ height: `${Math.random() * 60 + 20}%` }}
-                ></div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {feature.id === 'notification-center' && (
-        <div className="space-y-3">
-          {Array.from({ length: 4 }, (_, i) => (
-            <div key={i} className="flex items-start gap-3 p-3 bg-card/30 rounded-lg border border-border/20">
-              <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-              <div className="flex-1 space-y-1">
-                <div className="h-3 bg-gradient-to-r from-primary/60 to-primary/30 rounded-full w-full max-w-[140px]"></div>
-                <div className="h-2 bg-muted/50 rounded-full w-full"></div>
-                <div className="h-2 bg-muted/30 rounded-full w-3/4"></div>
-              </div>
-              <Bell className="w-3 h-3 text-muted-foreground mt-1" />
-            </div>
-          ))}
-          <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg p-3 border border-primary/20">
-            <div className="flex items-center gap-2 mb-2">
-              <Bell className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">Live Notification</span>
-            </div>
-            <div className="space-y-1">
-              <div className="h-2 bg-primary/40 rounded-full w-full"></div>
-              <div className="h-2 bg-primary/30 rounded-full w-2/3"></div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {feature.id === 'google-drive-integration' && (
+      {feature.id === 'voice-recording' && (
         <div className="space-y-4">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center">
-              <Cloud className="w-6 h-6 text-blue-500" />
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-red-500/20 to-pink-600/20 flex items-center justify-center">
+              <Mic className="w-6 h-6 text-red-500" />
             </div>
             <div>
-              <div className="h-3 bg-blue-500/80 rounded-full w-32 mb-1"></div>
+              <div className="h-3 bg-red-500/80 rounded-full w-32 mb-1"></div>
               <div className="h-2 bg-muted-foreground/60 rounded-full w-20"></div>
             </div>
           </div>
-          <div className="space-y-2">
-            {['Document.docx', 'Presentation.pptx', 'Spreadsheet.xlsx', 'Notes.txt'].map((file, i) => (
-              <div key={i} className="flex items-center gap-3 p-2 bg-card/30 rounded border border-border/20">
-                <div className="w-8 h-8 rounded bg-blue-500/20 flex items-center justify-center">
-                  <Cloud className="w-4 h-4 text-blue-500" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-xs text-foreground mb-1">{file}</div>
-                  <div className="h-1.5 bg-muted/40 rounded-full w-16"></div>
-                </div>
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {feature.id === 'data-export' && (
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center">
-              <Download className="w-6 h-6 text-green-500" />
+          <div className="bg-card/40 rounded-lg p-4 border border-border/30">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-medium">Recording...</span>
+              <span className="text-xs text-red-500">●</span>
             </div>
-            <div>
-              <div className="h-3 bg-green-500/80 rounded-full w-28 mb-1"></div>
-              <div className="h-2 bg-muted-foreground/60 rounded-full w-16"></div>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { format: 'JSON', status: 'Ready', color: 'text-blue-400' },
-              { format: 'CSV', status: 'Ready', color: 'text-green-400' },
-              { format: 'PDF', status: 'Processing', color: 'text-orange-400' },
-              { format: 'XML', status: 'Ready', color: 'text-purple-400' }
-            ].map((export_item, i) => (
-              <div key={i} className="bg-card/40 rounded-lg p-3 border border-border/30">
-                <div className="text-xs text-muted-foreground mb-1">{export_item.format}</div>
-                <div className={`text-sm font-medium ${export_item.color}`}>{export_item.status}</div>
-              </div>
-            ))}
-          </div>
-          <div className="bg-card/30 rounded-lg p-3 border border-border/30">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Export Progress</span>
-              <span className="text-xs text-muted-foreground">75%</span>
-            </div>
-            <div className="w-full bg-muted/30 rounded-full h-2">
-              <div className="bg-gradient-to-r from-green-400 to-green-500 h-2 rounded-full" style={{ width: '75%' }}></div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {feature.id === 'enhanced-analytics' && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { label: 'Line Chart', value: '90', color: 'text-blue-400' },
-              { label: 'Pie Chart', value: '65%', color: 'text-purple-400' },
-              { label: 'Area Chart', value: '940', color: 'text-green-400' },
-              { label: 'Live Data', value: '2.1K', color: 'text-orange-400' }
-            ].map((metric, i) => (
-              <div key={i} className="bg-card/40 rounded-lg p-3 border border-border/30">
-                <div className="text-xs text-muted-foreground mb-1">{metric.label}</div>
-                <div className={`text-lg font-bold ${metric.color}`}>{metric.value}</div>
-              </div>
-            ))}
-          </div>
-          <div className="bg-card/30 rounded-lg p-4 border border-border/30">
-            <div className="text-sm font-medium mb-3">Performance Trend</div>
-            <div className="flex items-end gap-1 h-12 mb-2">
-              {[65, 78, 90, 81, 56, 75, 82].map((value, i) => (
+            <div className="flex items-center gap-2 mb-3">
+              {Array.from({ length: 12 }, (_, i) => (
                 <div 
                   key={i} 
-                  className="bg-gradient-to-t from-primary to-accent flex-1 rounded-sm"
-                  style={{ height: `${(value / 90) * 100}%` }}
+                  className="bg-gradient-to-t from-red-400 to-red-500 w-1 rounded-full"
+                  style={{ height: `${Math.random() * 20 + 10}px` }}
                 ></div>
               ))}
             </div>
-            <div className="text-xs text-muted-foreground flex justify-between">
-              <span>Jan</span>
-              <span>Jul</span>
-            </div>
+            <div className="text-xs text-muted-foreground">Duration: 00:47</div>
           </div>
           <div className="bg-card/30 rounded-lg p-3 border border-border/30">
-            <div className="text-sm font-medium mb-2">Traffic Sources</div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <div className="w-4 h-4 bg-background rounded-full"></div>
-              </div>
-              <div className="flex-1">
-                <div className="text-xs text-muted-foreground">Desktop 65%</div>
-                <div className="h-1.5 bg-muted/30 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-primary to-accent w-2/3"></div>
-                </div>
-              </div>
+            <div className="text-sm font-medium mb-2">AI Transcription</div>
+            <div className="space-y-1">
+              <div className="h-2 bg-primary/40 rounded-full w-full"></div>
+              <div className="h-2 bg-primary/30 rounded-full w-3/4"></div>
+              <div className="h-2 bg-primary/20 rounded-full w-1/2"></div>
             </div>
-          </div>
-          <div className="mt-4">
-            <a 
-              href="/demo/analytics" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
-            >
-              View Full Demo
-              <ArrowRight className="w-4 h-4" />
-            </a>
           </div>
         </div>
       )}
 
-      {feature.id === 'advanced-settings' && (
+      {feature.id === 'clipboard-screenshots' && (
         <div className="space-y-4">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center">
-              <Settings className="w-6 h-6 text-primary" />
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500/20 to-teal-600/20 flex items-center justify-center">
+              <Image className="w-6 h-6 text-emerald-500" />
             </div>
             <div>
-              <div className="h-3 bg-foreground/80 rounded-full w-24 mb-1"></div>
+              <div className="h-3 bg-emerald-500/80 rounded-full w-28 mb-1"></div>
               <div className="h-2 bg-muted-foreground/60 rounded-full w-16"></div>
             </div>
           </div>
-          <div className="space-y-3">
-            {['Account & Profile', 'Appearance & Layout', 'Integrations & Data', 'System & Apps'].map((setting, i) => (
-              <div key={i} className="flex items-center gap-3 p-2 bg-card/30 rounded border border-border/20">
-                <div className="w-8 h-8 rounded bg-muted/40 flex items-center justify-center">
-                  <div className="w-4 h-4 bg-gradient-to-br from-primary/60 to-accent/60 rounded"></div>
+          <div className="grid grid-cols-2 gap-2">
+            {Array.from({ length: 4 }, (_, i) => (
+              <div key={i} className="aspect-square bg-gradient-to-br from-muted/40 to-muted/20 rounded-lg border border-border/30 flex items-center justify-center">
+                <Image className="w-6 h-6 text-muted-foreground/60" />
+              </div>
+            ))}
+          </div>
+          <div className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-lg p-3 border border-emerald-500/20">
+            <div className="flex items-center gap-2 mb-2">
+              <Image className="w-4 h-4 text-emerald-500" />
+              <span className="text-sm font-medium text-emerald-500">Auto-detected: Screenshot</span>
+            </div>
+            <div className="text-xs text-muted-foreground">Optimized and ready to paste</div>
+          </div>
+        </div>
+      )}
+
+      {feature.id === 'screen-ocr' && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500/20 to-purple-600/20 flex items-center justify-center">
+              <ScanText className="w-6 h-6 text-violet-500" />
+            </div>
+            <div>
+              <div className="h-3 bg-violet-500/80 rounded-full w-24 mb-1"></div>
+              <div className="h-2 bg-muted-foreground/60 rounded-full w-16"></div>
+            </div>
+          </div>
+          <div className="bg-card/40 rounded-lg p-4 border border-border/30 relative">
+            <div className="text-sm font-medium mb-3">Extracting Text...</div>
+            <div className="space-y-2">
+              <div className="h-2 bg-gradient-to-r from-violet-400/60 to-violet-300/40 rounded-full w-full"></div>
+              <div className="h-2 bg-gradient-to-r from-violet-400/40 to-violet-300/20 rounded-full w-4/5"></div>
+              <div className="h-2 bg-gradient-to-r from-violet-400/20 to-transparent rounded-full w-3/5"></div>
+            </div>
+            <div className="absolute top-2 right-3">
+              <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse"></div>
+            </div>
+          </div>
+          <div className="bg-card/30 rounded-lg p-3 border border-border/30">
+            <div className="text-sm font-medium mb-2">Extracted Text Preview</div>
+            <div className="space-y-1">
+              <div className="h-2 bg-foreground/60 rounded-full w-full"></div>
+              <div className="h-2 bg-foreground/40 rounded-full w-5/6"></div>
+              <div className="h-2 bg-foreground/20 rounded-full w-2/3"></div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {feature.id === 'project-management' && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500/20 to-blue-600/20 flex items-center justify-center">
+              <FolderOpen className="w-6 h-6 text-indigo-500" />
+            </div>
+            <div>
+              <div className="h-3 bg-indigo-500/80 rounded-full w-36 mb-1"></div>
+              <div className="h-2 bg-muted-foreground/60 rounded-full w-24"></div>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {[
+              { name: 'Website Redesign', progress: 75, color: 'from-blue-400 to-blue-500' },
+              { name: 'Mobile App', progress: 45, color: 'from-green-400 to-green-500' },
+              { name: 'Documentation', progress: 90, color: 'from-purple-400 to-purple-500' }
+            ].map((project, i) => (
+              <div key={i} className="bg-card/30 rounded-lg p-3 border border-border/20">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">{project.name}</span>
+                  <span className="text-xs text-muted-foreground">{project.progress}%</span>
                 </div>
-                <div className="flex-1">
-                  <div className="h-2.5 bg-foreground/70 rounded-full w-full max-w-[120px]"></div>
+                <div className="w-full bg-muted/30 rounded-full h-2">
+                  <div 
+                    className={`bg-gradient-to-r ${project.color} h-2 rounded-full transition-all duration-300`} 
+                    style={{ width: `${project.progress}%` }}
+                  ></div>
                 </div>
               </div>
             ))}
@@ -476,13 +376,12 @@ const MockupPreview: React.FC<{ feature: FeatureCard }> = ({ feature }) => {
 };
 
 export const LandingFeatureShowcase: React.FC = () => {
-  const [activeCategory, setActiveCategory] = useState<'productivity' | 'analytics' | 'management'>('productivity');
+  const [activeCategory, setActiveCategory] = useState<'productivity' | 'analytics' | 'management' | 'projects'>('productivity');
   const [hoveredFeature, setHoveredFeature] = useState<string | null>(null);
 
   const filteredFeatures = features.filter(feature => feature.category === activeCategory);
 
   const handleTryFeature = (featureId: string) => {
-    // For landing page, this would navigate to the app or show a demo
     console.log('Demo: Try feature', featureId);
   };
 
@@ -547,6 +446,7 @@ export const LandingFeatureShowcase: React.FC = () => {
                     {key === 'productivity' && <Calendar className="w-4 h-4" />}
                     {key === 'analytics' && <BarChart3 className="w-4 h-4" />}
                     {key === 'management' && <Settings className="w-4 h-4" />}
+                    {key === 'projects' && <FolderOpen className="w-4 h-4" />}
                     {label}
                   </span>
                 </motion.button>
@@ -605,7 +505,6 @@ export const LandingFeatureShowcase: React.FC = () => {
                       </div>
                     ))}
                   </div>
-
                 </div>
 
                 {/* Hover Glow Effect */}
@@ -651,7 +550,6 @@ export const LandingFeatureShowcase: React.FC = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <MockupPreview feature={feature} />
-                
               </motion.div>
             ))}
           </div>
