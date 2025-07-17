@@ -49,7 +49,7 @@ const features: FeatureCard[] = [
     name: 'Activity Log',
     description: 'Comprehensive activity tracking with detailed insights and filtering',
     icon: Activity,
-    category: 'productivity',
+    category: 'management',
     benefits: [
       'Real-time activity monitoring',
       'Advanced search & filtering',
