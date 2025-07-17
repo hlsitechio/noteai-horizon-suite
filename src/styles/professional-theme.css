@@ -122,5 +122,6 @@
 
 .professional-hero {
   background: var(--gradient-hero);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
