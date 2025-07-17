@@ -2,7 +2,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles, Zap, Shield, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 const WhimsicalHero = () => {
+  const navigate = useNavigate();
   return <section className="relative py-20 lg:py-32">
       <div className="container mx-auto px-4">
         {/* Main Hero Content */}
@@ -49,7 +51,11 @@ const WhimsicalHero = () => {
           duration: 0.8,
           delay: 0.2
         }}>
-            <Button size="lg" className="h-14 px-8 text-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground group">
+            <Button 
+              size="lg" 
+              onClick={() => navigate('/register')}
+              className="h-14 px-8 text-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground group"
+            >
               Get started free
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
