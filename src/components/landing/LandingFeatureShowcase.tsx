@@ -391,7 +391,7 @@ export const LandingFeatureShowcase: React.FC = () => {
         {/* Section Title */}
         <div className="text-center mb-16">
           <motion.h2 
-            className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-6"
+            className="text-4xl lg:text-5xl font-bold text-foreground mb-6"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
