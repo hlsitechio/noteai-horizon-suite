@@ -11,7 +11,7 @@ OnlineNote AI is a sophisticated, AI-powered note-taking and productivity platfo
 - **React 18.3.1** - Modern React with Concurrent Features
 - **TypeScript 5.8.3** - Full type safety across the application
 - **Vite 6.3.5** - Ultra-fast build tool with HMR
-- **SWC** - Rust-based JavaScript/TypeScript compiler for performance
+- **SWC** - Rust-based JavaScript/TypeScript compiler (configured for stability over raw performance)
 
 ### **Build & Development Tools**
 - **ESLint 9.31.0** - Code linting with React hooks support
@@ -69,25 +69,39 @@ OnlineNote AI is a sophisticated, AI-powered note-taking and productivity platfo
 - **Calendar**: `calendar_events`, `reminders`
 - **Dashboard**: `dashboard_settings`, `dashboard_workspaces`, `dashboard_components`
 
-### **Edge Functions**
+### **Edge Functions** *(Available Supabase Functions)*
+- **Weather API** - Weather data integration
+- **Track Visitor** - Analytics tracking
+- **Speech to Text** - Voice transcription
+- **Send Support Email** - Support ticket handling
+- **Send APM Alert** - Performance monitoring alerts
+- **Realtime Voice Chat** - Live voice communication
+- **Google Drive Integration** - File sync operations
+- **Get LaunchDarkly Config** - Feature flag management
+- **Generate Note Tags** - AI-powered tagging
+- **Dashboard Lock** - Dashboard state management
+- **CSP Report** - Content Security Policy reporting
+- **Chat OpenRouter** - AI model routing
+- **Banner Storage** - File management
+
+### **AI Edge Functions** *(Planned/In Development)*
 - **AI Chat with Context** - OpenAI integration with conversation memory
 - **AI Copilot Enhanced** - Advanced AI assistance
 - **AI Writing Assistant** - Content generation and optimization
+- **Advanced Document Analysis** - Document processing
+- **Advanced Speech Processing** - Enhanced voice features
 - **Advanced Text-to-Speech** - Voice synthesis
-- **Realtime Voice Chat** - Live voice communication
-- **Generate Note Tags** - AI-powered tagging
-- **Banner Storage & Upload** - File management
-- **Visitor Widget** - Analytics tracking
+- **Chat with RAG** - Retrieval-augmented generation
 
 ---
 
 ## 🤖 **AI & Intelligence Features**
 
-### **AI Agents System**
-- **BaseAgent** - Core agent functionality and prompt management
-- **GeneralAgent** - Multi-purpose conversational AI
-- **ProductivityAgent** - Task and productivity optimization
-- **WritingAgent** - Content creation and editing assistance
+### **AI Agents System** *(Planned/In Development)*
+- **BaseAgent** - Core agent functionality and prompt management *(Planned)*
+- **GeneralAgent** - Multi-purpose conversational AI *(Planned)*
+- **ProductivityAgent** - Task and productivity optimization *(Planned)*
+- **WritingAgent** - Content creation and editing assistance *(Planned)*
 
 ### **AI Capabilities**
 - **Natural Language Processing** - Intent recognition and context understanding
@@ -158,12 +172,20 @@ OnlineNote AI is a sophisticated, AI-powered note-taking and productivity platfo
 - **Authentication Security** - JWT token management and validation
 - **Data Encryption** - End-to-end data protection
 
-### **Performance Optimization**
-- **Code Splitting** - Lazy loading with React.lazy()
-- **Bundle Optimization** - Terser 5.43.1 for minification
+### **Performance Configuration** *(Current Build Setup)*
+- **Single Bundle Build** - Simplified deployment with single chunk output for stability
+- **Minification Disabled** - Development-optimized build for debugging
+- **Source Maps Enabled** - Full debugging capability
+- **Bundle Optimization** - Terser 5.43.1 available for production
 - **Query Optimization** - TanStack Query for efficient data fetching
 - **Image Optimization** - Responsive images and lazy loading
 - **Memory Management** - Proper cleanup and garbage collection
+
+### **Performance Optimization** *(Available Features)*
+- **Code Splitting** - Lazy loading with React.lazy() (available but not currently active)
+- **Advanced Bundle Optimization** - Multi-chunk builds for improved caching (configurable)
+- **SWC Performance Mode** - Ultra-fast compilation (configurable)
+- **Tree Shaking** - Dead code elimination (available)
 
 ### **Monitoring & Observability**
 - **APM (Application Performance Monitoring)** - Real-time performance tracking
@@ -321,9 +343,15 @@ OnlineNote AI is a sophisticated, AI-powered note-taking and productivity platfo
 
 ## 🔄 **CI/CD & Deployment**
 
-### **Build Process**
-- **Vite Build Optimization** - Fast production builds
-- **Code Splitting** - Automatic chunk splitting
+### **Build Process** *(Current Configuration)*
+- **Vite Build with Stability Focus** - Single-chunk builds for deployment reliability
+- **Development-Optimized Build** - Unminified builds with source maps for debugging
+- **ES2020 Target** - Modern JavaScript support
+- **Dependency Optimization** - React and React-DOM pre-bundled
+
+### **Build Optimization Options** *(Configurable)*
+- **Advanced Code Splitting** - Multi-chunk builds for improved caching
+- **Production Minification** - Terser-based code compression
 - **Tree Shaking** - Dead code elimination
 - **Asset Optimization** - Image and font optimization
 
@@ -436,18 +464,8 @@ src/
 ├── 📄 main.tsx                         # React app entry point
 ├── 📄 vite-env.d.ts                    # Vite environment types
 │
-├── 📁 ai/                              # AI & Intelligence System
-│   ├── 📁 agents/                      # AI Agent Classes
-│   │   ├── 📄 BaseAgent.ts             # Base agent functionality
-│   │   ├── 📄 GeneralAgent.ts          # General purpose AI agent
-│   │   ├── 📄 ProductivityAgent.ts     # Productivity-focused agent
-│   │   └── 📄 WritingAgent.ts          # Writing assistance agent
-│   ├── 📁 core/                        # Core AI Services
-│   │   ├── 📄 AIKnowledgeManager.ts    # Knowledge management
-│   │   ├── 📄 AIMemoryService.ts       # Conversation memory
-│   │   └── 📄 AIRouter.ts              # Agent routing logic
-│   └── 📁 types/                       # AI Type Definitions
-│       └── 📄 index.ts                 # AI interfaces & types
+├── 📁 ai/                              # AI & Intelligence System (Planned)
+│   └── 📄 [AI components to be implemented]   # Future AI agent architecture
 │
 ├── 📁 assets/                          # Static Assets
 │   ├── 📄 tech-stack-mindmap.png       # Generated tech mindmap
