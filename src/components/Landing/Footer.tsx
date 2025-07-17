@@ -4,7 +4,7 @@ import { Sparkles } from 'lucide-react';
 const Footer = () => {
   return <footer className="relative z-[100] py-20 px-4 border-t border-white/10 bg-gradient-to-br from-slate-900/50 to-black">
       <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-8 mb-12">
+        <div className="grid md:grid-cols-5 gap-8 mb-12">
           <div>
             <div className="flex items-center space-x-3 mb-6">
               <div className="relative">
@@ -46,11 +46,24 @@ const Footer = () => {
               <li><Link to="/sitemap" className="text-left hover:text-cyan-400 transition-colors cursor-pointer">Sitemap</Link></li>
             </ul>
           </div>
+
+          <div>
+            <h4 className="text-white font-bold mb-6 text-lg">Connect</h4>
+            <ul className="space-y-3 text-gray-400">
+              <li><a href="https://x.com/Online_Note_AI" target="_blank" rel="noopener noreferrer" className="text-left hover:text-cyan-400 transition-colors cursor-pointer">X (Twitter)</a></li>
+              <li><a href="https://www.instagram.com/onlinenoteai/" target="_blank" rel="noopener noreferrer" className="text-left hover:text-cyan-400 transition-colors cursor-pointer">Instagram</a></li>
+              <li><a href="https://bsky.app/profile/onlinenoteai.bsky.social" target="_blank" rel="noopener noreferrer" className="text-left hover:text-cyan-400 transition-colors cursor-pointer">Bluesky</a></li>
+            </ul>
+          </div>
         </div>
         
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 mb-4 md:mb-0">© 2025 OnlineNote AI. All rights reserved. Crafted with innovation.</p>
-          
+          <div className="flex items-center space-x-4 text-gray-400">
+            <a href="mailto:info@onlinenote.ai" className="hover:text-cyan-400 transition-colors">info@onlinenote.ai</a>
+            <span>•</span>
+            <a href="mailto:onlinenoteai@gmail.com" className="hover:text-cyan-400 transition-colors">onlinenoteai@gmail.com</a>
+          </div>
         </div>
       </div>
     </footer>;

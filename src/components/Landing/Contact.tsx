@@ -5,9 +5,9 @@ import { Mail, Phone, MapPin } from 'lucide-react';
 
 const Contact = () => {
   const contactInfo = [
-    { icon: <Mail className="w-8 h-8" />, title: 'Email', info: 'hello@onlinenoteai.com', gradient: 'from-cyan-500 to-blue-500' },
-    { icon: <Phone className="w-8 h-8" />, title: 'Phone', info: '+1 (555) 123-4567', gradient: 'from-blue-500 to-purple-500' },
-    { icon: <MapPin className="w-8 h-8" />, title: 'Office', info: 'San Francisco, CA', gradient: 'from-purple-500 to-pink-500' }
+    { icon: <Mail className="w-8 h-8" />, title: 'Email', info: 'info@onlinenote.ai', gradient: 'from-cyan-500 to-blue-500' },
+    { icon: <Mail className="w-8 h-8" />, title: 'Support Email', info: 'onlinenoteai@gmail.com', gradient: 'from-blue-500 to-purple-500' },
+    { icon: <MapPin className="w-8 h-8" />, title: 'Social Media', info: 'Follow us on X, Instagram & Bluesky', gradient: 'from-purple-500 to-pink-500' }
   ];
 
   return (
