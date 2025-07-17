@@ -20,6 +20,16 @@ export interface AuthContextType {
   authError?: string | null;
   showPasskeySetup: boolean;
   setShowPasskeySetup: (show: boolean) => void;
+  showStorageSetup: boolean;
+  setShowStorageSetup: (show: boolean) => void;
+  storageInitialization: {
+    isInitialized: boolean;
+    isLoading: boolean;
+    needsInitialization: boolean;
+    error: string | null;
+    refreshStatus: () => void;
+    markAsInitialized: () => void;
+  };
 }
 
 export interface AuthState {

@@ -6,7 +6,9 @@ import { loginUser, registerUser, logoutUser } from './auth/authService';
 import { logger } from '../utils/logger';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { PasskeySetupModal } from '@/components/Auth/PasskeySetupModal';
+import { StorageSetupModal } from '@/components/Auth/StorageSetupModal';
 import { isPasskeySupported } from '@/services/webauthn/client';
+import { useStorageInitialization } from '@/hooks/useStorageInitialization';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -29,34 +31,50 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   } = useStableAuth();
 
   const [showPasskeySetup, setShowPasskeySetup] = useState(false);
+  const [showStorageSetup, setShowStorageSetup] = useState(false);
 
-  // Check if we should show passkey setup after successful auth
+  // Check storage initialization status
+  const storageInit = useStorageInitialization(user?.id || null);
+
+  // Check if we should show storage setup first, then passkey setup
   useEffect(() => {
-    const checkPasskeySetup = async () => {
-      if (isAuthenticated && user && !isLoading) {
-        // Check if user has any passkeys already
-        try {
-          const response = await fetch('/functions/v1/passkey-manage');
-          if (response.ok) {
-            const passkeys = await response.json();
-            // Show setup modal if user has no passkeys and browser supports it
-            if (passkeys.length === 0 && isPasskeySupported()) {
-              // Only show once per session
-              const hasShownSetup = sessionStorage.getItem('passkey-setup-shown');
-              if (!hasShownSetup) {
-                setShowPasskeySetup(true);
-                sessionStorage.setItem('passkey-setup-shown', 'true');
+    const checkSetupFlow = async () => {
+      if (isAuthenticated && user && !isLoading && !storageInit.isLoading) {
+        // First priority: Storage setup
+        if (storageInit.needsInitialization && !showStorageSetup) {
+          const hasShownStorageSetup = sessionStorage.getItem('storage-setup-shown');
+          if (!hasShownStorageSetup) {
+            setShowStorageSetup(true);
+            sessionStorage.setItem('storage-setup-shown', 'true');
+            return; // Don't check passkey setup yet
+          }
+        }
+
+        // Second priority: Passkey setup (only after storage is initialized)
+        if (storageInit.isInitialized && !showPasskeySetup) {
+          try {
+            const response = await fetch('/functions/v1/passkey-manage');
+            if (response.ok) {
+              const passkeys = await response.json();
+              // Show setup modal if user has no passkeys and browser supports it
+              if (passkeys.length === 0 && isPasskeySupported()) {
+                // Only show once per session
+                const hasShownPasskeySetup = sessionStorage.getItem('passkey-setup-shown');
+                if (!hasShownPasskeySetup) {
+                  setShowPasskeySetup(true);
+                  sessionStorage.setItem('passkey-setup-shown', 'true');
+                }
               }
             }
+          } catch (error) {
+            logger.auth.error('Error checking passkey setup:', error);
           }
-        } catch (error) {
-          logger.auth.error('Error checking passkey setup:', error);
         }
       }
     };
 
-    checkPasskeySetup();
-  }, [isAuthenticated, user, isLoading]);
+    checkSetupFlow();
+  }, [isAuthenticated, user, isLoading, storageInit.isLoading, storageInit.needsInitialization, storageInit.isInitialized, showStorageSetup, showPasskeySetup]);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
@@ -91,12 +109,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     authError,
     showPasskeySetup,
     setShowPasskeySetup,
+    showStorageSetup,
+    setShowStorageSetup,
+    storageInitialization: storageInit,
   };
 
   return (
     <ErrorBoundary>
       <AuthContext.Provider value={contextValue}>
         {children}
+        <StorageSetupModal
+          isOpen={showStorageSetup}
+          onClose={() => {
+            setShowStorageSetup(false);
+            storageInit.refreshStatus();
+          }}
+          onComplete={() => {
+            storageInit.markAsInitialized();
+            setShowStorageSetup(false);
+          }}
+        />
         <PasskeySetupModal
           isOpen={showPasskeySetup}
           onClose={() => setShowPasskeySetup(false)}

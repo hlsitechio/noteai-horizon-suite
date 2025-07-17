@@ -102,3 +102,6 @@ verify_jwt = false
 
 [functions.wasabi-storage]
 verify_jwt = true
+
+[functions.initialize-user-storage]
+verify_jwt = true

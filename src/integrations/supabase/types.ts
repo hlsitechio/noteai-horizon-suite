@@ -1794,6 +1794,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_storage_initialization: {
+        Row: {
+          created_at: string | null
+          default_workspace_created: boolean | null
+          id: string
+          initialization_completed: boolean | null
+          storage_quota_set: boolean | null
+          updated_at: string | null
+          user_id: string
+          wasabi_bucket_created: boolean | null
+          wasabi_bucket_name: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          default_workspace_created?: boolean | null
+          id?: string
+          initialization_completed?: boolean | null
+          storage_quota_set?: boolean | null
+          updated_at?: string | null
+          user_id: string
+          wasabi_bucket_created?: boolean | null
+          wasabi_bucket_name?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          default_workspace_created?: boolean | null
+          id?: string
+          initialization_completed?: boolean | null
+          storage_quota_set?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+          wasabi_bucket_created?: boolean | null
+          wasabi_bucket_name?: string | null
+        }
+        Relationships: []
+      }
       user_storage_quotas: {
         Row: {
           bucket_name: string
