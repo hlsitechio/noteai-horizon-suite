@@ -272,7 +272,6 @@
 .animate-dots-wave {
   animation: dots-float 15s ease-in-out infinite;
 }
-}
     
     /* Premium typography */
     --font-size-hero: clamp(3rem, 8vw, 6rem);
