@@ -60,27 +60,28 @@ const WhimsicalFeatures = () => {
         >
           {/* Navigation Buttons */}
           <div className="relative flex flex-wrap gap-4 mb-12 justify-center">
-            {features.map((feature, index) => (
-              <motion.button
-                key={feature.id}
-                onClick={() => setActiveTab(index)}
-                className={`relative px-8 py-4 rounded-2xl font-medium transition-all duration-500 backdrop-blur-sm border ${
-                  activeTab === index
-                    ? 'bg-white/10 border-white/30 text-white shadow-[0_0_20px_rgba(255,255,255,0.3)]'
-                    : 'bg-white/5 border-white/10 text-muted-foreground hover:bg-white/8 hover:border-white/20 hover:text-white'
-                }`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                style={{
-                  boxShadow: activeTab === index 
-                    ? '0 0 30px rgba(255,255,255,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' 
-                    : 'inset 0 1px 0 rgba(255,255,255,0.05)'
-                }}
-              >
-                <div className="relative z-10 flex items-center">
-                  <feature.icon className="mr-3 h-5 w-5" />
-                  {feature.title}
-                </div>
+             {features.map((feature, index) => (
+               <motion.button
+                 key={feature.id}
+                 id={`${feature.title.toLowerCase().replace(' ', '-')}-section`}
+                 onClick={() => setActiveTab(index)}
+                 className={`relative px-8 py-4 rounded-2xl font-medium transition-all duration-500 backdrop-blur-sm border ${
+                   activeTab === index
+                     ? 'bg-white/10 border-white/30 text-white shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                     : 'bg-white/5 border-white/10 text-muted-foreground hover:bg-white/8 hover:border-white/20 hover:text-white'
+                 }`}
+                 whileHover={{ scale: 1.02 }}
+                 whileTap={{ scale: 0.98 }}
+                 style={{
+                   boxShadow: activeTab === index 
+                     ? '0 0 30px rgba(255,255,255,0.2), inset 0 1px 0 rgba(255,255,255,0.1)' 
+                     : 'inset 0 1px 0 rgba(255,255,255,0.05)'
+                 }}
+               >
+                 <div className="relative z-10 flex items-center">
+                   <feature.icon className="mr-3 h-5 w-5" />
+                   {feature.title}
+                 </div>
                 
                 {/* Animated breathing glow for active button */}
                 {activeTab === index && (
