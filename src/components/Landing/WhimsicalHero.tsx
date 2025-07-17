@@ -2,35 +2,34 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles, Zap, Shield, Users } from 'lucide-react';
-
 const WhimsicalHero = () => {
-  return (
-    <section className="relative py-20 lg:py-32">
+  return <section className="relative py-20 lg:py-32">
       <div className="container mx-auto px-4">
         {/* Main Hero Content */}
         <div className="text-center space-y-8 mb-16">
-          {/* Hero Image with Black Background */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1 }}
-            className="mb-8"
-          >
-            <div className="bg-black rounded-xl p-8 mx-auto max-w-4xl">
-              <img 
-                src="/lovable-uploads/a7a417fa-e49a-4e8d-ad62-c20f8d2cb1f9.png" 
-                alt="OnlineNote AI - Futuristic Note Taking Platform"
-                className="mx-auto w-full h-auto object-contain"
-              />
-            </div>
+          {/* Hero Image */}
+          <motion.div initial={{
+          opacity: 0,
+          scale: 0.8
+        }} animate={{
+          opacity: 1,
+          scale: 1
+        }} transition={{
+          duration: 1
+        }} className="mb-8">
+            
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="space-y-6"
-          >
+          <motion.div initial={{
+          opacity: 0,
+          y: 30
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} transition={{
+          duration: 0.8,
+          delay: 0.3
+        }} className="space-y-6">
             <h1 className="text-3xl lg:text-5xl font-bold tracking-tight">
               The all-in-one{' '}
               <span className="gradient-text">AI-powered workspace</span>{' '}
@@ -41,15 +40,17 @@ const WhimsicalHero = () => {
             </p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <Button 
-              size="lg" 
-              className="h-14 px-8 text-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground group"
-            >
+          <motion.div initial={{
+          opacity: 0,
+          y: 20
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} transition={{
+          duration: 0.8,
+          delay: 0.2
+        }}>
+            <Button size="lg" className="h-14 px-8 text-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground group">
               Get started free
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
@@ -57,45 +58,46 @@ const WhimsicalHero = () => {
         </div>
 
         {/* Feature Cards Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
-        >
-          {[
-            {
-              icon: Sparkles,
-              title: "AI Notes",
-              description: "Intelligent note-taking with AI assistance and smart organization.",
-              color: "from-purple-500 to-pink-500"
-            },
-            {
-              icon: Users,
-              title: "Collaboration",
-              description: "Real-time collaboration with your team in one unified workspace.",
-              color: "from-blue-500 to-cyan-500"
-            },
-            {
-              icon: Zap,
-              title: "Automation",
-              description: "Automate repetitive tasks and focus on what matters most.",
-              color: "from-orange-500 to-red-500"
-            },
-            {
-              icon: Shield,
-              title: "Security",
-              description: "Enterprise-grade security to keep your data safe and private.",
-              color: "from-green-500 to-emerald-500"
-            }
-          ].map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-              className="glass-card p-6 group cursor-pointer"
-            >
+        <motion.div initial={{
+        opacity: 0,
+        y: 50
+      }} animate={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 1,
+        delay: 0.4
+      }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          {[{
+          icon: Sparkles,
+          title: "AI Notes",
+          description: "Intelligent note-taking with AI assistance and smart organization.",
+          color: "from-purple-500 to-pink-500"
+        }, {
+          icon: Users,
+          title: "Collaboration",
+          description: "Real-time collaboration with your team in one unified workspace.",
+          color: "from-blue-500 to-cyan-500"
+        }, {
+          icon: Zap,
+          title: "Automation",
+          description: "Automate repetitive tasks and focus on what matters most.",
+          color: "from-orange-500 to-red-500"
+        }, {
+          icon: Shield,
+          title: "Security",
+          description: "Enterprise-grade security to keep your data safe and private.",
+          color: "from-green-500 to-emerald-500"
+        }].map((feature, index) => <motion.div key={feature.title} initial={{
+          opacity: 0,
+          y: 30
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} transition={{
+          duration: 0.6,
+          delay: 0.6 + index * 0.1
+        }} className="glass-card p-6 group cursor-pointer">
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                 <feature.icon className="h-6 w-6 text-white" />
               </div>
@@ -105,17 +107,20 @@ const WhimsicalHero = () => {
               <p className="text-sm text-muted-foreground">
                 {feature.description}
               </p>
-            </motion.div>
-          ))}
+            </motion.div>)}
         </motion.div>
 
         {/* Interactive Demo Preview */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.8 }}
-          className="relative max-w-6xl mx-auto"
-        >
+        <motion.div initial={{
+        opacity: 0,
+        scale: 0.95
+      }} animate={{
+        opacity: 1,
+        scale: 1
+      }} transition={{
+        duration: 1,
+        delay: 0.8
+      }} className="relative max-w-6xl mx-auto">
           <div className="glass-card p-8 feature-showcase">
             <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-lg p-6 border border-slate-600">
               {/* Mock Interface Header */}
@@ -157,8 +162,6 @@ const WhimsicalHero = () => {
           </div>
         </motion.div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default WhimsicalHero;
