@@ -43,11 +43,6 @@ export function SidebarFooter() {
             exit="collapsed"
             className="space-y-1"
           >
-            {/* Separator line above Profile */}
-            <div className="px-2 py-1">
-              <div className="h-px bg-sidebar-border"></div>
-            </div>
-            
             <div className="space-y-0.5">
               <SidebarMenuButton 
                 onNotificationsClick={handleNotificationsClick}

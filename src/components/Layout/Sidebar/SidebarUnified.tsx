@@ -91,11 +91,8 @@ export function SidebarUnified() {
           <NavigationMenu />
         </motion.div>
 
-        {/* Spacer to push footer to bottom */}
-        <div className="flex-1"></div>
-
         {/* Footer Section */}
-        <motion.div className="flex-shrink-0 px-1 py-1 border-t border-sidebar-border" variants={sectionVariants}>
+        <motion.div className="flex-shrink-0 px-1 py-1" variants={sectionVariants}>
           <SidebarFooter />
         </motion.div>
       </motion.div>
