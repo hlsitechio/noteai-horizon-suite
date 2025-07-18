@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TopNavigationBar } from './TopNavigationBar';
 import ResizableBannerSetup from './ResizableBanner/ResizableBannerSetup';
@@ -109,14 +109,17 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
     console.error('Weather error:', error);
   };
 
+  // Memoize TopNavigationBar props to prevent unnecessary re-renders during banner resize
+  const topNavProps = useMemo(() => ({
+    weatherCity,
+    onWeatherError: handleWeatherError
+  }), [weatherCity]);
+
   return (
     <div className="w-full h-full flex flex-col">
       {/* Top Navigation Bar */}
       <div className="flex-shrink-0">
-        <TopNavigationBar 
-          weatherCity={weatherCity}
-          onWeatherError={handleWeatherError}
-        />
+        <TopNavigationBar {...topNavProps} />
       </div>
       
       {/* Banner Content */}

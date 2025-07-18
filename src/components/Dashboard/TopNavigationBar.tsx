@@ -21,7 +21,7 @@ interface TopNavigationBarProps {
   onWeatherError?: (error: string) => void;
 }
 
-export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({ 
+const TopNavigationBarComponent: React.FC<TopNavigationBarProps> = ({ 
   weatherCity = 'New York', 
   onWeatherError 
 }) => {
@@ -338,3 +338,5 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
     </Card>
   );
 };
+
+export const TopNavigationBar = React.memo(TopNavigationBarComponent);
