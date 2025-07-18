@@ -209,11 +209,11 @@ const NavigationItem = ({
   return (
     <Link to={route.path} className={cn("block", isCollapsed ? "px-2 mx-2" : "px-3 mx-3")}>
       <Button 
-        variant={isActive ? "secondary" : "ghost"} 
+        variant="ghost"
         className={cn(
           "w-full h-10 text-sm font-medium transition-all duration-200 rounded-lg",
           isActive 
-            ? "bg-primary/10 text-primary border border-primary/20 shadow-sm" 
+            ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90" 
             : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
           isCollapsed ? "justify-center px-0" : "justify-start gap-3"
         )}
@@ -334,8 +334,8 @@ export function LocationAwareSidebar() {
           </nav>
         </div>
         
-        {/* Action Buttons Section */}
-        <div className="flex-shrink-0 border-t border-border/50 p-3">
+        {/* Action Buttons Section - Always visible above description */}
+        <div className="flex-shrink-0 border-t border-border/50 p-3 bg-card">
           <div className={cn("flex gap-2", isCollapsed ? "flex-col items-center" : "justify-between")}>
             {/* Notifications Button */}
             <Tooltip>
