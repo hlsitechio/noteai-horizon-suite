@@ -36,13 +36,15 @@ export const useStableAuth = (): UseStableAuthReturn => {
   const handleAuthChange = useCallback(async (newSession: Session | null, skipLoading = false) => {
     if (!mountedRef.current) return;
     
-    // Development logging only
+    // Development logging only - sanitized
     if (import.meta.env.DEV) {
+      const maskedUserId = newSession?.user?.id?.substring(0, 8) + '***' || null;
+      const maskedEmail = newSession?.user?.email?.replace(/(.{2}).*(@.*)/, '$1***$2') || null;
       console.log('useStableAuth - Auth state change:', {
         hasNewSession: !!newSession,
-        userId: newSession?.user?.id,
-        userEmail: newSession?.user?.email,
-        lastSessionId: lastSessionRef.current?.user?.id,
+        userId: maskedUserId,
+        userEmail: maskedEmail,
+        lastSessionId: lastSessionRef.current?.user?.id?.substring(0, 8) + '***' || null,
         timestamp: new Date().toISOString()
       });
     }

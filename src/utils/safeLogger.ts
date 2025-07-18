@@ -1,5 +1,8 @@
 // Safe logging utility that prevents sensitive data exposure
 // Only logs in development mode and sanitizes user data
+// Enhanced with comprehensive security audit features
+
+import { maskSensitiveData, securityAudit } from './securityAudit';
 
 type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 
@@ -10,33 +13,11 @@ interface LogData {
 const isDevelopment = import.meta.env.DEV;
 
 /**
- * Sanitize sensitive user data for logging
+ * Enhanced sanitization using security audit system
  */
 const sanitizeUserData = (data: any): any => {
-  if (!data) return data;
-  
-  if (typeof data === 'object') {
-    const sanitized = { ...data };
-    
-    // Remove or mask sensitive fields
-    if (sanitized.email) {
-      sanitized.email = sanitized.email.replace(/(.{2}).*(@.*)/, '$1***$2');
-    }
-    
-    if (sanitized.user) {
-      sanitized.user = sanitizeUserData(sanitized.user);
-    }
-    
-    // Remove other sensitive fields
-    delete sanitized.password;
-    delete sanitized.token;
-    delete sanitized.secret;
-    delete sanitized.apiKey;
-    
-    return sanitized;
-  }
-  
-  return data;
+  // Use the comprehensive security audit masking
+  return maskSensitiveData(data);
 };
 
 /**

@@ -2,6 +2,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { blockExternalTracking } from './utils/blockExternalTracking';
+import { initializeSecurity } from './utils/securityAudit';
 import App from './App.tsx';
 import './index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -10,6 +11,14 @@ import { AppInitializationService } from './services/appInitializationService';
 
 // Block external tracking injection before app initialization
 blockExternalTracking();
+
+// Initialize security measures to prevent data leaks
+initializeSecurity({
+  enableConsoleBlocking: !import.meta.env.DEV,
+  enableSensitiveDataMasking: true,
+  logSecurityViolations: import.meta.env.DEV,
+  productionMode: !import.meta.env.DEV
+});
 
 // Initialize app with optimized services
 AppInitializationService.initialize();
