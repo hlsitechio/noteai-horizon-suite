@@ -76,6 +76,8 @@ const VoiceChat = lazyWithRetry(() => import('../pages/VoiceChat'));
 const Calendar = lazyWithRetry(() => import('../pages/app/Calendar'));
 const Projects = lazyWithRetry(() => import('../pages/app/Projects'));
 const ProjectDetail = lazyWithRetry(() => import('../pages/ProjectDetail'));
+const KanbanBoards = lazyWithRetry(() => import('../pages/app/KanbanBoards'));
+const KanbanBoardDetail = lazyWithRetry(() => import('../pages/app/KanbanBoardDetail'));
 const FolderDetail = lazyWithRetry(() => import('../pages/FolderDetail'));
 const ActivityPage = lazyWithRetry(() => import('../pages/ActivityPage'));
 const ReferralPage = lazyWithRetry(() => import('../pages/ReferralPage'));
@@ -304,6 +306,18 @@ export const OptimizedLazyRoutes: React.FC = () => {
           
           <Route path="projects/:id" element={<ProjectDetail />} />
           <Route path="folders/:id" element={<FolderDetail />} />
+          
+          <Route path="kanban" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <KanbanBoards />
+            </Suspense>
+          } />
+          
+          <Route path="kanban/:boardId" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <KanbanBoardDetail />
+            </Suspense>
+          } />
           
           <Route path="calendar" element={
             <Suspense fallback={<DashboardLoadingFallback />}>
