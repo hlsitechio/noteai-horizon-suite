@@ -6,6 +6,7 @@ export interface CSPConfig {
   enabled: boolean;
   directives: Record<string, string | string[]>;
   reportUri?: string;
+  reportTo?: string;
   reportOnly?: boolean;
 }
 
