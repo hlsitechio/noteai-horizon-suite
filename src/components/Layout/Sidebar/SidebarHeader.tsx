@@ -9,13 +9,13 @@ export const SidebarHeader: React.FC = () => {
   const { isCollapsed, toggleCollapse } = useSidebarCollapse();
 
   return (
-    <div className="flex items-center justify-between px-6 py-4 border-b border-border/50">
+    <div className="flex items-center justify-between px-3 py-4 border-b border-border/50 min-h-[60px]">
       <motion.div 
-        className="flex items-center gap-3"
+        className="flex items-center gap-3 flex-1"
         animate={{ opacity: isCollapsed ? 0 : 1 }}
         transition={{ duration: 0.2 }}
       >
-        <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center">
+        <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center flex-shrink-0">
           <Zap className="w-4 h-4 text-primary-foreground" />
         </div>
         {!isCollapsed && (
@@ -30,7 +30,7 @@ export const SidebarHeader: React.FC = () => {
         variant="ghost"
         size="sm"
         onClick={toggleCollapse}
-        className="h-8 w-8 p-0 hover:bg-muted/50"
+        className="h-8 w-8 p-0 hover:bg-muted/50 flex-shrink-0 z-10"
         title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         {isCollapsed ? (

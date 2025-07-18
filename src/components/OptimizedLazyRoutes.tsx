@@ -238,7 +238,7 @@ export const OptimizedLazyRoutes: React.FC = () => {
         } />
 
         {/* ========== APP ROUTES ========== */}
-        <Route path="/app" element={
+        <Route path="/app/*" element={
           <ProtectedRoute>
             <Layout />
           </ProtectedRoute>

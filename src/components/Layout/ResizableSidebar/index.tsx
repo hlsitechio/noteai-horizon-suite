@@ -38,13 +38,12 @@ export const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps>
         </ResizablePanel>
         
         <ResizableHandle 
-          withHandle={isEditMode && !isCollapsed}
+          withHandle={!isCollapsed}
           className={cn(
-            "transition-all duration-200",
-            isEditMode && !isCollapsed
-              ? "hover:bg-primary/20 cursor-col-resize" 
-              : "opacity-30 pointer-events-none",
-            isCollapsed && "w-0 opacity-0"
+            "transition-all duration-200 bg-border hover:bg-primary/30",
+            !isCollapsed
+              ? "hover:bg-primary/20 cursor-col-resize w-1" 
+              : "w-0 opacity-0 pointer-events-none"
           )}
         />
         
