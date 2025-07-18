@@ -36,28 +36,21 @@ export const useStableAuth = (): UseStableAuthReturn => {
   const handleAuthChange = useCallback(async (newSession: Session | null, skipLoading = false) => {
     if (!mountedRef.current) return;
     
-    // Development logging only - sanitized
-    if (import.meta.env.DEV) {
-      const maskedUserId = newSession?.user?.id?.substring(0, 8) + '***' || null;
-      const maskedEmail = newSession?.user?.email?.replace(/(.{2}).*(@.*)/, '$1***$2') || null;
-      console.log('useStableAuth - Auth state change:', {
-        hasNewSession: !!newSession,
-        userId: maskedUserId,
-        userEmail: maskedEmail,
-        lastSessionId: lastSessionRef.current?.user?.id?.substring(0, 8) + '***' || null,
-        timestamp: new Date().toISOString()
-      });
-    }
-    
     // Prevent unnecessary state updates if session hasn't actually changed
     const sessionChanged = lastSessionRef.current?.user?.id !== newSession?.user?.id ||
                            lastSessionRef.current?.access_token !== newSession?.access_token;
     
+    // Minimal auth state logging - only for critical debugging
+    if (import.meta.env.DEV && sessionChanged) {
+      const maskedUserId = newSession?.user?.id?.substring(0, 8) + '***' || null;
+      console.log('SECURITY: Auth session updated', {
+        hasSession: !!newSession,
+        userId: maskedUserId
+      });
+    }
+    
     if (!sessionChanged && lastSessionRef.current !== null && newSession !== null) {
-      if (import.meta.env.DEV) {
-        console.log('useStableAuth - Session unchanged, skipping update');
-      }
-      return;
+      return; // Remove the verbose "Session unchanged" logging
     }
     
     lastSessionRef.current = newSession;

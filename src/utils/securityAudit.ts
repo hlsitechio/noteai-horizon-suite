@@ -10,13 +10,21 @@ export interface SecurityAuditConfig {
   enableSensitiveDataMasking: boolean;
   logSecurityViolations: boolean;
   productionMode: boolean;
+  aggressiveBlocking: boolean; // NEW: Blocks all non-essential development logs
+  allowedLogPatterns: string[]; // NEW: Only these patterns are allowed to log
 }
 
 const defaultConfig: SecurityAuditConfig = {
   enableConsoleBlocking: !import.meta.env.DEV,
   enableSensitiveDataMasking: true,
-  logSecurityViolations: import.meta.env.DEV,
-  productionMode: !import.meta.env.DEV
+  logSecurityViolations: false, // Reduce noise - only critical security issues
+  productionMode: !import.meta.env.DEV,
+  aggressiveBlocking: true, // Block most development logs by default
+  allowedLogPatterns: [
+    'ERROR', 'CRITICAL', 'SECURITY', // Only critical logs allowed
+    'Retrieved settings (sanitized)', // Exception for sanitized data
+    '✅ Service Worker registered successfully' // Essential PWA status
+  ]
 };
 
 /**
@@ -135,8 +143,26 @@ class SecureConsole {
     this.originalConsole = { ...console };
   }
   
-  private shouldBlock(): boolean {
-    return defaultConfig.productionMode && defaultConfig.enableConsoleBlocking;
+  private shouldBlock(message?: string): boolean {
+    // Block in production
+    if (defaultConfig.productionMode && defaultConfig.enableConsoleBlocking) {
+      return true;
+    }
+    
+    // In development, use aggressive blocking
+    if (defaultConfig.aggressiveBlocking && message) {
+      // Check if message contains allowed patterns
+      const isAllowed = defaultConfig.allowedLogPatterns.some(pattern => 
+        message.includes(pattern)
+      );
+      
+      // Block if not explicitly allowed
+      if (!isAllowed) {
+        return true;
+      }
+    }
+    
+    return false;
   }
   
   private sanitizeArgs(args: any[]): any[] {
@@ -152,28 +178,33 @@ class SecureConsole {
     });
   }
   
+  private shouldLogArgs(...args: any[]): boolean {
+    const message = args.join(' ');
+    return !this.shouldBlock(message);
+  }
+  
   log(...args: any[]) {
-    if (this.shouldBlock()) return;
+    if (!this.shouldLogArgs(...args)) return;
     this.originalConsole.log(...this.sanitizeArgs(args));
   }
   
   info(...args: any[]) {
-    if (this.shouldBlock()) return;
+    if (!this.shouldLogArgs(...args)) return;
     this.originalConsole.info(...this.sanitizeArgs(args));
   }
   
   warn(...args: any[]) {
-    if (this.shouldBlock()) return;
+    if (!this.shouldLogArgs(...args)) return;
     this.originalConsole.warn(...this.sanitizeArgs(args));
   }
   
   error(...args: any[]) {
-    if (this.shouldBlock()) return;
+    // Always allow errors through but sanitize them
     this.originalConsole.error(...this.sanitizeArgs(args));
   }
   
   debug(...args: any[]) {
-    if (this.shouldBlock()) return;
+    if (!this.shouldLogArgs(...args)) return;
     this.originalConsole.debug(...this.sanitizeArgs(args));
   }
   
@@ -187,9 +218,10 @@ class SecureConsole {
  */
 export const initializeSecurity = (config: Partial<SecurityAuditConfig> = {}) => {
   const finalConfig = { ...defaultConfig, ...config };
+  Object.assign(defaultConfig, finalConfig);
   
-  // Only replace console in production
-  if (finalConfig.productionMode && finalConfig.enableConsoleBlocking) {
+  // Replace console in both production AND development for aggressive blocking
+  if (finalConfig.enableConsoleBlocking || finalConfig.aggressiveBlocking) {
     const secureConsole = new SecureConsole();
     
     // Replace console methods
@@ -203,9 +235,10 @@ export const initializeSecurity = (config: Partial<SecurityAuditConfig> = {}) =>
     (window as any).__restoreConsole = secureConsole.restore.bind(secureConsole);
   }
   
-  safeLog.info('Security audit initialized', { 
+  safeLog.info('🔒 SECURITY AUDIT ACTIVE - Aggressive log blocking enabled', { 
     mode: finalConfig.productionMode ? 'production' : 'development',
     consoleBlocking: finalConfig.enableConsoleBlocking,
+    aggressiveBlocking: finalConfig.aggressiveBlocking,
     dataMasking: finalConfig.enableSensitiveDataMasking
   });
 };
