@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Home, FileText, Edit3, Search, MessageSquare, Calendar, BarChart3, Settings, FolderOpen, Mic, Palette, Activity, Component, Bot, Zap } from 'lucide-react';
+import { useSidebarCollapse } from '@/contexts/SidebarContext';
+import { SidebarHeader } from './SidebarHeader';
+
 interface RouteConfig {
   path: string;
   label: string;
@@ -11,6 +14,7 @@ interface RouteConfig {
   category?: 'main' | 'tools' | 'settings';
   sidebar: () => React.ReactElement;
 }
+
 const routes: RouteConfig[] = [
 // Main Navigation
 {
@@ -172,15 +176,7 @@ const routes: RouteConfig[] = [
         </p>
       </div>
 }];
-const SidebarBrand = () => <div className="flex items-center gap-3 px-6 py-4 border-b border-border/50">
-    <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center">
-      <Zap className="w-4 h-4 text-primary-foreground" />
-    </div>
-    <div className="flex flex-col">
-      <span className="text-sm font-semibold text-foreground">ONAI</span>
-      <span className="text-xs text-muted-foreground">Workspace</span>
-    </div>
-  </div>;
+
 const CategoryLabel = ({
   children
 }: {
@@ -190,64 +186,112 @@ const CategoryLabel = ({
       {children}
     </span>
   </div>;
+
 interface NavigationItemProps {
   route: RouteConfig;
   isActive: boolean;
+  isCollapsed: boolean;
 }
+
 const NavigationItem = ({
   route,
-  isActive
+  isActive,
+  isCollapsed
 }: NavigationItemProps) => {
   const Icon = route.icon;
   return <Link to={route.path} className="block px-3 mx-3">
-      <Button variant={isActive ? "secondary" : "ghost"} className={cn("w-full justify-start gap-3 h-10 text-sm font-medium transition-all duration-200", isActive ? "bg-primary/10 text-primary border border-primary/20 shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50", "rounded-lg")}>
+      <Button 
+        variant={isActive ? "secondary" : "ghost"} 
+        className={cn(
+          "w-full h-10 text-sm font-medium transition-all duration-200 rounded-lg",
+          isActive 
+            ? "bg-primary/10 text-primary border border-primary/20 shadow-sm" 
+            : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+          isCollapsed ? "justify-center px-0" : "justify-start gap-3"
+        )}
+        title={isCollapsed ? route.label : undefined}
+      >
         <Icon className="w-4 h-4 flex-shrink-0" />
-        <span className="truncate">{route.label}</span>
+        {!isCollapsed && <span className="truncate">{route.label}</span>}
       </Button>
     </Link>;
 };
+
 const SidebarContent = ({
   routes,
-  currentPath
+  currentPath,
+  isCollapsed
 }: {
   routes: RouteConfig[];
   currentPath: string;
+  isCollapsed: boolean;
 }) => {
   const mainRoutes = routes.filter(r => r.category === 'main' || !r.category);
   const toolRoutes = routes.filter(r => r.category === 'tools');
   const settingsRoutes = routes.filter(r => r.category === 'settings');
+  
   return <div className="flex-1 overflow-y-auto">
       <nav className="space-y-1 py-4">
         {/* Main Navigation */}
         <div className="space-y-1">
-          {mainRoutes.map(route => <NavigationItem key={route.path} route={route} isActive={currentPath === route.path} />)}
+          {mainRoutes.map(route => 
+            <NavigationItem 
+              key={route.path} 
+              route={route} 
+              isActive={currentPath === route.path}
+              isCollapsed={isCollapsed}
+            />
+          )}
         </div>
 
         {/* Tools Section */}
-        {toolRoutes.length > 0 && <div className="pt-4">
-            <CategoryLabel>Tools</CategoryLabel>
+        {toolRoutes.length > 0 && (
+          <div className="pt-4">
+            {!isCollapsed && <CategoryLabel>Tools</CategoryLabel>}
             <div className="space-y-1 mt-2">
-              {toolRoutes.map(route => <NavigationItem key={route.path} route={route} isActive={currentPath === route.path} />)}
+              {toolRoutes.map(route => 
+                <NavigationItem 
+                  key={route.path} 
+                  route={route} 
+                  isActive={currentPath === route.path}
+                  isCollapsed={isCollapsed}
+                />
+              )}
             </div>
-          </div>}
+          </div>
+        )}
 
         {/* Settings Section */}
-        {settingsRoutes.length > 0 && <div className="pt-4">
-            <CategoryLabel>Settings</CategoryLabel>
+        {settingsRoutes.length > 0 && (
+          <div className="pt-4">
+            {!isCollapsed && <CategoryLabel>Settings</CategoryLabel>}
             <div className="space-y-1 mt-2">
-              {settingsRoutes.map(route => <NavigationItem key={route.path} route={route} isActive={currentPath === route.path} />)}
+              {settingsRoutes.map(route => 
+                <NavigationItem 
+                  key={route.path} 
+                  route={route} 
+                  isActive={currentPath === route.path}
+                  isCollapsed={isCollapsed}
+                />
+              )}
             </div>
-          </div>}
+          </div>
+        )}
       </nav>
     </div>;
 };
+
 const SidebarDescription = ({
   routes,
-  currentPath
+  currentPath,
+  isCollapsed
 }: {
   routes: RouteConfig[];
   currentPath: string;
+  isCollapsed: boolean;
 }) => {
+  if (isCollapsed) return null;
+  
   return <AnimatePresence mode="wait">
       <Routes>
         {routes.map(({
@@ -270,12 +314,26 @@ const SidebarDescription = ({
       </Routes>
     </AnimatePresence>;
 };
+
 export function LocationAwareSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
-  return <div className="h-full w-72 bg-card border-r border-border flex flex-col">
-      <SidebarBrand />
-      <SidebarContent routes={routes} currentPath={currentPath} />
-      <SidebarDescription routes={routes} currentPath={currentPath} />
-    </div>;
+  const { isCollapsed } = useSidebarCollapse();
+  
+  return (
+    <motion.div 
+      className="h-full bg-card border-r border-border flex flex-col"
+      animate={{ 
+        width: isCollapsed ? '4rem' : '18rem' 
+      }}
+      transition={{ 
+        duration: 0.3, 
+        ease: [0.4, 0, 0.2, 1] 
+      }}
+    >
+      <SidebarHeader />
+      <SidebarContent routes={routes} currentPath={currentPath} isCollapsed={isCollapsed} />
+      <SidebarDescription routes={routes} currentPath={currentPath} isCollapsed={isCollapsed} />
+    </motion.div>
+  );
 }
