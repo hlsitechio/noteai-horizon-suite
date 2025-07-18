@@ -87,12 +87,17 @@ export function SidebarUnified() {
   return <TooltipProvider delayDuration={200} skipDelayDuration={100}>
       <motion.div className="h-full bg-sidebar flex flex-col w-48" variants={sidebarVariants} initial="initial" animate={isInitialLoad ? "initial" : (isCollapsed ? "collapsed" : "expanded")} data-onboarding="sidebar">
         {/* Navigation Section */}
-        <motion.div className="flex-shrink-0 px-1 py-1" variants={sectionVariants}>
+        <motion.div className="flex-1 px-1 py-1" variants={sectionVariants}>
           <NavigationMenu />
         </motion.div>
 
+        {/* Quick Actions Section */}
+        <motion.div className="flex-shrink-0 px-1 py-2" variants={sectionVariants}>
+          <SidebarQuickActions />
+        </motion.div>
+
         {/* Footer Section */}
-        <motion.div className="flex-shrink-0 px-1 py-1" variants={sectionVariants}>
+        <motion.div className="flex-shrink-0 px-1 py-1 mt-auto" variants={sectionVariants}>
           <SidebarFooter />
         </motion.div>
       </motion.div>
