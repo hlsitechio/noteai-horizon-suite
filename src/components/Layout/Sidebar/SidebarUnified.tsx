@@ -91,28 +91,11 @@ export function SidebarUnified() {
           <NavigationMenu />
         </motion.div>
 
-        <AnimatePresence>
-          {!isCollapsed && <motion.div initial={{
-          opacity: 0,
-          height: 0
-        }} animate={{
-          opacity: 1,
-          height: 'auto'
-        }} exit={{
-          opacity: 0,
-          height: 0
-        }} transition={{
-          duration: 0.2
-        }}>
-              <Separator className="mx-2" />
-            </motion.div>}
-        </AnimatePresence>
-
         {/* Spacer to push footer to bottom */}
         <div className="flex-1"></div>
 
         {/* Footer Section */}
-        <motion.div className="flex-shrink-0 px-1 py-1 border-t border-sidebar-border mt-auto" variants={sectionVariants}>
+        <motion.div className="flex-shrink-0 px-1 py-1 border-t border-sidebar-border" variants={sectionVariants}>
           <SidebarFooter />
         </motion.div>
       </motion.div>
