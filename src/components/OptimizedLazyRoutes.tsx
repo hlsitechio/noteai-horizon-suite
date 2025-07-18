@@ -2,7 +2,6 @@ import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import Layout from './Layout/Layout';
-import HomeRedirect from './HomeRedirect';
 import { Card } from './ui/card';
 import ComponentLibraryPage from '../pages/ComponentLibraryPage';
 import { DeviceRouter } from './DeviceRouter';
@@ -126,7 +125,11 @@ export const OptimizedLazyRoutes: React.FC = () => {
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
         {/* ========== PUBLIC ROUTES ========== */}
-        <Route path="/" element={<HomeRedirect />} />
+        <Route path="/" element={
+          <PublicPageWrapper>
+            <Landing />
+          </PublicPageWrapper>
+        } />
         <Route path="/landing" element={
           <PublicPageWrapper>
             <Landing />

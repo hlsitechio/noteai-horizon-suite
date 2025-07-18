@@ -41,7 +41,7 @@ const Register: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const redirectUrl = `${window.location.origin}/`;
+      const redirectUrl = `${window.location.origin}/setup/onboarding`;
       
       const { error } = await supabase.auth.signUp({
         email,
