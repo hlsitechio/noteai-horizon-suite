@@ -19,20 +19,13 @@ const Login: React.FC = () => {
   const { login, isAuthenticated, isLoading: authLoading, user } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated - only check when component initially mounts
   useEffect(() => {
-    console.log('Login component - Auth state check:', { 
-      isAuthenticated, 
-      authLoading, 
-      user: user?.email,
-      pathname: window.location.pathname 
-    });
-    
+    // Only redirect if definitely authenticated and not loading
     if (isAuthenticated && !authLoading) {
-      console.log('Login - Redirecting authenticated user to dashboard');
       navigate('/app/dashboard', { replace: true });
     }
-  }, [isAuthenticated, authLoading, navigate, user]);
+  }, [isAuthenticated, authLoading, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

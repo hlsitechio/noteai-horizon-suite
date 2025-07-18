@@ -49,55 +49,42 @@ export function PWAWrapper({
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
-    // Clear and re-register service worker to fix 404 loops
+    // Register service worker only once per app lifecycle
     if ('serviceWorker' in navigator) {
-      // First, unregister any existing service worker
-      navigator.serviceWorker.getRegistrations().then((registrations) => {
-        registrations.forEach((registration) => {
-          // Development logging only
-          if (import.meta.env.DEV) {
-            console.log('🧹 Unregistering old service worker');
-          }
-          registration.unregister();
-        });
-        
-        // Then register the updated service worker after a brief delay
-        setTimeout(() => {
-          navigator.serviceWorker.register('/sw.js', {
+      let registrationAttempted = false;
+      
+      const registerServiceWorker = async () => {
+        if (registrationAttempted) return;
+        registrationAttempted = true;
+
+        try {
+          const registration = await navigator.serviceWorker.register('/sw.js', {
             scope: '/',
-            updateViaCache: 'none' // Force refresh of SW file
-          })
-            .then((registration) => {
-              // Development logging only
-              if (import.meta.env.DEV) {
-                console.log('✅ Service Worker registered successfully');
-              }
-              
-              registration.addEventListener('updatefound', () => {
-                const newWorker = registration.installing;
-                if (newWorker) {
-                  newWorker.addEventListener('statechange', () => {
-                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                      // Development logging only
-                      if (import.meta.env.DEV) {
-                        console.log('🔄 New service worker available');
-                      }
-                    }
-                  });
+            updateViaCache: 'none'
+          });
+          
+          if (import.meta.env.DEV) {
+            console.log('✅ Service Worker registered successfully');
+          }
+          
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            if (newWorker) {
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  if (import.meta.env.DEV) {
+                    console.log('🔄 New service worker available');
+                  }
                 }
               });
-            })
-            .catch((error) => {
-              // Keep this error for production as it's important for debugging
-              console.error('❌ Service Worker registration failed:', error);
-            });
-        }, 100);
-      }).catch((error) => {
-        // Development logging only
-        if (import.meta.env.DEV) {
-          console.error('Error getting service worker registrations:', error);
+            }
+          });
+        } catch (error) {
+          console.error('❌ Service Worker registration failed:', error);
         }
-      });
+      };
+
+      registerServiceWorker();
 
       // Add optimized message listener for service worker communications
       const handleMessage = (event: MessageEvent) => {

@@ -36,20 +36,25 @@ export const useStableAuth = (): UseStableAuthReturn => {
   const handleAuthChange = useCallback(async (newSession: Session | null, skipLoading = false) => {
     if (!mountedRef.current) return;
     
-    console.log('useStableAuth - Auth state change:', {
-      hasNewSession: !!newSession,
-      userId: newSession?.user?.id,
-      userEmail: newSession?.user?.email,
-      lastSessionId: lastSessionRef.current?.user?.id,
-      timestamp: new Date().toISOString()
-    });
+    // Development logging only
+    if (import.meta.env.DEV) {
+      console.log('useStableAuth - Auth state change:', {
+        hasNewSession: !!newSession,
+        userId: newSession?.user?.id,
+        userEmail: newSession?.user?.email,
+        lastSessionId: lastSessionRef.current?.user?.id,
+        timestamp: new Date().toISOString()
+      });
+    }
     
     // Prevent unnecessary state updates if session hasn't actually changed
     const sessionChanged = lastSessionRef.current?.user?.id !== newSession?.user?.id ||
                            lastSessionRef.current?.access_token !== newSession?.access_token;
     
     if (!sessionChanged && lastSessionRef.current !== null && newSession !== null) {
-      console.log('useStableAuth - Session unchanged, skipping update');
+      if (import.meta.env.DEV) {
+        console.log('useStableAuth - Session unchanged, skipping update');
+      }
       return;
     }
     

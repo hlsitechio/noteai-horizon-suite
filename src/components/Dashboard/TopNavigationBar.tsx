@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Clock, MapPin, Thermometer } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -125,8 +125,8 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
     });
   }, []);
 
-  // Fetch weather data from edge function
-  const fetchWeather = async (city: string) => {
+  // Fetch weather data from edge function with useCallback to prevent unnecessary re-creation
+  const fetchWeather = useCallback(async (city: string) => {
     if (!city.trim()) return;
     
     setIsLoadingWeather(true);
@@ -191,7 +191,7 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
     } finally {
       setIsLoadingWeather(false);
     }
-  };
+  }, [weatherUnits, onWeatherError]);
 
   useEffect(() => {
     if (import.meta.env.DEV) {
@@ -200,7 +200,7 @@ export const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
     if (savedWeatherCity && savedWeatherCity.trim()) {
       fetchWeather(savedWeatherCity);
     }
-  }, [savedWeatherCity, weatherUnits]); // Re-fetch when city or units change
+  }, [savedWeatherCity, weatherUnits, fetchWeather]); // Include fetchWeather in dependencies
 
   // Chronometer handlers
   const handleStartTimer = (minutes: number, seconds: number) => {
