@@ -11,6 +11,7 @@ import { ReloadPreventionProvider } from './components/ReloadPrevention/ReloadPr
 import { AppProviders } from './components/AppProviders';
 
 import './App.css';
+import '@/utils/consoleCapture'; // Initialize console capture
 
 // Sentry disabled - use plain Router
 const AppRouter = Router;
