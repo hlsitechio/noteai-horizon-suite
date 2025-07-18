@@ -22,8 +22,12 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
   };
   
   const [isAppRoute, setIsAppRoute] = useState(getIsAppRoute);
+  const [isHydrated, setIsHydrated] = useState(false);
   
   useEffect(() => {
+    // Ensure hydration is complete
+    setIsHydrated(true);
+    
     // Listen for navigation changes only
     const handleNavigation = () => {
       const path = window.location.pathname;
@@ -54,6 +58,18 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
     };
   }, []);
   
+  // Show loading until hydration is complete for app routes to prevent provider context issues
+  if (isAppRoute && !isHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="w-8 h-8 animate-spin mx-auto mb-4 border-2 border-primary border-t-transparent rounded-full" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   // For app routes, use the full theme provider with user settings AND AppProviders
   if (isAppRoute) {
     return (
