@@ -20,9 +20,16 @@ export const usePerformanceTracking = () => {
       if (hasRun || !('performance' in window)) return;
       hasRun = true;
       
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-      
-      const loadTime = navigation.loadEventEnd - navigation.fetchStart;
+      try {
+        const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+        
+        // Check if navigation timing is available and not blocked
+        if (!navigation || typeof navigation.loadEventEnd === 'undefined' || typeof navigation.fetchStart === 'undefined') {
+          console.warn('SECURITY: Performance measurement blocked for privacy');
+          return;
+        }
+        
+        const loadTime = navigation.loadEventEnd - navigation.fetchStart;
       
       const newMetrics: PerformanceMetrics = {
         loadTime: Math.round(loadTime)
@@ -35,19 +42,22 @@ export const usePerformanceTracking = () => {
         newMetrics.firstContentfulPaint = Math.round(fcpEntry.startTime);
       }
 
-      setMetrics(newMetrics);
+        setMetrics(newMetrics);
 
-      // Track performance metrics (only once)
-      safeSendAnalyticsEvent('performance_metrics', {
-        load_time: newMetrics.loadTime,
-        fcp: newMetrics.firstContentfulPaint,
-        user_agent: navigator.userAgent,
-        connection: (navigator as any).connection?.effectiveType || 'unknown'
-      });
+        // Track performance metrics (only once)
+        safeSendAnalyticsEvent('performance_metrics', {
+          load_time: newMetrics.loadTime,
+          fcp: newMetrics.firstContentfulPaint,
+          user_agent: navigator.userAgent,
+          connection: (navigator as any).connection?.effectiveType || 'unknown'
+        });
 
-      // Performance warnings
-      if (newMetrics.loadTime > 3000) {
-        console.warn('Slow page load detected:', newMetrics.loadTime + 'ms');
+        // Performance warnings
+        if (newMetrics.loadTime > 3000) {
+          console.warn('Slow page load detected:', newMetrics.loadTime + 'ms');
+        }
+      } catch (error) {
+        console.warn('SECURITY: Performance measurement blocked for privacy');
       }
     };
 

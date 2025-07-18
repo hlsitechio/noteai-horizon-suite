@@ -92,6 +92,8 @@ const isTrackingUrl = (url: string): boolean => {
     /fingerprint/,
     /tracking/,
     /analytics/,
+    /gusid/,
+    /HB-ET/,
     
     // Specific IDs found in logs
     /9151671744940732/, // Facebook Pixel ID

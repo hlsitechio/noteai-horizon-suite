@@ -100,6 +100,48 @@ export const blockFingerprinting = () => {
     configurable: false 
   });
 
+  // Block UTS tracking system specifically
+  const originalConsoleLog = console.log;
+  console.log = function(...args: any[]) {
+    const message = args.join(' ');
+    // Block all UTS tracking messages
+    if (message.includes('[UTS]') || message.includes('UTS') || 
+        message.includes('_fbp') || message.includes('fingerprint') ||
+        message.includes('gusid') || message.includes('HB-ET')) {
+      console.warn('SECURITY: UTS tracking attempt blocked:', message);
+      return;
+    }
+    return originalConsoleLog.apply(this, args);
+  };
+
+  // Block any external script loading
+  const originalFetch = window.fetch;
+  window.fetch = function(input: RequestInfo | URL, init?: RequestInit) {
+    const url = typeof input === 'string' ? input : input.toString();
+    
+    // Block UTS and tracking URLs
+    if (url.includes('UTS') || url.includes('_fbp') || 
+        url.includes('fingerprint') || url.includes('gusid') ||
+        url.includes('facebook') || url.includes('fbcdn') ||
+        url.includes('connect.facebook.net')) {
+      console.warn('SECURITY: Tracking request blocked:', url);
+      return Promise.reject(new Error('Tracking request blocked for privacy'));
+    }
+    
+    return originalFetch.apply(this, [input, init]);
+  };
+
+  // Block localStorage and sessionStorage access for tracking
+  const originalSetItem = Storage.prototype.setItem;
+  Storage.prototype.setItem = function(key: string, value: string) {
+    if (key.includes('_fbp') || key.includes('UTS') || 
+        key.includes('fingerprint') || key.includes('gusid')) {
+      console.warn('SECURITY: Tracking storage blocked:', key);
+      return;
+    }
+    return originalSetItem.call(this, key, value);
+  };
+
   console.log('🔒 SECURITY: Ultra-aggressive fingerprinting blocker activated');
 };
 

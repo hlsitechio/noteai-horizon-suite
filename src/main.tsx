@@ -2,6 +2,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { blockExternalTracking } from './utils/blockExternalTracking';
+import { blockUTSTracking } from './utils/blockUTSTracking';
 import './utils/blockFingerprinting'; // ULTRA-AGGRESSIVE: Block all fingerprinting attempts
 import './utils/ultraSecureLogging'; // ULTRA-SECURE: Blocks ALL non-essential logging immediately
 import App from './App.tsx';
@@ -12,6 +13,7 @@ import { AppInitializationService } from './services/appInitializationService';
 
 // Block external tracking injection before app initialization
 blockExternalTracking();
+blockUTSTracking();
 
 // Initialize app with optimized services
 AppInitializationService.initialize();
