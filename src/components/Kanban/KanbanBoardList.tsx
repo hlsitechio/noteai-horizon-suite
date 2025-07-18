@@ -7,9 +7,13 @@ import { CreateBoardDialog } from './CreateBoardDialog';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
-export function KanbanBoardList() {
+interface KanbanBoardListProps {
+  projectId?: string;
+}
+
+export function KanbanBoardList({ projectId }: KanbanBoardListProps) {
   const navigate = useNavigate();
-  const { boards, isLoading, createBoard } = useKanbanBoards();
+  const { boards, isLoading, createBoard } = useKanbanBoards(projectId);
   const [showCreateBoard, setShowCreateBoard] = useState(false);
 
   if (isLoading) {
@@ -52,7 +56,7 @@ export function KanbanBoardList() {
             <Card 
               key={board.id} 
               className="cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => navigate(`/app/kanban/${board.id}`)}
+              onClick={() => navigate(projectId ? `/app/projects/${projectId}/kanban/${board.id}` : `/app/kanban/${board.id}`)}
             >
               <CardHeader>
                 <CardTitle className="text-lg">{board.title}</CardTitle>

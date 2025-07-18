@@ -3,16 +3,22 @@ import { supabase } from '@/integrations/supabase/client';
 import { KanbanBoard, CreateBoardData } from '@/types/kanban';
 import { toast } from 'sonner';
 
-export function useKanbanBoards() {
+export function useKanbanBoards(projectId?: string) {
   const [boards, setBoards] = useState<KanbanBoard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchBoards = async () => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('kanban_boards')
-        .select('*')
-        .order('updated_at', { ascending: false });
+        .select('*');
+      
+      // If projectId is provided, filter boards by project
+      if (projectId) {
+        query = query.eq('project_id', projectId);
+      }
+      
+      const { data, error } = await query.order('updated_at', { ascending: false });
 
       if (error) throw error;
       setBoards(data || []);
@@ -34,6 +40,7 @@ export function useKanbanBoards() {
         .insert({
           ...boardData,
           user_id: user.id,
+          project_id: projectId, // Associate with project if provided
         })
         .select()
         .single();
@@ -107,7 +114,7 @@ export function useKanbanBoards() {
 
   useEffect(() => {
     fetchBoards();
-  }, []);
+  }, [projectId]);
 
   return {
     boards,
