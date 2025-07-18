@@ -88,15 +88,15 @@ const routes: RouteConfig[] = [
     )
   },
   {
-    path: "/app/files",
-    label: "Files",
+    path: "/app/projects",
+    label: "Projects",
     icon: FolderOpen,
     category: 'main',
     sidebar: () => (
       <div className="space-y-3">
-        <h3 className="text-sm font-medium text-muted-foreground">Files</h3>
+        <h3 className="text-sm font-medium text-muted-foreground">Projects</h3>
         <p className="text-sm text-muted-foreground/80 leading-relaxed">
-          Manage your files and documents. Upload, organize, and share files with secure access controls.
+          Manage your project realms, create new projects, and organize your work with collaborative features.
         </p>
       </div>
     )
