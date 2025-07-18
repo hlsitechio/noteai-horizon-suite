@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 /**
  * Settings synchronization utility
@@ -180,14 +180,30 @@ export const useSettingsSync = (
   getFn: () => any,
   enabled: boolean = true
 ) => {
-  const syncManager = createSettingsSyncManager(updateFn, getFn);
+  const syncManager = useMemo(() => 
+    createSettingsSyncManager(updateFn, getFn), 
+    [updateFn, getFn]
+  );
 
-  // Auto-migrate on mount
+  // Auto-migrate on mount - only once when enabled becomes true
   useEffect(() => {
     if (enabled) {
-      syncManager.migrateLocalStorageToDatabase();
+      let migrationStarted = false;
+      
+      const performMigration = async () => {
+        if (migrationStarted) return;
+        migrationStarted = true;
+        
+        try {
+          await syncManager.migrateLocalStorageToDatabase();
+        } catch (error) {
+          console.error('Settings migration failed:', error);
+        }
+      };
+      
+      performMigration();
     }
-  }, [enabled, syncManager]);
+  }, [enabled]); // Remove syncManager from dependencies
 
   return syncManager;
 };
