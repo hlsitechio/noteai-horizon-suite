@@ -108,24 +108,6 @@ export function SidebarUnified() {
             </motion.div>}
         </AnimatePresence>
 
-        {/* Quick Actions Section */}
-        <AnimatePresence>
-          {!isCollapsed && <motion.div className="flex-1 p-2" variants={sectionVariants} initial={{
-          opacity: 0,
-          height: 0
-        }} animate={{
-          opacity: 1,
-          height: 'auto'
-        }} exit={{
-          opacity: 0,
-          height: 0
-        }} transition={{
-          duration: 0.2
-        }}>
-              {/* Quick actions content can go here */}
-            </motion.div>}
-        </AnimatePresence>
-
         {/* Footer Section */}
         <motion.div className="flex-shrink-0 px-1 py-1 border-t border-sidebar-border" variants={sectionVariants}>
           <SidebarFooter />
