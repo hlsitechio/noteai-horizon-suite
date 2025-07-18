@@ -584,9 +584,9 @@ const NotesExplorer: React.FC = () => {
             <>
               <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
                 <div className="h-full border-r bg-background flex flex-col">
-                  <div className="flex-1 overflow-hidden">
+                  <ScrollArea className="flex-1">
                     <NotesSection onFolderSelect={(folderId) => setSelectedItems(new Set([folderId]))} />
-                  </div>
+                  </ScrollArea>
                   
                   {/* Storage Indicator at bottom of sidebar */}
                   <div className="p-4 border-t bg-card/50">
@@ -605,7 +605,7 @@ const NotesExplorer: React.FC = () => {
 
           {/* Main explorer area */}
           <ResizablePanel defaultSize={previewVisible ? (treeVisible ? 50 : 70) : (treeVisible ? 80 : 100)} minSize={40}>
-            <ScrollArea className="h-full p-6">
+            <div className="h-full p-6 overflow-auto">
               {sortedItems.length === 0 ? (
                 <div className="text-center py-12">
                   <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
@@ -631,7 +631,7 @@ const NotesExplorer: React.FC = () => {
                   {sortedItems.map(renderGridItem)}
                 </div>
               )}
-            </ScrollArea>
+            </div>
           </ResizablePanel>
 
           {/* Preview panel */}
