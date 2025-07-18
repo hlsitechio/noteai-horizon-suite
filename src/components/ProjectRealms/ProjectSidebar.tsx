@@ -4,10 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Settings, Users, FileText, Download, Plus, Trash2 } from 'lucide-react';
+import { Settings, Users, FileText, Download, Plus, Trash2, Kanban } from 'lucide-react';
 import { ProjectRealm } from '../../types/project';
 import { useProjectRealms } from '../../contexts/ProjectRealmsContext';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 interface ProjectSidebarProps {
   project: ProjectRealm;
@@ -15,6 +16,7 @@ interface ProjectSidebarProps {
 
 const ProjectSidebar: React.FC<ProjectSidebarProps> = ({ project }) => {
   const { updateProject } = useProjectRealms();
+  const navigate = useNavigate();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isAgentsOpen, setIsAgentsOpen] = useState(false);
 
@@ -215,6 +217,11 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({ project }) => {
               </div>
             </DialogContent>
           </Dialog>
+
+          <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/app/kanban')}>
+            <Kanban className="h-4 w-4 mr-2" />
+            Kanban Board
+          </Button>
 
           <Button variant="outline" className="w-full justify-start" onClick={handleExportData}>
             <FileText className="h-4 w-4 mr-2" />
