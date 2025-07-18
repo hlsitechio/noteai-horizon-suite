@@ -49,8 +49,15 @@ const EnhancedPreferencesSection: React.FC = () => {
     setSyncStatus('syncing');
     try {
       await syncManager.migrateLocalStorageToDatabase();
+      
+      // Trigger data refresh across the application
+      // Force refresh by dispatching a custom event
+      window.dispatchEvent(new CustomEvent('settingsSync', {
+        detail: { timestamp: Date.now() }
+      }));
+      
       setSyncStatus('success');
-      toast.success('Settings synchronized successfully');
+      toast.success('Settings synchronized successfully - Explorer data refreshed');
       setTimeout(() => setSyncStatus('idle'), 2000);
     } catch (error) {
       setSyncStatus('idle');

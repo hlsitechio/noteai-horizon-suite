@@ -33,6 +33,18 @@ const NotesExplorer: React.FC = () => {
   const { filteredNotes, filters, notes, selectedNote } = useOptimizedNotes();
   const { folders } = useFolders();
   const { documents, fetchDocuments } = useDocuments();
+
+  // Listen for settings sync events to refresh data
+  useEffect(() => {
+    const handleSettingsSync = () => {
+      console.log('Settings sync detected - refreshing NotesExplorer data');
+      fetchDocuments();
+      // Note: notes are managed by OptimizedNotesContext which may have its own refresh mechanism
+    };
+
+    window.addEventListener('settingsSync', handleSettingsSync);
+    return () => window.removeEventListener('settingsSync', handleSettingsSync);
+  }, [fetchDocuments]);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 

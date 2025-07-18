@@ -53,6 +53,18 @@ const Explorer: React.FC = () => {
   const { toast } = useToast();
   const { documents, isLoading: documentsLoading, fetchDocuments, deleteDocument, downloadDocument } = useDocuments();
 
+  // Listen for settings sync events to refresh data
+  useEffect(() => {
+    const handleSettingsSync = () => {
+      console.log('Settings sync detected - refreshing Explorer data');
+      fetchDocuments();
+      loadFiles();
+    };
+
+    window.addEventListener('settingsSync', handleSettingsSync);
+    return () => window.removeEventListener('settingsSync', handleSettingsSync);
+  }, [fetchDocuments]);
+
   // Combine all files for mobile view
   const allFiles = [...leftPanelFiles, ...rightPanelFiles];
 
