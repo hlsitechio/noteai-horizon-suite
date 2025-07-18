@@ -2,6 +2,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { blockExternalTracking } from './utils/blockExternalTracking';
+import './utils/blockFingerprinting'; // ULTRA-AGGRESSIVE: Block all fingerprinting attempts
 import './utils/ultraSecureLogging'; // ULTRA-SECURE: Blocks ALL non-essential logging immediately
 import App from './App.tsx';
 import './index.css';

@@ -73,13 +73,36 @@ const isTrackingScript = (node: Node): boolean => {
 
 const isTrackingUrl = (url: string): boolean => {
   const trackingPatterns = [
+    // Facebook tracking
     /facebook\.com\/tr/,
     /fbcdn\.net/,
     /connect\.facebook\.net/,
+    /fbevents/,
+    
+    // Google tracking
     /analytics\.google\.com/,
     /googletagmanager\.com/,
     /doubleclick\.net/,
-    /9151671744940732/ // Specific Facebook Pixel ID
+    /googlesyndication/,
+    /google-analytics/,
+    
+    // Universal tracking systems and fingerprinting
+    /UTS/,
+    /_fbp/,
+    /fingerprint/,
+    /tracking/,
+    /analytics/,
+    
+    // Specific IDs found in logs
+    /9151671744940732/, // Facebook Pixel ID
+    /51355e5ea95dbd049a736d96abcbf090/, // Fingerprinting hash
+    /HB-ET_62a029ce4d0d5148349c0bd60bf952550b18008677ee9505980bcdf9060d6d7e/, // UTS tracking ID
+    
+    // Additional tracking patterns
+    /pixel/,
+    /beacon/,
+    /metrics/,
+    /telemetry/
   ];
 
   return trackingPatterns.some(pattern => pattern.test(url));
