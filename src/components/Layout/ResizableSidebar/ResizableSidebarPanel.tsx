@@ -28,7 +28,7 @@ const ResizableSidebarPanel: React.FC<ResizableSidebarPanelProps> = ({
       defaultSize={defaultSize} 
       minSize={minSize} 
       maxSize={maxSize}
-      className="flex flex-col border-r border-border"
+      className="flex flex-col"
     >
       <div className="h-full w-full">
         {(topPanelContent || middlePanelContent || bottomPanelContent) ? (
