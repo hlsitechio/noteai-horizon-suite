@@ -22,9 +22,9 @@ const Layout: React.FC = () => {
       <SidebarCollapseProvider>
         <div className="h-full w-full bg-background overflow-hidden">
           <ResizableSidebarContainer
-            sidebarDefaultSize={18}
-            sidebarMinSize={15}
-            sidebarMaxSize={50}
+            sidebarDefaultSize={14}
+            sidebarMinSize={12}
+            sidebarMaxSize={25}
             isEditMode={isSidebarEditMode}
             sidebarContent={<SidebarUnified />}
             mainContent={
