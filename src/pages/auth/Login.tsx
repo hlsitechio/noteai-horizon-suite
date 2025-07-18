@@ -16,15 +16,23 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { login, isAuthenticated, isLoading: authLoading, user } = useAuth();
   const navigate = useNavigate();
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
+    console.log('Login component - Auth state check:', { 
+      isAuthenticated, 
+      authLoading, 
+      user: user?.email,
+      pathname: window.location.pathname 
+    });
+    
+    if (isAuthenticated && !authLoading) {
+      console.log('Login - Redirecting authenticated user to dashboard');
       navigate('/app/dashboard', { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, authLoading, navigate, user]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
