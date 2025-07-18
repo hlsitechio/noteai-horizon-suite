@@ -261,6 +261,8 @@ export const DocumentImport: React.FC<DocumentImportProps> = ({
           const completedCount = currentFiles.filter(f => f.status === 'completed').length;
           const errorCount = currentFiles.filter(f => f.status === 'error').length;
 
+          console.log('Upload completed - completed count:', completedCount, 'error count:', errorCount);
+
           toast({
             title: "Import completed",
             description: `${completedCount} files uploaded successfully${errorCount > 0 ? `, ${errorCount} failed` : ''}`,
@@ -268,6 +270,7 @@ export const DocumentImport: React.FC<DocumentImportProps> = ({
           });
 
           if (onImportComplete && completedCount > 0) {
+            console.log('Calling onImportComplete callback to refresh documents list');
             onImportComplete();
           }
 
