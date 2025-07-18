@@ -108,8 +108,11 @@ export function SidebarUnified() {
             </motion.div>}
         </AnimatePresence>
 
+        {/* Spacer to push footer to bottom */}
+        <div className="flex-1"></div>
+
         {/* Footer Section */}
-        <motion.div className="flex-shrink-0 px-1 py-1 border-t border-sidebar-border" variants={sectionVariants}>
+        <motion.div className="flex-shrink-0 px-1 py-1 border-t border-sidebar-border mt-auto" variants={sectionVariants}>
           <SidebarFooter />
         </motion.div>
       </motion.div>
