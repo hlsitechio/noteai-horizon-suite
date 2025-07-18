@@ -181,11 +181,13 @@ const CategoryLabel = ({
   children
 }: {
   children: React.ReactNode;
-}) => <div className="px-6 py-2">
+}) => (
+  <div className="px-6 py-2">
     <span className="text-xs font-medium text-muted-foreground/60 uppercase tracking-wider">
       {children}
     </span>
-  </div>;
+  </div>
+);
 
 interface NavigationItemProps {
   route: RouteConfig;
@@ -199,7 +201,9 @@ const NavigationItem = ({
   isCollapsed
 }: NavigationItemProps) => {
   const Icon = route.icon;
-  return <Link to={route.path} className="block px-3 mx-3">
+  
+  return (
+    <Link to={route.path} className={cn("block", isCollapsed ? "px-2 mx-2" : "px-3 mx-3")}>
       <Button 
         variant={isActive ? "secondary" : "ghost"} 
         className={cn(
@@ -211,75 +215,13 @@ const NavigationItem = ({
         )}
         title={isCollapsed ? route.label : undefined}
       >
-        <Icon className="w-4 h-4 flex-shrink-0" />
+        <Icon className={cn("flex-shrink-0", isCollapsed ? "w-5 h-5" : "w-4 h-4")} />
         {!isCollapsed && <span className="truncate">{route.label}</span>}
       </Button>
-    </Link>;
+    </Link>
+  );
 };
 
-const SidebarContent = ({
-  routes,
-  currentPath,
-  isCollapsed
-}: {
-  routes: RouteConfig[];
-  currentPath: string;
-  isCollapsed: boolean;
-}) => {
-  const mainRoutes = routes.filter(r => r.category === 'main' || !r.category);
-  const toolRoutes = routes.filter(r => r.category === 'tools');
-  const settingsRoutes = routes.filter(r => r.category === 'settings');
-  
-  return <div className="flex-1 overflow-y-auto">
-      <nav className="space-y-1 py-4">
-        {/* Main Navigation */}
-        <div className="space-y-1">
-          {mainRoutes.map(route => 
-            <NavigationItem 
-              key={route.path} 
-              route={route} 
-              isActive={currentPath === route.path}
-              isCollapsed={isCollapsed}
-            />
-          )}
-        </div>
-
-        {/* Tools Section */}
-        {toolRoutes.length > 0 && (
-          <div className="pt-4">
-            {!isCollapsed && <CategoryLabel>Tools</CategoryLabel>}
-            <div className="space-y-1 mt-2">
-              {toolRoutes.map(route => 
-                <NavigationItem 
-                  key={route.path} 
-                  route={route} 
-                  isActive={currentPath === route.path}
-                  isCollapsed={isCollapsed}
-                />
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Settings Section */}
-        {settingsRoutes.length > 0 && (
-          <div className="pt-4">
-            {!isCollapsed && <CategoryLabel>Settings</CategoryLabel>}
-            <div className="space-y-1 mt-2">
-              {settingsRoutes.map(route => 
-                <NavigationItem 
-                  key={route.path} 
-                  route={route} 
-                  isActive={currentPath === route.path}
-                  isCollapsed={isCollapsed}
-                />
-              )}
-            </div>
-          </div>
-        )}
-      </nav>
-    </div>;
-};
 
 const SidebarDescription = ({
   routes,
@@ -332,8 +274,58 @@ export function LocationAwareSidebar() {
       }}
     >
       <SidebarHeader />
-      <SidebarContent routes={routes} currentPath={currentPath} isCollapsed={isCollapsed} />
-      <SidebarDescription routes={routes} currentPath={currentPath} isCollapsed={isCollapsed} />
+      
+      {/* Navigation Content */}
+      <div className="flex-1 overflow-y-auto">
+        <nav className="space-y-1 py-4">
+          {/* Main Navigation */}
+          <div className="space-y-1">
+            {routes.filter(r => r.category === 'main' || !r.category).map(route => 
+              <NavigationItem 
+                key={route.path} 
+                route={route} 
+                isActive={currentPath === route.path}
+                isCollapsed={isCollapsed}
+              />
+            )}
+          </div>
+
+          {/* Tools Section */}
+          <div className="pt-4">
+            {!isCollapsed && <CategoryLabel>Tools</CategoryLabel>}
+            <div className="space-y-1 mt-2">
+              {routes.filter(r => r.category === 'tools').map(route => 
+                <NavigationItem 
+                  key={route.path} 
+                  route={route} 
+                  isActive={currentPath === route.path}
+                  isCollapsed={isCollapsed}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Settings Section */}
+          <div className="pt-4">
+            {!isCollapsed && <CategoryLabel>Settings</CategoryLabel>}
+            <div className="space-y-1 mt-2">
+              {routes.filter(r => r.category === 'settings').map(route => 
+                <NavigationItem 
+                  key={route.path} 
+                  route={route} 
+                  isActive={currentPath === route.path}
+                  isCollapsed={isCollapsed}
+                />
+              )}
+            </div>
+          </div>
+        </nav>
+      </div>
+      
+      {/* Bottom Description - Only show when expanded */}
+      {!isCollapsed && (
+        <SidebarDescription routes={routes} currentPath={currentPath} isCollapsed={isCollapsed} />
+      )}
     </motion.div>
   );
 }
