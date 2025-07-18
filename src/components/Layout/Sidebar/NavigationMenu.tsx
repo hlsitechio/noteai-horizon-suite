@@ -90,17 +90,17 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ onNavigate }) => {
   ];
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-0.5">
       {/* Collapse Button */}
-      <div className="px-2 mb-2">
+      <div className="px-1 mb-1">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
               size="sm"
               onClick={toggleCollapse}
-              className={`w-full h-8 flex items-center transition-all duration-200 group relative overflow-hidden hover:bg-sidebar-accent hover:text-sidebar-accent-foreground ${
-                isCollapsed ? 'justify-center px-0' : 'justify-start px-2'
+              className={`w-full h-7 flex items-center transition-all duration-200 group relative overflow-hidden hover:bg-sidebar-accent hover:text-sidebar-accent-foreground ${
+                isCollapsed ? 'justify-center px-0' : 'justify-start px-1'
               }`}
             >
               <div className={`relative z-10 flex items-center ${isCollapsed ? 'justify-center' : ''}`}>
@@ -134,10 +134,10 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ onNavigate }) => {
             variant={isActive ? "secondary" : "ghost"}
             className={`w-full transition-all duration-300 group relative overflow-hidden ${
               isMobile 
-                ? 'justify-center px-2 h-7' 
+                ? 'justify-center px-1 h-6' 
                 : isCollapsed 
-                  ? 'justify-center px-0 h-7' 
-                  : 'justify-start px-2 h-7'
+                  ? 'justify-center px-0 h-6' 
+                  : 'justify-start px-1 h-6'
             } ${
               isActive 
                 ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm' 
@@ -145,13 +145,13 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ onNavigate }) => {
             }`}
           >
             <div className={`relative z-10 flex items-center w-full ${
-              isMobile || isCollapsed ? 'justify-center' : 'justify-start gap-2'
+              isMobile || isCollapsed ? 'justify-center' : 'justify-start gap-1'
             }`}>
-              <i className={`${item.icon} text-lg transition-transform duration-200 ${
+              <i className={`${item.icon} text-base transition-transform duration-200 ${
                 isActive ? 'text-sidebar-primary-foreground' : 'group-hover:scale-110'
               }`}></i>
               {!isMobile && !isCollapsed && (
-                <span className="text-sm font-medium">
+                <span className="text-xs font-medium">
                   {item.label}
                 </span>
               )}
