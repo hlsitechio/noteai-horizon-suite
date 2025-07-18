@@ -8,6 +8,7 @@ import { ConditionalThemeWrapper } from './components/ConditionalThemeWrapper';
 import { OptimizedLazyRoutes } from './components/OptimizedLazyRoutes';
 import { SmartErrorBoundary } from './components/ErrorBoundary/SmartErrorBoundary';
 import { ReloadPreventionProvider } from './components/ReloadPrevention/ReloadPreventionProvider';
+import { AppProviders } from './components/AppProviders';
 
 import './App.css';
 
@@ -19,11 +20,13 @@ function App() {
     <SmartErrorBoundary preserveWork={true}>
       <ReloadPreventionProvider>
         <AppRouter>
-          <ConditionalThemeWrapper>
-            <OptimizedLazyRoutes />
-            <Toaster />
-            <Sonner />
-          </ConditionalThemeWrapper>
+          <AppProviders>
+            <ConditionalThemeWrapper>
+              <OptimizedLazyRoutes />
+              <Toaster />
+              <Sonner />
+            </ConditionalThemeWrapper>
+          </AppProviders>
         </AppRouter>
       </ReloadPreventionProvider>
     </SmartErrorBoundary>
