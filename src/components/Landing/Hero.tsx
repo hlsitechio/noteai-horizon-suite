@@ -115,7 +115,7 @@ const Hero: React.FC = () => {
                 <Button 
                   size="lg" 
                   className="professional-button group px-8 py-4 text-lg font-semibold"
-                  onClick={() => navigate('/auth')}
+                  onClick={() => navigate('/auth/login')}
                 >
                   Start Free Trial
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />

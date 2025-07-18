@@ -8,7 +8,7 @@ const NavigationActions: React.FC = () => {
   return (
     <div className="flex items-center space-x-4">
       <Button
-        onClick={() => navigate('/login')}
+        onClick={() => navigate('/auth/login')}
         variant="ghost"
         className="hidden md:inline-flex text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-300"
       >

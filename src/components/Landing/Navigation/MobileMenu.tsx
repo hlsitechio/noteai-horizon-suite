@@ -49,7 +49,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             ))}
             <div className="flex flex-col space-y-3 pt-4">
               <Button
-                onClick={() => handleNavigation('/login')}
+                onClick={() => handleNavigation('/auth/login')}
                 variant="ghost"
                 className="justify-start text-gray-300 hover:text-white"
               >
