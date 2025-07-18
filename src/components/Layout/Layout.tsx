@@ -3,7 +3,7 @@ import React from 'react';
 import { ResizableSidebarContainer } from './ResizableSidebar';
 import { Toaster } from '@/components/ui/sonner';
 import { useEditMode } from '@/contexts/EditModeContext';
-import { LocationAwareSidebar } from './Sidebar/LocationAwareSidebar';
+import { SidebarOptimized } from './Sidebar/optimized';
 import { SidebarCollapseProvider } from '@/contexts/SidebarContext';
 import { PWAWrapper } from '../PWA/PWAWrapper';
 import BannerLayout from './BannerLayout';
@@ -26,7 +26,7 @@ const Layout: React.FC = () => {
             sidebarMinSize={12}
             sidebarMaxSize={25}
             isEditMode={isSidebarEditMode}
-            sidebarContent={<LocationAwareSidebar />}
+            sidebarContent={<SidebarOptimized />}
             mainContent={
               <div className="h-full w-full overflow-hidden">
                 <BannerLayout />
