@@ -273,7 +273,7 @@ const SidebarDescription = ({
 export function LocationAwareSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
-  return <div className="h-full w-64 bg-card border-r border-border flex flex-col">
+  return <div className="h-full w-72 bg-card border-r border-border flex flex-col">
       <SidebarBrand />
       <SidebarContent routes={routes} currentPath={currentPath} />
       <SidebarDescription routes={routes} currentPath={currentPath} />
