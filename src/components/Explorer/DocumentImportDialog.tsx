@@ -7,11 +7,13 @@ import { DocumentImport } from './DocumentImport';
 interface DocumentImportDialogProps {
   onImportComplete?: () => void;
   children?: React.ReactNode;
+  targetFolderId?: string | null;
 }
 
 export const DocumentImportDialog: React.FC<DocumentImportDialogProps> = ({
   onImportComplete,
-  children
+  children,
+  targetFolderId
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -36,7 +38,7 @@ export const DocumentImportDialog: React.FC<DocumentImportDialogProps> = ({
         <DialogHeader>
           <DialogTitle>Import Documents to Explorer</DialogTitle>
         </DialogHeader>
-        <DocumentImport onImportComplete={handleImportComplete} />
+        <DocumentImport onImportComplete={handleImportComplete} targetFolderId={targetFolderId} />
       </DialogContent>
     </Dialog>
   );

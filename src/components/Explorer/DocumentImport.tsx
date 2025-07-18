@@ -25,11 +25,13 @@ interface FileUpload {
 interface DocumentImportProps {
   onImportComplete?: () => void;
   className?: string;
+  targetFolderId?: string | null;
 }
 
 export const DocumentImport: React.FC<DocumentImportProps> = ({
   onImportComplete,
-  className
+  className,
+  targetFolderId
 }) => {
   const [files, setFiles] = useState<FileUpload[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -209,7 +211,8 @@ export const DocumentImport: React.FC<DocumentImportProps> = ({
         file_url: urlData.publicUrl,
         description: fileUpload.description || null,
         tags: fileUpload.tags || [],
-        is_public: false
+        is_public: false,
+        folder_id: targetFolderId || null
       };
       
       console.log('Document data to insert:', documentData);

@@ -5,6 +5,7 @@ import { useFolders } from '@/contexts/FoldersContext';
 import { useQuantumAIIntegration } from '@/hooks/useQuantumAIIntegration';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useDocuments } from '@/hooks/useDocuments';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -31,6 +32,7 @@ const NotesExplorer: React.FC = () => {
   const { folderId } = useParams<{ folderId: string }>();
   const { filteredNotes, filters, notes, selectedNote } = useOptimizedNotes();
   const { folders } = useFolders();
+  const { documents, fetchDocuments } = useDocuments();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
@@ -68,7 +70,7 @@ const NotesExplorer: React.FC = () => {
   const sortedItems = useMemo(() => {
     type CombinedItem = {
       id: string;
-      type: 'folder' | 'note';
+      type: 'folder' | 'note' | 'document';
       displayName: string;
       modifiedDate: Date;
       createdAt?: Date | string; // Made optional to match Note interface
@@ -85,12 +87,29 @@ const NotesExplorer: React.FC = () => {
       }
     }
 
+    // Filter documents by selected folder
+    let documentsToShow = documents;
+    if (selectedFolderId) {
+      if (selectedFolderId === 'unorganized') {
+        documentsToShow = documents.filter(doc => !doc.folder_id);
+      } else {
+        documentsToShow = documents.filter(doc => doc.folder_id === selectedFolderId);
+      }
+    }
+
     // Filter by search term
     notesToShow = notesToShow.filter(note => 
       searchTerm === '' || 
       note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
       note.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+
+    documentsToShow = documentsToShow.filter(doc => 
+      searchTerm === '' || 
+      doc.original_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     let allItems: CombinedItem[] = [
@@ -106,6 +125,12 @@ const NotesExplorer: React.FC = () => {
         type: 'note' as const, 
         displayName: note.title,
         modifiedDate: new Date(note.updatedAt) 
+      })),
+      ...documentsToShow.map(doc => ({ 
+        ...doc, 
+        type: 'document' as const, 
+        displayName: doc.original_name,
+        modifiedDate: new Date(doc.updated_at) 
       }))
     ];
 
@@ -396,7 +421,7 @@ const NotesExplorer: React.FC = () => {
               </Button>
             </CreateItemDialog>
             
-            <DocumentImportDialog>
+            <DocumentImportDialog onImportComplete={fetchDocuments}>
               <Button size="sm" variant="ghost">
                 <Upload className="w-4 h-4 mr-2" />
                 Import Documents
