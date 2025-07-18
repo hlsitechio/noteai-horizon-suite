@@ -45,7 +45,10 @@ export const useStableAuth = (): UseStableAuthReturn => {
     });
     
     // Prevent unnecessary state updates if session hasn't actually changed
-    if (lastSessionRef.current === newSession) {
+    const sessionChanged = lastSessionRef.current?.user?.id !== newSession?.user?.id ||
+                           lastSessionRef.current?.access_token !== newSession?.access_token;
+    
+    if (!sessionChanged && lastSessionRef.current !== null && newSession !== null) {
       console.log('useStableAuth - Session unchanged, skipping update');
       return;
     }
