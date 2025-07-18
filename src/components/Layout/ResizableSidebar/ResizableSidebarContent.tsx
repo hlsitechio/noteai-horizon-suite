@@ -9,8 +9,8 @@ const ResizableSidebarContent: React.FC<ResizableSidebarContentProps> = ({
   children
 }) => {
   return (
-    <Panel className="flex flex-col min-w-0 flex-1">
-      <div className="h-full w-full overflow-hidden">
+    <Panel className="flex flex-col">
+      <div className="h-full w-full">
         {children}
       </div>
     </Panel>
