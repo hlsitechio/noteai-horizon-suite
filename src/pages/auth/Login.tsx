@@ -12,7 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const Login: React.FC = () => {
   // Ensure clean theme for public auth page
   usePublicPageTheme();
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -28,7 +28,7 @@ const Login: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       toast.error('Please fill in all fields');
       return;
@@ -36,10 +36,10 @@ const Login: React.FC = () => {
 
     try {
       const success = await login(email, password);
-      
+
       if (success) {
         toast.success('Login successful!');
-        // Navigation will be handled by the useEffect above when isAuthenticated becomes true
+        // Navigation will be handled by the useEffect above
       } else {
         toast.error('Invalid email or password');
       }
@@ -74,7 +74,7 @@ const Login: React.FC = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-gray-300">Password</Label>
                 <div className="relative">
