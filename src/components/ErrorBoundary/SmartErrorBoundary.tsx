@@ -104,8 +104,11 @@ export class SmartErrorBoundary extends Component<Props, State> {
       retryCount: 0
     });
     
-    // Navigate to dashboard
-    window.location.href = '/app/dashboard';
+    // SECURITY: Use navigation instead of hard redirect to prevent page reload
+    if (typeof window !== 'undefined' && window.history) {
+      window.history.pushState({}, '', '/app/dashboard');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
   };
 
   private handleReload = () => {

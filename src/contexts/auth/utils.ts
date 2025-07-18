@@ -91,12 +91,12 @@ export const clearCorruptedSession = async () => {
     
     console.log('Session data cleared successfully');
     
-    // Force reload to ensure clean state
-    window.location.reload();
+    // SECURITY: Instead of force reload, just clear the session and let React handle the state
+    console.log('SECURITY: Session data cleared successfully - no reload needed');
+    
   } catch (error) {
-    console.error('Error clearing session:', error);
-    // Force reload even if clearing fails
-    window.location.reload();
+    console.error('ERROR: Error clearing session:', error);
+    // SECURITY: Even if clearing fails, don't force reload - let the app handle it gracefully
   }
 };
 
