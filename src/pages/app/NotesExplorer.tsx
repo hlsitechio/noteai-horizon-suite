@@ -194,8 +194,13 @@ const NotesExplorer: React.FC = () => {
 
   const handleItemDoubleClick = (item: any) => {
     if (item.type === 'folder') {
+      // Navigate into the folder
       navigate(`/app/explorer/${item.id}`);
-    } else {
+    } else if (item.type === 'document') {
+      // Open document in new tab
+      window.open(item.file_url, '_blank');
+    } else if (item.type === 'note') {
+      // Open note in editor
       navigate(`/app/editor/${item.id}`);
     }
   };
