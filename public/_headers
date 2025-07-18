@@ -55,8 +55,3 @@
 /sw.js
   Cache-Control: no-cache
   X-Content-Type-Options: nosniff
-
-# API endpoints
-/~api/*
-  Cache-Control: no-cache, no-store, must-revalidate
-  X-Content-Type-Options: nosniff
