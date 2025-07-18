@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Home, FileText, Edit3, Search, MessageSquare, Calendar, BarChart3, Settings, FolderOpen, Mic, Palette, Activity, Component, Bot, Zap } from 'lucide-react';
+import { Home, FileText, Edit3, Search, MessageSquare, Calendar, BarChart3, Settings, FolderOpen, Mic, Palette, Activity, Component, Bot, Zap, Bell, LogOut } from 'lucide-react';
 import { useSidebarCollapse } from '@/contexts/SidebarContext';
 import { SidebarHeader } from './SidebarHeader';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNotifications } from '@/contexts/NotificationsContext';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import NotificationsPanel from '../NotificationsPanel';
 
 interface RouteConfig {
   path: string;
@@ -261,40 +265,34 @@ export function LocationAwareSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const { isCollapsed } = useSidebarCollapse();
+  const { logout } = useAuth();
+  const { unreadCount } = useNotifications();
+  const [isNotificationsPanelOpen, setIsNotificationsPanelOpen] = useState(false);
+
+  const handleNotificationsClick = () => {
+    setIsNotificationsPanelOpen(true);
+  };
   
   return (
-    <motion.div 
-      className="h-full bg-card border-r border-border flex flex-col"
-      animate={{ 
-        width: isCollapsed ? '4rem' : '18rem' 
-      }}
-      transition={{ 
-        duration: 0.3, 
-        ease: [0.4, 0, 0.2, 1] 
-      }}
-    >
-      <SidebarHeader />
-      
-      {/* Navigation Content */}
-      <div className="flex-1 overflow-y-auto">
-        <nav className="space-y-1 py-4">
-          {/* Main Navigation */}
-          <div className="space-y-1">
-            {routes.filter(r => r.category === 'main' || !r.category).map(route => 
-              <NavigationItem 
-                key={route.path} 
-                route={route} 
-                isActive={currentPath === route.path}
-                isCollapsed={isCollapsed}
-              />
-            )}
-          </div>
-
-          {/* Tools Section */}
-          <div className="pt-4">
-            {!isCollapsed && <CategoryLabel>Tools</CategoryLabel>}
-            <div className="space-y-1 mt-2">
-              {routes.filter(r => r.category === 'tools').map(route => 
+    <>
+      <motion.div 
+        className="h-full bg-card border-r border-border flex flex-col"
+        animate={{ 
+          width: isCollapsed ? '4rem' : '18rem' 
+        }}
+        transition={{ 
+          duration: 0.3, 
+          ease: [0.4, 0, 0.2, 1] 
+        }}
+      >
+        <SidebarHeader />
+        
+        {/* Navigation Content */}
+        <div className="flex-1 overflow-y-auto">
+          <nav className="space-y-1 py-4">
+            {/* Main Navigation */}
+            <div className="space-y-1">
+              {routes.filter(r => r.category === 'main' || !r.category).map(route => 
                 <NavigationItem 
                   key={route.path} 
                   route={route} 
@@ -303,29 +301,102 @@ export function LocationAwareSidebar() {
                 />
               )}
             </div>
-          </div>
 
-          {/* Settings Section */}
-          <div className="pt-4">
-            {!isCollapsed && <CategoryLabel>Settings</CategoryLabel>}
-            <div className="space-y-1 mt-2">
-              {routes.filter(r => r.category === 'settings').map(route => 
-                <NavigationItem 
-                  key={route.path} 
-                  route={route} 
-                  isActive={currentPath === route.path}
-                  isCollapsed={isCollapsed}
-                />
-              )}
+            {/* Tools Section */}
+            <div className="pt-4">
+              {!isCollapsed && <CategoryLabel>Tools</CategoryLabel>}
+              <div className="space-y-1 mt-2">
+                {routes.filter(r => r.category === 'tools').map(route => 
+                  <NavigationItem 
+                    key={route.path} 
+                    route={route} 
+                    isActive={currentPath === route.path}
+                    isCollapsed={isCollapsed}
+                  />
+                )}
+              </div>
             </div>
+
+            {/* Settings Section */}
+            <div className="pt-4">
+              {!isCollapsed && <CategoryLabel>Settings</CategoryLabel>}
+              <div className="space-y-1 mt-2">
+                {routes.filter(r => r.category === 'settings').map(route => 
+                  <NavigationItem 
+                    key={route.path} 
+                    route={route} 
+                    isActive={currentPath === route.path}
+                    isCollapsed={isCollapsed}
+                  />
+                )}
+              </div>
+            </div>
+          </nav>
+        </div>
+        
+        {/* Action Buttons Section */}
+        <div className="flex-shrink-0 border-t border-border/50 p-3">
+          <div className={cn("flex gap-2", isCollapsed ? "flex-col items-center" : "justify-between")}>
+            {/* Notifications Button */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleNotificationsClick}
+                  className={cn(
+                    "relative",
+                    isCollapsed ? "h-8 w-8 p-0" : "h-8 px-3"
+                  )}
+                >
+                  <Bell className="h-4 w-4" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 h-4 w-4 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                  {!isCollapsed && <span className="ml-2">Notifications</span>}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Notifications {unreadCount > 0 ? `(${unreadCount})` : ''}</p>
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Sign Out Button */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={logout}
+                  className={cn(
+                    "text-destructive hover:text-destructive hover:bg-destructive/10",
+                    isCollapsed ? "h-8 w-8 p-0" : "h-8 px-3"
+                  )}
+                >
+                  <LogOut className="h-4 w-4" />
+                  {!isCollapsed && <span className="ml-2">Sign Out</span>}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Sign Out</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
-        </nav>
-      </div>
-      
-      {/* Bottom Description - Only show when expanded */}
-      {!isCollapsed && (
-        <SidebarDescription routes={routes} currentPath={currentPath} isCollapsed={isCollapsed} />
-      )}
-    </motion.div>
+        </div>
+        
+        {/* Bottom Description - Only show when expanded */}
+        {!isCollapsed && (
+          <SidebarDescription routes={routes} currentPath={currentPath} isCollapsed={isCollapsed} />
+        )}
+      </motion.div>
+
+      {/* Notifications Panel */}
+      <NotificationsPanel 
+        isOpen={isNotificationsPanelOpen} 
+        onClose={() => setIsNotificationsPanelOpen(false)} 
+      />
+    </>
   );
 }
