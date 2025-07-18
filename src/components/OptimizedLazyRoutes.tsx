@@ -305,6 +305,16 @@ export const OptimizedLazyRoutes: React.FC = () => {
           } />
           
           <Route path="projects/:id" element={<ProjectDetail />} />
+          <Route path="projects/:id/kanban" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <KanbanBoards />
+            </Suspense>
+          } />
+          <Route path="projects/:id/kanban/:boardId" element={
+            <Suspense fallback={<DashboardLoadingFallback />}>
+              <KanbanBoardDetail />
+            </Suspense>
+          } />
           <Route path="folders/:id" element={<FolderDetail />} />
           
           <Route path="kanban" element={

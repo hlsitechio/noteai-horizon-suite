@@ -218,7 +218,7 @@ const ProjectSidebar: React.FC<ProjectSidebarProps> = ({ project }) => {
             </DialogContent>
           </Dialog>
 
-          <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/app/kanban')}>
+          <Button variant="outline" className="w-full justify-start" onClick={() => navigate(`/app/projects/${project.id}/kanban`)}>
             <Kanban className="h-4 w-4 mr-2" />
             Kanban Board
           </Button>
