@@ -9,7 +9,7 @@ import ProjectContent from '../components/ProjectRealms/ProjectContent';
 import ProjectSidebar from '../components/ProjectRealms/ProjectSidebar';
 
 const ProjectDetail: React.FC = () => {
-  const { projectId } = useParams<{ projectId: string }>();
+  const { id: projectId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { projects, currentProject, setCurrentProject } = useProjectRealms();
   const [project, setProject] = useState<ProjectRealm | null>(null);
