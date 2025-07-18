@@ -126,11 +126,7 @@ export const OptimizedLazyRoutes: React.FC = () => {
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
         {/* ========== PUBLIC ROUTES ========== */}
-        <Route path="/" element={
-          <PublicPageWrapper>
-            <Landing />
-          </PublicPageWrapper>
-        } />
+        <Route path="/" element={<HomeRedirect />} />
         <Route path="/landing" element={
           <PublicPageWrapper>
             <Landing />
