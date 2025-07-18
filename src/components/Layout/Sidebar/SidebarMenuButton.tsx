@@ -29,8 +29,8 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
 
   // Enhanced hover styles with sidebar theme colors
   const getButtonHoverStyles = () => {
-    return `w-full h-10 text-sidebar-foreground transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-sm group relative overflow-hidden ${
-      isCollapsed || isMobile ? 'justify-center px-0' : 'justify-start px-3'
+    return `w-full h-8 text-sidebar-foreground transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-sm group relative overflow-hidden ${
+      isCollapsed || isMobile ? 'justify-center px-0' : 'justify-start px-2'
     }`;
   };
 
@@ -57,9 +57,9 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-0.5">
       {/* Action Buttons */}
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         {/* Profile Button */}
         <Tooltip>
           <TooltipTrigger asChild>
@@ -68,7 +68,7 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
               onClick={handleProfileClick}
               className={getButtonHoverStyles()}
             >
-              <div className={`flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-3'} relative z-10`}>
+              <div className={`flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-2'} relative z-10`}>
                 <User className="w-5 h-5" />
                 {!isCollapsed && !isMobile && <span>Profile</span>}
               </div>
@@ -89,7 +89,7 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
               onClick={onNotificationsClick}
               className={getButtonHoverStyles()}
             >
-              <div className={`relative flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-3'} relative z-10`}>
+              <div className={`relative flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-2'} relative z-10`}>
                 <Bell className="w-5 h-5" />
                 {!isCollapsed && !isMobile && <span>Notifications</span>}
                 {unreadCount > 0 && !isCollapsed && !isMobile && (
@@ -115,7 +115,7 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
 
         {/* Separator */}
         {!isCollapsed && !isMobile && (
-          <div className="px-3 py-2">
+          <div className="px-2 py-1">
             <Separator />
           </div>
         )}
@@ -128,7 +128,7 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
               onClick={handleThemeToggle}
               className={getButtonHoverStyles()}
             >
-              <div className={`flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-3'} relative z-10`}>
+              <div className={`flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-2'} relative z-10`}>
                 {isCurrentlyDark ? (
                   <Sun className="w-5 h-5" />
                 ) : (
@@ -155,7 +155,7 @@ export function SidebarMenuButton({ onNotificationsClick, isMobile }: SidebarMen
               onClick={handleSettingsClick}
               className={getButtonHoverStyles()}
             >
-              <div className={`flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-3'} relative z-10`}>
+              <div className={`flex items-center ${isCollapsed || isMobile ? 'justify-center' : 'gap-2'} relative z-10`}>
                 <Settings className="w-5 h-5" />
                 {!isCollapsed && !isMobile && <span>Settings</span>}
               </div>

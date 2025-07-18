@@ -34,16 +34,21 @@ export function SidebarFooter() {
 
   return (
     <>
-      <div className="px-2 relative z-20">
+      <div className="px-1 relative z-20">
         <AnimatePresence>
           <motion.div
             variants={contentVariants}
             initial="collapsed"
             animate="expanded"
             exit="collapsed"
-            className="space-y-3"
+            className="space-y-1"
           >
-            <div className="space-y-2">
+            {/* Separator line above Profile */}
+            <div className="px-2 py-1">
+              <div className="h-px bg-sidebar-border"></div>
+            </div>
+            
+            <div className="space-y-0.5">
               <SidebarMenuButton 
                 onNotificationsClick={handleNotificationsClick}
                 isMobile={isMobile}
