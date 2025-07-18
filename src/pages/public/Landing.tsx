@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import Navigation from '@/components/Landing/Navigation';
 import Hero from '@/components/Landing/Hero';
 import Features from '@/components/Landing/Features';
@@ -32,6 +34,9 @@ const Landing: React.FC = () => {
   // Ensure clean theme for public landing page
   usePublicPageTheme();
   
+  const navigate = useNavigate();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  
   const [isScrolled, setIsScrolled] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   
@@ -43,6 +48,13 @@ const Landing: React.FC = () => {
 
 
   useEffect(() => {
+    // Redirect authenticated users to dashboard
+    if (isAuthenticated && !authLoading) {
+      console.log('Landing - Redirecting authenticated user to dashboard');
+      navigate('/app/dashboard', { replace: true });
+      return;
+    }
+
     // Track page view
     AnalyticsService.trackPageView('/landing', 'Landing Page');
 
@@ -85,7 +97,7 @@ const Landing: React.FC = () => {
       window.removeEventListener('click', handleUserInteraction);
       window.removeEventListener('keydown', handleUserInteraction);
     };
-  }, [isScrolled]);
+  }, [isScrolled, isAuthenticated, authLoading, navigate]);
 
   return (
     <>
