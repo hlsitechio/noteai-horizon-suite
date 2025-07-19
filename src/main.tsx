@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { blockExternalTracking } from './utils/blockExternalTracking';
@@ -10,6 +9,10 @@ import './index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import { AppInitializationService } from './services/appInitializationService';
+import { TestingService } from './services/testingService';
+import { ProductionErrorService } from './services/productionErrorService';
+import { BundleAnalysisService } from './services/bundleAnalysisService';
+import { OnboardingService } from './services/onboardingService';
 
 // Block external tracking injection before app initialization
 blockExternalTracking();
@@ -20,6 +23,12 @@ devExperienceOptimizer.optimize();
 
 // Initialize app with optimized services
 AppInitializationService.initialize();
+
+// Initialize completion services
+TestingService.initialize?.();
+ProductionErrorService.initialize();
+BundleAnalysisService.initialize();
+OnboardingService.initialize();
 
 const queryClient = new QueryClient({
   defaultOptions: {
