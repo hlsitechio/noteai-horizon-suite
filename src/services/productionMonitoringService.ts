@@ -96,29 +96,9 @@ export class ProductionMonitoringService {
    * Track page load performance
    */
   trackPageLoad(path: string) {
-    // Use Navigation Timing API
-    if ('performance' in window && 'getEntriesByType' in performance) {
-      const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
-      
-      if (navigationEntries.length > 0) {
-        const timing = navigationEntries[0];
-        
-        this.trackMetric('page_load_time', timing.loadEventEnd - timing.fetchStart, 'histogram', {
-          page: path,
-          type: 'full_load'
-        });
-
-        this.trackMetric('dom_content_loaded', timing.domContentLoadedEventEnd - timing.fetchStart, 'histogram', {
-          page: path,
-          type: 'dom_ready'
-        });
-
-        this.trackMetric('first_paint', timing.responseEnd - timing.fetchStart, 'histogram', {
-          page: path,
-          type: 'first_paint'
-        });
-      }
-    }
+    // Performance tracking disabled to prevent fingerprinting warnings
+    logger.debug('Page load tracking disabled');
+    return;
   }
 
   /**
@@ -152,36 +132,9 @@ export class ProductionMonitoringService {
    * Track Core Web Vitals
    */
   trackWebVitals() {
-    // LCP (Largest Contentful Paint)
-    new PerformanceObserver((entryList) => {
-      for (const entry of entryList.getEntries()) {
-        this.trackMetric('web_vital_lcp', entry.startTime, 'gauge', {
-          metric_type: 'largest_contentful_paint'
-        });
-      }
-    }).observe({ entryTypes: ['largest-contentful-paint'] });
-
-    // FID (First Input Delay)
-    new PerformanceObserver((entryList) => {
-      for (const entry of entryList.getEntries()) {
-        this.trackMetric('web_vital_fid', (entry as any).processingStart - entry.startTime, 'gauge', {
-          metric_type: 'first_input_delay'
-        });
-      }
-    }).observe({ entryTypes: ['first-input'] });
-
-    // CLS (Cumulative Layout Shift)
-    let clsValue = 0;
-    new PerformanceObserver((entryList) => {
-      for (const entry of entryList.getEntries()) {
-        if (!(entry as any).hadRecentInput) {
-          clsValue += (entry as any).value;
-        }
-      }
-      this.trackMetric('web_vital_cls', clsValue, 'gauge', {
-        metric_type: 'cumulative_layout_shift'
-      });
-    }).observe({ entryTypes: ['layout-shift'] });
+    // Web vitals tracking disabled to prevent fingerprinting warnings
+    logger.debug('Web vitals tracking disabled');
+    return;
   }
 
   /**
@@ -232,32 +185,9 @@ export class ProductionMonitoringService {
    * Setup automatic performance tracking
    */
   private setupPerformanceTracking() {
-    // Track long tasks (tasks taking > 50ms)
-    if ('PerformanceObserver' in window) {
-      try {
-        new PerformanceObserver((entryList) => {
-          for (const entry of entryList.getEntries()) {
-            this.trackMetric('long_task_duration', entry.duration, 'histogram', {
-              task_type: 'long_task'
-            });
-          }
-        }).observe({ entryTypes: ['longtask'] });
-      } catch (error) {
-        // Long tasks not supported in all browsers
-        logger.debug('Long task observer not supported');
-      }
-    }
-
-    // Track resource loading times
-    new PerformanceObserver((entryList) => {
-      for (const entry of entryList.getEntries()) {
-        const resourceEntry = entry as PerformanceResourceTiming;
-        this.trackMetric('resource_load_time', resourceEntry.responseEnd - resourceEntry.startTime, 'histogram', {
-          resource_type: resourceEntry.initiatorType,
-          resource_name: resourceEntry.name.split('/').pop()?.substring(0, 100)
-        });
-      }
-    }).observe({ entryTypes: ['resource'] });
+    // Performance tracking disabled to prevent fingerprinting warnings
+    logger.debug('Performance tracking disabled');
+    return;
   }
 
   /**

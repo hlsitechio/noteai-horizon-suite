@@ -20,45 +20,9 @@ export const usePerformanceTracking = () => {
       if (hasRun || !('performance' in window)) return;
       hasRun = true;
       
-      try {
-        const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-        
-        // Check if navigation timing is available and not blocked
-        if (!navigation || typeof navigation.loadEventEnd === 'undefined' || typeof navigation.fetchStart === 'undefined') {
-          console.warn('SECURITY: Performance measurement blocked for privacy');
-          return;
-        }
-        
-        const loadTime = navigation.loadEventEnd - navigation.fetchStart;
-      
-      const newMetrics: PerformanceMetrics = {
-        loadTime: Math.round(loadTime)
-      };
-
-      // Get FCP if available
-      const paintEntries = performance.getEntriesByType('paint');
-      const fcpEntry = paintEntries.find(entry => entry.name === 'first-contentful-paint');
-      if (fcpEntry) {
-        newMetrics.firstContentfulPaint = Math.round(fcpEntry.startTime);
-      }
-
-        setMetrics(newMetrics);
-
-        // Track performance metrics (only once)
-        safeSendAnalyticsEvent('performance_metrics', {
-          load_time: newMetrics.loadTime,
-          fcp: newMetrics.firstContentfulPaint,
-          user_agent: navigator.userAgent,
-          connection: (navigator as any).connection?.effectiveType || 'unknown'
-        });
-
-        // Performance warnings
-        if (newMetrics.loadTime > 3000) {
-          console.warn('Slow page load detected:', newMetrics.loadTime + 'ms');
-        }
-      } catch (error) {
-        console.warn('SECURITY: Performance measurement blocked for privacy');
-      }
+      // Performance measurement disabled to prevent fingerprinting warnings
+      console.warn('Performance measurement disabled to prevent fingerprinting');
+      return;
     };
 
     // Measure on load with delay to avoid multiple calls

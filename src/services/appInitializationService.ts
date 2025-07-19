@@ -19,16 +19,8 @@ export class AppInitializationService {
 
       // Initialize production monitoring in production
       if (import.meta.env.PROD) {
-        productionMonitoring.trackWebVitals();
-        productionMonitoring.trackMemoryUsage();
-        
-        // Track initial page load
-        productionMonitoring.trackPageLoad(window.location.pathname);
-        
-        // Set up periodic health monitoring
-        setInterval(() => {
-          productionMonitoring.trackMemoryUsage();
-        }, 30000); // Every 30 seconds
+        // Production monitoring disabled to prevent fingerprinting warnings
+        logger.debug('Production monitoring disabled');
       }
 
       // Set up minimal global error handlers
