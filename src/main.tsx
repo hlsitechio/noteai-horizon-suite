@@ -25,7 +25,6 @@ devExperienceOptimizer.optimize();
 AppInitializationService.initialize();
 
 // Initialize completion services
-TestingService.initialize?.();
 ProductionErrorService.initialize();
 BundleAnalysisService.initialize();
 OnboardingService.initialize();

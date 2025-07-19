@@ -10,7 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { 
   ChevronLeft, 
   ChevronRight, 
-  Skip, 
+  SkipForward, 
   X, 
   Lightbulb,
   CheckCircle 
@@ -252,7 +252,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
                       onClick={handleSkip}
                       className="flex items-center gap-1"
                     >
-                      <Skip className="h-3 w-3" />
+                      <SkipForward className="h-3 w-3" />
                       Skip
                     </Button>
                   )}
