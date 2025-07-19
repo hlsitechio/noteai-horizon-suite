@@ -120,15 +120,15 @@ export class RealtimeSyncService {
   }
 
   private connect() {
-    if (this.isDestroyed || this.connecting) {
+    // Completely prevent any connection attempts to avoid WebSocket failures
+    if (this.isDestroyed) {
       return;
     }
-
-    // WebSocket connections disabled to prevent CSP violations and connection errors
-    console.warn('RealtimeSyncService: WebSocket connections disabled');
+    
+    // Never attempt connections - immediately set as disabled
     this.connecting = false;
+    this.connected = false;
     this.config.onConnectionStatusChange?.(false, false);
-    this.config.onError?.('WebSocket connections disabled');
     return;
   }
 
