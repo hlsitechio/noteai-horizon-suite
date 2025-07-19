@@ -41,6 +41,10 @@ export class ProductionMonitoringService {
    * Track performance metric
    */
   trackMetric(name: string, value: number, type: 'counter' | 'gauge' | 'histogram' = 'counter', tags?: Record<string, any>) {
+    // Temporarily disable metrics collection to prevent RLS errors
+    logger.debug('Metrics collection temporarily disabled');
+    return;
+    
     const metric: PerformanceMetrics = {
       timestamp: Date.now(),
       metric_name: name,
