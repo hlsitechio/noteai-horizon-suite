@@ -42,11 +42,19 @@ class UltraSecureConsole {
       return false;
     }
     
+    // Block repetitive security messages to prevent spam
+    if (message.includes('fingerprinting blocker activated') ||
+        message.includes('UTS tracking system neutralized') ||
+        message.includes('Navigation timing fingerprinting blocked') ||
+        message.includes('Performance measurement blocked')) {
+      return false;
+    }
+    
     // Only allow critically important messages
     return CRITICALLY_ALLOWED_MESSAGES.has(message) || 
            message.includes('ERROR') || 
            message.includes('CRITICAL') || 
-           message.includes('SECURITY') ||
+           (message.includes('SECURITY') && !message.includes('UTS tracking attempt blocked')) ||
            message.includes('FATAL');
   }
   
