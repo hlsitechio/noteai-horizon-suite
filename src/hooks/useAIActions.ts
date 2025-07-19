@@ -26,7 +26,9 @@ export const useAIActions = () => {
     setIsExecuting(true);
     
     try {
-      console.log('Executing AI action:', action);
+      if (import.meta.env.DEV) {
+        console.log('Executing AI action:', action);
+      }
 
       switch (action.type) {
         case 'create_note':

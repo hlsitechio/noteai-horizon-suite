@@ -18,7 +18,9 @@ export const useAIChat = () => {
     setIsLoading(true);
     
     try {
-      console.log('Sending chat message to AI:', { messageCount: messages.length });
+      if (import.meta.env.DEV) {
+        console.log('Sending chat message to AI:', { messageCount: messages.length });
+      }
       
       // Convert messages to OpenAI format
       const openAIMessages = messages.map(msg => ({
@@ -50,7 +52,9 @@ export const useAIChat = () => {
         throw new Error('Invalid response format from AI service');
       }
 
-      console.log('AI response received successfully');
+      if (import.meta.env.DEV) {
+        console.log('AI response received successfully');
+      }
       return data.message;
 
     } catch (error: any) {

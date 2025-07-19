@@ -90,7 +90,9 @@ const ResizableSidebarContainer: React.FC<ResizableSidebarContainerProps> = ({
 
   const handleLayout = React.useCallback((sizes: number[]) => {
     // Only emit layout changes when in edit mode
-    console.log('Sidebar layout change:', sizes, 'Edit mode:', isEditMode);
+    if (import.meta.env.DEV) {
+      console.log('Sidebar layout change:', sizes, 'Edit mode:', isEditMode);
+    }
   }, [isEditMode]);
 
   return (

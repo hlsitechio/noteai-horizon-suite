@@ -221,10 +221,14 @@ const TopNavigationBarComponent: React.FC<TopNavigationBarProps> = ({
 
   const handleClockClick = () => {
     if (!activeTimer) {
-      console.log('Clock clicked, toggling dropdown:', !showChronoDropdown);
+      if (import.meta.env.DEV) {
+        console.log('Clock clicked, toggling dropdown:', !showChronoDropdown);
+      }
       setShowChronoDropdown(!showChronoDropdown);
     } else {
-      console.log('Clock clicked but timer is active');
+      if (import.meta.env.DEV) {
+        console.log('Clock clicked but timer is active');
+      }
     }
   };
 
