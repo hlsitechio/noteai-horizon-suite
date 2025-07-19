@@ -67,6 +67,7 @@ export const CalendarEventFormInline: React.FC<CalendarEventFormInlineProps> = (
               type="text"
               className="w-full px-2 py-1.5 text-sm border rounded-md bg-background/50"
               placeholder="Event title"
+              autoComplete="off"
             />
           </div>
           <div className="space-y-1">

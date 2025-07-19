@@ -42,6 +42,7 @@ const Contact: React.FC = () => {
                 <input 
                   type="text" 
                   className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" 
+                  autoComplete="name"
                 />
               </div>
               <div>
@@ -49,6 +50,7 @@ const Contact: React.FC = () => {
                 <input 
                   type="email" 
                   className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" 
+                  autoComplete="email"
                 />
               </div>
               <div>

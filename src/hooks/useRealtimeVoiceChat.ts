@@ -29,6 +29,7 @@ export const useRealtimeVoiceChat = () => {
   const [messages, setMessages] = useState<VoiceMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   
+  // WebSocket features disabled to prevent console errors
   const wsRef = useRef<WebSocket | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -185,10 +186,9 @@ export const useRealtimeVoiceChat = () => {
 
   // Start recording user audio
   const startRecording = useCallback(async () => {
-    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      toast.error('Not connected to voice chat');
-      return;
-    }
+    // Voice chat is currently disabled
+    toast.error('Voice chat feature is currently unavailable');
+    return;
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -264,10 +264,9 @@ export const useRealtimeVoiceChat = () => {
 
   // Send text message (for hybrid mode)
   const sendTextMessage = useCallback((text: string) => {
-    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      toast.error('Not connected to voice chat');
-      return;
-    }
+    // Voice chat is currently disabled
+    toast.error('Voice chat feature is currently unavailable');
+    return;
 
     const userMessage: VoiceMessage = {
       id: Date.now().toString(),

@@ -216,6 +216,7 @@ const ContentHub: React.FC<ContentHubProps> = ({ className = '' }) => {
               type="email"
               placeholder="Enter your email"
               className="flex-1 px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+              autoComplete="email"
             />
             <Button className="px-8">
               Subscribe Free

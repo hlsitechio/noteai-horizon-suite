@@ -30,6 +30,18 @@ class UltraSecureConsole {
   }
   
   private isMessageAllowed(message: string): boolean {
+    // Block WebSocket and development-related messages
+    if (message.includes('WebSocket') || 
+        message.includes('CORS') || 
+        message.includes('dev-server') || 
+        message.includes('Failed to load resource') ||
+        message.includes('net::ERR_FAILED') ||
+        message.includes('_sandbox') ||
+        message.includes('[vite]') ||
+        message.includes('[HMR]')) {
+      return false;
+    }
+    
     // Only allow critically important messages
     return CRITICALLY_ALLOWED_MESSAGES.has(message) || 
            message.includes('ERROR') || 

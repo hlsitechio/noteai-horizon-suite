@@ -5,6 +5,7 @@ import { blockExternalTracking } from './utils/blockExternalTracking';
 import { blockUTSTracking } from './utils/blockUTSTracking';
 import './utils/blockFingerprinting'; // ULTRA-AGGRESSIVE: Block all fingerprinting attempts
 import './utils/ultraSecureLogging'; // ULTRA-SECURE: Blocks ALL non-essential logging immediately
+import { initDevErrorSuppression } from './utils/devErrorSuppression'; // CLEAN: Suppress dev environment noise
 import App from './App.tsx';
 import './index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -14,6 +15,9 @@ import { AppInitializationService } from './services/appInitializationService';
 // Block external tracking injection before app initialization
 blockExternalTracking();
 blockUTSTracking();
+
+// Initialize development error suppression
+initDevErrorSuppression();
 
 // Initialize app with optimized services
 AppInitializationService.initialize();
