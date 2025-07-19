@@ -38,7 +38,10 @@ class UltraSecureConsole {
         message.includes('net::ERR_FAILED') ||
         message.includes('_sandbox') ||
         message.includes('[vite]') ||
-        message.includes('[HMR]')) {
+        message.includes('[HMR]') ||
+        message.includes('lovableproject.com') ||
+        message.includes('connection to') ||
+        message.includes('failed:')) {
       return false;
     }
     
