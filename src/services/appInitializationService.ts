@@ -47,6 +47,8 @@ export class AppInitializationService {
       
       // Track initialization failure
       if (import.meta.env.PROD) {
+        // Temporarily disable initialization error tracking to prevent RLS errors
+        return;
         productionMonitoring.trackMetric('app_initialization_error', 1, 'counter', {
           error_message: String(error).substring(0, 500)
         });

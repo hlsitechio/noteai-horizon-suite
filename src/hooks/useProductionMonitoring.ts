@@ -48,6 +48,8 @@ export function useProductionMonitoring(
     if (!trackErrors || !import.meta.env.PROD) return;
 
     const handleError = (event: ErrorEvent) => {
+      // Temporarily disable error tracking to prevent RLS errors
+      return;
       productionMonitoring.trackMetric('javascript_error', 1, 'counter', {
         error_message: event.message.substring(0, 500),
         error_source: event.filename,
@@ -57,6 +59,8 @@ export function useProductionMonitoring(
     };
 
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      // Temporarily disable rejection tracking to prevent RLS errors
+      return;
       productionMonitoring.trackMetric('unhandled_promise_rejection', 1, 'counter', {
         error_reason: String(event.reason).substring(0, 500),
         page: window.location.pathname
