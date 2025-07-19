@@ -44,35 +44,6 @@ export const navigationItems = [
     description: 'Schedule and manage events'
   },
 
-  // Tools
-  { 
-    icon: 'bx bx-bar-chart', 
-    label: 'Analytics', 
-    path: '/app/analytics',
-    category: 'tools',
-    description: 'Track productivity metrics'
-  },
-  { 
-    icon: 'bx bx-search-alt', 
-    label: 'SEO', 
-    path: '/app/seo',
-    category: 'tools',
-    description: 'Search engine optimization'
-  },
-  { 
-    icon: 'bx bx-list-ul', 
-    label: 'Activity', 
-    path: '/app/activity',
-    category: 'tools',
-    description: 'View recent activity'
-  },
-  { 
-    icon: 'bx bx-palette', 
-    label: 'Themes', 
-    path: '/app/themes',
-    category: 'tools',
-    description: 'Customize appearance'
-  },
 
 ] as const;
 

@@ -5,7 +5,6 @@ import { useSidebarCollapse } from '@/contexts/SidebarContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { SidebarHeader } from './SidebarHeader';
 import { SidebarNavigation } from './SidebarNavigation';
-import { SidebarActions } from './SidebarActions';
 import { SidebarFooter } from './SidebarFooter';
 import { sidebarAnimations } from './animations';
 import { useSidebarOptimization } from './useSidebarOptimization';
@@ -39,13 +38,6 @@ const SidebarOptimized = memo(() => {
           <SidebarNavigation />
         </motion.div>
 
-        {/* Quick Actions */}
-        <motion.div
-          className="flex-shrink-0 px-2 py-2"
-          variants={sidebarAnimations.content}
-        >
-          <SidebarActions />
-        </motion.div>
 
         {/* Footer */}
         <motion.div
