@@ -143,24 +143,11 @@ export const useTasks = () => {
   useEffect(() => {
     fetchTasks();
 
-    // Set up real-time subscription for tasks
-    const channel = supabase
-      .channel('tasks-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'tasks'
-        },
-        () => {
-          fetchTasks(); // Refetch tasks when changes occur
-        }
-      )
-      .subscribe();
+    // Real-time subscription disabled to prevent WebSocket connections
+    console.warn('Real-time subscription for tasks disabled');
 
     return () => {
-      supabase.removeChannel(channel);
+      // No cleanup needed since no subscription was created
     };
   }, []);
 

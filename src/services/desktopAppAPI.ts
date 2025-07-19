@@ -44,8 +44,8 @@ class DesktopAppAPIService {
 
       this.connections.set(deviceId, connection);
 
-      // Set up real-time connection for desktop app
-      this.setupRealtimeConnection(user.id, deviceId);
+      // Real-time connection disabled for desktop app
+      console.warn('Desktop app real-time connection disabled');
 
       console.log(`Desktop app connected: ${deviceId}`);
       return true;
@@ -57,34 +57,9 @@ class DesktopAppAPIService {
 
   // Set up real-time sync channel
   private setupRealtimeConnection(userId: string, deviceId: string) {
-    this.realtimeChannel = supabase
-      .channel(`desktop-sync-${deviceId}`)
-      .on('presence', { event: 'sync' }, () => {
-        console.log('Desktop app presence sync');
-      })
-      .on('postgres_changes', 
-        { 
-          event: '*', 
-          schema: 'public', 
-          table: 'notes_v2',
-          filter: `user_id=eq.${userId}`
-        }, 
-        (payload) => {
-          this.handleRealtimeChange('notes', payload);
-        }
-      )
-      .on('postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'folders',
-          filter: `user_id=eq.${userId}`
-        },
-        (payload) => {
-          this.handleRealtimeChange('folders', payload);
-        }
-      )
-      .subscribe();
+    // Real-time connection disabled to prevent WebSocket connections
+    console.warn('Desktop app real-time connection disabled');
+    this.realtimeChannel = null;
   }
 
   // Handle real-time changes for desktop app
