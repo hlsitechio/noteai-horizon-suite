@@ -85,6 +85,7 @@ const APMPage = lazyWithRetry(() => import('../pages/APMPage').then(module => ({
 const UnifiedThemePage = lazyWithRetry(() => import('../pages/app/UnifiedThemePage'));
 const AIFeatures = lazyWithRetry(() => import('../pages/AIFeatures'));
 const AnalyticsDemo = lazyWithRetry(() => import('../pages/AnalyticsDemo'));
+const CompletionDashboard = lazyWithRetry(() => import('../pages/app/CompletionDashboard'));
 
 // MOBILE PAGES
 const MobileApp = lazyWithRetry(() => import('../pages/mobile/MobileApp'));
@@ -375,7 +376,13 @@ export const OptimizedLazyRoutes: React.FC = () => {
             <Suspense fallback={<DashboardLoadingFallback />}>
               <AIFeatures />
             </Suspense>
-          } />
+           } />
+           
+           <Route path="completion" element={
+             <Suspense fallback={<DashboardLoadingFallback />}>
+               <CompletionDashboard />
+             </Suspense>
+           } />
 
           {/* Development Tools */}
           <Route path="components" element={<ComponentLibraryPage />} />

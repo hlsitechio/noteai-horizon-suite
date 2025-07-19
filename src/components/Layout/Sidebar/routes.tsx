@@ -13,7 +13,8 @@ import {
   Palette,
   Activity,
   Component,
-  Bot
+  Bot,
+  CheckCircle2
 } from 'lucide-react';
 
 export interface RouteConfig {
@@ -197,7 +198,20 @@ export const routes: RouteConfig[] = [
         'Explore advanced AI capabilities including text generation, image analysis, and automation.'
       )
     )
-  },
+   },
+   {
+     path: "/app/completion",
+     label: "App Completion",
+     icon: CheckCircle2,
+     category: 'tools',
+     main: () => React.createElement('div', null, 'App Completion Content'),
+     sidebar: () => React.createElement('div', { className: 'space-y-3' }, 
+       React.createElement('h3', { className: 'text-sm font-medium text-muted-foreground' }, 'App Completion'),
+       React.createElement('p', { className: 'text-sm text-muted-foreground/80 leading-relaxed' }, 
+         'Track development progress, run health checks, and monitor application completion metrics.'
+       )
+     )
+   },
 
   // Settings Section
   {

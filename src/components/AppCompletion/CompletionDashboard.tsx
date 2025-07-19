@@ -1,11 +1,12 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useAppCompletion } from '@/hooks/useAppCompletion';
 import { TestingDashboard } from '@/components/Testing/TestingDashboard';
+import { OnboardingTrigger } from '@/components/Onboarding/OnboardingTrigger';
 import { 
   CheckCircle2, 
   AlertTriangle, 
@@ -15,6 +16,7 @@ import {
   TrendingUp 
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useToast } from '@/hooks/use-toast';
 
 export const CompletionDashboard: React.FC = () => {
   const { 
@@ -25,8 +27,22 @@ export const CompletionDashboard: React.FC = () => {
     runHealthCheck,
     getCompletionStatus 
   } = useAppCompletion();
-
+  
+  const { toast } = useToast();
   const completionStatus = getCompletionStatus();
+
+  // Welcome message for first-time visitors
+  useEffect(() => {
+    const hasVisitedCompletion = localStorage.getItem('hasVisitedCompletion');
+    if (!hasVisitedCompletion) {
+      toast({
+        title: "Welcome to App Completion! 🚀",
+        description: "Track your app's development progress and run health checks to ensure everything is production-ready.",
+        duration: 5000,
+      });
+      localStorage.setItem('hasVisitedCompletion', 'true');
+    }
+  }, [toast]);
 
   const scoreCards = [
     {
@@ -190,6 +206,36 @@ export const CompletionDashboard: React.FC = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Onboarding Management */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <OnboardingTrigger variant="card" showProgress={true} />
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button
+              onClick={runHealthCheck}
+              disabled={isLoading}
+              className="w-full flex items-center gap-2"
+            >
+              <TrendingUp className="h-4 w-4" />
+              Run Full Health Check
+            </Button>
+            <Button
+              variant="outline"
+              onClick={refreshMetrics}
+              disabled={isLoading}
+              className="w-full flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              Refresh All Metrics
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Testing Dashboard */}
       <TestingDashboard />
