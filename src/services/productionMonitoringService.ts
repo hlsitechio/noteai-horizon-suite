@@ -276,13 +276,23 @@ export class ProductionMonitoringService {
     const batch = this.metricsQueue.splice(0, this.BATCH_SIZE);
     
     try {
-      // Convert to Supabase format
+      // Get current authenticated user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      // Only store metrics if user is authenticated
+      if (!user) {
+        logger.debug('No authenticated user - skipping metrics storage');
+        return;
+      }
+
+      // Convert to Supabase format with user_id
       const metricsData = batch.map(metric => ({
         metric_name: metric.metric_name,
         metric_value: metric.metric_value,
         metric_type: metric.metric_type,
         tags: metric.tags || {},
-        timestamp: new Date(metric.timestamp).toISOString()
+        timestamp: new Date(metric.timestamp).toISOString(),
+        user_id: user.id
       }));
 
       const { error } = await supabase
