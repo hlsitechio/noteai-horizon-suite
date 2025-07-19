@@ -43,9 +43,9 @@ const SidebarActions = memo(() => {
     },
     {
       icon: Archive,
-      label: 'Archive',
-      description: 'Browse archived content',
-      action: useCallback(() => navigate('/app/explorer?filter=archived'), [navigate]),
+      label: 'Activity',
+      description: 'View recent activity',
+      action: useCallback(() => navigate('/app/activity'), [navigate]),
       variant: 'secondary'
     }
   ];

@@ -74,14 +74,6 @@ export const navigationItems = [
     description: 'Customize appearance'
   },
 
-  // Settings
-  { 
-    icon: 'bx bx-cog', 
-    label: 'Settings', 
-    path: '/app/settings',
-    category: 'settings',
-    description: 'Configure preferences'
-  }
 ] as const;
 
 export type NavigationItem = typeof navigationItems[number];

@@ -86,7 +86,6 @@ const SidebarNavigation = memo(() => {
   // Group navigation items by category
   const mainItems = navigationItems.filter(item => item.category === 'main' || !item.category);
   const toolItems = navigationItems.filter(item => item.category === 'tools');
-  const settingItems = navigationItems.filter(item => item.category === 'settings');
 
   const renderSection = (items: (typeof navigationItems)[number][], title?: string) => (
     <div className="space-y-1">
@@ -124,14 +123,6 @@ const SidebarNavigation = memo(() => {
         <>
           {!isCollapsed && <div className="h-px bg-border/50 mx-2" />}
           {renderSection(toolItems, 'Tools')}
-        </>
-      )}
-      
-      {/* Settings Section */}
-      {settingItems.length > 0 && (
-        <>
-          {!isCollapsed && <div className="h-px bg-border/50 mx-2" />}
-          {renderSection(settingItems, 'Settings')}
         </>
       )}
     </nav>
