@@ -2,6 +2,7 @@
 import { ConsolidatedAnalyticsService } from './consolidatedAnalyticsService';
 import { OptimizedPerformanceService } from './optimizedPerformanceService';
 import { OptimizedCleanupService } from './optimizedCleanupService';
+import { productionMonitoring } from './productionMonitoringService';
 import { logger } from '../utils/logger';
 
 export class AppInitializationService {
@@ -16,14 +17,40 @@ export class AppInitializationService {
       OptimizedPerformanceService.initialize();
       ConsolidatedAnalyticsService.initialize();
 
+      // Initialize production monitoring in production
+      if (import.meta.env.PROD) {
+        productionMonitoring.trackWebVitals();
+        productionMonitoring.trackMemoryUsage();
+        
+        // Track initial page load
+        productionMonitoring.trackPageLoad(window.location.pathname);
+        
+        // Set up periodic health monitoring
+        setInterval(() => {
+          productionMonitoring.trackMemoryUsage();
+        }, 30000); // Every 30 seconds
+      }
+
       // Set up minimal global error handlers
       this.setupGlobalErrorHandlers();
 
       this.isInitialized = true;
       logger.debug('✅ App initialized successfully with optimized services');
+      
+      // Track initialization success
+      if (import.meta.env.PROD) {
+        productionMonitoring.trackUserAction('app_initialized', performance.now());
+      }
 
     } catch (error) {
       logger.error('❌ Failed to initialize application:', error);
+      
+      // Track initialization failure
+      if (import.meta.env.PROD) {
+        productionMonitoring.trackMetric('app_initialization_error', 1, 'counter', {
+          error_message: String(error).substring(0, 500)
+        });
+      }
     }
   }
 
@@ -57,6 +84,12 @@ export class AppInitializationService {
     OptimizedPerformanceService.cleanup();
     OptimizedCleanupService.cleanup();
     ConsolidatedAnalyticsService.cleanup();
+    
+    // Cleanup production monitoring
+    if (import.meta.env.PROD) {
+      productionMonitoring.cleanup();
+    }
+    
     this.isInitialized = false;
   }
 }

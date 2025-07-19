@@ -224,6 +224,36 @@ export type Database = {
         }
         Relationships: []
       }
+      app_metrics: {
+        Row: {
+          id: string
+          metric_name: string
+          metric_type: string
+          metric_value: number
+          tags: Json | null
+          timestamp: string
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          metric_name: string
+          metric_type?: string
+          metric_value: number
+          tags?: Json | null
+          timestamp?: string
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          metric_name?: string
+          metric_type?: string
+          metric_value?: number
+          tags?: Json | null
+          timestamp?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       calendar_events: {
         Row: {
           created_at: string
@@ -929,6 +959,39 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      rate_limits: {
+        Row: {
+          created_at: string
+          endpoint: string
+          id: string
+          ip_address: unknown | null
+          request_count: number
+          updated_at: string
+          user_id: string | null
+          window_start: string
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          id?: string
+          ip_address?: unknown | null
+          request_count?: number
+          updated_at?: string
+          user_id?: string | null
+          window_start?: string
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          id?: string
+          ip_address?: unknown | null
+          request_count?: number
+          updated_at?: string
+          user_id?: string | null
+          window_start?: string
         }
         Relationships: []
       }
