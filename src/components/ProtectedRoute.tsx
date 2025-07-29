@@ -9,8 +9,20 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, isAuthenticated, authError } = useAuth();
 
+  // Debug log for authentication state
+  if (import.meta.env.DEV) {
+    console.log('ProtectedRoute auth state:', { 
+      hasUser: !!user, 
+      isAuthenticated, 
+      isLoading,
+      userEmail: user?.email,
+      authError
+    });
+  }
+
+  // Show loading state while authentication is being verified
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -22,7 +34,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  if (!user) {
+  // Check authentication state more thoroughly
+  if (!isAuthenticated || !user) {
+    if (import.meta.env.DEV) {
+      console.warn('ProtectedRoute: Authentication failed, redirecting to login', {
+        isAuthenticated,
+        hasUser: !!user,
+        authError
+      });
+    }
     return <Navigate to="/auth/login" replace />;
   }
 
