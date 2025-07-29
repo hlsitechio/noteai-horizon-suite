@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Save, Share, MoreHorizontal, Wifi, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { SimpleTiptapEditor } from '@/components/Editor/tiptap/components/SimpleTiptapEditor';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useNotes } from '@/contexts/NotesContext';
@@ -229,18 +229,18 @@ const MobileEditor: React.FC = () => {
           </div>
         )}
 
-        {/* Content Textarea */}
-        <Textarea
+        {/* Content Editor */}
+        <SimpleTiptapEditor
           placeholder="Start writing your note..."
           value={content}
-          onChange={(e) => {
-            setContent(e.target.value);
+          onChange={(newContent) => {
+            setContent(newContent);
             // Send real-time update to other devices
             if (noteId) {
-              sendNoteUpdate(noteId, e.target.value);
+              sendNoteUpdate(noteId, newContent);
             }
           }}
-          className="min-h-[60vh] border-none p-0 resize-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="min-h-[60vh] border-none p-0 bg-transparent"
         />
 
         {/* Quick Actions */}
