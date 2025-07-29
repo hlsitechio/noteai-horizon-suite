@@ -1,6 +1,5 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { ProductionErrorService } from '@/services/productionErrorService';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
@@ -14,7 +13,6 @@ interface Props {
 interface State {
   hasError: boolean;
   error?: Error;
-  errorId?: string;
   retryCount: number;
 }
 
@@ -37,23 +35,11 @@ export class ProductionErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Report error to production error service
-    const errorId = ProductionErrorService.reportError({
-      error,
-      context: `React Error Boundary: ${errorInfo.componentStack}`,
-      severity: 'high',
-      reportedBy: 'system'
-    });
-
-    this.setState({ errorId });
+    // Error monitoring removed - simplified error handling
+    console.error('ProductionErrorBoundary caught an error:', error, errorInfo);
 
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
-
-    // Call global React error reporter if available
-    if (window.reportReactError) {
-      window.reportReactError(error, errorInfo);
-    }
   }
 
   handleRetry = () => {
@@ -61,7 +47,6 @@ export class ProductionErrorBoundary extends Component<Props, State> {
       this.setState(prevState => ({
         hasError: false,
         error: undefined,
-        errorId: undefined,
         retryCount: prevState.retryCount + 1
       }));
     }
@@ -91,13 +76,6 @@ export class ProductionErrorBoundary extends Component<Props, State> {
             <CardContent className="space-y-4">
               <div className="text-center text-muted-foreground">
                 <p>An unexpected error occurred while loading this page.</p>
-                {this.state.errorId && (
-                  <p className="text-sm mt-2">
-                    Error ID: <code className="bg-muted px-1 py-0.5 rounded text-xs">
-                      {this.state.errorId}
-                    </code>
-                  </p>
-                )}
               </div>
 
               {import.meta.env.DEV && this.state.error && (
@@ -134,7 +112,7 @@ export class ProductionErrorBoundary extends Component<Props, State> {
 
               <div className="text-center">
                 <p className="text-xs text-muted-foreground">
-                  If this problem persists, please contact support with the error ID above.
+                  If this problem persists, please contact support.
                 </p>
               </div>
             </CardContent>

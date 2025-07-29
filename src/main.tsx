@@ -10,7 +10,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import { AppInitializationService } from './services/appInitializationService';
 import { TestingService } from './services/testingService';
-import { ProductionErrorService } from './services/productionErrorService';
 import { BundleAnalysisService } from './services/bundleAnalysisService';
 import { OnboardingService } from './services/onboardingService';
 
@@ -25,7 +24,6 @@ devExperienceOptimizer.optimize();
 AppInitializationService.initialize();
 
 // Initialize completion services
-ProductionErrorService.initialize();
 BundleAnalysisService.initialize();
 OnboardingService.initialize();
 

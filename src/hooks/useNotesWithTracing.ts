@@ -3,12 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Note, NoteFilters } from '../types/note';
 import { SupabaseNotesService } from '../services/supabaseNotesService';
 import { useAuth } from '../contexts/AuthContext';
-import { useErrorTracing } from './useErrorTracing';
 import { toast } from 'sonner';
 
 export const useNotesWithTracing = (filters?: NoteFilters) => {
   const { user } = useAuth();
-  const { traceError } = useErrorTracing();
   const queryClient = useQueryClient();
 
   // Query for fetching notes with error tracing
@@ -42,12 +40,7 @@ export const useNotesWithTracing = (filters?: NoteFilters) => {
         
         return notes;
       } catch (error) {
-        traceError({
-          component: 'useNotesWithTracing',
-          operation: 'fetchNotes',
-          error: error as Error,
-          additionalData: { filters, userId: user?.id },
-        });
+        console.error('Failed to fetch notes:', error);
         throw error;
       }
     },
@@ -72,12 +65,7 @@ export const useNotesWithTracing = (filters?: NoteFilters) => {
       try {
         return await SupabaseNotesService.saveNote(noteData);
       } catch (error) {
-        traceError({
-          component: 'useNotesWithTracing',
-          operation: 'createNote',
-          error: error as Error,
-          additionalData: { noteData: { title: noteData.title, category: noteData.category } },
-        });
+        console.error('Failed to create note:', error);
         throw error;
       }
     },
@@ -103,12 +91,7 @@ export const useNotesWithTracing = (filters?: NoteFilters) => {
       try {
         return await SupabaseNotesService.updateNote(id, updates);
       } catch (error) {
-        traceError({
-          component: 'useNotesWithTracing',
-          operation: 'updateNote',
-          error: error as Error,
-          additionalData: { noteId: id, updates },
-        });
+        console.error('Failed to update note:', error);
         throw error;
       }
     },
@@ -140,12 +123,7 @@ export const useNotesWithTracing = (filters?: NoteFilters) => {
         }
         return noteId;
       } catch (error) {
-        traceError({
-          component: 'useNotesWithTracing',
-          operation: 'deleteNote',
-          error: error as Error,
-          additionalData: { noteId },
-        });
+        console.error('Failed to delete note:', error);
         throw error;
       }
     },
@@ -171,12 +149,7 @@ export const useNotesWithTracing = (filters?: NoteFilters) => {
       try {
         return await SupabaseNotesService.toggleFavorite(noteId);
       } catch (error) {
-        traceError({
-          component: 'useNotesWithTracing',
-          operation: 'toggleFavorite',
-          error: error as Error,
-          additionalData: { noteId },
-        });
+        console.error('Failed to toggle favorite:', error);
         throw error;
       }
     },

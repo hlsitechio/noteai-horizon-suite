@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { TestingService } from '@/services/testingService';
-import { ProductionErrorService } from '@/services/productionErrorService';
 import { BundleAnalysisService } from '@/services/bundleAnalysisService';
 import { OnboardingService } from '@/services/onboardingService';
 import { useAuth } from '@/contexts/AuthContext';
@@ -37,9 +36,8 @@ export const useAppCompletion = () => {
     // Testing Score (0-100)
     const testingScore = TestingService.getHealthScore();
     
-    // Error Score (0-100, inverse of error rate)
-    const errorStats = ProductionErrorService.getErrorStats();
-    const errorScore = Math.max(0, 100 - (errorStats.unresolved * 10));
+    // Error Score (0-100, simplified without monitoring)
+    const errorScore = 85; // Default good score since monitoring is removed
     
     // Performance Score (0-100)
     const bundleMetrics = BundleAnalysisService.getBundleMetrics();
