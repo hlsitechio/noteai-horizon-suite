@@ -26,6 +26,7 @@ const MobileEditor: React.FC = () => {
   const [isChanged, setIsChanged] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [userId, setUserId] = useState<string>('');
+  const [editor, setEditor] = useState<any>(null);
 
   // Get current user for sync
   useEffect(() => {
@@ -201,7 +202,7 @@ const MobileEditor: React.FC = () => {
       </div>
 
       {/* Editor Toolbar */}
-      <MobileEditorToolbar />
+      <MobileEditorToolbar editor={editor} />
 
       {/* Content */}
       <div className="p-4 space-y-4">
@@ -240,6 +241,7 @@ const MobileEditor: React.FC = () => {
               sendNoteUpdate(noteId, newContent);
             }
           }}
+          onEditorReady={setEditor}
           className="min-h-[60vh] border-none p-0 bg-transparent"
         />
 
