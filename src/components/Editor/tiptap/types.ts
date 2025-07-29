@@ -32,4 +32,25 @@ export type FormattingCommand =
   | 'heading2'
   | 'blockquote'
   | 'bulletList'
-  | 'orderedList';
+  | 'orderedList'
+  | 'highlight'
+  | 'textColor'
+  | 'insertTable'
+  | 'deleteTable'
+  | 'addColumnBefore'
+  | 'addColumnAfter'
+  | 'deleteColumn'
+  | 'addRowBefore'
+  | 'addRowAfter'
+  | 'deleteRow'
+  | 'mergeCells'
+  | 'splitCell'
+  | 'toggleHeaderColumn'
+  | 'toggleHeaderRow'
+  | 'toggleHeaderCell';
+
+export interface MobileEditorToolbarProps {
+  onFormatClick?: (formatId: string, event: React.MouseEvent) => void;
+  activeFormats?: Set<string>;
+  editor?: any;
+}

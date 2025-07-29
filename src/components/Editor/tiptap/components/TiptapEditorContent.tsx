@@ -4,6 +4,8 @@ import { TiptapEditorProps } from '../types';
 import { useTiptapEditor } from '../hooks/useTiptapEditor';
 import { useTiptapFormatting } from '../hooks/useTiptapFormatting';
 import TiptapToolbar from './TiptapToolbar';
+import TiptapBubbleMenu from './TiptapBubbleMenu';
+import EnhancedMobileToolbar from './EnhancedMobileToolbar';
 
 const TiptapEditorContent: React.FC<TiptapEditorProps> = ({
   value,
@@ -43,7 +45,8 @@ const TiptapEditorContent: React.FC<TiptapEditorProps> = ({
         onFocusModeToggle={onFocusModeToggle}
       />
       
-      <div className="flex-1 min-h-0 overflow-hidden">
+      <div className="flex-1 min-h-0 overflow-hidden relative">
+        <TiptapBubbleMenu editor={editor} />
         <div 
           className="h-full p-8 overflow-y-auto bg-background"
           onKeyDown={handleKeyDown}
@@ -54,6 +57,8 @@ const TiptapEditorContent: React.FC<TiptapEditorProps> = ({
           />
         </div>
       </div>
+      
+      <EnhancedMobileToolbar editor={editor} />
     </div>
   );
 };
