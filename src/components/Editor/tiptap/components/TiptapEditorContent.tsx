@@ -3,7 +3,7 @@ import { EditorContent } from '@tiptap/react';
 import { TiptapEditorProps } from '../types';
 import { useTiptapEditor } from '../hooks/useTiptapEditor';
 import { useTiptapFormatting } from '../hooks/useTiptapFormatting';
-import TiptapToolbar from './TiptapToolbar';
+import EnhancedTiptapToolbar from './EnhancedTiptapToolbar';
 import TiptapBubbleMenu from './TiptapBubbleMenu';
 import EnhancedMobileToolbar from './EnhancedMobileToolbar';
 
@@ -37,7 +37,7 @@ const TiptapEditorContent: React.FC<TiptapEditorProps> = ({
 
   return (
     <div className={`h-full flex flex-col ${className}`}>
-      <TiptapToolbar
+      <EnhancedTiptapToolbar 
         editor={editor}
         onSave={onSave}
         canSave={canSave}
