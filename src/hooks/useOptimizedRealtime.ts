@@ -54,12 +54,9 @@ export const useOptimizedRealtime = ({
   }, []);
 
   const setupRealtime = useCallback(async () => {
-    // Completely disable all realtime functionality to prevent WebSocket connection attempts
-    if (subscriptionActiveRef.current) {
-      return; // Already handled
-    }
+    // Realtime functionality removed - WebSockets not supported
     subscriptionActiveRef.current = false;
-    logger.realtime.debug('Realtime connections permanently disabled - no connection attempts');
+    logger.realtime.debug('Realtime functionality removed');
     return;
   }, []);
 

@@ -44,8 +44,8 @@ class DesktopAppAPIService {
 
       this.connections.set(deviceId, connection);
 
-      // Real-time connection disabled for desktop app
-      console.warn('Desktop app real-time connection disabled');
+      // Real-time connection removed - WebSockets not supported
+      console.warn('Desktop app real-time connection removed');
 
       console.log(`Desktop app connected: ${deviceId}`);
       return true;
@@ -55,10 +55,10 @@ class DesktopAppAPIService {
     }
   }
 
-  // Set up real-time sync channel
+  // Real-time sync functionality removed
   private setupRealtimeConnection(userId: string, deviceId: string) {
-    // Real-time connection disabled to prevent WebSocket connections
-    console.warn('Desktop app real-time connection disabled');
+    // Real-time connection removed - WebSockets not supported
+    console.warn('Desktop app real-time connection removed');
     this.realtimeChannel = null;
   }
 

@@ -49,17 +49,14 @@ export const useRealtimeSync = ({
   }, [toast]);
 
   useEffect(() => {
-    // Completely disable RealtimeSyncService to prevent any WebSocket connection attempts
+    // RealtimeSyncService removed - WebSockets not supported
     if (enabled) {
-      console.warn('RealtimeSyncService disabled - WebSocket connections not available');
+      console.warn('RealtimeSyncService removed - functionality not available');
     }
     setConnected(false);
 
     return () => {
-      if (syncServiceRef.current) {
-        syncServiceRef.current.disconnect();
-        syncServiceRef.current = null;
-      }
+      // Cleanup not needed as service is removed
     };
   }, [documentId, userId, enabled, onContentChange, handleUserJoined, handleUserLeft, handleConnectionChange]);
 
