@@ -5,6 +5,19 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Highlight from '@tiptap/extension-highlight';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
+import Focus from '@tiptap/extension-focus';
+import Typography from '@tiptap/extension-typography';
+import Link from '@tiptap/extension-link';
+import Image from '@tiptap/extension-image';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { TableCell } from '@tiptap/extension-table-cell';
+import { TaskList } from '@tiptap/extension-task-list';
+import { TaskItem } from '@tiptap/extension-task-item';
+import { TextStyle } from '@tiptap/extension-text-style';
+import { Color } from '@tiptap/extension-color';
+import { AIAssistantToolbar } from '../ai/AIAssistantToolbar';
 import { parseInitialValue } from '../utils/editorUtils';
 
 interface SimpleTiptapEditorProps {
@@ -13,6 +26,8 @@ interface SimpleTiptapEditorProps {
   placeholder?: string;
   className?: string;
   onEditorReady?: (editor: any) => void;
+  showAIToolbar?: boolean;
+  enableAdvancedFeatures?: boolean;
 }
 
 export const SimpleTiptapEditor: React.FC<SimpleTiptapEditorProps> = ({
@@ -20,15 +35,13 @@ export const SimpleTiptapEditor: React.FC<SimpleTiptapEditorProps> = ({
   onChange,
   placeholder = "Start writing...",
   className = "",
-  onEditorReady
+  onEditorReady,
+  showAIToolbar = true,
+  enableAdvancedFeatures = true
 }) => {
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2],
-        },
-      }),
+  const extensions = useMemo(() => {
+    const basicExtensions = [
+      StarterKit,
       Placeholder.configure({
         placeholder,
       }),
@@ -39,7 +52,38 @@ export const SimpleTiptapEditor: React.FC<SimpleTiptapEditorProps> = ({
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
-    ],
+      Focus.configure({
+        className: 'has-focus',
+        mode: 'all',
+      }),
+      Typography,
+    ];
+
+    if (enableAdvancedFeatures) {
+      return [
+        ...basicExtensions,
+        TextStyle,
+        Color.configure({
+          types: [TextStyle.name],
+        }),
+        Link.configure({
+          HTMLAttributes: {
+            class: 'text-primary underline cursor-pointer',
+          },
+          openOnClick: false,
+        }),
+        TaskList,
+        TaskItem.configure({
+          nested: true,
+        })
+      ];
+    }
+
+    return basicExtensions;
+  }, [placeholder, enableAdvancedFeatures]);
+
+  const editor = useEditor({
+    extensions,
     content: parseInitialValue(value),
     onUpdate: ({ editor }) => {
       // Get HTML content for rich text storage
@@ -62,13 +106,15 @@ export const SimpleTiptapEditor: React.FC<SimpleTiptapEditorProps> = ({
 
   return (
     <div className={`relative ${className}`}>
+      {showAIToolbar && editor && (
+        <AIAssistantToolbar 
+          editor={editor}
+          className="mb-4"
+        />
+      )}
       <EditorContent 
         editor={editor}
-        style={{
-          backgroundColor: 'transparent',
-          fontSize: '16px',
-          lineHeight: '1.6',
-        }}
+        className="prose prose-sm max-w-none focus:outline-none"
       />
     </div>
   );
