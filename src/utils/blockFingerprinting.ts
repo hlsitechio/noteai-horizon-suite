@@ -74,13 +74,27 @@ export const blockFingerprinting = () => {
   };
 
   // Block user agent parsing
-  Object.defineProperty(navigator, 'userAgent', {
-    value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    configurable: false
-  });
+  try {
+    const userAgentDescriptor = Object.getOwnPropertyDescriptor(navigator, 'userAgent');
+    if (!userAgentDescriptor || userAgentDescriptor.configurable) {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        configurable: false
+      });
+    }
+  } catch (error) {
+    // userAgent property cannot be redefined, skip silently
+  }
 
   // Block plugin enumeration
-  Object.defineProperty(navigator, 'plugins', { value: [], configurable: false });
+  try {
+    const pluginsDescriptor = Object.getOwnPropertyDescriptor(navigator, 'plugins');
+    if (!pluginsDescriptor || pluginsDescriptor.configurable) {
+      Object.defineProperty(navigator, 'plugins', { value: [], configurable: false });
+    }
+  } catch (error) {
+    // plugins property cannot be redefined, skip silently
+  }
 
   // Block battery status API
   if ('getBattery' in navigator) {
