@@ -47,11 +47,3 @@
   Cache-Control: public, max-age=3600
   X-Content-Type-Options: nosniff
 
-# Manifest and service worker
-/manifest.json
-  Cache-Control: public, max-age=86400
-  X-Content-Type-Options: nosniff
-
-/sw.js
-  Cache-Control: no-cache
-  X-Content-Type-Options: nosniff

@@ -23,7 +23,7 @@ const defaultConfig: SecurityAuditConfig = {
   allowedLogPatterns: [
     'ERROR', 'CRITICAL', 'SECURITY', // Only critical logs allowed
     'Retrieved settings (sanitized)', // Exception for sanitized data
-    '✅ Service Worker registered successfully' // Essential PWA status
+    '✅ Security measures active' // Essential security status
   ]
 };
 

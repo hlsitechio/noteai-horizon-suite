@@ -68,7 +68,7 @@ const ExportButtons: React.FC<ExportButtonsProps> = ({
       </div>
 
       <p className="text-sm text-gray-600">
-        Download your note in various formats for offline use or to upload to cloud storage.
+        Download your note in various formats for sharing or cloud storage.
       </p>
     </div>
   );

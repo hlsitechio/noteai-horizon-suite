@@ -1,10 +1,11 @@
 import React from 'react';
-import { PWADownloadSection } from '@/components/Settings/PWADownloadSection';
 
 export const DownloadTabContent: React.FC = () => {
   return (
     <div className="space-y-6">
-      <PWADownloadSection />
+      <div className="text-muted-foreground">
+        Download functionality is not available as PWA features have been removed.
+      </div>
     </div>
   );
 };

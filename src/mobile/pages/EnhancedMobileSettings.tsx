@@ -21,7 +21,7 @@ const EnhancedMobileSettings: React.FC = () => {
   const [notifications, setNotifications] = useState(true);
   const [autoSync, setAutoSync] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [offlineMode, setOfflineMode] = useState(false);
+  
 
   const handleBack = () => {
     navigate('/mobile/notes');
@@ -92,12 +92,6 @@ const EnhancedMobileSettings: React.FC = () => {
           value: autoSync,
           type: 'toggle',
           onChange: setAutoSync
-        },
-        {
-          label: 'Offline Mode',
-          value: offlineMode,
-          type: 'toggle',
-          onChange: setOfflineMode
         },
         {
           label: 'Sync Status',

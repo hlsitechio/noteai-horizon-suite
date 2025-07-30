@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { SidebarOptimized } from './Sidebar/optimized';
 import { SidebarCollapseProvider } from '@/contexts/SidebarContext';
-import { PWAWrapper } from '../PWA/PWAWrapper';
+
 import BannerLayout from './BannerLayout';
 import FloatingNotesContainer from '../FloatingNotes/FloatingNotesContainer';
 import { useThemeManager } from '@/hooks/useThemeManager';
@@ -18,27 +18,25 @@ const Layout: React.FC = () => {
   useThemeManager();
   
   return (
-    <PWAWrapper>
-      <SidebarCollapseProvider>
-        <div className="h-full w-full bg-background overflow-hidden">
-          <ResizableSidebarContainer
-            sidebarDefaultSize={16}
-            sidebarMinSize={12}
-            sidebarMaxSize={25}
-            isEditMode={isSidebarEditMode}
-            sidebarContent={<SidebarOptimized />}
-            mainContent={
-              <div className="h-full w-full overflow-hidden">
-                <BannerLayout />
-              </div>
-            }
-          />
-          <Toaster />
-          <FloatingNotesContainer />
-          <ReminderManager />
-        </div>
-      </SidebarCollapseProvider>
-    </PWAWrapper>
+    <SidebarCollapseProvider>
+      <div className="h-full w-full bg-background overflow-hidden">
+        <ResizableSidebarContainer
+          sidebarDefaultSize={16}
+          sidebarMinSize={12}
+          sidebarMaxSize={25}
+          isEditMode={isSidebarEditMode}
+          sidebarContent={<SidebarOptimized />}
+          mainContent={
+            <div className="h-full w-full overflow-hidden">
+              <BannerLayout />
+            </div>
+          }
+        />
+        <Toaster />
+        <FloatingNotesContainer />
+        <ReminderManager />
+      </div>
+    </SidebarCollapseProvider>
   );
 };
 

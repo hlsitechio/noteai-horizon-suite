@@ -111,7 +111,7 @@ const QRCodeSection: React.FC<QRCodeSectionProps> = ({ note }) => {
       </Card>
 
       <p className="text-sm text-gray-600">
-        Generate a QR code to easily share your note with mobile devices or for offline sharing.
+        Generate a QR code to easily share your note with mobile devices.
       </p>
     </div>
   );

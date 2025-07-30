@@ -167,7 +167,7 @@ const DynamicSEOOptimizer: React.FC<DynamicSEOOptimizerProps> = ({
       <meta name="theme-color" content="#3b82f6" />
       <meta name="msapplication-TileColor" content="#3b82f6" />
       <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-      <link rel="manifest" href="/site.webmanifest" />
+      
     </Helmet>
   );
 };

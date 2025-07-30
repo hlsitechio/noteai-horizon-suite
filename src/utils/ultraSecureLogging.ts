@@ -14,7 +14,7 @@ const CRITICALLY_ALLOWED_MESSAGES = new Set([
   'SECURITY',
   'FATAL',
   'Retrieved settings (sanitized)',
-  '✅ Service Worker registered successfully',
+  
   '🔒 SECURITY AUDIT ACTIVE'
 ]);
 

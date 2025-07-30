@@ -27,14 +27,9 @@ const Features: React.FC = () => {
       description: "Access your notes instantly across all devices with lightning-fast synchronization."
     },
     {
-      icon: Globe,
-      title: "Offline Access",
-      description: "Continue writing even without internet. Your work syncs automatically when you're back online."
-    },
-    {
       icon: Users,
-      title: "Collaboration",
-      description: "Share notes and collaborate with team members in real-time with granular permission controls."
+      title: "Team Collaboration",
+      description: "Work together seamlessly with real-time collaboration tools and shared workspaces."
     },
     {
       icon: Sparkles,

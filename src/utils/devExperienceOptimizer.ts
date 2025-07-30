@@ -8,7 +8,6 @@ const DEV_NOISE_PATTERNS = [
   /SECURITY.*UTS tracking attempt blocked/i,
   /SECURITY.*fingerprinting blocker activated/i,
   /SECURITY.*Auth session updated/i,
-  /Service Worker.*successfully/i,
   /Retrieved settings.*sanitized/i,
   /SECURITY AUDIT ACTIVE/i,
   /WebSocket connection.*failed/i,
