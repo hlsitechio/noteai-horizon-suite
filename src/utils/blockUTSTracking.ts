@@ -76,22 +76,26 @@ export const blockUTSTracking = () => {
 
   // Block UTS cookie access more thoroughly
   const originalCookieDescriptor = Object.getOwnPropertyDescriptor(Document.prototype, 'cookie');
-  if (originalCookieDescriptor) {
-    Object.defineProperty(document, 'cookie', {
-      get: function() {
-        const cookies = originalCookieDescriptor.get?.call(this) || '';
-        // Filter out UTS tracking cookies completely
-        return cookies.split(';')
-          .filter(cookie => !isUTSCookie(cookie.trim()))
-          .join(';');
-      },
-      set: function(value: string) {
-        if (isUTSCookie(value)) {
-          return; // Silent block
+  if (originalCookieDescriptor && originalCookieDescriptor.configurable) {
+    try {
+      Object.defineProperty(document, 'cookie', {
+        get: function() {
+          const cookies = originalCookieDescriptor.get?.call(this) || '';
+          // Filter out UTS tracking cookies completely
+          return cookies.split(';')
+            .filter(cookie => !isUTSCookie(cookie.trim()))
+            .join(';');
+        },
+        set: function(value: string) {
+          if (isUTSCookie(value)) {
+            return; // Silent block
+          }
+          return originalCookieDescriptor.set?.call(this, value);
         }
-        return originalCookieDescriptor.set?.call(this, value);
-      }
-    });
+      });
+    } catch (error) {
+      // Cookie property cannot be redefined, skip this protection silently
+    }
   }
 
   // Block script injection attempts
