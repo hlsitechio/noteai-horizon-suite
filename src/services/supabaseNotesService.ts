@@ -243,80 +243,14 @@ export class SupabaseNotesService {
     onUpdate?: (note: Note) => void,
     onDelete?: (noteId: string) => void
   ) {
-    // DEPRECATED: Use useOptimizedRealtime hook instead
-    // This method is kept for backwards compatibility
-    console.warn('SupabaseNotesService.subscribeToNoteChanges is deprecated. Use useOptimizedRealtime hook instead.');
+    // Real-time subscriptions completely removed
+    console.log('Real-time subscription for tasks disabled');
     
-    const channelName = `notes-${userId}-${Date.now()}`;
-    
-    const channel = supabase
-      .channel(channelName, {
-        config: {
-          broadcast: { self: false },
-          presence: { key: userId }
-        }
-      })
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notes_v2',
-          filter: `user_id=eq.${userId}`
-        },
-        (payload) => {
-          if (onInsert && payload.new) {
-            try {
-              const note: Note = this.transformPayloadToNote(payload.new);
-              onInsert(note);
-            } catch (error) {
-              console.error('Error processing INSERT payload:', error);
-            }
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'notes_v2',
-          filter: `user_id=eq.${userId}`
-        },
-        (payload) => {
-          if (onUpdate && payload.new) {
-            try {
-              const note: Note = this.transformPayloadToNote(payload.new);
-              onUpdate(note);
-            } catch (error) {
-              console.error('Error processing UPDATE payload:', error);
-            }
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'notes_v2',
-          filter: `user_id=eq.${userId}`
-        },
-        (payload) => {
-          if (onDelete && payload.old) {
-            try {
-              onDelete(payload.old.id);
-            } catch (error) {
-              console.error('Error processing DELETE payload:', error);
-            }
-          }
-        }
-      )
-      .subscribe((status) => {
-        console.log(`Channel ${channelName} subscription status:`, status);
-      });
-
-    return channel;
+    // Return a mock channel object to prevent errors
+    return {
+      unsubscribe: () => Promise.resolve(),
+      subscribe: () => ({ status: 'CLOSED' })
+    };
   }
 
   // Helper method to transform database payload to Note object

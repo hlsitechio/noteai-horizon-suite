@@ -131,8 +131,8 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     let isSetupInProgress = false;
     
     const setupRealtimeSubscription = async () => {
-      // Real-time subscription disabled to prevent connection errors
-      console.warn('NotesContext: Real-time subscription disabled');
+      // Real-time subscription completely disabled
+      console.log('Real-time subscription for tasks disabled');
       
       // Still do initial load
       if (user && !authLoading) {

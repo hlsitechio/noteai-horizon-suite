@@ -120,12 +120,14 @@ export class RealtimeSyncService {
   }
 
   private connect() {
-    // Completely prevent any connection attempts to avoid WebSocket failures
+    // Real-time connections completely disabled
+    console.log('Real-time subscription for tasks disabled');
+    
     if (this.isDestroyed) {
       return;
     }
     
-    // Never attempt connections - immediately set as disabled
+    // Never attempt connections
     this.connecting = false;
     this.connected = false;
     this.config.onConnectionStatusChange?.(false, false);

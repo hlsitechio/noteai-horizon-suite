@@ -55,43 +55,8 @@ export const OptimizedNotesProvider: React.FC<{ children: React.ReactNode }> = (
     enabled: !!user,
   });
 
-  // Set up optimized realtime
-  const { isConnected } = useOptimizedRealtime({
-    onInsert: useCallback((newNote: Note) => {
-      optimisticAddNote(newNote);
-      setSyncStatus('connected');
-    }, [optimisticAddNote]),
-    onUpdate: useCallback((updatedNote: Note) => {
-      optimisticUpdateNote(updatedNote.id, updatedNote);
-      
-      // Update current/selected notes if they match
-      if (currentNote?.id === updatedNote.id) {
-        setCurrentNote(updatedNote);
-      }
-      if (selectedNote?.id === updatedNote.id) {
-        setSelectedNote(updatedNote);
-      }
-      setSyncStatus('connected');
-    }, [optimisticUpdateNote, currentNote, selectedNote]),
-    onDelete: useCallback((deletedNoteId: string) => {
-      optimisticRemoveNote(deletedNoteId);
-      
-      // Clear current/selected notes if they were deleted
-      if (currentNote?.id === deletedNoteId) {
-        setCurrentNote(null);
-      }
-      if (selectedNote?.id === deletedNoteId) {
-        setSelectedNote(null);
-      }
-      setSyncStatus('connected');
-    }, [optimisticRemoveNote, currentNote, selectedNote]),
-    enabled: !!user,
-  });
-
-  // Update sync status based on connection
-  React.useEffect(() => {
-    setSyncStatus(isConnected ? 'connected' : 'disconnected');
-  }, [isConnected]);
+  // Real-time functionality completely removed
+  console.log('Real-time subscription for tasks disabled');
 
   // Filter notes based on current filters
   const filteredNotes = React.useMemo(() => {

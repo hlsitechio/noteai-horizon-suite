@@ -1,12 +1,8 @@
-import { useEffect, useRef, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { Note } from '../types/note';
-import { useAuth } from '../contexts/AuthContext';
-import { logger } from '../utils/logger';
+import { useCallback } from 'react';
 
 interface UseOptimizedRealtimeOptions {
-  onInsert?: (note: Note) => void;
-  onUpdate?: (note: Note) => void;
+  onInsert?: (note: any) => void;
+  onUpdate?: (note: any) => void;
   onDelete?: (noteId: string) => void;
   enabled?: boolean;
   throttleMs?: number;
@@ -17,53 +13,19 @@ export const useOptimizedRealtime = ({
   onUpdate,
   onDelete,
   enabled = true,
-  throttleMs = 1000, // 1 second throttle
+  throttleMs = 1000,
 }: UseOptimizedRealtimeOptions) => {
-  const { user, isAuthenticated } = useAuth();
-  const channelRef = useRef<any>(null);
-  const subscriptionActiveRef = useRef(false);
-  const lastEventTimeRef = useRef<Record<string, number>>({});
-  const callbacksRef = useRef({ onInsert, onUpdate, onDelete });
-  
-  // Update callbacks without changing hook order
-  callbacksRef.current = { onInsert, onUpdate, onDelete };
-
-  // Throttle function to prevent event flooding
-  const throttleEvent = useCallback((eventKey: string, callback: () => void) => {
-    const now = Date.now();
-    const lastTime = lastEventTimeRef.current[eventKey] || 0;
-    
-    if (now - lastTime >= throttleMs) {
-      lastEventTimeRef.current[eventKey] = now;
-      callback();
-    }
-  }, [throttleMs]);
+  // Real-time functionality completely removed
+  console.log('Real-time subscription for tasks disabled');
 
   const cleanup = useCallback(() => {
-    if (channelRef.current) {
-      logger.realtime.debug('Cleaning up realtime subscription');
-      try {
-        channelRef.current.unsubscribe();
-        supabase.removeChannel(channelRef.current);
-      } catch (error) {
-        logger.realtime.error('Error cleaning up realtime subscription:', error);
-      }
-      channelRef.current = null;
-      subscriptionActiveRef.current = false;
-    }
+    // No cleanup needed as realtime is disabled
   }, []);
 
   const setupRealtime = useCallback(async () => {
-    // Realtime functionality removed - WebSockets not supported
-    subscriptionActiveRef.current = false;
-    logger.realtime.debug('Realtime functionality removed');
+    // Realtime functionality removed
     return;
   }, []);
-
-  useEffect(() => {
-    setupRealtime();
-    return cleanup;
-  }, [setupRealtime, cleanup]);
 
   return {
     isConnected: false, // Always false since realtime is disabled
