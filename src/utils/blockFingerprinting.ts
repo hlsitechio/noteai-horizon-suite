@@ -61,10 +61,18 @@ export const blockFingerprinting = () => {
   };
 
   // Block screen fingerprinting
-  Object.defineProperty(screen, 'width', { value: 1920, configurable: false });
-  Object.defineProperty(screen, 'height', { value: 1080, configurable: false });
-  Object.defineProperty(screen, 'colorDepth', { value: 24, configurable: false });
-  Object.defineProperty(screen, 'pixelDepth', { value: 24, configurable: false });
+  try {
+    const screenProps = ['width', 'height', 'colorDepth', 'pixelDepth'];
+    screenProps.forEach(prop => {
+      const descriptor = Object.getOwnPropertyDescriptor(screen, prop);
+      if (!descriptor || descriptor.configurable) {
+        const value = prop === 'width' ? 1920 : prop === 'height' ? 1080 : 24;
+        Object.defineProperty(screen, prop, { value, configurable: false });
+      }
+    });
+  } catch (error) {
+    // Screen properties cannot be redefined, skip silently
+  }
 
   // Block timezone fingerprinting
   const originalToLocaleString = Date.prototype.toLocaleString;
@@ -105,14 +113,36 @@ export const blockFingerprinting = () => {
   }
 
   // Block device memory fingerprinting
-  Object.defineProperty(navigator, 'deviceMemory', { value: 8, configurable: false });
-  Object.defineProperty(navigator, 'hardwareConcurrency', { value: 4, configurable: false });
+  try {
+    const deviceMemoryDescriptor = Object.getOwnPropertyDescriptor(navigator, 'deviceMemory');
+    if (!deviceMemoryDescriptor || deviceMemoryDescriptor.configurable) {
+      Object.defineProperty(navigator, 'deviceMemory', { value: 8, configurable: false });
+    }
+  } catch (error) {
+    // deviceMemory property cannot be redefined, skip silently
+  }
+
+  try {
+    const hardwareConcurrencyDescriptor = Object.getOwnPropertyDescriptor(navigator, 'hardwareConcurrency');
+    if (!hardwareConcurrencyDescriptor || hardwareConcurrencyDescriptor.configurable) {
+      Object.defineProperty(navigator, 'hardwareConcurrency', { value: 4, configurable: false });
+    }
+  } catch (error) {
+    // hardwareConcurrency property cannot be redefined, skip silently
+  }
 
   // Block connection fingerprinting
-  Object.defineProperty(navigator, 'connection', { 
-    value: { effectiveType: '4g', downlink: 10 }, 
-    configurable: false 
-  });
+  try {
+    const connectionDescriptor = Object.getOwnPropertyDescriptor(navigator, 'connection');
+    if (!connectionDescriptor || connectionDescriptor.configurable) {
+      Object.defineProperty(navigator, 'connection', { 
+        value: { effectiveType: '4g', downlink: 10 }, 
+        configurable: false 
+      });
+    }
+  } catch (error) {
+    // connection property cannot be redefined, skip silently
+  }
 
   // Silent UTS blocking - no console override to prevent loops
 
