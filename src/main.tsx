@@ -4,6 +4,7 @@ import { blockExternalTracking } from './utils/blockExternalTracking';
 import { blockUTSTracking } from './utils/blockUTSTracking';
 import './utils/blockFingerprinting'; // ULTRA-AGGRESSIVE: Block all fingerprinting attempts
 import { devExperienceOptimizer } from './utils/devExperienceOptimizer'; // CLEAN: Optimized dev experience
+import './utils/debugPermissionsPolicy'; // DEBUG: Track permissions policy issues
 import App from './App.tsx';
 import './index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
