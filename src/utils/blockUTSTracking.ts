@@ -1,105 +1,172 @@
+
 /**
- * UTS TRACKING SYSTEM BLOCKER
- * Specifically targets and neutralizes UTS (Universal Tracking System) attempts
+ * ENHANCED UTS TRACKING SYSTEM BLOCKER
+ * Completely neutralizes UTS (Universal Tracking System) and all Facebook tracking
  */
 
 export const blockUTSTracking = () => {
   if (typeof window === 'undefined') return;
 
-  // Silent UTS blocking - no console override to prevent loops with intelligent console manager
-
-  // Block UTS script execution
+  // More aggressive UTS script execution blocking
   const originalEval = window.eval;
   window.eval = function(script: string) {
     if (isUTSScript(script)) {
-      console.warn('SECURITY: UTS script execution blocked');
+      // Silent block - don't log to prevent console noise
       return '';
     }
     return originalEval.call(this, script);
   };
 
-  // Block UTS data storage
+  // Block UTS data storage more aggressively
   const originalLocalStorageSetItem = localStorage.setItem;
   const originalSessionStorageSetItem = sessionStorage.setItem;
+  const originalLocalStorageGetItem = localStorage.getItem;
+  const originalSessionStorageGetItem = sessionStorage.getItem;
 
   localStorage.setItem = function(key: string, value: string) {
     if (isUTSStorageKey(key)) {
-      console.warn('SECURITY: UTS localStorage blocked:', key);
-      return;
+      return; // Silent block
     }
     return originalLocalStorageSetItem.call(this, key, value);
   };
 
+  localStorage.getItem = function(key: string) {
+    if (isUTSStorageKey(key)) {
+      return null; // Return null for UTS keys
+    }
+    return originalLocalStorageGetItem.call(this, key);
+  };
+
   sessionStorage.setItem = function(key: string, value: string) {
     if (isUTSStorageKey(key)) {
-      console.warn('SECURITY: UTS sessionStorage blocked:', key);
-      return;
+      return; // Silent block
     }
     return originalSessionStorageSetItem.call(this, key, value);
   };
 
-  // Block UTS network requests
+  sessionStorage.getItem = function(key: string) {
+    if (isUTSStorageKey(key)) {
+      return null; // Return null for UTS keys
+    }
+    return originalSessionStorageGetItem.call(this, key);
+  };
+
+  // Enhanced network request blocking
   const originalFetch = window.fetch;
   window.fetch = function(input: RequestInfo | URL, init?: RequestInit) {
     const url = typeof input === 'string' ? input : input.toString();
     
     if (isUTSUrl(url)) {
-      console.warn('SECURITY: UTS network request blocked:', url);
-      return Promise.reject(new Error('UTS tracking request blocked for privacy'));
+      // Silent rejection - errors are expected and filtered by console manager
+      return Promise.reject(new Error('UTS tracking request blocked'));
     }
     
     return originalFetch.apply(this, [input, init]);
   };
 
-  // Block UTS cookie access
+  // Enhanced XMLHttpRequest blocking
+  const originalXHROpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function(method: string, url: string, ...args: any[]) {
+    if (isUTSUrl(url)) {
+      // Block the request by opening to a dummy URL
+      return originalXHROpen.call(this, method, 'about:blank', ...args);
+    }
+    return originalXHROpen.call(this, method, url, ...args);
+  };
+
+  // Block UTS cookie access more thoroughly
   const originalCookieDescriptor = Object.getOwnPropertyDescriptor(Document.prototype, 'cookie');
   if (originalCookieDescriptor) {
     Object.defineProperty(document, 'cookie', {
       get: function() {
         const cookies = originalCookieDescriptor.get?.call(this) || '';
-        // Filter out UTS tracking cookies
+        // Filter out UTS tracking cookies completely
         return cookies.split(';')
           .filter(cookie => !isUTSCookie(cookie.trim()))
           .join(';');
       },
       set: function(value: string) {
         if (isUTSCookie(value)) {
-          console.warn('SECURITY: UTS cookie blocked:', value);
-          return;
+          return; // Silent block
         }
         return originalCookieDescriptor.set?.call(this, value);
       }
     });
   }
 
-  // Silent activation to prevent console loops
-};
+  // Block script injection attempts
+  const originalCreateElement = document.createElement;
+  document.createElement = function(tagName: string, options?: ElementCreationOptions): HTMLElement {
+    const element = originalCreateElement.call(this, tagName, options) as HTMLElement;
+    
+    if (tagName.toLowerCase() === 'script') {
+      const script = element as HTMLScriptElement;
+      const originalSrcSetter = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src')?.set;
+      
+      if (originalSrcSetter) {
+        Object.defineProperty(script, 'src', {
+          set: function(value: string) {
+            if (isUTSUrl(value)) {
+              return; // Don't set UTS URLs
+            }
+            return originalSrcSetter.call(this, value);
+          },
+          get: function() {
+            return Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src')?.get?.call(this) || '';
+          }
+        });
+      }
+    }
+    
+    return element;
+  };
 
-const isUTSMessage = (message: string): boolean => {
-  const utsPatterns = [
-    /\[UTS\]/,
-    /UTS.*fp/,
-    /UTS.*gusid/,
-    /UTS.*_fbp/,
-    /UTS.*pc/,
-    /HB-ET_/,
-    /51355e5ea95dbd049a736d96abcbf090/,
-    /_fbp_c/,
-    /fb\.1\.\d+\.\d+/
-  ];
+  // Block WebSocket connections to tracking services
+  const originalWebSocket = window.WebSocket;
+  window.WebSocket = function(url: string, protocols?: string | string[]) {
+    if (isUTSUrl(url)) {
+      throw new Error('WebSocket connection blocked');
+    }
+    return new originalWebSocket(url, protocols);
+  } as any;
 
-  return utsPatterns.some(pattern => pattern.test(message));
+  // Clean up existing UTS data
+  setTimeout(() => {
+    // Clean localStorage
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i);
+      if (key && isUTSStorageKey(key)) {
+        localStorage.removeItem(key);
+      }
+    }
+    
+    // Clean sessionStorage
+    for (let i = sessionStorage.length - 1; i >= 0; i--) {
+      const key = sessionStorage.key(i);
+      if (key && isUTSStorageKey(key)) {
+        sessionStorage.removeItem(key);
+      }
+    }
+  }, 100);
 };
 
 const isUTSScript = (script: string): boolean => {
   const utsScriptPatterns = [
-    /UTS/,
-    /_fbp/,
-    /fingerprint/,
-    /gusid/,
-    /HB-ET/,
-    /facebook.*pixel/,
-    /connect\.facebook\.net/
+    /UTS/i,
+    /_fbp/i,
+    /fingerprint/i,
+    /gusid/i,
+    /HB-ET/i,
+    /facebook.*pixel/i,
+    /connect\.facebook\.net/i,
+    /fbevents/i,
+    /fbcdn\.net/i,
+    /googleads/i,
+    /doubleclick/i,
+    /googlesyndication/i,
+    /google-analytics/i,
+    /gtag/i,
+    /gtm/i
   ];
 
   return utsScriptPatterns.some(pattern => pattern.test(script));
@@ -107,12 +174,18 @@ const isUTSScript = (script: string): boolean => {
 
 const isUTSStorageKey = (key: string): boolean => {
   const utsKeyPatterns = [
-    /^_fbp/,
-    /^UTS/,
-    /fingerprint/,
-    /gusid/,
-    /HB-ET/,
-    /facebook.*pixel/
+    /^_fbp/i,
+    /^UTS/i,
+    /fingerprint/i,
+    /gusid/i,
+    /HB-ET/i,
+    /facebook.*pixel/i,
+    /^_ga/i,
+    /^_gid/i,
+    /^_gtag/i,
+    /^_gcl/i,
+    /tracking/i,
+    /analytics/i
   ];
 
   return utsKeyPatterns.some(pattern => pattern.test(key));
@@ -120,15 +193,24 @@ const isUTSStorageKey = (key: string): boolean => {
 
 const isUTSUrl = (url: string): boolean => {
   const utsUrlPatterns = [
-    /UTS/,
-    /_fbp/,
-    /fingerprint/,
-    /gusid/,
-    /HB-ET/,
-    /facebook\.com\/tr/,
-    /connect\.facebook\.net/,
-    /fbcdn\.net/,
-    /fbevents/
+    /UTS/i,
+    /_fbp/i,
+    /fingerprint/i,
+    /gusid/i,
+    /HB-ET/i,
+    /facebook\.com\/tr/i,
+    /connect\.facebook\.net/i,
+    /fbcdn\.net/i,
+    /fbevents/i,
+    /googleads/i,
+    /doubleclick\.net/i,
+    /googlesyndication/i,
+    /google-analytics\.com/i,
+    /googletagmanager\.com/i,
+    /analytics\.google\.com/i,
+    /stats\.g\.doubleclick\.net/i,
+    /pagead2\.googlesyndication\.com/i,
+    /googleadservices\.com/i
   ];
 
   return utsUrlPatterns.some(pattern => pattern.test(url));
@@ -136,13 +218,21 @@ const isUTSUrl = (url: string): boolean => {
 
 const isUTSCookie = (cookie: string): boolean => {
   const utsCookiePatterns = [
-    /^_fbp=/,
-    /^UTS=/,
-    /fingerprint=/,
-    /gusid=/,
-    /HB-ET=/,
-    /fb\.1\.\d+\.\d+/
+    /^_fbp=/i,
+    /^UTS=/i,
+    /fingerprint=/i,
+    /gusid=/i,
+    /HB-ET=/i,
+    /fb\.1\.\d+\.\d+/i,
+    /^_ga=/i,
+    /^_gid=/i,
+    /^_gat=/i,
+    /^_gtag=/i,
+    /^_gcl=/i
   ];
 
   return utsCookiePatterns.some(pattern => pattern.test(cookie));
 };
+
+// Initialize immediately
+blockUTSTracking();
