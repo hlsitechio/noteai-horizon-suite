@@ -135,14 +135,16 @@ class DevExperienceOptimizer {
       '🧹 Development Experience Optimized - Console noise filtered'
     );
 
-    // Periodic summary for developers
+    // Show summary only when there are new errors (not repetitive warnings)
+    let lastErrorCount = 0;
     setInterval(() => {
-      if (this.errorCount > 0 || this.warningCount > 0) {
+      if (this.errorCount > lastErrorCount) {
         this.originalConsole.group('📊 Development Summary');
         this.originalConsole.log(`Errors: ${this.errorCount} | Warnings: ${this.warningCount} | Noise filtered: ${this.suppressedCount}`);
         this.originalConsole.groupEnd();
+        lastErrorCount = this.errorCount;
       }
-    }, 30000); // Every 30 seconds
+    }, 60000); // Every 60 seconds, only for new errors
   }
 
   public restore() {
