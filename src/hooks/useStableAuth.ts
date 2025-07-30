@@ -43,7 +43,7 @@ export const useStableAuth = (): UseStableAuthReturn => {
     // Minimal auth state logging - only for critical debugging
     if (import.meta.env.DEV && sessionChanged) {
       const maskedUserId = newSession?.user?.id?.substring(0, 8) + '***' || null;
-      console.log('SECURITY: Auth session updated', {
+      logger.auth.debug('Auth session updated', {
         hasSession: !!newSession,
         userId: maskedUserId
       });

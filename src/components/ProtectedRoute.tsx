@@ -11,15 +11,9 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, isLoading, isAuthenticated, authError } = useAuth();
 
-  // Debug log for authentication state
-  if (import.meta.env.DEV) {
-    console.log('ProtectedRoute auth state:', { 
-      hasUser: !!user, 
-      isAuthenticated, 
-      isLoading,
-      userEmail: user?.email,
-      authError
-    });
+  // Reduced debug logging to prevent console spam
+  if (import.meta.env.DEV && !isLoading && !isAuthenticated) {
+    console.warn('ProtectedRoute: Authentication required');
   }
 
   // Show loading state while authentication is being verified
@@ -36,13 +30,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   // Check authentication state more thoroughly
   if (!isAuthenticated || !user) {
-    if (import.meta.env.DEV) {
-      console.warn('ProtectedRoute: Authentication failed, redirecting to login', {
-        isAuthenticated,
-        hasUser: !!user,
-        authError
-      });
-    }
     return <Navigate to="/auth/login" replace />;
   }
 

@@ -100,19 +100,7 @@ export const blockFingerprinting = () => {
     configurable: false 
   });
 
-  // Block UTS tracking system specifically
-  const originalConsoleLog = console.log;
-  console.log = function(...args: any[]) {
-    const message = args.join(' ');
-    // Block all UTS tracking messages
-    if (message.includes('[UTS]') || message.includes('UTS') || 
-        message.includes('_fbp') || message.includes('fingerprint') ||
-        message.includes('gusid') || message.includes('HB-ET')) {
-      console.warn('SECURITY: UTS tracking attempt blocked:', message);
-      return;
-    }
-    return originalConsoleLog.apply(this, args);
-  };
+  // Silent UTS blocking - no console override to prevent loops
 
   // Block any external script loading
   const originalFetch = window.fetch;
@@ -142,7 +130,7 @@ export const blockFingerprinting = () => {
     return originalSetItem.call(this, key, value);
   };
 
-  console.log('🔒 SECURITY: Ultra-aggressive fingerprinting blocker activated');
+  // Silent activation to prevent console loops
 };
 
 // Initialize fingerprinting protection immediately

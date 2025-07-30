@@ -6,36 +6,7 @@
 export const blockUTSTracking = () => {
   if (typeof window === 'undefined') return;
 
-  // Block all UTS-related console logging
-  const originalConsoleLog = console.log;
-  const originalConsoleInfo = console.info;
-  const originalConsoleWarn = console.warn;
-
-  console.log = function(...args: any[]) {
-    const message = args.join(' ');
-    if (isUTSMessage(message)) {
-      console.warn('SECURITY: UTS tracking blocked:', message);
-      return;
-    }
-    return originalConsoleLog.apply(this, args);
-  };
-
-  console.info = function(...args: any[]) {
-    const message = args.join(' ');
-    if (isUTSMessage(message)) {
-      console.warn('SECURITY: UTS tracking blocked:', message);
-      return;
-    }
-    return originalConsoleInfo.apply(this, args);
-  };
-
-  console.warn = function(...args: any[]) {
-    const message = args.join(' ');
-    if (isUTSMessage(message)) {
-      return; // Silently block UTS warnings
-    }
-    return originalConsoleWarn.apply(this, args);
-  };
+  // Silent UTS blocking - no console override to prevent loops with intelligent console manager
 
   // Block UTS script execution
   const originalEval = window.eval;
@@ -101,7 +72,7 @@ export const blockUTSTracking = () => {
     });
   }
 
-  console.log('🔒 SECURITY: UTS tracking system neutralized');
+  // Silent activation to prevent console loops
 };
 
 const isUTSMessage = (message: string): boolean => {

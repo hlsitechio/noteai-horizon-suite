@@ -33,7 +33,12 @@ class IntelligentConsoleManager {
     /\[HMR\]/i,
     /\[vite\]/i,
     /ESLint/i,
-    /TypeScript/i
+    /TypeScript/i,
+    // Security patterns to prevent console loops
+    /SECURITY.*UTS.*tracking/i,
+    /Ultra-aggressive.*fingerprinting/i,
+    /UTS.*tracking.*system.*neutralized/i,
+    /fingerprinting.*blocker.*activated/i
   ];
 
   // Strict patterns for additional filtering
