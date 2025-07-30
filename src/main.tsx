@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { blockExternalTracking } from './utils/blockExternalTracking';
 import { blockUTSTracking } from './utils/blockUTSTracking';
+import { enforcePermissionsPolicy } from './utils/permissionsPolicyEnforcer';
 import './utils/blockFingerprinting'; // ULTRA-AGGRESSIVE: Block all fingerprinting attempts
 import { devExperienceOptimizer } from './utils/devExperienceOptimizer'; // CLEAN: Optimized dev experience
 import './utils/debugPermissionsPolicy'; // DEBUG: Track permissions policy issues
@@ -17,6 +18,7 @@ import { OnboardingService } from './services/onboardingService';
 // Block external tracking injection before app initialization
 blockExternalTracking();
 blockUTSTracking();
+enforcePermissionsPolicy();
 
 // Initialize optimized development experience
 devExperienceOptimizer.optimize();

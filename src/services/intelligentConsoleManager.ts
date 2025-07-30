@@ -38,7 +38,15 @@ class IntelligentConsoleManager {
     /SECURITY.*UTS.*tracking/i,
     /Ultra-aggressive.*fingerprinting/i,
     /UTS.*tracking.*system.*neutralized/i,
-    /fingerprinting.*blocker.*activated/i
+    /fingerprinting.*blocker.*activated/i,
+    // Permissions policy warnings from external sources
+    /Unrecognized feature.*vr/i,
+    /Unrecognized feature.*battery/i,
+    // Blocked external tracking messages (these are expected)
+    /Failed to load resource.*connect\.facebook\.net/i,
+    /Failed to load resource.*fbevents/i,
+    /Failed to load resource.*fbcdn\.net/i,
+    /ERR_BLOCKED_BY_CLIENT/i
   ];
 
   // Strict patterns for additional filtering
