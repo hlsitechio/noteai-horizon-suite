@@ -105,20 +105,26 @@ export const blockUTSTracking = () => {
     
     if (tagName.toLowerCase() === 'script') {
       const script = element as HTMLScriptElement;
+      const srcDescriptor = Object.getOwnPropertyDescriptor(script, 'src');
       const originalSrcSetter = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src')?.set;
       
-      if (originalSrcSetter) {
-        Object.defineProperty(script, 'src', {
-          set: function(value: string) {
-            if (isUTSUrl(value)) {
-              return; // Don't set UTS URLs
-            }
-            return originalSrcSetter.call(this, value);
-          },
-          get: function() {
-            return Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src')?.get?.call(this) || '';
-          }
-        });
+      if (originalSrcSetter && (!srcDescriptor || srcDescriptor.configurable !== false)) {
+        try {
+          Object.defineProperty(script, 'src', {
+            set: function(value: string) {
+              if (isUTSUrl(value)) {
+                return; // Don't set UTS URLs
+              }
+              return originalSrcSetter.call(this, value);
+            },
+            get: function() {
+              return Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src')?.get?.call(this) || '';
+            },
+            configurable: true
+          });
+        } catch (error) {
+          // Property already redefined by another security module, skip silently
+        }
       }
     }
     
