@@ -133,12 +133,15 @@ export const blockFingerprinting = () => {
 
   // Block connection fingerprinting
   try {
-    const connectionDescriptor = Object.getOwnPropertyDescriptor(navigator, 'connection');
-    if (!connectionDescriptor || connectionDescriptor.configurable) {
-      Object.defineProperty(navigator, 'connection', { 
-        value: { effectiveType: '4g', downlink: 10 }, 
-        configurable: false 
-      });
+    // Only try to modify if navigator.connection exists and is not already defined
+    if ('connection' in navigator) {
+      const connectionDescriptor = Object.getOwnPropertyDescriptor(navigator, 'connection');
+      if (connectionDescriptor && connectionDescriptor.configurable) {
+        Object.defineProperty(navigator, 'connection', { 
+          value: { effectiveType: '4g', downlink: 10 }, 
+          configurable: false 
+        });
+      }
     }
   } catch (error) {
     // connection property cannot be redefined, skip silently
