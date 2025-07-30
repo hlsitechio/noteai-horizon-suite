@@ -3,7 +3,6 @@
  */
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/utils/logger';
-import * as Sentry from '@sentry/react';
 
 interface ApiKeyMetadata {
   keyId: string;
@@ -345,16 +344,6 @@ export class ApiKeySecurityService {
     };
 
     logger.warn('SECURITY', eventType, details);
-
-    Sentry.captureMessage(`API Key Security Event: ${eventType}`, {
-      level: 'warning',
-      tags: {
-        security: true,
-        service: 'api_key_security',
-        eventType,
-      },
-      extra: details,
-    });
   }
 }
 

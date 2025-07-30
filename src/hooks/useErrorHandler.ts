@@ -13,7 +13,7 @@ export const useErrorHandler = () => {
 
     // In production, you would send this to an error tracking service
     if (process.env.NODE_ENV === 'production') {
-      // Example: Sentry.captureException(error, { contexts: { custom: context } })
+      // Error tracking would be implemented here in production
     }
 
     // Show user-friendly error message

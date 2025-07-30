@@ -2,7 +2,6 @@
  * Rate limiting service with adaptive thresholds and IP blocking
  */
 import { logger } from '@/utils/logger';
-import * as Sentry from '@sentry/react';
 
 interface RateLimitConfig {
   maxRequests: number;
@@ -167,16 +166,6 @@ export class RateLimitingService {
     };
 
     logger.warn('SECURITY', eventType, details);
-
-    Sentry.captureMessage(`Rate Limiting Event: ${eventType}`, {
-      level: 'warning',
-      tags: {
-        security: true,
-        service: 'rate_limiting',
-        eventType,
-      },
-      extra: details,
-    });
   }
 }
 

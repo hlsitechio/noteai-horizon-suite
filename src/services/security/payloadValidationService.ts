@@ -3,7 +3,6 @@
  */
 import { MALICIOUS_PATTERNS } from '@/utils/advancedInputValidation';
 import { logger } from '@/utils/logger';
-import * as Sentry from '@sentry/react';
 
 export interface SecurityContext {
   userId?: string;
@@ -189,16 +188,6 @@ export class PayloadValidationService {
     };
 
     logger.warn('SECURITY', eventType, details);
-
-    Sentry.captureMessage(`Payload Security Event: ${eventType}`, {
-      level: 'warning',
-      tags: {
-        security: true,
-        service: 'payload_validation',
-        eventType,
-      },
-      extra: details,
-    });
   }
 }
 

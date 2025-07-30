@@ -5,9 +5,9 @@ import { hasMessageBeenSent, markMessageAsSent } from './messageDeduplication';
  * Performance observers for long tasks and layout shifts
  */
 
-// Sentry completely disabled - no-op function
-const throttledSentryCapture = throttle((message: string, options: any) => {
-  // No-op - Sentry removed
+// Performance monitoring no-op function
+const throttledPerfCapture = throttle((message: string, options: any) => {
+  // No-op - performance tracking removed
 }, 30000);
 
 /**
@@ -31,7 +31,7 @@ export function initLongTaskMonitor(): void {
             if (!hasMessageBeenSent(messageKey)) {
               markMessageAsSent(messageKey);
               
-              throttledSentryCapture('Long Task Detected', {
+              throttledPerfCapture('Long Task Detected', {
                 level: 'warning',
                 extra: {
                   duration: longTask.duration,
@@ -75,7 +75,7 @@ export function initLayoutShiftMonitor(): void {
             if (!hasMessageBeenSent(messageKey)) {
               markMessageAsSent(messageKey);
               
-              throttledSentryCapture('Significant Layout Shift', {
+              throttledPerfCapture('Significant Layout Shift', {
                 level: 'warning',
                 extra: {
                   value: layoutShift.value,

@@ -3,7 +3,6 @@
  */
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/utils/logger';
-import * as Sentry from '@sentry/react';
 
 export interface AuditEvent {
   eventType: string;
@@ -178,16 +177,6 @@ export class AuditLogService {
     };
 
     logger.warn('SECURITY PATTERN', 'Suspicious pattern detected', alert);
-    
-    Sentry.captureMessage('Suspicious security pattern detected', {
-      level: 'warning',
-      tags: {
-        security: true,
-        pattern: pattern.pattern,
-        riskScore: pattern.riskScore,
-      },
-      extra: alert,
-    });
 
     // Reset pattern risk score after reporting
     pattern.riskScore = Math.max(10, pattern.riskScore * 0.5);
@@ -207,16 +196,6 @@ export class AuditLogService {
     };
 
     logger.error('CRITICAL SECURITY EVENT', alert);
-    
-    Sentry.captureMessage('Critical security event', {
-      level: 'error',
-      tags: {
-        security: true,
-        critical: true,
-        eventType: event.eventType,
-      },
-      extra: alert,
-    });
   }
 
   /**

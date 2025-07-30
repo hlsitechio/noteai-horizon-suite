@@ -3,7 +3,6 @@
  */
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/utils/logger';
-import * as Sentry from '@sentry/react';
 
 interface SessionMetrics {
   lastActivity: number;
@@ -240,16 +239,6 @@ export class SessionSecurityService {
     };
 
     logger.warn('SECURITY', eventType, details);
-
-    Sentry.captureMessage(`Session Security Event: ${eventType}`, {
-      level: 'warning',
-      tags: {
-        security: true,
-        service: 'session_security',
-        eventType,
-      },
-      extra: details,
-    });
   }
 }
 

@@ -63,7 +63,7 @@ export const KNOWN_ERROR_PATTERNS = {
   CSP_VIOLATION: 'Content Security Policy directive',
   WEBSOCKET_LOCALHOST: 'ws://localhost',
   RATE_LIMITING: '429',
-  SENTRY_RATE_LIMIT: 'Too Many Requests',
+  RATE_LIMIT: 'Too Many Requests',
 };
 
 class APMService {

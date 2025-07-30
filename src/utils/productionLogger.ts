@@ -83,7 +83,7 @@ class ProductionLogger {
     requestIdleCallback(() => {
       try {
         // In a real app, send to your monitoring service
-        // e.g., Sentry, LogRocket, DataDog, etc.
+        // e.g., LogRocket, DataDog, etc.
         if (entry.level === 'error') {
           // Critical errors should be sent immediately
           this.sendCriticalError(entry);

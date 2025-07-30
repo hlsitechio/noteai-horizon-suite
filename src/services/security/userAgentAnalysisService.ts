@@ -2,7 +2,6 @@
  * User Agent Analysis Service for detecting suspicious clients
  */
 import { logger } from '@/utils/logger';
-import * as Sentry from '@sentry/react';
 import type { SecurityContext, SecurityResult } from './payloadValidationService';
 
 interface UserAgentAnalysis {
@@ -160,18 +159,7 @@ export class UserAgentAnalysisService {
       logger.info('SECURITY', eventType, details);
     }
 
-    if (details.analysis?.confidence > 0.8) {
-      Sentry.captureMessage(`User Agent Security Event: ${eventType}`, {
-        level: 'warning',
-        tags: {
-          security: true,
-          service: 'user_agent_analysis',
-          eventType,
-          category: details.analysis?.category,
-        },
-        extra: details,
-      });
-    }
+    // High confidence security events are logged for monitoring
   }
 
   getStats() {

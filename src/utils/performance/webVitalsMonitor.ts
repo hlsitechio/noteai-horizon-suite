@@ -7,9 +7,9 @@ import { hasMessageBeenSent, markMessageAsSent } from './messageDeduplication';
  * Web Vitals monitoring and tracking
  */
 
-// Sentry completely disabled - no-op function
-const throttledSentryCapture = throttle((message: string, options: any) => {
-  // No-op - Sentry removed
+// Performance monitoring no-op function
+const throttledPerfCapture = throttle((message: string, options: any) => {
+  // No-op - performance tracking removed
 }, 30000);
 
 /**
@@ -47,8 +47,8 @@ function onPerfEntry(metric: PerformanceMetric): void {
   
   markMessageAsSent(messageKey);
   
-  // Send to Sentry with throttling
-  throttledSentryCapture(`Web Vital: ${metric.name}`, {
+  // Log performance metric with throttling
+  throttledPerfCapture(`Web Vital: ${metric.name}`, {
     level: getMetricLevel(metric),
     extra: {
       value: metric.value,
