@@ -18,13 +18,9 @@ export const SmartEditor: React.FC<SmartEditorProps> = ({
   enableCollaboration = false,
   ...props
 }) => {
-  // Use collaborative editor if collaboration is enabled and we have the required props
-  const useCollaborative = enableCollaboration && props.documentId && props.userId;
+  // Collaborative editor completely disabled to prevent WebSocket connections
+  console.log('Collaborative editor disabled - using simple editor');
 
-  if (useCollaborative) {
-    return <CollaborativeEditorContent {...props} enableCollaboration={true} />;
-  }
-
-  // Fall back to regular editor
+  // Always use the simple editor to prevent WebSocket connections
   return <SimpleEditorContent value={props.value} onChange={props.onChange} placeholder={props.placeholder} className={props.className} />;
 };
