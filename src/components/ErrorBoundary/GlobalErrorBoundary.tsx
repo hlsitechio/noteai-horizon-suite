@@ -1,6 +1,5 @@
 
 import { Component, ErrorInfo, ReactNode } from 'react';
-// Sentry removed
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,8 +26,6 @@ class GlobalErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('Global Error Boundary caught error:', error);
     
-    // Send to Sentry with additional context
-    // Sentry removed - captureException call disabled
   }
 
   handleRetry = () => {

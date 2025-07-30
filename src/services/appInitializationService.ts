@@ -58,7 +58,6 @@ export class AppInitializationService {
         return;
       }
       
-      // Sentry removed
     });
 
     // Handle JavaScript errors
@@ -70,7 +69,7 @@ export class AppInitializationService {
         return;
       }
       
-      // Sentry removed
+      
     });
   }
 

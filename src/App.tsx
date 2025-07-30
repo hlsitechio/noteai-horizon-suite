@@ -13,7 +13,7 @@ import { AppProviders } from './components/AppProviders';
 import './App.css';
 import '@/utils/simpleConsoleInspector'; // Simple error/warning tracking
 
-// Sentry disabled - use plain Router
+
 const AppRouter = Router;
 
 function App() {

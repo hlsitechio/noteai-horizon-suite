@@ -287,7 +287,7 @@ OnlineNote AI is a sophisticated, AI-powered note-taking and productivity platfo
 ### **External Services**
 - **Google Drive Integration** - Cloud storage synchronization
 - **LaunchDarkly 3.8.1** - Feature flag management
-- **Sentry 9.35.0** - Error tracking and performance monitoring
+
 - **HyperDX 0.21.2** - Observability platform
 
 ### **AI Services**

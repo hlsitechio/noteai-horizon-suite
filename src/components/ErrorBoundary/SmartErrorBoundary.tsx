@@ -2,7 +2,7 @@ import React, { Component, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { logger } from '@/utils/logger';
-// Sentry removed
+
 
 interface Props {
   children: ReactNode;

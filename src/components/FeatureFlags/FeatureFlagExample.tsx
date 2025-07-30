@@ -21,7 +21,7 @@ export const FeatureFlagExample: React.FC = () => {
       <CardHeader>
         <CardTitle>Feature Flags Demo</CardTitle>
         <CardDescription>
-          LaunchDarkly integration with Sentry tracking
+          LaunchDarkly integration demo
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -62,13 +62,12 @@ export const FeatureFlagExample: React.FC = () => {
         )}
 
         <Button onClick={handleVerifySetup} className="w-full">
-          Test Sentry Integration
+          Test Integration
         </Button>
 
         <div className="text-xs text-muted-foreground">
           <p>
-            Click "Test Sentry Integration" to verify that feature flag data
-            is being tracked in Sentry error events.
+            Click "Test Integration" to verify feature flag functionality.
           </p>
         </div>
       </CardContent>

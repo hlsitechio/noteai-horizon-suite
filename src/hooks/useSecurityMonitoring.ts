@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-// Sentry removed
+
 import { auditLogService } from '@/services/security/auditLogService';
 import { sessionSecurityService } from '@/services/security/sessionSecurityService';
 import { rateLimitingService } from '@/services/security/rateLimitingService';

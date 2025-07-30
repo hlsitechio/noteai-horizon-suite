@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as LaunchDarkly from 'launchdarkly-js-client-sdk';
-// Sentry removed
 import { supabase } from '@/integrations/supabase/client';
 
 interface FeatureFlagHook {
@@ -56,7 +55,6 @@ export const useFeatureFlags = (): FeatureFlagHook => {
         console.log('LaunchDarkly client initialized successfully');
       } catch (error) {
         console.error('Failed to initialize LaunchDarkly client:', error);
-        // Sentry removed
       }
     };
 
@@ -79,7 +77,6 @@ export const useFeatureFlags = (): FeatureFlagHook => {
       return client.variation(flagKey, defaultValue);
     } catch (error) {
       console.error(`Failed to evaluate feature flag ${flagKey}:`, error);
-      // Sentry removed
       return defaultValue;
     }
   }, [client, isInitialized]);
@@ -93,7 +90,6 @@ export const useFeatureFlags = (): FeatureFlagHook => {
       return client.variation(flagKey, defaultValue);
     } catch (error) {
       console.error(`Failed to evaluate string feature flag ${flagKey}:`, error);
-      // Sentry removed
       return defaultValue;
     }
   }, [client, isInitialized]);
@@ -107,7 +103,6 @@ export const useFeatureFlags = (): FeatureFlagHook => {
       return client.variation(flagKey, defaultValue);
     } catch (error) {
       console.error(`Failed to evaluate number feature flag ${flagKey}:`, error);
-      // Sentry removed
       return defaultValue;
     }
   }, [client, isInitialized]);
@@ -133,11 +128,11 @@ export const verifyFeatureFlagsSetup = (client: LaunchDarkly.LDClient | null) =>
     const testFlag = client.variation("test-flag", false);
     console.log('Test flag value:', testFlag);
 
-    // Sentry removed - test exception disabled
+    
     
     console.log('Feature flags verification completed.');
   } catch (error) {
     console.error('Feature flags verification failed:', error);
-    // Sentry removed
+    
   }
 };

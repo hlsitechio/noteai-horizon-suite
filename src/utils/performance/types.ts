@@ -11,9 +11,3 @@ export interface PerformanceMetric {
 }
 
 export type LogLevel = 'info' | 'warning' | 'error';
-
-export interface SentryOptions {
-  level: LogLevel;
-  extra: Record<string, any>;
-  tags: Record<string, string>;
-}

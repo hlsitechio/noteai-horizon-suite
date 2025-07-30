@@ -37,7 +37,7 @@ export const useGlobalErrorHandler = () => {
     };
 
     // Console methods are already overridden in main.tsx
-    // Just send important messages to Sentry silently
+    
 
     // Set up global query error handler using query cache
     const queryCache = queryClient.getQueryCache();
