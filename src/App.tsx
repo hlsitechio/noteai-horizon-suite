@@ -1,6 +1,6 @@
-
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 
@@ -18,19 +18,21 @@ const AppRouter = Router;
 
 function App() {
   return (
-    <SmartErrorBoundary preserveWork={true}>
-      <ReloadPreventionProvider>
-        <AppRouter>
-          <AppProviders>
-            <ConditionalThemeWrapper>
-              <OptimizedLazyRoutes />
-              <Toaster />
-              <Sonner />
-            </ConditionalThemeWrapper>
-          </AppProviders>
-        </AppRouter>
-      </ReloadPreventionProvider>
-    </SmartErrorBoundary>
+    <HelmetProvider>
+      <SmartErrorBoundary preserveWork={true}>
+        <ReloadPreventionProvider>
+          <AppRouter>
+            <AppProviders>
+              <ConditionalThemeWrapper>
+                <OptimizedLazyRoutes />
+                <Toaster />
+                <Sonner />
+              </ConditionalThemeWrapper>
+            </AppProviders>
+          </AppRouter>
+        </ReloadPreventionProvider>
+      </SmartErrorBoundary>
+    </HelmetProvider>
   );
 }
 
