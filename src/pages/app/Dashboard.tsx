@@ -11,8 +11,21 @@ import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useEditMode } from '@/contexts/EditModeContext';
 import { useDashboardWorkspace } from '@/hooks/useDashboardWorkspace';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ErrorBoundary } from 'react-error-boundary';
 
-const OptimizedDashboard: React.FC = () => {
+const DashboardErrorFallback = ({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) => (
+  <div className="flex items-center justify-center h-full">
+    <div className="text-center space-y-4">
+      <h2 className="text-xl font-semibold text-destructive">Dashboard Error</h2>
+      <p className="text-muted-foreground">Failed to load dashboard components</p>
+      <Button onClick={resetErrorBoundary} variant="outline">
+        Retry Dashboard
+      </Button>
+    </div>
+  </div>
+);
+
+const DashboardContent: React.FC = () => {
   const { notes } = useOptimizedNotes();
   const { isDashboardEditMode, isLoading } = useEditMode();
   const [showEditLayoutModal, setShowEditLayoutModal] = React.useState(false);
@@ -119,6 +132,18 @@ const OptimizedDashboard: React.FC = () => {
         onImageSelect={memoizedHandlers.onImageSelect}
       />
     </div>
+  );
+};
+
+const OptimizedDashboard: React.FC = () => {
+  return (
+    <ErrorBoundary
+      FallbackComponent={DashboardErrorFallback}
+      onError={(error) => console.error('Dashboard error:', error)}
+      onReset={() => window.location.reload()}
+    >
+      <DashboardContent />
+    </ErrorBoundary>
   );
 };
 

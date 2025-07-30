@@ -98,32 +98,42 @@ export const blockUTSTracking = () => {
     }
   }
 
-  // Block script injection attempts
+  // Block script injection attempts with react-helmet-async compatibility
   const originalCreateElement = document.createElement;
   document.createElement = function(tagName: string, options?: ElementCreationOptions): HTMLElement {
     const element = originalCreateElement.call(this, tagName, options) as HTMLElement;
     
     if (tagName.toLowerCase() === 'script') {
       const script = element as HTMLScriptElement;
-      const srcDescriptor = Object.getOwnPropertyDescriptor(script, 'src');
-      const originalSrcSetter = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src')?.set;
       
-      if (originalSrcSetter && (!srcDescriptor || srcDescriptor.configurable !== false)) {
+      // Enhanced compatibility check for react-helmet-async and other libraries
+      const existingDescriptor = Object.getOwnPropertyDescriptor(script, 'src');
+      const prototypeDescriptor = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
+      
+      // Only intercept if no other library has already modified the property
+      if (!existingDescriptor && prototypeDescriptor && prototypeDescriptor.configurable !== false) {
         try {
-          Object.defineProperty(script, 'src', {
-            set: function(value: string) {
-              if (isUTSUrl(value)) {
-                return; // Don't set UTS URLs
-              }
-              return originalSrcSetter.call(this, value);
-            },
-            get: function() {
-              return Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src')?.get?.call(this) || '';
-            },
-            configurable: true
-          });
+          const originalSetter = prototypeDescriptor.set;
+          const originalGetter = prototypeDescriptor.get;
+          
+          if (originalSetter) {
+            Object.defineProperty(script, 'src', {
+              set: function(value: string) {
+                if (isUTSUrl(value)) {
+                  return; // Don't set UTS URLs
+                }
+                return originalSetter.call(this, value);
+              },
+              get: function() {
+                return originalGetter ? originalGetter.call(this) : '';
+              },
+              configurable: true,
+              enumerable: true
+            });
+          }
         } catch (error) {
-          // Property already redefined by another security module, skip silently
+          // Property conflicts detected - let other libraries handle this
+          // This prevents conflicts with react-helmet-async and similar libraries
         }
       }
     }
