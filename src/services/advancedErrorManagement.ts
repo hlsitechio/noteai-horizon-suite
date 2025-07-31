@@ -1,438 +1,257 @@
-import { logger } from '../utils/logger';
-
-interface ErrorContext {
-  userId?: string;
-  sessionId: string;
-  userAgent: string;
-  url: string;
-  timestamp: number;
-  buildVersion?: string;
-  environment: 'development' | 'production' | 'staging';
-}
-
-interface CategorizedError {
-  id: string;
-  type: 'javascript' | 'network' | 'render' | 'memory' | 'security' | 'user-action';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  message: string;
-  stack?: string;
-  context: ErrorContext;
-  frequency: number;
-  firstSeen: number;
-  lastSeen: number;
-  resolved: boolean;
-  tags: string[];
-}
+import { logger } from '@/utils/logger';
 
 interface ErrorMetrics {
   totalErrors: number;
-  errorsByType: Record<string, number>;
-  errorsBySeverity: Record<string, number>;
-  errorRate: number;
-  mttr: number; // Mean Time To Resolution
+  criticalErrors: number;
+  warningErrors: number;
+  recoveredErrors: number;
   stabilityScore: number;
-  trendsData: Array<{
-    timestamp: number;
-    errorCount: number;
-    errorRate: number;
-  }>;
+  errorRate: number;
+  meanTimeToRecovery: number;
 }
 
-interface ErrorPattern {
-  pattern: RegExp;
-  type: CategorizedError['type'];
-  severity: CategorizedError['severity'];
-  suggestion: string;
+interface ErrorReport {
+  id: string;
+  type: 'javascript' | 'network' | 'rendering' | 'performance';
+  message: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  timestamp: number;
+  stack?: string;
+  url?: string;
+  recovered: boolean;
+  userAgent?: string;
+  context?: any;
+}
+
+interface RecoveryStrategy {
+  errorType: string;
+  action: 'retry' | 'fallback' | 'reload' | 'redirect';
+  maxAttempts: number;
+  delay: number;
 }
 
 export class AdvancedErrorManagement {
-  private static errors: Map<string, CategorizedError> = new Map();
+  private static errorHistory: ErrorReport[] = [];
   private static metrics: ErrorMetrics = {
     totalErrors: 0,
-    errorsByType: {},
-    errorsBySeverity: {},
-    errorRate: 0,
-    mttr: 0,
+    criticalErrors: 0,
+    warningErrors: 0,
+    recoveredErrors: 0,
     stabilityScore: 100,
-    trendsData: []
+    errorRate: 0,
+    meanTimeToRecovery: 0
   };
-  
-  private static sessionId = this.generateSessionId();
+
+  private static recoveryStrategies: Map<string, RecoveryStrategy> = new Map([
+    ['ChunkLoadError', { errorType: 'ChunkLoadError', action: 'reload', maxAttempts: 2, delay: 1000 }],
+    ['NetworkError', { errorType: 'NetworkError', action: 'retry', maxAttempts: 3, delay: 2000 }],
+    ['ReferenceError', { errorType: 'ReferenceError', action: 'fallback', maxAttempts: 1, delay: 0 }],
+    ['TypeError', { errorType: 'TypeError', action: 'fallback', maxAttempts: 1, delay: 0 }]
+  ]);
+
   private static isInitialized = false;
-  private static errorPatterns: ErrorPattern[] = [
-    {
-      pattern: /ChunkLoadError|Loading chunk \\d+ failed/,
-      type: 'network',
-      severity: 'medium',
-      suggestion: 'Implement chunk loading retry logic or reduce bundle sizes'
-    },
-    {
-      pattern: /Cannot read property|Cannot read properties of undefined/,
-      type: 'javascript',
-      severity: 'high',
-      suggestion: 'Add null checks and proper error boundaries'
-    },
-    {
-      pattern: /Script error|Non-Error promise rejection/,
-      type: 'javascript',
-      severity: 'medium',
-      suggestion: 'Enable CORS for better error reporting or add promise rejection handlers'
-    },
-    {
-      pattern: /ResizeObserver loop limit exceeded/,
-      type: 'render',
-      severity: 'low',
-      suggestion: 'Optimize component rendering and avoid infinite resize loops'
-    },
-    {
-      pattern: /QuotaExceededError|Storage quota exceeded/,
-      type: 'memory',
-      severity: 'medium',
-      suggestion: 'Implement storage cleanup and quota management'
-    },
-    {
-      pattern: /SecurityError|Blocked by Content Security Policy/,
-      type: 'security',
-      severity: 'critical',
-      suggestion: 'Review and update Content Security Policy configuration'
-    }
-  ];
+  private static attemptCounts: Map<string, number> = new Map();
 
   static initialize() {
     if (this.isInitialized) return;
 
     this.setupGlobalErrorHandlers();
-    this.loadErrorsFromStorage();
-    this.setupPeriodicCleanup();
-    this.isInitialized = true;
+    this.setupUnhandledPromiseRejectionHandler();
+    this.startMetricsCalculation();
     
     logger.info('Advanced Error Management initialized');
+    this.isInitialized = true;
   }
 
   private static setupGlobalErrorHandlers() {
-    // Enhanced global error handler
+    // Handle JavaScript errors
     window.addEventListener('error', (event) => {
       this.captureError({
         type: 'javascript',
         message: event.message,
+        severity: this.determineSeverity(event.error),
         stack: event.error?.stack,
-        filename: event.filename,
-        lineno: event.lineno,
-        colno: event.colno
+        url: event.filename
       });
     });
 
-    // Enhanced unhandled promise rejection handler
+    // Handle unhandled promise rejections
     window.addEventListener('unhandledrejection', (event) => {
       this.captureError({
         type: 'javascript',
         message: `Unhandled Promise Rejection: ${event.reason}`,
+        severity: 'high',
         stack: event.reason?.stack
       });
     });
 
-    // React error boundary integration
-    window.addEventListener('react-error-boundary', (event: any) => {
+    // Override console.error to capture logged errors
+    const originalConsoleError = console.error;
+    console.error = (...args) => {
+      const message = args.map(arg => 
+        typeof arg === 'string' ? arg : JSON.stringify(arg)
+      ).join(' ');
+      
       this.captureError({
-        type: 'render',
-        message: `React Error Boundary: ${event.detail.error.message}`,
-        stack: event.detail.error.stack,
-        componentStack: event.detail.errorInfo?.componentStack
+        type: 'javascript',
+        message,
+        severity: 'medium'
       });
-    });
-
-    // Performance observer for resource errors
-    if ('PerformanceObserver' in window) {
-      try {
-        const observer = new PerformanceObserver((list) => {
-          for (const entry of list.getEntries()) {
-            const resourceEntry = entry as PerformanceResourceTiming;
-            if (resourceEntry.duration === 0) {
-              this.captureError({
-                type: 'network',
-                message: `Failed to load resource: ${resourceEntry.name}`,
-                severity: 'medium'
-              });
-            }
-          }
-        });
-        observer.observe({ type: 'resource', buffered: true });
-      } catch (error) {
-        logger.warn('Failed to setup performance observer for error tracking:', error);
-      }
-    }
+      
+      originalConsoleError.apply(console, args);
+    };
   }
 
-  static captureError(errorData: {
-    type?: CategorizedError['type'];
-    message: string;
-    stack?: string;
-    severity?: CategorizedError['severity'];
-    filename?: string;
-    lineno?: number;
-    colno?: number;
-    componentStack?: string;
-    userId?: string;
-  }) {
-    const errorId = this.generateErrorId(errorData.message, errorData.stack);
-    const existingError = this.errors.get(errorId);
-    
-    // Determine error type and severity using patterns
-    const pattern = this.errorPatterns.find(p => p.pattern.test(errorData.message));
-    const errorType = errorData.type || pattern?.type || 'javascript';
-    const severity = errorData.severity || pattern?.severity || this.determineSeverity(errorData.message);
+  private static setupUnhandledPromiseRejectionHandler() {
+    window.addEventListener('unhandledrejection', (event) => {
+      const error = event.reason;
+      
+      this.captureError({
+        type: 'javascript',
+        message: `Unhandled Promise: ${error?.message || error}`,
+        severity: 'high',
+        stack: error?.stack
+      });
 
-    const context: ErrorContext = {
-      userId: errorData.userId,
-      sessionId: this.sessionId,
-      userAgent: navigator.userAgent,
-      url: window.location.href,
+      // Attempt recovery
+      this.attemptRecovery('UnhandledPromise', error);
+    });
+  }
+
+  static captureError(errorData: Omit<ErrorReport, 'id' | 'timestamp' | 'recovered' | 'userAgent'>) {
+    const errorReport: ErrorReport = {
+      id: this.generateErrorId(),
       timestamp: Date.now(),
-      buildVersion: this.getBuildVersion(),
-      environment: this.getEnvironment()
+      recovered: false,
+      userAgent: navigator.userAgent,
+      ...errorData
     };
 
-    if (existingError) {
-      // Update existing error
-      existingError.frequency++;
-      existingError.lastSeen = Date.now();
-      existingError.context = context; // Update with latest context
-    } else {
-      // Create new error
-      const newError: CategorizedError = {
-        id: errorId,
-        type: errorType,
-        severity,
-        message: errorData.message,
-        stack: errorData.stack,
-        context,
-        frequency: 1,
-        firstSeen: Date.now(),
-        lastSeen: Date.now(),
-        resolved: false,
-        tags: this.generateTags(errorData.message, errorType)
-      };
-      
-      this.errors.set(errorId, newError);
+    this.errorHistory.push(errorReport);
+    
+    // Keep only last 100 errors
+    if (this.errorHistory.length > 100) {
+      this.errorHistory.shift();
     }
 
-    // Update metrics
     this.updateMetrics();
-    this.saveErrorsToStorage();
+    this.attemptRecovery(errorData.type, errorData);
 
-    // Log based on severity
-    if (severity === 'critical') {
-      logger.error('Critical error captured:', { errorId, message: errorData.message });
-    } else if (severity === 'high') {
-      logger.warn('High severity error captured:', { errorId, message: errorData.message });
-    } else {
-      logger.debug('Error captured:', { errorId, message: errorData.message });
-    }
-
-    // Auto-suggest solutions for known patterns
-    if (pattern) {
-      logger.info(`Error suggestion for ${errorType}: ${pattern.suggestion}`);
-    }
-
-    return errorId;
+    logger.error('Error captured by Advanced Error Management', errorReport);
   }
 
-  static getErrors(): CategorizedError[] {
-    return Array.from(this.errors.values())
-      .sort((a, b) => b.lastSeen - a.lastSeen);
+  private static generateErrorId(): string {
+    return `err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  static getErrorsByType(type: CategorizedError['type']): CategorizedError[] {
-    return this.getErrors().filter(error => error.type === type);
-  }
-
-  static getErrorsBySeverity(severity: CategorizedError['severity']): CategorizedError[] {
-    return this.getErrors().filter(error => error.severity === severity);
-  }
-
-  static getMetrics(): ErrorMetrics {
-    return { ...this.metrics };
-  }
-
-  static resolveError(errorId: string, resolvedBy?: string) {
-    const error = this.errors.get(errorId);
-    if (error && !error.resolved) {
-      error.resolved = true;
-      error.tags.push(`resolved-by:${resolvedBy || 'system'}`);
-      this.updateMetrics();
-      this.saveErrorsToStorage();
-      
-      logger.info(`Error resolved: ${errorId} by ${resolvedBy || 'system'}`);
-    }
-  }
-
-  static dismissError(errorId: string) {
-    const error = this.errors.get(errorId);
-    if (error) {
-      error.tags.push('dismissed');
-      this.saveErrorsToStorage();
-    }
-  }
-
-  static getErrorInsights(): {
-    topErrorTypes: Array<{ type: string; count: number; percentage: number }>;
-    criticalIssues: CategorizedError[];
-    recentTrends: Array<{ period: string; errorCount: number; change: number }>;
-    suggestions: Array<{ priority: 'high' | 'medium' | 'low'; message: string; type: string }>;
-  } {
-    const errors = this.getErrors();
-    const activeErrors = errors.filter(e => !e.resolved);
+  private static determineSeverity(error: any): 'low' | 'medium' | 'high' | 'critical' {
+    if (!error) return 'low';
     
-    // Top error types
-    const typeCount: Record<string, number> = {};
-    activeErrors.forEach(error => {
-      typeCount[error.type] = (typeCount[error.type] || 0) + error.frequency;
+    const message = error.message || error.toString();
+    
+    // Critical errors that break the app
+    if (message.includes('ChunkLoadError') || 
+        message.includes('Loading chunk') ||
+        message.includes('TypeError: Cannot read prop')) {
+      return 'critical';
+    }
+    
+    // High severity errors
+    if (message.includes('ReferenceError') ||
+        message.includes('TypeError') ||
+        message.includes('Network request failed')) {
+      return 'high';
+    }
+    
+    // Medium severity
+    if (message.includes('Warning') || 
+        message.includes('Deprecated')) {
+      return 'medium';
+    }
+    
+    return 'low';
+  }
+
+  private static async attemptRecovery(errorType: string, error: any): Promise<boolean> {
+    const strategy = this.recoveryStrategies.get(errorType);
+    if (!strategy) return false;
+
+    const attemptKey = `${errorType}_${error?.message || 'unknown'}`;
+    const currentAttempts = this.attemptCounts.get(attemptKey) || 0;
+
+    if (currentAttempts >= strategy.maxAttempts) {
+      return false;
+    }
+
+    this.attemptCounts.set(attemptKey, currentAttempts + 1);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, strategy.delay));
+
+      switch (strategy.action) {
+        case 'reload':
+          window.location.reload();
+          break;
+        case 'retry':
+          // Implement retry logic based on error context
+          return this.retryFailedOperation(error);
+        case 'fallback':
+          return this.activateFallback(error);
+        case 'redirect':
+          window.location.href = '/app/dashboard';
+          break;
+      }
+
+      this.markErrorAsRecovered(errorType);
+      return true;
+    } catch (recoveryError) {
+      logger.error('Recovery attempt failed', { originalError: error, recoveryError });
+      return false;
+    }
+  }
+
+  private static retryFailedOperation(error: any): boolean {
+    // Implement retry logic for network operations
+    if (error?.type === 'network') {
+      // Trigger a re-fetch or retry mechanism
+      window.dispatchEvent(new CustomEvent('retry-failed-request', { detail: error }));
+      return true;
+    }
+    return false;
+  }
+
+  private static activateFallback(error: any): boolean {
+    // Implement fallback UI or functionality
+    window.dispatchEvent(new CustomEvent('activate-error-fallback', { detail: error }));
+    return true;
+  }
+
+  private static markErrorAsRecovered(errorType: string) {
+    const recentErrors = this.errorHistory
+      .filter(err => err.type === errorType && !err.recovered)
+      .slice(-5); // Mark last 5 similar errors as recovered
+
+    recentErrors.forEach(err => {
+      err.recovered = true;
     });
-    
-    const totalErrors = Object.values(typeCount).reduce((sum, count) => sum + count, 0);
-    const topErrorTypes = Object.entries(typeCount)
-      .map(([type, count]) => ({
-        type,
-        count,
-        percentage: totalErrors > 0 ? (count / totalErrors) * 100 : 0
-      }))
-      .sort((a, b) => b.count - a.count);
 
-    // Critical issues
-    const criticalIssues = activeErrors.filter(e => e.severity === 'critical');
-
-    // Recent trends (last 7 days)
-    const now = Date.now();
-    const dayMs = 24 * 60 * 60 * 1000;
-    const recentTrends = [];
-    
-    for (let i = 6; i >= 0; i--) {
-      const periodStart = now - (i + 1) * dayMs;
-      const periodEnd = now - i * dayMs;
-      const periodErrors = errors.filter(e => 
-        e.firstSeen >= periodStart && e.firstSeen < periodEnd
-      );
-      
-      recentTrends.push({
-        period: new Date(periodEnd - dayMs / 2).toISOString().split('T')[0],
-        errorCount: periodErrors.length,
-        change: 0 // Would calculate change from previous period
-      });
-    }
-
-    // Suggestions based on error patterns
-    const suggestions = this.generateErrorSuggestions(activeErrors);
-
-    return {
-      topErrorTypes,
-      criticalIssues,
-      recentTrends,
-      suggestions
-    };
-  }
-
-  private static generateErrorSuggestions(errors: CategorizedError[]): Array<{
-    priority: 'high' | 'medium' | 'low';
-    message: string;
-    type: string;
-  }> {
-    const suggestions = [];
-    
-    // Check for common patterns
-    const networkErrors = errors.filter(e => e.type === 'network').length;
-    const jsErrors = errors.filter(e => e.type === 'javascript').length;
-    const criticalErrors = errors.filter(e => e.severity === 'critical').length;
-    
-    if (criticalErrors > 0) {
-      suggestions.push({
-        priority: 'high' as const,
-        message: `${criticalErrors} critical errors need immediate attention`,
-        type: 'critical-alert'
-      });
-    }
-    
-    if (networkErrors > 5) {
-      suggestions.push({
-        priority: 'medium' as const,
-        message: 'High number of network errors detected. Consider implementing retry logic.',
-        type: 'network-optimization'
-      });
-    }
-    
-    if (jsErrors > 10) {
-      suggestions.push({
-        priority: 'medium' as const,
-        message: 'Many JavaScript errors detected. Review error boundaries and null checks.',
-        type: 'code-quality'
-      });
-    }
-    
-    return suggestions;
-  }
-
-  private static generateErrorId(message: string, stack?: string): string {
-    const content = message + (stack || '');
-    let hash = 0;
-    for (let i = 0; i < content.length; i++) {
-      const char = content.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32-bit integer
-    }
-    return Math.abs(hash).toString(36);
-  }
-
-  private static generateSessionId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-
-  private static determineSeverity(message: string): CategorizedError['severity'] {
-    if (message.includes('Critical') || message.includes('Fatal')) return 'critical';
-    if (message.includes('Cannot read') || message.includes('undefined')) return 'high';
-    if (message.includes('Warning') || message.includes('Deprecated')) return 'low';
-    return 'medium';
-  }
-
-  private static generateTags(message: string, type: string): string[] {
-    const tags = [type];
-    
-    if (message.includes('React')) tags.push('react');
-    if (message.includes('fetch') || message.includes('XMLHttpRequest')) tags.push('api');
-    if (message.includes('localStorage') || message.includes('sessionStorage')) tags.push('storage');
-    if (message.includes('Permission') || message.includes('Security')) tags.push('security');
-    
-    return tags;
-  }
-
-  private static getBuildVersion(): string {
-    return process.env.REACT_APP_VERSION || 'unknown';
-  }
-
-  private static getEnvironment(): 'development' | 'production' | 'staging' {
-    return import.meta.env.MODE as 'development' | 'production' | 'staging';
+    this.updateMetrics();
   }
 
   private static updateMetrics() {
-    const errors = Array.from(this.errors.values());
-    const activeErrors = errors.filter(e => !e.resolved);
+    const now = Date.now();
+    const oneHour = 60 * 60 * 1000;
+    const recentErrors = this.errorHistory.filter(err => now - err.timestamp < oneHour);
+
+    this.metrics.totalErrors = this.errorHistory.length;
+    this.metrics.criticalErrors = this.errorHistory.filter(err => err.severity === 'critical').length;
+    this.metrics.warningErrors = this.errorHistory.filter(err => err.severity === 'medium' || err.severity === 'low').length;
+    this.metrics.recoveredErrors = this.errorHistory.filter(err => err.recovered).length;
     
-    this.metrics.totalErrors = errors.length;
+    // Calculate error rate per hour
+    this.metrics.errorRate = recentErrors.length;
     
-    // Errors by type
-    this.metrics.errorsByType = {};
-    activeErrors.forEach(error => {
-      this.metrics.errorsByType[error.type] = (this.metrics.errorsByType[error.type] || 0) + 1;
-    });
-    
-    // Errors by severity
-    this.metrics.errorsBySeverity = {};
-    activeErrors.forEach(error => {
-      this.metrics.errorsBySeverity[error.severity] = (this.metrics.errorsBySeverity[error.severity] || 0) + 1;
-    });
-    
-    // Error rate (errors per session)
-    this.metrics.errorRate = activeErrors.length;
-    
-    // Stability score (100 - weighted error score)
+    // Calculate stability score (0-100)
     const errorWeight = {
       critical: 25,
       high: 10,
@@ -440,73 +259,98 @@ export class AdvancedErrorManagement {
       low: 1
     };
     
-    const weightedErrors = activeErrors.reduce((sum, error) => {
-      return sum + errorWeight[error.severity];
-    }, 0);
+    const totalErrorWeight = recentErrors.reduce((sum, err) => sum + errorWeight[err.severity], 0);
+    this.metrics.stabilityScore = Math.max(0, 100 - totalErrorWeight);
     
-    this.metrics.stabilityScore = Math.max(0, 100 - weightedErrors);
-    
-    // Add to trends
-    this.metrics.trendsData.push({
-      timestamp: Date.now(),
-      errorCount: activeErrors.length,
-      errorRate: this.metrics.errorRate
-    });
-    
-    // Keep only last 100 entries
-    if (this.metrics.trendsData.length > 100) {
-      this.metrics.trendsData = this.metrics.trendsData.slice(-100);
+    // Calculate mean time to recovery
+    const recoveredErrors = this.errorHistory.filter(err => err.recovered);
+    if (recoveredErrors.length > 0) {
+      const avgRecoveryTime = recoveredErrors.reduce((sum, err) => {
+        const recoveryTime = this.estimateRecoveryTime(err);
+        return sum + recoveryTime;
+      }, 0) / recoveredErrors.length;
+      
+      this.metrics.meanTimeToRecovery = avgRecoveryTime;
     }
   }
 
-  private static loadErrorsFromStorage() {
-    try {
-      const stored = localStorage.getItem('advanced_error_management');
-      if (stored) {
-        const data = JSON.parse(stored);
-        if (data.errors) {
-          this.errors = new Map(data.errors);
-        }
-        if (data.metrics) {
-          this.metrics = { ...this.metrics, ...data.metrics };
-        }
-      }
-    } catch (error) {
-      logger.warn('Failed to load error data from storage:', error);
-    }
+  private static estimateRecoveryTime(error: ErrorReport): number {
+    // Estimate recovery time based on error type and when it was marked as recovered
+    // This is a simplified calculation
+    return 30000; // 30 seconds average
   }
 
-  private static saveErrorsToStorage() {
-    try {
-      const data = {
-        errors: Array.from(this.errors.entries()),
-        metrics: this.metrics,
-        lastUpdate: Date.now()
-      };
-      localStorage.setItem('advanced_error_management', JSON.stringify(data));
-    } catch (error) {
-      logger.warn('Failed to save error data to storage:', error);
-    }
-  }
-
-  private static setupPeriodicCleanup() {
-    // Clean up old resolved errors every hour
+  private static startMetricsCalculation() {
+    // Update metrics every 30 seconds
     setInterval(() => {
-      const cutoff = Date.now() - (7 * 24 * 60 * 60 * 1000); // 7 days ago
-      
-      for (const [errorId, error] of this.errors.entries()) {
-        if (error.resolved && error.lastSeen < cutoff) {
-          this.errors.delete(errorId);
-        }
-      }
-      
-      this.saveErrorsToStorage();
-    }, 60 * 60 * 1000); // Every hour
+      this.updateMetrics();
+    }, 30000);
   }
 
-  static cleanup() {
-    this.saveErrorsToStorage();
-    this.isInitialized = false;
-    logger.info('Advanced Error Management cleaned up');
+  static getMetrics(): ErrorMetrics {
+    return { ...this.metrics };
+  }
+
+  static getErrorHistory(limit: number = 50): ErrorReport[] {
+    return this.errorHistory.slice(-limit);
+  }
+
+  static clearErrorHistory() {
+    this.errorHistory = [];
+    this.attemptCounts.clear();
+    this.updateMetrics();
+  }
+
+  static addRecoveryStrategy(errorType: string, strategy: RecoveryStrategy) {
+    this.recoveryStrategies.set(errorType, strategy);
+  }
+
+  static getStabilityReport() {
+    const metrics = this.getMetrics();
+    const recentErrors = this.getErrorHistory(20);
+    
+    return {
+      score: metrics.stabilityScore,
+      status: metrics.stabilityScore >= 90 ? 'excellent' : 
+              metrics.stabilityScore >= 70 ? 'good' : 
+              metrics.stabilityScore >= 50 ? 'fair' : 'poor',
+      recommendations: this.generateRecommendations(metrics, recentErrors)
+    };
+  }
+
+  private static generateRecommendations(metrics: ErrorMetrics, recentErrors: ErrorReport[]): string[] {
+    const recommendations: string[] = [];
+    
+    if (metrics.criticalErrors > 0) {
+      recommendations.push('Address critical errors immediately to prevent app crashes');
+    }
+    
+    if (metrics.errorRate > 10) {
+      recommendations.push('High error rate detected - implement better error prevention');
+    }
+    
+    if (metrics.meanTimeToRecovery > 60000) {
+      recommendations.push('Improve error recovery mechanisms for faster resolution');
+    }
+    
+    const commonErrorTypes = this.getMostCommonErrorTypes(recentErrors);
+    if (commonErrorTypes.length > 0) {
+      recommendations.push(`Focus on fixing common error types: ${commonErrorTypes.join(', ')}`);
+    }
+    
+    return recommendations;
+  }
+
+  private static getMostCommonErrorTypes(errors: ErrorReport[]): string[] {
+    const errorCounts = errors.reduce((acc, err) => {
+      const type = err.message.split(':')[0] || err.type;
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    return Object.entries(errorCounts)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 3)
+      .map(([type]) => type);
   }
 }
