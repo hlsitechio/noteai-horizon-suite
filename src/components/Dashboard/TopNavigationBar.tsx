@@ -18,22 +18,64 @@ const TopNavigationBarComponent: React.FC<TopNavigationBarProps> = () => {
   const [showChronoDropdown, setShowChronoDropdown] = useState(false);
   const [activeTimer, setActiveTimer] = useState<{minutes: number, seconds: number} | null>(null);
 
-  // Update clock every second using optimized scheduling
+  // Update clock every second using optimized scheduling with robust error handling
   useEffect(() => {
-    import('@/utils/scheduler').then(({ scheduleIdleCallback, cancelIdleCallback }) => {
-      let timeoutId: number;
-      
-      const updateClock = () => {
-        setCurrentTime(new Date());
+    let timeoutId: number | null = null;
+    let isComponentMounted = true;
+
+    const initializeScheduler = async () => {
+      try {
+        const { scheduleIdleCallback, cancelIdleCallback } = await import('@/utils/scheduler');
+        
+        if (!isComponentMounted) return;
+
+        const updateClock = () => {
+          if (!isComponentMounted) return;
+          
+          try {
+            setCurrentTime(new Date());
+            if (isComponentMounted) {
+              timeoutId = scheduleIdleCallback(updateClock, 1000);
+            }
+          } catch (error) {
+            console.warn('Clock update failed, retrying...', error);
+            if (isComponentMounted) {
+              timeoutId = scheduleIdleCallback(updateClock, 5000); // Retry with longer delay
+            }
+          }
+        };
+        
         timeoutId = scheduleIdleCallback(updateClock, 1000);
-      };
-      
-      timeoutId = scheduleIdleCallback(updateClock, 1000);
-      
-      return () => {
-        if (timeoutId) cancelIdleCallback(timeoutId);
-      };
-    });
+      } catch (error) {
+        console.warn('Scheduler initialization failed, using fallback', error);
+        // Fallback to regular setTimeout if scheduler fails
+        const fallbackUpdate = () => {
+          if (!isComponentMounted) return;
+          setCurrentTime(new Date());
+          timeoutId = window.setTimeout(fallbackUpdate, 1000);
+        };
+        timeoutId = window.setTimeout(fallbackUpdate, 1000);
+      }
+    };
+
+    initializeScheduler();
+    
+    return () => {
+      isComponentMounted = false;
+      if (timeoutId !== null) {
+        // Try both cleanup methods for robustness
+        try {
+          import('@/utils/scheduler').then(({ cancelIdleCallback }) => {
+            cancelIdleCallback(timeoutId);
+          }).catch(() => {
+            // Fallback to clearTimeout
+            clearTimeout(timeoutId);
+          });
+        } catch {
+          clearTimeout(timeoutId);
+        }
+      }
+    };
   }, []);
 
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { AuthProvider } from '../contexts/AuthContext';
+import { RobustnessProvider } from '../contexts/RobustnessContext';
 import { ThemeAccentProviders } from '../contexts/ThemeAccentProviders';
 import { NotesDataProviders } from '../contexts/NotesDataProviders';
 import { ProjectAIProviders } from '../contexts/ProjectAIProviders';
@@ -21,19 +22,21 @@ interface AppProvidersProps {
  */
 export const AppProviders: React.FC<AppProvidersProps> = React.memo(({ children }) => (
   <SmartErrorBoundary>
-    <ThemeAccentProviders>
-      <AuthProvider>
-        <NotesDataProviders>
-          <ProjectAIProviders>
-            <EditModeProvider>
-              <OnboardingProvider>
-                {children}
-              </OnboardingProvider>
-            </EditModeProvider>
-          </ProjectAIProviders>
-        </NotesDataProviders>
-      </AuthProvider>
-    </ThemeAccentProviders>
+    <RobustnessProvider>
+      <ThemeAccentProviders>
+        <AuthProvider>
+          <NotesDataProviders>
+            <ProjectAIProviders>
+              <EditModeProvider>
+                <OnboardingProvider>
+                  {children}
+                </OnboardingProvider>
+              </EditModeProvider>
+            </ProjectAIProviders>
+          </NotesDataProviders>
+        </AuthProvider>
+      </ThemeAccentProviders>
+    </RobustnessProvider>
   </SmartErrorBoundary>
 ));
 
