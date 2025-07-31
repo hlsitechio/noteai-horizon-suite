@@ -22,26 +22,28 @@ export const useDashboardStatus = () => {
           .from('user_onboarding')
           .select('onboarding_completed')
           .eq('user_id', user.id)
-          .single();
+          .execute();
 
         // Check if user has dashboard settings (indicating initialization)
         const { data: dashboardData } = await supabase
           .from('dashboard_settings')
           .select('settings')
           .eq('user_id', user.id)
-          .single();
+          .execute();
 
         // Check if user has any notes (another indicator)
         const { data: notesData } = await supabase
           .from('notes_v2')
           .select('id')
-          .eq('user_id', user.id);
+          .eq('user_id', user.id)
+          .execute();
 
         // Check if user has folders
         const { data: foldersData } = await supabase
           .from('folders')
           .select('id')
-          .eq('user_id', user.id);
+          .eq('user_id', user.id)
+          .execute();
 
         // Check if user is truly new (no existing data)
         const isNewUser = !onboardingData?.onboarding_completed && 

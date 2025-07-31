@@ -26,7 +26,8 @@ export const useWelcomeFlow = (onDashboardInitialized?: () => void) => {
           display_name: info.name,
           welcome_message: `Welcome back, ${info.nickname}!`
         })
-        .eq('id', user!.id);
+        .eq('id', user!.id)
+        .execute();
 
       if (error) {
         console.error('Error saving user profile:', error);

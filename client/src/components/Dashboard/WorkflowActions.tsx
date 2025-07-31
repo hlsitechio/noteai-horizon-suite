@@ -36,7 +36,7 @@ const WorkflowActions: React.FC<WorkflowActionsProps> = ({
     .filter(note => {
       const hourAgo = new Date();
       hourAgo.setHours(hourAgo.getHours() - 24);
-      return new Date(note.updatedAt) > hourAgo;
+      return note.updatedAt && new Date(note.updatedAt) > hourAgo;
     })
     .slice(0, 3);
 

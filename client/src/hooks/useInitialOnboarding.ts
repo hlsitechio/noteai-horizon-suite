@@ -23,7 +23,7 @@ export const useInitialOnboarding = () => {
           .eq('user_id', user.id)
           .single();
 
-        if (onboardingError && onboardingError.code !== 'PGRST116') {
+        if (onboardingError && (onboardingError as any).code !== 'PGRST116') {
           console.error('Error checking onboarding status:', onboardingError);
           setNeedsOnboarding(false);
           setIsLoading(false);
@@ -37,7 +37,7 @@ export const useInitialOnboarding = () => {
           .eq('user_id', user.id)
           .single();
 
-        if (preferencesError && preferencesError.code !== 'PGRST116') {
+        if (preferencesError && (preferencesError as any).code !== 'PGRST116') {
           console.error('Error checking preferences:', preferencesError);
           setNeedsOnboarding(false);
           setIsLoading(false);
