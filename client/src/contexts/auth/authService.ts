@@ -2,6 +2,7 @@
 import { toast } from 'sonner';
 import { clearCorruptedSession, handleRefreshTokenError } from './utils';
 import { logger } from '../../utils/logger';
+import { supabase } from '@/integrations/supabase/client';
 
 const API_BASE_URL = window.location.origin + '/api';
 
@@ -27,23 +28,30 @@ async function apiRequest(endpoint: string, options: RequestInit = {}) {
 
 export const loginUser = async (email: string, password: string): Promise<{ success: boolean; user?: any }> => {
   try {
-    const data = await apiRequest('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({
-        email: email.trim(),
-        password,
-      }),
+    // Use Supabase client-side authentication directly
+    const { data, error } = await supabase.auth.signIn({
+      email: email.trim(),
+      password,
     });
 
-    if (data.user) {
+    if (error) {
+      console.error('Login error:', error);
+      
+      const errorMessage = (error as any)?.message || error?.toString() || 'Login failed. Please try again.';
+      if (errorMessage.includes('Invalid credentials')) {
+        toast.error('Invalid email or password. Please check your credentials.');
+      } else {
+        toast.error(errorMessage);
+      }
+      return { success: false };
+    }
+
+    if (data?.user) {
       // Development logging only
       if (import.meta.env.DEV) {
         console.log('Login successful');
       }
       toast.success('Welcome back!');
-      
-      // Trigger a window event to update auth state
-      window.dispatchEvent(new Event('auth-state-change'));
       
       return { success: true, user: data.user };
     }
@@ -51,15 +59,7 @@ export const loginUser = async (email: string, password: string): Promise<{ succ
     return { success: false };
   } catch (error: any) {
     console.error('Login exception:', error);
-    
-    if (error.message.includes('Invalid credentials')) {
-      toast.error('Invalid email or password. Please check your credentials.');
-    } else if (error.message.includes('Session expired')) {
-      await clearCorruptedSession();
-      toast.error('Session expired. Please try logging in again.');
-    } else {
-      toast.error(error.message || 'Login failed. Please try again.');
-    }
+    toast.error('Login failed. Please try again.');
     return { success: false };
   }
 };

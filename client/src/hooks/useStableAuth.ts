@@ -112,7 +112,7 @@ export const useStableAuth = (): UseStableAuthReturn => {
         throw error;
       }
       
-      handleAuthChange(session);
+      await handleAuthChange(session);
     } catch (error) {
       logger.auth.error('Auth retry failed:', error);
       
@@ -151,7 +151,7 @@ export const useStableAuth = (): UseStableAuthReturn => {
         throw error;
       }
 
-      handleAuthChange(session);
+      await handleAuthChange(session);
       logger.auth.debug('Auth initialized successfully');
     } catch (error) {
       logger.auth.error('Error initializing auth:', error);
@@ -219,6 +219,14 @@ export const useStableAuth = (): UseStableAuthReturn => {
       }
     );
 
+    // Listen for custom auth state change events from login
+    const handleCustomAuthChange = () => {
+      logger.auth.debug('Custom auth state change triggered, refreshing session');
+      retryAuth();
+    };
+
+    window.addEventListener('auth-state-change', handleCustomAuthChange);
+
     // Initialize auth state
     initializeAuth();
 
@@ -226,8 +234,9 @@ export const useStableAuth = (): UseStableAuthReturn => {
       logger.auth.debug('Cleaning up stable auth');
       mountedRef.current = false;
       subscription.unsubscribe();
+      window.removeEventListener('auth-state-change', handleCustomAuthChange);
     };
-  }, [handleAuthChange, initializeAuth]);
+  }, [handleAuthChange, initializeAuth, retryAuth]);
 
   return {
     user,
