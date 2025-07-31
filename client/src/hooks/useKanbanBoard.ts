@@ -2,32 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-
-interface KanbanTask {
-  id: string;
-  title: string;
-  description?: string;
-  column_id: string;
-  position: number;
-  labels?: string[];
-  created_at: string;
-  updated_at: string;
-}
-
-interface KanbanColumn {
-  id: string;
-  title: string;
-  position: number;
-  board_id: string;
-}
-
-interface KanbanBoard {
-  id: string;
-  title: string;
-  user_id: string;
-  created_at: string;
-  updated_at: string;
-}
+import { KanbanTask, KanbanColumn, KanbanBoard } from '@/types/kanban';
 
 export const useKanbanBoard = (boardId?: string) => {
   const { user } = useAuth();

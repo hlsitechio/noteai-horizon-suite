@@ -6,7 +6,13 @@
 import { useState } from 'react';
 import { useToast } from './useToast';
 import { supabase } from '@/integrations/supabase/client';
-import type { ChatMessage } from './useAIChat';
+// Simplified ChatMessage type
+interface ChatMessage {
+  id: string;
+  content: string;
+  isUser: boolean;
+  timestamp: Date;
+}
 
 export const useWorkerAIIntegration = () => {
   const [isLoading, setIsLoading] = useState(false);

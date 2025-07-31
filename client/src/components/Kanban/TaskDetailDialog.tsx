@@ -91,7 +91,7 @@ export function TaskDetailDialog({ task, open, onOpenChange }: TaskDetailDialogP
             <div>
               <h4 className="font-medium mb-2">Labels</h4>
               <div className="flex flex-wrap gap-2">
-                {task.labels.map((label: string, index: number) => (
+                {(task.labels as string[]).map((label: string, index: number) => (
                   <Badge key={index} variant="secondary">
                     {label}
                   </Badge>

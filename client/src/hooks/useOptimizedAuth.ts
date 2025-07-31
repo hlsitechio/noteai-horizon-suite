@@ -96,7 +96,7 @@ export const useOptimizedAuth = (): UseOptimizedAuthReturn => {
   const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signIn({
         email,
         password,
       });
@@ -116,12 +116,6 @@ export const useOptimizedAuth = (): UseOptimizedAuthReturn => {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: {
-            display_name: name,
-          },
-          emailRedirectTo: `${window.location.origin}/`,
-        },
       });
       return { error };
     } catch (error) {

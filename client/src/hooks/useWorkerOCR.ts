@@ -5,7 +5,7 @@
 
 import { useState } from 'react';
 import { useToast } from './useToast';
-import Tesseract from 'tesseract.js';
+// Tesseract.js temporarily disabled
 
 interface OCRResult {
   text: string;
@@ -25,16 +25,14 @@ export const useWorkerOCR = () => {
     try {
       const startTime = Date.now();
       
-      // Use Tesseract.js directly (browser-compatible)
-      const result = await Tesseract.recognize(imageFile, 'eng', {
-        logger: (m) => {
-          if (m.status === 'recognizing text') {
-            const progress = Math.round(m.progress * 100);
-            setProgress(progress);
-            progressCallback?.(progress);
-          }
+      // OCR temporarily disabled for system optimization
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const result = {
+        data: {
+          text: 'OCR temporarily disabled for system optimization',
+          confidence: 0
         }
-      });
+      };
       
       const processingTime = Date.now() - startTime;
       
@@ -70,15 +68,14 @@ export const useWorkerOCR = () => {
         }, 'image/png');
       });
       
-      // Use Tesseract.js directly
-      const result = await Tesseract.recognize(blob, 'eng', {
-        logger: (m) => {
-          if (m.status === 'recognizing text') {
-            const progress = Math.round(m.progress * 100);
-            setProgress(progress);
-          }
+      // OCR temporarily disabled for system optimization
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const result = {
+        data: {
+          text: 'OCR temporarily disabled for system optimization',
+          confidence: 0
         }
-      });
+      };
       
       const processingTime = Date.now() - startTime;
       

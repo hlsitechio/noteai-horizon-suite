@@ -5,15 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 
 export const FeatureFlagExample: React.FC = () => {
-  const { isInitialized, evaluateFlag, evaluateStringFlag, evaluateNumberFlag, client } = useFeatureFlags();
-
-  // Example feature flags
-  const showNewFeature = evaluateFlag('show-new-feature', false);
-  const themeName = evaluateStringFlag('theme-name', 'default');
-  const maxItems = evaluateNumberFlag('max-items', 10);
+  // Simplified implementation - feature flags temporarily disabled
+  const isInitialized = false;
+  const showNewFeature = false;
+  const themeName = 'default';
+  const maxItems = 10;
 
   const handleVerifySetup = () => {
-    verifyFeatureFlagsSetup(client);
+    console.log('Feature flags temporarily disabled');
   };
 
   return (

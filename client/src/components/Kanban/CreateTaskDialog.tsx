@@ -112,7 +112,7 @@ export function CreateTaskDialog({
         labels: values.labels ? values.labels.split(',').map(label => label.trim()).filter(Boolean) : [],
       };
 
-      const success = await createTask(columnId, taskData);
+      const success = await createTask(taskData);
       if (success) {
         form.reset();
         onClose();

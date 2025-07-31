@@ -72,7 +72,7 @@ export function KanbanTaskCard({ task, onClick }: KanbanTaskCardProps) {
 
         {Array.isArray(task.labels) && task.labels.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {task.labels.map((label: string, index: number) => (
+            {(task.labels as string[]).map((label: string, index: number) => (
               <Badge key={index} variant="secondary" className="text-xs px-1 py-0">
                 {label}
               </Badge>

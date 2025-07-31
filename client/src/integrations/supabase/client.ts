@@ -90,7 +90,10 @@ export const auth = {
       data: { 
         session: { 
           user: { id: userId },
-          access_token: 'placeholder-token' // Add access_token to fix TypeScript errors
+          access_token: 'placeholder-token',
+          refresh_token: 'placeholder-refresh',
+          expires_in: 3600,
+          token_type: 'bearer'
         } 
       }, 
       error: null 

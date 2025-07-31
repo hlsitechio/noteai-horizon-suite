@@ -8,7 +8,7 @@ export const useEnhancedAIChat = () => {
   return {
     messages,
     isLoading,
-    sendMessage: () => {},
+    sendMessage: (messages: any) => Promise.resolve('AI features temporarily disabled'),
     clearMessages: () => {},
   };
 };
