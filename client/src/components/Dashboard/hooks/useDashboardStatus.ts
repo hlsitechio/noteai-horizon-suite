@@ -18,38 +18,30 @@ export const useDashboardStatus = () => {
 
       try {
         // Check if user has completed onboarding before
-        const onboardingQuery = supabase
+        const { data: onboardingData } = await supabase
           .from('user_onboarding')
           .select('onboarding_completed')
           .eq('user_id', user.id)
           .single();
-        
-        const { data: onboardingData } = await onboardingQuery;
 
         // Check if user has dashboard settings (indicating initialization)
-        const dashboardQuery = supabase
+        const { data: dashboardData } = await supabase
           .from('dashboard_settings')
           .select('settings')
           .eq('user_id', user.id)
           .single();
-          
-        const { data: dashboardData } = await dashboardQuery;
 
         // Check if user has any notes (another indicator)
-        const notesQuery = supabase
+        const { data: notesData } = await supabase
           .from('notes_v2')
           .select('id')
           .eq('user_id', user.id);
-          
-        const { data: notesData } = await notesQuery;
 
         // Check if user has folders
-        const foldersQuery = supabase
+        const { data: foldersData } = await supabase
           .from('folders')
           .select('id')
           .eq('user_id', user.id);
-          
-        const { data: foldersData } = await foldersQuery;
 
         // Check if user is truly new (no existing data)
         const isNewUser = !onboardingData?.onboarding_completed && 

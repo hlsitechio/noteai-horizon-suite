@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,7 +17,8 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
   onCreateNote,
   onEditNote,
 }) => {
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return 'Unknown date';
     const date = new Date(dateString);
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
@@ -32,56 +32,49 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
     }
   };
 
-  const truncateContent = (content: string, maxLength: number = 150) => {
-    if (content.length <= maxLength) return content;
-    return content.substring(0, maxLength) + '...';
+  const truncateContent = (content: string | null, maxLength: number = 150) => {
+    if (!content) return 'No content available';
+    return content.length > maxLength 
+      ? content.substring(0, maxLength) + '...' 
+      : content;
   };
 
   return (
     <Card className="h-full">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle className="text-xl font-semibold">Recent Activity</CardTitle>
-        <Button onClick={onCreateNote} size="sm" className="gap-2">
-          <i className="bx bx-plus text-sm"></i>
-          New Note
-        </Button>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">
+          Recent Activity
+        </CardTitle>
+        <i className="bx bx-external-link text-muted-foreground hover:text-foreground cursor-pointer text-sm"></i>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="h-[calc(100%-4rem)] overflow-y-auto">
         {recentNotes.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <i className="bx bx-edit text-2xl"></i>
+          <div className="flex flex-col items-center justify-center h-full space-y-3">
+            <div className="text-4xl text-muted-foreground/30">
+              <i className="bx bx-note"></i>
             </div>
-            <p className="text-lg mb-2">No notes yet</p>
-            <p className="text-sm mb-4">Create your first note to get started</p>
-            <Button onClick={onCreateNote} className="gap-2">
-              <i className="bx bx-plus text-sm"></i>
+            <p className="text-sm text-muted-foreground text-center">No recent notes found</p>
+            <Button 
+              onClick={onCreateNote}
+              size="sm" 
+              className="mt-2"
+            >
+              <i className="bx bx-plus mr-2"></i>
               Create Note
             </Button>
           </div>
         ) : (
-          recentNotes.map((note) => (
-            <div
-              key={note.id}
-              className="border-2 border-accent rounded-lg p-4 hover:bg-accent/10 transition-colors"
+          recentNotes.slice(0, 5).map((note) => (
+            <div 
+              key={note.id} 
+              className="p-3 mb-3 border rounded-lg hover:bg-muted/30 cursor-pointer transition-colors"
+              onClick={() => onEditNote(note)}
             >
               <div className="flex items-start justify-between mb-2">
-                <h3 
-                  className="font-medium text-foreground cursor-pointer hover:text-accent transition-colors"
-                  onClick={() => onEditNote(note)}
-                >
-                  {note.title || 'Untitled Note'}
-                </h3>
-                <div className="flex items-center gap-2">
-                  <DesktopPopOutButton note={note} />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onEditNote(note)}
-                    className="h-8 w-8 p-0 hover:bg-accent/10 hover:text-accent"
-                  >
-                    <i className="bx bx-edit text-sm"></i>
-                  </Button>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-medium truncate">
+                    {note.title || 'Untitled Note'}
+                  </h4>
                 </div>
               </div>
               
@@ -92,15 +85,20 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary" className="text-xs">
-                    {note.category}
+                    {note.category || 'General'}
                   </Badge>
-                  {note.tags.length > 0 && (
-                    <div className="flex items-center gap-1">
-                      <i className="bx bx-tag text-xs text-muted-foreground"></i>
-                      <span className="text-xs text-muted-foreground">
-                        {note.tags.slice(0, 2).join(', ')}
-                        {note.tags.length > 2 && ` +${note.tags.length - 2}`}
-                      </span>
+                  {note.tags && note.tags.length > 0 && (
+                    <div className="flex gap-1">
+                      {note.tags.slice(0, 2).map((tag: string, index: number) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                      {note.tags.length > 2 && (
+                        <span className="text-xs text-muted-foreground">
+                          +{note.tags.length - 2}
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
