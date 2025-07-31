@@ -104,16 +104,6 @@ export const componentLibraryItems: ComponentLibraryItem[] = [
     createdAt: '2024-02-10T10:00:00Z'
   },
   {
-    id: 'weather-widget',
-    name: 'Weather',
-    description: 'Current weather conditions and forecast',
-    category: 'Info',
-    icon: Share2,
-    componentKey: 'weather-widget',
-    tags: ['weather', 'forecast', 'location'],
-    createdAt: '2024-02-15T10:00:00Z'
-  },
-  {
     id: 'stats-revenue',
     name: 'Revenue Stats',
     description: 'Revenue tracking and financial metrics',
@@ -261,4 +251,4 @@ export const processedComponentLibraryItems = componentLibraryItems.map(componen
   isNew: isComponentNew(component.createdAt)
 }));
 
-export const categories = ['All', 'New', 'Analytics', 'Actions', 'Activity', 'Time', 'Content', 'System', 'Productivity', 'Info', 'Social', 'Projects', 'Tools', 'Charts', 'Utilities'];
+export const categories = ['All', 'New', 'Analytics', 'Actions', 'Activity', 'Time', 'Content', 'System', 'Productivity', 'Social', 'Projects', 'Tools', 'Charts', 'Utilities'];

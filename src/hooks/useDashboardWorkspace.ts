@@ -112,17 +112,6 @@ export const useDashboardWorkspace = () => {
     return updateWorkspace({ panel_sizes: panelSizes }, true); // Skip toast for frequent updates
   }, [updateWorkspace]);
 
-  const updateWeatherSettings = useCallback(async (
-    location: string,
-    enabled: boolean,
-    units: 'celsius' | 'fahrenheit'
-  ) => {
-    return updateWorkspace({
-      weather_location: location,
-      weather_enabled: enabled,
-      weather_units: units
-    });
-  }, [updateWorkspace]);
 
   const updateLayoutSettings = useCallback(async (
     dashboardLayout: Record<string, unknown>,
@@ -240,14 +229,6 @@ export const useDashboardWorkspace = () => {
     };
   }, [workspace]);
 
-  const getWeatherSettings = useCallback(() => {
-    if (!workspace) return { location: 'New York', enabled: true, units: 'celsius' as const };
-    return {
-      location: workspace.weather_location,
-      enabled: workspace.weather_enabled,
-      units: workspace.weather_units
-    };
-  }, [workspace]);
 
   const getUISettings = useCallback(() => {
     if (!workspace) return { glowingEffects: true, theme: {} };
@@ -272,7 +253,7 @@ export const useDashboardWorkspace = () => {
     // Update methods
     updateBannerSelection,
     updatePanelSizes,
-    updateWeatherSettings,
+    
     updateLayoutSettings,
     updateUISettings,
     updateEditModes,
@@ -288,7 +269,7 @@ export const useDashboardWorkspace = () => {
     getLayoutSettings,
     getPanelSizes,
     getBannerSettings,
-    getWeatherSettings,
+    
     getUISettings,
     getEditModes,
     

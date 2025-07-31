@@ -16,7 +16,7 @@ export interface SettingsSyncManager {
  * Keys that should be migrated from localStorage to database
  */
 const MIGRATABLE_KEYS = [
-  'weather-settings',
+  
   'glow-effect-intensity', 
   'accent-color',
   'accent-color-hsl',
@@ -100,12 +100,6 @@ export const createSettingsSyncManager = (
  */
 const mapLocalStorageToDatabase = (key: string, value: any): any => {
   switch (key) {
-    case 'weather-settings':
-      return {
-        weather_location: value.city || 'New York',
-        weather_enabled: value.enabled !== false,
-        weather_units: value.units || 'celsius'
-      };
     
     case 'glow-effect-intensity':
       return {
@@ -145,12 +139,6 @@ const mapDatabaseToLocalStorage = (key: string, settings: any): any => {
   if (!settings) return null;
 
   switch (key) {
-    case 'weather-settings':
-      return {
-        city: settings.weather_location || 'New York',
-        enabled: settings.weather_enabled !== false,
-        units: settings.weather_units || 'celsius'
-      };
     
     case 'glow-effect-intensity':
       return settings.theme_settings?.glowIntensity || 1;

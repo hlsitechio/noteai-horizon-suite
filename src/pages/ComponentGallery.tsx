@@ -22,7 +22,7 @@ import { CalendarWidget } from '@/components/Dashboard/Components/CalendarWidget
 import { NotesSummary } from '@/components/Dashboard/Components/NotesSummary';
 import { TaskList } from '@/components/Dashboard/Components/TaskList';
 import { SystemStatus } from '@/components/Dashboard/Components/SystemStatus';
-import { WeatherWidget } from '@/components/Dashboard/Components/WeatherWidget';
+
 
 const componentDefinitions = [
   {
@@ -80,14 +80,6 @@ const componentDefinitions = [
     icon: Monitor,
     category: 'system',
     component: SystemStatus,
-  },
-  {
-    id: 'widgets',
-    name: 'Weather Widget',
-    description: 'Current weather information',
-    icon: Cloud,
-    category: 'widgets',
-    component: WeatherWidget,
   },
 ];
 

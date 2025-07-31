@@ -11,7 +11,7 @@ import { CalendarWidget } from '@/components/Dashboard/Components/CalendarWidget
 import { SystemStatus } from '@/components/Dashboard/Components/SystemStatus';
 import { NotesSummary } from '@/components/Dashboard/Components/NotesSummary';
 import { TaskList } from '@/components/Dashboard/Components/TaskList';
-import { WeatherWidget } from '@/components/Dashboard/Components/WeatherWidget';
+
 import { StatsCard } from '@/components/Dashboard/Components/StatsCard';
 import { SocialMediaCard } from '@/components/Dashboard/Components/SocialMediaCard';
 import { ProjectCard } from '@/components/Dashboard/Components/ProjectCard';
@@ -37,7 +37,7 @@ const componentRegistry: Record<string, React.ComponentType> = {
   'system-status': SystemStatus,
   'notes-summary': NotesSummary,
   'calendar-widget': CalendarWidget,
-  'weather-widget': WeatherWidget,
+  
   'task-list': TaskList,
   // New component cards
   'stats-revenue': () => <StatsCard variant="revenue" />,

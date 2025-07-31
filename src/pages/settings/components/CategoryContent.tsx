@@ -10,7 +10,7 @@ import { ProfileTabContent } from './tabs/ProfileTabContent';
 import { LayoutTabContent } from './tabs/LayoutTabContent';
 import { ThemesTabContent } from './tabs/ThemesTabContent';
 import { PreferencesTabContent } from './tabs/PreferencesTabContent';
-import { WeatherTabContent } from './tabs/WeatherTabContent';
+
 import { AITabContent } from './tabs/AITabContent';
 
 import { DataTabContent } from './tabs/DataTabContent';
@@ -105,12 +105,6 @@ export const CategoryContent: React.FC<CategoryContentProps> = ({ activeTab }) =
       title: 'Integrations & Data',
       description: 'Connect external services and manage your data',
       subTabs: [
-        {
-          id: 'weather',
-          label: 'Weather',
-          icon: Cloud,
-          component: <WeatherTabContent />
-        },
         {
           id: 'ai',
           label: 'AI Settings',

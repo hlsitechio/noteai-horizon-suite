@@ -21,10 +21,6 @@ export interface DashboardWorkspace {
   glowing_effects_enabled: boolean;
   theme_settings: Record<string, any>;
   
-  // Weather Settings
-  weather_location: string;
-  weather_enabled: boolean;
-  weather_units: 'celsius' | 'fahrenheit';
   
   // Edit Mode Settings
   dashboard_edit_mode: boolean;
@@ -68,9 +64,6 @@ export class DashboardWorkspaceService {
         banner_settings: (data.banner_settings as Record<string, any>) || {},
         glowing_effects_enabled: data.glowing_effects_enabled ?? true,
         theme_settings: (data.theme_settings as Record<string, any>) || {},
-        weather_location: data.weather_location || 'New York',
-        weather_enabled: data.weather_enabled ?? true,
-        weather_units: (data.weather_units as 'celsius' | 'fahrenheit') || 'celsius',
         dashboard_edit_mode: data.dashboard_edit_mode || false,
         sidebar_edit_mode: data.sidebar_edit_mode || false,
         edit_mode_expires_at: data.edit_mode_expires_at,
@@ -98,9 +91,6 @@ export class DashboardWorkspaceService {
           banner_settings: {},
           glowing_effects_enabled: true,
           theme_settings: {},
-          weather_location: 'New York',
-          weather_enabled: true,
-          weather_units: 'celsius',
           dashboard_edit_mode: false,
           sidebar_edit_mode: false,
           custom_settings: {}
@@ -123,9 +113,6 @@ export class DashboardWorkspaceService {
         banner_settings: (data.banner_settings as Record<string, any>) || {},
         glowing_effects_enabled: data.glowing_effects_enabled ?? true,
         theme_settings: (data.theme_settings as Record<string, any>) || {},
-        weather_location: data.weather_location || 'New York',
-        weather_enabled: data.weather_enabled ?? true,
-        weather_units: (data.weather_units as 'celsius' | 'fahrenheit') || 'celsius',
         dashboard_edit_mode: data.dashboard_edit_mode || false,
         sidebar_edit_mode: data.sidebar_edit_mode || false,
         edit_mode_expires_at: data.edit_mode_expires_at,
@@ -196,18 +183,6 @@ export class DashboardWorkspaceService {
     return this.updateWorkspace(userId, { panel_sizes: panelSizes });
   }
 
-  static async updateWeatherSettings(
-    userId: string,
-    location: string,
-    enabled: boolean,
-    units: 'celsius' | 'fahrenheit'
-  ): Promise<boolean> {
-    return this.updateWorkspace(userId, {
-      weather_location: location,
-      weather_enabled: enabled,
-      weather_units: units
-    });
-  }
 
   static async updateLayoutSettings(
     userId: string,
