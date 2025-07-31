@@ -83,10 +83,10 @@ export const useStableAuth = (): UseStableAuthReturn => {
     }
   }, [isLoading]);
 
-  // Retry auth with exponential backoff
+  // Retry auth with exponential backoff and better error handling
   const retryAuth = useCallback(async () => {
     if (retryCountRef.current >= maxRetries) {
-      logger.auth.error('Max auth retries reached');
+      logger.auth.warn(`Max auth retries reached (${maxRetries}), stopping retry attempts`);
       return;
     }
 
@@ -114,7 +114,7 @@ export const useStableAuth = (): UseStableAuthReturn => {
       
       handleAuthChange(session);
     } catch (error) {
-      logger.auth.error('Auth retry failed:', error);
+      logger.auth.warn('Auth retry failed:', error);
       
       // Handle refresh token errors specifically in catch
       if (error instanceof Error && await handleRefreshTokenError(error)) {
@@ -122,10 +122,17 @@ export const useStableAuth = (): UseStableAuthReturn => {
         setSession(null);
         setUser(null);
         setAuthError(null);
+        retryCountRef.current = 0; // Reset retry count after cleanup
         return;
       }
       
-      setAuthError(error instanceof Error ? error.message : 'Authentication retry failed');
+      const errorMessage = error instanceof Error ? error.message : 'Authentication retry failed';
+      setAuthError(errorMessage);
+      
+      // Only continue retrying for network/temporary errors
+      if (retryCountRef.current >= maxRetries) {
+        logger.auth.warn('Stopping retry attempts due to repeated failures');
+      }
     }
   }, [handleAuthChange]);
 

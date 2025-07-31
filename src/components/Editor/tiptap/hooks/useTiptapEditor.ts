@@ -42,6 +42,9 @@ export const useTiptapEditor = ({ value, onChange, placeholder, characterLimit }
           levels: [1, 2, 3],
         },
         codeBlock: false, // Disable default code block
+        // Disable built-in extensions to avoid duplicates
+        link: false,
+        underline: false,
       }),
       CodeBlockLowlight.configure({
         lowlight,
@@ -115,8 +118,12 @@ export const useTiptapEditor = ({ value, onChange, placeholder, characterLimit }
     ],
     content: parseInitialValue(value),
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      onChange(html);
+      try {
+        const html = editor.getHTML();
+        onChange(html);
+      } catch (error) {
+        console.warn('TipTap update error:', error);
+      }
     },
     editorProps: {
       attributes: {

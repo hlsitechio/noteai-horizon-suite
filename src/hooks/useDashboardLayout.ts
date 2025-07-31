@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 
 export const useDashboardLayout = () => {
   const { user } = useAuth();
-  const [layout, setLayout] = useState<DashboardLayout | null>(null);
+  const [layout, setLayout] = useState<any | null>(null);
   const [availableComponents, setAvailableComponents] = useState<DashboardComponent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
