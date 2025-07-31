@@ -40,9 +40,7 @@ export const useUserProfile = () => {
       // Session found, calling edge function with auth token
       
       const { data, error } = await supabase.functions.invoke('get-user-profile', {
-        headers: {
-          Authorization: `Bearer ${sessionData.session.access_token}`,
-        },
+        body: {}
       });
 
       if (error) {
@@ -78,12 +76,10 @@ export const useUserProfile = () => {
     if (!user || !profile) return false;
 
     try {
-      const { data, error } = await supabase
+      const result = await supabase
         .from('user_profiles')
-        .update(updates)
-        .eq('id', user.id)
-        .select()
-        .single();
+        .update(updates);
+      const { data, error } = await result.eq('id', user.id);
 
       if (error) {
         console.error('Error updating profile:', error);

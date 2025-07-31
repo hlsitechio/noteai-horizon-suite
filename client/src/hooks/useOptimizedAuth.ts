@@ -50,7 +50,7 @@ export const useOptimizedAuth = (): UseOptimizedAuthReturn => {
         return;
       }
 
-      handleAuthChange(session);
+      handleAuthChange(session as any);
     } catch (error) {
       console.error('Error initializing auth:', error);
       if (mountedRef.current) {
@@ -74,7 +74,7 @@ export const useOptimizedAuth = (): UseOptimizedAuthReturn => {
         // Handle auth state change without logging
         
         // Handle auth events synchronously to prevent deadlocks
-        handleAuthChange(session);
+        handleAuthChange(session as any);
         
         // Handle specific events
         if (event === 'SIGNED_OUT') {

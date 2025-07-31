@@ -106,7 +106,7 @@ const EnhancedMobileNoteCard: React.FC<EnhancedMobileNoteCardProps> = ({
                 <div className="flex items-center space-x-2 mt-1">
                   <div className="flex items-center text-xs text-muted-foreground">
                     <Clock className="w-3 h-3 mr-1" />
-                    <span>{formatDate(note.updatedAt)}</span>
+                    <span>{formatDate(note.updatedAt || new Date().toISOString())}</span>
                   </div>
                   
                   {folder && (

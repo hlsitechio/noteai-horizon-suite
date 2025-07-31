@@ -75,10 +75,7 @@ Make sure to follow the instruction while maintaining the note's coherence and u
             }
           ],
           model: 'deepseek/deepseek-chat-v3-0324:free'
-        },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
+        }
       });
 
       if (error) throw error;

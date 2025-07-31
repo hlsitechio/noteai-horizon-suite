@@ -117,7 +117,9 @@ export class ImageLoader {
         // Limit cache size
         if (this.cache.size > 100) {
           const firstKey = this.cache.keys().next().value;
-          this.cache.delete(firstKey);
+          if (firstKey) {
+            this.cache.delete(firstKey);
+          }
         }
         resolve(img);
       };

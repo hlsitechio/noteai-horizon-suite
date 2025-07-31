@@ -69,7 +69,7 @@ const EnhancedMobileNotes: React.FC = () => {
     const groups: Record<string, typeof notes> = {};
     
     notes.forEach(note => {
-      const date = new Date(note.updatedAt);
+      const date = new Date(note.updatedAt || new Date().toISOString());
       const today = new Date();
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - 1);

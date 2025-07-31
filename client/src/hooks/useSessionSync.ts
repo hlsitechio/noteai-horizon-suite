@@ -20,7 +20,7 @@ export function useSessionSync({ setSession, onError }: UseSessionSyncProps) {
         return;
       }
       
-      setSession(data?.session || null);
+      setSession((data?.session as any) || null);
       // Session synced successfully
     } catch (error) {
       const sessionError = error instanceof Error ? error : new Error('Unknown session sync error');

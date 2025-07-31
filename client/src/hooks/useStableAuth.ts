@@ -112,7 +112,7 @@ export const useStableAuth = (): UseStableAuthReturn => {
         throw error;
       }
       
-      await handleAuthChange(session);
+      await handleAuthChange(session as any);
     } catch (error) {
       logger.auth.error('Auth retry failed:', error);
       
@@ -151,7 +151,7 @@ export const useStableAuth = (): UseStableAuthReturn => {
         throw error;
       }
 
-      await handleAuthChange(session);
+      await handleAuthChange(session as any);
       logger.auth.debug('Auth initialized successfully');
     } catch (error) {
       logger.auth.error('Error initializing auth:', error);

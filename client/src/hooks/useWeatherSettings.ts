@@ -162,7 +162,7 @@ export function useWeatherSettings() {
     );
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [loadSettings]);
 
   return {
     settings,

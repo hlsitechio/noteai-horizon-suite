@@ -57,7 +57,7 @@ const MobileNoteCard: React.FC<MobileNoteCardProps> = ({ note }) => {
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <Clock className="w-3 h-3" />
-            <span>{formatDate(note.updatedAt)}</span>
+            <span>{formatDate(note.updatedAt || new Date().toISOString())}</span>
           </div>
           
           <div className="flex items-center gap-2">

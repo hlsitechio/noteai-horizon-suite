@@ -58,9 +58,7 @@ const OnboardingProfileSection: React.FC = () => {
       // Upload the file to Supabase storage
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(fileName, file, {
-          upsert: true,
-        });
+        .upload(fileName, file);
 
       if (uploadError) {
         console.error('Upload error:', uploadError);
