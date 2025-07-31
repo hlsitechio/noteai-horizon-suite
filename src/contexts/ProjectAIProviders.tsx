@@ -2,14 +2,21 @@ import React from 'react';
 import { ProjectRealmsProvider } from '../contexts/ProjectRealmsContext';
 import { FloatingNotesProvider } from '../contexts/FloatingNotesContext';
 import { QuantumAIProvider } from '../contexts/QuantumAIContext';
-import { composeProviders } from '../utils/composeProviders';
+
+interface ProjectAIProvidersProps {
+  children: React.ReactNode;
+}
 
 /**
  * Project and AI-related providers grouped together
- * for better organization and performance optimization
+ * using direct nesting to avoid context issues
  */
-export const ProjectAIProviders = composeProviders(
-  ProjectRealmsProvider,
-  FloatingNotesProvider,
-  QuantumAIProvider
+export const ProjectAIProviders: React.FC<ProjectAIProvidersProps> = ({ children }) => (
+  <ProjectRealmsProvider>
+    <FloatingNotesProvider>
+      <QuantumAIProvider>
+        {children}
+      </QuantumAIProvider>
+    </FloatingNotesProvider>
+  </ProjectRealmsProvider>
 );
