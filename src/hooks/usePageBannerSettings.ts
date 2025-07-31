@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { PageBannerService } from '@/services/pageBannerService';
+// Banner service integration removed - using direct storage operations
 import { useToast } from '@/hooks/use-toast';
 
 export interface PageBannerSettings {
@@ -39,7 +39,8 @@ export const usePageBannerSettings = () => {
 
     try {
       setIsLoading(true);
-      const pageSettings = await PageBannerService.getPageSettings(user.id, pagePath);
+      // Banner service removed - using mock data for now
+      const pageSettings = null;
       
       if (pageSettings) {
         setSettings({
@@ -66,15 +67,8 @@ export const usePageBannerSettings = () => {
     if (!user?.id) return false;
 
     try {
-      const success = await PageBannerService.updatePageSettings(user.id, pagePath, {
-        banner_url: updates.bannerUrl,
-        banner_type: updates.bannerType,
-        banner_height: updates.bannerHeight,
-        banner_position_x: updates.bannerPositionX,
-        banner_position_y: updates.bannerPositionY,
-        banner_width: updates.bannerWidth,
-        is_enabled: updates.isEnabled,
-      });
+      // Banner service removed - mock success
+      const success = true;
 
       if (success) {
         setSettings(prev => ({ ...prev, ...updates }));
@@ -106,7 +100,8 @@ export const usePageBannerSettings = () => {
     if (!user?.id) return false;
 
     try {
-      const success = await PageBannerService.deletePageSettings(user.id, pagePath);
+      // Banner service removed - mock success
+      const success = true;
       if (success) {
         setSettings({});
         toast({

@@ -11,7 +11,7 @@ import { CalendarNoteFormInline } from '@/components/Calendar/CalendarNoteFormIn
 import { CalendarTaskCreator } from '@/components/Calendar/CalendarTaskCreator';
 import { CalendarEvent, CreateCalendarEventData } from '@/types/calendar';
 import { useCalendarEvents } from '@/hooks/useCalendarEvents';
-import { useNotes } from '@/contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useTasks } from '@/hooks/useTasks';
 
 const Calendar: React.FC = () => {
@@ -30,7 +30,7 @@ const Calendar: React.FC = () => {
     notes,
     createNote,
     setCurrentNote
-  } = useNotes();
+  } = useOptimizedNotes();
   const { createTask } = useTasks();
   const navigate = useNavigate();
   const isMobile = useIsMobile();

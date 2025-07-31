@@ -10,7 +10,7 @@ declare global {
 }
 
 export class AnalyticsService {
-  private static GA_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // Replace with your actual GA4 Measurement ID
+  private static GA_MEASUREMENT_ID = ''; // Analytics service paused
   private static isInitialized = false;
 
   static initialize() {

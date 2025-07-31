@@ -5,10 +5,10 @@ import { TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { useNotes } from '@/contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 
 const DailyNotesChart: React.FC = () => {
-  const { notes } = useNotes();
+  const { notes } = useOptimizedNotes();
 
   // Generate daily notes creation data for the last 7 days
   const dailyNotesData = useMemo(() => {

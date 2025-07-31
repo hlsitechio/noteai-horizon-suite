@@ -1,5 +1,5 @@
 
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useAutoTagging } from '../../hooks/useAutoTagging';
 import { useToast } from '../../hooks/useToast';
 import { 
@@ -44,7 +44,7 @@ export const useSecureEditorHandlers = ({
   setIsAssistantCollapsed,
   isHeaderHidden,
 }: SecureEditorHandlersProps) => {
-  const { createNote, updateNote } = useNotes();
+  const { createNote, updateNote } = useOptimizedNotes();
   const { generateTags, isGeneratingTags } = useAutoTagging();
   const { toast } = useToast();
 

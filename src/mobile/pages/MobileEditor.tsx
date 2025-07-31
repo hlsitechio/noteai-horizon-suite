@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { SimpleTiptapEditor } from '@/components/Editor/tiptap/components/SimpleTiptapEditor';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { useNotes } from '@/contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useRealtimeSync } from '@/hooks/useRealtimeSync';
 import MobileEditorToolbar from '../components/MobileEditorToolbar';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,7 +15,7 @@ const MobileEditor: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
-  const { notes, createNote, updateNote } = useNotes();
+  const { notes, createNote, updateNote } = useOptimizedNotes();
   
   const noteId = searchParams.get('id');
   const existingNote = noteId ? notes.find(n => n.id === noteId) : null;

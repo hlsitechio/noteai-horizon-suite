@@ -5,7 +5,7 @@ import { Clock, Star, Tag, MessageSquare, Folder } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useFolders } from '../../contexts/FoldersContext';
 import { Note } from '../../types/note';
 
@@ -21,7 +21,7 @@ const EnhancedMobileNoteCard: React.FC<EnhancedMobileNoteCardProps> = ({
   compact = false 
 }) => {
   const navigate = useNavigate();
-  const { setCurrentNote } = useNotes();
+  const { setCurrentNote } = useOptimizedNotes();
   const { folders } = useFolders();
 
   const handleNoteClick = () => {

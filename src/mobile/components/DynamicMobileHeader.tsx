@@ -4,7 +4,7 @@ import { Menu, Search, ArrowLeft, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SyncStatusIndicator from '@/components/SyncStatusIndicator';
@@ -25,7 +25,7 @@ const DynamicMobileHeader: React.FC<DynamicMobileHeaderProps> = ({
   onBack,
   rightActions
 }) => {
-  const { syncStatus, filters, setFilters } = useNotes();
+  const { syncStatus, filters, setFilters } = useOptimizedNotes();
   const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);

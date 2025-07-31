@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Clock, Star, Tag } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { Note } from '../../types/note';
 
 interface MobileNoteCardProps {
@@ -13,7 +13,7 @@ interface MobileNoteCardProps {
 
 const MobileNoteCard: React.FC<MobileNoteCardProps> = ({ note }) => {
   const navigate = useNavigate();
-  const { setCurrentNote } = useNotes();
+  const { setCurrentNote } = useOptimizedNotes();
 
   const handleNoteClick = () => {
     setCurrentNote(note);

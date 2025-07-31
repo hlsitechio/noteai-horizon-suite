@@ -11,12 +11,12 @@ import MobileProjects from '@/mobile/pages/MobileProjects';
 import MobileAnalytics from '@/mobile/pages/MobileAnalytics';
 import EnhancedMobileSettings from '@/mobile/pages/EnhancedMobileSettings';
 import MobileThemeGallery from '@/mobile/pages/MobileThemeGallery';
-import { useNotes } from '@/contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 
 const MobileApp: React.FC = () => {
   const [searchParams] = useSearchParams();
   const noteId = searchParams.get('note');
-  const { notes, setCurrentNote } = useNotes();
+  const { notes, setCurrentNote } = useOptimizedNotes();
 
   // Removed debug logs to prevent PostHog rate limiting
 

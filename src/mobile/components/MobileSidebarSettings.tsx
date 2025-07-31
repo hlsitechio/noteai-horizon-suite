@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useTheme } from '@/providers/ThemeProvider';
 import SyncStatusIndicator from '../../components/SyncStatusIndicator';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 
 interface MobileSidebarSettingsProps {
   expandedSettings: boolean;
@@ -27,7 +27,7 @@ const MobileSidebarSettings: React.FC<MobileSidebarSettingsProps> = ({
   setAutoSync,
 }) => {
   const { theme, setTheme } = useTheme();
-  const { syncStatus } = useNotes();
+  const { syncStatus } = useOptimizedNotes();
 
   return (
     <div className="space-y-1">

@@ -3,7 +3,7 @@ import React from 'react';
 import { Folder, FileText, ChevronRight, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useFolders } from '../../contexts/FoldersContext';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 
 interface MobileSidebarFoldersProps {
   expandedFolders: Set<string>;
@@ -17,7 +17,7 @@ const MobileSidebarFolders: React.FC<MobileSidebarFoldersProps> = ({
   onNavigate,
 }) => {
   const { folders } = useFolders();
-  const { notes } = useNotes();
+  const { notes } = useOptimizedNotes();
 
   const renderFolder = (folder: any) => {
     const folderNotes = notes.filter(note => note.folder_id === folder.id);

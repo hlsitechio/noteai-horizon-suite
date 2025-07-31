@@ -2,12 +2,12 @@
 import React from 'react';
 import { User } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import SyncStatusIndicator from '../../components/SyncStatusIndicator';
 
 const MobileSidebarProfile: React.FC = () => {
   const { user } = useAuth();
-  const { syncStatus } = useNotes();
+  const { syncStatus } = useOptimizedNotes();
 
   return (
     <div className="p-4 border-b bg-muted/30 flex-shrink-0">

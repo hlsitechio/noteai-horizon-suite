@@ -5,14 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useFolders } from '../../contexts/FoldersContext';
 import { useAuth } from '../../contexts/AuthContext';
 import DynamicMobileHeader from '../components/DynamicMobileHeader';
 
 const MobileDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { notes, createNote, setCurrentNote } = useNotes();
+  const { notes, createNote, setCurrentNote } = useOptimizedNotes();
   const { folders } = useFolders();
   const { user } = useAuth();
 

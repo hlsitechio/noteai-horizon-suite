@@ -8,14 +8,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/providers/ThemeProvider';
 import { useAuth } from '../../contexts/AuthContext';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import SyncStatusIndicator from '../../components/SyncStatusIndicator';
 
 const EnhancedMobileSettings: React.FC = () => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const { user } = useAuth();
-  const { syncStatus } = useNotes();
+  const { syncStatus } = useOptimizedNotes();
   
   // Settings state
   const [notifications, setNotifications] = useState(true);

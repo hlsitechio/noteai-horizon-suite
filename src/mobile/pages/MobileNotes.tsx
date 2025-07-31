@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { Search, Plus, Filter, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import MobileNoteCard from '../components/MobileNoteCard';
 import MobileFilterSheet from '../components/MobileFilterSheet';
 
 const MobileNotes: React.FC = () => {
-  const { filteredNotes, filters, setFilters, createNote, setCurrentNote } = useNotes();
+  const { filteredNotes, filters, setFilters, createNote, setCurrentNote } = useOptimizedNotes();
   const [searchTerm, setSearchTerm] = useState(filters.searchTerm || '');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const navigate = useNavigate();

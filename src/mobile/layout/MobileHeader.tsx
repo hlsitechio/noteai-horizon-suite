@@ -2,12 +2,12 @@
 import React, { useState } from 'react';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import SyncStatusIndicator from '../../components/SyncStatusIndicator';
 import MobileSidebar from '../components/MobileSidebar';
 
 const MobileHeader: React.FC = () => {
-  const { syncStatus } = useNotes();
+  const { syncStatus } = useOptimizedNotes();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (

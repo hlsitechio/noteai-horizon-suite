@@ -1,9 +1,9 @@
 
 import { useState, useEffect, useRef } from 'react';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 
 export const useEditorState = () => {
-  const { currentNote } = useNotes();
+  const { currentNote } = useOptimizedNotes();
   
   // Form state
   const [title, setTitle] = useState('');

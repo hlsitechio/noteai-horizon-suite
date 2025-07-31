@@ -2,11 +2,11 @@
 import React from 'react';
 import { BarChart3, TrendingUp, Calendar, FileText, Clock, Target } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import DynamicMobileHeader from '../components/DynamicMobileHeader';
 
 const MobileAnalytics: React.FC = () => {
-  const { notes } = useNotes();
+  const { notes } = useOptimizedNotes();
 
   // Calculate analytics data
   const totalNotes = notes.length;

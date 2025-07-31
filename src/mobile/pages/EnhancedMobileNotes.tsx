@@ -4,7 +4,7 @@ import { Search, Plus, Filter, FileText, Users, Archive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 import { useFolders } from '../../contexts/FoldersContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import EnhancedMobileNoteCard from '../components/EnhancedMobileNoteCard';
@@ -12,7 +12,7 @@ import MobileFilterSheet from '../components/MobileFilterSheet';
 import DynamicMobileHeader from '../components/DynamicMobileHeader';
 
 const EnhancedMobileNotes: React.FC = () => {
-  const { filteredNotes, filters, setFilters, createNote, setCurrentNote, notes } = useNotes();
+  const { filteredNotes, filters, setFilters, createNote, setCurrentNote, notes } = useOptimizedNotes();
   const { folders } = useFolders();
   const [searchTerm, setSearchTerm] = useState(filters.searchTerm || '');
   const [isFilterOpen, setIsFilterOpen] = useState(false);

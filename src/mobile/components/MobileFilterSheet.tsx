@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useNotes } from '../../contexts/NotesContext';
+import { useOptimizedNotes } from '@/contexts/OptimizedNotesContext';
 
 interface MobileFilterSheetProps {
   isOpen: boolean;
@@ -14,7 +14,7 @@ interface MobileFilterSheetProps {
 }
 
 const MobileFilterSheet: React.FC<MobileFilterSheetProps> = ({ isOpen, onClose }) => {
-  const { filters, setFilters } = useNotes();
+  const { filters, setFilters } = useOptimizedNotes();
 
   const handleCategoryChange = (category: string) => {
     setFilters({ ...filters, category: category === 'all' ? undefined : category });
