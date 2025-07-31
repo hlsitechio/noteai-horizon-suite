@@ -78,23 +78,32 @@ export const cleanPreloadLinks = () => {
 const shouldRemovePreload = (link: HTMLLinkElement): boolean => {
   const href = link.href;
   
-  // Remove tracking-related preloads
+  // Remove tracking-related preloads - ultra aggressive against Facebook Pixel
   const trackingPatterns = [
-    /facebook\.com/i,
-    /fbcdn\.net/i,
-    /connect\.facebook\.net/i,
-    /fbevents/i,
+    // Facebook Pixel specific patterns
+    /facebook\.com\/tr/i,               // Facebook tracking pixel
+    /facebook\.com/i,                   // All Facebook domains
+    /fbcdn\.net/i,                      // Facebook CDN
+    /connect\.facebook\.net/i,          // Facebook Connect
+    /fbevents/i,                        // Facebook events
+    /9151671744940732/i,               // Specific FB Pixel ID from warning
+    // Google tracking
     /googleads/i,
     /doubleclick\.net/i,
     /googlesyndication/i,
     /google-analytics/i,
     /googletagmanager/i,
+    // Generic tracking patterns
     /tracking/i,
     /analytics/i,
     /pixel/i,
     /beacon/i,
     /metrics/i,
-    /telemetry/i
+    /telemetry/i,
+    // UTM and campaign tracking
+    /utm_/i,
+    /\?.*ev=PageView/i,                 // Facebook PageView events
+    /\?.*noscript=1/i                   // Facebook noscript pixel fallbacks
   ];
 
   // More comprehensive patterns for Vite-generated assets that cause Chrome warnings
