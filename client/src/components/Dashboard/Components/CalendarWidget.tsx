@@ -156,7 +156,7 @@ export function CalendarWidget() {
                 <p className="text-sm text-muted-foreground">No upcoming events</p>
               </div>
             ) : (
-              upcomingEvents.map((event) => (
+              upcomingEvents.map((event) => event && (
                 <div key={event.id} className="space-y-1 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 cursor-pointer">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-foreground truncate">
@@ -177,7 +177,7 @@ export function CalendarWidget() {
                     </div>
                   </div>
                 </div>
-              ))
+              )).filter(Boolean)
             )}
           </div>
         </div>

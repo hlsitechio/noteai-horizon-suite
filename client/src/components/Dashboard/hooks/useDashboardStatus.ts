@@ -18,36 +18,36 @@ export const useDashboardStatus = () => {
 
       try {
         // Check if user has completed onboarding before
-        const { data: onboardingData } = await supabase
+        const onboardingQuery = await supabase
           .from('user_onboarding')
           .select('onboarding_completed')
           .eq('user_id', user.id)
           .single();
 
         // Check if user has dashboard settings (indicating initialization)
-        const { data: dashboardSettings } = await supabase
+        const dashboardQuery = await supabase
           .from('dashboard_settings')
           .select('settings')
           .eq('user_id', user.id)
           .single();
 
         // Check if user has any notes (another indicator)
-        const { data: notes } = await supabase
+        const notesQuery = await supabase
           .from('notes_v2')
           .select('id')
           .eq('user_id', user.id);
 
         // Check if user has folders
-        const { data: folders } = await supabase
+        const foldersQuery = await supabase
           .from('folders')
           .select('id')
           .eq('user_id', user.id);
 
         // Check if user is truly new (no existing data)
-        const isNewUser = !onboardingData?.onboarding_completed && 
-                         !dashboardSettings && 
-                         (!notes || notes.length === 0) && 
-                         (!folders || folders.length === 0);
+        const isNewUser = !onboardingQuery.data?.onboarding_completed && 
+                         !dashboardQuery.data && 
+                         (!notesQuery.data || notesQuery.data.length === 0) && 
+                         (!foldersQuery.data || foldersQuery.data.length === 0);
 
         if (isNewUser) {
           // Development logging only

@@ -392,8 +392,8 @@ PERSONALITY TRAITS:
     ];
 
     for (const pattern of requirementPatterns) {
-      const matches = message.matchAll(pattern);
-      for (const match of matches) {
+      const matchArray = Array.from(message.matchAll(pattern));
+      for (const match of matchArray) {
         requirements.push(match[1].trim());
       }
     }

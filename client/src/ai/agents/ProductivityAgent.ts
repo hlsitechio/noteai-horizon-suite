@@ -239,13 +239,13 @@ PERSONALITY TRAITS:
     ];
 
     for (const pattern of tagPatterns) {
-      const matches = message.matchAll(pattern);
-      for (const match of matches) {
+      const matchArray = Array.from(message.matchAll(pattern));
+      for (const match of matchArray) {
         tags.push(match[1].trim());
       }
     }
 
-    return [...new Set(tags)]; // Remove duplicates
+    return Array.from(new Set(tags)); // Remove duplicates
   }
 
   private extractReminderTitle(message: string): string {
