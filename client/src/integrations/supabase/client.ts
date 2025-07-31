@@ -33,10 +33,10 @@ export const auth = {
     try {
       const result = await apiRequest('/auth/register', {
         method: 'POST',
-        body: JSON.stringify({ username: email, password }),
+        body: JSON.stringify({ email, password, name: email.split('@')[0] }),
       });
-      const user = { id: result.userId, email };
-      localStorage.setItem('userId', result.userId);
+      const user = { id: result.user.id, email: result.user.email };
+      localStorage.setItem('userId', result.user.id);
       authListeners.forEach(cb => cb('SIGNED_IN', { user }));
       return { data: { user }, error: null };
     } catch (error) {
@@ -48,10 +48,10 @@ export const auth = {
     try {
       const result = await apiRequest('/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ username: email, password }),
+        body: JSON.stringify({ email, password }),
       });
-      const user = { id: result.userId, email };
-      localStorage.setItem('userId', result.userId);
+      const user = { id: result.user.id, email: result.user.email };
+      localStorage.setItem('userId', result.user.id);
       authListeners.forEach(cb => cb('SIGNED_IN', { user }));
       return { data: { user }, error: null };
     } catch (error) {

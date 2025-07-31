@@ -46,6 +46,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { email, password } = req.body;
       
+      console.log('Login attempt for email:', email);
+      console.log('Request body:', { email, passwordLength: password?.length });
+      
+      if (!email || !password) {
+        res.status(400).json({ error: 'Email and password are required' });
+        return;
+      }
+      
       // Use Supabase Auth for authentication
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email,
@@ -54,6 +62,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (error || !data.user) {
         console.error('Login error:', error);
+        console.error('Error code:', error?.code);
+        console.error('Error message:', error?.message);
         res.status(401).json({ error: 'Invalid credentials' });
         return;
       }

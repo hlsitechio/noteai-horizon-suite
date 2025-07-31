@@ -37,11 +37,14 @@ A full-featured SAAS application originally built on Lovable/Supabase, now being
 - 2025-01-31: Implemented intelligent post-login routing based on user onboarding status
 - 2025-01-31: Added onboarding status API endpoints and database integration
 - 2025-01-31: New users now route to /setup/onboarding, existing users to /app/dashboard
+- 2025-01-31: Resolved duplicate Supabase client configurations - now using single source of truth
+- 2025-01-31: Confirmed authentication flow working correctly with Supabase Auth service
 
 ## Architecture Notes
 - Frontend: React with TypeScript, TailwindCSS, shadcn/ui
 - Backend: Express.js with Drizzle ORM
-- Database: PostgreSQL (migrating from Supabase)
+- Database: PostgreSQL via Supabase (ubxtmbgvibtjtjggjnjm.supabase.co)
+- Authentication: Supabase Auth service (centralized configuration)
 - Key Features: AI integration, document processing, real-time features
 
 ## Migration Progress
