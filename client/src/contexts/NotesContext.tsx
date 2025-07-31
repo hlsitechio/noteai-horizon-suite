@@ -106,18 +106,18 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         
         // Then remove the channel
         if (subscriptionRef.current) {
-          supabase.removeChannel(subscriptionRef.current);
+          // supabase.removeChannel(subscriptionRef.current);
           if (import.meta.env.DEV) {
             console.log('Channel removed');
           }
         }
-      }).catch((error) => {
+      }).catch((error: any) => {
         if (import.meta.env.DEV) {
           console.error('Error during unsubscribe:', error);
         }
         // Force remove the channel even if unsubscribe fails
         if (subscriptionRef.current) {
-          supabase.removeChannel(subscriptionRef.current);
+          // supabase.removeChannel(subscriptionRef.current);
         }
       });
       

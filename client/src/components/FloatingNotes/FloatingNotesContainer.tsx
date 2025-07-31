@@ -37,7 +37,7 @@ const FloatingNotesContainer: React.FC = () => {
               key={floatingNote.id}
               noteId={floatingNote.noteId}
               title={floatingNote.note.title}
-              content={floatingNote.note.content}
+              content={floatingNote.note.content || ''}
               initialPosition={floatingNote.position}
               initialSize={floatingNote.size}
               isMinimized={floatingNote.isMinimized}
