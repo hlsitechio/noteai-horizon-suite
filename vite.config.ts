@@ -34,6 +34,8 @@ export default defineConfig(({ mode }) => ({
         manualChunks: () => 'index',
       },
     },
+    // Disable modulepreload to prevent console warnings
+    modulePreload: false,
   },
   define: {
     'process.env.NODE_ENV': '"development"',

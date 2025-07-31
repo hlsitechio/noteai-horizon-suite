@@ -7,33 +7,30 @@
 export const cleanPreloadLinks = () => {
   if (typeof window === 'undefined') return;
 
-  // Remove existing problematic preload links
-  const preloadLinks = document.querySelectorAll('link[rel="preload"]');
+  // Immediately remove all existing problematic preload links
+  const preloadLinks = document.querySelectorAll('link[rel="preload"], link[rel="modulepreload"]');
   let removedCount = 0;
 
   preloadLinks.forEach((link) => {
     const htmlLink = link as HTMLLinkElement;
     
-    // Check if it's a tracking-related preload
-    if (isTrackingPreload(htmlLink.href)) {
+    // More aggressive removal - remove tracking, chunk files, and unused scripts
+    if (shouldRemovePreload(htmlLink)) {
       link.remove();
       removedCount++;
       return;
     }
 
-    // Check if preload has been unused for more than 3 seconds
-    const linkLoadTime = htmlLink.dataset.loadTime;
-    if (!linkLoadTime) {
+    // Mark timestamp and schedule removal after shorter delay
+    if (!htmlLink.dataset.loadTime) {
       htmlLink.dataset.loadTime = Date.now().toString();
-    } else {
-      const loadTime = parseInt(linkLoadTime);
-      const timeDiff = Date.now() - loadTime;
       
-      // Remove if unused for more than 3 seconds
-      if (timeDiff > 3000 && !isResourceUsed(htmlLink)) {
-        link.remove();
-        removedCount++;
-      }
+      // Schedule removal after just 1 second instead of 3
+      setTimeout(() => {
+        if (document.contains(htmlLink) && !isResourceUsed(htmlLink)) {
+          htmlLink.remove();
+        }
+      }, 1000);
     }
   });
 
@@ -41,18 +38,18 @@ export const cleanPreloadLinks = () => {
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
-        if (node instanceof HTMLLinkElement && node.rel === 'preload') {
-          if (isTrackingPreload(node.href)) {
+        if (node instanceof HTMLLinkElement && (node.rel === 'preload' || node.rel === 'modulepreload')) {
+          if (shouldRemovePreload(node)) {
             node.remove();
           } else {
             node.dataset.loadTime = Date.now().toString();
             
-            // Check usage after 3 seconds
+            // Reduce timeout to 1 second to prevent console warnings
             setTimeout(() => {
-              if (!isResourceUsed(node)) {
+              if (document.contains(node) && !isResourceUsed(node)) {
                 node.remove();
               }
-            }, 3000);
+            }, 1000);
           }
         }
       });
@@ -66,7 +63,10 @@ export const cleanPreloadLinks = () => {
   }
 };
 
-const isTrackingPreload = (href: string): boolean => {
+const shouldRemovePreload = (link: HTMLLinkElement): boolean => {
+  const href = link.href;
+  
+  // Remove tracking-related preloads
   const trackingPatterns = [
     /facebook\.com/i,
     /fbcdn\.net/i,
@@ -85,7 +85,18 @@ const isTrackingPreload = (href: string): boolean => {
     /telemetry/i
   ];
 
-  return trackingPatterns.some(pattern => pattern.test(href));
+  // Also remove problematic chunk files and assets that commonly cause warnings
+  const problematicPatterns = [
+    /assets\/.*\.(js|css)$/i,  // Vite generated assets
+    /chunk/i,                   // Chunk files
+    /vendor/i,                  // Vendor bundles
+    /runtime/i,                 // Runtime files
+    /\.bundle\./i,              // Bundle files
+    /\.[a-f0-9]{8,}\.(js|css)$/i // Hashed assets
+  ];
+
+  return trackingPatterns.some(pattern => pattern.test(href)) ||
+         problematicPatterns.some(pattern => pattern.test(href));
 };
 
 const isResourceUsed = (link: HTMLLinkElement): boolean => {
