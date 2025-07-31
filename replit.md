@@ -30,6 +30,10 @@ A full-featured SAAS application originally built on Lovable/Supabase, now being
 - 2025-01-30: Installed missing dependencies
 - 2025-01-30: Created comprehensive PostgreSQL schema
 - 2025-01-30: Project successfully running on port 5000
+- 2025-01-31: Successfully migrated authentication to Supabase
+- 2025-01-31: Fixed DNS resolution issues by using Supabase REST API instead of direct database connections
+- 2025-01-31: Updated all API routes to work with Supabase authentication service
+- 2025-01-31: Resolved frontend/backend authentication parameter mismatch (email vs username)
 
 ## Architecture Notes
 - Frontend: React with TypeScript, TailwindCSS, shadcn/ui

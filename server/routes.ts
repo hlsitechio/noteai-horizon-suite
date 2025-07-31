@@ -8,12 +8,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication & User Management
   app.post('/api/auth/register', async (req, res) => {
     try {
-      const { username, password } = req.body;
+      const { name, email, password } = req.body;
       
       // Use Supabase Auth for registration
       const { data, error } = await supabase.auth.signUp({
-        email: username, // Assuming username is email
-        password: password
+        email: email,
+        password: password,
+        options: {
+          data: {
+            name: name
+          }
+        }
       });
       
       if (error || !data.user) {
@@ -25,7 +30,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ 
         user: { 
           id: data.user.id, 
-          username: data.user.email || username 
+          username: data.user.email || email,
+          email: data.user.email,
+          name: name
         },
         session: data.session
       });
@@ -37,11 +44,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/auth/login', async (req, res) => {
     try {
-      const { username, password } = req.body;
+      const { email, password } = req.body;
       
       // Use Supabase Auth for authentication
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: username, // Assuming username is email
+        email: email,
         password: password
       });
       
@@ -55,7 +62,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ 
         user: { 
           id: data.user.id, 
-          username: data.user.email || username 
+          username: data.user.email || email,
+          email: data.user.email
         },
         session: data.session
       });
