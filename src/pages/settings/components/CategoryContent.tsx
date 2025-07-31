@@ -12,7 +12,7 @@ import { ThemesTabContent } from './tabs/ThemesTabContent';
 import { PreferencesTabContent } from './tabs/PreferencesTabContent';
 import { WeatherTabContent } from './tabs/WeatherTabContent';
 import { AITabContent } from './tabs/AITabContent';
-import { GoogleDriveTabContent } from './tabs/GoogleDriveTabContent';
+
 import { DataTabContent } from './tabs/DataTabContent';
 import { StorageTabContent } from './tabs/StorageTabContent';
 import { DownloadTabContent } from './tabs/DownloadTabContent';
@@ -116,12 +116,6 @@ export const CategoryContent: React.FC<CategoryContentProps> = ({ activeTab }) =
           label: 'AI Settings',
           icon: Sliders,
           component: <AITabContent />
-        },
-        {
-          id: 'drive',
-          label: 'Google Drive',
-          icon: HardDrive,
-          component: <GoogleDriveTabContent />
         },
         {
           id: 'storage',
