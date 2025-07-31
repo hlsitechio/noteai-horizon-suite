@@ -35,7 +35,7 @@ export const useOptimizedNotesQuery = ({
       if (filters.searchTerm) {
         const searchLower = filters.searchTerm.toLowerCase();
         const titleMatch = note.title.toLowerCase().includes(searchLower);
-        const contentMatch = note.content.toLowerCase().includes(searchLower);
+        const contentMatch = (note.content || '').toLowerCase().includes(searchLower);
         const tagMatch = note.tags.some(tag => tag.toLowerCase().includes(searchLower));
         
         if (!titleMatch && !contentMatch && !tagMatch) return false;

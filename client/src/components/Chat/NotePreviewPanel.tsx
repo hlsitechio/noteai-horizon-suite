@@ -1,5 +1,12 @@
-// Temporarily disabled - placeholder component
 import React from 'react';
+
+export interface PreviewNote {
+  id: string;
+  title: string;
+  content: string;
+  tags: string[];
+  isNew?: boolean;
+}
 
 const NotePreviewPanel: React.FC = () => {
   return (

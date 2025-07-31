@@ -24,7 +24,7 @@ export const useNotesWithTracing = (filters?: NoteFilters) => {
             if (filters.searchTerm) {
               const searchLower = filters.searchTerm.toLowerCase();
               const matchesTitle = note.title.toLowerCase().includes(searchLower);
-              const matchesContent = note.content.toLowerCase().includes(searchLower);
+              const matchesContent = (note.content || '').toLowerCase().includes(searchLower);
               const matchesTags = note.tags.some(tag => tag.toLowerCase().includes(searchLower));
               if (!matchesTitle && !matchesContent && !matchesTags) return false;
             }

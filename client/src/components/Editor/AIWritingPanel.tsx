@@ -124,7 +124,8 @@ const AIWritingPanel: React.FC<AIWritingPanelProps> = ({
 
     } catch (error) {
       console.error('AI Writing Assistant error:', error);
-      toast.error(`AI processing failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      toast.error(`AI processing failed: ${errorMessage}`);
       throw error;
     } finally {
       setIsLoading(false);

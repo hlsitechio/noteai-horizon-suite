@@ -36,12 +36,13 @@ export const useDashboardSettings = () => {
       const userSettings = await DashboardSettingsService.getUserSettings(user.id);
       
       // Update cache
-      settingsCache.set(cacheKey, {
-        data: userSettings,
-        timestamp: Date.now()
-      });
-      
-      setSettings(userSettings || null);
+      if (userSettings) {
+        settingsCache.set(cacheKey, {
+          data: userSettings,
+          timestamp: Date.now()
+        });
+        setSettings(userSettings);
+      }
     } catch (error) {
       console.error('Failed to load dashboard settings:', error);
       toast.error('Failed to load dashboard settings');
