@@ -102,7 +102,7 @@ export function CalendarTaskCreator({ isOpen, onClose, onSubmit, selectedDate }:
             <div className="space-y-2">
               <Label htmlFor="task-priority">Priority</Label>
               <Select value={formData.priority} onValueChange={(value) => handleInputChange('priority', value)}>
-                <SelectTrigger className="text-sm">
+                <SelectTrigger id="task-priority" className="text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -131,7 +131,7 @@ export function CalendarTaskCreator({ isOpen, onClose, onSubmit, selectedDate }:
             <div className="space-y-2">
               <Label htmlFor="task-category">Category</Label>
               <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
-                <SelectTrigger className="text-sm">
+                <SelectTrigger id="task-category" className="text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

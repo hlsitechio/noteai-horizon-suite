@@ -52,6 +52,8 @@ const DEV_NOISE_PATTERNS = [
   // DOM accessibility warnings for development
   /Input elements should have autocomplete attributes/i,
   /\[DOM\].*autocomplete/i,
+  /Incorrect use of.*label for=.*FORM_ELEMENT/i,
+  /The label's for attribute doesn't match any element id/i,
 ];
 
 // Important errors that should always show

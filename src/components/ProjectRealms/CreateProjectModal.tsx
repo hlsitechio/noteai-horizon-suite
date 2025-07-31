@@ -97,7 +97,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
                 setFormData({ ...formData, status: value })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger id="status">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>

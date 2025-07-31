@@ -251,7 +251,7 @@ export const CreateItemDialog: React.FC<CreateItemDialogProps> = ({ type, childr
                     setFormData({ ...formData, parentId: value === 'none' ? undefined : value })
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="parent">
                     <SelectValue placeholder="Select parent folder" />
                   </SelectTrigger>
                   <SelectContent>
@@ -297,7 +297,7 @@ export const CreateItemDialog: React.FC<CreateItemDialogProps> = ({ type, childr
                     value={formData.category || 'general'}
                     onValueChange={(value) => setFormData({ ...formData, category: value })}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger id="category">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -321,7 +321,7 @@ export const CreateItemDialog: React.FC<CreateItemDialogProps> = ({ type, childr
                       setFormData({ ...formData, folder_id: value === 'none' ? null : value })
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger id="folder">
                       <SelectValue placeholder="Select folder" />
                     </SelectTrigger>
                     <SelectContent>
