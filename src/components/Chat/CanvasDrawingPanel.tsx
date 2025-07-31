@@ -365,6 +365,8 @@ export const CanvasDrawingPanel: React.FC<CanvasDrawingPanelProps> = ({
                   />
                 ))}
                 <input
+                  id="custom-color-picker"
+                  name="customColor"
                   type="color"
                   value={brushColor}
                   onChange={(e) => setBrushColor(e.target.value)}
@@ -395,6 +397,8 @@ export const CanvasDrawingPanel: React.FC<CanvasDrawingPanelProps> = ({
               <div className="text-xs font-medium text-muted-foreground">Canvas Size</div>
               <div className="flex gap-2">
                 <Input
+                  id="canvas-width"
+                  name="canvasWidth"
                   type="number"
                   value={canvasSize.width}
                   onChange={(e) => handleResize(Number(e.target.value), canvasSize.height)}
@@ -404,6 +408,8 @@ export const CanvasDrawingPanel: React.FC<CanvasDrawingPanelProps> = ({
                 />
                 <span className="text-xs text-muted-foreground self-center">×</span>
                 <Input
+                  id="canvas-height"
+                  name="canvasHeight"
                   type="number"
                   value={canvasSize.height}
                   onChange={(e) => handleResize(canvasSize.width, Number(e.target.value))}

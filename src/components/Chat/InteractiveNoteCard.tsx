@@ -101,6 +101,8 @@ const InteractiveNoteCard: React.FC<InteractiveNoteCardProps> = ({
             <FileText className="w-4 h-4 text-primary" />
             {isEditing ? (
               <Input
+                id="note-card-title"
+                name="noteCardTitle"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="h-7 text-sm font-semibold"
@@ -199,6 +201,8 @@ const InteractiveNoteCard: React.FC<InteractiveNoteCardProps> = ({
           {isEditing && (
             <div className="flex gap-2">
               <Input
+                id="note-card-new-tag"
+                name="noteCardNewTag"
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}

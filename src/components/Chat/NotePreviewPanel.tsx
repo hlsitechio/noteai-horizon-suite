@@ -263,6 +263,8 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
                     </label>
                     {isEditing ? (
                       <Input
+                        id="note-title-edit"
+                        name="noteTitle"
                         value={editedTitle}
                         onChange={(e) => setEditedTitle(e.target.value)}
                         placeholder="Note title..."
@@ -323,6 +325,8 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
                     {isEditing && (
                       <div className="flex gap-3 mt-3">
                         <Input
+                          id="new-tag-input"
+                          name="newTag"
                           value={newTag}
                           onChange={(e) => setNewTag(e.target.value)}
                           onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
@@ -353,6 +357,8 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
                 </label>
                 <div className="flex gap-3">
                   <Input
+                    id="modification-instruction"
+                    name="modificationInstruction"
                     value={modificationInstruction}
                     onChange={(e) => setModificationInstruction(e.target.value)}
                     placeholder="e.g., Make it more concise, add examples, change tone..."

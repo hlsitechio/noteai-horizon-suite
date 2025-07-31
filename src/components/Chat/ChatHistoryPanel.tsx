@@ -132,7 +132,7 @@ const ChatHistoryPanel: React.FC<ChatHistoryPanelProps> = ({
           {/* Enhanced Search Bar */}
           <div className="relative mb-3">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground/70" />
-            <Input placeholder="Search conversations, messages..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 h-10 rounded-xl border-2 border-muted/50 focus:border-primary/50 bg-gradient-to-r from-background to-muted/10 backdrop-blur-sm transition-all duration-200" />
+            <Input id="search-conversations" name="search" placeholder="Search conversations, messages..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 h-10 rounded-xl border-2 border-muted/50 focus:border-primary/50 bg-gradient-to-r from-background to-muted/10 backdrop-blur-sm transition-all duration-200" />
             {searchQuery && <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                 <Badge variant="secondary" className="text-xs h-5 px-2 bg-gradient-to-r from-primary/20 to-primary/10">
                   {filteredSessions.length}
@@ -198,7 +198,7 @@ const ChatHistoryPanel: React.FC<ChatHistoryPanelProps> = ({
                     <div className="relative flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         {editingSessionId === session.id ? <div className="space-y-3" onClick={e => e.stopPropagation()}>
-                            <Input value={editTitle} onChange={e => setEditTitle(e.target.value)} onKeyDown={e => {
+                            <Input id="edit-session-title" name="sessionTitle" value={editTitle} onChange={e => setEditTitle(e.target.value)} onKeyDown={e => {
                       if (e.key === 'Enter') handleSaveRename();
                       if (e.key === 'Escape') handleCancelRename();
                     }} className="h-8 text-sm rounded-xl border-2 border-primary/30 focus:border-primary/50" autoFocus />
