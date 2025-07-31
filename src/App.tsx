@@ -11,7 +11,7 @@ import { ReloadPreventionProvider } from './components/ReloadPrevention/ReloadPr
 import { AppProviders } from './components/AppProviders';
 
 import './App.css';
-import '@/utils/simpleConsoleInspector'; // Simple error/warning tracking
+// Console management handled by unified system in main.tsx
 
 
 const AppRouter = Router;
