@@ -31,24 +31,12 @@ export const useCollaborativeEditor = ({
   userName,
   enabled = false 
 }: UseCollaborativeEditorProps) => {
-  // Initialize Y.Doc and shared text type
-  const ydoc = useMemo(() => new Y.Doc(), [documentId]);
-  const sharedType = useMemo(() => ydoc.get('content', Y.XmlText) as Y.XmlText, [ydoc]);
+  // Collaborative functionality completely disabled
   
-  // Create editor with yjs integration
+  // Create simple editor without collaboration
   const editor = useMemo(() => {
-    let baseEditor = withHistory(withReact(createEditor()));
-    
-    if (enabled && documentId && userId) {
-      try {
-        baseEditor = withYjs(baseEditor, sharedType);
-      } catch (error) {
-        console.error('Failed to create YJS editor:', error);
-      }
-    }
-    
-    return baseEditor;
-  }, [enabled, documentId, userId, sharedType]);
+    return withHistory(withReact(createEditor()));
+  }, []);
 
   // Parse the value from string to Slate value
   const parsedValue = useMemo(() => {
@@ -64,34 +52,10 @@ export const useCollaborativeEditor = ({
   const [slateValue, setSlateValue] = useState<SlateValue>(parsedValue);
   const [isConnected, setIsConnected] = useState(false);
 
-  // Connect/disconnect YjsEditor when enabled state changes
+  // Collaborative functionality completely disabled
   useEffect(() => {
-    if (!enabled || !documentId || !userId) {
-      return;
-    }
-
-    try {
-      if (YjsEditor.isYjsEditor(editor)) {
-        YjsEditor.connect(editor);
-        setIsConnected(true);
-        console.log('YjsEditor connected for document:', documentId);
-      }
-    } catch (error) {
-      console.error('Failed to connect YjsEditor:', error);
-    }
-
-    return () => {
-      try {
-        if (YjsEditor.isYjsEditor(editor)) {
-          YjsEditor.disconnect(editor);
-          setIsConnected(false);
-          console.log('YjsEditor disconnected for document:', documentId);
-        }
-      } catch (error) {
-        console.error('Error disconnecting YjsEditor:', error);
-      }
-    };
-  }, [enabled, documentId, userId, editor]);
+    setIsConnected(false);
+  }, []);
 
   const handleChange = useCallback((newValue: Descendant[]) => {
     setSlateValue(newValue);
@@ -154,9 +118,7 @@ export const useCollaborativeEditor = ({
     setCursor,
     setSelection,
     isConnected,
-    isCollaborative: enabled && !!documentId && !!userId,
-    collaborationEnabled: enabled,
-    ydoc,
-    sharedType,
+    isCollaborative: false,
+    collaborationEnabled: false,
   };
 };

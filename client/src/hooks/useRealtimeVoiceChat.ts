@@ -29,8 +29,7 @@ export const useRealtimeVoiceChat = () => {
   const [messages, setMessages] = useState<VoiceMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   
-  // WebSocket features disabled to prevent console errors
-  const wsRef = useRef<WebSocket | null>(null);
+  // All WebSocket functionality completely removed
   const audioContextRef = useRef<AudioContext | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioQueueRef = useRef<Uint8Array[]>([]);
@@ -143,46 +142,12 @@ export const useRealtimeVoiceChat = () => {
     }
   }, [createWavFromPCM]);
 
-  // Connect to realtime voice API
+  // Voice chat completely disabled - no WebSocket connections
   const connect = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      
-      // Disable WebSocket connection for now to prevent CSP violations
-      console.warn('Voice chat WebSocket connection disabled - edge function not available');
-      toast.error('Voice chat feature is currently unavailable');
-      setIsLoading(false);
-      return;
-      
-      // const wsUrl = `wss://ubxtmbgvibtjtjggjnjm.functions.supabase.co/realtime-voice-chat`;
-      // wsRef.current = new WebSocket(wsUrl);
-
-      /*
-      WebSocket connection disabled to prevent CSP violations 
-      until the edge function is properly implemented
-      
-      wsRef.current.onopen = () => {
-        // ... all the WebSocket event handlers would go here
-      };
-
-      wsRef.current.onmessage = async (event) => {
-        // ... message handling would go here
-      };
-
-      wsRef.current.onerror = (error) => {
-        // ... error handling would go here
-      };
-
-      wsRef.current.onclose = () => {
-        // ... close handling would go here
-      };
-      */
-    } catch (error) {
-      console.error('Error connecting to voice chat:', error);
-      toast.error('Failed to connect to voice chat');
-      setIsLoading(false);
-    }
-  }, [toast, currentSession, playAudioQueue]);
+    console.log('Voice chat feature disabled');
+    toast.error('Voice chat feature is currently unavailable');
+    setIsLoading(false);
+  }, [toast]);
 
   // Start recording user audio
   const startRecording = useCallback(async () => {
@@ -209,12 +174,7 @@ export const useRealtimeVoiceChat = () => {
         const inputData = e.inputBuffer.getChannelData(0);
         const encodedAudio = encodeAudioForAPI(new Float32Array(inputData));
         
-        if (wsRef.current?.readyState === WebSocket.OPEN) {
-          wsRef.current.send(JSON.stringify({
-            type: 'input_audio_buffer.append',
-            audio: encodedAudio
-          }));
-        }
+        // WebSocket functionality removed
       };
 
       source.connect(processor);
@@ -247,46 +207,18 @@ export const useRealtimeVoiceChat = () => {
     setIsRecording(false);
   }, []);
 
-  // Disconnect from voice chat
+  // Disconnect from voice chat - no WebSocket to disconnect
   const disconnect = useCallback(() => {
     stopRecording();
-    
-    if (wsRef.current) {
-      wsRef.current.close();
-      wsRef.current = null;
-    }
-    
     audioQueueRef.current = [];
     setIsConnected(false);
     setIsRecording(false);
     setIsPlaying(false);
   }, [stopRecording]);
 
-  // Send text message (for hybrid mode)
+  // Send text message - feature disabled
   const sendTextMessage = useCallback((text: string) => {
-    // Voice chat is currently disabled
     toast.error('Voice chat feature is currently unavailable');
-    return;
-
-    const userMessage: VoiceMessage = {
-      id: Date.now().toString(),
-      type: 'user',
-      content: text,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-
-    wsRef.current.send(JSON.stringify({
-      type: 'conversation.item.create',
-      item: {
-        type: 'message',
-        role: 'user',
-        content: [{ type: 'input_text', text }]
-      }
-    }));
-
-    wsRef.current.send(JSON.stringify({ type: 'response.create' }));
   }, [toast]);
 
   return {
