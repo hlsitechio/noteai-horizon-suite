@@ -98,7 +98,7 @@ export const OptimizedNotesProvider: React.FC<{ children: React.ReactNode }> = (
         metadata: { 
           category: newNote.category,
           tags: newNote.tags,
-          content_length: newNote.content.length
+          content_length: newNote.content ? newNote.content.length : 0
         }
       });
       
@@ -129,7 +129,7 @@ export const OptimizedNotesProvider: React.FC<{ children: React.ReactNode }> = (
           entity_id: updatedNote.id,
           metadata: { 
             updated_fields: Object.keys(updates),
-            content_length: updatedNote.content.length
+            content_length: updatedNote.content ? updatedNote.content.length : 0
           }
         });
         

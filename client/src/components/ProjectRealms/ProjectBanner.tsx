@@ -106,7 +106,7 @@ const ProjectBanner: React.FC<ProjectBannerProps> = ({
         <div className="flex items-start">
           <ProjectImageUpload 
             projectId={project.id}
-            currentImageUrl={bannerImage}
+            currentImageUrl={bannerImage || undefined}
             onImageUpdate={onImageUpdate}
           />
         </div>

@@ -32,9 +32,9 @@ const DeepSeekChat: React.FC = () => {
 
       if (error) {
         console.error('Error calling DeepSeek:', error);
-        setResponse(`Error: ${error.message}`);
+        setResponse(`Error: ${(error as any)?.message || 'Unknown error'}`);
       } else {
-        setResponse(data.message);
+        setResponse((data as any)?.message || 'No message received');
       }
     } catch (error) {
       console.error('Error:', error);
