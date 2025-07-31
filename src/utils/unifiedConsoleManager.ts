@@ -32,6 +32,7 @@ const DEV_NOISE_PATTERNS = [
   /Failed to load resource.*googleads/i,
   /Failed to load resource.*doubleclick\.net/i,
   /connect\.facebook\.net/i,
+  /facebook\.com\/tr/i,
   
   // Browser extension noise
   /message port closed before a response/i,
@@ -39,9 +40,18 @@ const DEV_NOISE_PATTERNS = [
   /moz-extension/i,
   /message port closed/i,
   
+  // Browser feature warnings
+  /Unrecognized feature.*'vr'/i,
+  /Unrecognized feature.*'battery'/i,
+  
   // Preload warnings
   /resource.*was preloaded.*but not used/i,
   /Please make sure it has an appropriate.*as.*value/i,
+  /The resource.*was preloaded using link preload/i,
+  
+  // DOM accessibility warnings for development
+  /Input elements should have autocomplete attributes/i,
+  /\[DOM\].*autocomplete/i,
 ];
 
 // Important errors that should always show
