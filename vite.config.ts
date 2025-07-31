@@ -1,37 +1,44 @@
+
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import { componentTagger } from "lovable-tagger";
 
-export default defineConfig(async ({ mode }) => ({
-  plugins: [
-    react(),
-    runtimeErrorOverlay(),
-    mode === 'development' && componentTagger(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-        ]
-      : []),
-  ].filter(Boolean),
+// https://vitejs.dev/config/
+export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(import.meta.dirname, "client", "src"),
-      "@shared": path.resolve(import.meta.dirname, "shared"),
-      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+    cors: {
+      origin: true,
+      credentials: true,
     },
   },
-  root: path.resolve(import.meta.dirname, "client"),
+  plugins: [
+    react(),
+    mode === 'development' && componentTagger(),
+  ].filter(Boolean),
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
-    emptyOutDir: true,
+    // Ultra-minimal build to fix corruption
+    target: 'es2020',
+    minify: false,
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        // Single chunk to eliminate chunk loading errors
+        manualChunks: () => 'index',
+      },
+    },
+  },
+  define: {
+    'process.env.NODE_ENV': '"development"',
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
   },
 }));
