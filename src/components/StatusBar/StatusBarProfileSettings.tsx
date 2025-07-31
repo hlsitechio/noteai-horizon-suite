@@ -107,7 +107,7 @@ const StatusBarProfileSettings: React.FC = () => {
         {/* Scroll Speed Slider */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <Label className="flex items-center gap-2">
+            <Label htmlFor="scroll-speed" className="flex items-center gap-2">
               <Zap className="w-4 h-4" />
               Scroll Speed
             </Label>
@@ -117,6 +117,7 @@ const StatusBarProfileSettings: React.FC = () => {
           </div>
           <div className="px-2">
             <Slider
+              id="scroll-speed"
               value={[tempScrollSpeed]}
               onValueChange={handleSpeedChange}
               max={10}
