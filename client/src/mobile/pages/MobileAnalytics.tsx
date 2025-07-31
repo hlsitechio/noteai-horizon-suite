@@ -12,9 +12,10 @@ const MobileAnalytics: React.FC = () => {
   const totalNotes = notes.length;
   const favoriteNotes = notes.filter(n => n.isFavorite).length;
   const todayNotes = notes.filter(n => 
-    new Date(n.createdAt).toDateString() === new Date().toDateString()
+    n.createdAt ? new Date(n.createdAt).toDateString() === new Date().toDateString() : false
   ).length;
   const thisWeekNotes = notes.filter(n => {
+    if (!n.createdAt) return false;
     const noteDate = new Date(n.createdAt);
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);

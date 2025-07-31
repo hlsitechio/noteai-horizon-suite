@@ -165,7 +165,7 @@ const MobileDashboard: React.FC = () => {
                     {note.content || 'No content'}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {new Date(note.updatedAt).toLocaleDateString()}
+                    {note.updatedAt ? new Date(note.updatedAt).toLocaleDateString() : 'No date'}
                   </p>
                 </CardContent>
               </Card>

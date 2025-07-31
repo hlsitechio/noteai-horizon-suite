@@ -130,7 +130,7 @@ const MobileChat: React.FC = () => {
                       {/* Show actions that were executed */}
                       {message.actions && message.actions.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-1">
-                          {message.actions.map((action, actionIndex) => (
+                          {message.actions.map((action: any, actionIndex: number) => (
                             <Badge 
                               key={actionIndex}
                               variant="secondary" 

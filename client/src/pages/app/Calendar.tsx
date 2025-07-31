@@ -49,7 +49,7 @@ const Calendar: React.FC = () => {
     return events.filter(event => isSameDay(new Date(event.start_date), date));
   };
   const getNotesForDate = (date: Date) => {
-    return notes.filter(note => isSameDay(new Date(note.createdAt), date));
+    return notes.filter(note => note.createdAt ? isSameDay(new Date(note.createdAt), date) : false);
   };
   const selectedDateEvents = getEventsForDate(selectedDate);
   const selectedDateNotes = getNotesForDate(selectedDate);

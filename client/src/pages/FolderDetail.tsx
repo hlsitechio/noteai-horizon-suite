@@ -139,7 +139,7 @@ const FolderDetail: React.FC = () => {
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-3 w-3" />
                       <span>
-                        {formatDistanceToNow(new Date(note.updatedAt), { addSuffix: true })}
+                        {note.updatedAt ? formatDistanceToNow(new Date(note.updatedAt), { addSuffix: true }) : 'No date'}
                       </span>
                     </div>
                     <Badge variant="secondary" className="text-xs">

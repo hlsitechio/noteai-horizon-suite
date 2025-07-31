@@ -96,7 +96,7 @@ const NotesGrid: React.FC<NotesGridProps> = ({ notes, hasFilters }) => {
                 <div className="flex items-center gap-2 mt-1">
                   <Clock className="w-3 h-3 text-gray-400" />
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {formatDate(note.updatedAt)}
+                    {note.updatedAt ? formatDate(note.updatedAt) : 'No date'}
                   </span>
                 </div>
               </div>

@@ -168,7 +168,7 @@ const EnhancedMobileSettings: React.FC = () => {
                   <div key={index}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        {item.icon && <item.icon className="h-4 w-4 text-muted-foreground" />}
+                        {'icon' in item && item.icon && <item.icon className="h-4 w-4 text-muted-foreground" />}
                         <Label className="text-sm font-medium">{item.label}</Label>
                       </div>
                       
@@ -176,7 +176,7 @@ const EnhancedMobileSettings: React.FC = () => {
                         {item.type === 'toggle' && (
                           <Switch
                             checked={item.value as boolean}
-                            onCheckedChange={item.onChange}
+                            onCheckedChange={'onChange' in item ? item.onChange : undefined}
                           />
                         )}
                         {item.type === 'info' && (
@@ -191,7 +191,7 @@ const EnhancedMobileSettings: React.FC = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={item.onClick}
+                            onClick={'onClick' in item ? item.onClick : undefined}
                             className="h-8 text-primary hover:text-primary/80"
                           >
                             View

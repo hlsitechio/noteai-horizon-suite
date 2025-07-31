@@ -29,7 +29,7 @@ const Analytics: React.FC = () => {
   const weeklyNotes = notes.filter(note => {
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
-    return new Date(note.createdAt) > weekAgo;
+    return note.createdAt ? new Date(note.createdAt) > weekAgo : false;
   }).length;
 
   // Calculate word and character counts

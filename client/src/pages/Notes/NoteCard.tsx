@@ -77,7 +77,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Calendar className="w-3 h-3" />
-          {formatDate(note.updatedAt)}
+          {note.updatedAt ? formatDate(note.updatedAt) : 'No date'}
           <Badge variant="secondary" className="text-xs">
             {categories.find(c => c.value === note.category)?.label || note.category}
           </Badge>
