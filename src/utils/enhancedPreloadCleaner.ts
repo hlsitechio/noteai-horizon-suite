@@ -2,10 +2,57 @@
 /**
  * Ultimate Preload Cleaner for Chrome Warning Fix
  * Aggressively prevents and removes unused preload links to eliminate console warnings
+ * Now includes early DOM interception to prevent Facebook tracking preloads
  */
 
 let isCleanerActive = false;
 let cleanupInterval: ReturnType<typeof setInterval> | null = null;
+
+// Immediately hijack HTMLLinkElement creation to prevent tracking preloads
+if (typeof window !== 'undefined') {
+  const originalCreateElement = document.createElement;
+  document.createElement = function(tagName: string) {
+    const element = originalCreateElement.call(document, tagName);
+    
+    // Intercept link elements being created
+    if (tagName.toLowerCase() === 'link') {
+      const link = element as HTMLLinkElement;
+      
+      // Override href setter to block tracking preloads
+      const originalHrefSetter = Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href')?.set;
+      if (originalHrefSetter) {
+        Object.defineProperty(link, 'href', {
+          set: function(value: string) {
+            // Block Facebook tracking URLs from being set as preloads
+            if (this.rel === 'preload' && shouldBlockTrackingUrl(value)) {
+              console.warn('🚫 Blocked tracking preload creation:', value);
+              return; // Don't set the href
+            }
+            originalHrefSetter.call(this, value);
+          },
+          get: function() {
+            return originalHrefSetter ? this.getAttribute('href') || '' : '';
+          }
+        });
+      }
+    }
+    
+    return element;
+  };
+}
+
+// Helper function to identify tracking URLs
+const shouldBlockTrackingUrl = (url: string): boolean => {
+  const trackingPatterns = [
+    /facebook\.com\/tr/i,
+    /9151671744940732/i,
+    /fbevents/i,
+    /pixel/i,
+    /ev=PageView/i,
+    /noscript=1/i
+  ];
+  return trackingPatterns.some(pattern => pattern.test(url));
+};
 
 export const cleanPreloadLinks = () => {
   if (typeof window === 'undefined' || isCleanerActive) return;

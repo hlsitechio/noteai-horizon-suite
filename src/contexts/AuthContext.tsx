@@ -55,16 +55,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           try {
             const response = await fetch('/functions/v1/passkey-manage');
             if (response.ok) {
-              const passkeys = await response.json();
-              // Show setup modal if user has no passkeys and browser supports it
-              if (passkeys.length === 0 && isPasskeySupported()) {
-                // Only show once per session
-                const hasShownPasskeySetup = sessionStorage.getItem('passkey-setup-shown');
-                if (!hasShownPasskeySetup) {
-                  setShowPasskeySetup(true);
-                  sessionStorage.setItem('passkey-setup-shown', 'true');
+              // Check if response is actually JSON before parsing
+              const contentType = response.headers.get('content-type');
+              if (contentType && contentType.includes('application/json')) {
+                const passkeys = await response.json();
+                // Show setup modal if user has no passkeys and browser supports it
+                if (passkeys.length === 0 && isPasskeySupported()) {
+                  // Only show once per session
+                  const hasShownPasskeySetup = sessionStorage.getItem('passkey-setup-shown');
+                  if (!hasShownPasskeySetup) {
+                    setShowPasskeySetup(true);
+                    sessionStorage.setItem('passkey-setup-shown', 'true');
+                  }
                 }
+              } else {
+                logger.auth.warn('Passkey endpoint returned non-JSON response, skipping passkey setup check');
               }
+            } else {
+              logger.auth.warn(`Passkey endpoint returned ${response.status}, skipping passkey setup check`);
             }
           } catch (error) {
             logger.auth.error('Error checking passkey setup:', error);
