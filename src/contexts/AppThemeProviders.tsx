@@ -3,15 +3,23 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThemeProvider } from '../providers/ThemeProvider';
 import { AccentColorProvider } from '../contexts/AccentColorContext';
 import { DynamicAccentProvider } from '../contexts/DynamicAccentContext';
-import { composeProviders } from '../utils/composeProviders';
+
+interface AppThemeProvidersProps {
+  children: React.ReactNode;
+}
 
 /**
  * Theme and styling providers for APP pages
  * Used when Router context is available
  */
-export const AppThemeProviders = composeProviders(
-  (props) => <ThemeProvider defaultTheme="dark" storageKey="online-note-ai-theme" {...props} />,
-  TooltipProvider,
-  AccentColorProvider,
-  DynamicAccentProvider
+export const AppThemeProviders: React.FC<AppThemeProvidersProps> = ({ children }) => (
+  <ThemeProvider defaultTheme="dark" storageKey="online-note-ai-theme">
+    <TooltipProvider>
+      <AccentColorProvider>
+        <DynamicAccentProvider>
+          {children}
+        </DynamicAccentProvider>
+      </AccentColorProvider>
+    </TooltipProvider>
+  </ThemeProvider>
 );

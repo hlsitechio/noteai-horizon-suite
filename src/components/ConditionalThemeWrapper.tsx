@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AppThemeProviders } from '../contexts/AppThemeProviders';
 import { PublicThemeProviders } from '../contexts/PublicThemeProviders';
-import { AppProviders } from './AppProviders';
-import { OnboardingProvider } from './Onboarding/OnboardingProvider';
 
 type ConditionalThemeWrapperProps = {
   children: React.ReactNode;
@@ -70,16 +68,12 @@ export function ConditionalThemeWrapper({ children }: ConditionalThemeWrapperPro
     );
   }
 
-  // For app routes, use the full theme provider with user settings AND AppProviders
+  // For app routes, use the theme provider
   if (isAppRoute) {
     return (
-      <AppProviders>
-        <AppThemeProviders>
-          <OnboardingProvider>
-            {children}
-          </OnboardingProvider>
-        </AppThemeProviders>
-      </AppProviders>
+      <AppThemeProviders>
+        {children}
+      </AppThemeProviders>
     );
   }
   

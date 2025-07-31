@@ -4,6 +4,8 @@ import { ThemeAccentProviders } from '../contexts/ThemeAccentProviders';
 import { NotesDataProviders } from '../contexts/NotesDataProviders';
 import { ProjectAIProviders } from '../contexts/ProjectAIProviders';
 import { EditModeProvider } from '../contexts/EditModeContext';
+import { OnboardingProvider } from './Onboarding/OnboardingProvider';
+import { SmartErrorBoundary } from './ErrorBoundary/SmartErrorBoundary';
 
 interface AppProvidersProps {
   children: React.ReactNode;
@@ -13,21 +15,26 @@ interface AppProvidersProps {
  * Optimized providers wrapper using direct nesting to avoid hook issues
  * - Simple provider tree structure
  * - Logical grouping by concern
- * - Avoids composeProviders utility that can cause React context issues
+ * - Includes OnboardingProvider inside AuthProvider to fix context issues
+ * - Error boundaries for provider-level protection
  * - Improved React reconciliation performance
  */
 export const AppProviders: React.FC<AppProvidersProps> = React.memo(({ children }) => (
-  <ThemeAccentProviders>
-    <AuthProvider>
-      <NotesDataProviders>
-        <ProjectAIProviders>
-          <EditModeProvider>
-            {children}
-          </EditModeProvider>
-        </ProjectAIProviders>
-      </NotesDataProviders>
-    </AuthProvider>
-  </ThemeAccentProviders>
+  <SmartErrorBoundary>
+    <ThemeAccentProviders>
+      <AuthProvider>
+        <NotesDataProviders>
+          <ProjectAIProviders>
+            <EditModeProvider>
+              <OnboardingProvider>
+                {children}
+              </OnboardingProvider>
+            </EditModeProvider>
+          </ProjectAIProviders>
+        </NotesDataProviders>
+      </AuthProvider>
+    </ThemeAccentProviders>
+  </SmartErrorBoundary>
 ));
 
 AppProviders.displayName = 'AppProviders';

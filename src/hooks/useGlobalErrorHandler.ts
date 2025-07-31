@@ -36,7 +36,7 @@ export const useGlobalErrorHandler = () => {
       console.warn('Resource loading error:', errorMessage);
     };
 
-    // Console methods are managed by the unified console system
+    // Console methods are managed by the unified console system - no conflicts
     
 
     // Set up global query error handler using query cache
@@ -76,7 +76,7 @@ export const useGlobalErrorHandler = () => {
       window.removeEventListener('error', handleError);
       window.removeEventListener('error', handleResourceError, true);
       
-      // Console methods managed by unified system
+      // Console methods managed by unified system - no cleanup conflicts
       
       unsubscribeQuery();
       unsubscribeMutation();
