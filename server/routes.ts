@@ -73,6 +73,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Check user onboarding status
+  app.get('/api/auth/onboarding-status/:userId', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const status = await storage.getUserOnboardingStatus(userId);
+      res.json(status || { onboarding_completed: false });
+    } catch (error) {
+      console.error('Onboarding status fetch error:', error);
+      res.status(500).json({ error: 'Failed to fetch onboarding status' });
+    }
+  });
+
+  // Update user onboarding status
+  app.put('/api/auth/onboarding-status/:userId', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { completed } = req.body;
+      await storage.updateUserOnboardingStatus(userId, completed);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Onboarding status update error:', error);
+      res.status(500).json({ error: 'Failed to update onboarding status' });
+    }
+  });
+
   // User Profiles
   app.get('/api/profiles/:userId', async (req, res) => {
     try {

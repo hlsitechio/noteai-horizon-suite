@@ -19,13 +19,11 @@ const Login: React.FC = () => {
   const { login, isAuthenticated, isLoading: authLoading, user } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if already authenticated - only check when component initially mounts
+  // Redirect if already authenticated - disable automatic redirect to allow onboarding check
   useEffect(() => {
-    // Only redirect if definitely authenticated and not loading
-    if (isAuthenticated && !authLoading) {
-      navigate('/app/dashboard', { replace: true });
-    }
-  }, [isAuthenticated, authLoading, navigate]);
+    // Disable automatic redirect to allow post-login onboarding status check
+    // Navigation will be handled in the handleLogin function
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +38,38 @@ const Login: React.FC = () => {
 
       if (success) {
         toast.success('Login successful!');
-        // Navigation will be handled by the useEffect above
+        
+        // Wait a moment for the user context to update, then check onboarding status
+        setTimeout(async () => {
+          try {
+            // Get user data from context (should be available after successful login)
+            if (user?.id) {
+              // Check onboarding status
+              const onboardingResponse = await fetch(`/api/auth/onboarding-status/${user.id}`);
+              if (onboardingResponse.ok) {
+                const onboardingData = await onboardingResponse.json();
+                
+                // Route based on onboarding status
+                if (onboardingData.onboarding_completed) {
+                  // Existing user - go to dashboard
+                  navigate('/app/dashboard', { replace: true });
+                } else {
+                  // New user - go to onboarding
+                  navigate('/setup/onboarding', { replace: true });
+                }
+              } else {
+                // Fallback to onboarding for new users if status check fails
+                navigate('/setup/onboarding', { replace: true });
+              }
+            } else {
+              // If no user context yet, fallback to dashboard
+              navigate('/app/dashboard', { replace: true });
+            }
+          } catch (error) {
+            console.log('Onboarding status check failed, defaulting to dashboard:', error);
+            navigate('/app/dashboard', { replace: true });
+          }
+        }, 100); // Small delay to ensure user context is updated
       } else {
         toast.error('Invalid email or password');
       }

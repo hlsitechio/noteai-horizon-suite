@@ -34,6 +34,9 @@ A full-featured SAAS application originally built on Lovable/Supabase, now being
 - 2025-01-31: Fixed DNS resolution issues by using Supabase REST API instead of direct database connections
 - 2025-01-31: Updated all API routes to work with Supabase authentication service
 - 2025-01-31: Resolved frontend/backend authentication parameter mismatch (email vs username)
+- 2025-01-31: Implemented intelligent post-login routing based on user onboarding status
+- 2025-01-31: Added onboarding status API endpoints and database integration
+- 2025-01-31: New users now route to /setup/onboarding, existing users to /app/dashboard
 
 ## Architecture Notes
 - Frontend: React with TypeScript, TailwindCSS, shadcn/ui

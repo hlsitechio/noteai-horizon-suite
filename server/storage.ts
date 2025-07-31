@@ -71,6 +71,10 @@ export interface IStorage {
   // User activities
   logUserActivity(activity: { userId: string; action: string; description?: string; metadata?: any; ipAddress?: string; userAgent?: string }): Promise<UserActivity>;
   getUserActivities(userId: string, limit?: number): Promise<UserActivity[]>;
+  
+  // Onboarding status
+  getUserOnboardingStatus(userId: string): Promise<{ onboarding_completed: boolean } | undefined>;
+  updateUserOnboardingStatus(userId: string, completed: boolean): Promise<void>;
 }
 
 export class SupabaseStorage implements IStorage {
@@ -488,6 +492,48 @@ export class SupabaseStorage implements IStorage {
     
     if (error) throw new Error(`Failed to fetch activities: ${error.message}`);
     return (data || []) as UserActivity[];
+  }
+
+  // Onboarding status
+  async getUserOnboardingStatus(userId: string): Promise<{ onboarding_completed: boolean } | undefined> {
+    const { data, error } = await supabase
+      .from('user_onboarding')
+      .select('onboarding_completed')
+      .eq('user_id', userId)
+      .single();
+    
+    if (error || !data) return undefined;
+    return { onboarding_completed: data.onboarding_completed };
+  }
+
+  async updateUserOnboardingStatus(userId: string, completed: boolean): Promise<void> {
+    // Try to update existing record first
+    const { error: updateError } = await supabase
+      .from('user_onboarding')
+      .update({ 
+        onboarding_completed: completed,
+        updated_at: new Date().toISOString() 
+      })
+      .eq('user_id', userId);
+
+    // If no record exists, create one
+    if (updateError) {
+      const { error: insertError } = await supabase
+        .from('user_onboarding')
+        .insert({
+          user_id: userId,
+          onboarding_completed: completed,
+          onboarding_enabled: true,
+          current_step: completed ? -1 : 0,
+          completed_steps: completed ? ['welcome'] : [],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        });
+
+      if (insertError) {
+        throw new Error(`Failed to create onboarding status: ${insertError.message}`);
+      }
+    }
   }
 }
 
