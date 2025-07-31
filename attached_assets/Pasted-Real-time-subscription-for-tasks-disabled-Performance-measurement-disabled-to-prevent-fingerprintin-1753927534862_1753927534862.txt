@@ -1,0 +1,30 @@
+Real-time subscription for tasks disabled
+Performance measurement disabled to prevent fingerprinting
+Error loading folders: 
+Error {}
+
+at t.value (https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Error loading folders: 
+Error {}
+
+at t.value (https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Error loading folders: 
+Error {}
+
+at t.value (https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Error loading folders: 
+Error {}
+
+at t.value (https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://bef75135-273c-4d41-90b2-f880243f8cc8-00-2w9de9fmee6ws.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
