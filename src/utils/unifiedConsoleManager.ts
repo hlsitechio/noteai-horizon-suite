@@ -8,6 +8,8 @@ const DEV_NOISE_PATTERNS = [
   // Development environment
   /lovable\.dev/i,
   /lovable\.app/i,
+  /lovableproject\.com/i,
+  /lovable-api\.com/i,
   /vite.*hmr/i,
   /\[vite\]/i,
   /\[HMR\]/i,
@@ -18,6 +20,8 @@ const DEV_NOISE_PATTERNS = [
   /failed.*to.*load.*resource.*net::ERR_FAILED/i,
   /cors.*policy.*blocked/i,
   /access.*control.*allow.*origin/i,
+  /net::ERR_HTTP2_PROTOCOL_ERROR/i,
+  /manifest\.json.*404/i,
   
   // Security blocks (working as intended)
   /SECURITY.*UTS.*tracking/i,
@@ -27,15 +31,17 @@ const DEV_NOISE_PATTERNS = [
   /Failed to load resource.*fbevents/i,
   /Failed to load resource.*googleads/i,
   /Failed to load resource.*doubleclick\.net/i,
+  /connect\.facebook\.net/i,
+  
+  // Browser extension noise
+  /message port closed before a response/i,
+  /chrome-extension/i,
+  /moz-extension/i,
+  /message port closed/i,
   
   // Preload warnings
   /resource.*was preloaded.*but not used/i,
   /Please make sure it has an appropriate.*as.*value/i,
-  
-  // Browser extensions
-  /chrome-extension/i,
-  /moz-extension/i,
-  /message port closed/i,
 ];
 
 // Important errors that should always show
