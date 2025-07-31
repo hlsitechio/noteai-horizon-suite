@@ -78,7 +78,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      return await loginUser(email, password);
+      const result = await loginUser(email, password);
+      return result.success;
     } catch (error) {
       logger.auth.error('Login failed:', error);
       return false;

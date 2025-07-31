@@ -8,6 +8,7 @@ import { Eye, EyeOff, Mail, Lock, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { usePublicPageTheme } from '@/hooks/usePublicPageTheme';
 import { useAuth } from '@/contexts/AuthContext';
+import { loginUser } from '@/contexts/auth/authService';
 
 const Login: React.FC = () => {
   // Ensure clean theme for public auth page
@@ -34,42 +35,34 @@ const Login: React.FC = () => {
     }
 
     try {
-      const success = await login(email, password);
+      // Get the user data directly from login to avoid context timing issues
+      const loginResult = await loginUser(email, password);
 
-      if (success) {
+      if (loginResult.success && loginResult.user) {
         toast.success('Login successful!');
         
-        // Wait a moment for the user context to update, then check onboarding status
-        setTimeout(async () => {
-          try {
-            // Get user data from context (should be available after successful login)
-            if (user?.id) {
-              // Check onboarding status
-              const onboardingResponse = await fetch(`/api/auth/onboarding-status/${user.id}`);
-              if (onboardingResponse.ok) {
-                const onboardingData = await onboardingResponse.json();
-                
-                // Route based on onboarding status
-                if (onboardingData.onboarding_completed) {
-                  // Existing user - go to dashboard
-                  navigate('/app/dashboard', { replace: true });
-                } else {
-                  // New user - go to onboarding
-                  navigate('/setup/onboarding', { replace: true });
-                }
-              } else {
-                // Fallback to onboarding for new users if status check fails
-                navigate('/setup/onboarding', { replace: true });
-              }
-            } else {
-              // If no user context yet, fallback to dashboard
+        try {
+          // Check onboarding status using the user ID from login response
+          const onboardingResponse = await fetch(`/api/auth/onboarding-status/${loginResult.user.id}`);
+          if (onboardingResponse.ok) {
+            const onboardingData = await onboardingResponse.json();
+            
+            // Route based on onboarding status
+            if (onboardingData.onboarding_completed) {
+              // Existing user - go to dashboard
               navigate('/app/dashboard', { replace: true });
+            } else {
+              // New user - go to onboarding
+              navigate('/setup/onboarding', { replace: true });
             }
-          } catch (error) {
-            console.log('Onboarding status check failed, defaulting to dashboard:', error);
-            navigate('/app/dashboard', { replace: true });
+          } else {
+            // Fallback to onboarding for new users if status check fails
+            navigate('/setup/onboarding', { replace: true });
           }
-        }, 100); // Small delay to ensure user context is updated
+        } catch (error) {
+          console.log('Onboarding status check failed, defaulting to dashboard:', error);
+          navigate('/app/dashboard', { replace: true });
+        }
       } else {
         toast.error('Invalid email or password');
       }

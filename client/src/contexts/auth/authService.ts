@@ -25,7 +25,7 @@ async function apiRequest(endpoint: string, options: RequestInit = {}) {
   return response.json();
 }
 
-export const loginUser = async (email: string, password: string): Promise<boolean> => {
+export const loginUser = async (email: string, password: string): Promise<{ success: boolean; user?: any }> => {
   try {
     const data = await apiRequest('/auth/login', {
       method: 'POST',
@@ -45,10 +45,10 @@ export const loginUser = async (email: string, password: string): Promise<boolea
       // Trigger a window event to update auth state
       window.dispatchEvent(new Event('auth-state-change'));
       
-      return true;
+      return { success: true, user: data.user };
     }
 
-    return false;
+    return { success: false };
   } catch (error: any) {
     console.error('Login exception:', error);
     
@@ -60,7 +60,7 @@ export const loginUser = async (email: string, password: string): Promise<boolea
     } else {
       toast.error(error.message || 'Login failed. Please try again.');
     }
-    return false;
+    return { success: false };
   }
 };
 
