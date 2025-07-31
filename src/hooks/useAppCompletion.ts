@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { TestingService } from '@/services/testingService';
 import { BundleAnalysisService } from '@/services/bundleAnalysisService';
 import { OnboardingService } from '@/services/onboardingService';
+import { EnhancedTestingService } from '@/services/enhancedTestingService';
+import { AdvancedErrorManagement } from '@/services/advancedErrorManagement';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface AppCompletionMetrics {
@@ -33,11 +35,18 @@ export const useAppCompletion = () => {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const calculateMetrics = async (): Promise<AppCompletionMetrics> => {
-    // Testing Score (0-100)
-    const testingScore = TestingService.getHealthScore();
+    // Initialize enhanced services
+    EnhancedTestingService.initialize();
+    AdvancedErrorManagement.initialize();
+
+    // Testing Score (0-100) - Enhanced with comprehensive testing
+    const basicTestingScore = TestingService.getHealthScore();
+    const enhancedTestingMetrics = EnhancedTestingService.getMetrics();
+    const testingScore = Math.max(basicTestingScore, enhancedTestingMetrics.overallHealth);
     
-    // Error Score (0-100, simplified without monitoring)
-    const errorScore = 85; // Default good score since monitoring is removed
+    // Error Score (0-100) - Now using advanced error management
+    const errorMetrics = AdvancedErrorManagement.getMetrics();
+    const errorScore = errorMetrics.stabilityScore;
     
     // Performance Score (0-100)
     const bundleMetrics = BundleAnalysisService.getBundleMetrics();
@@ -140,15 +149,22 @@ export const useAppCompletion = () => {
     setIsLoading(true);
     
     try {
-      // Run all health checks
+      // Run comprehensive health checks
       await Promise.all([
         TestingService.runComponentTests(),
+        EnhancedTestingService.runComprehensiveTests(),
         BundleAnalysisService.initialize(), // Re-initialize to get fresh metrics
       ]);
       
       await refreshMetrics();
     } catch (error) {
       console.error('Health check failed:', error);
+      // Capture this error in our advanced error management
+      AdvancedErrorManagement.captureError({
+        type: 'javascript',
+        message: `Health check failed: ${error instanceof Error ? error.message : String(error)}`,
+        severity: 'high'
+      });
     } finally {
       setIsLoading(false);
     }
