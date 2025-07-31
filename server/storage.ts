@@ -1,15 +1,4 @@
 import { 
-  users, 
-  userProfiles,
-  documents,
-  folders,
-  dashboardWorkspaces,
-  dashboardSettings,
-  calendarEvents,
-  tasks,
-  userPreferences,
-  apiKeys,
-  userActivities,
   type User, 
   type InsertUser,
   type UserProfile,
@@ -29,8 +18,7 @@ import {
   type ApiKey,
   type UserActivity
 } from "@shared/schema";
-import { db } from "./db";
-import { eq, and, desc, asc } from "drizzle-orm";
+import { supabase } from "./supabase";
 
 export interface IStorage {
   // User management
@@ -85,252 +73,422 @@ export interface IStorage {
   getUserActivities(userId: string, limit?: number): Promise<UserActivity[]>;
 }
 
-export class DatabaseStorage implements IStorage {
+export class SupabaseStorage implements IStorage {
   // User management
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user || undefined;
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error || !data) return undefined;
+    return data as User;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
-    return user || undefined;
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username)
+      .single();
+    
+    if (error || !data) return undefined;
+    return data as User;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db.insert(users).values(insertUser).returning();
-    return user;
+    const { data, error } = await supabase
+      .from('users')
+      .insert(insertUser)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to create user: ${error?.message}`);
+    return data as User;
   }
 
   // User profiles
   async getUserProfile(userId: string): Promise<UserProfile | undefined> {
-    const [profile] = await db.select().from(userProfiles).where(eq(userProfiles.userId, userId));
-    return profile || undefined;
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+    
+    if (error || !data) return undefined;
+    return data as UserProfile;
   }
 
   async createUserProfile(profile: InsertUserProfile): Promise<UserProfile> {
-    const [newProfile] = await db.insert(userProfiles).values(profile).returning();
-    return newProfile;
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .insert(profile)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to create profile: ${error?.message}`);
+    return data as UserProfile;
   }
 
   async updateUserProfile(userId: string, updates: Partial<UserProfile>): Promise<UserProfile> {
-    const [updated] = await db
-      .update(userProfiles)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(eq(userProfiles.userId, userId))
-      .returning();
-    return updated;
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('user_id', userId)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to update profile: ${error?.message}`);
+    return data as UserProfile;
   }
 
   // Documents
   async getDocuments(userId: string, folderId?: string): Promise<Document[]> {
-    const query = db.select().from(documents).where(eq(documents.userId, userId));
+    let query = supabase
+      .from('documents')
+      .select('*')
+      .eq('user_id', userId);
+    
     if (folderId) {
-      return await query.where(eq(documents.folderId, folderId)).orderBy(desc(documents.createdAt));
+      query = query.eq('folder_id', folderId);
     }
-    return await query.orderBy(desc(documents.createdAt));
+    
+    const { data, error } = await query.order('created_at', { ascending: false });
+    
+    if (error) throw new Error(`Failed to fetch documents: ${error.message}`);
+    return (data || []) as Document[];
   }
 
   async getDocument(id: string, userId: string): Promise<Document | undefined> {
-    const [document] = await db
-      .select()
-      .from(documents)
-      .where(and(eq(documents.id, id), eq(documents.userId, userId)));
-    return document || undefined;
+    const { data, error } = await supabase
+      .from('documents')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', userId)
+      .single();
+    
+    if (error || !data) return undefined;
+    return data as Document;
   }
 
   async createDocument(document: InsertDocument): Promise<Document> {
-    const [newDocument] = await db.insert(documents).values(document).returning();
-    return newDocument;
+    const { data, error } = await supabase
+      .from('documents')
+      .insert(document)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to create document: ${error?.message}`);
+    return data as Document;
   }
 
   async updateDocument(id: string, userId: string, updates: Partial<Document>): Promise<Document> {
-    const [updated] = await db
-      .update(documents)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(and(eq(documents.id, id), eq(documents.userId, userId)))
-      .returning();
-    return updated;
+    const { data, error } = await supabase
+      .from('documents')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('user_id', userId)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to update document: ${error?.message}`);
+    return data as Document;
   }
 
   async deleteDocument(id: string, userId: string): Promise<boolean> {
-    const result = await db
-      .delete(documents)
-      .where(and(eq(documents.id, id), eq(documents.userId, userId)));
-    return result.rowCount > 0;
+    const { error } = await supabase
+      .from('documents')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId);
+    
+    return !error;
   }
 
   // Folders
   async getFolders(userId: string, parentId?: string): Promise<Folder[]> {
-    const query = db.select().from(folders).where(eq(folders.userId, userId));
+    let query = supabase
+      .from('folders')
+      .select('*')
+      .eq('user_id', userId);
+    
     if (parentId) {
-      return await query.where(eq(folders.parentFolderId, parentId)).orderBy(asc(folders.name));
+      query = query.eq('parent_folder_id', parentId);
     }
-    return await query.orderBy(asc(folders.name));
+    
+    const { data, error } = await query.order('name', { ascending: true });
+    
+    if (error) throw new Error(`Failed to fetch folders: ${error.message}`);
+    return (data || []) as Folder[];
   }
 
   async getFolder(id: string, userId: string): Promise<Folder | undefined> {
-    const [folder] = await db
-      .select()
-      .from(folders)
-      .where(and(eq(folders.id, id), eq(folders.userId, userId)));
-    return folder || undefined;
+    const { data, error } = await supabase
+      .from('folders')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', userId)
+      .single();
+    
+    if (error || !data) return undefined;
+    return data as Folder;
   }
 
   async createFolder(folder: InsertFolder): Promise<Folder> {
-    const [newFolder] = await db.insert(folders).values(folder).returning();
-    return newFolder;
+    const { data, error } = await supabase
+      .from('folders')
+      .insert(folder)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to create folder: ${error?.message}`);
+    return data as Folder;
   }
 
   async updateFolder(id: string, userId: string, updates: Partial<Folder>): Promise<Folder> {
-    const [updated] = await db
-      .update(folders)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(and(eq(folders.id, id), eq(folders.userId, userId)))
-      .returning();
-    return updated;
+    const { data, error } = await supabase
+      .from('folders')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('user_id', userId)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to update folder: ${error?.message}`);
+    return data as Folder;
   }
 
   async deleteFolder(id: string, userId: string): Promise<boolean> {
-    const result = await db
-      .delete(folders)
-      .where(and(eq(folders.id, id), eq(folders.userId, userId)));
-    return result.rowCount > 0;
+    const { error } = await supabase
+      .from('folders')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId);
+    
+    return !error;
   }
 
   // Dashboard workspaces
   async getDashboardWorkspaces(userId: string): Promise<DashboardWorkspace[]> {
-    return await db
-      .select()
-      .from(dashboardWorkspaces)
-      .where(eq(dashboardWorkspaces.userId, userId))
-      .orderBy(desc(dashboardWorkspaces.isDefault), asc(dashboardWorkspaces.workspaceName));
+    const { data, error } = await supabase
+      .from('dashboard_workspaces')
+      .select('*')
+      .eq('user_id', userId)
+      .order('is_default', { ascending: false })
+      .order('workspace_name', { ascending: true });
+    
+    if (error) throw new Error(`Failed to fetch workspaces: ${error.message}`);
+    return (data || []) as DashboardWorkspace[];
   }
 
   async getDefaultWorkspace(userId: string): Promise<DashboardWorkspace | undefined> {
-    const [workspace] = await db
-      .select()
-      .from(dashboardWorkspaces)
-      .where(and(eq(dashboardWorkspaces.userId, userId), eq(dashboardWorkspaces.isDefault, true)));
-    return workspace || undefined;
+    const { data, error } = await supabase
+      .from('dashboard_workspaces')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_default', true)
+      .single();
+    
+    if (error || !data) return undefined;
+    return data as DashboardWorkspace;
   }
 
   async createWorkspace(workspace: InsertDashboardWorkspace): Promise<DashboardWorkspace> {
-    const [newWorkspace] = await db.insert(dashboardWorkspaces).values(workspace).returning();
-    return newWorkspace;
+    const { data, error } = await supabase
+      .from('dashboard_workspaces')
+      .insert(workspace)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to create workspace: ${error?.message}`);
+    return data as DashboardWorkspace;
   }
 
   async updateWorkspace(id: string, userId: string, updates: Partial<DashboardWorkspace>): Promise<DashboardWorkspace> {
-    const [updated] = await db
-      .update(dashboardWorkspaces)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(and(eq(dashboardWorkspaces.id, id), eq(dashboardWorkspaces.userId, userId)))
-      .returning();
-    return updated;
+    const { data, error } = await supabase
+      .from('dashboard_workspaces')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('user_id', userId)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to update workspace: ${error?.message}`);
+    return data as DashboardWorkspace;
   }
 
   // Calendar events
   async getCalendarEvents(userId: string, startDate?: Date, endDate?: Date): Promise<CalendarEvent[]> {
-    const query = db.select().from(calendarEvents).where(eq(calendarEvents.userId, userId));
-    // Add date filtering if provided
-    return await query.orderBy(asc(calendarEvents.startDate));
+    let query = supabase
+      .from('calendar_events')
+      .select('*')
+      .eq('user_id', userId);
+    
+    if (startDate) {
+      query = query.gte('start_time', startDate.toISOString());
+    }
+    if (endDate) {
+      query = query.lte('end_time', endDate.toISOString());
+    }
+    
+    const { data, error } = await query.order('start_time', { ascending: true });
+    
+    if (error) throw new Error(`Failed to fetch calendar events: ${error.message}`);
+    return (data || []) as CalendarEvent[];
   }
 
   async createCalendarEvent(event: InsertCalendarEvent): Promise<CalendarEvent> {
-    const [newEvent] = await db.insert(calendarEvents).values(event).returning();
-    return newEvent;
+    const { data, error } = await supabase
+      .from('calendar_events')
+      .insert(event)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to create calendar event: ${error?.message}`);
+    return data as CalendarEvent;
   }
 
   async updateCalendarEvent(id: string, userId: string, updates: Partial<CalendarEvent>): Promise<CalendarEvent> {
-    const [updated] = await db
-      .update(calendarEvents)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(and(eq(calendarEvents.id, id), eq(calendarEvents.userId, userId)))
-      .returning();
-    return updated;
+    const { data, error } = await supabase
+      .from('calendar_events')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('user_id', userId)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to update calendar event: ${error?.message}`);
+    return data as CalendarEvent;
   }
 
   async deleteCalendarEvent(id: string, userId: string): Promise<boolean> {
-    const result = await db
-      .delete(calendarEvents)
-      .where(and(eq(calendarEvents.id, id), eq(calendarEvents.userId, userId)));
-    return result.rowCount > 0;
+    const { error } = await supabase
+      .from('calendar_events')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId);
+    
+    return !error;
   }
 
   // Tasks
   async getTasks(userId: string, isCompleted?: boolean): Promise<Task[]> {
-    const query = db.select().from(tasks).where(eq(tasks.userId, userId));
-    if (isCompleted !== undefined) {
-      return await query.where(eq(tasks.isCompleted, isCompleted)).orderBy(desc(tasks.createdAt));
+    let query = supabase
+      .from('tasks')
+      .select('*')
+      .eq('user_id', userId);
+    
+    if (typeof isCompleted === 'boolean') {
+      query = query.eq('completed', isCompleted);
     }
-    return await query.orderBy(desc(tasks.createdAt));
+    
+    const { data, error } = await query.order('created_at', { ascending: false });
+    
+    if (error) throw new Error(`Failed to fetch tasks: ${error.message}`);
+    return (data || []) as Task[];
   }
 
   async createTask(task: InsertTask): Promise<Task> {
-    const [newTask] = await db.insert(tasks).values(task).returning();
-    return newTask;
+    const { data, error } = await supabase
+      .from('tasks')
+      .insert(task)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to create task: ${error?.message}`);
+    return data as Task;
   }
 
   async updateTask(id: string, userId: string, updates: Partial<Task>): Promise<Task> {
-    const [updated] = await db
-      .update(tasks)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(and(eq(tasks.id, id), eq(tasks.userId, userId)))
-      .returning();
-    return updated;
+    const { data, error } = await supabase
+      .from('tasks')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('user_id', userId)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to update task: ${error?.message}`);
+    return data as Task;
   }
 
   async deleteTask(id: string, userId: string): Promise<boolean> {
-    const result = await db
-      .delete(tasks)
-      .where(and(eq(tasks.id, id), eq(tasks.userId, userId)));
-    return result.rowCount > 0;
+    const { error } = await supabase
+      .from('tasks')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId);
+    
+    return !error;
   }
 
   // User preferences
   async getUserPreferences(userId: string): Promise<UserPreferences | undefined> {
-    const [preferences] = await db
-      .select()
-      .from(userPreferences)
-      .where(eq(userPreferences.userId, userId));
-    return preferences || undefined;
+    const { data, error } = await supabase
+      .from('user_preferences')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+    
+    if (error || !data) return undefined;
+    return data as UserPreferences;
   }
 
   async createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences> {
-    const [newPreferences] = await db.insert(userPreferences).values(preferences).returning();
-    return newPreferences;
+    const { data, error } = await supabase
+      .from('user_preferences')
+      .insert(preferences)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to create preferences: ${error?.message}`);
+    return data as UserPreferences;
   }
 
   async updateUserPreferences(userId: string, updates: Partial<UserPreferences>): Promise<UserPreferences> {
-    const [updated] = await db
-      .update(userPreferences)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(eq(userPreferences.userId, userId))
-      .returning();
-    return updated;
+    const { data, error } = await supabase
+      .from('user_preferences')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('user_id', userId)
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to update preferences: ${error?.message}`);
+    return data as UserPreferences;
   }
 
   // User activities
-  async logUserActivity(activity: { 
-    userId: string; 
-    action: string; 
-    description?: string; 
-    metadata?: any; 
-    ipAddress?: string; 
-    userAgent?: string 
-  }): Promise<UserActivity> {
-    const [newActivity] = await db.insert(userActivities).values(activity).returning();
-    return newActivity;
+  async logUserActivity(activity: { userId: string; action: string; description?: string; metadata?: any; ipAddress?: string; userAgent?: string }): Promise<UserActivity> {
+    const { data, error } = await supabase
+      .from('user_activities')
+      .insert({
+        user_id: activity.userId,
+        action: activity.action,
+        description: activity.description,
+        metadata: activity.metadata,
+        ip_address: activity.ipAddress,
+        user_agent: activity.userAgent,
+        created_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+    
+    if (error || !data) throw new Error(`Failed to log activity: ${error?.message}`);
+    return data as UserActivity;
   }
 
   async getUserActivities(userId: string, limit: number = 50): Promise<UserActivity[]> {
-    return await db
-      .select()
-      .from(userActivities)
-      .where(eq(userActivities.userId, userId))
-      .orderBy(desc(userActivities.timestamp))
+    const { data, error } = await supabase
+      .from('user_activities')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
       .limit(limit);
+    
+    if (error) throw new Error(`Failed to fetch activities: ${error.message}`);
+    return (data || []) as UserActivity[];
   }
 }
 
-export const storage = new DatabaseStorage();
+export const storage = new SupabaseStorage();

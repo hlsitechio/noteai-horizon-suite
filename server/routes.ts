@@ -1,15 +1,34 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { supabase } from "./supabase";
 import { insertUserSchema, insertDocumentSchema, insertFolderSchema, insertDashboardWorkspaceSchema, insertCalendarEventSchema, insertTaskSchema, insertUserPreferencesSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication & User Management
   app.post('/api/auth/register', async (req, res) => {
     try {
-      const userData = insertUserSchema.parse(req.body);
-      const user = await storage.createUser(userData);
-      res.json({ user: { id: user.id, username: user.username } });
+      const { username, password } = req.body;
+      
+      // Use Supabase Auth for registration
+      const { data, error } = await supabase.auth.signUp({
+        email: username, // Assuming username is email
+        password: password
+      });
+      
+      if (error || !data.user) {
+        console.error('Registration error:', error);
+        res.status(400).json({ error: error?.message || 'Registration failed' });
+        return;
+      }
+      
+      res.json({ 
+        user: { 
+          id: data.user.id, 
+          username: data.user.email || username 
+        },
+        session: data.session
+      });
     } catch (error) {
       console.error('Registration error:', error);
       res.status(400).json({ error: 'Registration failed' });
@@ -19,12 +38,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/auth/login', async (req, res) => {
     try {
       const { username, password } = req.body;
-      const user = await storage.getUserByUsername(username);
-      if (user && user.password === password) {
-        res.json({ user: { id: user.id, username: user.username } });
-      } else {
+      
+      // Use Supabase Auth for authentication
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: username, // Assuming username is email
+        password: password
+      });
+      
+      if (error || !data.user) {
+        console.error('Login error:', error);
         res.status(401).json({ error: 'Invalid credentials' });
+        return;
       }
+      
+      // Return user data in expected format
+      res.json({ 
+        user: { 
+          id: data.user.id, 
+          username: data.user.email || username 
+        },
+        session: data.session
+      });
     } catch (error) {
       console.error('Login error:', error);
       res.status(500).json({ error: 'Login failed' });
@@ -122,6 +156,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/folders', async (req, res) => {
     try {
       const { userId, parentId } = req.query;
+      
+      // If no userId provided, return empty array (unauthenticated request)
+      if (!userId) {
+        res.json([]);
+        return;
+      }
+      
       const folders = await storage.getFolders(userId as string, parentId as string);
       res.json(folders);
     } catch (error) {
