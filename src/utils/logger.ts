@@ -31,8 +31,16 @@ class Logger {
   }
 
   private shouldLog(level: LogLevel, module?: string): boolean {
-    // Only allow a specific welcome message, block everything else
-    return false;
+    // Allow logging based on level and enabled modules
+    if (level < this.logLevel) return false;
+    
+    // If no modules specified, allow all modules at this level
+    if (this.enabledModules.size === 0) return true;
+    
+    // If module specified, check if it's enabled
+    if (module && !this.enabledModules.has(module)) return false;
+    
+    return true;
   }
 
   private formatMessage(level: string, module: string | undefined, message: string, ...args: unknown[]): unknown[] {

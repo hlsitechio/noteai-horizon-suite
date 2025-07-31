@@ -36,7 +36,7 @@ export const useGlobalErrorHandler = () => {
       console.warn('Resource loading error:', errorMessage);
     };
 
-    // Console methods are already overridden in main.tsx
+    // Console methods are managed by the unified console system
     
 
     // Set up global query error handler using query cache
@@ -76,7 +76,7 @@ export const useGlobalErrorHandler = () => {
       window.removeEventListener('error', handleError);
       window.removeEventListener('error', handleResourceError, true);
       
-      // Console methods remain overridden globally
+      // Console methods managed by unified system
       
       unsubscribeQuery();
       unsubscribeMutation();

@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { apmService } from '@/services/apmService';
-import { intelligentConsoleManager } from '@/services/intelligentConsoleManager';
+import { unifiedConsoleManager } from '@/utils/unifiedConsoleManager';
 import { PerformanceMonitor } from '@/lib/logger';
 
 export interface APMStats {
@@ -37,11 +37,7 @@ export const useAPMMonitoring = () => {
     }
   }, [user?.id, isEnabled]);
 
-  // Initialize console management
-  useEffect(() => {
-    intelligentConsoleManager.setEnabled(isEnabled);
-    intelligentConsoleManager.setFilterLevel(filterLevel);
-  }, [isEnabled, filterLevel]);
+  // Console management is handled by the unified system
 
   // Performance monitoring setup
   useEffect(() => {
@@ -229,7 +225,7 @@ export const useAPMMonitoring = () => {
   }, []);
 
   const suppressNextError = useCallback(() => {
-    intelligentConsoleManager.suppressNextError();
+    // Console suppression handled by unified system
   }, []);
 
   return {
@@ -252,6 +248,6 @@ export const useAPMMonitoring = () => {
     
     // Service access
     apmService,
-    intelligentConsoleManager
+    unifiedConsoleManager
   };
 };
