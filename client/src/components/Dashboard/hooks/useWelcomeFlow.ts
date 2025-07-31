@@ -20,14 +20,14 @@ export const useWelcomeFlow = (onDashboardInitialized?: () => void) => {
     
     // Save user info to profile
     try {
-      const { error } = await supabase
+      const result = await supabase
         .from('user_profiles')
         .update({
           display_name: info.name,
           welcome_message: `Welcome back, ${info.nickname}!`
-        })
-        .eq('id', user!.id)
-        .execute();
+        });
+      
+      const { error } = await result.eq('id', user!.id);
 
       if (error) {
         console.error('Error saving user profile:', error);

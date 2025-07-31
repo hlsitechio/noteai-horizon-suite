@@ -41,7 +41,7 @@ export const useDashboardSettings = () => {
         timestamp: Date.now()
       });
       
-      setSettings(userSettings!);
+      setSettings(userSettings || null);
     } catch (error) {
       console.error('Failed to load dashboard settings:', error);
       toast.error('Failed to load dashboard settings');

@@ -31,7 +31,7 @@ export function NotesListSection({
   
   // Get all notes sorted by most recent
   const allNotes = notes.sort((a, b) => 
-    new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    new Date(b.updatedAt || b.updated_at || '').getTime() - new Date(a.updatedAt || a.updated_at || '').getTime()
   );
   
   // Show more notes when expanded, fewer when collapsed

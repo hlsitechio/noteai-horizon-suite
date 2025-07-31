@@ -238,7 +238,7 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (filters.searchTerm) {
       const searchLower = filters.searchTerm.toLowerCase();
       const matchesTitle = note.title.toLowerCase().includes(searchLower);
-      const matchesContent = note.content.toLowerCase().includes(searchLower);
+      const matchesContent = note.content ? note.content.toLowerCase().includes(searchLower) : false;
       const matchesTags = note.tags.some(tag => tag.toLowerCase().includes(searchLower));
       if (!matchesTitle && !matchesContent && !matchesTags) return false;
     }
