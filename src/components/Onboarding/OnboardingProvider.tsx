@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef } from 'react';
+import React, { createContext, useContext, useRef, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { OnboardingTooltip } from './OnboardingTooltip';
@@ -26,17 +26,21 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
     return <>{children}</>;
   }
 
-  // Determine current page from pathname
-  const currentPage = location.pathname === '/' ? 'landing' : 
-                     location.pathname === '/landing' ? 'landing' :
-                     location.pathname === '/dashboard' ? 'dashboard' :
-                     location.pathname === '/settings' ? 'settings' : 
-                     location.pathname.slice(1); // remove leading slash
+  // Memoize current page determination for performance
+  const currentPage = useMemo(() => {
+    return location.pathname === '/' ? 'landing' : 
+           location.pathname === '/landing' ? 'landing' :
+           location.pathname === '/dashboard' ? 'dashboard' :
+           location.pathname === '/settings' ? 'settings' : 
+           location.pathname.slice(1); // remove leading slash
+  }, [location.pathname]);
 
-  // Check if onboarding should show on current page
-  const shouldShowOnCurrentPage = onboarding.shouldShowOnboarding(currentPage);
+  // Memoize onboarding visibility check
+  const shouldShowOnCurrentPage = useMemo(() => {
+    return onboarding.shouldShowOnboarding(currentPage);
+  }, [onboarding, currentPage]);
 
-  // Debug logging (development only) - reduced frequency
+  // Optimized debug logging with useRef to prevent excessive renders
   const debugLogRef = useRef<string>('');
   const currentDebugKey = `${location.pathname}-${shouldShowOnCurrentPage}`;
   
