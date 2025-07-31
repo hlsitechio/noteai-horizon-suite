@@ -219,7 +219,7 @@ const DashboardScreenshot = () => {
                     <p className="text-sm text-gray-400">You have 12 pending tasks and 3 new insights</p>
                   </div>
 
-                  {/* Time and Weather */}
+                  {/* Time and Clock */}
                   <div className="flex items-center space-x-6">
                     <div className="text-center">
                       <div className="text-white font-mono text-lg font-bold">

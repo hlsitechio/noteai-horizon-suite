@@ -12,6 +12,7 @@ import { AppProviders } from './components/AppProviders';
 
 import './App.css';
 // Console management handled by unified system in main.tsx
+import '@/utils/clearLegacyData';
 
 
 const AppRouter = Router;

@@ -10,8 +10,8 @@ import { toast } from 'sonner';
 
 const preBuiltExamples = {
   improve: {
-    input: "The weather is good today. I think I will go outside.",
-    output: "The weather is absolutely beautiful today, with clear skies and perfect temperature. I'm excited to step outside and enjoy this wonderful day in nature."
+    input: "The project looks great. I think I will deploy it today.",
+    output: "The project looks absolutely fantastic with clean code and excellent architecture. I'm excited to deploy it and share this wonderful creation with users."
   },
   translate: {
     input: "Hello, how are you doing today?",

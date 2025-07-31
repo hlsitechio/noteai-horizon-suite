@@ -128,10 +128,10 @@ export const cleanPreloadLinks = () => {
 
   observer.observe(document.head, { childList: true, subtree: true });
 
-  // Continuous cleanup every 2 seconds to catch any stragglers
+  // More aggressive cleanup every 1 second to catch any stragglers
   cleanupInterval = setInterval(() => {
     immediateCleanup();
-  }, 2000);
+  }, 1000);
 
   // Stop continuous cleanup after 30 seconds
   setTimeout(() => {
