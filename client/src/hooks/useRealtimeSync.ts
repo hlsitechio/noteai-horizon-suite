@@ -50,7 +50,6 @@ export const useRealtimeSync = ({
 
   useEffect(() => {
     // Real-time sync completely disabled
-    console.log('Real-time subscription for tasks disabled');
     setConnected(false);
 
     return () => {

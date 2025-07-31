@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { WasabiStorageService } from '@/services/wasabiStorageService';
+
 import { toast } from 'sonner';
 
 interface StorageQuota {
@@ -104,13 +104,8 @@ export const StorageIndicator: React.FC<StorageIndicatorProps> = ({
 
   const refreshQuota = async () => {
     try {
-      const result = await WasabiStorageService.checkStorageQuota();
-      if (result.success) {
-        await fetchStorageData(); // Refresh the data
-        toast.success('Storage quota updated');
-      } else {
-        toast.error('Failed to update storage quota');
-      }
+      // Storage quota refresh functionality disabled
+      toast.info('Storage quota refresh temporarily disabled');
     } catch (error) {
       toast.error('Failed to update storage quota');
     }

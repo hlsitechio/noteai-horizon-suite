@@ -244,7 +244,6 @@ export class SupabaseNotesService {
     onDelete?: (noteId: string) => void
   ) {
     // Real-time subscriptions completely removed
-    console.log('Real-time subscription for tasks disabled');
     
     // Return a mock channel object to prevent errors
     return {

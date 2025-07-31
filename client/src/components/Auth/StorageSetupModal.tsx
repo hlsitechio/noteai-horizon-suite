@@ -71,12 +71,8 @@ export const StorageSetupModal: React.FC<StorageSetupModalProps> = ({
       updateStepStatus(0, 'running');
       setProgress(10);
       
-      const { data: bucketResult, error: bucketError } = await supabase.functions.invoke('wasabi-storage', {
-        body: { action: 'initialize-user-storage' }
-      });
-      
-      if (bucketError) throw bucketError;
-      if (!bucketResult?.success) throw new Error(bucketResult?.error || 'Failed to create bucket');
+      // Wasabi storage disabled - skip bucket creation
+      const bucketResult = { success: true, bucketName: 'storage-disabled' };
       
       updateStepStatus(0, 'completed');
       setProgress(40);
@@ -85,11 +81,8 @@ export const StorageSetupModal: React.FC<StorageSetupModalProps> = ({
       setCurrentStep(1);
       updateStepStatus(1, 'running');
       
-      const { data: quotaResult, error: quotaError } = await supabase.functions.invoke('wasabi-storage', {
-        body: { action: 'check-storage-quota' }
-      });
-      
-      if (quotaError) throw quotaError;
+      // Wasabi storage disabled - skip quota check
+      const quotaResult = { success: true };
       
       updateStepStatus(1, 'completed');
       setProgress(70);
@@ -124,8 +117,8 @@ export const StorageSetupModal: React.FC<StorageSetupModalProps> = ({
         .from('user_storage_initialization')
         .upsert({
           user_id: (await supabase.auth.getUser()).data.user?.id,
-          wasabi_bucket_created: true,
-          wasabi_bucket_name: bucketResult.bucketName,
+          wasabi_bucket_created: false,
+          wasabi_bucket_name: null,
           default_workspace_created: true,
           storage_quota_set: true,
           initialization_completed: true

@@ -58,7 +58,6 @@ class DesktopAppAPIService {
   // Real-time sync functionality removed
   private setupRealtimeConnection(userId: string, deviceId: string) {
     // Real-time connection completely removed
-    console.log('Real-time subscription for tasks disabled');
     this.realtimeChannel = null;
   }
 

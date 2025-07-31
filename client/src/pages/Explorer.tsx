@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import { GoogleDriveService } from '@/services/googleDriveService';
+
 import { useToast } from '@/hooks/use-toast';
 import { useDocuments } from '@/hooks/useDocuments';
 import { DocumentImportDialog } from '@/components/Explorer/DocumentImportDialog';
@@ -22,7 +22,7 @@ interface FileItem {
   type: 'file' | 'folder';
   size?: number;
   modifiedDate: string;
-  source: 'supabase' | 'google-drive';
+  source: 'supabase';
   path?: string;
   mimeType?: string;
   url?: string;
@@ -106,37 +106,17 @@ const Explorer: React.FC = () => {
     }
   };
 
-  // Load files from Google Drive
+  // Google Drive functionality disabled
   const loadGoogleDriveFiles = async (): Promise<FileItem[]> => {
-    try {
-      const files = await GoogleDriveService.listFiles();
-      return files.map(file => ({
-        id: `gdrive-${file.id}`,
-        name: file.name,
-        type: (file.mimeType.includes('folder') ? 'folder' : 'file') as 'file' | 'folder',
-        size: file.size ? parseInt(file.size) : undefined,
-        modifiedDate: file.modifiedTime,
-        source: 'google-drive' as const,
-        path: `/${file.name}`,
-        mimeType: file.mimeType,
-        url: file.webViewLink
-      }));
-    } catch (error) {
-      console.error('Error loading Google Drive files:', error);
-      return [];
-    }
+    return [];
   };
 
   // Load all files
   const loadFiles = async () => {
     setIsLoading(true);
     try {
-      const [supabaseFiles, googleDriveFiles] = await Promise.all([
-        loadSupabaseFiles(),
-        loadGoogleDriveFiles()
-      ]);
-      
-      const allFiles = [...supabaseFiles, ...googleDriveFiles];
+      const supabaseFiles = await loadSupabaseFiles();
+      const allFiles = [...supabaseFiles];
       
       // Split files between left and right panels (example logic)
       const midPoint = Math.ceil(allFiles.length / 2);
@@ -235,7 +215,7 @@ const Explorer: React.FC = () => {
   // File icon based on type and source
   const getFileIcon = (file: FileItem) => {
     if (file.type === 'folder') return FolderOpen;
-    if (file.source === 'google-drive') return Cloud;
+    
     return HardDrive;
   };
 
@@ -291,7 +271,7 @@ const Explorer: React.FC = () => {
           <Icon className={cn(
             "text-muted-foreground",
             viewMode === 'grid' ? "w-5 h-5" : "w-4 h-4",
-            file.source === 'google-drive' ? "text-blue-500" : "text-green-500"
+            "text-green-500"
           )} />
           
           <div className={cn(

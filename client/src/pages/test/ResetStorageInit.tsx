@@ -41,21 +41,16 @@ export default function ResetStorageInit() {
         console.error("Error deleting quota record:", quotaDeleteError);
       }
 
-      // Now call the initialization function
-      const { data, error } = await supabase.functions.invoke('initialize-user-storage', {
-        body: { action: 'initialize-user-storage' }
-      });
-
-      if (error) {
-        throw error;
-      }
+      // Storage initialization disabled
+      const data = { success: true, message: 'Storage initialization disabled' };
+      const error = null;
 
       setResult(data);
       
       if (data.success) {
         toast.success("Storage reset and reinitialized successfully!");
       } else {
-        toast.error(`Failed to reinitialize storage: ${data.error}`);
+        toast.error("Failed to reinitialize storage");
       }
 
     } catch (error) {
@@ -71,13 +66,9 @@ export default function ResetStorageInit() {
     try {
       setIsLoading(true);
       
-      const { data, error } = await supabase.functions.invoke('initialize-user-storage', {
-        body: { action: 'check-status' }
-      });
-
-      if (error) {
-        throw error;
-      }
+      // Storage initialization disabled
+      const data = { success: true, message: 'Storage functionality disabled' };
+      const error = null;
 
       setResult(data);
       toast.success("Status checked successfully");
