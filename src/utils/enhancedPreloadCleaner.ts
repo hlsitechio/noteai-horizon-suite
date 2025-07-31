@@ -24,7 +24,7 @@ if (typeof window !== 'undefined') {
         Object.defineProperty(link, 'href', {
           set: function(value: string) {
             // Block Facebook tracking URLs from being set as preloads
-            if (this.rel === 'preload' && shouldBlockTrackingUrl(value)) {
+            if ((this.rel === 'preload' || this.rel === 'prefetch') && shouldBlockTrackingUrl(value)) {
               console.warn('🚫 Blocked tracking preload creation:', value);
               return; // Don't set the href
             }
@@ -32,7 +32,26 @@ if (typeof window !== 'undefined') {
           },
           get: function() {
             return originalHrefSetter ? this.getAttribute('href') || '' : '';
-          }
+          },
+          configurable: true
+        });
+      }
+      
+      // Also override rel setter to catch late assignments
+      const originalRelSetter = Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'rel')?.set;
+      if (originalRelSetter) {
+        Object.defineProperty(link, 'rel', {
+          set: function(value: string) {
+            if ((value === 'preload' || value === 'prefetch') && shouldBlockTrackingUrl(this.href)) {
+              console.warn('🚫 Blocked tracking preload via rel assignment:', this.href);
+              return; // Don't set rel to preload for tracking URLs
+            }
+            originalRelSetter.call(this, value);
+          },
+          get: function() {
+            return originalRelSetter ? this.getAttribute('rel') || '' : '';
+          },
+          configurable: true
         });
       }
     }
@@ -49,7 +68,12 @@ const shouldBlockTrackingUrl = (url: string): boolean => {
     /fbevents/i,
     /pixel/i,
     /ev=PageView/i,
-    /noscript=1/i
+    /noscript=1/i,
+    /connect\.facebook\.net/i,
+    /fbcdn\.net/i,
+    /gusid/i,
+    /HB-ET/i,
+    /UTS/i
   ];
   return trackingPatterns.some(pattern => pattern.test(url));
 };
@@ -134,6 +158,8 @@ const shouldRemovePreload = (link: HTMLLinkElement): boolean => {
     /connect\.facebook\.net/i,          // Facebook Connect
     /fbevents/i,                        // Facebook events
     /9151671744940732/i,               // Specific FB Pixel ID from warning
+    /ev=PageView/i,                     // Facebook PageView events
+    /noscript=1/i,                      // Facebook noscript fallbacks
     // Google tracking
     /googleads/i,
     /doubleclick\.net/i,
