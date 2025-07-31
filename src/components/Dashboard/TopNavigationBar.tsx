@@ -132,7 +132,7 @@ const TopNavigationBarComponent: React.FC<TopNavigationBarProps> = ({
     setIsLoadingWeather(true);
     try {
       if (import.meta.env.DEV) {
-        console.log(`Fetching weather for: ${city}`);
+        // Fetching weather data
       }
       
       // Add timeout to prevent blocking page load
@@ -171,7 +171,7 @@ const TopNavigationBarComponent: React.FC<TopNavigationBarProps> = ({
           icon: data.icon // Weather code from API
         });
         if (import.meta.env.DEV) {
-          console.log('Weather data updated:', data);
+          // Weather data updated
         }
       } else {
         console.error('Invalid weather data received:', data);
@@ -195,7 +195,7 @@ const TopNavigationBarComponent: React.FC<TopNavigationBarProps> = ({
 
   useEffect(() => {
     if (import.meta.env.DEV) {
-      console.log(`Weather useEffect triggered - City: ${savedWeatherCity}, Units: ${weatherUnits}`);
+      // Weather useEffect triggered
     }
     if (savedWeatherCity && savedWeatherCity.trim()) {
       fetchWeather(savedWeatherCity);

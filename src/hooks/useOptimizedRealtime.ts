@@ -16,7 +16,6 @@ export const useOptimizedRealtime = ({
   throttleMs = 1000,
 }: UseOptimizedRealtimeOptions) => {
   // Real-time functionality completely removed
-  console.log('Real-time subscription for tasks disabled');
 
   const cleanup = useCallback(() => {
     // No cleanup needed as realtime is disabled

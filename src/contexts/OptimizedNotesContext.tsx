@@ -56,7 +56,6 @@ export const OptimizedNotesProvider: React.FC<{ children: React.ReactNode }> = (
   });
 
   // Real-time functionality completely removed
-  console.log('Real-time subscription for tasks disabled');
 
   // Filter notes based on current filters
   const filteredNotes = React.useMemo(() => {

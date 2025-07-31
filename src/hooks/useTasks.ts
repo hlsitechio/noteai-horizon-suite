@@ -143,9 +143,6 @@ export const useTasks = () => {
   useEffect(() => {
     fetchTasks();
 
-    // Real-time subscription disabled to prevent WebSocket connections
-    console.warn('Real-time subscription for tasks disabled');
-
     return () => {
       // No cleanup needed since no subscription was created
     };

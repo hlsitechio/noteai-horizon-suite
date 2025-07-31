@@ -121,7 +121,6 @@ export class RealtimeSyncService {
 
   private connect() {
     // Real-time connections completely disabled
-    console.log('Real-time subscription for tasks disabled');
     
     if (this.isDestroyed) {
       return;

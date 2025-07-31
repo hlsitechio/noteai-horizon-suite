@@ -35,7 +35,7 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
   useEffect(() => {
     // Development logging only
     if (import.meta.env.DEV) {
-      console.log('BannerWithTopNav: Loading weather settings');
+      // Loading weather settings
     }
     const savedSettings = localStorage.getItem('weather-settings');
     if (savedSettings) {
@@ -54,12 +54,12 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
   useEffect(() => {
     // Development logging only
     if (import.meta.env.DEV) {
-      console.log('BannerWithTopNav: Setting up storage listeners');
+      // Setting up storage listeners
     }
     const handleStorageChange = (e: StorageEvent) => {
       // Development logging only
       if (import.meta.env.DEV) {
-        console.log('BannerWithTopNav: Storage change detected', e.key);
+        // Storage change detected
       }
       if (e.key === 'weather-settings' && e.newValue) {
         try {
@@ -77,7 +77,7 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
     const handleCustomStorageChange = () => {
       // Development logging only
       if (import.meta.env.DEV) {
-        console.log('BannerWithTopNav: Custom storage change detected');
+        // Custom storage change detected
       }
       const savedSettings = localStorage.getItem('weather-settings');
       if (savedSettings) {
@@ -98,7 +98,7 @@ export const BannerWithTopNav: React.FC<BannerWithTopNavProps> = ({
     return () => {
       // Development logging only
       if (import.meta.env.DEV) {
-        console.log('BannerWithTopNav: Removing storage listeners');
+        // Removing storage listeners
       }
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('weather-settings-changed', handleCustomStorageChange);

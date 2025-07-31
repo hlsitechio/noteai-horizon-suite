@@ -132,7 +132,6 @@ export const NotesProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     const setupRealtimeSubscription = async () => {
       // Real-time subscription completely disabled
-      console.log('Real-time subscription for tasks disabled');
       
       // Still do initial load
       if (user && !authLoading) {
