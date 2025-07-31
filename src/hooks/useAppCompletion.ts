@@ -35,9 +35,11 @@ export const useAppCompletion = () => {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const calculateMetrics = async (): Promise<AppCompletionMetrics> => {
-    // Initialize enhanced services
+    // Initialize all enhanced services
     EnhancedTestingService.initialize();
     AdvancedErrorManagement.initialize();
+    await BundleAnalysisService.initialize();
+    OnboardingService.initialize();
 
     // Testing Score (0-100) - Enhanced with comprehensive testing
     const basicTestingScore = TestingService.getHealthScore();
@@ -153,7 +155,7 @@ export const useAppCompletion = () => {
       await Promise.all([
         TestingService.runComponentTests(),
         EnhancedTestingService.runComprehensiveTests(),
-        BundleAnalysisService.initialize(), // Re-initialize to get fresh metrics
+        BundleAnalysisService.refreshMetrics(),
       ]);
       
       await refreshMetrics();

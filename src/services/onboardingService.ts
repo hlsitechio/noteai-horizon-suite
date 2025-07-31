@@ -1,4 +1,5 @@
 import { logger } from '@/utils/logger';
+import { ReactNode } from 'react';
 
 interface OnboardingStep {
   id: string;
@@ -7,9 +8,13 @@ interface OnboardingStep {
   category: 'setup' | 'features' | 'customization' | 'advanced';
   completed: boolean;
   optional: boolean;
+  required: boolean; // Alias for !optional
   order: number;
   estimatedTime: number; // in minutes
   dependencies?: string[]; // step IDs that must be completed first
+  target?: string; // CSS selector for the target element
+  position?: 'top' | 'bottom' | 'left' | 'right';
+  content?: string | ReactNode;
 }
 
 interface UserProgress {
@@ -17,6 +22,7 @@ interface UserProgress {
   overallProgress: number; // 0-100
   completedSteps: string[];
   skippedSteps: string[];
+  completedFlows: string[]; // New property for flow tracking
   timeSpent: number; // total time in minutes
   currentStep?: string;
   lastActivity: number;
@@ -26,6 +32,12 @@ interface UserProgress {
     customization: number;
     advanced: number;
   };
+}
+
+interface FlowProgress {
+  currentStep: number;
+  totalSteps: number;
+  progress: number;
 }
 
 interface OnboardingMetrics {
@@ -71,8 +83,12 @@ export class OnboardingService {
         category: 'setup',
         completed: false,
         optional: false,
+        required: true,
         order: 1,
-        estimatedTime: 2
+        estimatedTime: 2,
+        target: '[data-onboarding="welcome"]',
+        position: 'bottom',
+        content: 'Let\'s take a quick tour to get you started with all the powerful features available.'
       },
       {
         id: 'profile-setup',
@@ -81,9 +97,13 @@ export class OnboardingService {
         category: 'setup',
         completed: false,
         optional: false,
+        required: true,
         order: 2,
         estimatedTime: 5,
-        dependencies: ['welcome']
+        dependencies: ['welcome'],
+        target: '[data-onboarding="profile"]',
+        position: 'left',
+        content: 'Add your personal information to personalize your experience.'
       },
       {
         id: 'dashboard-tour',
@@ -92,9 +112,13 @@ export class OnboardingService {
         category: 'features',
         completed: false,
         optional: false,
+        required: true,
         order: 3,
         estimatedTime: 3,
-        dependencies: ['profile-setup']
+        dependencies: ['profile-setup'],
+        target: '[data-onboarding="dashboard"]',
+        position: 'top',
+        content: 'This is your central hub where you can see all your important information at a glance.'
       },
       {
         id: 'navigation-tutorial',
@@ -103,9 +127,13 @@ export class OnboardingService {
         category: 'features',
         completed: false,
         optional: false,
+        required: true,
         order: 4,
         estimatedTime: 4,
-        dependencies: ['dashboard-tour']
+        dependencies: ['dashboard-tour'],
+        target: '[data-onboarding="sidebar"]',
+        position: 'right',
+        content: 'Use the sidebar to quickly access all features and tools.'
       },
       {
         id: 'ai-features',
@@ -114,9 +142,13 @@ export class OnboardingService {
         category: 'features',
         completed: false,
         optional: false,
+        required: true,
         order: 5,
         estimatedTime: 6,
-        dependencies: ['navigation-tutorial']
+        dependencies: ['navigation-tutorial'],
+        target: '[data-onboarding="ai-features"]',
+        position: 'bottom',
+        content: 'Discover how AI can help boost your productivity.'
       },
       {
         id: 'customization',
@@ -125,9 +157,13 @@ export class OnboardingService {
         category: 'customization',
         completed: false,
         optional: true,
+        required: false,
         order: 6,
         estimatedTime: 8,
-        dependencies: ['ai-features']
+        dependencies: ['ai-features'],
+        target: '[data-onboarding="settings"]',
+        position: 'left',
+        content: 'Customize the interface to match your preferences.'
       },
       {
         id: 'collaboration',
@@ -136,9 +172,13 @@ export class OnboardingService {
         category: 'features',
         completed: false,
         optional: true,
+        required: false,
         order: 7,
         estimatedTime: 5,
-        dependencies: ['ai-features']
+        dependencies: ['ai-features'],
+        target: '[data-onboarding="collaboration"]',
+        position: 'top',
+        content: 'Collaborate seamlessly with your team members.'
       },
       {
         id: 'advanced-settings',
@@ -147,9 +187,13 @@ export class OnboardingService {
         category: 'advanced',
         completed: false,
         optional: true,
+        required: false,
         order: 8,
         estimatedTime: 10,
-        dependencies: ['customization']
+        dependencies: ['customization'],
+        target: '[data-onboarding="advanced"]',
+        position: 'bottom',
+        content: 'Fine-tune advanced settings for power users.'
       },
       {
         id: 'keyboard-shortcuts',
@@ -158,9 +202,13 @@ export class OnboardingService {
         category: 'advanced',
         completed: false,
         optional: true,
+        required: false,
         order: 9,
         estimatedTime: 4,
-        dependencies: ['navigation-tutorial']
+        dependencies: ['navigation-tutorial'],
+        target: '[data-onboarding="shortcuts"]',
+        position: 'right',
+        content: 'Master keyboard shortcuts to work more efficiently.'
       },
       {
         id: 'completion',
@@ -169,9 +217,13 @@ export class OnboardingService {
         category: 'setup',
         completed: false,
         optional: false,
+        required: true,
         order: 10,
         estimatedTime: 1,
-        dependencies: ['ai-features']
+        dependencies: ['ai-features'],
+        target: '[data-onboarding="completion"]',
+        position: 'top',
+        content: 'Congratulations! You\'ve completed the onboarding tour and are ready to explore all features.'
       }
     ];
 
@@ -209,6 +261,7 @@ export class OnboardingService {
         overallProgress: 0,
         completedSteps: [],
         skippedSteps: [],
+        completedFlows: [], // Initialize empty flows array
         timeSpent: 0,
         lastActivity: Date.now(),
         categories: {
@@ -268,26 +321,7 @@ export class OnboardingService {
     return false;
   }
 
-  static skipStep(userId: string, stepId: string): boolean {
-    const step = this.steps.get(stepId);
-    if (!step || !step.optional) {
-      return false;
-    }
-
-    const progress = this.getUserProgress(userId);
-    
-    if (!progress.skippedSteps.includes(stepId) && !progress.completedSteps.includes(stepId)) {
-      progress.skippedSteps.push(stepId);
-      progress.lastActivity = Date.now();
-      this.updateProgress(userId);
-      this.saveUserProgress();
-      
-      logger.info(`Onboarding step skipped: ${stepId} by user ${userId}`);
-      return true;
-    }
-
-    return false;
-  }
+  // Remove the old skipStep method since we updated it above
 
   private static updateProgress(userId: string) {
     const progress = this.getUserProgress(userId);
@@ -391,34 +425,70 @@ export class OnboardingService {
     return this.getNextStep(userId);
   }
 
-  static getCurrentFlowProgress(userId?: string): number {
-    if (!userId) return 0;
-    return this.getUserProgress(userId).overallProgress;
+  static getCurrentFlowProgress(userId?: string): FlowProgress {
+    if (!userId) {
+      return { currentStep: 0, totalSteps: 0, progress: 0 };
+    }
+    
+    const progress = this.getUserProgress(userId);
+    const allSteps = Array.from(this.steps.values());
+    const currentStep = this.getNextStep(userId);
+    const currentStepIndex = currentStep ? allSteps.findIndex(s => s.id === currentStep.id) : allSteps.length;
+    
+    return {
+      currentStep: currentStepIndex + 1,
+      totalSteps: allSteps.length,
+      progress: progress.overallProgress
+    };
   }
 
-  static startFlow(userId: string, flowId?: string): boolean {
+  static startFlow(flowId: string, userId?: string): boolean {
+    if (!userId) return false;
     // Initialize user progress if needed
     this.getUserProgress(userId);
     return true;
   }
 
-  static nextStep(userId: string): boolean {
+  static nextStep(userId: string): OnboardingStep | null {
     const nextStep = this.getNextStep(userId);
     if (nextStep) {
-      return this.completeStep(userId, nextStep.id);
+      this.completeStep(userId, nextStep.id);
+      return this.getNextStep(userId); // Return the new next step
     }
-    return false;
+    return null;
   }
 
-  static previousStep(userId: string): boolean {
-    // Simple implementation - just mark last completed step as incomplete
-    const progress = this.getUserProgress(userId);
-    if (progress.completedSteps.length > 0) {
-      const lastStep = progress.completedSteps.pop();
-      this.saveUserProgress();
-      return true;
+  static previousStep(): OnboardingStep | null {
+    // Simple implementation - just return null for now
+    // In a full implementation, this would handle step navigation
+    return null;
+  }
+
+  static skipStep(userId?: string, stepId?: string): OnboardingStep | null {
+    if (!userId) return null;
+    
+    // If stepId not provided, skip current step
+    const currentStep = this.getNextStep(userId);
+    if (!currentStep) return null;
+    
+    const targetStepId = stepId || currentStep.id;
+    const step = this.steps.get(targetStepId);
+    if (!step || !step.optional) {
+      return currentStep; // Can't skip required steps
     }
-    return false;
+
+    const progress = this.getUserProgress(userId);
+    
+    if (!progress.skippedSteps.includes(targetStepId) && !progress.completedSteps.includes(targetStepId)) {
+      progress.skippedSteps.push(targetStepId);
+      progress.lastActivity = Date.now();
+      this.updateProgress(userId);
+      this.saveUserProgress();
+      
+      logger.info(`Onboarding step skipped: ${targetStepId} by user ${userId}`);
+    }
+
+    return this.getNextStep(userId);
   }
 
   static resetUserProgress(userId: string) {

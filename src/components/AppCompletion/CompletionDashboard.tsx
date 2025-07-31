@@ -76,7 +76,9 @@ export const CompletionDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-onboarding="dashboard">
+      {/* Welcome message for first-time visitors */}
+      <div data-onboarding="welcome" className="sr-only">Welcome to your completion dashboard</div>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -208,7 +210,7 @@ export const CompletionDashboard: React.FC = () => {
       )}
 
       {/* Onboarding Management */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" data-onboarding="ai-features">
         <OnboardingTrigger variant="card" showProgress={true} />
         
         <Card>
@@ -238,7 +240,9 @@ export const CompletionDashboard: React.FC = () => {
       </div>
 
       {/* Testing Dashboard */}
-      <TestingDashboard />
+      <div data-onboarding="completion">
+        <TestingDashboard />
+      </div>
     </div>
   );
 };
