@@ -41,7 +41,7 @@ export const useStorageInitialization = (userId: string | null) => {
         .from('user_storage_initialization')
         .select('*')
         .eq('user_id', userId)
-        .maybeSingle();
+        .single();
 
       if (error) {
         throw error;

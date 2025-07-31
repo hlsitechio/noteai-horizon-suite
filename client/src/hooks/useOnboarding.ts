@@ -96,7 +96,7 @@ export function useOnboarding() {
         .eq('user_id', user.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error && (error as any)?.code !== 'PGRST116') {
         console.error('Error loading onboarding state:', error);
         setIsLoading(false);
         return;

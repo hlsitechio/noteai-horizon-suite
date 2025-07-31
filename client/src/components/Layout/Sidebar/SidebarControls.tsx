@@ -32,7 +32,7 @@ export const SidebarControls: React.FC = () => {
         console.error('Save and lock error:', error);
         toast({
           title: "Save & Lock Failed",
-          description: `Failed to save and lock sidebar layout: ${error.message}`,
+          description: `Failed to save and lock sidebar layout: ${(error as any)?.message || 'Unknown error'}`,
           variant: "destructive",
         });
         return;
@@ -51,7 +51,7 @@ export const SidebarControls: React.FC = () => {
       console.error('Save and lock error:', err);
       toast({
         title: "Save & Lock Failed", 
-        description: `An unexpected error occurred: ${err.message}`,
+        description: `An unexpected error occurred: ${(err as any)?.message || 'Unknown error'}`,
         variant: "destructive",
       });
     } finally {

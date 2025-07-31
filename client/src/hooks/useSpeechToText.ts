@@ -117,7 +117,7 @@ export const useSpeechToText = () => {
 
               if (error) {
                 console.error('Supabase function error:', error);
-                throw new Error(`Transcription failed: ${error.message}`);
+                throw new Error(`Transcription failed: ${(error as any)?.message || 'Unknown error'}`);
               }
 
               if (!data || !data.text) {

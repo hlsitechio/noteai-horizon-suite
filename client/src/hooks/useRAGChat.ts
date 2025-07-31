@@ -62,7 +62,7 @@ export const useRAGChat = () => {
 
       if (error) {
         console.error('Supabase function error:', error);
-        throw new Error(`Failed to get AI response: ${error.message}`);
+        throw new Error(`Failed to get AI response: ${(error as any)?.message || 'Unknown error'}`);
       }
 
       if (!data) {

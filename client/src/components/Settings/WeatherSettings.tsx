@@ -79,7 +79,7 @@ export const WeatherSettings: React.FC<WeatherSettingsProps> = ({ onSettingsChan
       if (error) {
         console.error('Weather API test error:', error);
         setConnectionStatus('error');
-        toast.error(`Connection test failed: ${error.message}`);
+        toast.error(`Connection test failed: ${(error as any)?.message || 'Unknown error'}`);
         return;
       }
 

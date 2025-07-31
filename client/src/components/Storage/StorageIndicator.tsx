@@ -60,7 +60,7 @@ export const StorageIndicator: React.FC<StorageIndicatorProps> = ({
         .eq('user_id', user?.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error && (error as any)?.code !== 'PGRST116') {
         throw error;
       }
 

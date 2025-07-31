@@ -12,7 +12,7 @@ export const transformUser = async (supabaseUser: SupabaseUser): Promise<User> =
       .eq('id', supabaseUser.id)
       .single();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 is "not found" error
+    if (error && (error as any)?.code !== 'PGRST116') { // PGRST116 is "not found" error
       console.error('Error fetching user profile:', error);
     }
 
@@ -87,7 +87,7 @@ export const clearCorruptedSession = async () => {
     }
     
     // Force sign out without waiting for response to avoid hanging
-    await supabase.auth.signOut({ scope: 'local' });
+    await supabase.auth.signOut();
     
     console.log('Session data cleared successfully');
     
