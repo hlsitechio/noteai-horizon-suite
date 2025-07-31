@@ -28,10 +28,10 @@ const ResizableDashboardContainer: React.FC<ResizableDashboardContainerProps> = 
     }
   }, [isEditMode, onLayout]);
 
-  // Create storage handler that returns null to disable localStorage persistence
+  // Create storage handler that returns undefined to disable localStorage persistence
   // We handle persistence through our own system
   const createStorageHandler = () => {
-    return null; // Always return null to disable localStorage integration
+    return undefined; // Always return undefined to disable localStorage integration
   };
 
   return (

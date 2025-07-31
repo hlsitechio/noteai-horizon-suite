@@ -120,8 +120,8 @@ export const InitializeDashboardButton: React.FC<InitializeDashboardButtonProps>
       const { data, error: functionError } = await supabase.functions.invoke(
         'initialize-user-dashboard',
         {
-          headers: {
-            Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+          body: {
+            userId: (await supabase.auth.getUser()).data.user?.id
           }
         }
       );
@@ -130,7 +130,7 @@ export const InitializeDashboardButton: React.FC<InitializeDashboardButtonProps>
       await progressPromise;
 
       if (functionError) {
-        throw new Error(functionError.message || 'Failed to initialize dashboard');
+        throw new Error(typeof functionError === 'string' ? functionError : 'Failed to initialize dashboard');
       }
 
       if (!data?.success) {

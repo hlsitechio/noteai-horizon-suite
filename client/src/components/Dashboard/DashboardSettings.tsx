@@ -88,7 +88,7 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = ({ children }) => {
       if (error) {
         toast({
           title: "Save & Lock Failed",
-          description: `Failed to save and lock sidebar layout: ${error.message}`,
+          description: `Failed to save and lock sidebar layout: ${typeof error === 'string' ? error : 'Unknown error'}`,
           variant: "destructive",
         });
         return;
@@ -104,7 +104,7 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = ({ children }) => {
     } catch (err) {
       toast({
         title: "Save & Lock Failed", 
-        description: `An unexpected error occurred: ${err.message}`,
+        description: `An unexpected error occurred: ${err instanceof Error ? err.message : 'Unknown error'}`,
         variant: "destructive",
       });
     } finally {

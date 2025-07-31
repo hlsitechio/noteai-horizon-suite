@@ -12,7 +12,7 @@ interface ResizableDashboardGridProps {
   isDashboardEditMode: boolean;
   onMainContentResize: (sizes: number[]) => void;
   onHorizontalResize: (sizes: number[]) => void;
-  createStorageHandler: () => null;
+  createStorageHandler: () => undefined;
   startOrder: number; // Starting order for panels
 }
 

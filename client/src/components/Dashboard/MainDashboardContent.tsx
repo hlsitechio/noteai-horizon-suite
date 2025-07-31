@@ -81,7 +81,7 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     
     return notes.filter(note => {
-      const noteDate = new Date(note.createdAt);
+      const noteDate = new Date(note.createdAt || new Date());
       return noteDate > oneWeekAgo;
     }).length;
   }, [notes]);
@@ -116,10 +116,10 @@ export const MainDashboardContent: React.FC<MainDashboardContentProps> = ({
     return <RedirectLoadingState />;
   }
 
-  // Create storage handler that returns null to disable localStorage persistence
+  // Create storage handler that returns undefined to disable localStorage persistence
   // We handle persistence through our own system
   const createStorageHandler = () => {
-    return null; // Always return null to disable localStorage integration
+    return undefined; // Always return undefined to disable localStorage integration
   };
 
   // On mobile, render a simpler stacked layout
