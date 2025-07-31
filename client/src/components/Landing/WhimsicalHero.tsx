@@ -54,7 +54,7 @@ const WhimsicalHero = () => {
             <Button 
               size="lg" 
               onClick={() => navigate('/register')}
-              className="h-14 px-8 text-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground group"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-accent/20 hover:border-accent/40 hover:shadow-md rounded-xl h-14 px-8 text-lg font-semibold hover:bg-primary/90 text-primary-foreground group bg-[#2856c9]"
             >
               Get started free
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />

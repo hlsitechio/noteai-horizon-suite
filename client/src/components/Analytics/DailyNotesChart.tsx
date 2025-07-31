@@ -20,6 +20,7 @@ const DailyNotesChart: React.FC = () => {
       date.setDate(today.getDate() - i);
       
       const dayNotes = notes.filter(note => {
+        if (!note.createdAt) return false;
         const noteDate = new Date(note.createdAt);
         return noteDate.toDateString() === date.toDateString();
       }).length;

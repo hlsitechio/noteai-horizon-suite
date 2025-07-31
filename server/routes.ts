@@ -277,6 +277,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Folders endpoints
+  app.get('/api/folders', async (req, res) => {
+    try {
+      // For now, return empty array since folders aren't implemented in storage
+      res.json([]);
+    } catch (error) {
+      console.error('Folders fetch error:', error);
+      res.status(500).json({ error: 'Failed to fetch folders' });
+    }
+  });
+
+  app.post('/api/folders', async (req, res) => {
+    try {
+      // Mock implementation for now
+      const folder = {
+        id: Date.now().toString(),
+        ...req.body,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      res.json(folder);
+    } catch (error) {
+      console.error('Folder creation error:', error);
+      res.status(500).json({ error: 'Failed to create folder' });
+    }
+  });
+
+  app.put('/api/folders/:id', async (req, res) => {
+    try {
+      const folder = {
+        id: req.params.id,
+        ...req.body,
+        updated_at: new Date().toISOString()
+      };
+      res.json(folder);
+    } catch (error) {
+      console.error('Folder update error:', error);
+      res.status(500).json({ error: 'Failed to update folder' });
+    }
+  });
+
+  app.delete('/api/folders/:id', async (req, res) => {
+    try {
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Folder deletion error:', error);
+      res.status(500).json({ error: 'Failed to delete folder' });
+    }
+  });
+
   // User Preferences
   app.get('/api/preferences/:userId', async (req, res) => {
     try {

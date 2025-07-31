@@ -25,14 +25,15 @@ export function RecentActivity() {
     if (!notes.length) return [];
 
     return notes
-      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+      .filter(note => note.updatedAt)
+      .sort((a, b) => new Date(b.updatedAt!).getTime() - new Date(a.updatedAt!).getTime())
       .slice(0, 5)
       .map((note) => ({
         id: note.id,
         type: 'edited',
         title: 'Updated note',
         description: note.title,
-        time: formatDistanceToNow(new Date(note.updatedAt), { addSuffix: true }),
+        time: formatDistanceToNow(new Date(note.updatedAt!), { addSuffix: true }),
         icon: Edit3,
         color: 'bg-blue-500'
       }));
@@ -44,18 +45,19 @@ export function RecentActivity() {
 
     const recent = notes
       .filter(note => {
+        if (!note.createdAt || !note.updatedAt) return false;
         const created = new Date(note.createdAt);
         const updated = new Date(note.updatedAt);
         return Math.abs(created.getTime() - updated.getTime()) < 60000; // Less than 1 minute difference
       })
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime())
       .slice(0, 2)
       .map((note) => ({
         id: `created-${note.id}`,
         type: 'created',
         title: 'Created new note',
         description: note.title,
-        time: formatDistanceToNow(new Date(note.createdAt), { addSuffix: true }),
+        time: formatDistanceToNow(new Date(note.createdAt!), { addSuffix: true }),
         icon: Plus,
         color: 'bg-green-500'
       }));

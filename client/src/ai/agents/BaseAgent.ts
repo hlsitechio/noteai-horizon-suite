@@ -2,7 +2,7 @@ import { AIAgent, AIContext, AIMessage, AgentResponse, ChatMode } from '../types
 
 export abstract class BaseAgent {
   protected agent: AIAgent;
-  protected context: AIContext;
+  protected context!: AIContext; // Will be set via setContext method
 
   constructor(agent: AIAgent) {
     this.agent = agent;

@@ -1,18 +1,34 @@
 
-import { supabase } from '@/integrations/supabase/client';
 import { Folder } from '../types/folder';
+
+const API_BASE_URL = window.location.origin + '/api';
+
+async function apiRequest(endpoint: string, options: RequestInit = {}) {
+  const url = `${API_BASE_URL}${endpoint}`;
+  const defaultOptions: RequestInit = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    credentials: 'include',
+  };
+
+  const response = await fetch(url, { ...defaultOptions, ...options });
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Request failed' }));
+    throw new Error(error.error || `HTTP error! status: ${response.status}`);
+  }
+  
+  return response.json();
+}
 
 export class SupabaseFoldersService {
   static async getAllFolders(): Promise<Folder[]> {
     try {
-      const { data, error } = await supabase
-        .from('folders')
-        .select('*')
-        .order('updated_at', { ascending: false });
+      const data = await apiRequest('/folders');
 
-      if (error) throw error;
-
-      return data.map(folder => ({
+      return data.map((folder: any) => ({
         id: folder.id,
         name: folder.name,
         color: '#64748b', // Default color since not in database
@@ -28,20 +44,13 @@ export class SupabaseFoldersService {
 
   static async saveFolder(folderData: Omit<Folder, 'id' | 'createdAt' | 'updatedAt'>): Promise<Folder> {
     try {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) throw new Error('User not authenticated');
-
-      const { data, error } = await supabase
-        .from('folders')
-        .insert({
+      const data = await apiRequest('/folders', {
+        method: 'POST',
+        body: JSON.stringify({
           name: folderData.name,
           parent_folder_id: folderData.parentId,
-          user_id: user.user.id,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
+        }),
+      });
 
       return {
         id: data.id,
@@ -64,14 +73,10 @@ export class SupabaseFoldersService {
       if (updates.name !== undefined) updateData.name = updates.name;
       if (updates.parentId !== undefined) updateData.parent_folder_id = updates.parentId;
 
-      const { data, error } = await supabase
-        .from('folders')
-        .update(updateData)
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
+      const data = await apiRequest(`/folders/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updateData),
+      });
 
       return {
         id: data.id,
@@ -89,12 +94,9 @@ export class SupabaseFoldersService {
 
   static async deleteFolder(id: string): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('folders')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      await apiRequest(`/folders/${id}`, {
+        method: 'DELETE',
+      });
       return true;
     } catch (error) {
       console.error('Error deleting folder:', error);

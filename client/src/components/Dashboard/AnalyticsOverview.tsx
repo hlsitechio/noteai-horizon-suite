@@ -35,6 +35,7 @@ const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
       date.setDate(today.getDate() - i);
       
       const dayNotes = notes.filter(note => {
+        if (!note.createdAt) return false;
         const noteDate = new Date(note.createdAt);
         return noteDate.toDateString() === date.toDateString();
       }).length;
@@ -74,6 +75,7 @@ const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
     
     // Count notes and favorites by month
     notes.forEach(note => {
+      if (!note.createdAt) return;
       const noteDate = new Date(note.createdAt);
       const monthKey = noteDate.toLocaleDateString('en-US', { month: 'short' });
       
@@ -97,8 +99,8 @@ const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
   const writingStreak = React.useMemo(() => {
     if (notes.length === 0) return 0;
     
-    const sortedNotes = [...notes].sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    const sortedNotes = [...notes].filter(note => note.createdAt).sort((a, b) => 
+      new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
     );
     
     let streak = 0;
@@ -107,6 +109,7 @@ const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({
     
     for (let i = 0; i < 30; i++) { // Check last 30 days
       const hasNoteOnDay = sortedNotes.some(note => {
+        if (!note.createdAt) return false;
         const noteDate = new Date(note.createdAt);
         noteDate.setHours(0, 0, 0, 0);
         return noteDate.getTime() === currentDate.getTime();

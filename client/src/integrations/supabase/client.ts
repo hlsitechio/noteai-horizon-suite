@@ -86,7 +86,15 @@ export const auth = {
     const userId = localStorage.getItem('userId');
     if (!userId) return { data: { session: null }, error: null };
     
-    return { data: { session: { user: { id: userId } } }, error: null };
+    return { 
+      data: { 
+        session: { 
+          user: { id: userId },
+          access_token: 'placeholder-token' // Add access_token to fix TypeScript errors
+        } 
+      }, 
+      error: null 
+    };
   },
 
   onAuthStateChange(callback: (event: string, session: any) => void) {
@@ -202,6 +210,11 @@ export const supabase = {
               if (result.error) return result;
               return { data: result.data?.[0] || null, error: null };
             },
+            async maybeSingle() {
+              const result = await execute();
+              if (result.error) return result;
+              return { data: result.data?.[0] || null, error: null };
+            },
             execute,
           };
         },
@@ -216,6 +229,24 @@ export const supabase = {
           } catch (error) {
             return { data: null, error };
           }
+        },
+        
+        async upsert(data: any, options?: { onConflict?: string }) {
+          try {
+            const result = await apiRequest(`/${table}/upsert`, {
+              method: 'POST',
+              body: JSON.stringify({ data, onConflict: options?.onConflict }),
+            });
+            return { data: result, error: null };
+          } catch (error) {
+            return { data: null, error };
+          }
+        },
+        
+        async single() {
+          const result = await execute();
+          if (result.error) return result;
+          return { data: result.data?.[0] || null, error: null };
         },
         
         async update(data: any) {

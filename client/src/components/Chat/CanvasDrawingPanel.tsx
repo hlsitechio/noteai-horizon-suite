@@ -70,8 +70,10 @@ export const CanvasDrawingPanel: React.FC<CanvasDrawingPanelProps> = ({
     });
 
     // Configure drawing brush
-    canvas.freeDrawingBrush.color = brushColor;
-    canvas.freeDrawingBrush.width = brushWidth[0];
+    if (canvas.freeDrawingBrush) {
+      canvas.freeDrawingBrush.color = brushColor;
+      canvas.freeDrawingBrush.width = brushWidth[0];
+    }
     canvas.isDrawingMode = activeTool === 'pen';
 
     setFabricCanvas(canvas);

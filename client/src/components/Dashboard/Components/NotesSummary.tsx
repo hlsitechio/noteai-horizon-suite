@@ -31,7 +31,8 @@ export function NotesSummary() {
   // Calculate real stats from data
   const favoriteNotes = notes.filter(note => note.isFavorite);
   const recentNotes = notes
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .filter(note => note.updatedAt)
+    .sort((a, b) => new Date(b.updatedAt!).getTime() - new Date(a.updatedAt!).getTime())
     .slice(0, 4);
 
   // Calculate today's word count (mock for now, would need word count data)
@@ -216,7 +217,7 @@ export function NotesSummary() {
                         {note.tags?.[0] || 'General'}
                       </Badge>
                       <span>•</span>
-                      <span>{format(new Date(note.updatedAt), 'MMM d')}</span>
+                      <span>{note.updatedAt ? format(new Date(note.updatedAt), 'MMM d') : 'N/A'}</span>
                     </div>
                   </div>
                 </div>
