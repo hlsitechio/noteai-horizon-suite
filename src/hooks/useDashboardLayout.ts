@@ -159,7 +159,7 @@ export const useDashboardLayout = () => {
     return () => {
       isMounted = false;
     };
-  }, [user]);
+  }, [user?.id]); // Only depend on user ID to prevent infinite loops
 
   return {
     layout,
