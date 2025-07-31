@@ -3,6 +3,7 @@ import { ConsolidatedAnalyticsService } from './consolidatedAnalyticsService';
 import { OptimizedPerformanceService } from './optimizedPerformanceService';
 import { OptimizedCleanupService } from './optimizedCleanupService';
 import { productionMonitoring } from './productionMonitoringService';
+import { DashboardLayoutService } from './dashboardLayoutService';
 import { logger } from '../utils/logger';
 
 export class AppInitializationService {
@@ -16,6 +17,9 @@ export class AppInitializationService {
       OptimizedCleanupService.initialize();
       OptimizedPerformanceService.initialize();
       ConsolidatedAnalyticsService.initialize();
+      
+      // Clear dashboard layout cache to prevent circuit breaker issues
+      DashboardLayoutService.clearCache();
 
       // Initialize production monitoring in production
       if (import.meta.env.PROD) {

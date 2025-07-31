@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
-  DashboardLayoutService, 
   DashboardComponentService, 
   DashboardPanelService,
-  type DashboardLayout, 
   type DashboardComponent,
   type PanelConfiguration 
 } from '@/services/dashboard';
+import { DashboardLayoutService } from '@/services/dashboardLayoutService';
+import type { DashboardLayout } from '@/types/dashboard';
 import { DashboardSettingsService } from '@/services/dashboardSettingsService';
 import { toast } from 'sonner';
 
@@ -20,23 +20,64 @@ export const useDashboardLayout = () => {
   const [error, setError] = useState<string | null>(null);
 
   const loadLayout = async () => {
-    if (!user) return;
+    if (!user?.id) return;
 
     try {
       setIsLoading(true);
       setError(null);
+      
+      console.log('🔄 Loading dashboard layout for user:', user.id);
 
-      // First cleanup any duplicate active layouts
-      await DashboardLayoutService.cleanupDuplicateLayouts(user.id);
-
-      // Load user's layout
+      // Load user's layout with robust service (includes caching and deduplication)
       const userLayout = await DashboardLayoutService.getUserLayout(user.id);
 
-      setLayout(userLayout);
+      if (userLayout) {
+        // Transform to expected format
+        const transformedLayout = {
+          id: userLayout.id,
+          user_id: userLayout.user_id,
+          layout_name: userLayout.name,
+          panel_configurations: userLayout.layout_config,
+          panel_sizes: userLayout.layout_config,
+          is_active: userLayout.is_default || false,
+          created_at: userLayout.created_at,
+          updated_at: userLayout.updated_at
+        };
+        setLayout(transformedLayout);
+        console.log('✅ Dashboard layout loaded successfully');
+      } else {
+        console.log('📝 Creating default dashboard layout');
+        // Create default layout if none exists
+        const defaultConfig = {
+          components: {},
+          panelSizes: {},
+          gridLayout: []
+        };
+        
+        const newLayout = await DashboardLayoutService.createLayout(user.id, defaultConfig);
+        if (newLayout) {
+          const transformedLayout = {
+            id: newLayout.id,
+            user_id: newLayout.user_id,
+            layout_name: newLayout.name,
+            panel_configurations: newLayout.layout_config,
+            panel_sizes: newLayout.layout_config,
+            is_active: newLayout.is_default || false,
+            created_at: newLayout.created_at,
+            updated_at: newLayout.updated_at
+          };
+          setLayout(transformedLayout);
+          console.log('✅ Default dashboard layout created');
+        }
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load dashboard layout';
       setError(errorMessage);
-      toast.error(errorMessage);
+      console.error('Dashboard layout error:', err);
+      // Don't show toast for network errors to prevent spam
+      if (!errorMessage.includes('network') && !errorMessage.includes('fetch')) {
+        toast.error(errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -90,7 +131,7 @@ export const useDashboardLayout = () => {
       const newLayoutConfig = { ...layoutConfig, components: updatedConfigs };
       
       await DashboardLayoutService.updateLayout(layout.id, {
-        panel_configurations: newLayoutConfig
+        layout_config: newLayoutConfig
       });
 
       // Update local state
@@ -150,14 +191,23 @@ export const useDashboardLayout = () => {
 
   useEffect(() => {
     let isMounted = true;
+    let timeoutId: NodeJS.Timeout;
     
-    if (user && isMounted) {
-      loadLayout();
-      loadAvailableComponents();
+    if (user?.id && isMounted) {
+      // Debounce the layout loading to prevent rapid successive calls
+      timeoutId = setTimeout(() => {
+        if (isMounted) {
+          loadLayout();
+          loadAvailableComponents();
+        }
+      }, 100);
     }
     
     return () => {
       isMounted = false;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
     };
   }, [user?.id]); // Only depend on user ID to prevent infinite loops
 
