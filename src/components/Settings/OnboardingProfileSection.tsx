@@ -223,11 +223,12 @@ const OnboardingProfileSection: React.FC = () => {
         {/* Form Fields */}
         <div className="grid gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
+            <label htmlFor="onboarding-full-name" className="text-sm font-medium text-foreground flex items-center gap-2">
               <User className="w-4 h-4" />
               Full Name *
             </label>
             <Input 
+              id="onboarding-full-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="h-11 rounded-lg border-2 focus:border-primary transition-colors" 
@@ -237,11 +238,12 @@ const OnboardingProfileSection: React.FC = () => {
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
+            <label htmlFor="onboarding-nickname" className="text-sm font-medium text-foreground flex items-center gap-2">
               <MessageSquare className="w-4 h-4" />
               Nickname / Display Name
             </label>
             <Input 
+              id="onboarding-nickname"
               value={welcomeMessage}
               onChange={(e) => setWelcomeMessage(e.target.value)}
               className="h-11 rounded-lg border-2 focus:border-primary transition-colors" 
@@ -253,11 +255,12 @@ const OnboardingProfileSection: React.FC = () => {
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
+            <label htmlFor="onboarding-email" className="text-sm font-medium text-foreground flex items-center gap-2">
               <Mail className="w-4 h-4" />
               Email Address *
             </label>
             <Input 
+              id="onboarding-email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="email"

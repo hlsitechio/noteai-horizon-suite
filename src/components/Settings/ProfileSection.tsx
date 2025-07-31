@@ -234,11 +234,12 @@ const ProfileSection: React.FC = () => {
         {/* Form Fields */}
         <div className="grid gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
+            <label htmlFor="profile-full-name" className="text-sm font-medium text-foreground flex items-center gap-2">
               <User className="w-4 h-4" />
               Full Name
             </label>
             <Input 
+              id="profile-full-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="h-11 rounded-lg border-2 focus:border-primary transition-colors" 
@@ -247,11 +248,12 @@ const ProfileSection: React.FC = () => {
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
+            <label htmlFor="profile-welcome-message" className="text-sm font-medium text-foreground flex items-center gap-2">
               <MessageSquare className="w-4 h-4" />
               Welcome Message
             </label>
             <Input 
+              id="profile-welcome-message"
               value={welcomeMessage}
               onChange={(e) => setWelcomeMessage(e.target.value)}
               className="h-11 rounded-lg border-2 focus:border-primary transition-colors" 
@@ -263,11 +265,12 @@ const ProfileSection: React.FC = () => {
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground flex items-center gap-2">
+            <label htmlFor="profile-email" className="text-sm font-medium text-foreground flex items-center gap-2">
               <Mail className="w-4 h-4" />
               Email Address
             </label>
             <Input 
+              id="profile-email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
