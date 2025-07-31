@@ -19,7 +19,7 @@ import { Card } from '@/components/ui/card';
 import { CreateItemDialog } from '@/components/Explorer/CreateItemDialog';
 import { CreateItemDropdown } from '@/components/Explorer/CreateItemDropdown';
 import { DocumentImportDialog } from '@/components/Explorer/DocumentImportDialog';
-import { PreviewPanel } from '@/components/Explorer/PreviewPanel';
+import { PreviewPanel } from '@/components/Chat/PreviewPanel';
 import { FolderTree } from '@/components/Explorer/FolderTree';
 import { NotesSection } from '@/components/Layout/Sidebar/NotesSection';
 import { StorageIndicator } from '@/components/Storage/StorageIndicator';
@@ -113,7 +113,7 @@ const NotesExplorer: React.FC = () => {
     notesToShow = notesToShow.filter(note => 
       searchTerm === '' || 
       note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      note.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (note.content || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       note.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
@@ -660,10 +660,19 @@ const NotesExplorer: React.FC = () => {
                   <div className="p-4 border-b">
                     <h3 className="font-semibold">Preview</h3>
                   </div>
-                  <div className="h-[calc(100%-60px)]">
+                   <div className="h-[calc(100%-60px)]">
                     <PreviewPanel 
-                      selectedItems={selectedItems} 
-                      allItems={sortedItems}
+                      allItems={sortedItems.map(item => ({
+                        id: item.id,
+                        type: item.type as 'note' | 'document',
+                        name: item.displayName,
+                        description: item.type === 'note' ? item.content?.substring(0, 100) : item.description,
+                        updatedAt: item.modifiedDate,
+                        createdAt: item.createdAt ? new Date(item.createdAt) : undefined,
+                        tags: item.tags || [],
+                        category: item.category,
+                        folderId: item.folder_id || null
+                      }))}
                     />
                   </div>
                 </div>

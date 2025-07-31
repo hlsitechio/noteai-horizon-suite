@@ -2,7 +2,7 @@
 export interface Note {
   id: string;
   title: string;
-  content: string | null;
+  content: string | null | undefined;
   content_type?: string | null;
   category: string;
   tags: string[];

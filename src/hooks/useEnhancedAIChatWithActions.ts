@@ -232,10 +232,16 @@ Current conversation context: The user is chatting with an AI assistant that can
     setMessages([]);
   };
 
+  const sendMessage = async (content: string) => {
+    await sendMessageWithActions(content);
+  };
+
   return {
     messages,
+    sendMessage,
     sendMessageWithActions,
     clearChat,
-    isLoading: isLoading || isProcessing || isExecuting
+    isLoading: isLoading || isProcessing || isExecuting,
+    isProcessing: isLoading || isProcessing || isExecuting
   };
 };

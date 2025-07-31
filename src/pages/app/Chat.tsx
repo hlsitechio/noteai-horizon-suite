@@ -211,7 +211,6 @@ const Chat: React.FC = () => {
                   <div className="h-full bg-gradient-glass backdrop-blur-sm border border-border/20 rounded-xl">
                     <NotePreviewPanel
                       note={currentNote}
-                      isVisible={isPreviewVisible}
                       onToggleVisibility={toggleVisibility}
                       onNoteUpdate={updateNote}
                       onRequestModification={requestModification}

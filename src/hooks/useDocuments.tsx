@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-interface Document {
+export interface Document {
   id: string;
   user_id: string;
   file_name: string;
@@ -15,9 +15,10 @@ interface Document {
   description?: string;
   tags: string[];
   is_public: boolean;
-  folder_id?: string;
+  folder_id?: string | null;
   created_at: string;
   updated_at: string;
+  updatedAt?: string; // For compatibility
 }
 
 export const useDocuments = () => {

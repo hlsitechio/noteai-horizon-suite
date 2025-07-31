@@ -33,9 +33,8 @@ export interface PreviewNote {
   isNew?: boolean;
 }
 
-interface NotePreviewPanelProps {
+export interface NotePreviewPanelProps {
   note: PreviewNote | null;
-  isVisible: boolean;
   onToggleVisibility: () => void;
   onNoteUpdate: (note: PreviewNote) => void;
   onRequestModification: (instruction: string) => void;
@@ -45,13 +44,19 @@ interface NotePreviewPanelProps {
 
 export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
   note,
-  isVisible,
   onToggleVisibility,
   onNoteUpdate,
   onRequestModification,
   isModifying = false,
   className = ''
 }) => {
+  // Use local state for visibility
+  const [isVisible, setIsVisible] = React.useState(true);
+
+  const handleToggleVisibility = () => {
+    setIsVisible(!isVisible);
+    onToggleVisibility();
+  };
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
   const [editedContent, setEditedContent] = useState('');
@@ -183,9 +188,9 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
               </div>
               <div className="absolute inset-0 w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 animate-pulse"></div>
             </div>
-            <Button
-              variant="outline"
-              onClick={onToggleVisibility}
+              <Button
+                variant="outline"
+                onClick={handleToggleVisibility}
               className="group h-14 px-8 rounded-2xl border-2 border-primary/30 bg-gradient-to-r from-background/80 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all duration-500 shadow-2xl hover:shadow-primary/20 backdrop-blur-sm"
             >
               <Eye className="w-6 h-6 text-primary mr-3 group-hover:scale-110 transition-transform duration-300" />
@@ -234,7 +239,7 @@ export const NotePreviewPanel: React.FC<NotePreviewPanelProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={onToggleVisibility}
+                onClick={handleToggleVisibility}
                 className="h-10 w-10 p-0 rounded-2xl hover:bg-muted/50 transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-border/30"
               >
                 <EyeOff className="w-5 h-5" />

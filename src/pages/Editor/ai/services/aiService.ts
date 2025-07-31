@@ -50,7 +50,7 @@ class AIService {
       });
 
       if (error) {
-        throw new Error(error.message || 'AI processing failed');
+        throw new Error((error as any)?.message || 'AI processing failed');
       }
 
       if (!data || !data.result) {
