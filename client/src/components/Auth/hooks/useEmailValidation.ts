@@ -22,7 +22,7 @@ export const useEmailValidation = () => {
         .from('user_profiles')
         .select('email, id')
         .eq('email', emailToCheck)
-        .maybeSingle();
+        .single();
 
       if (error) {
         logger.auth.error('Error checking email:', error);

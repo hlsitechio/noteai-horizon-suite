@@ -287,13 +287,13 @@ PERSONALITY TRAITS:
     recommendation: any, 
     mode: ChatMode
   ): string {
-    const agentNames = {
+    const agentNames: Record<string, string> = {
       'productivity-agent': 'Productivity Assistant',
       'writing-agent': 'Writing Assistant',
       'creative-agent': 'Creative Assistant'
     };
 
-    const agentName = agentNames[recommendation.recommendedAgent] || 'Specialized Assistant';
+    const agentName = agentNames[recommendation.recommendedAgent as string] || 'Specialized Assistant';
 
     switch (mode) {
       case 'task-focused':

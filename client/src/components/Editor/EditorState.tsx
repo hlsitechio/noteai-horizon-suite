@@ -27,11 +27,11 @@ export const useEditorState = () => {
   // Load current note when it changes
   useEffect(() => {
     if (currentNote) {
-      setTitle(currentNote.title);
-      setContent(currentNote.content);
-      setCategory(currentNote.category);
-      setTags(currentNote.tags);
-      setIsFavorite(currentNote.isFavorite);
+      setTitle(currentNote.title || '');
+      setContent(currentNote.content || '');
+      setCategory(currentNote.category || 'general');
+      setTags(currentNote.tags || []);
+      setIsFavorite(currentNote.isFavorite ?? false);
     } else {
       // Clear form for new note
       setTitle('');

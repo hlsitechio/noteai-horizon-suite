@@ -8,7 +8,6 @@ export const useDashboardStatus = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasResetCompleted, setHasResetCompleted] = useState(false);
 
-  
   useEffect(() => {
     const checkDashboardStatus = async () => {
       if (!user) {
@@ -33,24 +32,22 @@ export const useDashboardStatus = () => {
           .single();
 
         // Check if user has any notes (another indicator)
-        const { data: notes, count } = await supabase
+        const { data: notes } = await supabase
           .from('notes_v2')
-          .select('id', { count: 'exact' })
-          .eq('user_id', user.id)
-          .limit(1);
+          .select('id')
+          .eq('user_id', user.id);
 
         // Check if user has folders
-        const { data: folders, count: foldersCount } = await supabase
+        const { data: folders } = await supabase
           .from('folders')
-          .select('id', { count: 'exact' })
-          .eq('user_id', user.id)
-          .limit(1);
+          .select('id')
+          .eq('user_id', user.id);
 
         // Check if user is truly new (no existing data)
         const isNewUser = !onboardingData?.onboarding_completed && 
                          !dashboardSettings && 
-                         (!notes || count === 0) && 
-                         (!folders || foldersCount === 0);
+                         (!notes || notes.length === 0) && 
+                         (!folders || folders.length === 0);
 
         if (isNewUser) {
           // Development logging only

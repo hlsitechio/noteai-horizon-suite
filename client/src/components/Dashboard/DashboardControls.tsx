@@ -52,7 +52,7 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
         console.error('Dashboard save and lock error:', error);
         toast({
           title: "Save & Lock Failed",
-          description: `Failed to save and lock dashboard layout: ${error.message}`,
+          description: `Failed to save and lock dashboard layout: ${(error as any)?.message || 'Unknown error'}`,
           variant: "destructive",
         });
         return;
@@ -71,11 +71,11 @@ export const DashboardControls: React.FC<DashboardControlsProps> = ({
         variant: "default",
       });
 
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Dashboard save and lock error:', err);
       toast({
         title: "Save & Lock Failed",
-        description: `An unexpected error occurred: ${err.message}`,
+        description: `An unexpected error occurred: ${(err as Error)?.message || 'Unknown error'}`,
         variant: "destructive",
       });
     } finally {

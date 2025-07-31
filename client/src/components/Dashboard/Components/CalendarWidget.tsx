@@ -160,20 +160,20 @@ export function CalendarWidget() {
                 <div key={event.id} className="space-y-1 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 cursor-pointer">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-foreground truncate">
-                      {event.title}
+                      {event.title || 'Untitled Event'}
                     </span>
                     <Badge variant="outline" className="text-xs">
-                      {event.date}
+                      {event.date || 'No date'}
                     </Badge>
                   </div>
                   <div className="flex items-center space-x-3 text-xs text-muted-foreground">
                     <div className="flex items-center space-x-1">
                       <Clock className="h-3 w-3" />
-                      <span>{event.time}</span>
+                      <span>{event.time || 'No time'}</span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <MapPin className="h-3 w-3" />
-                      <span>{event.location}</span>
+                      <span>{event.location || 'No location'}</span>
                     </div>
                   </div>
                 </div>

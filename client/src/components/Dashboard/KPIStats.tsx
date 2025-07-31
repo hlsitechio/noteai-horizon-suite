@@ -38,7 +38,7 @@ const KPIStats: React.FC<KPIStatsProps> = ({
     if (notes.length === 0) return 0;
     
     const sortedNotes = [...notes].sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
     );
     
     let streak = 0;
@@ -47,7 +47,7 @@ const KPIStats: React.FC<KPIStatsProps> = ({
     
     for (let i = 0; i < 30; i++) { // Check last 30 days
       const hasNoteOnDay = sortedNotes.some(note => {
-        const noteDate = new Date(note.createdAt);
+        const noteDate = new Date(note.createdAt || 0);
         noteDate.setHours(0, 0, 0, 0);
         return noteDate.getTime() === currentDate.getTime();
       });
