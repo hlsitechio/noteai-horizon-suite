@@ -55,7 +55,7 @@ const AIContentOptimizer: React.FC = () => {
     
     try {
       // Simulate AI content optimization
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Mock optimization result - in a real app, this would call an AI service
       const mockOptimization: ContentOptimization = {

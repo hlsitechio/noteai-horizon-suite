@@ -16,7 +16,7 @@ export const useFocusModeControls = (isZenMode: boolean) => {
         if (hideControlsTimeoutRef.current) {
           clearTimeout(hideControlsTimeoutRef.current);
         }
-        hideControlsTimeoutRef.current = setTimeout(hideControls, 3000);
+        hideControlsTimeoutRef.current = setTimeout(hideControls, 2000);
       };
 
       const handleMouseMove = () => {
@@ -24,7 +24,7 @@ export const useFocusModeControls = (isZenMode: boolean) => {
       };
 
       document.addEventListener('mousemove', handleMouseMove);
-      hideControlsTimeoutRef.current = setTimeout(hideControls, 3000);
+      hideControlsTimeoutRef.current = setTimeout(hideControls, 2000);
 
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);

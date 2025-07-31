@@ -84,7 +84,7 @@ const AIGenerateModal: React.FC<AIGenerateModalProps> = ({
       toast.success('AI generation started...');
       
       // Mock delay for generation
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       // For now, show placeholder message instead of external images
       // In production, this would generate actual AI images
