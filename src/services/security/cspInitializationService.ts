@@ -54,25 +54,22 @@ export class CSPInitializationService {
   private applyDynamicCSP(): void {
     const headers = this.securityService.getAllSecurityHeaders();
     
-    // For meta tags, we need to strip out report-uri and report-to directives
-    // as they're only allowed in HTTP headers
-    const metaCompatibleCSP = this.makeMetaCompatible(headers['Content-Security-Policy']);
-    const metaCompatibleCSPReportOnly = this.makeMetaCompatible(headers['Content-Security-Policy-Report-Only']);
-    
-    // Update CSP meta tags with compatible directives only
-    if (metaCompatibleCSP) {
-      this.updateMetaTag('Content-Security-Policy', metaCompatibleCSP);
-    }
-    if (metaCompatibleCSPReportOnly) {
-      this.updateMetaTag('Content-Security-Policy-Report-Only', metaCompatibleCSPReportOnly);
-    }
-    
-    // Apply other security headers as meta tags (these are compatible)
+    // Apply other security headers as meta tags (excluding CSP and headers that require HTTP)
     Object.entries(headers).forEach(([name, value]) => {
-      if (name !== 'Content-Security-Policy' && name !== 'Content-Security-Policy-Report-Only') {
-        this.updateMetaTag(name, value);
+      // Skip CSP policies entirely - they contain report-uri which isn't allowed in meta tags
+      // Also skip other headers that must be HTTP-only
+      if (name.includes('Content-Security-Policy') || 
+          name === 'X-Frame-Options' ||
+          name === 'X-Content-Type-Options' ||
+          name === 'Referrer-Policy') {
+        logger.security.debug(`Skipped HTTP-only header: ${name}`);
+        return;
       }
+      
+      this.updateMetaTag(name, value);
     });
+    
+    logger.security.info('✅ Security headers applied (CSP policies skipped for meta compatibility)');
   }
 
   /**

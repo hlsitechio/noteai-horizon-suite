@@ -26,12 +26,14 @@ if (typeof window !== 'undefined') {
             // Block Facebook tracking URLs from being set as preloads
             if ((this.rel === 'preload' || this.rel === 'prefetch') && shouldBlockTrackingUrl(value)) {
               console.warn('🚫 Blocked tracking preload creation:', value);
-              return; // Don't set the href
+              // Set a dummy URL instead of the tracking URL
+              originalHrefSetter.call(this, 'about:blank');
+              return;
             }
             originalHrefSetter.call(this, value);
           },
           get: function() {
-            return originalHrefSetter ? this.getAttribute('href') || '' : '';
+            return this.getAttribute('href') || '';
           },
           configurable: true
         });
@@ -44,12 +46,14 @@ if (typeof window !== 'undefined') {
           set: function(value: string) {
             if ((value === 'preload' || value === 'prefetch') && shouldBlockTrackingUrl(this.href)) {
               console.warn('🚫 Blocked tracking preload via rel assignment:', this.href);
-              return; // Don't set rel to preload for tracking URLs
+              // Set rel to something harmless instead
+              originalRelSetter.call(this, 'alternate');
+              return;
             }
             originalRelSetter.call(this, value);
           },
           get: function() {
-            return originalRelSetter ? this.getAttribute('rel') || '' : '';
+            return this.getAttribute('rel') || '';
           },
           configurable: true
         });
@@ -60,20 +64,33 @@ if (typeof window !== 'undefined') {
   };
 }
 
-// Helper function to identify tracking URLs
+// Helper function to identify tracking URLs - more comprehensive patterns
 const shouldBlockTrackingUrl = (url: string): boolean => {
   const trackingPatterns = [
+    // Facebook Pixel specific patterns (most aggressive)
     /facebook\.com\/tr/i,
-    /9151671744940732/i,
+    /9151671744940732/i,               // Specific FB Pixel ID causing issues
     /fbevents/i,
+    /connect\.facebook\.net/i,
+    /fbcdn\.net/i,
+    /facebook\.com/i,                  // Block all Facebook domains
+    
+    // Google tracking
+    /google-analytics/i,
+    /googletagmanager/i,
+    /doubleclick/i,
+    /googlesyndication/i,
+    
+    // Generic tracking patterns
     /pixel/i,
     /ev=PageView/i,
     /noscript=1/i,
-    /connect\.facebook\.net/i,
-    /fbcdn\.net/i,
+    /tracking/i,
+    /analytics/i,
     /gusid/i,
     /HB-ET/i,
-    /UTS/i
+    /UTS/i,
+    /_fbp/i
   ];
   return trackingPatterns.some(pattern => pattern.test(url));
 };

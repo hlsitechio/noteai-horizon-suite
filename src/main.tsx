@@ -16,6 +16,7 @@ import { FormAccessibilityDiagnostic } from './services/accessibility/formDiagno
 import { AggressiveFormFieldFixer } from './services/accessibility/aggressiveFormFixer'
 import { alternativeCSPReportingService } from './services/security/alternativeCSPReporting'
 import './utils/enhancedPreloadCleaner'
+import './utils/permissionsPolicyBlocker'
 
 // Initialize security measures immediately
 blockUTSTracking();
