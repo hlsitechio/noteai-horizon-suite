@@ -32,6 +32,9 @@ export interface CSPViolation {
   blockedUri: string;
   sourceFile?: string;
   lineNumber?: number;
+  timestamp?: string;
+  severity?: 'high' | 'medium' | 'low';
+  category?: string;
 }
 
 export interface SecurityScore {

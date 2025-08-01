@@ -156,6 +156,13 @@ class Logger {
     warn: (message: string, ...args: unknown[]) => this.warn('FLOATING', message, ...args),
     error: (message: string, ...args: unknown[]) => this.error('FLOATING', message, ...args),
   };
+
+  security = {
+    debug: (message: string, ...args: unknown[]) => this.debug('SECURITY', message, ...args),
+    info: (message: string, ...args: unknown[]) => this.info('SECURITY', message, ...args),
+    warn: (message: string, ...args: unknown[]) => this.warn('SECURITY', message, ...args),
+    error: (message: string, ...args: unknown[]) => this.error('SECURITY', message, ...args),
+  };
 }
 
 // Export singleton instance
@@ -172,4 +179,5 @@ export const log = {
   projects: logger.projects,
   realtime: logger.realtime,
   floating: logger.floating,
+  security: logger.security,
 };

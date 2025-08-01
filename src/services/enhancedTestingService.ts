@@ -1,4 +1,5 @@
 import { logger } from '@/utils/logger';
+import { cspValidationService } from './security/cspValidationService';
 
 interface EnhancedTestMetrics {
   overallHealth: number;
@@ -61,6 +62,9 @@ export class EnhancedTestingService {
     
     // Performance Testing
     reports.push(await this.runPerformanceTests());
+    
+    // Security Testing (NEW - CSP Validation)
+    reports.push(await this.runSecurityTests());
     
     // Error Handling Testing
     reports.push(await this.runErrorHandlingTests());
@@ -215,6 +219,53 @@ export class EnhancedTestingService {
 
     return {
       category: 'Error Handling Tests',
+      tests
+    };
+  }
+
+  private static async runSecurityTests(): Promise<TestReport> {
+    const tests = [];
+    
+    try {
+      // Run CSP validation suite
+      const cspResults = await cspValidationService.runValidationSuite();
+      
+      tests.push({
+        name: 'Content Security Policy',
+        status: cspResults.overallScore >= 80 ? 'passed' : cspResults.overallScore >= 60 ? 'warning' : 'failed' as const,
+        score: cspResults.overallScore,
+        details: `${cspResults.passedTests}/${cspResults.totalTests} CSP tests passed (${Math.round(cspResults.overallScore)}%)`
+      });
+
+      // Check for HTTPS enforcement
+      const isHTTPS = location.protocol === 'https:';
+      tests.push({
+        name: 'HTTPS Enforcement',
+        status: isHTTPS ? 'passed' : 'warning' as const,
+        score: isHTTPS ? 100 : 50,
+        details: isHTTPS ? 'HTTPS enforced' : 'Consider enforcing HTTPS'
+      });
+
+      // Check for security headers
+      const hasSecurityHeaders = document.querySelector('meta[http-equiv*="Security"]') !== null;
+      tests.push({
+        name: 'Security Headers',
+        status: hasSecurityHeaders ? 'passed' : 'warning' as const,
+        score: hasSecurityHeaders ? 100 : 60,
+        details: hasSecurityHeaders ? 'Security headers detected' : 'Consider adding security headers'
+      });
+
+    } catch (error) {
+      tests.push({
+        name: 'Security Test Suite',
+        status: 'failed' as const,
+        score: 0,
+        details: `Security testing failed: ${error}`
+      });
+    }
+
+    return {
+      category: 'Security Tests',
       tests
     };
   }
