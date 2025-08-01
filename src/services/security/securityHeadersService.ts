@@ -119,8 +119,8 @@ export class SecurityHeadersService {
         notifications: ["'self'"],
         payment: ["'self'"],
         fullscreen: ["'self'"],
-        // Removed deprecated features: vr, ambient-light-sensor, battery
-        // These were causing "Unrecognized feature" console warnings
+        // Removed deprecated features that cause console warnings:
+        // vr, ambient-light-sensor, battery
       }
     };
 

@@ -50,6 +50,7 @@ const DEV_NOISE_PATTERNS = [
   /The resource.*was preloaded using link preload/i,
   /facebook\.com\/tr.*was preloaded/i,
   /9151671744940732.*was preloaded/i,
+  /was preloaded using link preload but not used/i,
   
   // DOM accessibility warnings for development
   /Input elements should have autocomplete attributes/i,

@@ -38,7 +38,7 @@ const ResizableSidebarPanel: React.FC<ResizableSidebarPanelProps> = ({
             id="sidebar-vertical-panels"
           >
             {/* Top Panel */}
-            <Panel defaultSize={40} minSize={25} maxSize={60}>
+            <Panel defaultSize={35} minSize={25} maxSize={60}>
               <div className="h-full overflow-y-auto">
                 {topPanelContent || children}
               </div>
@@ -68,7 +68,7 @@ const ResizableSidebarPanel: React.FC<ResizableSidebarPanelProps> = ({
             />
             
             {/* Bottom Panel */}
-            <Panel defaultSize={25} minSize={15} maxSize={40}>
+            <Panel defaultSize={30} minSize={15} maxSize={40}>
               <div className="h-full overflow-y-auto">
                 {bottomPanelContent || (
                   <div className="p-4 h-full flex items-center justify-center">
