@@ -12,6 +12,7 @@ import { enforcePermissionsPolicy } from './utils/permissionsPolicyEnforcer'
 import { initializeConsole } from './utils/consoleInitializer'
 import { cspInitializationService } from './services/security/cspInitializationService'
 import { accessibilityLabelFixerService } from './services/accessibility/labelFixerService'
+import { formAccessibilityService } from './services/accessibility/formAccessibilityService'
 import './utils/enhancedPreloadCleaner'
 
 // Initialize security measures immediately
@@ -23,8 +24,8 @@ enforcePermissionsPolicy();
 // Initialize enhanced CSP with dynamic headers and monitoring
 cspInitializationService.initialize();
 
-// Initialize accessibility label fixer
-accessibilityLabelFixerService.initialize();
+// Initialize comprehensive form accessibility (includes label fixing)
+formAccessibilityService.initialize();
 
 // Initialize unified console management
 initializeConsole();

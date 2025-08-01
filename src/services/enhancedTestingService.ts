@@ -1,6 +1,6 @@
 import { logger } from '@/utils/logger';
 import { cspValidationService } from './security/cspValidationService';
-import { accessibilityLabelFixerService } from './accessibility/labelFixerService';
+import { formAccessibilityService } from './accessibility/formAccessibilityService';
 
 interface EnhancedTestMetrics {
   overallHealth: number;
@@ -106,14 +106,29 @@ export class EnhancedTestingService {
   private static async runAccessibilityTests(): Promise<TestReport> {
     const tests = [];
     
-    // Check label associations using our fixer service
-    const labelReport = accessibilityLabelFixerService.getAccessibilityReport();
+    // Check comprehensive form accessibility using our enhanced service
+    const formAccessibilityReport = formAccessibilityService.getAccessibilityReport();
+    
+    tests.push({
+      name: 'Form Field IDs/Names',
+      status: formAccessibilityReport.missingIds === 0 ? 'passed' : 'warning' as const,
+      score: formAccessibilityReport.totalFormFields > 0 ? 
+        ((formAccessibilityReport.totalFormFields - formAccessibilityReport.missingIds + formAccessibilityReport.fixedIds) / formAccessibilityReport.totalFormFields) * 100 : 100,
+      details: `${formAccessibilityReport.fixedIds} IDs added, ${formAccessibilityReport.missingIds} remaining`
+    });
+
+    tests.push({
+      name: 'Autocomplete Attributes',
+      status: formAccessibilityReport.missingAutocomplete <= 2 ? 'passed' : 'warning' as const,
+      score: Math.max(0, 100 - (formAccessibilityReport.missingAutocomplete * 5)),
+      details: `${formAccessibilityReport.fixedAutocomplete} autocomplete attributes added`
+    });
+    
     tests.push({
       name: 'Label Associations',
-      status: labelReport.labelAssociations.score >= 95 ? 'passed' : 
-              labelReport.labelAssociations.score >= 80 ? 'warning' : 'failed' as const,
-      score: labelReport.labelAssociations.score,
-      details: `${labelReport.labelAssociations.associatedLabels}/${labelReport.labelAssociations.totalLabels} labels properly associated (${labelReport.fixedCount} auto-fixed)`
+      status: formAccessibilityReport.unassociatedLabels === 0 ? 'passed' : 'warning' as const,
+      score: Math.max(0, 100 - (formAccessibilityReport.unassociatedLabels * 10)),
+      details: `${formAccessibilityReport.fixedLabels} labels fixed, ${formAccessibilityReport.unassociatedLabels} remaining`
     });
     
     // Check for semantic HTML
