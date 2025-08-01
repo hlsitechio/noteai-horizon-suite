@@ -51,6 +51,10 @@ const DEV_NOISE_PATTERNS = [
   /facebook\.com\/tr.*was preloaded/i,
   /9151671744940732.*was preloaded/i,
   /was preloaded using link preload but not used/i,
+  /preloaded using link preload but not used within a few seconds/i,
+  
+  // Panel layout warnings from react-resizable-panels
+  /Invalid layout total size.*Layout normalization will be applied/i,
   
   // DOM accessibility warnings for development
   /Input elements should have autocomplete attributes/i,

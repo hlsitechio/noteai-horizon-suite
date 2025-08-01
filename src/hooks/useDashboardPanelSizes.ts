@@ -13,10 +13,10 @@ export const useDashboardPanelSizes = () => {
   const settingsPanelSizes = workspace?.panel_sizes || {};
   
   const panelSizes = useMemo(() => ({
-    banner: settingsPanelSizes.banner || 25,
-    analytics: settingsPanelSizes.analytics || 25,
-    topSection: settingsPanelSizes.topSection || 35,
-    bottomSection: settingsPanelSizes.bottomSection || 40,
+    banner: settingsPanelSizes.banner || 30,
+    analytics: settingsPanelSizes.analytics || 30,
+    topSection: settingsPanelSizes.topSection || 40,
+    bottomSection: settingsPanelSizes.bottomSection || 30,
     leftPanels: settingsPanelSizes.leftPanels || 50,
     rightPanels: settingsPanelSizes.rightPanels || 50,
   }), [settingsPanelSizes]);
