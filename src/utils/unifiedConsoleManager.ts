@@ -44,14 +44,17 @@ const DEV_NOISE_PATTERNS = [
   /Unrecognized feature.*'vr'/i,
   /Unrecognized feature.*'battery'/i,
   
-  // Preload warnings - especially Facebook tracking
-  /resource.*was preloaded.*but not used/i,
+  // Preload warnings - COMPLETE SUPPRESSION (we disabled preloading entirely)
+  /resource.*was preloaded/i,
+  /preloaded.*but not used/i,
+  /preloaded using link preload/i,
   /Please make sure it has an appropriate.*as.*value/i,
-  /The resource.*was preloaded using link preload/i,
+  /The resource.*was preloaded/i,
   /facebook\.com\/tr.*was preloaded/i,
   /9151671744940732.*was preloaded/i,
   /was preloaded using link preload but not used/i,
   /preloaded using link preload but not used within a few seconds/i,
+  /was preloaded using link preload but not used within a few seconds from the window's load event/i,
   
   // Panel layout warnings from react-resizable-panels
   /Invalid layout total size.*Layout normalization will be applied/i,
