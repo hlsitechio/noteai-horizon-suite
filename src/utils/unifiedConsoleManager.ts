@@ -44,10 +44,12 @@ const DEV_NOISE_PATTERNS = [
   /Unrecognized feature.*'vr'/i,
   /Unrecognized feature.*'battery'/i,
   
-  // Preload warnings
+  // Preload warnings - especially Facebook tracking
   /resource.*was preloaded.*but not used/i,
   /Please make sure it has an appropriate.*as.*value/i,
   /The resource.*was preloaded using link preload/i,
+  /facebook\.com\/tr.*was preloaded/i,
+  /9151671744940732.*was preloaded/i,
   
   // DOM accessibility warnings for development
   /Input elements should have autocomplete attributes/i,

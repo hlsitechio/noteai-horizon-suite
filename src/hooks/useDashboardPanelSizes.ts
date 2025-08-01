@@ -14,8 +14,8 @@ export const useDashboardPanelSizes = () => {
   
   const panelSizes = useMemo(() => ({
     banner: settingsPanelSizes.banner || 25,
-    analytics: settingsPanelSizes.analytics || 20,
-    topSection: settingsPanelSizes.topSection || 40,
+    analytics: settingsPanelSizes.analytics || 25,
+    topSection: settingsPanelSizes.topSection || 35,
     bottomSection: settingsPanelSizes.bottomSection || 40,
     leftPanels: settingsPanelSizes.leftPanels || 50,
     rightPanels: settingsPanelSizes.rightPanels || 50,
