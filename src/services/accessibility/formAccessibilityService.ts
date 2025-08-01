@@ -107,18 +107,32 @@ export class FormAccessibilityService {
     if (this.isInitialized) return;
 
     try {
-      // Fix all form accessibility issues
-      this.fixAllFormAccessibilityIssues();
+      // Initial fix on DOM ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => this.runInitialFixes());
+      } else {
+        this.runInitialFixes();
+      }
+      
+      // Additional fix after a short delay to catch dynamic content
+      setTimeout(() => this.runInitialFixes(), 1000);
       
       // Set up monitoring for dynamically added forms
       this.setupFormMonitoring();
       
       this.isInitialized = true;
-      logger.security.info(`✅ Form Accessibility Service initialized - Score: ${Math.round(this.report.score)}%`);
       
     } catch (error) {
       logger.security.error('❌ Failed to initialize form accessibility service:', error);
     }
+  }
+
+  /**
+   * Run initial fixes and report results
+   */
+  private runInitialFixes(): void {
+    this.fixAllFormAccessibilityIssues();
+    logger.security.info(`✅ Form Accessibility Service - Fixed ${this.report.fixedIds} IDs, ${this.report.fixedAutocomplete} autocomplete, ${this.report.fixedLabels} labels. Score: ${Math.round(this.report.score)}%`);
   }
 
   /**
@@ -157,14 +171,33 @@ export class FormAccessibilityService {
    */
   private fixFormField(field: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement): void {
     const fieldType = this.getFieldType(field);
+    let wasFixed = false;
     
-    // Issue 1: Missing ID or name attribute
+    // Issue 1: Missing ID or name attribute - AGGRESSIVE FIXING
     if (!field.id && !field.name) {
       this.report.missingIds++;
       const generatedId = this.generateMeaningfulId(field, fieldType);
+      
+      // Set both ID and name for maximum compatibility
+      field.id = generatedId;
+      field.name = generatedId;
+      
+      this.report.fixedIds++;
+      wasFixed = true;
+      logger.security.debug(`Added ID+name to form field: ${generatedId}`);
+    } else if (!field.id) {
+      // Only missing ID, generate one
+      const generatedId = this.generateMeaningfulId(field, fieldType);
       field.id = generatedId;
       this.report.fixedIds++;
+      wasFixed = true;
       logger.security.debug(`Added ID to form field: ${generatedId}`);
+    } else if (!field.name) {
+      // Only missing name, use existing ID
+      field.name = field.id;
+      this.report.fixedIds++;
+      wasFixed = true;
+      logger.security.debug(`Added name to form field: ${field.id}`);
     }
 
     // Issue 2: Missing autocomplete attribute (for appropriate fields)
