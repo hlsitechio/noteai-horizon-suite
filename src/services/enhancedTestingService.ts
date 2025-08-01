@@ -1,5 +1,6 @@
 import { logger } from '@/utils/logger';
 import { cspValidationService } from './security/cspValidationService';
+import { accessibilityLabelFixerService } from './accessibility/labelFixerService';
 
 interface EnhancedTestMetrics {
   overallHealth: number;
@@ -105,6 +106,16 @@ export class EnhancedTestingService {
   private static async runAccessibilityTests(): Promise<TestReport> {
     const tests = [];
     
+    // Check label associations using our fixer service
+    const labelReport = accessibilityLabelFixerService.getAccessibilityReport();
+    tests.push({
+      name: 'Label Associations',
+      status: labelReport.labelAssociations.score >= 95 ? 'passed' : 
+              labelReport.labelAssociations.score >= 80 ? 'warning' : 'failed' as const,
+      score: labelReport.labelAssociations.score,
+      details: `${labelReport.labelAssociations.associatedLabels}/${labelReport.labelAssociations.totalLabels} labels properly associated (${labelReport.fixedCount} auto-fixed)`
+    });
+    
     // Check for semantic HTML
     const hasMainLandmark = document.querySelector('main') !== null;
     tests.push({
@@ -136,6 +147,17 @@ export class EnhancedTestingService {
       status: focusableElements.length > 0 ? 'passed' : 'warning' as const,
       score: focusableElements.length > 0 ? 100 : 50,
       details: `${focusableElements.length} focusable elements found`
+    });
+
+    // Check for ARIA attributes
+    const elementsWithAria = document.querySelectorAll('[aria-label], [aria-labelledby], [aria-describedby], [role]');
+    const ariaScore = elementsWithAria.length > 10 ? 100 : (elementsWithAria.length / 10) * 100;
+    
+    tests.push({
+      name: 'ARIA Attributes',
+      status: ariaScore >= 70 ? 'passed' : 'warning' as const,
+      score: ariaScore,
+      details: `${elementsWithAria.length} elements with ARIA attributes found`
     });
 
     return {

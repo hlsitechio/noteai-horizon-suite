@@ -171,9 +171,10 @@ export const UnitConverterWidget: React.FC<UnitConverterProps> = ({
 
         {/* From Unit */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">From</label>
+          <label htmlFor="from-unit-value" className="text-sm font-medium">From</label>
           <div className="flex gap-2">
             <Input
+              id="from-unit-value"
               type="number"
               placeholder="Enter value"
               value={fromValue}
@@ -209,9 +210,10 @@ export const UnitConverterWidget: React.FC<UnitConverterProps> = ({
 
         {/* To Unit */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">To</label>
+          <label htmlFor="to-unit-value" className="text-sm font-medium">To</label>
           <div className="flex gap-2">
             <Input
+              id="to-unit-value"
               type="number"
               placeholder="Result"
               value={toValue}

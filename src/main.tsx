@@ -11,6 +11,7 @@ import { blockExternalTracking } from './utils/blockExternalTracking'
 import { enforcePermissionsPolicy } from './utils/permissionsPolicyEnforcer'
 import { initializeConsole } from './utils/consoleInitializer'
 import { cspInitializationService } from './services/security/cspInitializationService'
+import { accessibilityLabelFixerService } from './services/accessibility/labelFixerService'
 import './utils/enhancedPreloadCleaner'
 
 // Initialize security measures immediately
@@ -21,6 +22,9 @@ enforcePermissionsPolicy();
 
 // Initialize enhanced CSP with dynamic headers and monitoring
 cspInitializationService.initialize();
+
+// Initialize accessibility label fixer
+accessibilityLabelFixerService.initialize();
 
 // Initialize unified console management
 initializeConsole();

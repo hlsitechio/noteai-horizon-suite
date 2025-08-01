@@ -137,8 +137,9 @@ const AIContentOptimizer: React.FC = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Target Keywords (optional)</label>
+            <label htmlFor="target-keywords" className="text-sm font-medium">Target Keywords (optional)</label>
             <Textarea
+              id="target-keywords"
               placeholder="Enter target keywords separated by commas (e.g., ai notes, productivity, smart organization)"
               value={targetKeywords}
               onChange={(e) => setTargetKeywords(e.target.value)}
@@ -147,8 +148,9 @@ const AIContentOptimizer: React.FC = () => {
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium">Content to Optimize</label>
+            <label htmlFor="content-to-optimize" className="text-sm font-medium">Content to Optimize</label>
             <Textarea
+              id="content-to-optimize"
               placeholder="Paste your content here to get AI-powered optimization suggestions..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -316,22 +318,22 @@ const AIContentOptimizer: React.FC = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Optimized Title</label>
-                  <div className="p-3 bg-muted rounded-lg">
+                  <label htmlFor="optimized-title" className="text-sm font-medium">Optimized Title</label>
+                  <div id="optimized-title" className="p-3 bg-muted rounded-lg">
                     <p className="text-sm">{optimization.metadata.title}</p>
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Meta Description</label>
-                  <div className="p-3 bg-muted rounded-lg">
+                  <label htmlFor="meta-description" className="text-sm font-medium">Meta Description</label>
+                  <div id="meta-description" className="p-3 bg-muted rounded-lg">
                     <p className="text-sm">{optimization.metadata.description}</p>
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Recommended Tags</label>
-                  <div className="flex flex-wrap gap-2">
+                  <label htmlFor="recommended-tags" className="text-sm font-medium">Recommended Tags</label>
+                  <div id="recommended-tags" className="flex flex-wrap gap-2">
                     {optimization.metadata.tags.map((tag, index) => (
                       <Badge key={tag} variant="outline">
                         {tag}

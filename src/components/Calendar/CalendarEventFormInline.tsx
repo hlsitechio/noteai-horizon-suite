@@ -79,7 +79,7 @@ export const CalendarEventFormInline: React.FC<CalendarEventFormInlineProps> = (
             />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Time</label>
+            <label htmlFor="inline-event-time" className="text-xs font-medium text-muted-foreground">Time</label>
             <input
               id="inline-event-time"
               type="time"
