@@ -14,6 +14,7 @@ import { cspInitializationService } from './services/security/cspInitializationS
 import { formAccessibilityService } from './services/accessibility/formAccessibilityService'
 import { FormAccessibilityDiagnostic } from './services/accessibility/formDiagnosticService'
 import { AggressiveFormFieldFixer } from './services/accessibility/aggressiveFormFixer'
+import { alternativeCSPReportingService } from './services/security/alternativeCSPReporting'
 import './utils/enhancedPreloadCleaner'
 
 // Initialize security measures immediately
@@ -22,8 +23,11 @@ blockFingerprinting();
 blockExternalTracking();
 enforcePermissionsPolicy();
 
-// Initialize enhanced CSP with dynamic headers and monitoring
+// Initialize enhanced CSP with dynamic headers and monitoring (fixed for meta tag compatibility)
 cspInitializationService.initialize();
+
+// Initialize alternative CSP reporting (works without report-uri)
+alternativeCSPReportingService.initialize();
 
 // Initialize comprehensive form accessibility (includes label fixing)
 formAccessibilityService.initialize();

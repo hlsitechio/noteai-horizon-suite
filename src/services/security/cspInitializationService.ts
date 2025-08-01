@@ -54,11 +54,20 @@ export class CSPInitializationService {
   private applyDynamicCSP(): void {
     const headers = this.securityService.getAllSecurityHeaders();
     
-    // Update existing CSP meta tag or create new one
-    this.updateMetaTag('Content-Security-Policy', headers['Content-Security-Policy']);
-    this.updateMetaTag('Content-Security-Policy-Report-Only', headers['Content-Security-Policy-Report-Only']);
+    // For meta tags, we need to strip out report-uri and report-to directives
+    // as they're only allowed in HTTP headers
+    const metaCompatibleCSP = this.makeMetaCompatible(headers['Content-Security-Policy']);
+    const metaCompatibleCSPReportOnly = this.makeMetaCompatible(headers['Content-Security-Policy-Report-Only']);
     
-    // Apply other security headers as meta tags
+    // Update CSP meta tags with compatible directives only
+    if (metaCompatibleCSP) {
+      this.updateMetaTag('Content-Security-Policy', metaCompatibleCSP);
+    }
+    if (metaCompatibleCSPReportOnly) {
+      this.updateMetaTag('Content-Security-Policy-Report-Only', metaCompatibleCSPReportOnly);
+    }
+    
+    // Apply other security headers as meta tags (these are compatible)
     Object.entries(headers).forEach(([name, value]) => {
       if (name !== 'Content-Security-Policy' && name !== 'Content-Security-Policy-Report-Only') {
         this.updateMetaTag(name, value);
@@ -67,10 +76,29 @@ export class CSPInitializationService {
   }
 
   /**
+   * Make CSP policy compatible with meta tag delivery
+   * Removes directives that are only allowed in HTTP headers
+   */
+  private makeMetaCompatible(cspPolicy?: string): string {
+    if (!cspPolicy) return '';
+
+    // Remove report-uri and report-to directives as they're not allowed in meta tags
+    return cspPolicy
+      .replace(/;\s*report-uri\s+[^;]+/gi, '')
+      .replace(/;\s*report-to\s+[^;]+/gi, '')
+      .replace(/^report-uri\s+[^;]+;\s*/gi, '')
+      .replace(/^report-to\s+[^;]+;\s*/gi, '')
+      .trim();
+  }
+
+  /**
    * Update or create meta tag for security headers
    */
   private updateMetaTag(name: string, content?: string): void {
     if (!content) return;
+
+    // Skip empty or invalid policies
+    if (content.trim().length === 0) return;
 
     // Find existing meta tag
     let metaTag = document.querySelector(`meta[http-equiv="${name}"]`) as HTMLMetaElement;
@@ -78,12 +106,14 @@ export class CSPInitializationService {
     if (metaTag) {
       // Update existing tag
       metaTag.setAttribute('content', content);
+      logger.security.debug(`Updated CSP meta tag: ${name}`);
     } else {
       // Create new meta tag
       metaTag = document.createElement('meta');
       metaTag.setAttribute('http-equiv', name);
       metaTag.setAttribute('content', content);
       document.head.appendChild(metaTag);
+      logger.security.debug(`Created CSP meta tag: ${name}`);
     }
   }
 
