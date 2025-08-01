@@ -95,6 +95,13 @@ const isPermissionsPolicyMeta = (node: Node): boolean => {
     return true;
   }
   
+  // Block CSP meta tags that contain report-uri (not allowed in meta tags)
+  if ((httpEquiv === 'Content-Security-Policy' || httpEquiv === 'Content-Security-Policy-Report-Only') && 
+      content.includes('report-uri')) {
+    console.warn('SECURITY: Blocked CSP meta tag with report-uri (not allowed):', content.substring(0, 100));
+    return true;
+  }
+  
   return false;
 };
 

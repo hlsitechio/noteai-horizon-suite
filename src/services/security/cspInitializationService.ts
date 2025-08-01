@@ -83,11 +83,17 @@ export class CSPInitializationService {
     if (!cspPolicy) return '';
 
     // Remove report-uri and report-to directives as they're not allowed in meta tags
+    // Handle cases with and without semicolons, at beginning, middle, or end of policy
     return cspPolicy
-      .replace(/;\s*report-uri\s+[^;]+/gi, '')
-      .replace(/;\s*report-to\s+[^;]+/gi, '')
-      .replace(/^report-uri\s+[^;]+;\s*/gi, '')
-      .replace(/^report-to\s+[^;]+;\s*/gi, '')
+      .replace(/;\s*report-uri\s+[^;]+/gi, '')           // Middle: ; report-uri /path
+      .replace(/;\s*report-to\s+[^;]+/gi, '')            // Middle: ; report-to group
+      .replace(/^report-uri\s+[^;]+;\s*/gi, '')          // Beginning: report-uri /path;
+      .replace(/^report-to\s+[^;]+;\s*/gi, '')           // Beginning: report-to group;
+      .replace(/;\s*report-uri\s+[^;]*$/gi, '')          // End: ; report-uri /path
+      .replace(/;\s*report-to\s+[^;]*$/gi, '')           // End: ; report-to group
+      .replace(/^report-uri\s+[^;]*$/gi, '')             // Entire: report-uri /path
+      .replace(/^report-to\s+[^;]*$/gi, '')              // Entire: report-to group
+      .replace(/\s+/g, ' ')                              // Clean up multiple spaces
       .trim();
   }
 
